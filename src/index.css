@@ -33860,3 +33860,367 @@ gmp-map-3d-element .gmnoprint {
 .truck-view-map-container .mapboxgl-ctrl {
   display: none !important;
 }
+
+/* =============================================
+   MOBILE-FIRST OPTIMIZATION — SearchAtlas-inspired
+   Dark-first, clean spacing, section-by-section flow
+   ============================================= */
+
+/* ---- GLOBAL MOBILE FOUNDATIONS ---- */
+@media (max-width: 768px) {
+  /* Reduce header offset on mobile */
+  :root {
+    --header-offset: 4.5rem;
+  }
+
+  /* --- SiteShell / Header area tighter --- */
+  .sticky.top-0 .bg-background {
+    padding: 8px 16px 12px !important;
+  }
+
+  .sticky.top-0 .h-8 {
+    height: 12px;
+  }
+
+  /* --- Safer Trust Strip: compact single-line scroll --- */
+  .safer-trust-strip {
+    margin-top: 8px;
+    padding: 6px 12px;
+  }
+
+  .safer-trust-strip-inner {
+    gap: 14px;
+  }
+
+  .safer-trust-item {
+    font-size: 10px;
+    gap: 4px;
+  }
+
+  .safer-trust-item svg {
+    width: 13px;
+    height: 13px;
+  }
+
+  .safer-trust-dot {
+    margin: 0 4px;
+  }
+
+  /* --- Mobile Menu: Dark, full-width, immersive --- */
+  .header-mobile-menu {
+    background: hsl(220 15% 6%);
+    border-color: hsl(0 0% 100% / 0.06);
+    border-radius: 0 0 20px 20px;
+    padding: 12px 20px 28px;
+    box-shadow: 0 20px 60px hsl(0 0% 0% / 0.5);
+  }
+
+  .header-mobile-nav {
+    gap: 2px;
+    margin-bottom: 16px;
+  }
+
+  .header-mobile-link {
+    padding: 14px 16px;
+    font-size: 16px;
+    font-weight: 700;
+    color: hsl(0 0% 100% / 0.85);
+    border-radius: 12px;
+    letter-spacing: -0.01em;
+  }
+
+  .header-mobile-link:hover,
+  .header-mobile-link.is-active {
+    background: hsl(var(--primary) / 0.12);
+    color: hsl(0 0% 100%);
+  }
+
+  .header-mobile-actions {
+    gap: 10px;
+    padding-top: 16px;
+    border-top: 1px solid hsl(0 0% 100% / 0.08);
+  }
+
+  .header-mobile-btn {
+    height: 50px;
+    border-radius: 14px;
+    font-size: 14px;
+    font-weight: 700;
+    color: hsl(0 0% 100% / 0.9);
+    border: 1px solid hsl(0 0% 100% / 0.12);
+    background: hsl(0 0% 100% / 0.05);
+    backdrop-filter: blur(8px);
+  }
+
+  .header-mobile-btn.is-primary {
+    background: hsl(var(--primary));
+    color: hsl(220 15% 6%);
+    border: none;
+    box-shadow: 0 4px 20px hsl(var(--primary) / 0.4);
+    font-weight: 800;
+  }
+
+  /* Theme toggle in mobile menu */
+  .header-mobile-actions .flex.justify-center {
+    border-color: hsl(0 0% 100% / 0.08) !important;
+  }
+
+  /* --- Global Section Spacing --- */
+  main.flex-1 > div {
+    overflow-x: hidden;
+  }
+
+  /* --- Page containers: generous mobile padding --- */
+  .max-w-\\[1480px\\],
+  .max-w-\\[900px\\] {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+
+  /* --- Headings: Bold, tight, impactful --- */
+  h1 {
+    font-size: 1.875rem !important;
+    line-height: 1.15 !important;
+    letter-spacing: -0.025em;
+  }
+
+  h2 {
+    font-size: 1.5rem !important;
+    line-height: 1.2 !important;
+  }
+
+  /* --- Cards on mobile: full-width, no horizontal overflow --- */
+  .grid.grid-cols-1.lg\\:grid-cols-2 {
+    gap: 16px !important;
+  }
+
+  /* --- Tables: horizontal scroll with rounded wrapper --- */
+  .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+    border-radius: 12px;
+  }
+
+  /* --- About page comparison table: card-style on mobile --- */
+  table.w-full.text-sm th,
+  table.w-full.text-sm td {
+    padding: 10px 12px !important;
+    font-size: 12px !important;
+  }
+
+  /* --- CTA buttons: full-width on mobile --- */
+  .flex.flex-wrap.justify-center.gap-4 {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .flex.flex-wrap.justify-center.gap-4 > a,
+  .flex.flex-wrap.justify-center.gap-4 > button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* --- Hero section mobile optimization --- */
+  .tru-hero-headline-main {
+    font-size: clamp(1.75rem, 8vw, 2.5rem) !important;
+  }
+
+  .tru-hero-subheadline {
+    font-size: 0.9375rem;
+    padding: 0 4px;
+  }
+
+  .tru-hero-trust-inline {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .tru-hero-trust-item {
+    font-size: 10px;
+  }
+
+  /* --- Quote Builder on mobile --- */
+  .tru-qb-body {
+    padding: 16px !important;
+  }
+
+  /* --- Command Center / Tracking Headers --- */
+  .tracking-header {
+    padding: 10px 16px !important;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .tracking-header-trust {
+    display: none !important;
+  }
+
+  /* --- Vetting Page Mobile --- */
+  .tru-vetting-hero {
+    flex-direction: column !important;
+    padding: 24px 20px !important;
+    text-align: center;
+  }
+
+  .tru-vetting-hero-content {
+    align-items: center;
+  }
+
+  .tru-vetting-hero-visual {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .tru-vetting-headline {
+    font-size: 1.75rem !important;
+  }
+
+  .tru-vetting-trust-pills {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .tru-vetting-hero-cta {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .tru-vetting-hero-cta a {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .tru-vetting-stats {
+    flex-wrap: wrap !important;
+    gap: 12px !important;
+    padding: 20px 16px !important;
+  }
+
+  .tru-vetting-stat {
+    flex: 1 1 calc(50% - 6px) !important;
+    min-width: 0 !important;
+    text-align: center;
+  }
+
+  .tru-vetting-process-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  .tru-vetting-testimonial-card {
+    padding: 24px 20px !important;
+  }
+
+  /* --- Feature Carousel: full-width cards --- */
+  .tru-value-card-open {
+    min-width: 85vw !important;
+  }
+
+  /* --- Stats Strip mobile --- */
+  .stats-strip-inner {
+    gap: 16px !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+  }
+
+  /* --- AI Scanner section mobile --- */
+  .tru-ai-preview-live {
+    gap: 12px !important;
+  }
+
+  .tru-ai-live-scanner {
+    min-height: 220px !important;
+  }
+
+  /* --- Ticker strips: faster on mobile --- */
+  .tru-ticker-track {
+    animation-duration: 18s !important;
+  }
+
+  /* --- Book/Consult page: stack panels --- */
+  .video-consult-header-controls {
+    display: none !important;
+  }
+
+  /* --- FAQ accordion: tighter on mobile --- */
+  .space-y-3 > [data-state] {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  /* --- Footer mobile: stack and center --- */
+  footer {
+    text-align: center;
+  }
+
+  /* --- Card frames on mobile --- */
+  .tru-card-frame {
+    border-radius: 14px;
+  }
+
+  /* --- Floating elements: don't overlap on mobile --- */
+  .tru-floating-nav-wrapper,
+  .tru-floating-nav {
+    display: none !important;
+  }
+
+  /* --- Move Summary Modal: compact on mobile --- */
+  .tru-move-summary-modal {
+    padding: 16px !important;
+  }
+
+  .tru-move-summary-map.tru-move-summary-map-lg {
+    width: 100px !important;
+    height: 100px !important;
+  }
+
+  /* --- Scan Room page mobile --- */
+  .tru-scan-demo-unified {
+    grid-template-columns: 1fr !important;
+  }
+
+  .tru-scan-how-steps {
+    flex-direction: column !important;
+  }
+
+  /* --- Property Lookup mobile --- */
+  .tru-ai-two-column {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* --- Section separators: visible breathing room --- */
+  section + section,
+  .mb-16 + .mb-16,
+  .mb-16 + section {
+    margin-top: 2rem;
+  }
+
+  /* --- Dark immersive sections on mobile --- */
+  .tru-vetting-hero,
+  .tru-vetting-cta-section {
+    border-radius: 0 !important;
+    margin-left: -20px !important;
+    margin-right: -20px !important;
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+}
+
+/* ---- SMALL MOBILE (< 375px) ---- */
+@media (max-width: 375px) {
+  h1 {
+    font-size: 1.625rem !important;
+  }
+
+  .header-mobile-link {
+    font-size: 15px;
+    padding: 12px 14px;
+  }
+
+  .tru-vetting-headline {
+    font-size: 1.5rem !important;
+  }
+
+  .safer-trust-item {
+    font-size: 9px;
+  }
+}
