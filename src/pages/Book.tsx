@@ -1838,7 +1838,7 @@ export default function Book() {
       </div>
 
       {/* Main Content */}
-      <div className="min-h-[80vh] flex flex-col items-center justify-center px-6 py-12">
+      <div className="min-h-[80vh] md:min-h-[80vh] flex flex-col items-center justify-center px-4 md:px-6 py-8 md:py-12">
         <div className="w-full max-w-6xl mx-auto">
 
           {/* Section Header - centered */}
@@ -1857,7 +1857,7 @@ export default function Book() {
             {/* Video Window + Quick Tools Column */}
             <div className="flex flex-col items-center gap-4">
               {/* Main Video Window - 700x550 with window-style frame */}
-              <div className="w-[700px] rounded-xl overflow-hidden border-2 border-border bg-card shadow-2xl shadow-black/20">
+              <div className="w-full max-w-[700px] rounded-xl overflow-hidden border-2 border-border bg-card shadow-2xl shadow-black/20">
                 {/* Window title bar */}
                 <div className="flex items-center justify-between px-4 py-2 bg-muted/80 border-b border-border">
                   <div className="flex items-center gap-2">
@@ -1883,7 +1883,7 @@ export default function Book() {
                 </div>
                 <Card id="video-consult-container" className="overflow-hidden rounded-2xl border-2 border-foreground dark:border-white/15 shadow-[0_4px_16px_hsl(var(--tm-ink)/0.12),0_8px_32px_hsl(var(--tm-ink)/0.08),0_0_0_1px_hsl(var(--primary)/0.1),0_8px_24px_-4px_hsl(var(--primary)/0.15)]">
                   <CardContent className="p-0">
-                    <div className="relative h-[520px] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
+                    <div className="relative h-[320px] md:h-[520px] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
                     {/* Top controls - Fullscreen and PiP */}
                     <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
                       {roomUrl && (
