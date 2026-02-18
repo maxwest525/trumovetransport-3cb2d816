@@ -968,9 +968,28 @@ export default function LocationAutocomplete({
             )}
           >
             {isLoading ? (
-              <div className="flex items-center gap-2 px-4 py-3 text-sm text-muted-foreground">
-                <Loader2 className="w-4 h-4 animate-spin" />
-                <span>Searching...</span>
+              <div className="space-y-0.5 p-2">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="flex items-center gap-3 px-2 py-2.5 rounded-md">
+                    <div className="w-4 h-4 rounded-full bg-muted animate-pulse flex-shrink-0" />
+                    <div className="flex-1 space-y-1.5">
+                      <div
+                        className="h-3.5 rounded-md bg-muted animate-pulse"
+                        style={{
+                          width: `${70 - i * 12}%`,
+                          animationDelay: `${i * 100}ms`,
+                        }}
+                      />
+                      <div
+                        className="h-2.5 rounded-md bg-muted/60 animate-pulse"
+                        style={{
+                          width: `${50 - i * 8}%`,
+                          animationDelay: `${i * 150}ms`,
+                        }}
+                      />
+                    </div>
+                  </div>
+                ))}
               </div>
             ) : (
               <>
