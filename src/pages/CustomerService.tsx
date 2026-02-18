@@ -121,6 +121,11 @@ export default function CustomerService() {
 
       if (error) throw error;
 
+      // Fire email notification (non-blocking — ticket is already saved)
+      supabase.functions.invoke('notify-support-ticket', {
+        body: { name, email, subject, message },
+      }).catch(console.error);
+
       toast({ title: 'Message sent!', description: 'We\'ll get back to you within 24 hours.' });
       setFormData({ name: '', email: '', subject: '', message: '' });
     } catch (err) {

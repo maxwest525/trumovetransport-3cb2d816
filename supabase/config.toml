@@ -1,1 +1,4 @@
 project_id = "fsxoskcionoobxuepqeg"
+
+[functions.notify-support-ticket]
+verify_jwt = false
