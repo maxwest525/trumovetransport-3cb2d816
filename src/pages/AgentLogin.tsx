@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import SiteShell from "@/components/layout/SiteShell";
-import { Briefcase, Sparkles, Trophy, Key, MessageSquare, LayoutGrid, Medal } from "lucide-react";
+import { Briefcase, Sparkles, Trophy, Key, MessageSquare, LayoutGrid, Medal, Ticket } from "lucide-react";
 import { AgentLoginModal } from "@/components/agent/AgentLoginModal";
 import PPCDemoModal from "@/components/demo/PPCDemoModal";
 import { OperationsCenterModal } from "@/components/agent/OperationsCenterModal";
@@ -31,6 +31,14 @@ const AGENT_TOOLS = [
     description: "Carriers, customers & messaging",
     icon: Briefcase,
     external: false,
+  },
+  {
+    id: "support-tickets" as const,
+    title: "Support Tickets",
+    description: "View & manage customer support requests",
+    icon: Ticket,
+    external: true,
+    href: "/admin/support-tickets",
   },
   {
     id: "messaging" as const,
