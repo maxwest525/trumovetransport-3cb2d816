@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Truck, Sparkles, Hand, ChevronRight, ChevronLeft } from 'lucide-react';
 import ChatModal from './chat/ChatModal';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface FloatingTruckChatProps {
   className?: string;
@@ -9,6 +10,7 @@ interface FloatingTruckChatProps {
 
 export default function FloatingTruckChat({ className = '' }: FloatingTruckChatProps) {
   const location = useLocation();
+  const isMobile = useIsMobile();
   const [isOpen, setIsOpen] = useState(false);
   const [showButton] = useState(true);
   
@@ -22,6 +24,15 @@ export default function FloatingTruckChat({ className = '' }: FloatingTruckChatP
 
   // Combined minimized state
   const isCurrentlyMinimized = isMinimized || isScrollMinimized;
+
+  // Auto-minimize on mobile after 3 seconds
+  useEffect(() => {
+    if (!isMobile || isMinimized || isScrollMinimized) return;
+    const timer = setTimeout(() => {
+      setIsScrollMinimized(true);
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [isMobile, isMinimized, isScrollMinimized]);
 
   // Scroll listener to auto-minimize
   useEffect(() => {
