@@ -34338,6 +34338,45 @@ gmp-map-3d-element .gmnoprint {
      COMPREHENSIVE MOBILE FIXES — ALL PAGES
      ============================================================ */
 
+  /* --- 0. Homepage hero form — prevent cutoff --- */
+  .tru-floating-form-card {
+    min-height: auto !important;
+    height: auto !important;
+  }
+
+  .tru-hero.tru-hero-split {
+    padding: 24px 16px 20px !important;
+    min-height: auto !important;
+    gap: 20px !important;
+  }
+
+  .tru-hero-right-column {
+    max-width: 100% !important;
+    margin-left: 0 !important;
+  }
+
+  .tru-hero-left-column {
+    gap: 12px !important;
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+  }
+
+  .tru-hero-headline {
+    font-size: clamp(28px, 7vw, 40px) !important;
+    text-align: center !important;
+  }
+
+  .tru-hero-feature-line {
+    font-size: 11px !important;
+    text-align: center !important;
+  }
+
+  .tru-hero-logo {
+    height: 56px !important;
+    padding: 10px !important;
+    margin: -10px !important;
+  }
+
   /* --- 1. AI Scanner 3-column grid → vertical stack --- */
   .tru-ai-header-row {
     display: flex !important;
@@ -34355,18 +34394,77 @@ gmp-map-3d-element .gmnoprint {
   }
 
   .tru-ai-live-scanner {
+    width: 100% !important;
     aspect-ratio: 4/3 !important;
     height: auto !important;
-    min-height: unset !important;
+    min-height: 200px !important;
+    max-height: 300px !important;
+    border: 2px solid hsl(var(--border)) !important;
+  }
+
+  .tru-ai-live-inventory {
+    width: 100% !important;
+    max-width: 100% !important;
   }
 
   /* --- 2. Book page — Video consult header clip fix --- */
   .video-consult-header,
   .tru-video-header {
     overflow: hidden !important;
-    padding: 12px 16px !important;
+    padding: 8px 12px !important;
     margin-left: 0 !important;
     margin-right: 0 !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+  }
+
+  .video-consult-header > .flex {
+    flex-wrap: wrap !important;
+    gap: 4px !important;
+  }
+
+  .video-consult-header-trust {
+    display: none !important;
+  }
+
+  .video-consult-trust-dot {
+    display: none !important;
+  }
+
+  /* Book page sticky header offset fix */
+  .sticky.top-\[102px\] {
+    top: 4rem !important;
+  }
+
+  /* --- Tracking page text overflow fix --- */
+  .tru-page-hero-section {
+    padding: 20px 16px !important;
+    overflow: hidden !important;
+  }
+
+  .tru-page-hero-section h1 {
+    font-size: 1.75rem !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+  }
+
+  .tru-page-hero-section p {
+    padding: 0 8px !important;
+  }
+
+  /* Tracking tab bar — horizontal scroll */
+  .tru-tracker-tabs,
+  .tracking-tabs {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    flex-wrap: nowrap !important;
+  }
+
+  .tru-tracker-tabs button,
+  .tracking-tabs button {
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+    font-size: 12px !important;
   }
 
   .tru-video-header h2,
@@ -34418,13 +34516,26 @@ gmp-map-3d-element .gmnoprint {
 
   /* --- 4. Carrier Vetting — reduce white gap --- */
   .tru-vetting-hero {
-    padding-top: 24px !important;
-    padding-bottom: 24px !important;
+    padding-top: 8px !important;
+    padding-bottom: 16px !important;
     margin-top: 0 !important;
   }
 
   .tru-vetting-page .sticky {
-    top: 4.5rem !important;
+    top: 4rem !important;
+  }
+
+  /* --- SiteShell sticky header — reduce padding on mobile --- */
+  .sticky.top-0 > .bg-background {
+    padding-top: 4px !important;
+    padding-bottom: 8px !important;
+  }
+
+  .sticky.top-0 > .h-3,
+  .sticky.top-0 > .h-8,
+  .sticky.top-0 > .md\\:h-8 {
+    height: 0 !important;
+    margin-top: 0 !important;
   }
 
   .tru-vetting-hero-content {
