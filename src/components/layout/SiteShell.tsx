@@ -14,12 +14,12 @@ export default function SiteShell({ children, centered = false, hideTrustStrip =
     <div className="min-h-screen flex flex-col bg-background text-foreground font-sans">
       {/* Sticky Header + Trust Strip Together - solid background with gradient fade + shadow */}
       <div className="sticky top-0 z-[90]">
-        <div className="bg-background pt-2 px-6 pb-[25px] md:pb-[25px] pb-[12px] relative z-10 shadow-[0_4px_12px_-4px_hsl(var(--tm-ink)/0.08)]">
+        <div className="bg-background pt-2 px-6 pb-3 md:pb-[25px] relative z-10 shadow-[0_4px_12px_-4px_hsl(var(--tm-ink)/0.08)]">
           <Header />
           {!hideTrustStrip && <SaferTrustStrip />}
         </div>
         {/* Gradient fade for soft transition */}
-        <div className="h-8 md:h-8 h-3 bg-gradient-to-b from-background to-transparent -mt-8 md:-mt-8 -mt-3 pointer-events-none" />
+        <div className="h-3 md:h-8 bg-gradient-to-b from-background to-transparent -mt-3 md:-mt-8 pointer-events-none" />
       </div>
       <main className={`flex-1 w-full ${centered ? 'flex flex-col justify-center' : ''}`}>{children}</main>
       <Footer />
