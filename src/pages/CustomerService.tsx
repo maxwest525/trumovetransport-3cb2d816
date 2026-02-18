@@ -1,16 +1,57 @@
-import { useEffect } from 'react';
-import { Phone, Mail, MessageCircle, MapPin, Calculator, Calendar, HelpCircle } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Phone, Mail, MessageCircle, MapPin, Calculator, Calendar, HelpCircle, Send, Clock, Shield, Truck, ChevronDown } from 'lucide-react';
 import SiteShell from '@/components/layout/SiteShell';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { toast } from '@/hooks/use-toast';
 import trudyAvatar from '@/assets/trudy-avatar.png';
 
 const helpCards = [
-  { icon: Calculator, title: 'Moving Quotes', desc: 'Get an instant estimate for your upcoming move.' },
-  { icon: MapPin, title: 'Shipment Tracking', desc: 'Check the real-time status of your shipment.' },
-  { icon: Calendar, title: 'Scheduling', desc: 'Book or reschedule your moving date.' },
-  { icon: HelpCircle, title: 'General FAQ', desc: 'Answers to common questions about our services.' },
+  { icon: Calculator, title: 'Moving Quotes', desc: 'Get an instant estimate for your upcoming move — local or long distance.' },
+  { icon: MapPin, title: 'Shipment Tracking', desc: 'Real-time GPS tracking with weather and ETA updates.' },
+  { icon: Calendar, title: 'Scheduling', desc: 'Book, reschedule, or confirm your moving date.' },
+  { icon: Shield, title: 'Carrier Vetting', desc: 'Verify any mover\'s FMCSA safety record instantly.' },
+  { icon: Truck, title: 'Day-of Support', desc: 'Get help during your move with our live team.' },
+  { icon: HelpCircle, title: 'General Questions', desc: 'Insurance, packing, storage — ask us anything.' },
+];
+
+const faqItems = [
+  {
+    q: 'How does the AI Move Estimator work?',
+    a: 'Our AI scans photos of your rooms to auto-detect furniture and belongings, then calculates cubic feet and weight to give you an instant quote. You can also add items manually from our catalog of 200+ items.',
+  },
+  {
+    q: 'Are your carriers vetted and insured?',
+    a: 'Absolutely. Every carrier goes through our FMCSA-verified vetting process. We check safety ratings, complaint history, insurance coverage, and operating authority before recommending any mover.',
+  },
+  {
+    q: 'Can I track my shipment in real time?',
+    a: 'Yes! Our live tracking dashboard shows your truck\'s GPS location, real-time ETA, weather along the route, and weigh station alerts. You\'ll know exactly where your belongings are at all times.',
+  },
+  {
+    q: 'What if I need to reschedule my move?',
+    a: 'No problem. You can reschedule through Trudy or by calling our team. We recommend at least 48 hours notice for schedule changes to ensure availability.',
+  },
+  {
+    q: 'Do you offer packing services?',
+    a: 'Yes, we offer full-service packing, partial packing, and DIY options. Our team uses professional-grade materials and techniques to protect your belongings.',
+  },
+  {
+    q: 'What areas do you serve?',
+    a: 'TruMove operates nationwide for long-distance moves and serves the greater tri-state area for local moves. Contact us for specific availability in your area.',
+  },
+  {
+    q: 'How do I file a claim for damaged items?',
+    a: 'Contact our support team within 9 months of delivery. We\'ll guide you through the claims process. All moves include basic liability coverage, with full-value protection available as an upgrade.',
+  },
 ];
 
 export default function CustomerService() {
+  const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   useEffect(() => {
     if (!document.querySelector('script[src*="elevenlabs/convai-widget-embed"]')) {
       const script = document.createElement('script');
@@ -20,6 +61,21 @@ export default function CustomerService() {
       document.body.appendChild(script);
     }
   }, []);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) {
+      toast({ title: 'Please fill in all required fields', variant: 'destructive' });
+      return;
+    }
+    setIsSubmitting(true);
+    // Simulate submission
+    setTimeout(() => {
+      toast({ title: 'Message sent!', description: 'We\'ll get back to you within 24 hours.' });
+      setFormData({ name: '', email: '', subject: '', message: '' });
+      setIsSubmitting(false);
+    }, 1200);
+  };
 
   return (
     <SiteShell>
@@ -38,21 +94,9 @@ export default function CustomerService() {
             <p className="mt-4 text-lg text-muted-foreground max-w-xl mx-auto">
               Your 24/7 virtual customer service representative. Ask about quotes, tracking, scheduling, or anything else — Trudy's here to help.
             </p>
-          </div>
-        </section>
-
-        {/* Embedded widget – prominent center placement */}
-        <section className="py-12 px-4">
-          <div className="mx-auto max-w-2xl flex flex-col items-center">
-            <div className="w-full rounded-2xl border border-border bg-card p-6 shadow-xl flex flex-col items-center gap-4">
-              <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                <MessageCircle className="w-4 h-4 text-primary" />
-                <span>Talk to Trudy</span>
-                <span className="ml-2 inline-block h-2 w-2 rounded-full bg-green-500 animate-pulse" />
-              </div>
-              <p className="text-sm text-muted-foreground text-center">
-                Click the chat widget in the bottom-right corner to start talking with Trudy.
-              </p>
+            <div className="mt-6 flex items-center justify-center gap-2 text-sm text-muted-foreground">
+              <span className="inline-block h-2.5 w-2.5 rounded-full bg-primary animate-pulse" />
+              <span>Trudy is online — click the chat widget to start talking</span>
             </div>
           </div>
         </section>
@@ -61,11 +105,11 @@ export default function CustomerService() {
         <section className="py-16 px-4">
           <div className="mx-auto max-w-5xl">
             <h2 className="text-2xl font-bold text-center text-foreground mb-10">What Trudy Can Help With</h2>
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {helpCards.map((card) => (
                 <div
                   key={card.title}
-                  className="rounded-xl border border-border bg-card p-6 shadow-sm hover:shadow-md transition-shadow"
+                  className="rounded-xl border border-border bg-card p-6 shadow-sm hover:shadow-md hover:border-primary/30 transition-all"
                 >
                   <card.icon className="w-8 h-8 text-primary mb-3" />
                   <h3 className="font-semibold text-foreground">{card.title}</h3>
@@ -76,11 +120,100 @@ export default function CustomerService() {
           </div>
         </section>
 
+        {/* FAQ Accordion */}
+        <section className="py-16 px-4 bg-muted/20">
+          <div className="mx-auto max-w-3xl">
+            <h2 className="text-2xl font-bold text-center text-foreground mb-10">Frequently Asked Questions</h2>
+            <Accordion type="single" collapsible className="space-y-3">
+              {faqItems.map((item, i) => (
+                <AccordionItem
+                  key={i}
+                  value={`faq-${i}`}
+                  className="rounded-xl border border-border bg-card px-6 shadow-sm"
+                >
+                  <AccordionTrigger className="text-left font-medium text-foreground hover:no-underline py-5">
+                    {item.q}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground pb-5 leading-relaxed">
+                    {item.a}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
+        </section>
+
+        {/* Support Ticket Form */}
+        <section className="py-16 px-4">
+          <div className="mx-auto max-w-2xl">
+            <h2 className="text-2xl font-bold text-center text-foreground mb-2">Send Us a Message</h2>
+            <p className="text-center text-muted-foreground mb-10">
+              Can't find your answer? Submit a request and we'll respond within 24 hours.
+            </p>
+            <form onSubmit={handleSubmit} className="rounded-2xl border border-border bg-card p-8 shadow-lg space-y-5">
+              <div className="grid gap-5 sm:grid-cols-2">
+                <div>
+                  <label htmlFor="cs-name" className="block text-sm font-medium text-foreground mb-1.5">Name *</label>
+                  <Input
+                    id="cs-name"
+                    placeholder="Your name"
+                    value={formData.name}
+                    onChange={(e) => setFormData(p => ({ ...p, name: e.target.value }))}
+                    maxLength={100}
+                    required
+                  />
+                </div>
+                <div>
+                  <label htmlFor="cs-email" className="block text-sm font-medium text-foreground mb-1.5">Email *</label>
+                  <Input
+                    id="cs-email"
+                    type="email"
+                    placeholder="you@example.com"
+                    value={formData.email}
+                    onChange={(e) => setFormData(p => ({ ...p, email: e.target.value }))}
+                    maxLength={255}
+                    required
+                  />
+                </div>
+              </div>
+              <div>
+                <label htmlFor="cs-subject" className="block text-sm font-medium text-foreground mb-1.5">Subject</label>
+                <Input
+                  id="cs-subject"
+                  placeholder="What's this about?"
+                  value={formData.subject}
+                  onChange={(e) => setFormData(p => ({ ...p, subject: e.target.value }))}
+                  maxLength={200}
+                />
+              </div>
+              <div>
+                <label htmlFor="cs-message" className="block text-sm font-medium text-foreground mb-1.5">Message *</label>
+                <Textarea
+                  id="cs-message"
+                  placeholder="How can we help?"
+                  rows={5}
+                  value={formData.message}
+                  onChange={(e) => setFormData(p => ({ ...p, message: e.target.value }))}
+                  maxLength={2000}
+                  required
+                />
+              </div>
+              <Button type="submit" className="w-full" disabled={isSubmitting}>
+                {isSubmitting ? (
+                  <span className="flex items-center gap-2"><Clock className="w-4 h-4 animate-spin" /> Sending…</span>
+                ) : (
+                  <span className="flex items-center gap-2"><Send className="w-4 h-4" /> Send Message</span>
+                )}
+              </Button>
+            </form>
+          </div>
+        </section>
+
         {/* Fallback contact */}
         <section className="py-16 px-4 bg-muted/30">
           <div className="mx-auto max-w-3xl text-center">
-            <h2 className="text-2xl font-bold text-foreground mb-4">Prefer a Human?</h2>
-            <p className="text-muted-foreground mb-8">Our team is always ready to help.</p>
+            <h2 className="text-2xl font-bold text-foreground mb-4">Prefer to Talk to a Human?</h2>
+            <p className="text-muted-foreground mb-8">Our team is available Monday–Saturday, 8 AM – 8 PM EST.</p>
             <div className="flex flex-wrap justify-center gap-4">
               <a
                 href="tel:+16097277647"
