@@ -1,4 +1,4 @@
-import { Package, AlertTriangle, Phone, ArrowRight, Video } from "lucide-react";
+import { Package, AlertTriangle, Phone, ArrowRight, Video, Scan } from "lucide-react";
 import { Link } from "react-router-dom";
 
 interface InventoryIntroModalProps {
@@ -73,7 +73,14 @@ export default function InventoryIntroModal({
             </button>
             
             {/* Secondary CTAs */}
-            <div className="flex items-center justify-center gap-3">
+            <div className="flex items-center justify-center gap-3 flex-wrap">
+              <Link
+                to="/scan-room"
+                className="tru-modal-secondary-btn"
+              >
+                <Scan className="w-4 h-4" />
+                AI Room Scanner
+              </Link>
               <a
                 href="tel:1-800-555-0123"
                 className="tru-modal-secondary-btn"
