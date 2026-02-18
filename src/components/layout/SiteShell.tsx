@@ -18,8 +18,8 @@ export default function SiteShell({ children, centered = false, hideTrustStrip =
           <Header />
           {!hideTrustStrip && <SaferTrustStrip />}
         </div>
-        {/* Gradient fade for soft transition */}
-        <div className="h-3 md:h-8 bg-gradient-to-b from-background to-transparent -mt-3 md:-mt-8 pointer-events-none" />
+        {/* Gradient fade for soft transition - hidden on mobile */}
+        <div className="hidden md:block h-8 bg-gradient-to-b from-background to-transparent -mt-8 pointer-events-none" />
       </div>
       <main className={`flex-1 w-full ${centered ? 'flex flex-col justify-center' : ''}`}>{children}</main>
       <Footer />
