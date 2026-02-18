@@ -39,7 +39,7 @@
 }
 
 /* =============================================
-   UNIFIED CARD FRAME - Black stroke + green underglow
+   UNIFIED CARD FRAME - Neutral shadow, no colored glow
    Apply to any card, box, or panel for consistent styling
    ============================================= */
 .tru-card-frame {
@@ -47,36 +47,28 @@
   border-radius: 16px;
   box-shadow: 
     0 4px 16px hsl(var(--tm-ink) / 0.12),
-    0 8px 32px hsl(var(--tm-ink) / 0.08),
-    0 0 0 1px hsl(var(--primary) / 0.1),
-    0 8px 24px -4px hsl(var(--primary) / 0.15) !important;
+    0 8px 32px hsl(var(--tm-ink) / 0.08) !important;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .tru-card-frame:hover {
   box-shadow: 
     0 4px 16px hsl(var(--tm-ink) / 0.15),
-    0 8px 32px hsl(var(--tm-ink) / 0.10),
-    0 0 0 1px hsl(var(--primary) / 0.15),
-    0 12px 32px -4px hsl(var(--primary) / 0.25) !important;
+    0 12px 40px hsl(var(--tm-ink) / 0.12) !important;
 }
 
 .dark .tru-card-frame {
   border-color: hsl(0 0% 100% / 0.15) !important;
   box-shadow: 
     0 4px 16px hsl(0 0% 0% / 0.3),
-    0 8px 32px hsl(0 0% 0% / 0.2),
-    0 0 0 1px hsl(var(--primary) / 0.15),
-    0 8px 24px -4px hsl(var(--primary) / 0.2) !important;
+    0 8px 32px hsl(0 0% 0% / 0.2) !important;
 }
 
 .dark .tru-card-frame:hover {
   border-color: hsl(0 0% 100% / 0.25) !important;
   box-shadow: 
     0 4px 16px hsl(0 0% 0% / 0.4),
-    0 8px 32px hsl(0 0% 0% / 0.25),
-    0 0 0 1px hsl(var(--primary) / 0.2),
-    0 12px 32px -4px hsl(var(--primary) / 0.3) !important;
+    0 12px 40px hsl(0 0% 0% / 0.3) !important;
 }
 
 /* =============================================
