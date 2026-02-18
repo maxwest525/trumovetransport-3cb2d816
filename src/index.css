@@ -34227,40 +34227,47 @@ gmp-map-3d-element .gmnoprint {
 
   /* --- Scale down Trudy chat widget on mobile --- */
   .fixed.bottom-24.right-6 {
-    right: 12px !important;
-    bottom: 16px !important;
-    padding: 6px 10px !important;
-    gap: 6px !important;
-    max-width: 170px;
-    border-radius: 20px !important;
-    font-size: 11px !important;
+    right: 8px !important;
+    bottom: 12px !important;
+    padding: 4px 8px !important;
+    gap: 4px !important;
+    max-width: 140px;
+    border-radius: 16px !important;
+    font-size: 10px !important;
+    box-shadow: 0 4px 12px hsl(var(--tm-ink) / 0.2) !important;
   }
 
   .fixed.bottom-24.right-6 .w-10.h-10 {
-    width: 28px !important;
-    height: 28px !important;
-    min-width: 28px;
+    width: 22px !important;
+    height: 22px !important;
+    min-width: 22px;
+  }
+
+  .fixed.bottom-24.right-6 .w-5.h-5 {
+    width: 14px !important;
+    height: 14px !important;
   }
 
   .fixed.bottom-24.right-6 .text-sm {
-    font-size: 11px !important;
-    line-height: 1.2;
+    font-size: 10px !important;
+    line-height: 1.1;
   }
 
   .fixed.bottom-24.right-6 .text-xs {
-    font-size: 9px !important;
-    line-height: 1.2;
+    font-size: 8px !important;
+    line-height: 1.1;
   }
 
-  /* Hide the sparkle and status dot on mobile for compactness */
+  /* Hide sparkle, status dot, and minimize button on mobile */
   .fixed.bottom-24.right-6 .absolute.-top-1.-right-1,
-  .fixed.bottom-24.right-6 .w-2.h-2.rounded-full {
+  .fixed.bottom-24.right-6 .w-2.h-2.rounded-full,
+  .fixed.bottom-24.right-6 .absolute.-top-1\.5.-right-1\.5 {
     display: none !important;
   }
 
   /* Minimized chat strip - also reposition */
   .fixed.bottom-24.right-0 {
-    bottom: 16px !important;
+    bottom: 12px !important;
   }
 
   /* --- Tracker section: stack maps vertically on mobile --- */
