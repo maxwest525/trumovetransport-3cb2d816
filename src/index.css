@@ -34333,6 +34333,248 @@ gmp-map-3d-element .gmnoprint {
     padding-right: 0 !important;
     overflow: hidden !important;
   }
+
+  /* ============================================================
+     COMPREHENSIVE MOBILE FIXES — ALL PAGES
+     ============================================================ */
+
+  /* --- 1. AI Scanner 3-column grid → vertical stack --- */
+  .tru-ai-header-row {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px !important;
+  }
+
+  .tru-ai-content-left,
+  .tru-ai-scanner-center,
+  .tru-ai-detection-right {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    flex-shrink: 1 !important;
+  }
+
+  .tru-ai-live-scanner {
+    aspect-ratio: 4/3 !important;
+    height: auto !important;
+    min-height: unset !important;
+  }
+
+  /* --- 2. Book page — Video consult header clip fix --- */
+  .video-consult-header,
+  .tru-video-header {
+    overflow: hidden !important;
+    padding: 12px 16px !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  .tru-video-header h2,
+  .video-consult-header h2,
+  .tru-video-header h1 {
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+    text-indent: 0 !important;
+    font-size: 1.25rem !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+  }
+
+  /* Video toolbar — horizontal scroll instead of overflow */
+  .tru-video-toolbar,
+  .video-toolbar {
+    overflow-x: auto !important;
+    flex-wrap: nowrap !important;
+    -webkit-overflow-scrolling: touch;
+    gap: 8px !important;
+    padding: 8px 16px !important;
+  }
+
+  .tru-video-toolbar button,
+  .video-toolbar button {
+    flex-shrink: 0 !important;
+    font-size: 11px !important;
+    padding: 6px 10px !important;
+    white-space: nowrap !important;
+  }
+
+  /* --- 3. Book page — Contact cards constrain --- */
+  .tru-contact-grid,
+  .tru-connect-grid,
+  .contact-hub-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 12px !important;
+    padding: 0 16px !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .tru-contact-card,
+  .tru-connect-card,
+  .contact-hub-card {
+    min-width: 0 !important;
+    overflow: hidden !important;
+  }
+
+  /* --- 4. Carrier Vetting — reduce white gap --- */
+  .tru-vetting-hero {
+    padding-top: 24px !important;
+    padding-bottom: 24px !important;
+    margin-top: 0 !important;
+  }
+
+  .tru-vetting-page .sticky {
+    top: 4.5rem !important;
+  }
+
+  .tru-vetting-hero-content {
+    padding: 0 16px !important;
+  }
+
+  .tru-vetting-headline {
+    font-size: 1.75rem !important;
+    line-height: 1.2 !important;
+    word-break: break-word !important;
+  }
+
+  .tru-vetting-hero-visual {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 16px !important;
+  }
+
+  .tru-vetting-preview-card {
+    max-width: 100% !important;
+  }
+
+  .tru-vetting-trust-pills {
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+
+  .tru-vetting-stats {
+    flex-wrap: wrap !important;
+    gap: 16px !important;
+    padding: 24px 16px !important;
+  }
+
+  .tru-vetting-process-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+    padding: 0 16px !important;
+  }
+
+  /* --- 5. Online Estimate — inventory builder single-column --- */
+  .tru-qb-body {
+    flex-direction: column !important;
+    gap: 16px !important;
+  }
+
+  .tru-qb-room-list {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex-direction: row !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    gap: 8px !important;
+    padding-bottom: 8px !important;
+  }
+
+  .tru-qb-room-list button {
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+  }
+
+  .tru-qb-inventory-grid {
+    width: 100% !important;
+    max-width: 100% !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+
+  /* Estimate wizard form — padding */
+  .tru-qb-step-content,
+  .tru-estimate-form {
+    padding: 16px !important;
+  }
+
+  /* --- 6. Chat widget — reposition higher on mobile --- */
+  .fixed.bottom-24.right-6 {
+    bottom: 80px !important;
+  }
+
+  .fixed.bottom-24.right-0 {
+    bottom: 80px !important;
+  }
+
+  /* --- 7. General section padding — prevent edge bleed --- */
+  .tru-hero-section,
+  .tru-services-grid,
+  .tru-feature-section,
+  .tru-testimonial-section,
+  .tru-cta-section,
+  .tru-about-section,
+  .tru-faq-section {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    box-sizing: border-box !important;
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+  }
+
+  /* Ensure all major containers respect viewport */
+  .tru-vetting-cta-section,
+  .tru-vetting-testimonial,
+  .tru-vetting-process {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+  }
+
+  /* Tracking header trust indicators — wrap on mobile */
+  .tracking-header-trust {
+    flex-wrap: wrap !important;
+    gap: 4px !important;
+    justify-content: center !important;
+  }
+
+  .tracking-header-trust-dot {
+    display: none !important;
+  }
+
+  .tracking-header {
+    flex-direction: column !important;
+    gap: 8px !important;
+    padding: 10px 16px !important;
+    text-align: center !important;
+  }
+
+  .tracking-header > div:last-child {
+    display: none !important;
+  }
+}
+
+/* ---- EXTRA SMALL MOBILE (< 480px) ---- */
+@media (max-width: 480px) {
+  .tru-contact-grid,
+  .tru-connect-grid,
+  .contact-hub-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .tru-qb-inventory-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+  }
+
+  .tru-vetting-headline {
+    font-size: 1.5rem !important;
+  }
+
+  .tru-ai-header-row {
+    gap: 12px !important;
+  }
 }
 
 /* ---- SMALL MOBILE (< 375px) ---- */
