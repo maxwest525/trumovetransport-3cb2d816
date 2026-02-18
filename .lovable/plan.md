@@ -1,48 +1,70 @@
 
 
-## Comprehensive Mobile CSS Fix -- All Pages
+## Comprehensive Mobile Fix -- Round 3
 
-### Issues Identified from Screenshots
+This update addresses the remaining mobile issues across all pages: the initial form being cut off, proportional headers, trust bar pushing content down, maps sizing, the chat widget auto-minimizing after 3 seconds, and general spacing issues.
 
-1. **Homepage -- AI Scanner section**: The 3-column grid (`tru-ai-header-row`) shows a vertical black line and huge empty space below "Scan Your Home" on mobile. The scanner center and detection right panels don't properly fill the viewport width.
+### Changes Overview
 
-2. **Homepage -- Tracking section**: Maps show but the satellite/road map panels may not fill width properly, and the text content for "Track. Monitor. Arrive." section is cramped.
+**1. Chat Widget Auto-Minimize on Mobile (3-second timer)**
+- File: `src/components/FloatingTruckChat.tsx`
+- Add a `useIsMobile()` check and a `useEffect` that auto-sets `isScrollMinimized = true` after 3 seconds on mobile devices
+- This means on mobile, the full pill shows briefly then collapses to the slim right-edge strip automatically
 
-3. **Book page -- Video consult header clipped**: The "TruMove Video Consult" header text is cut off on the left side. The video call toolbar icons ("Whiteboard", "Volume", etc.) overflow horizontally.
+**2. Homepage Hero Form Cutoff Fix**
+- File: `src/index.css` (mobile media query)
+- The `.tru-floating-form-card` has `min-height: 480px` on desktop which causes cutoff on mobile
+- Force `min-height: auto !important` and reduce internal padding
+- Reduce `.tru-hero.tru-hero-split` padding further and set `min-height: auto`
+- Make the hero headline smaller on mobile: `clamp(24px, 6.5vw, 36px)`
+- Reduce logo height to `48px` on mobile
+- Compact the form inputs: smaller font size, reduced padding, tighter spacing
+- Ensure the "Analyze Route" button is always visible without scrolling
 
-4. **Book page -- Contact cards overflow**: The "Ready to Connect" section with Video Call, Voice Call, Email Us, Text Us cards bleeds past viewport edges.
+**3. Trust Strip Pushing Form Down**
+- File: `src/index.css` (mobile media query)
+- Reduce `.safer-trust-strip` `margin-top` from `8px` to `4px` and padding to `4px 8px`
+- Reduce `.safer-trust-item` font-size to `9px` on mobile
+- This recovers ~20px of vertical space
 
-5. **Carrier Vetting page -- Large white gap**: Excessive whitespace between the header/trust strip and the "CARRIER VETTING" command center strip. The hero headline text is also clipped.
+**4. SiteShell Header -- Tighter on Mobile**
+- File: `src/index.css` (mobile media query)
+- The sticky header `.bg-background` padding reduced to `4px 12px 6px`
+- The command center strip (`tracking-header`) also gets tighter padding
+- Sticky offset for command center: use `top: 3.5rem` instead of `4.5rem`
 
-6. **Online Estimate page -- Inventory builder sidebar**: The two-column sidebar + content layout is cramped at 390px. Room list and inventory grid overlap.
+**5. Map Panels -- Proper Mobile Sizing**
+- File: `src/index.css` (mobile media query)
+- `.tru-tracker-satellite-panel`: force `height: 180px` on mobile (not 200px)
+- `.tru-tracker-road-map`: force `height: 200px` on mobile (not 240px)
+- Both get `border-radius: 12px` and `overflow: hidden`
 
-7. **Chat widget**: Still overlapping form fields and CTA buttons on some pages despite previous fix.
+**6. Proportional Headers -- Responsive Sizing**
+- File: `src/index.css` (mobile media query)
+- `.tru-ai-main-headline`: `font-size: clamp(22px, 6vw, 32px)` on mobile
+- `.tru-ai-section-title`: `font-size: 12px` on mobile
+- `.tru-ai-subheadline`: `font-size: 13px` on mobile
+- `.tru-qb-question`: `font-size: 14px` on mobile
+- All section headings get `word-break: break-word` and controlled max widths
 
-### Plan
+**7. Inventory Builder (Online Estimate) -- Mobile Refinement**
+- File: `src/index.css` (mobile media query)
+- Room list horizontal scroll already in place -- add scroll snap for better UX
+- Inventory grid items get smaller icons and tighter labels
 
-All changes scoped to `@media (max-width: 768px)` in `src/index.css` only. Desktop remains 100% untouched.
-
-**File: `src/index.css`** (append to existing mobile block at ~line 34210)
-
-1. **AI Scanner 3-column grid**: Force `tru-ai-header-row` to `display: flex; flex-direction: column` on mobile, with each child (`tru-ai-content-left`, `tru-ai-scanner-center`, `tru-ai-detection-right`) set to `width: 100%; max-width: 100%`. Set `tru-ai-live-scanner` to `aspect-ratio: 4/3; height: auto` instead of fixed min-height.
-
-2. **Book page video header**: Fix the `video-consult-header` overflow by adding `overflow: hidden; padding: 12px 16px` on mobile. Fix the video toolbar to wrap or scroll horizontally. Ensure the "TruMove Video Consult" title doesn't clip by resetting any negative margins or left offsets.
-
-3. **Book page contact section**: The "Ready to Connect" cards use a grid that may overflow -- force single-column or 2-column constrained grid on mobile with `padding: 0 16px`.
-
-4. **Carrier Vetting white gap**: The gap comes from the SiteShell sticky header taking extra space plus the vetting hero section having large top padding. Reduce `tru-vetting-hero` top padding on mobile and ensure the command center strip (`sticky top-[6.375rem]`) uses the correct mobile offset.
-
-5. **Online Estimate inventory builder**: The `tru-qb-body` two-panel layout needs the sidebar to collapse or become a horizontal scrollable row on mobile. Force `flex-direction: column` if not already done, and limit the room list width.
-
-6. **Chat widget z-index and position**: Move the chat widget higher (`bottom: 80px`) to avoid overlapping form submit buttons, and reduce its width further on very small screens.
-
-7. **General section padding**: Add `padding-left: 16px; padding-right: 16px` to all major section containers to prevent content from touching viewport edges.
+**8. Extra-Small Breakpoint (< 375px)**
+- Further reduce hero headline to `22px`
+- Trust strip items to `8px` font
+- Form inputs get `height: 36px` and `font-size: 13px`
 
 ### Technical Details
 
-- All CSS changes are `@media (max-width: 768px)` scoped
-- Using `!important` overrides where existing desktop styles use high specificity
-- No JavaScript or component file changes needed
-- Edits go into the existing mobile block at the end of `src/index.css` (around line 34210-34356)
-- Some fixes also need a `@media (max-width: 480px)` sub-breakpoint for extra-small phones
+- All CSS changes are within `@media (max-width: 768px)`, `@media (max-width: 480px)`, and `@media (max-width: 375px)` blocks
+- One component change: `FloatingTruckChat.tsx` gets a 3-second auto-minimize timer on mobile
+- No other JS/component changes needed
+- Desktop layout is completely untouched
+
+### Files to Edit
+1. `src/index.css` -- Mobile media query additions/updates
+2. `src/components/FloatingTruckChat.tsx` -- Add auto-minimize timer for mobile
 
