@@ -34218,10 +34218,24 @@ gmp-map-3d-element .gmnoprint {
     margin-left: 0 !important;
   }
 
+  .header-logo img {
+    height: 28px !important;
+  }
+
+  .header-main.header-floating {
+    margin: 4px 8px 0 !important;
+    padding: 6px 12px !important;
+  }
+
+  .header-inner {
+    padding: 0 !important;
+    gap: 8px !important;
+  }
+
   /* --- Fix Command Center sticky offset on mobile --- */
   .sticky.top-\[6\.375rem\],
   .sticky.top-\[102px\] {
-    top: 4.5rem !important;
+    top: 3.5rem !important;
   }
 
   /* --- Fix horizontal overflow globally --- */
@@ -34309,6 +34323,75 @@ gmp-map-3d-element .gmnoprint {
     max-width: 100% !important;
     text-align: center;
     align-items: center;
+  }
+
+  /* --- TRACKING PAGE: Map + Dashboard stack on mobile --- */
+  .tracking-content,
+  .tracking-content.tracking-content-2col {
+    flex-direction: column !important;
+    padding: 8px !important;
+    gap: 12px !important;
+  }
+
+  .tracking-map-area {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .tracking-map-container {
+    width: 100% !important;
+    height: 280px !important;
+    min-height: 280px !important;
+    max-height: 320px !important;
+    border-radius: 12px !important;
+  }
+
+  .tracking-map-area .tracking-below-map-wrapper {
+    width: 100% !important;
+  }
+
+  .tracking-map-controls {
+    width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    padding: 8px 12px !important;
+  }
+
+  .tracking-map-controls-buttons {
+    flex-wrap: nowrap !important;
+    gap: 4px !important;
+  }
+
+  .tracking-map-controls-buttons button {
+    flex-shrink: 0 !important;
+    font-size: 11px !important;
+    padding: 4px 8px !important;
+    height: 32px !important;
+  }
+
+  .tracking-dashboard {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  .tracking-dashboard > div {
+    padding: 10px !important;
+  }
+
+  /* Map view toggle buttons - compact on mobile */
+  .tracking-map-container .absolute.top-3.right-3 {
+    top: 8px !important;
+    right: 8px !important;
+    gap: 4px !important;
+  }
+
+  .tracking-map-container .absolute.top-3.right-3 button {
+    height: 32px !important;
+    padding: 0 8px !important;
+    font-size: 10px !important;
   }
 
   /* --- AI Scanner section: stack on mobile --- */
@@ -34445,23 +34528,24 @@ gmp-map-3d-element .gmnoprint {
 
   /* Book page sticky header offset fix */
   .sticky.top-\[102px\] {
-    top: 4rem !important;
+    top: 3.5rem !important;
   }
 
   /* --- Tracking page text overflow fix --- */
   .tru-page-hero-section {
-    padding: 20px 16px !important;
+    padding: 16px 16px !important;
     overflow: hidden !important;
   }
 
   .tru-page-hero-section h1 {
-    font-size: 1.75rem !important;
+    font-size: 1.5rem !important;
     word-break: break-word !important;
     overflow-wrap: break-word !important;
   }
 
   .tru-page-hero-section p {
     padding: 0 8px !important;
+    font-size: 13px !important;
   }
 
   /* Tracking tab bar — horizontal scroll */
@@ -34527,6 +34611,22 @@ gmp-map-3d-element .gmnoprint {
   }
 
   /* --- 4. Carrier Vetting — reduce white gap --- */
+  .carrier-vetting-page .min-h-\[80vh\] {
+    min-height: auto !important;
+    padding-top: 16px !important;
+    padding-bottom: 24px !important;
+  }
+
+  .carrier-vetting-page .mb-10 {
+    margin-bottom: 16px !important;
+  }
+
+  .carrier-vetting-page h2 {
+    font-size: 1.5rem !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+  }
+
   .tru-vetting-hero {
     padding-top: 8px !important;
     padding-bottom: 16px !important;
@@ -34534,7 +34634,7 @@ gmp-map-3d-element .gmnoprint {
   }
 
   .tru-vetting-page .sticky {
-    top: 4rem !important;
+    top: 3.5rem !important;
   }
 
   /* --- SiteShell sticky header — reduce padding on mobile --- */
@@ -34667,13 +34767,31 @@ gmp-map-3d-element .gmnoprint {
 
   .tracking-header {
     flex-direction: column !important;
-    gap: 8px !important;
-    padding: 10px 16px !important;
+    gap: 4px !important;
+    padding: 8px 12px !important;
     text-align: center !important;
   }
 
+  /* Hide session/shipment ID on mobile to save space */
   .tracking-header > div:last-child {
     display: none !important;
+  }
+
+  /* Tracking header trust items - smaller on mobile */
+  .tracking-header-trust-item {
+    font-size: 9px !important;
+    gap: 2px !important;
+  }
+
+  .tracking-header-trust-item svg {
+    width: 10px !important;
+    height: 10px !important;
+  }
+
+  /* --- Live tracking page hero — tighter --- */
+  .live-tracking-page .tru-page-hero-section {
+    padding: 12px 16px !important;
+    margin-bottom: 0 !important;
   }
 
   /* --- Hero form cutoff fix --- */
@@ -34782,6 +34900,27 @@ gmp-map-3d-element .gmnoprint {
 
   .tru-qb-inventory-grid .tru-inventory-item-label {
     font-size: 11px !important;
+  }
+
+  /* --- Online Estimate page — single column on mobile --- */
+  .grid.lg\\:grid-cols-\\[540px_1fr_240px\\] {
+    grid-template-columns: 1fr !important;
+  }
+
+  .grid.lg\\:grid-cols-\\[240px_1fr_240px\\] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Estimate page hero spacing */
+  .min-h-\[80vh\] {
+    min-height: auto !important;
+    padding: 16px 12px !important;
+  }
+
+  /* Route setup modal on mobile */
+  .route-setup-modal {
+    max-height: 90vh !important;
+    overflow-y: auto !important;
   }
 }
 
