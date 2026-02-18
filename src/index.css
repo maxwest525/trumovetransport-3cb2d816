@@ -34118,6 +34118,11 @@ gmp-map-3d-element .gmnoprint {
   }
 
   /* --- Stats Strip mobile --- */
+  .stats-strip {
+    margin-top: 0 !important;
+    z-index: 5 !important;
+  }
+
   .stats-strip-inner {
     gap: 16px !important;
     flex-wrap: wrap !important;
@@ -34674,6 +34679,7 @@ gmp-map-3d-element .gmnoprint {
   /* --- Hero form cutoff fix --- */
   .tru-floating-form-card {
     min-height: auto !important;
+    overflow: visible !important;
   }
 
   .tru-hero.tru-hero-split {
@@ -34694,6 +34700,20 @@ gmp-map-3d-element .gmnoprint {
   .tru-floating-form-content {
     padding: 10px 14px 8px !important;
     gap: 6px !important;
+    min-height: auto !important;
+  }
+
+  .tru-qb-form-header.tru-qb-form-header-pill {
+    padding: 8px 14px !important;
+  }
+
+  .tru-qb-location-row {
+    gap: 4px !important;
+  }
+
+  .tru-qb-section-label {
+    margin-top: 8px !important;
+    font-size: 11px !important;
   }
 
   .tru-floating-form-card input,
