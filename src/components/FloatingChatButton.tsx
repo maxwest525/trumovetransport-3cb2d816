@@ -13,20 +13,17 @@ export default function FloatingChatButton({ className = '' }: FloatingChatButto
   const [isHovered, setIsHovered] = useState(false);
   const [showButton, setShowButton] = useState(false);
 
-  // Only show after scrolling past quote builder
   useEffect(() => {
     const handleScroll = () => {
       setShowButton(window.scrollY > 600);
     };
-    
     window.addEventListener('scroll', handleScroll);
-    handleScroll(); // Check initial position
+    handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
     <>
-      {/* Floating Button */}
       <button
         onClick={() => setIsOpen(true)}
         onMouseEnter={() => setIsHovered(true)}
@@ -35,20 +32,18 @@ export default function FloatingChatButton({ className = '' }: FloatingChatButto
           fixed bottom-6 right-6 z-50
           w-14 h-14 rounded-full
           bg-foreground text-background
-          shadow-lg shadow-[0_4px_16px_hsl(var(--primary)/0.3)]
+          shadow-lg shadow-[0_4px_16px_hsl(var(--tm-ink)/0.25)]
           flex items-center justify-center
           transition-all duration-300 ease-out
-          hover:scale-110 hover:shadow-xl hover:shadow-[0_8px_24px_hsl(var(--primary)/0.4)]
-          focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2
+          hover:scale-110 hover:shadow-xl hover:shadow-[0_8px_24px_hsl(var(--tm-ink)/0.35)]
+          focus:outline-none focus:ring-2 focus:ring-foreground/30 focus:ring-offset-2
           ${!showButton ? 'opacity-0 pointer-events-none translate-y-4' : 'opacity-100 translate-y-0'}
           ${className}
         `}
         aria-label="AI Moving Helper"
       >
-        {/* Icon */}
         <Sparkles className="w-6 h-6 relative z-10" />
         
-        {/* Tooltip */}
         <span
           className={`
             absolute right-full mr-3 px-3 py-1.5
@@ -62,7 +57,6 @@ export default function FloatingChatButton({ className = '' }: FloatingChatButto
         </span>
       </button>
 
-      {/* Chat Modal */}
       <ChatModal isOpen={isOpen} onClose={() => setIsOpen(false)} pagePath={location.pathname} />
     </>
   );
