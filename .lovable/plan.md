@@ -1,48 +1,54 @@
 
-# Integrating Trudy's ElevenLabs Embed Widget
+# Fix Green Tint on Homepage Hero Form Card Border
 
-## Overview
-Add Trudy's ElevenLabs conversational AI agent to the site in two ways:
-1. **Floating widget on all pages** -- replace or augment the current floating truck chat button
-2. **Dedicated customer service page** -- a new `/customer-service` route with a full-page Trudy experience
+## Problem
+The hero form card on the homepage shows a subtle green tint/glow around its border edges. This is caused by the combination of:
 
-## What We Need From You
-- Your ElevenLabs embed link or agent embed code (paste it in the next message after approving this plan)
+1. Semi-transparent background (`background: hsl(var(--background) / 0.98)`) at line 31005
+2. `backdrop-filter: blur(16px)` which blurs the content behind the card, including green elements like the "Move" text and truck logo
+3. The 2% transparency allows green light to bleed through at the rounded corners where anti-aliasing occurs
 
----
+## Fix
 
-## Part 1: Floating Widget (All Pages)
+### 1. Make the form card background fully opaque on the hero section
+Change `hsl(var(--background) / 0.98)` to `hsl(var(--background))` (fully opaque) at line 31005, and remove the backdrop-filter since it serves no purpose with an opaque background.
 
-**Approach**: ElevenLabs provides an embeddable widget via a `<script>` tag or iframe snippet. We'll add this globally so it appears on every page.
+**File:** `src/index.css` (lines 31001-31006)
 
-- Create a new component `src/components/ElevenLabsTrudyWidget.tsx` that injects the ElevenLabs embed script/iframe
-- Add it to `src/App.tsx` alongside (or replacing) the existing `FloatingTruckChat` component
-- Style it to sit in the bottom-right corner, mobile-friendly, and not conflict with existing UI elements
-- The existing `FloatingTruckChat` truck button can either be removed or kept as a secondary element -- we can decide once we see how the ElevenLabs widget looks
+Before:
+```css
+.tru-hero-form-panel .tru-floating-form-card {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  background: hsl(var(--background) / 0.98);
+}
+```
 
-## Part 2: Dedicated Customer Service Page
+After:
+```css
+.tru-hero-form-panel .tru-floating-form-card {
+  background: hsl(var(--background));
+}
+```
 
-**Approach**: Create a full-page experience at `/customer-service` featuring Trudy front and center.
+### 2. Neutralize remaining green in tailwind.config.ts
+The `attention-pulse` animation still references `hsl(var(--primary))` (green). Replace with neutral `--tm-ink` tones.
 
-- Create `src/pages/CustomerService.tsx` with:
-  - A hero section introducing Trudy as the virtual customer service rep
-  - The ElevenLabs embed widget displayed prominently (larger/centered)
-  - Info cards about what Trudy can help with (quotes, tracking, scheduling, FAQ)
-  - Fallback contact options (phone, email) below the widget
-- Add the route to `src/App.tsx`
-- Add a "Customer Service" link to the site navigation
+**File:** `tailwind.config.ts` (lines 93-101)
 
----
+Before:
+```css
+boxShadow: "0 8px 32px -4px hsl(var(--primary)/0.4), ..."
+```
 
-## Technical Details
+After:
+```css
+boxShadow: "0 8px 32px -4px hsl(var(--tm-ink)/0.4), ..."
+```
 
-### Files to create
-- `src/components/ElevenLabsTrudyWidget.tsx` -- wrapper component for the ElevenLabs embed
-- `src/pages/CustomerService.tsx` -- dedicated Trudy page
+### 3. Clean up remaining green references near the form
+- Line 31533: `.dark .tru-why-card-glow` uses `hsl(var(--primary) / 0.2)` -- neutralize to `--tm-ink`
 
-### Files to modify
-- `src/App.tsx` -- add widget globally + new route
-- `src/components/layout/Header.tsx` -- add nav link to Customer Service page
-
-### No backend changes needed
-The ElevenLabs embed is self-contained -- no edge function changes required since the embed handles its own authentication.
+## Scope
+- 3 targeted fixes in 2 files
+- No visual regressions expected -- the glassmorphism effect was barely visible at 2% transparency anyway
