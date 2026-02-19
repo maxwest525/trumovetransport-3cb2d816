@@ -533,7 +533,7 @@ export default function CarrierVetting() {
                 {[1, 2, 3].map((i) => (
                   <div 
                     key={i} 
-                    className="relative p-8 rounded-xl border-2 border-dashed border-slate-300 dark:border-border/60 bg-slate-50/50 dark:bg-muted/20 min-h-[300px] flex flex-col items-center justify-center text-center group hover:border-primary/40 hover:bg-slate-100/50 dark:hover:bg-muted/30 transition-all duration-300 shadow-sm"
+                    className="relative p-8 rounded-xl border-2 border-dashed border-slate-300 dark:border-border/60 bg-slate-50/50 dark:bg-muted/20 min-h-[300px] flex flex-col items-center justify-center text-center group hover:border-slate-400 dark:hover:border-border hover:bg-slate-100/50 dark:hover:bg-muted/30 transition-all duration-300 shadow-sm"
                     style={{ 
                       animation: `pulse-subtle 3s ease-in-out infinite`,
                       animationDelay: `${i * 0.5}s`
@@ -548,8 +548,8 @@ export default function CarrierVetting() {
                       }}
                     >
                       {/* Placeholder Icon */}
-                      <div className="w-20 h-20 rounded-full bg-slate-100 dark:bg-muted/50 border-2 border-slate-200 dark:border-border/50 flex items-center justify-center mb-5 group-hover:border-primary/30 transition-colors shadow-inner">
-                        <Truck className="w-10 h-10 text-slate-400 dark:text-muted-foreground/40 group-hover:text-primary/50 transition-colors" />
+                      <div className="w-20 h-20 rounded-full bg-slate-100 dark:bg-muted/50 border-2 border-slate-200 dark:border-border/50 flex items-center justify-center mb-5 group-hover:border-slate-300 dark:group-hover:border-border transition-colors shadow-inner">
+                        <Truck className="w-10 h-10 text-slate-400 dark:text-muted-foreground/40 group-hover:text-slate-500 transition-colors" />
                       </div>
                       
                       {/* Slot Label */}
@@ -578,9 +578,9 @@ export default function CarrierVetting() {
                     variant="outline"
                     size="sm"
                     onClick={() => loadDemoCarrier(MOCK_CARRIER_GOOD)}
-                    className="gap-2 border-green-500/30 hover:border-green-500/60 hover:bg-green-500/10"
+                    className="gap-2 border-slate-300 dark:border-border hover:border-slate-400 dark:hover:border-border/80 hover:bg-slate-50 dark:hover:bg-muted/30"
                   >
-                    <CheckCircle2 className="w-4 h-4 text-green-500" />
+                    <CheckCircle2 className="w-4 h-4 text-foreground" />
                     <span>Sunrise Movers</span>
                     <span className="text-xs text-muted-foreground">(Safe)</span>
                   </Button>
