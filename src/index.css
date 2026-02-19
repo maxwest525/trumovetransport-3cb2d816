@@ -30998,11 +30998,9 @@
   border-radius: 24px;
 }
 
-/* Only apply glassmorphism blur on hero sections */
+/* Fully opaque hero form card — no backdrop-filter to prevent green bleed */
 .tru-hero-form-panel .tru-floating-form-card {
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  background: hsl(var(--background) / 0.98);
+  background: hsl(var(--background));
 }
 
 /* =============================================
@@ -31530,7 +31528,7 @@
 }
 
 .dark .tru-why-card-glow {
-  background: radial-gradient(circle, hsl(var(--primary) / 0.2) 0%, transparent 60%);
+  background: radial-gradient(circle, hsl(var(--tm-ink) / 0.2) 0%, transparent 60%);
 }
 
 .dark .tru-why-title {

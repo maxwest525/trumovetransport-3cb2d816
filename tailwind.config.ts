@@ -92,11 +92,11 @@ export default {
         },
         "attention-pulse": {
           "0%, 100%": {
-            boxShadow: "0 8px 32px -4px hsl(var(--primary)/0.4), 0 4px 16px -2px hsl(var(--tm-ink)/0.3)",
+            boxShadow: "0 8px 32px -4px hsl(var(--tm-ink)/0.4), 0 4px 16px -2px hsl(var(--tm-ink)/0.3)",
             transform: "scale(1)",
           },
           "50%": {
-            boxShadow: "0 12px 40px -4px hsl(var(--primary)/0.55), 0 6px 20px -2px hsl(var(--tm-ink)/0.4)",
+            boxShadow: "0 12px 40px -4px hsl(var(--tm-ink)/0.55), 0 6px 20px -2px hsl(var(--tm-ink)/0.4)",
             transform: "scale(1.02)",
           },
         },
