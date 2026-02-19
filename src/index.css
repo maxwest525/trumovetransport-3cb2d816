@@ -28485,7 +28485,7 @@
 }
 
 .video-consult-header-go-btn:hover {
-  background: hsl(var(--primary) / 0.85) !important;
+  background: hsl(var(--tm-ink) / 0.85) !important;
   box-shadow: 0 0 12px hsl(var(--tm-ink) / 0.3);
 }
 
@@ -33332,14 +33332,14 @@ html.dark .tru-summary-header-large,
   padding: 0 28px;
   font-weight: 700;
   font-size: 15px;
-  background: hsl(var(--primary)) !important;
-  border: 2px solid hsl(var(--primary)) !important;
-  color: hsl(0 0% 0%) !important;
+  background: hsl(var(--tm-ink)) !important;
+  border: 2px solid hsl(var(--tm-ink)) !important;
+  color: white !important;
   border-radius: 10px !important;
 }
 
 .video-consult-booking-join-btn:hover {
-  background: hsl(var(--primary) / 0.85) !important;
+  background: hsl(var(--tm-ink) / 0.85) !important;
   transform: translateY(-1px);
 }
 

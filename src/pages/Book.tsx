@@ -235,15 +235,15 @@ function LiveAgentTypingIndicator({ withSound = true }: { withSound?: boolean })
           <User className="w-4 h-4 text-foreground" />
         </div>
         {/* Pulsing ripple */}
-        <span className="absolute inset-0 rounded-full border-2 border-primary/60 animate-ping" />
+        <span className="absolute inset-0 rounded-full border-2 border-foreground/40 animate-ping" />
       </div>
       
       {/* Typing bubble */}
       <div className="bg-white/10 rounded-lg rounded-bl-sm px-3 py-2.5">
         <div className="flex items-center gap-1">
-          <span className="w-2 h-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: '0ms' }} />
-          <span className="w-2 h-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: '150ms' }} />
-          <span className="w-2 h-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: '300ms' }} />
+          <span className="w-2 h-2 rounded-full bg-foreground/60 animate-bounce" style={{ animationDelay: '0ms' }} />
+          <span className="w-2 h-2 rounded-full bg-foreground/60 animate-bounce" style={{ animationDelay: '150ms' }} />
+          <span className="w-2 h-2 rounded-full bg-foreground/60 animate-bounce" style={{ animationDelay: '300ms' }} />
         </div>
       </div>
       
@@ -259,9 +259,9 @@ function ChatTypingIndicator() {
     <div className="flex items-center gap-1 text-xs text-white/50 py-1">
       <span className="font-bold text-white/70">Trudy</span>
       <span className="flex gap-0.5 ml-1">
-        <span className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce" style={{ animationDelay: '0ms' }} />
-        <span className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce" style={{ animationDelay: '150ms' }} />
-        <span className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce" style={{ animationDelay: '300ms' }} />
+        <span className="w-1.5 h-1.5 rounded-full bg-foreground/60 animate-bounce" style={{ animationDelay: '0ms' }} />
+        <span className="w-1.5 h-1.5 rounded-full bg-foreground/60 animate-bounce" style={{ animationDelay: '150ms' }} />
+        <span className="w-1.5 h-1.5 rounded-full bg-foreground/60 animate-bounce" style={{ animationDelay: '300ms' }} />
       </span>
     </div>
   );
@@ -299,7 +299,7 @@ function AgentQueueIndicator({
   return (
     <div className={cn(
       "bg-background border border-border rounded-lg px-4 py-3 mb-3 transition-all duration-300",
-      isHighlighted && "ring-1 ring-emerald-500"
+      isHighlighted && "ring-1 ring-foreground/50"
     )}>
       <div className="flex flex-col gap-2">
         <p className="text-foreground font-medium text-sm">
@@ -469,8 +469,8 @@ function InventoryShareModal({ onClose }: { onClose: () => void }) {
               Customer's Screen - My Move Inventory
             </span>
           </div>
-          <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-primary/20 text-primary flex items-center gap-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+          <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-foreground/10 text-foreground/80 flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-foreground/60 animate-pulse" />
             Live
           </span>
         </div>
@@ -493,7 +493,7 @@ function InventoryShareModal({ onClose }: { onClose: () => void }) {
                   className={cn(
                     "w-full flex items-center gap-2 px-2 py-2 rounded-lg text-left text-xs font-semibold transition-all",
                     isActive 
-                      ? "border-2 border-primary bg-primary/10 text-slate-800 dark:text-white" 
+                      ? "border-2 border-foreground bg-foreground/10 text-slate-800 dark:text-white" 
                       : "border-2 border-transparent hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300"
                   )}
                 >
@@ -524,7 +524,7 @@ function InventoryShareModal({ onClose }: { onClose: () => void }) {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search items..."
-                  className="w-full pl-8 pr-7 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50"
+                   className="w-full pl-8 pr-7 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground/40"
                 />
                 {searchQuery && (
                   <button 
@@ -546,7 +546,7 @@ function InventoryShareModal({ onClose }: { onClose: () => void }) {
                   className={cn(
                     "p-1.5 rounded-md transition-all",
                     viewMode === 'grid' 
-                      ? "bg-primary/20 text-primary" 
+                      ? "bg-foreground/15 text-foreground" 
                       : "text-slate-400 hover:text-slate-600"
                   )}
                 >
@@ -557,7 +557,7 @@ function InventoryShareModal({ onClose }: { onClose: () => void }) {
                   className={cn(
                     "p-1.5 rounded-md transition-all",
                     viewMode === 'list' 
-                      ? "bg-primary/20 text-primary" 
+                      ? "bg-foreground/15 text-foreground" 
                       : "text-slate-400 hover:text-slate-600"
                   )}
                 >
@@ -588,7 +588,7 @@ function InventoryShareModal({ onClose }: { onClose: () => void }) {
                         className={cn(
                           "flex flex-col items-center p-2 rounded-xl border-2 transition-all",
                           qty > 0 
-                            ? "border-primary/40 bg-primary/5" 
+                            ? "border-foreground/30 bg-foreground/5" 
                             : "border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700"
                         )}
                       >
@@ -607,7 +607,7 @@ function InventoryShareModal({ onClose }: { onClose: () => void }) {
                           <span className="w-5 text-center text-xs font-bold text-slate-700 dark:text-white">{qty}</span>
                           <button
                             onClick={() => updateQuantity(activeRoom, item.name, 1)}
-                            className="w-5 h-5 rounded flex items-center justify-center bg-primary/20 hover:bg-primary/30 text-primary transition-colors"
+                            className="w-5 h-5 rounded flex items-center justify-center bg-foreground/15 hover:bg-foreground/25 text-foreground transition-colors"
                           >
                             <Plus className="w-3 h-3" />
                           </button>
@@ -626,7 +626,7 @@ function InventoryShareModal({ onClose }: { onClose: () => void }) {
                         className={cn(
                           "flex items-center gap-3 p-2 rounded-lg border transition-all",
                           qty > 0 
-                            ? "border-primary/40 bg-primary/5" 
+                            ? "border-foreground/30 bg-foreground/5" 
                             : "border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700"
                         )}
                       >
@@ -648,7 +648,7 @@ function InventoryShareModal({ onClose }: { onClose: () => void }) {
                           <span className="w-8 text-center text-sm font-bold text-slate-700 dark:text-white">{qty}</span>
                           <button
                             onClick={() => updateQuantity(activeRoom, item.name, 1)}
-                            className="w-6 h-6 rounded bg-primary/20 hover:bg-primary/30 flex items-center justify-center text-primary transition-colors"
+                            className="w-6 h-6 rounded bg-foreground/15 hover:bg-foreground/25 flex items-center justify-center text-foreground transition-colors"
                           >
                             <Plus className="w-3 h-3" />
                           </button>
@@ -665,8 +665,8 @@ function InventoryShareModal({ onClose }: { onClose: () => void }) {
         {/* Footer with Totals */}
         <div className="px-4 py-3 bg-slate-50 dark:bg-slate-700/50 border-t border-slate-200 dark:border-slate-600 flex items-center justify-between">
           <span className="text-xs text-slate-500 dark:text-slate-400">{totalItems} items • Est. {totalWeight.toLocaleString()} lbs</span>
-          <span className="text-xs text-primary font-medium flex items-center gap-1">
-            <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+          <span className="text-xs text-foreground/70 font-medium flex items-center gap-1">
+            <span className="w-2 h-2 rounded-full bg-foreground/50 animate-pulse" />
             Live sharing with Trudy
           </span>
         </div>
@@ -739,7 +739,7 @@ function ScreenSharePreviewModal({ onClose }: { onClose: () => void }) {
               Agent's View - Your Inventory
             </span>
           </div>
-          <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-green-500/20 text-green-600 flex items-center gap-1 mr-2">
+          <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-foreground/10 text-foreground/80 flex items-center gap-1 mr-2">
             <Monitor className="w-3 h-3" />
             Sharing
           </span>
@@ -770,7 +770,7 @@ function ScreenSharePreviewModal({ onClose }: { onClose: () => void }) {
                   className={cn(
                     "w-full flex items-center gap-2 px-2 py-2 rounded-lg text-left text-xs font-semibold transition-all",
                     isActive 
-                      ? "border-2 border-primary bg-primary/10 text-slate-800 dark:text-white" 
+                      ? "border-2 border-foreground bg-foreground/10 text-slate-800 dark:text-white" 
                       : "border-2 border-transparent hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300"
                   )}
                 >
@@ -800,7 +800,7 @@ function ScreenSharePreviewModal({ onClose }: { onClose: () => void }) {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search items..."
-                  className="w-full pl-8 pr-7 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50"
+                  className="w-full pl-8 pr-7 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground/40"
                 />
                 {searchQuery && (
                   <button 
@@ -818,7 +818,7 @@ function ScreenSharePreviewModal({ onClose }: { onClose: () => void }) {
                   className={cn(
                     "p-1.5 rounded-md transition-all",
                     viewMode === 'grid' 
-                      ? "bg-primary/20 text-primary" 
+                      ? "bg-foreground/15 text-foreground" 
                       : "text-slate-400 hover:text-slate-600"
                   )}
                 >
@@ -829,7 +829,7 @@ function ScreenSharePreviewModal({ onClose }: { onClose: () => void }) {
                   className={cn(
                     "p-1.5 rounded-md transition-all",
                     viewMode === 'list' 
-                      ? "bg-primary/20 text-primary" 
+                      ? "bg-foreground/15 text-foreground" 
                       : "text-slate-400 hover:text-slate-600"
                   )}
                 >
@@ -860,7 +860,7 @@ function ScreenSharePreviewModal({ onClose }: { onClose: () => void }) {
                         className={cn(
                           "flex flex-col items-center p-2 rounded-xl border-2 transition-all",
                           qty > 0 
-                            ? "border-primary/40 bg-primary/5" 
+                            ? "border-foreground/30 bg-foreground/5" 
                             : "border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700"
                         )}
                       >
@@ -879,7 +879,7 @@ function ScreenSharePreviewModal({ onClose }: { onClose: () => void }) {
                           <span className="w-5 text-center text-xs font-bold text-slate-700 dark:text-white">{qty}</span>
                           <button
                             onClick={() => updateQuantity(activeRoom, item.name, 1)}
-                            className="w-5 h-5 rounded flex items-center justify-center bg-primary/20 hover:bg-primary/30 text-primary transition-colors"
+                            className="w-5 h-5 rounded flex items-center justify-center bg-foreground/15 hover:bg-foreground/25 text-foreground transition-colors"
                           >
                             <Plus className="w-3 h-3" />
                           </button>
@@ -898,7 +898,7 @@ function ScreenSharePreviewModal({ onClose }: { onClose: () => void }) {
                         className={cn(
                           "flex items-center gap-3 p-2 rounded-lg border-2 transition-all",
                           qty > 0 
-                            ? "border-primary/40 bg-primary/5" 
+                            ? "border-foreground/30 bg-foreground/5" 
                             : "border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700"
                         )}
                       >
@@ -917,7 +917,7 @@ function ScreenSharePreviewModal({ onClose }: { onClose: () => void }) {
                           <span className="w-8 text-center text-sm font-bold text-slate-700 dark:text-white">{qty}</span>
                           <button
                             onClick={() => updateQuantity(activeRoom, item.name, 1)}
-                            className="w-6 h-6 rounded bg-primary/20 hover:bg-primary/30 flex items-center justify-center text-primary transition-colors"
+                            className="w-6 h-6 rounded bg-foreground/15 hover:bg-foreground/25 flex items-center justify-center text-foreground transition-colors"
                           >
                             <Plus className="w-3 h-3" />
                           </button>
@@ -934,8 +934,8 @@ function ScreenSharePreviewModal({ onClose }: { onClose: () => void }) {
         {/* Footer with Totals */}
         <div className="px-4 py-3 bg-slate-50 dark:bg-slate-700/50 border-t border-slate-200 dark:border-slate-600 flex items-center justify-between">
           <span className="text-xs text-slate-500 dark:text-slate-400">{totalItems} items • Est. {totalWeight.toLocaleString()} lbs</span>
-          <span className="text-xs text-green-600 font-medium flex items-center gap-1">
-            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+          <span className="text-xs text-foreground/70 font-medium flex items-center gap-1">
+            <span className="w-2 h-2 rounded-full bg-foreground/50 animate-pulse" />
             Agent can see your screen
           </span>
         </div>
@@ -1119,7 +1119,7 @@ function DemoVideoPlaceholder({ onLeave, isPiP = false, onWhiteboardOpen }: { on
               <div className="absolute inset-0 bg-gradient-to-br from-slate-600 via-slate-500 to-slate-600" />
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className={cn(
-                  "rounded-full bg-primary/20 border border-white/30 flex items-center justify-center",
+                  "rounded-full bg-foreground/10 border border-white/30 flex items-center justify-center",
                   isPiP ? "w-6 h-6" : "w-14 h-14 border-2"
                 )}>
                   <span className={cn("text-white font-bold", isPiP ? "text-[8px]" : "text-lg")}>You</span>
@@ -1180,8 +1180,8 @@ function DemoVideoPlaceholder({ onLeave, isPiP = false, onWhiteboardOpen }: { on
             onClick={() => onWhiteboardOpen?.()}
             className="flex flex-col items-center gap-1 group"
           >
-            <div className="w-11 h-11 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 transition-colors border border-white/10 group-hover:border-primary/50">
-              <PenTool className="w-5 h-5 text-white group-hover:text-primary transition-colors" />
+            <div className="w-11 h-11 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 transition-colors border border-white/10 group-hover:border-white/40">
+              <PenTool className="w-5 h-5 text-white group-hover:text-white transition-colors" />
             </div>
             <span className="text-[10px] text-white/60 font-medium">Whiteboard</span>
           </button>
@@ -1193,10 +1193,10 @@ function DemoVideoPlaceholder({ onLeave, isPiP = false, onWhiteboardOpen }: { on
             <DropdownMenuTrigger asChild>
               <button className="flex flex-col items-center gap-1 group">
                 <div className={cn(
-                  "w-11 h-11 rounded-full flex items-center justify-center transition-colors border border-white/10 group-hover:border-primary/50",
+                  "w-11 h-11 rounded-full flex items-center justify-center transition-colors border border-white/10 group-hover:border-white/40",
                   volume === 0 ? "bg-amber-500/30" : "bg-white/10 hover:bg-white/20"
                 )}>
-                  {volume === 0 ? <VolumeX className="w-5 h-5 text-amber-400" /> : <Volume2 className="w-5 h-5 text-white group-hover:text-primary transition-colors" />}
+                  {volume === 0 ? <VolumeX className="w-5 h-5 text-amber-400" /> : <Volume2 className="w-5 h-5 text-white group-hover:text-white transition-colors" />}
                 </div>
                 <span className="text-[10px] text-white/60 font-medium">Volume</span>
               </button>
@@ -1214,7 +1214,7 @@ function DemoVideoPlaceholder({ onLeave, isPiP = false, onWhiteboardOpen }: { on
                   step="0.05"
                   value={volume}
                   onChange={(e) => setVolume(parseFloat(e.target.value))}
-                  className="w-full h-2 bg-muted rounded-full appearance-none cursor-pointer accent-primary"
+                  className="w-full h-2 bg-muted rounded-full appearance-none cursor-pointer accent-foreground"
                 />
               </div>
             </DropdownMenuContent>
@@ -1227,11 +1227,11 @@ function DemoVideoPlaceholder({ onLeave, isPiP = false, onWhiteboardOpen }: { on
           className={cn("flex flex-col items-center gap-1 group", isPiP && "gap-0")}
         >
           <div className={cn(
-            "rounded-full flex items-center justify-center transition-colors border border-white/10 group-hover:border-primary/50",
+            "rounded-full flex items-center justify-center transition-colors border border-white/10 group-hover:border-white/40",
             isPiP ? "w-7 h-7" : "w-11 h-11",
             isMuted ? "bg-red-500 border-red-500/50" : "bg-white/10 hover:bg-white/20"
           )}>
-            {isMuted ? <MicOff className={cn(isPiP ? "w-3.5 h-3.5" : "w-5 h-5", "text-white")} /> : <Mic className={cn(isPiP ? "w-3.5 h-3.5" : "w-5 h-5", "text-white group-hover:text-primary transition-colors")} />}
+            {isMuted ? <MicOff className={cn(isPiP ? "w-3.5 h-3.5" : "w-5 h-5", "text-white")} /> : <Mic className={cn(isPiP ? "w-3.5 h-3.5" : "w-5 h-5", "text-white")} />}
           </div>
           {!isPiP && <span className="text-[10px] text-white/60 font-medium">{isMuted ? "Unmute" : "Mute"}</span>}
         </button>
@@ -1242,11 +1242,11 @@ function DemoVideoPlaceholder({ onLeave, isPiP = false, onWhiteboardOpen }: { on
           className={cn("flex flex-col items-center gap-1 group", isPiP && "gap-0")}
         >
           <div className={cn(
-            "rounded-full flex items-center justify-center transition-colors border border-white/10 group-hover:border-primary/50",
+            "rounded-full flex items-center justify-center transition-colors border border-white/10 group-hover:border-white/40",
             isPiP ? "w-7 h-7" : "w-11 h-11",
             isVideoOff ? "bg-red-500 border-red-500/50" : "bg-white/10 hover:bg-white/20"
           )}>
-            {isVideoOff ? <VideoOff className={cn(isPiP ? "w-3.5 h-3.5" : "w-5 h-5", "text-white")} /> : <Video className={cn(isPiP ? "w-3.5 h-3.5" : "w-5 h-5", "text-white group-hover:text-primary transition-colors")} />}
+            {isVideoOff ? <VideoOff className={cn(isPiP ? "w-3.5 h-3.5" : "w-5 h-5", "text-white")} /> : <Video className={cn(isPiP ? "w-3.5 h-3.5" : "w-5 h-5", "text-white")} />}
           </div>
           {!isPiP && <span className="text-[10px] text-white/60 font-medium">{isVideoOff ? "Start Video" : "Stop Video"}</span>}
         </button>
@@ -1258,10 +1258,10 @@ function DemoVideoPlaceholder({ onLeave, isPiP = false, onWhiteboardOpen }: { on
             className="flex flex-col items-center gap-1 group"
           >
             <div className={cn(
-              "w-11 h-11 rounded-full flex items-center justify-center transition-colors border border-white/10 group-hover:border-primary/50",
-              isScreenSharing ? "bg-primary border-primary/50" : "bg-white/10 hover:bg-white/20"
+              "w-11 h-11 rounded-full flex items-center justify-center transition-colors border border-white/10 group-hover:border-white/40",
+              isScreenSharing ? "bg-foreground border-foreground/50" : "bg-white/10 hover:bg-white/20"
             )}>
-              <Monitor className={cn("w-5 h-5 transition-colors", isScreenSharing ? "text-primary-foreground" : "text-white group-hover:text-primary")} />
+              <Monitor className={cn("w-5 h-5 transition-colors", isScreenSharing ? "text-background" : "text-white")} />
             </div>
             <span className="text-[10px] text-white/60 font-medium">{isScreenSharing ? "Stop Share" : "Share"}</span>
           </button>
@@ -1272,8 +1272,8 @@ function DemoVideoPlaceholder({ onLeave, isPiP = false, onWhiteboardOpen }: { on
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="flex flex-col items-center gap-1 group">
-                <div className="w-11 h-11 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 transition-colors border border-white/10 group-hover:border-primary/50">
-                  <Settings className="w-5 h-5 text-white group-hover:text-primary transition-colors" />
+                <div className="w-11 h-11 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 transition-colors border border-white/10 group-hover:border-white/40">
+                  <Settings className="w-5 h-5 text-white" />
                 </div>
                 <span className="text-[10px] text-white/60 font-medium">Settings</span>
               </button>
@@ -1875,7 +1875,7 @@ export default function Book() {
                     </div>
                     {roomUrl && (
                       <div className="flex items-center gap-1.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
                         <span className="text-[10px] font-medium text-muted-foreground tabular-nums">{formatCallDuration(callDuration)}</span>
                       </div>
                     )}
@@ -1893,7 +1893,7 @@ export default function Book() {
                               onClick={() => setIsPiP(!isPiP)}
                               className="w-9 h-9 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center hover:bg-black/80 transition-colors border border-white/20"
                             >
-                              <PictureInPicture2 className={cn("w-4 h-4", isPiP ? "text-primary" : "text-white")} />
+                              <PictureInPicture2 className={cn("w-4 h-4", isPiP ? "text-white" : "text-white")} />
                             </button>
                           </TooltipTrigger>
                           <TooltipContent side="left"><p>{isPiP ? "Exit Picture-in-Picture" : "Picture-in-Picture"}</p></TooltipContent>
@@ -1991,12 +1991,12 @@ export default function Book() {
 
             {/* Chat Panel - Right Side - Resizable when on call */}
             <div className={cn(
-              "video-consult-chat-panel border-2 border-primary/20 shadow-lg shadow-primary/5 ring-1 ring-white/5 relative",
+              "video-consult-chat-panel border-2 border-border shadow-lg shadow-foreground/5 ring-1 ring-white/5 relative",
               roomUrl && "is-resizable"
             )}>
               {/* Popout Button - Small box in corner */}
               <button 
-                className="absolute top-1 right-1 z-10 w-5 h-5 rounded bg-muted/80 border border-border flex items-center justify-center hover:bg-primary/20 hover:border-primary/40 transition-colors"
+                className="absolute top-1 right-1 z-10 w-5 h-5 rounded bg-muted/80 border border-border flex items-center justify-center hover:bg-foreground/10 hover:border-foreground/30 transition-colors"
                 onClick={() => {
                   setPopoutChatMode(chatMode);
                   setShowPopoutChat(true);
@@ -2543,7 +2543,7 @@ export default function Book() {
               className="absolute bottom-0 right-0 w-5 h-5 cursor-se-resize group"
               onMouseDown={handleExpandedResizeStart}
             >
-              <div className="absolute bottom-1 right-1 w-3 h-3 border-b-2 border-r-2 border-primary/50 group-hover:border-primary transition-colors" />
+              <div className="absolute bottom-1 right-1 w-3 h-3 border-b-2 border-r-2 border-foreground/30 group-hover:border-foreground/60 transition-colors" />
             </div>
           </div>
         </div>
@@ -2554,15 +2554,15 @@ export default function Book() {
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <PhoneCall className="w-5 h-5 text-primary" />
+              <PhoneCall className="w-5 h-5 text-foreground" />
               Request a Callback
             </DialogTitle>
           </DialogHeader>
           
           {callbackSubmitted ? (
             <div className="text-center py-6">
-              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                <Phone className="w-8 h-8 text-primary" />
+              <div className="w-16 h-16 rounded-full bg-foreground/10 flex items-center justify-center mx-auto mb-4">
+                <Phone className="w-8 h-8 text-foreground" />
               </div>
               <h3 className="text-lg font-bold mb-2">Callback Requested!</h3>
               <p className="text-muted-foreground text-sm mb-4">
@@ -2626,7 +2626,7 @@ export default function Book() {
         <div 
           ref={pipRef}
           className={cn(
-            "fixed z-50 rounded-xl overflow-hidden shadow-2xl border-2 border-primary/30 bg-card ring-1 ring-white/10",
+            "fixed z-50 rounded-xl overflow-hidden shadow-2xl border-2 border-border bg-card ring-1 ring-white/10",
             !isDragging && !isResizing && "animate-in slide-in-from-right-4 duration-300",
             (isDragging || isResizing) && "select-none"
           )}
@@ -2681,25 +2681,25 @@ export default function Book() {
             className="absolute top-0 left-0 w-4 h-4 cursor-nw-resize group z-10"
             onMouseDown={(e) => handlePipResizeStart(e, 'tl')}
           >
-            <div className="absolute top-1 left-1 w-2 h-2 border-t-2 border-l-2 border-primary/50 group-hover:border-primary transition-colors" />
+            <div className="absolute top-1 left-1 w-2 h-2 border-t-2 border-l-2 border-foreground/30 group-hover:border-foreground/60 transition-colors" />
           </div>
           <div 
             className="absolute top-0 right-0 w-4 h-4 cursor-ne-resize group z-10"
             onMouseDown={(e) => handlePipResizeStart(e, 'tr')}
           >
-            <div className="absolute top-1 right-1 w-2 h-2 border-t-2 border-r-2 border-primary/50 group-hover:border-primary transition-colors" />
+            <div className="absolute top-1 right-1 w-2 h-2 border-t-2 border-r-2 border-foreground/30 group-hover:border-foreground/60 transition-colors" />
           </div>
           <div 
             className="absolute bottom-0 left-0 w-4 h-4 cursor-sw-resize group z-10"
             onMouseDown={(e) => handlePipResizeStart(e, 'bl')}
           >
-            <div className="absolute bottom-1 left-1 w-2 h-2 border-b-2 border-l-2 border-primary/50 group-hover:border-primary transition-colors" />
+            <div className="absolute bottom-1 left-1 w-2 h-2 border-b-2 border-l-2 border-foreground/30 group-hover:border-foreground/60 transition-colors" />
           </div>
           <div 
             className="absolute bottom-0 right-0 w-4 h-4 cursor-se-resize group z-10"
             onMouseDown={(e) => handlePipResizeStart(e, 'br')}
           >
-            <div className="absolute bottom-1 right-1 w-2 h-2 border-b-2 border-r-2 border-primary/50 group-hover:border-primary transition-colors" />
+            <div className="absolute bottom-1 right-1 w-2 h-2 border-b-2 border-r-2 border-foreground/30 group-hover:border-foreground/60 transition-colors" />
           </div>
         </div>
       )}
@@ -2731,7 +2731,7 @@ export default function Book() {
                 <div className="flex items-center gap-2 px-3 py-2 mb-3 bg-muted/50 border border-border rounded-lg">
                   <Video className="w-4 h-4 text-muted-foreground/60 shrink-0" />
                   <p className="text-muted-foreground text-xs">
-                    Not on video call — <button onClick={() => { setShowPopoutChat(false); handleStartDemo(); }} className="text-primary hover:underline font-medium">try demo</button>
+                    Not on video call — <button onClick={() => { setShowPopoutChat(false); handleStartDemo(); }} className="text-foreground hover:underline font-medium">try demo</button>
                   </p>
                 </div>
               )}
