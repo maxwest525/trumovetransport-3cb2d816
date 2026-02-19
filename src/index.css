@@ -33740,8 +33740,8 @@ gmp-map-3d-element .gmnoprint {
   box-shadow: 
     0 4px 16px hsl(var(--tm-ink) / 0.12),
     0 8px 32px hsl(var(--tm-ink) / 0.08),
-    0 0 0 1px hsl(var(--primary) / 0.1),
-    0 8px 24px -4px hsl(var(--primary) / 0.15) !important;
+    0 0 0 1px hsl(var(--tm-ink) / 0.1),
+    0 8px 24px -4px hsl(var(--tm-ink) / 0.15) !important;
 }
 
 .dark .carrier-vetting-page .rounded-xl,
@@ -33752,8 +33752,8 @@ gmp-map-3d-element .gmnoprint {
   box-shadow: 
     0 4px 16px hsl(0 0% 0% / 0.3),
     0 8px 32px hsl(0 0% 0% / 0.2),
-    0 0 0 1px hsl(var(--primary) / 0.15),
-    0 8px 24px -4px hsl(var(--primary) / 0.2) !important;
+    0 0 0 1px hsl(0 0% 100% / 0.08),
+    0 8px 24px -4px hsl(0 0% 0% / 0.15) !important;
 }
 
 /* Video Consult Page - main panels */
@@ -33763,8 +33763,8 @@ gmp-map-3d-element .gmnoprint {
   box-shadow: 
     0 4px 16px hsl(var(--tm-ink) / 0.12),
     0 8px 32px hsl(var(--tm-ink) / 0.08),
-    0 0 0 1px hsl(var(--primary) / 0.1),
-    0 8px 24px -4px hsl(var(--primary) / 0.15);
+    0 0 0 1px hsl(var(--tm-ink) / 0.1),
+    0 8px 24px -4px hsl(var(--tm-ink) / 0.15);
 }
 
 .dark .video-consult-page .rounded-xl,
@@ -33773,8 +33773,8 @@ gmp-map-3d-element .gmnoprint {
   box-shadow: 
     0 4px 16px hsl(0 0% 0% / 0.3),
     0 8px 32px hsl(0 0% 0% / 0.2),
-    0 0 0 1px hsl(var(--primary) / 0.15),
-    0 8px 24px -4px hsl(var(--primary) / 0.2);
+    0 0 0 1px hsl(0 0% 100% / 0.08),
+    0 8px 24px -4px hsl(0 0% 0% / 0.15);
 }
 
 /* =============================================
