@@ -95,7 +95,7 @@ function FakeAgentView({
           className="w-full h-full object-cover animate-subtle-zoom"
         />
         {/* Subtle gradient overlay for readability */}
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-slate-900/30" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30" />
       </div>
       
       {/* LIVE indicator - top left */}
@@ -136,12 +136,12 @@ function FakeAgentView({
             <Button
               variant="ghost"
               className={cn(
-                "h-10 px-3 rounded-full bg-slate-900/80 border border-sky-500/40 text-white hover:bg-slate-800 backdrop-blur-sm flex items-center gap-2",
+                "h-10 px-3 rounded-full bg-black/80 border border-foreground/20 text-white hover:bg-black/70 backdrop-blur-sm flex items-center gap-2",
                 isMuted && "border-amber-500/50 bg-amber-900/40"
               )}
               title="Volume control"
             >
-              {isMuted ? <VolumeX className="w-5 h-5 text-amber-400" /> : <Volume2 className="w-5 h-5 text-sky-400" />}
+              {isMuted ? <VolumeX className="w-5 h-5 text-amber-400" /> : <Volume2 className="w-5 h-5 text-white/80" />}
               <span className="text-xs font-medium tabular-nums">{Math.round(volume * 100)}%</span>
             </Button>
           </DropdownMenuTrigger>
@@ -456,16 +456,16 @@ function InventoryShareModal({ onClose }: { onClose: () => void }) {
 
   return (
     <div className="absolute inset-4 flex items-center justify-center z-10">
-      <div className="w-full max-w-2xl bg-white dark:bg-slate-800 rounded-xl shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-600">
+      <div className="w-full max-w-2xl bg-card rounded-xl shadow-2xl overflow-hidden border border-border">
         {/* Window Chrome */}
-        <div className="px-4 py-3 bg-slate-100 dark:bg-slate-700 flex items-center gap-2 border-b border-slate-200 dark:border-slate-600">
+        <div className="px-4 py-3 bg-muted flex items-center gap-2 border-b border-border">
           <div className="flex gap-1.5">
             <button onClick={onClose} className="w-3 h-3 rounded-full bg-red-500 hover:bg-red-600 transition-colors" />
             <div className="w-3 h-3 rounded-full bg-yellow-500" />
             <div className="w-3 h-3 rounded-full bg-green-500" />
           </div>
           <div className="flex-1 text-center">
-            <span className="text-sm font-medium text-slate-600 dark:text-slate-300">
+            <span className="text-sm font-medium text-muted-foreground">
               Customer's Screen - My Move Inventory
             </span>
           </div>
@@ -478,8 +478,8 @@ function InventoryShareModal({ onClose }: { onClose: () => void }) {
         {/* Main Content - Sidebar + Grid */}
         <div className="flex h-[360px]">
           {/* Left Sidebar - Room Navigation */}
-          <div className="w-36 border-r border-slate-200 dark:border-slate-600 p-3 space-y-1 bg-slate-50 dark:bg-slate-800/50">
-            <div className="text-[10px] font-black tracking-wider uppercase text-slate-400 mb-2 px-2">
+          <div className="w-36 border-r border-border p-3 space-y-1 bg-muted/50">
+            <div className="text-[10px] font-black tracking-wider uppercase text-muted-foreground mb-2 px-2">
               Rooms
             </div>
             {ROOM_CONFIG_DEMO.map((room) => {
@@ -493,8 +493,8 @@ function InventoryShareModal({ onClose }: { onClose: () => void }) {
                   className={cn(
                     "w-full flex items-center gap-2 px-2 py-2 rounded-lg text-left text-xs font-semibold transition-all",
                     isActive 
-                      ? "border-2 border-foreground bg-foreground/10 text-slate-800 dark:text-white" 
-                      : "border-2 border-transparent hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300"
+                      ? "border-2 border-foreground bg-foreground/10 text-foreground" 
+                      : "border-2 border-transparent hover:bg-muted text-muted-foreground"
                   )}
                 >
                   <Icon className="w-3.5 h-3.5 flex-shrink-0" />
@@ -502,7 +502,7 @@ function InventoryShareModal({ onClose }: { onClose: () => void }) {
                   {count > 0 && (
                     <span className={cn(
                       "text-[9px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center",
-                      isActive ? "bg-slate-800 dark:bg-white text-white dark:text-slate-800" : "bg-slate-200 dark:bg-slate-600 text-slate-600 dark:text-slate-300"
+                      isActive ? "bg-foreground text-background" : "bg-muted text-muted-foreground"
                     )}>
                       {count}
                     </span>
@@ -515,21 +515,21 @@ function InventoryShareModal({ onClose }: { onClose: () => void }) {
           {/* Right Content - Item Grid */}
           <div className="flex-1 flex flex-col">
             {/* Search Bar + View Toggle Header */}
-            <div className="flex items-center gap-2 px-3 py-2 border-b border-slate-200 dark:border-slate-600 bg-slate-50/50 dark:bg-slate-800/30">
+            <div className="flex items-center gap-2 px-3 py-2 border-b border-border bg-muted/50">
               {/* Search Input */}
               <div className="relative flex-1">
-                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search items..."
-                   className="w-full pl-8 pr-7 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground/40"
+                   className="w-full pl-8 pr-7 py-1.5 text-xs rounded-lg border border-border bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground/40"
                 />
                 {searchQuery && (
                   <button 
                     onClick={() => setSearchQuery('')}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                   >
                     <X className="w-3.5 h-3.5" />
                   </button>
@@ -537,17 +537,17 @@ function InventoryShareModal({ onClose }: { onClose: () => void }) {
               </div>
               
               {/* Room Label */}
-              <span className="text-xs font-bold text-slate-700 dark:text-slate-200 whitespace-nowrap">{activeRoom}</span>
+              <span className="text-xs font-bold text-foreground whitespace-nowrap">{activeRoom}</span>
               
               {/* View Toggle */}
-              <div className="flex rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 p-0.5">
+              <div className="flex rounded-lg border border-border bg-card p-0.5">
                 <button
                   onClick={() => setViewMode('grid')}
                   className={cn(
                     "p-1.5 rounded-md transition-all",
                     viewMode === 'grid' 
                       ? "bg-foreground/15 text-foreground" 
-                      : "text-slate-400 hover:text-slate-600"
+                      : "text-muted-foreground hover:text-foreground"
                   )}
                 >
                   <LayoutGrid className="w-3.5 h-3.5" />
@@ -558,7 +558,7 @@ function InventoryShareModal({ onClose }: { onClose: () => void }) {
                     "p-1.5 rounded-md transition-all",
                     viewMode === 'list' 
                       ? "bg-foreground/15 text-foreground" 
-                      : "text-slate-400 hover:text-slate-600"
+                      : "text-muted-foreground hover:text-foreground"
                   )}
                 >
                   <List className="w-3.5 h-3.5" />
@@ -570,11 +570,11 @@ function InventoryShareModal({ onClose }: { onClose: () => void }) {
             <div className="flex-1 p-3 overflow-y-auto">
               {filteredItems.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full text-center py-8">
-                  <Search className="w-8 h-8 text-slate-300 dark:text-slate-500 mb-3" />
-                  <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
+                  <Search className="w-8 h-8 text-muted-foreground/40 mb-3" />
+                  <p className="text-sm font-medium text-muted-foreground">
                     No items found
                   </p>
-                  <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
+                  <p className="text-xs text-muted-foreground/70 mt-1">
                     Try a different search term
                   </p>
                 </div>
@@ -589,22 +589,22 @@ function InventoryShareModal({ onClose }: { onClose: () => void }) {
                           "flex flex-col items-center p-2 rounded-xl border-2 transition-all",
                           qty > 0 
                             ? "border-foreground/30 bg-foreground/5" 
-                            : "border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700"
+                            : "border-border bg-card"
                         )}
                       >
-                        <div className="w-12 h-12 rounded-lg bg-white flex items-center justify-center mb-1 border border-slate-100">
+                        <div className="w-12 h-12 rounded-lg bg-background flex items-center justify-center mb-1 border border-border/50">
                           <img src={item.image} alt={item.name} className="w-10 h-10 object-contain mix-blend-multiply" />
                         </div>
-                        <span className="text-[10px] font-medium text-center line-clamp-2 h-7 text-slate-700 dark:text-slate-200">{item.name}</span>
+                        <span className="text-[10px] font-medium text-center line-clamp-2 h-7 text-foreground">{item.name}</span>
                         <div className="flex items-center gap-1 mt-1">
                           <button
                             onClick={() => updateQuantity(activeRoom, item.name, -1)}
                             disabled={qty === 0}
-                            className="w-5 h-5 rounded flex items-center justify-center bg-slate-100 dark:bg-slate-600 hover:bg-slate-200 disabled:opacity-30 transition-colors"
+                            className="w-5 h-5 rounded flex items-center justify-center bg-muted hover:bg-accent disabled:opacity-30 transition-colors"
                           >
                             <Minus className="w-3 h-3" />
                           </button>
-                          <span className="w-5 text-center text-xs font-bold text-slate-700 dark:text-white">{qty}</span>
+                          <span className="w-5 text-center text-xs font-bold text-foreground">{qty}</span>
                           <button
                             onClick={() => updateQuantity(activeRoom, item.name, 1)}
                             className="w-5 h-5 rounded flex items-center justify-center bg-foreground/15 hover:bg-foreground/25 text-foreground transition-colors"
@@ -627,25 +627,25 @@ function InventoryShareModal({ onClose }: { onClose: () => void }) {
                           "flex items-center gap-3 p-2 rounded-lg border transition-all",
                           qty > 0 
                             ? "border-foreground/30 bg-foreground/5" 
-                            : "border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700"
+                            : "border-border bg-card"
                         )}
                       >
-                        <div className="w-10 h-10 rounded-md bg-white flex items-center justify-center border border-slate-100">
+                        <div className="w-10 h-10 rounded-md bg-background flex items-center justify-center border border-border/50">
                           <img src={item.image} alt={item.name} className="w-8 h-8 object-contain mix-blend-multiply" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-slate-800 dark:text-white truncate">{item.name}</p>
-                          <p className="text-xs text-slate-500">{item.weight} lbs</p>
+                          <p className="text-sm font-medium text-foreground truncate">{item.name}</p>
+                          <p className="text-xs text-muted-foreground">{item.weight} lbs</p>
                         </div>
                         <div className="flex items-center gap-1">
                           <button
                             onClick={() => updateQuantity(activeRoom, item.name, -1)}
                             disabled={qty === 0}
-                            className="w-6 h-6 rounded bg-slate-200 dark:bg-slate-600 hover:bg-slate-300 flex items-center justify-center disabled:opacity-30 transition-colors"
+                            className="w-6 h-6 rounded bg-muted hover:bg-accent flex items-center justify-center disabled:opacity-30 transition-colors"
                           >
                             <Minus className="w-3 h-3" />
                           </button>
-                          <span className="w-8 text-center text-sm font-bold text-slate-700 dark:text-white">{qty}</span>
+                          <span className="w-8 text-center text-sm font-bold text-foreground">{qty}</span>
                           <button
                             onClick={() => updateQuantity(activeRoom, item.name, 1)}
                             className="w-6 h-6 rounded bg-foreground/15 hover:bg-foreground/25 flex items-center justify-center text-foreground transition-colors"
@@ -663,8 +663,8 @@ function InventoryShareModal({ onClose }: { onClose: () => void }) {
         </div>
 
         {/* Footer with Totals */}
-        <div className="px-4 py-3 bg-slate-50 dark:bg-slate-700/50 border-t border-slate-200 dark:border-slate-600 flex items-center justify-between">
-          <span className="text-xs text-slate-500 dark:text-slate-400">{totalItems} items • Est. {totalWeight.toLocaleString()} lbs</span>
+        <div className="px-4 py-3 bg-muted/50 border-t border-border flex items-center justify-between">
+          <span className="text-xs text-muted-foreground">{totalItems} items • Est. {totalWeight.toLocaleString()} lbs</span>
           <span className="text-xs text-foreground/70 font-medium flex items-center gap-1">
             <span className="w-2 h-2 rounded-full bg-foreground/50 animate-pulse" />
             Live sharing with Trudy
@@ -726,16 +726,16 @@ function ScreenSharePreviewModal({ onClose }: { onClose: () => void }) {
 
   return (
     <div className="w-full max-w-xl mx-4 max-h-[calc(100%-32px)]">
-      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-600">
+      <div className="bg-card rounded-xl shadow-2xl overflow-hidden border border-border">
         {/* Window Chrome with "Agent's View" indicator */}
-        <div className="px-4 py-3 bg-slate-100 dark:bg-slate-700 flex items-center gap-2 border-b border-slate-200 dark:border-slate-600">
+        <div className="px-4 py-3 bg-muted flex items-center gap-2 border-b border-border">
           <div className="flex gap-1.5">
             <div className="w-3 h-3 rounded-full bg-red-500" />
             <div className="w-3 h-3 rounded-full bg-yellow-500" />
             <div className="w-3 h-3 rounded-full bg-green-500" />
           </div>
           <div className="flex-1 text-center">
-            <span className="text-sm font-medium text-slate-600 dark:text-slate-300">
+            <span className="text-sm font-medium text-muted-foreground">
               Agent's View - Your Inventory
             </span>
           </div>
@@ -745,18 +745,18 @@ function ScreenSharePreviewModal({ onClose }: { onClose: () => void }) {
           </span>
           <button 
             onClick={onClose}
-            className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
+            className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-accent transition-colors"
             title="Close preview"
           >
-            <X className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+            <X className="w-4 h-4 text-muted-foreground" />
           </button>
         </div>
         
         {/* Main Content - Sidebar + Grid */}
         <div className="flex h-[280px]">
           {/* Left Sidebar - Room Navigation */}
-          <div className="w-36 border-r border-slate-200 dark:border-slate-600 p-3 space-y-1 bg-slate-50 dark:bg-slate-800/50">
-            <div className="text-[10px] font-black tracking-wider uppercase text-slate-400 mb-2 px-2">
+          <div className="w-36 border-r border-border p-3 space-y-1 bg-muted/50">
+            <div className="text-[10px] font-black tracking-wider uppercase text-muted-foreground mb-2 px-2">
               Rooms
             </div>
             {ROOM_CONFIG_DEMO.map((room) => {
@@ -770,8 +770,8 @@ function ScreenSharePreviewModal({ onClose }: { onClose: () => void }) {
                   className={cn(
                     "w-full flex items-center gap-2 px-2 py-2 rounded-lg text-left text-xs font-semibold transition-all",
                     isActive 
-                      ? "border-2 border-foreground bg-foreground/10 text-slate-800 dark:text-white" 
-                      : "border-2 border-transparent hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300"
+                      ? "border-2 border-foreground bg-foreground/10 text-foreground" 
+                      : "border-2 border-transparent hover:bg-muted text-muted-foreground"
                   )}
                 >
                   <Icon className="w-3.5 h-3.5 flex-shrink-0" />
@@ -779,7 +779,7 @@ function ScreenSharePreviewModal({ onClose }: { onClose: () => void }) {
                   {count > 0 && (
                     <span className={cn(
                       "text-[9px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center",
-                      isActive ? "bg-slate-800 dark:bg-white text-white dark:text-slate-800" : "bg-slate-200 dark:bg-slate-600 text-slate-600 dark:text-slate-300"
+                      isActive ? "bg-foreground text-background" : "bg-muted text-muted-foreground"
                     )}>
                       {count}
                     </span>
@@ -792,34 +792,34 @@ function ScreenSharePreviewModal({ onClose }: { onClose: () => void }) {
           {/* Right Content - Item Grid */}
           <div className="flex-1 flex flex-col">
             {/* Search Bar + View Toggle Header */}
-            <div className="flex items-center gap-2 px-3 py-2 border-b border-slate-200 dark:border-slate-600 bg-slate-50/50 dark:bg-slate-800/30">
+            <div className="flex items-center gap-2 px-3 py-2 border-b border-border bg-muted/50">
               <div className="relative flex-1">
-                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search items..."
-                  className="w-full pl-8 pr-7 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground/40"
+                  className="w-full pl-8 pr-7 py-1.5 text-xs rounded-lg border border-border bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground/40"
                 />
                 {searchQuery && (
                   <button 
                     onClick={() => setSearchQuery('')}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                   >
                     <X className="w-3.5 h-3.5" />
                   </button>
                 )}
               </div>
-              <span className="text-xs font-bold text-slate-700 dark:text-slate-200 whitespace-nowrap">{activeRoom}</span>
-              <div className="flex rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 p-0.5">
+              <span className="text-xs font-bold text-foreground whitespace-nowrap">{activeRoom}</span>
+              <div className="flex rounded-lg border border-border bg-card p-0.5">
                 <button
                   onClick={() => setViewMode('grid')}
                   className={cn(
                     "p-1.5 rounded-md transition-all",
                     viewMode === 'grid' 
                       ? "bg-foreground/15 text-foreground" 
-                      : "text-slate-400 hover:text-slate-600"
+                      : "text-muted-foreground hover:text-foreground"
                   )}
                 >
                   <LayoutGrid className="w-3.5 h-3.5" />
@@ -830,7 +830,7 @@ function ScreenSharePreviewModal({ onClose }: { onClose: () => void }) {
                     "p-1.5 rounded-md transition-all",
                     viewMode === 'list' 
                       ? "bg-foreground/15 text-foreground" 
-                      : "text-slate-400 hover:text-slate-600"
+                      : "text-muted-foreground hover:text-foreground"
                   )}
                 >
                   <List className="w-3.5 h-3.5" />
@@ -842,11 +842,11 @@ function ScreenSharePreviewModal({ onClose }: { onClose: () => void }) {
             <div className="flex-1 p-3 overflow-y-auto">
               {filteredItems.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full text-center py-8">
-                  <Search className="w-8 h-8 text-slate-300 dark:text-slate-500 mb-3" />
-                  <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
+                  <Search className="w-8 h-8 text-muted-foreground/40 mb-3" />
+                  <p className="text-sm font-medium text-muted-foreground">
                     No items found
                   </p>
-                  <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
+                  <p className="text-xs text-muted-foreground/70 mt-1">
                     Try a different search term
                   </p>
                 </div>
@@ -861,22 +861,22 @@ function ScreenSharePreviewModal({ onClose }: { onClose: () => void }) {
                           "flex flex-col items-center p-2 rounded-xl border-2 transition-all",
                           qty > 0 
                             ? "border-foreground/30 bg-foreground/5" 
-                            : "border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700"
+                            : "border-border bg-card"
                         )}
                       >
-                        <div className="w-12 h-12 rounded-lg bg-white flex items-center justify-center mb-1 border border-slate-100">
+                        <div className="w-12 h-12 rounded-lg bg-background flex items-center justify-center mb-1 border border-border/50">
                           <img src={item.image} alt={item.name} className="w-10 h-10 object-contain mix-blend-multiply" />
                         </div>
-                        <span className="text-[10px] font-medium text-center line-clamp-2 h-7 text-slate-700 dark:text-slate-200">{item.name}</span>
+                        <span className="text-[10px] font-medium text-center line-clamp-2 h-7 text-foreground">{item.name}</span>
                         <div className="flex items-center gap-1 mt-1">
                           <button
                             onClick={() => updateQuantity(activeRoom, item.name, -1)}
                             disabled={qty === 0}
-                            className="w-5 h-5 rounded flex items-center justify-center bg-slate-100 dark:bg-slate-600 hover:bg-slate-200 disabled:opacity-30 transition-colors"
+                            className="w-5 h-5 rounded flex items-center justify-center bg-muted hover:bg-accent disabled:opacity-30 transition-colors"
                           >
                             <Minus className="w-3 h-3" />
                           </button>
-                          <span className="w-5 text-center text-xs font-bold text-slate-700 dark:text-white">{qty}</span>
+                          <span className="w-5 text-center text-xs font-bold text-foreground">{qty}</span>
                           <button
                             onClick={() => updateQuantity(activeRoom, item.name, 1)}
                             className="w-5 h-5 rounded flex items-center justify-center bg-foreground/15 hover:bg-foreground/25 text-foreground transition-colors"
@@ -899,22 +899,22 @@ function ScreenSharePreviewModal({ onClose }: { onClose: () => void }) {
                           "flex items-center gap-3 p-2 rounded-lg border-2 transition-all",
                           qty > 0 
                             ? "border-foreground/30 bg-foreground/5" 
-                            : "border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700"
+                            : "border-border bg-card"
                         )}
                       >
-                        <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center flex-shrink-0 border border-slate-100">
+                        <div className="w-10 h-10 rounded-lg bg-background flex items-center justify-center flex-shrink-0 border border-border/50">
                           <img src={item.image} alt={item.name} className="w-8 h-8 object-contain mix-blend-multiply" />
                         </div>
-                        <span className="flex-1 text-xs font-medium text-slate-700 dark:text-slate-200">{item.name}</span>
+                        <span className="flex-1 text-xs font-medium text-foreground">{item.name}</span>
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() => updateQuantity(activeRoom, item.name, -1)}
                             disabled={qty === 0}
-                            className="w-6 h-6 rounded bg-slate-100 dark:bg-slate-600 hover:bg-slate-200 flex items-center justify-center disabled:opacity-30 transition-colors"
+                            className="w-6 h-6 rounded bg-muted hover:bg-accent flex items-center justify-center disabled:opacity-30 transition-colors"
                           >
                             <Minus className="w-3 h-3" />
                           </button>
-                          <span className="w-8 text-center text-sm font-bold text-slate-700 dark:text-white">{qty}</span>
+                          <span className="w-8 text-center text-sm font-bold text-foreground">{qty}</span>
                           <button
                             onClick={() => updateQuantity(activeRoom, item.name, 1)}
                             className="w-6 h-6 rounded bg-foreground/15 hover:bg-foreground/25 flex items-center justify-center text-foreground transition-colors"
@@ -932,8 +932,8 @@ function ScreenSharePreviewModal({ onClose }: { onClose: () => void }) {
         </div>
 
         {/* Footer with Totals */}
-        <div className="px-4 py-3 bg-slate-50 dark:bg-slate-700/50 border-t border-slate-200 dark:border-slate-600 flex items-center justify-between">
-          <span className="text-xs text-slate-500 dark:text-slate-400">{totalItems} items • Est. {totalWeight.toLocaleString()} lbs</span>
+        <div className="px-4 py-3 bg-muted/50 border-t border-border flex items-center justify-between">
+          <span className="text-xs text-muted-foreground">{totalItems} items • Est. {totalWeight.toLocaleString()} lbs</span>
           <span className="text-xs text-foreground/70 font-medium flex items-center gap-1">
             <span className="w-2 h-2 rounded-full bg-foreground/50 animate-pulse" />
             Agent can see your screen
@@ -1082,7 +1082,7 @@ function DemoVideoPlaceholder({ onLeave, isPiP = false, onWhiteboardOpen }: { on
   return (
     <div className="relative w-full h-full flex flex-col">
       {/* Main video area */}
-      <div className="flex-1 relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+      <div className="flex-1 relative bg-gradient-to-br from-black via-neutral-900 to-black">
         {/* Agent always visible (dimmed when screen sharing) */}
         <div className={`absolute inset-0 transition-opacity duration-300 ${isScreenSharing ? 'opacity-30' : 'opacity-100'}`}>
           <FakeAgentView 
@@ -1106,17 +1106,17 @@ function DemoVideoPlaceholder({ onLeave, isPiP = false, onWhiteboardOpen }: { on
 
         {/* Self view (picture-in-picture) - Scaled for PiP mode */}
         <div className={cn(
-          "absolute rounded-xl overflow-hidden border-2 border-white/30 bg-slate-800 shadow-xl",
+          "absolute rounded-xl overflow-hidden border-2 border-white/30 bg-neutral-800 shadow-xl",
           isPiP ? "bottom-2 right-2 w-16 h-12 rounded-lg border" : "bottom-4 right-4 w-36 h-28"
         )}>
           {isVideoOff ? (
-            <div className="w-full h-full flex items-center justify-center bg-slate-800">
+            <div className="w-full h-full flex items-center justify-center bg-neutral-800">
               <VideoOff className={isPiP ? "w-3 h-3 text-white/40" : "w-6 h-6 text-white/40"} />
             </div>
           ) : (
             <div className="w-full h-full relative">
               {/* Simulated webcam with gradient - looks like real video feed */}
-              <div className="absolute inset-0 bg-gradient-to-br from-slate-600 via-slate-500 to-slate-600" />
+              <div className="absolute inset-0 bg-gradient-to-br from-neutral-600 via-neutral-500 to-neutral-600" />
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className={cn(
                   "rounded-full bg-foreground/10 border border-white/30 flex items-center justify-center",
@@ -1171,7 +1171,7 @@ function DemoVideoPlaceholder({ onLeave, isPiP = false, onWhiteboardOpen }: { on
 
       {/* Control bar - compact in PiP, full controls with labels in normal mode */}
       <div className={cn(
-        "bg-slate-900 border-t border-white/10 flex items-center justify-center px-2",
+        "bg-black border-t border-white/10 flex items-center justify-center px-2",
         isPiP ? "h-10 gap-2" : "h-20 gap-5 px-6"
       )}>
         {/* Whiteboard - hide in PiP */}
@@ -1883,7 +1883,7 @@ export default function Book() {
                 </div>
                 <Card id="video-consult-container" className="overflow-hidden rounded-2xl border-2 border-foreground dark:border-white/15 shadow-[0_4px_16px_hsl(var(--tm-ink)/0.12),0_8px_32px_hsl(var(--tm-ink)/0.08),0_0_0_1px_hsl(var(--primary)/0.1),0_8px_24px_-4px_hsl(var(--primary)/0.15)]">
                   <CardContent className="p-0">
-                    <div className="relative h-[320px] md:h-[520px] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
+                    <div className="relative h-[320px] md:h-[520px] bg-gradient-to-br from-black via-neutral-900 to-black flex items-center justify-center">
                     {/* Top controls - Fullscreen and PiP */}
                     <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
                       {roomUrl && (
@@ -2505,7 +2505,7 @@ export default function Book() {
             </div>
             
             {/* Video content */}
-            <div className="w-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center" style={{ height: expandedVideoSize.height - 40 }}>
+            <div className="w-full bg-gradient-to-br from-black via-neutral-900 to-black flex items-center justify-center" style={{ height: expandedVideoSize.height - 40 }}>
               {roomUrl ? (
                 isDemo ? (
                   <DemoVideoPlaceholder onLeave={() => { handleLeaveRoom(); setIsFullscreen(false); }} onWhiteboardOpen={() => setShowWhiteboardModal(true)} />
@@ -2869,7 +2869,7 @@ export default function Book() {
           <TooltipTrigger asChild>
             <button
               onClick={handleStartDemo}
-              className="px-4 py-2 rounded-lg bg-slate-800/90 hover:bg-slate-700 text-white/70 hover:text-white text-xs font-medium transition-all border border-slate-700 backdrop-blur-sm shadow-lg"
+              className="px-4 py-2 rounded-lg bg-foreground/90 hover:bg-foreground/80 text-background text-xs font-medium transition-all border border-foreground/30 backdrop-blur-sm shadow-lg"
             >
               Demo
             </button>
