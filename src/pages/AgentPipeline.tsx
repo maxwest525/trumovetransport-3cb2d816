@@ -5,8 +5,8 @@ import { PipelineReports } from "@/components/pipeline/PipelineReports";
 import { AddLeadDealForm } from "@/components/pipeline/AddLeadDealForm";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, ArrowLeft, BarChart3, Kanban } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Plus, BarChart3, Kanban } from "lucide-react";
+import AgentBreadcrumb from "@/components/agent/AgentBreadcrumb";
 
 export default function AgentPipeline() {
   const [addOpen, setAddOpen] = useState(false);
@@ -15,20 +15,11 @@ export default function AgentPipeline() {
   return (
     <SiteShell hideTrustStrip>
       <div className="px-4 py-6 max-w-[1600px] mx-auto">
+        <AgentBreadcrumb crumbs={[{ label: "Agent Tools", href: "/agent-login" }, { label: "Pipeline" }]} />
         <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2">
-              <Link to="/agent-login">
-                <Button variant="ghost" size="icon"><ArrowLeft className="h-4 w-4" /></Button>
-              </Link>
-              <Link to="/" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
-                ← Website
-              </Link>
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">Pipeline</h1>
-              <p className="text-sm text-muted-foreground">Manage deals & track performance</p>
-            </div>
+          <div>
+            <h1 className="text-2xl font-bold text-foreground">Pipeline</h1>
+            <p className="text-sm text-muted-foreground">Manage deals & track performance</p>
           </div>
           <Button onClick={() => setAddOpen(true)} className="gap-2">
             <Plus className="h-4 w-4" /> New Lead

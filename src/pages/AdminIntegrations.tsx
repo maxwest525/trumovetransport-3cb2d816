@@ -6,8 +6,9 @@
  import { Label } from "@/components/ui/label";
  import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
  import { Badge } from "@/components/ui/badge";
- import { ArrowLeft, Key, Eye, EyeOff, Check, ExternalLink } from "lucide-react";
- import { toast } from "sonner";
+  import { Key, Eye, EyeOff, Check, ExternalLink } from "lucide-react";
+  import { toast } from "sonner";
+  import AgentBreadcrumb from "@/components/agent/AgentBreadcrumb";
  
  interface IntegrationConfig {
    id: string;
@@ -136,17 +137,7 @@ const INTEGRATIONS: IntegrationConfig[] = [
    return (
      <SiteShell centered>
        <div className="max-w-4xl mx-auto py-8 px-4">
-          <div className="flex items-center gap-4 mb-6">
-            <Button
-              variant="ghost"
-              onClick={() => navigate("/agent-login")}
-              className="gap-2"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Back to Agent Tools
-            </Button>
-            <a href="/" className="text-xs text-muted-foreground hover:text-foreground transition-colors">← Website</a>
-          </div>
+          <AgentBreadcrumb crumbs={[{ label: "Agent Tools", href: "/agent-login" }, { label: "API Keys" }]} />
  
          <div className="mb-8">
            <h1 className="text-3xl font-bold text-foreground mb-2">Integration API Keys</h1>

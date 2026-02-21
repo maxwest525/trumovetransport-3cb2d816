@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import SiteShell from "@/components/layout/SiteShell";
-import { Briefcase, Sparkles, Trophy, Key, MessageSquare, LayoutGrid, Medal, Ticket, Kanban, ArrowLeft } from "lucide-react";
+import { Briefcase, Sparkles, Trophy, Key, MessageSquare, LayoutGrid, Medal, Ticket, Kanban } from "lucide-react";
+import AgentBreadcrumb from "@/components/agent/AgentBreadcrumb";
 import { AgentLoginModal } from "@/components/agent/AgentLoginModal";
 import PPCDemoModal from "@/components/demo/PPCDemoModal";
 import { OperationsCenterModal } from "@/components/agent/OperationsCenterModal";
@@ -138,17 +139,9 @@ export default function AgentLogin() {
         onOpenChange={setCommissionBoardOpen}
       />
       <div className="agent-dashboard-page">
+            <AgentBreadcrumb crumbs={[{ label: "Agent Tools" }]} />
             <div className="agent-dashboard-header">
               <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-3">
-                  <Link
-                    to="/"
-                    className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    <ArrowLeft className="w-4 h-4" />
-                    Back to Website
-                  </Link>
-                </div>
                 <h1 className="agent-dashboard-title">Agent Tools</h1>
                 {isLoggedIn && (
                   <Link

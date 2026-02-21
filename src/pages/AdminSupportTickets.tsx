@@ -6,7 +6,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-import { ArrowLeft, Search, RefreshCw, Mail, Clock, CheckCircle, AlertCircle, XCircle } from 'lucide-react';
+import { Search, RefreshCw, Mail, Clock, CheckCircle, AlertCircle, XCircle } from 'lucide-react';
+import AgentBreadcrumb from '@/components/agent/AgentBreadcrumb';
 
 interface SupportTicket {
   id: string;
@@ -87,12 +88,9 @@ export default function AdminSupportTickets() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <div className="border-b border-border bg-card">
-        <div className="mx-auto max-w-6xl px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" onClick={() => navigate('/agent-login')}>
-              <ArrowLeft className="w-5 h-5" />
-            </Button>
-            <a href="/" className="text-xs text-muted-foreground hover:text-foreground transition-colors">← Website</a>
+        <div className="mx-auto max-w-6xl px-4 py-4">
+          <AgentBreadcrumb crumbs={[{ label: "Agent Tools", href: "/agent-login" }, { label: "Support Tickets" }]} />
+          <div className="flex items-center justify-between">
             <div>
               <h1 className="text-xl font-bold text-foreground">Support Tickets</h1>
               <p className="text-sm text-muted-foreground">{tickets.length} total tickets</p>
