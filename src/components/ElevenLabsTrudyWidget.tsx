@@ -1,9 +1,10 @@
 import { useConversation } from '@elevenlabs/react';
 import { useState, useCallback } from 'react';
-import { Mic, MicOff, Phone, PhoneOff, Loader2 } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { Phone, PhoneOff, Loader2 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import trudyAvatar from '@/assets/trudy-avatar.png';
+
+const TRUDY_AGENT_ID = 'agent_0501khwa2t2pfj0s3echetmjhx4n';
 
 export default function ElevenLabsTrudyWidget() {
   const [isConnecting, setIsConnecting] = useState(false);
@@ -34,13 +35,8 @@ export default function ElevenLabsTrudyWidget() {
     try {
       await navigator.mediaDevices.getUserMedia({ audio: true });
 
-      const { data, error } = await supabase.functions.invoke('elevenlabs-conversation-token');
-      if (error || !data?.token) {
-        throw new Error(error?.message || 'No token received');
-      }
-
       await conversation.startSession({
-        conversationToken: data.token,
+        agentId: TRUDY_AGENT_ID,
         connectionType: 'webrtc',
       });
     } catch (err: any) {
