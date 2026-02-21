@@ -116,7 +116,7 @@ export default function AgentTopBar({ crumbs, onLogout }: AgentTopBarProps) {
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => toast({ title: "Profile settings coming soon" })}>
+              <DropdownMenuItem onClick={() => navigate("/agent/profile")}>
                 <Settings className="w-4 h-4 mr-2" />
                 Profile Settings
               </DropdownMenuItem>

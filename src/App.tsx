@@ -26,6 +26,7 @@ import ElevenLabsTrudyWidget from "./components/ElevenLabsTrudyWidget";
 import CustomerService from "./pages/CustomerService";
 import AdminSupportTickets from "./pages/AdminSupportTickets";
 import AgentPipeline from "./pages/AgentPipeline";
+import ProfileSettings from "./pages/ProfileSettings";
 
 const queryClient = new QueryClient();
 
@@ -57,6 +58,7 @@ const App = () => (
             <Route path="/customer-service" element={<CustomerService />} />
             <Route path="/admin/support-tickets" element={<AdminSupportTickets />} />
             <Route path="/agent/pipeline" element={<AgentPipeline />} />
+            <Route path="/agent/profile" element={<ProfileSettings />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
