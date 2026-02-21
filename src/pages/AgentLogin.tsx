@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import SiteShell from "@/components/layout/SiteShell";
-import { Briefcase, Sparkles, Trophy, Key, MessageSquare, LayoutGrid, Medal, Ticket } from "lucide-react";
+import { Briefcase, Sparkles, Trophy, Key, MessageSquare, LayoutGrid, Medal, Ticket, Kanban } from "lucide-react";
 import { AgentLoginModal } from "@/components/agent/AgentLoginModal";
 import PPCDemoModal from "@/components/demo/PPCDemoModal";
 import { OperationsCenterModal } from "@/components/agent/OperationsCenterModal";
@@ -11,6 +11,14 @@ import { CombinedWorkspaceModal } from "@/components/agent/CombinedWorkspaceModa
 import { AgentCommissionBoard } from "@/components/agent/AgentCommissionBoard";
 
 const AGENT_TOOLS = [
+  {
+    id: "pipeline" as const,
+    title: "Sales Pipeline",
+    description: "Kanban board for leads, deals & activities",
+    icon: Kanban,
+    external: true,
+    href: "/agent/pipeline",
+  },
   {
     id: "workspace" as const,
     title: "Agent Workspace",
