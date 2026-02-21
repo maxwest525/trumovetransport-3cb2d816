@@ -8,6 +8,7 @@ import { Deal, Activity, PipelineStage } from "./types";
 import { ActivityTimeline } from "./ActivityTimeline";
 import { AddActivityForm } from "./AddActivityForm";
 import { DealAIAssistant } from "./DealAIAssistant";
+import { DealEmailComposer } from "./DealEmailComposer";
 import { Phone, Mail, MapPin, Calendar, DollarSign } from "lucide-react";
 import { format, parseISO } from "date-fns";
 
@@ -115,6 +116,11 @@ export function DealDetailPanel({ deal, stages, open, onOpenChange, onStageChang
 
           {/* AI Assistant */}
           <DealAIAssistant deal={deal} activities={activities} />
+
+          <Separator />
+
+          {/* Email Composer */}
+          <DealEmailComposer deal={deal} activities={activities} />
 
           <Separator />
 

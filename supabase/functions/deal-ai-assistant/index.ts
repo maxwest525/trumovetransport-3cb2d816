@@ -9,16 +9,9 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { deal, lead, activities } = await req.json();
+    const { deal, lead, activities, action } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
-
-    const systemPrompt = `You are a sales assistant for a moving company CRM. Given a deal's context (customer info, move details, stage, activity history), provide:
-1. A brief assessment of the deal (1-2 sentences)
-2. 2-3 specific, actionable next steps
-3. If asked, draft a follow-up email
-
-Be concise, practical, and specific to the moving industry. Reference actual data from the deal context. Use markdown formatting.`;
 
     const dealContext = `
 **Deal Stage:** ${deal.stage}
@@ -40,6 +33,22 @@ Be concise, practical, and specific to the moving industry. Reference actual dat
 ${(activities || []).slice(0, 5).map((a: any) => `- [${a.type}] ${a.subject || "No subject"} (${a.created_at})`).join("\n") || "None"}
 `;
 
+    let systemPrompt: string;
+    let userPrompt: string;
+
+    if (action === "draft_email") {
+      systemPrompt = `You are a professional moving company sales agent. Draft a follow-up email for a customer based on their deal context. Write ONLY the email body text (no subject line, no "Subject:" prefix). Be warm, professional, and specific to their move details. Keep it under 200 words. Do not use markdown — write plain text suitable for an email.`;
+      userPrompt = `Draft a follow-up email for this customer:\n${dealContext}`;
+    } else {
+      systemPrompt = `You are a sales assistant for a moving company CRM. Given a deal's context (customer info, move details, stage, activity history), provide:
+1. A brief assessment of the deal (1-2 sentences)
+2. 2-3 specific, actionable next steps
+3. If asked, draft a follow-up email
+
+Be concise, practical, and specific to the moving industry. Reference actual data from the deal context. Use markdown formatting.`;
+      userPrompt = `Analyze this deal and suggest next steps:\n${dealContext}`;
+    }
+
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -50,7 +59,7 @@ ${(activities || []).slice(0, 5).map((a: any) => `- [${a.type}] ${a.subject || "
         model: "google/gemini-3-flash-preview",
         messages: [
           { role: "system", content: systemPrompt },
-          { role: "user", content: `Analyze this deal and suggest next steps:\n${dealContext}` },
+          { role: "user", content: userPrompt },
         ],
         stream: true,
       }),
