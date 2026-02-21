@@ -72,30 +72,36 @@ export default function ElevenLabsTrudyWidget() {
         </div>
       )}
 
-      {/* Main button */}
-      <button
-        onClick={isConnected ? stopConversation : startConversation}
-        disabled={isConnecting}
-        className={`group relative flex h-14 w-14 items-center justify-center rounded-full shadow-xl transition-all duration-200 hover:scale-105 active:scale-95 ${
-          isConnected
-            ? 'bg-destructive text-destructive-foreground'
-            : 'bg-primary text-primary-foreground'
-        }`}
-        aria-label={isConnected ? 'End call with Trudy' : 'Talk to Trudy'}
-      >
-        {isConnecting ? (
-          <Loader2 className="h-6 w-6 animate-spin" />
-        ) : isConnected ? (
-          <PhoneOff className="h-6 w-6" />
-        ) : (
-          <Phone className="h-6 w-6" />
+      {/* Main button with label */}
+      <div className="flex items-center gap-2">
+        {!isConnected && !isConnecting && (
+          <span className="rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground shadow-lg animate-in fade-in slide-in-from-right-2">
+            Talk to Trudy
+          </span>
         )}
+        <button
+          onClick={isConnected ? stopConversation : startConversation}
+          disabled={isConnecting}
+          className={`group relative flex h-14 w-14 items-center justify-center rounded-full shadow-xl transition-all duration-200 hover:scale-105 active:scale-95 ${
+            isConnected
+              ? 'bg-destructive text-destructive-foreground'
+              : 'bg-primary text-primary-foreground'
+          }`}
+          aria-label={isConnected ? 'End call with Trudy' : 'Talk to Trudy'}
+        >
+          {isConnecting ? (
+            <Loader2 className="h-6 w-6 animate-spin" />
+          ) : isConnected ? (
+            <PhoneOff className="h-6 w-6" />
+          ) : (
+            <Phone className="h-6 w-6" />
+          )}
 
-        {/* Pulse ring when connected */}
-        {isConnected && (
-          <span className="absolute inset-0 rounded-full border-2 border-destructive animate-ping opacity-30" />
-        )}
-      </button>
+          {isConnected && (
+            <span className="absolute inset-0 rounded-full border-2 border-destructive animate-ping opacity-30" />
+          )}
+        </button>
+      </div>
     </div>
   );
 }
