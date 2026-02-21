@@ -422,110 +422,62 @@ export default function ScanRoom() {
                 </div>
               </div>
 
-              {/* Center: Scanner Preview */}
-              <div className="tru-scan-video-container">
-                <img 
-                  src={previewImage} 
-                  alt="AI Room Scanner" 
-                  className="tru-scan-video-preview"
-                />
-                
-                {/* Always show scanning overlay with grid pattern */}
-                <div className="tru-scan-video-overlay">
-                  <div className="tru-scan-grid-pattern" />
-                  {isScanning && <div className="tru-scan-video-scanline" />}
+              {/* Center: Demo & Actions */}
+              <div className="flex flex-col items-center justify-center gap-6 py-8">
+                <div className="flex flex-col items-center gap-3 text-center">
+                  <div className="w-16 h-16 rounded-2xl bg-muted/50 border border-border flex items-center justify-center">
+                    <Scan className="w-8 h-8 text-muted-foreground" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-foreground">AI Room Scanner</h3>
+                  <p className="text-sm text-muted-foreground max-w-[240px]">
+                    Upload your room photos and our AI will detect every item automatically.
+                  </p>
                 </div>
 
-                {/* Live Detection Panel - Right Side Overlay */}
-                <div className="tru-scan-live-detection">
-                  <div className="tru-scan-live-header">
-                    <Sparkles className="w-3.5 h-3.5" />
-                    <span>Live Detection</span>
-                    {!isScanning && detectedItems.length === 0 && (
-                      <span className="tru-scan-live-sample-badge">Sample</span>
-                    )}
-                  </div>
-                  <div className="tru-scan-live-items">
-                    {(isScanning || detectedItems.length > 0 ? detectedItems : SAMPLE_PREVIEW_ITEMS).map((item, i) => (
-                      <div 
-                        key={`${item.id}-${i}`} 
-                        className={`tru-scan-live-item ${!isScanning && detectedItems.length === 0 ? 'tru-scan-live-item-sample' : ''}`}
-                        style={{ animationDelay: `${i * 0.1}s` }}
-                      >
-                        <img src={item.image} alt={item.name} />
-                        <div className="tru-scan-live-item-info">
-                          <span className="tru-scan-live-item-name">{item.name}</span>
-                          <span className="tru-scan-live-item-weight">{item.weight} lbs</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="tru-scan-live-totals">
-                    {isScanning || detectedItems.length > 0 ? (
-                      <>
-                        <span>{detectedItems.length} items</span>
-                        <span>•</span>
-                        <span>{totalWeight.toLocaleString()} lbs</span>
-                      </>
-                    ) : (
-                      <span className="tru-scan-live-totals-hint">Start scan to detect your items</span>
-                    )}
-                  </div>
+                <div className="flex flex-col gap-3 w-full max-w-[220px]">
+                  <button
+                    onClick={handleStartScanClick}
+                    disabled={isScanning}
+                    className="flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold bg-foreground text-background hover:opacity-90 transition-opacity"
+                  >
+                    <Sparkles className="w-4 h-4" />
+                    {isScanning ? "Scanning..." : "Watch Demo"}
+                  </button>
+
+                  <label
+                    htmlFor="photo-upload"
+                    className="flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold border border-border text-foreground hover:bg-muted/50 transition-colors cursor-pointer"
+                  >
+                    <Upload className="w-4 h-4" />
+                    Upload Photos
+                  </label>
                 </div>
-                
-                {/* Status Pills Bar - Left Side */}
-                <div className="tru-scan-status-pills tru-scan-status-pills-left">
-                  <div className="tru-scan-status-pill">
-                    <Package className="w-3.5 h-3.5" />
-                    <span>{detectedItems.length} items</span>
-                  </div>
-                  <div className="tru-scan-status-divider" />
-                  <div className="tru-scan-status-pill">
-                    <Ruler className="w-3.5 h-3.5" />
+
+                {/* Stats - only show when items detected */}
+                {detectedItems.length > 0 && (
+                  <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                    <span className="flex items-center gap-1"><Package className="w-3.5 h-3.5" /> {detectedItems.length} items</span>
+                    <span>•</span>
                     <span>{totalWeight.toLocaleString()} lbs</span>
-                  </div>
-                  <div className="tru-scan-status-divider" />
-                  <div className="tru-scan-status-pill">
-                    <Box className="w-3.5 h-3.5" />
+                    <span>•</span>
                     <span>{totalCuFt} cu ft</span>
                   </div>
-                </div>
+                )}
 
                 {/* Progress Bar - Only show during scanning */}
                 {isScanning && (
-                  <div className="tru-scan-progress-container">
+                  <div className="w-full max-w-[220px]">
                     <div className="tru-scan-progress-bar">
                       <div 
                         className="tru-scan-progress-fill"
                         style={{ width: `${(detectedItems.length / DEMO_ITEMS.length) * 100}%` }}
                       />
                     </div>
-                    <span className="tru-scan-progress-text">
+                    <span className="text-[11px] text-muted-foreground mt-1 block text-center">
                       {Math.round((detectedItems.length / DEMO_ITEMS.length) * 100)}% Complete
                     </span>
                   </div>
                 )}
-
-                {/* Scan Control Buttons - Bottom Right */}
-                <div className="tru-scan-control-pills">
-                  {isScanning ? (
-                    <button 
-                      onClick={() => setIsScanning(false)}
-                      className="tru-scan-stop-pill"
-                    >
-                      <Square className="w-3.5 h-3.5" />
-                      <span>Stop Scan</span>
-                    </button>
-                  ) : (
-                    <button 
-                      onClick={startDemo}
-                      className="tru-scan-begin-pill"
-                    >
-                      <Sparkles className="w-3.5 h-3.5" />
-                      <span>Begin AI Inventory Scan</span>
-                    </button>
-                  )}
-                </div>
               </div>
 
               {/* Right: Photo Library - Compact */}
