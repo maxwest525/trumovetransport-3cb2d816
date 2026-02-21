@@ -1,17 +1,15 @@
-import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { 
   BarChart3, Phone, 
-  Users, Mail, FileText, 
+  Users, FileText, 
   PhoneIncoming, PhoneOutgoing, Voicemail,
-  DollarSign, Truck, MapPin, Package, 
-  Plus, Send, Eye, PenLine, Headphones,
-  MessageSquare
+  PenLine, ArrowRight
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useNavigate } from "react-router-dom";
 
 interface CombinedWorkspaceModalProps {
   open: boolean;
@@ -40,9 +38,11 @@ const DOCS = [
 const callIcon = (t: string) => t === 'incoming' ? PhoneIncoming : t === 'outgoing' ? PhoneOutgoing : Voicemail;
 
 export function CombinedWorkspaceModal({ open, onOpenChange }: CombinedWorkspaceModalProps) {
+  const navigate = useNavigate();
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl max-h-[85vh] overflow-hidden flex flex-col">
+      <DialogContent className="max-w-lg max-h-[80vh] overflow-hidden flex flex-col">
         <DialogHeader className="pb-2">
           <DialogTitle className="text-lg font-semibold">Workspace</DialogTitle>
         </DialogHeader>
@@ -55,30 +55,28 @@ export function CombinedWorkspaceModal({ open, onOpenChange }: CombinedWorkspace
           </TabsList>
 
           <div className="flex-1 overflow-y-auto mt-3">
-            {/* CRM Tab */}
-            <TabsContent value="crm" className="mt-0 space-y-2">
-              <div className="grid grid-cols-4 gap-2">
-                {[{ l: "Open Jobs", v: "47" }, { l: "In Transit", v: "12" }, { l: "Pending", v: "$142K" }, { l: "This Month", v: "$89K" }].map(s => (
-                  <div key={s.l} className="text-center p-2 rounded-lg bg-muted/50 border border-border">
-                    <div className="text-lg font-bold text-foreground">{s.v}</div>
-                    <div className="text-[10px] text-muted-foreground">{s.l}</div>
-                  </div>
-                ))}
-              </div>
+            {/* CRM Tab — simple list of recent leads */}
+            <TabsContent value="crm" className="mt-0 space-y-3">
               <div className="space-y-1">
                 {LEADS.map((lead, i) => (
-                  <div key={i} className="flex items-center gap-3 p-2.5 rounded-lg border border-border hover:bg-muted/30 transition-colors">
-                    <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                      <Users className="w-3.5 h-3.5 text-primary" />
-                    </div>
+                  <div key={i} className="flex items-center gap-3 p-3 rounded-lg border border-border hover:bg-muted/30 transition-colors cursor-pointer">
                     <div className="flex-1 min-w-0">
                       <div className="text-sm font-medium text-foreground">{lead.name}</div>
-                      <div className="text-[11px] text-muted-foreground">{lead.move}</div>
+                      <div className="text-xs text-muted-foreground">{lead.move}</div>
                     </div>
-                    <Badge variant="secondary" className="text-[10px]">{lead.value}</Badge>
+                    <span className="text-sm font-semibold text-foreground">{lead.value}</span>
+                    <Badge variant={lead.status === "Hot" ? "destructive" : "secondary"} className="text-[10px]">{lead.status}</Badge>
                   </div>
                 ))}
               </div>
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full gap-1.5 text-xs"
+                onClick={() => { onOpenChange(false); navigate("/agent/pipeline"); }}
+              >
+                Open Full Pipeline <ArrowRight className="h-3.5 w-3.5" />
+              </Button>
             </TabsContent>
 
             {/* E-Sign Tab */}

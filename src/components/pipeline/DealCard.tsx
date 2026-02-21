@@ -38,39 +38,25 @@ export function DealCard({ deal, onClick }: DealCardProps) {
       style={style}
       {...attributes}
       {...listeners}
-      className={`p-3 cursor-grab active:cursor-grabbing border-l-4 ${getUrgencyColor(daysInStage)} hover:shadow-md transition-shadow`}
+      className={`p-2.5 cursor-grab active:cursor-grabbing border-l-[3px] ${getUrgencyColor(daysInStage)} hover:bg-accent/50 transition-colors`}
       onClick={(e) => {
         e.stopPropagation();
         onClick(deal);
       }}
     >
-      <div className="flex items-start justify-between gap-2 mb-2">
-        <h4 className="font-semibold text-sm text-foreground truncate">
+      <div className="flex items-center justify-between gap-2">
+        <h4 className="font-medium text-sm text-foreground truncate">
           {lead ? `${lead.first_name} ${lead.last_name}` : "No lead"}
         </h4>
-        <Badge variant="outline" className="text-[10px] shrink-0">
-          {daysInStage}d
-        </Badge>
+        {deal.deal_value ? (
+          <span className="text-xs font-semibold text-foreground shrink-0">${deal.deal_value.toLocaleString()}</span>
+        ) : null}
       </div>
-
-      {deal.deal_value ? (
-        <div className="flex items-center gap-1 text-xs text-muted-foreground mb-1">
-          <DollarSign className="h-3 w-3" />
-          <span>${deal.deal_value.toLocaleString()}</span>
-        </div>
-      ) : null}
-
-      {lead?.move_date && (
-        <div className="flex items-center gap-1 text-xs text-muted-foreground mb-1">
-          <Calendar className="h-3 w-3" />
-          <span>{format(parseISO(lead.move_date), "MMM d, yyyy")}</span>
-        </div>
-      )}
-
-      {lead?.origin_address && (
-        <div className="flex items-center gap-1 text-xs text-muted-foreground truncate">
-          <MapPin className="h-3 w-3 shrink-0" />
-          <span className="truncate">{lead.origin_address}</span>
+      {(lead?.move_date || lead?.origin_address) && (
+        <div className="flex items-center gap-2 mt-1 text-[11px] text-muted-foreground truncate">
+          {lead?.move_date && <span>{format(parseISO(lead.move_date), "MMM d")}</span>}
+          {lead?.move_date && lead?.origin_address && <span>·</span>}
+          {lead?.origin_address && <span className="truncate">{lead.origin_address}</span>}
         </div>
       )}
     </Card>

@@ -16,13 +16,10 @@ export default function AgentPipeline() {
     <SiteShell hideTrustStrip>
       <AgentTopBar crumbs={[{ label: "Agent Tools", href: "/agent-login" }, { label: "Pipeline" }]} />
       <div className="px-4 py-6 max-w-[1600px] mx-auto">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">Pipeline</h1>
-            <p className="text-sm text-muted-foreground">Manage deals & track performance</p>
-          </div>
-          <Button onClick={() => setAddOpen(true)} className="gap-2">
-            <Plus className="h-4 w-4" /> New Lead
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-xl font-bold text-foreground">Pipeline</h1>
+          <Button onClick={() => setAddOpen(true)} size="sm" className="gap-1.5">
+            <Plus className="h-3.5 w-3.5" /> New Lead
           </Button>
         </div>
 

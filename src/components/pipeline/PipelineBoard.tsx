@@ -27,25 +27,22 @@ function StageColumn({ stage, deals, onDealClick }: { stage: PipelineStage; deal
   return (
     <div
       ref={setNodeRef}
-      className={`flex flex-col min-w-[260px] max-w-[280px] rounded-xl border bg-muted/30 transition-colors ${isOver ? "ring-2 ring-primary/40" : ""}`}
+      className={`flex flex-col min-w-[240px] max-w-[260px] rounded-lg border transition-colors ${isOver ? "ring-2 ring-primary/40 bg-primary/5" : "bg-muted/20"}`}
     >
-      <div className="flex items-center justify-between px-3 py-2 border-b">
-        <div className="flex items-center gap-2">
-          <div className="w-2.5 h-2.5 rounded-full" style={{ background: stage.color }} />
-          <span className="text-xs font-semibold text-foreground">{stage.name}</span>
-        </div>
-        <Badge variant="secondary" className="text-[10px] h-5">{deals.length}</Badge>
+      <div className="flex items-center justify-between px-3 py-2">
+        <span className="text-xs font-semibold text-foreground">{stage.name}</span>
+        <span className="text-[10px] text-muted-foreground font-medium">{deals.length}</span>
       </div>
-      <ScrollArea className="flex-1 p-2 max-h-[calc(100vh-220px)]">
+      <ScrollArea className="flex-1 px-2 pb-2 max-h-[calc(100vh-220px)]">
         <SortableContext items={deals.map((d) => d.id)} strategy={verticalListSortingStrategy}>
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             {deals.map((deal) => (
               <DealCard key={deal.id} deal={deal} onClick={onDealClick} />
             ))}
           </div>
         </SortableContext>
         {deals.length === 0 && (
-          <p className="text-xs text-muted-foreground text-center py-6">Drop deals here</p>
+          <p className="text-[11px] text-muted-foreground text-center py-8">No deals</p>
         )}
       </ScrollArea>
     </div>
