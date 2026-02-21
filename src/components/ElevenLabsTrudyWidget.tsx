@@ -1,6 +1,6 @@
 import { useConversation } from '@elevenlabs/react';
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { Phone, PhoneOff, Loader2, X, Mic } from 'lucide-react';
+import { Phone, PhoneOff, Loader2, X, Mic, Copy, Download, Check } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import trudyAvatar from '@/assets/trudy-avatar.png';
 
@@ -16,17 +16,23 @@ export default function ElevenLabsTrudyWidget() {
   const [isConnecting, setIsConnecting] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [showTranscript, setShowTranscript] = useState(false);
+  const [showPostCall, setShowPostCall] = useState(false);
+  const [savedTranscript, setSavedTranscript] = useState<TranscriptEntry[]>([]);
+  const [copied, setCopied] = useState(false);
   const [transcript, setTranscript] = useState<TranscriptEntry[]>([]);
   const [partialUser, setPartialUser] = useState('');
   const [partialAgent, setPartialAgent] = useState('');
   const idRef = useRef(0);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const postCallScrollRef = useRef<HTMLDivElement>(null);
+  const transcriptRef = useRef<TranscriptEntry[]>([]);
 
   const conversation = useConversation({
     onConnect: () => {
       console.log('Connected to Trudy');
       setIsExpanded(true);
       setShowTranscript(true);
+      setShowPostCall(false);
       setTranscript([]);
     },
     onDisconnect: () => {
@@ -34,6 +40,13 @@ export default function ElevenLabsTrudyWidget() {
       setIsExpanded(false);
       setPartialUser('');
       setPartialAgent('');
+      // Show post-call panel if there's transcript content
+      const current = transcriptRef.current;
+      if (current.length > 0) {
+        setSavedTranscript([...current]);
+        setShowPostCall(true);
+        setShowTranscript(false);
+      }
     },
     onMessage: (message: any) => {
       if (message.type === 'user_transcript') {
@@ -73,6 +86,11 @@ export default function ElevenLabsTrudyWidget() {
     },
   });
 
+  // Keep ref in sync with transcript state
+  useEffect(() => {
+    transcriptRef.current = transcript;
+  }, [transcript]);
+
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
   }, [transcript, partialUser, partialAgent]);
@@ -104,11 +122,88 @@ export default function ElevenLabsTrudyWidget() {
     await conversation.endSession();
   }, [conversation]);
 
+  const formatTranscriptText = useCallback((entries: TranscriptEntry[]) => {
+    return entries.map(e => `${e.speaker === 'trudy' ? 'Trudy' : 'You'}: ${e.text}`).join('\n');
+  }, []);
+
+  const handleCopy = useCallback(() => {
+    navigator.clipboard.writeText(formatTranscriptText(savedTranscript));
+    setCopied(true);
+    toast({ title: 'Copied!', description: 'Transcript copied to clipboard.' });
+    setTimeout(() => setCopied(false), 2000);
+  }, [savedTranscript, formatTranscriptText]);
+
+  const handleDownload = useCallback(() => {
+    const text = formatTranscriptText(savedTranscript);
+    const blob = new Blob([text], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `trudy-transcript-${new Date().toISOString().slice(0, 10)}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast({ title: 'Downloaded!', description: 'Transcript saved as text file.' });
+  }, [savedTranscript, formatTranscriptText]);
+
   const isConnected = conversation.status === 'connected';
 
   return (
     <div className="fixed bottom-6 right-6 z-[9999] flex flex-col items-end gap-3">
-      {/* Transcript panel */}
+      {/* Post-call transcript panel */}
+      {showPostCall && !isConnected && savedTranscript.length > 0 && (
+        <div className="w-80 rounded-2xl border border-border bg-card/95 backdrop-blur-xl shadow-2xl animate-in fade-in slide-in-from-bottom-4 overflow-hidden">
+          <div className="flex items-center gap-3 border-b border-border px-4 py-3 bg-muted/30">
+            <img src={trudyAvatar} alt="Trudy" className="h-7 w-7 rounded-full object-cover ring-2 ring-border" />
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-foreground leading-tight">Call Ended</p>
+              <p className="text-[11px] text-muted-foreground leading-tight">
+                {savedTranscript.length} message{savedTranscript.length !== 1 ? 's' : ''}
+              </p>
+            </div>
+            <button
+              onClick={() => setShowPostCall(false)}
+              className="flex h-6 w-6 items-center justify-center rounded-full text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+              aria-label="Close transcript"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          </div>
+
+          <div ref={postCallScrollRef} className="max-h-48 overflow-y-auto px-4 py-3 space-y-2">
+            {savedTranscript.map((entry) => (
+              <div key={entry.id} className={`flex ${entry.speaker === 'user' ? 'justify-end' : 'justify-start'}`}>
+                {entry.speaker === 'trudy' && (
+                  <img src={trudyAvatar} alt="" className="h-5 w-5 rounded-full object-cover mr-1.5 mt-1 flex-shrink-0" />
+                )}
+                <div className={`max-w-[80%] rounded-2xl px-3 py-2 text-xs leading-relaxed ${
+                  entry.speaker === 'user'
+                    ? 'bg-foreground text-background rounded-br-md'
+                    : 'bg-muted text-foreground rounded-bl-md'
+                }`}>
+                  {entry.text}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex gap-2 border-t border-border px-4 py-3">
+            <button
+              onClick={handleCopy}
+              className="flex-1 flex items-center justify-center gap-1.5 rounded-lg bg-muted hover:bg-muted/80 px-3 py-2 text-xs font-medium text-foreground transition-colors"
+            >
+              {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+              {copied ? 'Copied' : 'Copy'}
+            </button>
+            <button
+              onClick={handleDownload}
+              className="flex-1 flex items-center justify-center gap-1.5 rounded-lg bg-foreground text-background hover:bg-foreground/90 px-3 py-2 text-xs font-medium transition-colors"
+            >
+              <Download className="h-3.5 w-3.5" />
+              Download
+            </button>
+          </div>
+        </div>
+      )}
       {isConnected && showTranscript && (
         <div className="w-80 rounded-2xl border border-border bg-card/95 backdrop-blur-xl shadow-2xl animate-in fade-in slide-in-from-bottom-4 overflow-hidden">
           {/* Header bar */}
