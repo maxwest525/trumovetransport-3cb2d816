@@ -13952,8 +13952,8 @@
 }
 
 .mega-method-pill:hover {
-  background: hsl(var(--primary) / 0.1);
-  border-color: hsl(var(--primary) / 0.3);
+  background: hsl(var(--tm-ink) / 0.08);
+  border-color: hsl(var(--tm-ink) / 0.2);
 }
 
 .mega-method-pill svg {
@@ -13968,7 +13968,7 @@
 
 .mega-method-pill:hover svg {
   color: hsl(var(--tm-ink));
-  filter: drop-shadow(0 0 6px hsl(var(--primary) / 0.6)) drop-shadow(0 0 10px hsl(var(--primary) / 0.3));
+  filter: drop-shadow(0 0 4px hsl(var(--tm-ink) / 0.3));
 }
 
 .dark .mega-method-pill:hover svg {
@@ -14034,7 +14034,7 @@
 }
 
 .dark .mega-method-pill:hover {
-  background: hsl(var(--primary) / 0.15);
+  background: hsl(0 0% 100% / 0.1);
 }
 
 /* =============================================
