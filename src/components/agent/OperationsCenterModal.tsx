@@ -14,32 +14,32 @@ interface OperationsCenterModalProps {
 export function OperationsCenterModal({ open, onOpenChange }: OperationsCenterModalProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-6xl max-h-[90vh] overflow-hidden flex flex-col">
+      <DialogContent className="max-w-5xl max-h-[85vh] overflow-hidden flex flex-col">
         <DialogHeader className="pb-2">
-          <DialogTitle className="text-xl font-semibold">Operations Center</DialogTitle>
+          <DialogTitle className="text-lg font-semibold">Operations</DialogTitle>
         </DialogHeader>
         
         <Tabs defaultValue="carrier" className="flex-1 flex flex-col overflow-hidden">
-          <TabsList className="grid w-full grid-cols-4 mb-4">
-            <TabsTrigger value="carrier" className="gap-2">
-              <Truck className="h-4 w-4" />
-              Carrier Dashboard
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="carrier" className="gap-1.5 text-xs">
+              <Truck className="h-3.5 w-3.5" />
+              Carriers
             </TabsTrigger>
-            <TabsTrigger value="customer" className="gap-2">
-              <Users className="h-4 w-4" />
-              Customer Lookup
+            <TabsTrigger value="customer" className="gap-1.5 text-xs">
+              <Users className="h-3.5 w-3.5" />
+              Customers
             </TabsTrigger>
-            <TabsTrigger value="messaging" className="gap-2">
-              <Mail className="h-4 w-4" />
-              Client Messaging
+            <TabsTrigger value="messaging" className="gap-1.5 text-xs">
+              <Mail className="h-3.5 w-3.5" />
+              Messages
             </TabsTrigger>
-            <TabsTrigger value="coaching" className="gap-2">
-              <Headphones className="h-4 w-4" />
-              Live Coaching
+            <TabsTrigger value="coaching" className="gap-1.5 text-xs">
+              <Headphones className="h-3.5 w-3.5" />
+              Coaching
             </TabsTrigger>
           </TabsList>
           
-          <div className="flex-1 overflow-y-auto">
+          <div className="flex-1 overflow-y-auto mt-3">
             <TabsContent value="carrier" className="mt-0 h-full">
               <CarrierDashboard />
             </TabsContent>
