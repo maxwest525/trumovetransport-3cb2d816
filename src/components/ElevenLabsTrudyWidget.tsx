@@ -169,27 +169,27 @@ export default function ElevenLabsTrudyWidget() {
         </button>
       )}
 
-      {/* FAB row */}
-      <div className="flex items-center gap-2">
-        {!isConnected && !isConnecting && !showPostCall && (
-          <button onClick={startConversation} className="flex items-center gap-1.5 rounded-full border border-border bg-card/95 backdrop-blur-xl pl-1.5 pr-3 py-1 shadow-md hover:bg-accent transition-colors">
-            <img src={trudyAvatar} alt="" className="h-6 w-6 rounded-full object-cover" />
-            <span className="text-xs font-medium text-foreground">Talk to Trudy</span>
-          </button>
+      {/* FAB */}
+      <button
+        onClick={isConnected ? stopConversation : startConversation}
+        disabled={isConnecting}
+        className={`flex items-center gap-2 rounded-full shadow-lg transition-all hover:scale-105 active:scale-95 ${
+          isConnected
+            ? 'bg-destructive text-destructive-foreground px-4 py-2.5'
+            : isConnecting
+            ? 'bg-muted text-muted-foreground px-4 py-2.5'
+            : 'bg-foreground text-background pl-2.5 pr-4 py-2'
+        }`}
+        aria-label={isConnected ? 'End call' : 'Talk to Trudy'}
+      >
+        {isConnecting ? (
+          <><Loader2 className="h-4 w-4 animate-spin" /><span className="text-xs font-medium">Connecting…</span></>
+        ) : isConnected ? (
+          <><PhoneOff className="h-4 w-4" /><span className="text-xs font-medium">End Call</span></>
+        ) : (
+          <><Mic className="h-4 w-4" /><span className="text-xs font-medium">Talk to Trudy</span></>
         )}
-
-        <button
-          onClick={isConnected ? stopConversation : startConversation}
-          disabled={isConnecting}
-          className={`relative flex h-11 w-11 items-center justify-center rounded-full shadow-lg transition-all hover:scale-105 active:scale-95 ${
-            isConnected ? 'bg-destructive text-destructive-foreground' : isConnecting ? 'bg-muted text-muted-foreground' : 'bg-foreground text-background'
-          }`}
-          aria-label={isConnected ? 'End call' : 'Talk to Trudy'}
-        >
-          {isConnecting ? <Loader2 className="h-5 w-5 animate-spin" /> : isConnected ? <PhoneOff className="h-4 w-4" /> : <Mic className="h-5 w-5" />}
-          {isConnected && <span className="absolute inset-0 rounded-full border-2 border-destructive/30 animate-ping" />}
-        </button>
-      </div>
+      </button>
     </div>
   );
 }
