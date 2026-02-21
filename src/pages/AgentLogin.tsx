@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import SiteShell from "@/components/layout/SiteShell";
 import { Briefcase, Sparkles, Trophy, Key, MessageSquare, LayoutGrid, Medal, Ticket, Kanban } from "lucide-react";
-import AgentBreadcrumb from "@/components/agent/AgentBreadcrumb";
+import AgentTopBar from "@/components/agent/AgentTopBar";
 import { AgentLoginModal } from "@/components/agent/AgentLoginModal";
 import PPCDemoModal from "@/components/demo/PPCDemoModal";
 import { OperationsCenterModal } from "@/components/agent/OperationsCenterModal";
@@ -108,6 +108,13 @@ export default function AgentLogin() {
 
   return (
     <SiteShell centered>
+      {isLoggedIn && (
+        <AgentTopBar
+          crumbs={[{ label: "Agent Tools" }]}
+          agentName="Demo Agent"
+          onLogout={() => { setIsLoggedIn(false); setShowLoginModal(true); }}
+        />
+      )}
       <AgentLoginModal 
         open={showLoginModal && !isLoggedIn} 
         onClose={() => setShowLoginModal(false)}
@@ -139,7 +146,6 @@ export default function AgentLogin() {
         onOpenChange={setCommissionBoardOpen}
       />
       <div className="agent-dashboard-page">
-            <AgentBreadcrumb crumbs={[{ label: "Agent Tools" }]} />
             <div className="agent-dashboard-header">
               <div className="flex items-center justify-between mb-2">
                 <h1 className="agent-dashboard-title">Agent Tools</h1>

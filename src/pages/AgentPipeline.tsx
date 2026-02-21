@@ -6,7 +6,7 @@ import { AddLeadDealForm } from "@/components/pipeline/AddLeadDealForm";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plus, BarChart3, Kanban } from "lucide-react";
-import AgentBreadcrumb from "@/components/agent/AgentBreadcrumb";
+import AgentTopBar from "@/components/agent/AgentTopBar";
 
 export default function AgentPipeline() {
   const [addOpen, setAddOpen] = useState(false);
@@ -14,8 +14,8 @@ export default function AgentPipeline() {
 
   return (
     <SiteShell hideTrustStrip>
+      <AgentTopBar crumbs={[{ label: "Agent Tools", href: "/agent-login" }, { label: "Pipeline" }]} agentName="Demo Agent" />
       <div className="px-4 py-6 max-w-[1600px] mx-auto">
-        <AgentBreadcrumb crumbs={[{ label: "Agent Tools", href: "/agent-login" }, { label: "Pipeline" }]} />
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-2xl font-bold text-foreground">Pipeline</h1>

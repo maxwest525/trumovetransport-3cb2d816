@@ -8,7 +8,7 @@
  import { Badge } from "@/components/ui/badge";
   import { Key, Eye, EyeOff, Check, ExternalLink } from "lucide-react";
   import { toast } from "sonner";
-  import AgentBreadcrumb from "@/components/agent/AgentBreadcrumb";
+  import AgentTopBar from "@/components/agent/AgentTopBar";
  
  interface IntegrationConfig {
    id: string;
@@ -135,9 +135,9 @@ const INTEGRATIONS: IntegrationConfig[] = [
    };
  
    return (
-     <SiteShell centered>
-       <div className="max-w-4xl mx-auto py-8 px-4">
-          <AgentBreadcrumb crumbs={[{ label: "Agent Tools", href: "/agent-login" }, { label: "API Keys" }]} />
+      <SiteShell centered>
+        <AgentTopBar crumbs={[{ label: "Agent Tools", href: "/agent-login" }, { label: "API Keys" }]} agentName="Demo Agent" />
+        <div className="max-w-4xl mx-auto py-8 px-4">
  
          <div className="mb-8">
            <h1 className="text-3xl font-bold text-foreground mb-2">Integration API Keys</h1>

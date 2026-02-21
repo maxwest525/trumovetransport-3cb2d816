@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Search, RefreshCw, Mail, Clock, CheckCircle, AlertCircle, XCircle } from 'lucide-react';
-import AgentBreadcrumb from '@/components/agent/AgentBreadcrumb';
+import AgentTopBar from '@/components/agent/AgentTopBar';
 
 interface SupportTicket {
   id: string;
@@ -86,10 +86,10 @@ export default function AdminSupportTickets() {
 
   return (
     <div className="min-h-screen bg-background">
+      <AgentTopBar crumbs={[{ label: "Agent Tools", href: "/agent-login" }, { label: "Support Tickets" }]} agentName="Demo Agent" />
       {/* Header */}
       <div className="border-b border-border bg-card">
         <div className="mx-auto max-w-6xl px-4 py-4">
-          <AgentBreadcrumb crumbs={[{ label: "Agent Tools", href: "/agent-login" }, { label: "Support Tickets" }]} />
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-xl font-bold text-foreground">Support Tickets</h1>
