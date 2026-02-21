@@ -150,7 +150,7 @@ const NAV: NavItem[] = [
     }
   },
   { 
-    href: "/online-estimate", 
+    href: "/scan-room", 
     label: "AI Move Estimator",
     hasDropdown: true,
     dropdownContent: {
