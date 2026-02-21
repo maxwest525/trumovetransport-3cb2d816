@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import SiteShell from "@/components/layout/SiteShell";
-import { Briefcase, Sparkles, Trophy, Key, MessageSquare, LayoutGrid, Medal, Ticket, Kanban } from "lucide-react";
+import { Briefcase, Sparkles, Trophy, Key, MessageSquare, LayoutGrid, Medal, Ticket, Kanban, ArrowUpRight } from "lucide-react";
 import AgentTopBar from "@/components/agent/AgentTopBar";
 import { AgentLoginModal } from "@/components/agent/AgentLoginModal";
 import PPCDemoModal from "@/components/demo/PPCDemoModal";
@@ -15,61 +15,69 @@ const AGENT_TOOLS = [
   {
     id: "pipeline" as const,
     title: "Sales Pipeline",
-    description: "Kanban board for leads, deals & activities",
+    description: "Leads, deals & activities",
     icon: Kanban,
     external: true,
     href: "/agent/pipeline",
+    accent: "hsl(142 71% 45%)",
   },
   {
     id: "workspace" as const,
-    title: "Agent Workspace",
-    description: "CRM, Dialer & E-Sign in one split-panel view",
+    title: "Workspace",
+    description: "CRM, Dialer & E-Sign",
     icon: LayoutGrid,
     external: false,
+    accent: "hsl(221 83% 53%)",
   },
   {
     id: "commission-board" as const,
-    title: "Commission Leaderboard",
-    description: "Agent rankings by deposits, jobs & premium",
+    title: "Leaderboard",
+    description: "Rankings & commissions",
     icon: Medal,
     external: false,
+    accent: "hsl(38 92% 50%)",
   },
   {
     id: "operations" as const,
-    title: "Operations Center",
-    description: "Carriers, customers & messaging",
+    title: "Operations",
+    description: "Carriers & customers",
     icon: Briefcase,
     external: false,
+    accent: "hsl(262 83% 58%)",
   },
   {
     id: "support-tickets" as const,
-    title: "Support Tickets",
-    description: "View & manage customer support requests",
+    title: "Support",
+    description: "Customer tickets",
     icon: Ticket,
     external: true,
     href: "/admin/support-tickets",
+    accent: "hsl(0 84% 60%)",
   },
   {
     id: "messaging" as const,
-    title: "Team Messaging",
-    description: "Chat with agents & managers",
+    title: "Messaging",
+    description: "Team chat",
     icon: MessageSquare,
     external: false,
+    accent: "hsl(199 89% 48%)",
   },
   {
     id: "coaching-summary" as const,
-    title: "Team Performance",
-    description: "Coaching metrics, QA scores & leaderboards",
+    title: "Performance",
+    description: "Coaching & QA scores",
     icon: Trophy,
     external: false,
+    accent: "hsl(24 94% 50%)",
   },
   {
     id: "ppc" as const,
-    title: "AI Marketing Suite",
-    description: "PPC, SEO, A/B testing & conversions",
+    title: "AI Marketing",
+    description: "PPC, SEO & A/B testing",
     icon: Sparkles,
     external: false,
     isIntegration: true,
+    accent: "hsl(280 87% 55%)",
   },
 ];
 
@@ -91,19 +99,12 @@ export default function AgentLogin() {
   };
 
   const handleToolClick = (toolId: typeof AGENT_TOOLS[number]['id']) => {
-    if (toolId === "ppc") {
-      setPpcOpen(true);
-    } else if (toolId === "operations") {
-      setOperationsOpen(true);
-    } else if (toolId === "coaching-summary") {
-      setCoachingSummaryOpen(true);
-    } else if (toolId === "messaging") {
-      setMessagingOpen(true);
-    } else if (toolId === "workspace") {
-      setWorkspaceOpen(true);
-    } else if (toolId === "commission-board") {
-      setCommissionBoardOpen(true);
-    }
+    if (toolId === "ppc") setPpcOpen(true);
+    else if (toolId === "operations") setOperationsOpen(true);
+    else if (toolId === "coaching-summary") setCoachingSummaryOpen(true);
+    else if (toolId === "messaging") setMessagingOpen(true);
+    else if (toolId === "workspace") setWorkspaceOpen(true);
+    else if (toolId === "commission-board") setCommissionBoardOpen(true);
   };
 
   return (
@@ -120,100 +121,97 @@ export default function AgentLogin() {
         onLogin={handleLogin}
       />
 
-      <PPCDemoModal 
-        open={ppcOpen} 
-        onOpenChange={setPpcOpen} 
-      />
-      <OperationsCenterModal
-        open={operationsOpen}
-        onOpenChange={setOperationsOpen}
-      />
-      <CoachingSummaryModal
-        open={coachingSummaryOpen}
-        onOpenChange={setCoachingSummaryOpen}
-      />
-      <InternalMessagingModal
-        open={messagingOpen}
-        onOpenChange={setMessagingOpen}
-      />
-      <CombinedWorkspaceModal
-        open={workspaceOpen}
-        onOpenChange={setWorkspaceOpen}
-      />
-      <AgentCommissionBoard
-        open={commissionBoardOpen}
-        onOpenChange={setCommissionBoardOpen}
-      />
+      <PPCDemoModal open={ppcOpen} onOpenChange={setPpcOpen} />
+      <OperationsCenterModal open={operationsOpen} onOpenChange={setOperationsOpen} />
+      <CoachingSummaryModal open={coachingSummaryOpen} onOpenChange={setCoachingSummaryOpen} />
+      <InternalMessagingModal open={messagingOpen} onOpenChange={setMessagingOpen} />
+      <CombinedWorkspaceModal open={workspaceOpen} onOpenChange={setWorkspaceOpen} />
+      <AgentCommissionBoard open={commissionBoardOpen} onOpenChange={setCommissionBoardOpen} />
+
       <div className="agent-dashboard-page">
-            <div className="agent-dashboard-header">
-              <div className="flex items-center justify-between mb-2">
-                <h1 className="agent-dashboard-title">Agent Tools</h1>
-                {isLoggedIn && (
-                  <Link
-                    to="/admin/integrations"
-                    className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-muted hover:bg-muted/80 text-foreground transition-colors"
-                  >
-                    <Key className="w-4 h-4" />
-                    Manage API Keys
-                  </Link>
-                )}
-              </div>
+        <div className="agent-dashboard-header">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="agent-dashboard-title">
+                {isLoggedIn ? "Your Tools" : "Agent Tools"}
+              </h1>
               <p className="agent-dashboard-subtitle">
                 {isLoggedIn 
-                  ? "Access your carrier management and authorization tools" 
-                  : "Please log in to access agent tools"}
+                  ? "Everything you need, one click away" 
+                  : "Sign in to get started"}
               </p>
             </div>
+            {isLoggedIn && (
+              <Link
+                to="/admin/integrations"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-muted/60 hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <Key className="w-3 h-3" />
+                API Keys
+              </Link>
+            )}
+          </div>
+        </div>
 
-            <div className="agent-tools-grid">
-              {AGENT_TOOLS.map((tool) => {
-                const Icon = tool.icon;
-                const content = (
-                  <>
-                    <div className="agent-tool-icon">
-                      <Icon className="w-6 h-6" />
-                    </div>
+        <div className="agent-tools-grid">
+          {AGENT_TOOLS.map((tool) => {
+            const Icon = tool.icon;
+
+            if (!isLoggedIn) {
+              return (
+                <div 
+                  key={tool.id} 
+                  className="agent-tool-card agent-tool-card-disabled"
+                  onClick={() => setShowLoginModal(true)}
+                >
+                  <div className="agent-tool-icon-minimal">
+                    <Icon className="w-5 h-5" />
+                  </div>
+                  <div className="agent-tool-text">
                     <h3 className="agent-tool-title">{tool.title}</h3>
                     <p className="agent-tool-description">{tool.description}</p>
-                  </>
-                );
-
-                if (!isLoggedIn) {
-                  return (
-                    <div 
-                      key={tool.id} 
-                      className="agent-tool-card agent-tool-card-disabled"
-                      onClick={() => setShowLoginModal(true)}
-                    >
-                      {content}
-                      <span className="agent-tool-badge">Login Required</span>
-                    </div>
-                  );
-                }
-
-                if (tool.external && 'href' in tool && tool.href) {
-                  return (
-                    <Link
-                      key={tool.id}
-                      to={tool.href}
-                      className="agent-tool-card agent-tool-card-active"
-                    >
-                      {content}
-                    </Link>
-                  );
-                }
-
-                return (
-                  <div
-                    key={tool.id}
-                    className="agent-tool-card agent-tool-card-active"
-                    onClick={() => handleToolClick(tool.id)}
-                  >
-                    {content}
                   </div>
-                );
-              })}
-            </div>
+                </div>
+              );
+            }
+
+            if (tool.external && 'href' in tool && tool.href) {
+              return (
+                <Link
+                  key={tool.id}
+                  to={tool.href}
+                  className="agent-tool-card agent-tool-card-active"
+                >
+                  <div className="agent-tool-icon-minimal">
+                    <Icon className="w-5 h-5" />
+                  </div>
+                  <div className="agent-tool-text">
+                    <h3 className="agent-tool-title">{tool.title}</h3>
+                    <p className="agent-tool-description">{tool.description}</p>
+                  </div>
+                  <ArrowUpRight className="agent-tool-arrow" />
+                </Link>
+              );
+            }
+
+            return (
+              <div
+                key={tool.id}
+                className="agent-tool-card agent-tool-card-active"
+                onClick={() => handleToolClick(tool.id)}
+              >
+                <div className="agent-tool-icon-minimal">
+                  <Icon className="w-5 h-5" />
+                </div>
+                <div className="agent-tool-text">
+                  <h3 className="agent-tool-title">{tool.title}</h3>
+                  <p className="agent-tool-description">{tool.description}</p>
+                </div>
+                <ArrowUpRight className="agent-tool-arrow" />
+              </div>
+            );
+          })}
+        </div>
       </div>
     </SiteShell>
   );

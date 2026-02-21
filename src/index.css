@@ -21085,71 +21085,51 @@
    AGENT DASHBOARD STYLES
    ============================================= */
 .agent-dashboard-page {
-  max-width: 1000px;
+  max-width: 680px;
   margin: 0 auto;
-  padding: 40px 24px 100px;
+  padding: 48px 20px 100px;
   width: 100%;
 }
 
 .agent-dashboard-header {
-  text-align: center;
-  margin-bottom: 48px;
+  margin-bottom: 32px;
 }
 
 .agent-dashboard-title {
-  font-size: clamp(32px, 5vw, 48px);
-  font-weight: 800;
-  color: hsl(var(--tm-ink));
-  letter-spacing: -0.02em;
-  margin-bottom: 12px;
+  font-size: clamp(24px, 4vw, 32px);
+  font-weight: 700;
+  color: hsl(var(--foreground));
+  letter-spacing: -0.03em;
+  line-height: 1.1;
 }
 
 .agent-dashboard-subtitle {
-  font-size: 18px;
-  color: hsl(var(--tm-ink) / 0.6);
+  font-size: 14px;
+  color: hsl(var(--muted-foreground));
+  margin-top: 4px;
 }
 
 .agent-tools-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
-}
-
-@media (max-width: 768px) {
-  .agent-tools-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-  }
-}
-
-@media (max-width: 500px) {
-  .agent-tools-grid {
-    grid-template-columns: 1fr;
-  }
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .agent-tool-card {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  padding: 32px 24px;
+  gap: 14px;
+  padding: 14px 16px;
   background: hsl(var(--background));
-  border: 2px solid hsl(var(--tm-ink));
-  border-radius: 16px;
-  text-align: center;
-  transition: all 0.25s ease;
-  position: relative;
+  border: 1px solid hsl(var(--border));
+  border-radius: 12px;
   text-decoration: none;
-  box-shadow: 
-    0 4px 12px hsl(var(--tm-ink) / 0.08),
-    0 2px 6px hsl(var(--tm-ink) / 0.06);
+  transition: all 0.15s ease;
+  position: relative;
 }
 
 .dark .agent-tool-card {
-  border-color: hsl(0 0% 100% / 0.15);
-  box-shadow: 
-    0 4px 12px hsl(0 0% 0% / 0.2),
-    0 2px 6px hsl(0 0% 0% / 0.15);
+  border-color: hsl(0 0% 100% / 0.08);
 }
 
 .agent-tool-card-active {
@@ -21157,73 +21137,67 @@
 }
 
 .agent-tool-card-active:hover {
-  border-color: hsl(var(--tm-ink));
-  box-shadow: 
-    0 8px 24px hsl(var(--tm-ink) / 0.12),
-    0 4px 12px hsl(var(--tm-ink) / 0.08);
-  transform: translateY(-4px);
+  background: hsl(var(--muted) / 0.5);
+  border-color: hsl(var(--border));
 }
 
 .dark .agent-tool-card-active:hover {
-  border-color: hsl(0 0% 100% / 0.25);
-  box-shadow: 
-    0 8px 24px hsl(0 0% 0% / 0.3),
-    0 4px 12px hsl(0 0% 0% / 0.2);
-}
-
-.agent-tool-card-active:hover .agent-tool-title {
-  color: hsl(var(--primary));
+  background: hsl(0 0% 100% / 0.04);
+  border-color: hsl(0 0% 100% / 0.12);
 }
 
 .agent-tool-card-disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+  opacity: 0.45;
+  cursor: pointer;
 }
 
-.agent-tool-icon {
+.agent-tool-icon-minimal {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 56px;
-  height: 56px;
-  background: hsl(var(--foreground) / 0.08);
-  border-radius: 14px;
-  margin-bottom: 16px;
+  width: 40px;
+  height: 40px;
+  background: hsl(var(--muted));
+  border-radius: 10px;
   color: hsl(var(--foreground));
-  border: 1px solid hsl(var(--foreground) / 0.12);
+  flex-shrink: 0;
 }
 
-.agent-tool-card-active:hover .agent-tool-icon {
+.agent-tool-card-active:hover .agent-tool-icon-minimal {
   background: hsl(var(--foreground));
-  color: hsl(var(--primary));
-  border-color: hsl(var(--foreground));
+  color: hsl(var(--background));
+}
+
+.agent-tool-text {
+  flex: 1;
+  min-width: 0;
 }
 
 .agent-tool-title {
-  font-size: 16px;
-  font-weight: 700;
-  color: hsl(var(--tm-ink));
-  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: hsl(var(--foreground));
+  line-height: 1.2;
 }
 
 .agent-tool-description {
-  font-size: 13px;
-  color: hsl(var(--tm-ink) / 0.6);
-  line-height: 1.4;
+  font-size: 12px;
+  color: hsl(var(--muted-foreground));
+  line-height: 1.3;
+  margin-top: 1px;
 }
 
-.agent-tool-badge {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  padding: 4px 10px;
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  background: hsl(var(--muted));
+.agent-tool-arrow {
+  width: 16px;
+  height: 16px;
   color: hsl(var(--muted-foreground));
-  border-radius: 100px;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.agent-tool-card-active:hover .agent-tool-arrow {
+  opacity: 1;
 }
 
 /* =============================================
