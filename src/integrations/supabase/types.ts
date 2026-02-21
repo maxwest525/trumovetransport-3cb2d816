@@ -14,6 +14,70 @@ export type Database = {
   }
   public: {
     Tables: {
+      activities: {
+        Row: {
+          agent_id: string | null
+          completed_at: string | null
+          created_at: string
+          deal_id: string | null
+          description: string | null
+          due_date: string | null
+          id: string
+          is_done: boolean
+          lead_id: string | null
+          subject: string | null
+          type: Database["public"]["Enums"]["activity_type"]
+        }
+        Insert: {
+          agent_id?: string | null
+          completed_at?: string | null
+          created_at?: string
+          deal_id?: string | null
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          is_done?: boolean
+          lead_id?: string | null
+          subject?: string | null
+          type?: Database["public"]["Enums"]["activity_type"]
+        }
+        Update: {
+          agent_id?: string | null
+          completed_at?: string | null
+          created_at?: string
+          deal_id?: string | null
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          is_done?: boolean
+          lead_id?: string | null
+          subject?: string | null
+          type?: Database["public"]["Enums"]["activity_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activities_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activities_deal_id_fkey"
+            columns: ["deal_id"]
+            isOneToOne: false
+            referencedRelation: "deals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activities_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       agent_coaching_stats: {
         Row: {
           agent_id: string
@@ -225,6 +289,182 @@ export type Database = {
         }
         Relationships: []
       }
+      deal_history: {
+        Row: {
+          changed_at: string
+          changed_by: string | null
+          deal_id: string
+          field_changed: string
+          id: string
+          new_value: string | null
+          old_value: string | null
+        }
+        Insert: {
+          changed_at?: string
+          changed_by?: string | null
+          deal_id: string
+          field_changed: string
+          id?: string
+          new_value?: string | null
+          old_value?: string | null
+        }
+        Update: {
+          changed_at?: string
+          changed_by?: string | null
+          deal_id?: string
+          field_changed?: string
+          id?: string
+          new_value?: string | null
+          old_value?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deal_history_changed_by_fkey"
+            columns: ["changed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deal_history_deal_id_fkey"
+            columns: ["deal_id"]
+            isOneToOne: false
+            referencedRelation: "deals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      deals: {
+        Row: {
+          actual_close_date: string | null
+          actual_revenue: number | null
+          assigned_agent_id: string | null
+          carrier_id: string | null
+          carrier_name: string | null
+          created_at: string
+          deal_value: number | null
+          expected_close_date: string | null
+          id: string
+          lead_id: string | null
+          loss_reason: string | null
+          stage: Database["public"]["Enums"]["deal_stage"]
+          updated_at: string
+        }
+        Insert: {
+          actual_close_date?: string | null
+          actual_revenue?: number | null
+          assigned_agent_id?: string | null
+          carrier_id?: string | null
+          carrier_name?: string | null
+          created_at?: string
+          deal_value?: number | null
+          expected_close_date?: string | null
+          id?: string
+          lead_id?: string | null
+          loss_reason?: string | null
+          stage?: Database["public"]["Enums"]["deal_stage"]
+          updated_at?: string
+        }
+        Update: {
+          actual_close_date?: string | null
+          actual_revenue?: number | null
+          assigned_agent_id?: string | null
+          carrier_id?: string | null
+          carrier_name?: string | null
+          created_at?: string
+          deal_value?: number | null
+          expected_close_date?: string | null
+          id?: string
+          lead_id?: string | null
+          loss_reason?: string | null
+          stage?: Database["public"]["Enums"]["deal_stage"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deals_assigned_agent_id_fkey"
+            columns: ["assigned_agent_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deals_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      leads: {
+        Row: {
+          assigned_agent_id: string | null
+          created_at: string
+          destination_address: string | null
+          email: string | null
+          estimated_value: number | null
+          estimated_weight: number | null
+          first_name: string
+          id: string
+          last_name: string
+          move_date: string | null
+          notes: string | null
+          origin_address: string | null
+          phone: string | null
+          source: Database["public"]["Enums"]["lead_source"]
+          status: Database["public"]["Enums"]["lead_status"]
+          tags: string[] | null
+          updated_at: string
+        }
+        Insert: {
+          assigned_agent_id?: string | null
+          created_at?: string
+          destination_address?: string | null
+          email?: string | null
+          estimated_value?: number | null
+          estimated_weight?: number | null
+          first_name: string
+          id?: string
+          last_name: string
+          move_date?: string | null
+          notes?: string | null
+          origin_address?: string | null
+          phone?: string | null
+          source?: Database["public"]["Enums"]["lead_source"]
+          status?: Database["public"]["Enums"]["lead_status"]
+          tags?: string[] | null
+          updated_at?: string
+        }
+        Update: {
+          assigned_agent_id?: string | null
+          created_at?: string
+          destination_address?: string | null
+          email?: string | null
+          estimated_value?: number | null
+          estimated_weight?: number | null
+          first_name?: string
+          id?: string
+          last_name?: string
+          move_date?: string | null
+          notes?: string | null
+          origin_address?: string | null
+          phone?: string | null
+          source?: Database["public"]["Enums"]["lead_source"]
+          status?: Database["public"]["Enums"]["lead_status"]
+          tags?: string[] | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leads_assigned_agent_id_fkey"
+            columns: ["assigned_agent_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       messages: {
         Row: {
           content: string
@@ -259,6 +499,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      pipeline_stages: {
+        Row: {
+          color: string
+          display_order: number
+          id: string
+          is_default: boolean
+          name: string
+          stage_key: Database["public"]["Enums"]["deal_stage"]
+        }
+        Insert: {
+          color?: string
+          display_order?: number
+          id?: string
+          is_default?: boolean
+          name: string
+          stage_key: Database["public"]["Enums"]["deal_stage"]
+        }
+        Update: {
+          color?: string
+          display_order?: number
+          id?: string
+          is_default?: boolean
+          name?: string
+          stage_key?: Database["public"]["Enums"]["deal_stage"]
+        }
+        Relationships: []
       }
       profiles: {
         Row: {
@@ -367,6 +634,14 @@ export type Database = {
       is_conversation_member: { Args: { conv_id: string }; Returns: boolean }
     }
     Enums: {
+      activity_type:
+        | "call"
+        | "email"
+        | "note"
+        | "follow_up"
+        | "meeting"
+        | "text"
+        | "stage_change"
       call_outcome:
         | "booked"
         | "follow_up"
@@ -374,6 +649,26 @@ export type Database = {
         | "no_answer"
         | "callback_scheduled"
       call_status: "active" | "completed" | "missed" | "transferred"
+      deal_stage:
+        | "new_lead"
+        | "contacted"
+        | "qualified"
+        | "estimate_sent"
+        | "follow_up"
+        | "booked"
+        | "dispatched"
+        | "in_transit"
+        | "delivered"
+        | "closed_won"
+        | "closed_lost"
+      lead_source:
+        | "website"
+        | "referral"
+        | "ppc"
+        | "walk_in"
+        | "phone"
+        | "other"
+      lead_status: "new" | "contacted" | "qualified" | "lost"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -501,6 +796,15 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      activity_type: [
+        "call",
+        "email",
+        "note",
+        "follow_up",
+        "meeting",
+        "text",
+        "stage_change",
+      ],
       call_outcome: [
         "booked",
         "follow_up",
@@ -509,6 +813,21 @@ export const Constants = {
         "callback_scheduled",
       ],
       call_status: ["active", "completed", "missed", "transferred"],
+      deal_stage: [
+        "new_lead",
+        "contacted",
+        "qualified",
+        "estimate_sent",
+        "follow_up",
+        "booked",
+        "dispatched",
+        "in_transit",
+        "delivered",
+        "closed_won",
+        "closed_lost",
+      ],
+      lead_source: ["website", "referral", "ppc", "walk_in", "phone", "other"],
+      lead_status: ["new", "contacted", "qualified", "lost"],
     },
   },
 } as const
