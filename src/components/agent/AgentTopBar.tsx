@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ChevronRight, Home, LogOut, User, Settings, Bell, Sun, Moon, Monitor } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -12,11 +13,14 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgentProfile } from "@/hooks/useAgentProfile";
+import { useNotifications } from "@/hooks/useNotifications";
 import { toast } from "@/hooks/use-toast";
 import { useTheme } from "next-themes";
 import { Badge } from "@/components/ui/badge";
+import NotificationsPanel from "./NotificationsPanel";
 
 interface Crumb {
   label: string;
@@ -32,6 +36,8 @@ export default function AgentTopBar({ crumbs, onLogout }: AgentTopBarProps) {
   const navigate = useNavigate();
   const { displayName, email, isLoggedIn } = useAgentProfile();
   const { theme, setTheme } = useTheme();
+  const { notifications, unreadCount, loading, markAsRead, markAllAsRead, deleteNotification } = useNotifications();
+  const [notifOpen, setNotifOpen] = useState(false);
 
   const handleLogout = async () => {
     if (onLogout) {
@@ -67,18 +73,30 @@ export default function AgentTopBar({ crumbs, onLogout }: AgentTopBarProps) {
 
         {/* Agent dropdown + notifications */}
         <div className="flex items-center gap-2 shrink-0">
-          {/* Notifications bell */}
-          <Button
-            variant="ghost"
-            size="sm"
-            className="relative h-8 w-8 p-0"
-            onClick={() => toast({ title: "No new notifications" })}
-          >
-            <Bell className="w-4 h-4 text-muted-foreground" />
-            <Badge className="absolute -top-0.5 -right-0.5 h-4 min-w-4 px-1 text-[10px] leading-none bg-destructive text-destructive-foreground border-2 border-card">
-              3
-            </Badge>
-          </Button>
+          {/* Notifications popover */}
+          <Popover open={notifOpen} onOpenChange={setNotifOpen}>
+            <PopoverTrigger asChild>
+              <Button variant="ghost" size="sm" className="relative h-8 w-8 p-0">
+                <Bell className="w-4 h-4 text-muted-foreground" />
+                {unreadCount > 0 && (
+                  <Badge className="absolute -top-0.5 -right-0.5 h-4 min-w-4 px-1 text-[10px] leading-none bg-destructive text-destructive-foreground border-2 border-card">
+                    {unreadCount > 99 ? "99+" : unreadCount}
+                  </Badge>
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent align="end" className="p-0 w-auto bg-popover z-[100]" sideOffset={8}>
+              <NotificationsPanel
+                notifications={notifications}
+                unreadCount={unreadCount}
+                loading={loading}
+                onMarkAsRead={markAsRead}
+                onMarkAllAsRead={markAllAsRead}
+                onDelete={deleteNotification}
+                onClose={() => setNotifOpen(false)}
+              />
+            </PopoverContent>
+          </Popover>
 
           {/* Agent dropdown */}
           <DropdownMenu>
@@ -102,10 +120,12 @@ export default function AgentTopBar({ crumbs, onLogout }: AgentTopBarProps) {
                 <Settings className="w-4 h-4 mr-2" />
                 Profile Settings
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => toast({ title: "Notifications panel coming soon" })}>
+              <DropdownMenuItem onClick={() => setNotifOpen(true)}>
                 <Bell className="w-4 h-4 mr-2" />
                 Notifications
-                <Badge variant="secondary" className="ml-auto text-[10px] h-5">3</Badge>
+                {unreadCount > 0 && (
+                  <Badge variant="destructive" className="ml-auto text-[10px] h-5">{unreadCount}</Badge>
+                )}
               </DropdownMenuItem>
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger>
