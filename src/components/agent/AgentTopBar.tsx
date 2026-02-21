@@ -1,6 +1,9 @@
 import { Link, useNavigate } from "react-router-dom";
 import { ChevronRight, Home, LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+import { useAgentProfile } from "@/hooks/useAgentProfile";
+import { toast } from "@/hooks/use-toast";
 
 interface Crumb {
   label: string;
@@ -9,19 +12,20 @@ interface Crumb {
 
 interface AgentTopBarProps {
   crumbs: Crumb[];
-  agentName?: string;
   onLogout?: () => void;
 }
 
-export default function AgentTopBar({ crumbs, agentName = "Agent", onLogout }: AgentTopBarProps) {
+export default function AgentTopBar({ crumbs, onLogout }: AgentTopBarProps) {
   const navigate = useNavigate();
+  const { displayName, isLoggedIn } = useAgentProfile();
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     if (onLogout) {
       onLogout();
-    } else {
-      navigate("/agent-login");
     }
+    await supabase.auth.signOut();
+    toast({ title: "Signed out successfully" });
+    navigate("/agent-login");
   };
 
   return (
@@ -51,17 +55,19 @@ export default function AgentTopBar({ crumbs, agentName = "Agent", onLogout }: A
         <div className="flex items-center gap-3 shrink-0">
           <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
             <User className="w-3.5 h-3.5" />
-            <span className="font-medium text-foreground">{agentName}</span>
+            <span className="font-medium text-foreground">{displayName}</span>
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleLogout}
-            className="gap-1.5 text-xs text-muted-foreground hover:text-destructive"
-          >
-            <LogOut className="w-3.5 h-3.5" />
-            Logout
-          </Button>
+          {isLoggedIn && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleLogout}
+              className="gap-1.5 text-xs text-muted-foreground hover:text-destructive"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              Logout
+            </Button>
+          )}
         </div>
       </div>
     </div>

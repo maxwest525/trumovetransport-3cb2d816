@@ -111,7 +111,6 @@ export default function AgentLogin() {
       {isLoggedIn && (
         <AgentTopBar
           crumbs={[{ label: "Agent Tools" }]}
-          agentName="Demo Agent"
           onLogout={() => { setIsLoggedIn(false); setShowLoginModal(true); }}
         />
       )}

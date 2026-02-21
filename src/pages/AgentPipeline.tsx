@@ -14,7 +14,7 @@ export default function AgentPipeline() {
 
   return (
     <SiteShell hideTrustStrip>
-      <AgentTopBar crumbs={[{ label: "Agent Tools", href: "/agent-login" }, { label: "Pipeline" }]} agentName="Demo Agent" />
+      <AgentTopBar crumbs={[{ label: "Agent Tools", href: "/agent-login" }, { label: "Pipeline" }]} />
       <div className="px-4 py-6 max-w-[1600px] mx-auto">
         <div className="flex items-center justify-between mb-6">
           <div>

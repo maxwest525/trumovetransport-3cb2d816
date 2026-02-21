@@ -86,7 +86,7 @@ export default function AdminSupportTickets() {
 
   return (
     <div className="min-h-screen bg-background">
-      <AgentTopBar crumbs={[{ label: "Agent Tools", href: "/agent-login" }, { label: "Support Tickets" }]} agentName="Demo Agent" />
+      <AgentTopBar crumbs={[{ label: "Agent Tools", href: "/agent-login" }, { label: "Support Tickets" }]} />
       {/* Header */}
       <div className="border-b border-border bg-card">
         <div className="mx-auto max-w-6xl px-4 py-4">
