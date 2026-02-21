@@ -74,11 +74,33 @@ export function PipelineBoard() {
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
-  // Realtime subscription
+  // Realtime subscription with toast notifications
   useEffect(() => {
+    let currentUserId: string | null = null;
+    supabase.auth.getUser().then(({ data }) => { currentUserId = data.user?.id ?? null; });
+
     const channel = supabase
       .channel("pipeline-deals")
-      .on("postgres_changes", { event: "*", schema: "public", table: "deals" }, () => fetchData())
+      .on("postgres_changes", { event: "UPDATE", schema: "public", table: "deals" }, async (payload) => {
+        const newRow = payload.new as any;
+        const oldRow = payload.old as any;
+
+        // Only notify if stage changed and it wasn't the current user
+        if (oldRow.stage !== newRow.stage && newRow.assigned_agent_id !== currentUserId) {
+          // Fetch lead name for a meaningful notification
+          const { data: lead } = await supabase.from("leads").select("first_name, last_name").eq("id", newRow.lead_id).single();
+          const name = lead ? `${lead.first_name} ${lead.last_name}` : "A deal";
+          const stageName = (newRow.stage as string).replace(/_/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase());
+
+          toast({
+            title: "🔔 Deal Stage Updated",
+            description: `${name} was moved to "${stageName}" by another agent.`,
+          });
+        }
+        fetchData();
+      })
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "deals" }, () => fetchData())
+      .on("postgres_changes", { event: "DELETE", schema: "public", table: "deals" }, () => fetchData())
       .subscribe();
     return () => { supabase.removeChannel(channel); };
   }, [fetchData]);
