@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Deal, Activity, PipelineStage } from "./types";
 import { ActivityTimeline } from "./ActivityTimeline";
 import { AddActivityForm } from "./AddActivityForm";
+import { DealAIAssistant } from "./DealAIAssistant";
 import { Phone, Mail, MapPin, Calendar, DollarSign } from "lucide-react";
 import { format, parseISO } from "date-fns";
 
@@ -109,6 +110,11 @@ export function DealDetailPanel({ deal, stages, open, onOpenChange, onStageChang
               )}
             </div>
           )}
+
+          <Separator />
+
+          {/* AI Assistant */}
+          <DealAIAssistant deal={deal} activities={activities} />
 
           <Separator />
 
