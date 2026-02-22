@@ -209,7 +209,7 @@ export function UnifiedAnalyticsDashboard({ onCreateLandingPage, liveMode, simpl
         {!simplified && <BudgetAlerts liveMode={liveMode} />}
 
         {/* KPI Strip - Vibrant */}
-        <div className={`grid gap-2 ${simplified ? 'grid-cols-4' : 'grid-cols-8'}`}>
+        <div className={`grid gap-2 ${simplified ? 'grid-cols-2 sm:grid-cols-4' : 'grid-cols-2 sm:grid-cols-4 lg:grid-cols-8'}`}>
           {[
             { label: "Spend", value: totalSpend / 1000, prefix: "$", suffix: "K", decimals: 1, icon: DollarSign, gradient: "from-emerald-400 to-emerald-600", textColor: "text-emerald-500" },
             ...(simplified ? [] : [
@@ -249,7 +249,7 @@ export function UnifiedAnalyticsDashboard({ onCreateLandingPage, liveMode, simpl
          {/* Simplified Mode: 2-column selectable grid */}
          {simplified && (
            <div className="space-y-4">
-             <div className="grid grid-cols-2 gap-4">
+             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                {/* Keywords - Selectable */}
                <Card className="border-border">
                  <CardHeader className="pb-2 pt-3 px-3">
@@ -334,7 +334,7 @@ export function UnifiedAnalyticsDashboard({ onCreateLandingPage, liveMode, simpl
                  </CardTitle>
                </CardHeader>
                <CardContent className="px-3 pb-3">
-                 <div className="grid grid-cols-2 gap-2">
+                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                    {DEMO_DATA.slice(0, 4).map((demo) => (
                      <div key={demo.segment} className="p-2 rounded-lg bg-muted/50 space-y-1">
                        <div className="flex items-center justify-between">
@@ -364,7 +364,7 @@ export function UnifiedAnalyticsDashboard({ onCreateLandingPage, liveMode, simpl
              </button>
 
              {showAdvanced && (
-               <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                  {/* SEO */}
                  <Card className="border-border">
                    <CardHeader className="pb-2 pt-3 px-3">
@@ -442,7 +442,7 @@ export function UnifiedAnalyticsDashboard({ onCreateLandingPage, liveMode, simpl
 
          {/* Full Mode: 3-Column Grid */}
          {!simplified && (
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
            {/* Column 1: Keywords + SEO */}
            <div className="space-y-4">
             {/* Top Keywords - Selectable */}

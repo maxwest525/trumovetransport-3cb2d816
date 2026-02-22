@@ -2750,73 +2750,73 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
        <>
          <div className="space-y-4">
          {/* Control Bar */}
-         <div className="flex items-center justify-between p-3 rounded-xl border border-border bg-card">
-           <div className="flex items-center gap-3">
-             <Badge className="gap-1" style={{ background: "#10B98120", color: "#10B981" }}>
-               <CheckCircle2 className="w-3 h-3" />
-               AI Generated
-             </Badge>
-            <span className="text-sm text-muted-foreground">
-              {LANDING_PAGE_TEMPLATES.find(t => t.id === selectedTemplate)?.name} • Click text to edit
-            </span>
-           </div>
-           <div className="flex gap-2">
-             {/* Color Theme Selector */}
-             <Select value={selectedTheme} onValueChange={setSelectedTheme}>
-               <SelectTrigger className="w-[160px] h-9">
-                 <Palette className="w-3.5 h-3.5 mr-2" />
-                 <SelectValue placeholder="Theme" />
-               </SelectTrigger>
-               <SelectContent>
-                 {COLOR_THEMES.map((colorTheme) => (
-                   <SelectItem key={colorTheme.id} value={colorTheme.id}>
-                     <div className="flex items-center gap-2">
-                       <div 
-                         className="w-4 h-4 rounded-full border border-border"
-                         style={{ background: `linear-gradient(135deg, ${colorTheme.primary}, ${colorTheme.accent})` }}
-                       />
-                       {colorTheme.name}
-                     </div>
-                   </SelectItem>
-                 ))}
-               </SelectContent>
-             </Select>
+          <div className="flex flex-col gap-3 p-3 rounded-xl border border-border bg-card">
+            <div className="flex items-center gap-3 flex-wrap">
+              <Badge className="gap-1" style={{ background: "#10B98120", color: "#10B981" }}>
+                <CheckCircle2 className="w-3 h-3" />
+                AI Generated
+              </Badge>
+             <span className="text-sm text-muted-foreground">
+               {LANDING_PAGE_TEMPLATES.find(t => t.id === selectedTemplate)?.name} • Click text to edit
+             </span>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {/* Color Theme Selector */}
+              <Select value={selectedTheme} onValueChange={setSelectedTheme}>
+                <SelectTrigger className="w-[160px] h-9">
+                  <Palette className="w-3.5 h-3.5 mr-2" />
+                  <SelectValue placeholder="Theme" />
+                </SelectTrigger>
+                <SelectContent>
+                  {COLOR_THEMES.map((colorTheme) => (
+                    <SelectItem key={colorTheme.id} value={colorTheme.id}>
+                      <div className="flex items-center gap-2">
+                        <div 
+                          className="w-4 h-4 rounded-full border border-border"
+                          style={{ background: `linear-gradient(135deg, ${colorTheme.primary}, ${colorTheme.accent})` }}
+                        />
+                        {colorTheme.name}
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
 
-             <Button variant="outline" size="sm" onClick={() => setShowLandingPage(false)}>
-               <RefreshCw className="w-3 h-3 mr-1" />
-               Regenerate
-             </Button>
-             <Button variant="outline" size="sm" onClick={exportAsHtml}>
-               <Download className="w-3 h-3 mr-1" />
-               Export HTML
-             </Button>
-             <Button variant="outline" size="sm" onClick={copyHtmlToClipboard}>
-               <Copy className="w-3 h-3 mr-1" />
-               Copy HTML
-             </Button>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={() => setShowDataImport(true)}
-                className={importedData ? "border-primary text-primary" : ""}
-              >
-                <Upload className="w-3 h-3 mr-1" />
-                {importedData ? "Data Imported" : "Import Data"}
+              <Button variant="outline" size="sm" onClick={() => setShowLandingPage(false)}>
+                <RefreshCw className="w-3 h-3 mr-1" />
+                Regenerate
               </Button>
-              <Button 
-                variant="default" 
-                size="sm" 
-                onClick={() => setIsPopoutOpen(true)}
-                className="bg-purple-600 hover:bg-purple-700 text-white gap-1.5 shadow-lg"
-              >
-                <ExternalLink className="w-4 h-4" />
-                View Full Page
+              <Button variant="outline" size="sm" onClick={exportAsHtml}>
+                <Download className="w-3 h-3 mr-1" />
+                Export HTML
               </Button>
-             <Button size="sm" style={{ background: "linear-gradient(135deg, #7C3AED 0%, #A855F7 100%)" }}>
-               Publish Page
-             </Button>
-           </div>
-         </div>
+              <Button variant="outline" size="sm" onClick={copyHtmlToClipboard}>
+                <Copy className="w-3 h-3 mr-1" />
+                Copy HTML
+              </Button>
+               <Button 
+                 variant="outline" 
+                 size="sm" 
+                 onClick={() => setShowDataImport(true)}
+                 className={importedData ? "border-primary text-primary" : ""}
+               >
+                 <Upload className="w-3 h-3 mr-1" />
+                 {importedData ? "Data Imported" : "Import Data"}
+               </Button>
+               <Button 
+                 variant="default" 
+                 size="sm" 
+                 onClick={() => setIsPopoutOpen(true)}
+                 className="bg-purple-600 hover:bg-purple-700 text-white gap-1.5 shadow-lg"
+               >
+                 <ExternalLink className="w-4 h-4" />
+                 View Full Page
+               </Button>
+              <Button size="sm" style={{ background: "linear-gradient(135deg, #7C3AED 0%, #A855F7 100%)" }}>
+                Publish Page
+              </Button>
+            </div>
+          </div>
  
          {/* Generated Landing Page Preview */}
           <div className="rounded-xl border-2 border-purple-300 overflow-hidden shadow-lg relative group">
@@ -3770,7 +3770,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
                </div>
                
                {/* Key Features Below Video */}
-               <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                  {[
                    { icon: TrendingUp, label: "Conversion Tracking", desc: "Real-time analytics" },
                    { icon: Users, label: "Lead Capture", desc: "Instant notifications" },
@@ -3786,7 +3786,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
              </div>
            </div>
          ) : isSideBySide ? (
-           <div className="flex flex-1 overflow-hidden">
+           <div className="flex flex-col lg:flex-row flex-1 overflow-hidden">
              {/* Landing Page Preview */}
              <div className="flex-1 border-r border-border relative">
                <ScrollArea className="h-full">
@@ -3830,7 +3830,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
              </div>
              
              {/* Analytics Panel */}
-             <div className="w-[380px] flex flex-col bg-muted/30">
+             <div className="w-full lg:w-[380px] flex flex-col bg-muted/30 max-h-[50vh] lg:max-h-none">
                <div className="p-3 border-b border-border bg-card shrink-0">
                  <div className="flex items-center justify-between">
                    <h4 className="font-semibold text-sm text-foreground flex items-center gap-2">
@@ -3932,10 +3932,10 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
                </ScrollArea>
              </div>
            </div>
-          ) : showPostGenEditor ? (
-            /* Post-generation Editor + Preview */
-            <div className="flex-1 flex overflow-hidden">
-              <div className="w-[400px] border-r border-border bg-background overflow-hidden flex flex-col">
+           ) : showPostGenEditor ? (
+             /* Post-generation Editor + Preview */
+             <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
+               <div className="w-full lg:w-[400px] border-b lg:border-b-0 lg:border-r border-border bg-background overflow-hidden flex flex-col max-h-[50vh] lg:max-h-none">
                 <PostGenerationEditor
                   sections={sections.map(s => ({
                     id: s.id,
@@ -4122,7 +4122,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
           <span className="text-xs text-muted-foreground font-normal ml-auto">Hover to preview</span>
         </h4>
         
-        <div className="grid grid-cols-2 gap-3">
+         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {LANDING_PAGE_TEMPLATES.map((template) => (
             <TemplatePreviewCard
               key={template.id}
@@ -4141,7 +4141,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
           Tell us about your business
          </h4>
          
-        <div className="grid grid-cols-2 gap-4">
+         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
            <div>
              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1.5 block">
                Business Name
@@ -4171,7 +4171,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
               />
             </div>
             
-           <div className="col-span-2">
+            <div className="sm:col-span-2">
              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1.5 flex items-center gap-2">
                Target Audience
                {autoPopulatedFields.has('audience') && (
@@ -4189,7 +4189,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
              />
            </div>
            
-           <div className="col-span-2">
+           <div className="sm:col-span-2">
               <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1.5 flex items-center gap-2">
                 Main Offer / Value Proposition
                 {autoPopulatedFields.has('offer') && (
@@ -4224,7 +4224,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
                Import your existing campaign data to auto-populate fields and enable data-driven generation.
              </p>
              
-             <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                <button 
                  onClick={handleImportData}
                  className="p-4 rounded-xl border border-border bg-card hover:border-blue-400 hover:bg-blue-50/50 dark:hover:bg-blue-950/30 transition-all text-center group"
