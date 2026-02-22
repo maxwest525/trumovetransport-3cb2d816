@@ -3477,13 +3477,13 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
                 <div className="h-6 w-px bg-border" />
                 
                 <Button 
-                  variant={showPostGenEditor ? "default" : "ghost"}
+                  variant={showPostGenEditor ? "default" : "default"}
                   size="sm" 
                   onClick={() => setShowPostGenEditor(!showPostGenEditor)}
-                  className={`h-7 text-xs gap-1 ${showPostGenEditor ? 'bg-primary text-primary-foreground' : ''}`}
+                  className={`h-7 text-xs gap-1 ${showPostGenEditor ? 'bg-primary text-primary-foreground' : 'bg-primary text-primary-foreground'}`}
                 >
                   <Pencil className="w-3 h-3" />
-                  Edit
+                  {showPostGenEditor ? 'Close Editor' : '✏️ Edit Page'}
                 </Button>
                 
                 <Button 
@@ -3956,20 +3956,20 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
                   targetLocation={targetLocation}
                 />
               </div>
-              <div className="flex-1 overflow-hidden">
-                <ScaledPreview className="h-full">
-                  {renderSelectedTemplate()}
-                </ScaledPreview>
-              </div>
-            </div>
-          ) : (
-            /* Full width preview only */
-            <div className="flex-1 overflow-hidden">
-              <ScaledPreview className="h-full">
-                {renderSelectedTemplate()}
-              </ScaledPreview>
-            </div>
-          )}
+               <div className="flex-1 overflow-auto">
+                 <ScaledPreview scrollable className="min-h-full">
+                   {renderSelectedTemplate()}
+                 </ScaledPreview>
+               </div>
+             </div>
+           ) : (
+             /* Full width preview only - scrollable */
+             <div className="flex-1 overflow-auto">
+               <ScaledPreview scrollable className="min-h-full">
+                 {renderSelectedTemplate()}
+               </ScaledPreview>
+             </div>
+           )}
        </DraggableModal>
      </>
    );
@@ -4087,239 +4087,27 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
           </div>
         )}
 
-       {/* Intro Card */}
-       <div className="p-6 rounded-xl border-2 border-dashed border-purple-300 bg-purple-50/50 dark:bg-purple-950/20 dark:border-purple-700">
-         <div className="flex items-start gap-4">
-           <div 
-             className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
-             style={{ background: "linear-gradient(135deg, #7C3AED 0%, #A855F7 100%)" }}
-           >
-             <Sparkles className="w-6 h-6 text-white" />
-           </div>
-           <div className="flex-1">
-             <h3 className="text-lg font-bold text-foreground mb-2">AI Landing Page Generator</h3>
-             <p className="text-sm text-muted-foreground mb-4">
-               Tell our AI about your business and target audience, and it will generate a high-converting 
-               landing page like the pros at ClickFunnels or Unbounce would create — complete with 
-               persuasive copy, trust signals, and optimized CTAs.
-             </p>
-             <div className="flex flex-wrap gap-2 text-xs">
-               <Badge variant="secondary" className="gap-1"><CheckCircle2 className="w-3 h-3" /> Conversion-Optimized</Badge>
-               <Badge variant="secondary" className="gap-1"><Zap className="w-3 h-3" /> Instant Generation</Badge>
-               <Badge variant="secondary" className="gap-1"><TrendingUp className="w-3 h-3" /> A/B Test Ready</Badge>
-              <Badge variant="secondary" className="gap-1"><Pencil className="w-3 h-3" /> Inline Editing</Badge>
-             </div>
-           </div>
+       {/* Template Selection - Direct to Generate */}
+       <div className="rounded-xl border border-border bg-card p-5">
+         <h4 className="font-semibold text-sm text-foreground mb-4 flex items-center gap-2">
+           <span className="w-6 h-6 rounded-full bg-primary/20 text-primary flex items-center justify-center text-xs font-bold">1</span>
+           Choose a template style
+           <span className="text-xs text-muted-foreground font-normal ml-auto">Hover to preview</span>
+         </h4>
+         
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+           {LANDING_PAGE_TEMPLATES.map((template) => (
+             <TemplatePreviewCard
+               key={template.id}
+               template={template}
+               isSelected={selectedTemplate === template.id}
+               onSelect={setSelectedTemplate}
+             />
+           ))}
          </div>
        </div>
  
-      {/* Template Selection with Hover Previews */}
-      <div className="rounded-xl border border-border bg-card p-5">
-        <h4 className="font-semibold text-sm text-foreground mb-4 flex items-center gap-2">
-          <span className="w-6 h-6 rounded-full bg-primary/20 text-primary flex items-center justify-center text-xs font-bold">1</span>
-          Choose a template style
-          <span className="text-xs text-muted-foreground font-normal ml-auto">Hover to preview</span>
-        </h4>
-        
-         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {LANDING_PAGE_TEMPLATES.map((template) => (
-            <TemplatePreviewCard
-              key={template.id}
-              template={template}
-              isSelected={selectedTemplate === template.id}
-              onSelect={setSelectedTemplate}
-            />
-          ))}
-        </div>
-      </div>
-
-       {/* Input Form */}
-       <div className="rounded-xl border border-border bg-card p-5">
-         <h4 className="font-semibold text-sm text-foreground mb-4 flex items-center gap-2">
-          <span className="w-6 h-6 rounded-full bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300 flex items-center justify-center text-xs font-bold">2</span>
-          Tell us about your business
-         </h4>
-         
-         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-           <div>
-             <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1.5 block">
-               Business Name
-             </label>
-             <Input 
-               value={businessName}
-               onChange={(e) => setBusinessName(e.target.value)}
-               placeholder="Your company name"
-             />
-           </div>
-           
-           <div>
-              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1.5 flex items-center gap-2">
-               Target Location(s)
-               {autoPopulatedFields.has('location') && (
-                 <Badge variant="outline" className="text-[9px] h-4 gap-1 border-primary/50 bg-primary/5 text-primary font-normal normal-case">
-                   <Sparkles className="w-2.5 h-2.5" />
-                   From Analytics
-                 </Badge>
-               )}
-              </label>
-              <Input 
-               value={targetLocation}
-               onChange={(e) => setTargetLocation(e.target.value)}
-               placeholder="Cities, states, or regions"
-               className={autoPopulatedFields.has('location') ? 'border-primary/30 bg-primary/5' : ''}
-              />
-            </div>
-            
-            <div className="sm:col-span-2">
-             <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1.5 flex items-center gap-2">
-               Target Audience
-               {autoPopulatedFields.has('audience') && (
-                 <Badge variant="outline" className="text-[9px] h-4 gap-1 border-primary/50 bg-primary/5 text-primary font-normal normal-case">
-                   <Sparkles className="w-2.5 h-2.5" />
-                   From Analytics
-                 </Badge>
-               )}
-             </label>
-             <Input 
-               value={targetAudience}
-               onChange={(e) => setTargetAudience(e.target.value)}
-               placeholder="Who are you trying to reach?"
-               className={autoPopulatedFields.has('audience') ? 'border-primary/30 bg-primary/5' : ''}
-             />
-           </div>
-           
-           <div className="sm:col-span-2">
-              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1.5 flex items-center gap-2">
-                Main Offer / Value Proposition
-                {autoPopulatedFields.has('offer') && (
-                  <Badge variant="outline" className="text-[9px] h-4 gap-1 border-primary/50 bg-primary/5 text-primary font-normal normal-case">
-                    <Sparkles className="w-2.5 h-2.5" />
-                    From Keywords
-                  </Badge>
-                )}
-              </label>
-              <Textarea 
-                value={mainOffer}
-                onChange={(e) => setMainOffer(e.target.value)}
-                placeholder="What's the main benefit you're offering?"
-                rows={2}
-                className={autoPopulatedFields.has('offer') ? 'border-primary/30 bg-primary/5' : ''}
-              />
-            </div>
-         </div>
-       </div>
- 
-       {/* Step 3: Import Analytics Data (Optional) */}
-       <div className="rounded-xl border border-border bg-card p-5">
-         <h4 className="font-semibold text-sm text-foreground mb-4 flex items-center gap-2">
-           <span className="w-6 h-6 rounded-full bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300 flex items-center justify-center text-xs font-bold">3</span>
-           Import Analytics Data
-           <Badge variant="secondary" className="text-[10px] ml-1">Optional</Badge>
-         </h4>
-         
-         {!importedData ? (
-           <div className="space-y-4">
-             <p className="text-xs text-muted-foreground">
-               Import your existing campaign data to auto-populate fields and enable data-driven generation.
-             </p>
-             
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-               <button 
-                 onClick={handleImportData}
-                 className="p-4 rounded-xl border border-border bg-card hover:border-blue-400 hover:bg-blue-50/50 dark:hover:bg-blue-950/30 transition-all text-center group"
-               >
-                 <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900 flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform">
-                   <BarChart3 className="w-5 h-5 text-blue-600" />
-                 </div>
-                 <p className="font-medium text-sm text-foreground">Google Ads</p>
-                 <p className="text-xs text-muted-foreground">Import campaigns</p>
-               </button>
-               <button 
-                 onClick={handleImportData}
-                 className="p-4 rounded-xl border border-border bg-card hover:border-orange-400 hover:bg-orange-50/50 dark:hover:bg-orange-950/30 transition-all text-center group"
-               >
-                 <div className="w-10 h-10 rounded-lg bg-orange-100 dark:bg-orange-900 flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform">
-                   <PieChart className="w-5 h-5 text-orange-600" />
-                 </div>
-                 <p className="font-medium text-sm text-foreground">Analytics</p>
-                 <p className="text-xs text-muted-foreground">Import behavior</p>
-               </button>
-               <button 
-                 onClick={handleImportData}
-                  className="p-4 rounded-xl border border-border bg-card hover:border-blue-400 hover:bg-blue-50/50 dark:hover:bg-blue-950/30 transition-all text-center group"
-                >
-                  <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900 flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform">
-                    <Upload className="w-5 h-5 text-blue-600" />
-                 </div>
-                 <p className="font-medium text-sm text-foreground">Upload CSV</p>
-                 <p className="text-xs text-muted-foreground">Custom data</p>
-               </button>
-             </div>
-             
-             <div className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border">
-               <Database className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-               <p className="text-xs text-muted-foreground">
-                 <strong>Demo Mode:</strong> Click any source to load sample data with 24,847 clicks and 1,892 conversions.
-               </p>
-             </div>
-           </div>
-         ) : (
-           <div className="space-y-3">
-             {/* Imported Data Summary */}
-             <div className="flex items-center justify-between p-3 rounded-xl bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800">
-               <div className="flex items-center gap-3">
-                 <div className="w-8 h-8 rounded-lg bg-green-500 flex items-center justify-center">
-                   <CheckCircle2 className="w-4 h-4 text-white" />
-                 </div>
-                 <div>
-                   <p className="font-medium text-sm text-green-900 dark:text-green-200">Data Imported Successfully</p>
-                   <p className="text-xs text-green-600 dark:text-green-400">{importedData.dateRange}</p>
-                 </div>
-               </div>
-               <Button 
-                 variant="ghost" 
-                 size="sm" 
-                 onClick={() => setImportedData(null)}
-                 className="text-green-700 hover:text-green-900 hover:bg-green-100 dark:hover:bg-green-900/50"
-               >
-                 <X className="w-4 h-4" />
-               </Button>
-             </div>
-             
-             {/* Quick Stats */}
-             <div className="grid grid-cols-3 gap-3">
-               <div className="p-3 rounded-lg bg-muted/50 border border-border text-center">
-                 <p className="text-xl font-bold text-foreground">{importedData.totalClicks.toLocaleString()}</p>
-                 <p className="text-xs text-muted-foreground">Total Clicks</p>
-               </div>
-               <div className="p-3 rounded-lg bg-muted/50 border border-border text-center">
-                 <p className="text-xl font-bold text-green-600">{importedData.totalConversions.toLocaleString()}</p>
-                 <p className="text-xs text-muted-foreground">Conversions</p>
-               </div>
-               <div className="p-3 rounded-lg bg-muted/50 border border-border text-center">
-                 <p className="text-xl font-bold text-blue-600">${(importedData.totalRevenue / 1000).toFixed(1)}K</p>
-                 <p className="text-xs text-muted-foreground">Revenue</p>
-               </div>
-             </div>
-             
-             {/* Auto-populated info */}
-             <div className="p-3 rounded-lg bg-purple-50 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-800">
-               <div className="flex items-start gap-2">
-                 <Sparkles className="w-4 h-4 text-purple-500 flex-shrink-0 mt-0.5" />
-                 <div className="text-xs text-purple-700 dark:text-purple-300">
-                   <p className="font-medium mb-1">Fields auto-populated from data:</p>
-                   <ul className="space-y-0.5">
-                     <li>• Target Location: Top 3 geographic markets</li>
-                     <li>• Target Audience: Highest converting demographic</li>
-                   </ul>
-                 </div>
-               </div>
-             </div>
-           </div>
-         )}
-       </div>
- 
-       {/* Generate Button */}
+       {/* Generate Button - Direct after template */}
        <Button 
          onClick={handleGenerateLandingPage}
          disabled={isGenerating || generationStep > 0}
@@ -4338,11 +4126,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
          ) : (
            <>
              <Sparkles className="w-5 h-5" />
-             {importedData ? (
-               <>Generate Data-Driven Landing Page</>
-             ) : (
-               <>Generate Landing Page with AI</>
-             )}
+             Generate Landing Page with AI
            </>
          )}
        </Button>

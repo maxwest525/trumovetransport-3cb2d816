@@ -18,6 +18,7 @@ import { MarketingHubDashboard } from "@/components/demo/ppc/MarketingHubDashboa
 import { UnifiedAnalyticsDashboard } from "@/components/demo/ppc/UnifiedAnalyticsDashboard";
 import { SimpleMarketingFlow } from "@/components/demo/ppc/SimpleMarketingFlow";
 import { TrudyMarketingChat } from "@/components/demo/ppc/TrudyMarketingChat";
+import { AutoBuildPage } from "@/components/demo/ppc/AutoBuildPage";
 import { useMarketingPreferences } from "@/hooks/useMarketingPreferences";
 
 const INITIAL_KEYWORDS = [
@@ -110,13 +111,33 @@ export default function MarketingDashboard() {
 
   const handleNavigate = (section: string) => {
     if (section === 'trudy-chat') { setViewMode('trudy-chat'); }
-    else if (section === 'auto-build') { setViewMode('detail'); setActiveTab('analytics'); }
+    else if (section === 'auto-build') { setViewMode('auto-build'); }
     else if (section === 'ai-create' || section === 'landing') { handleQuickCreate('landing'); }
     else if (section === 'performance') { setViewMode('detail'); setActiveTab('analytics'); }
     else if (section === 'abtest') { setViewMode('detail'); setActiveTab('abtest'); }
     else if (section === 'keywords' || section === 'seo') { setViewMode('detail'); setActiveTab('analytics'); }
     else if (section === 'campaigns') { setViewMode('detail'); setActiveTab('ads'); }
     else { setViewMode('detail'); setActiveTab(section === 'dashboard' ? 'analytics' : section); }
+  };
+
+  const handleAutoBuild = (variationId: string) => {
+    // Map variation to template and go directly to landing page editor with it generated
+    const templateMap: Record<string, string> = {
+      'high-convert': 'quote-funnel',
+      'calculator': 'calculator',
+      'social-proof': 'testimonial',
+    };
+    setLandingPagePrefill({
+      topKeyword: 'long distance moving company',
+      topLocation: 'California',
+      audience: 'Homeowners 35-54 (Desktop 62%)',
+      locations: ['California', 'Texas', 'Florida'],
+      keywords: ['long distance moving', 'cross country movers', 'moving quotes'],
+      avgCPA: 24.80,
+      autoPopulatedFields: ['keywords', 'locations', 'audience', 'headline'],
+    });
+    setViewMode('detail');
+    setActiveTab('landing');
   };
 
   return (
@@ -210,11 +231,7 @@ export default function MarketingDashboard() {
 
         {/* Auto-Build Flow */}
         {viewMode === 'auto-build' && (
-          <UnifiedAnalyticsDashboard
-            onCreateLandingPage={(prefillData) => { setLandingPagePrefill(prefillData); setViewMode('detail'); setActiveTab("landing"); }}
-            liveMode={liveMode}
-            simplified
-          />
+          <AutoBuildPage onBuild={handleAutoBuild} onCancel={() => setViewMode('hub')} />
         )}
 
         {/* Detail View */}

@@ -78,8 +78,8 @@ export function MarketingHubDashboard({
     },
     {
       id: 'dashboard',
-      title: 'Marketing Dashboard',
-      subtitle: 'Analytics, A/B tests, and performance',
+      title: 'Marketing Analytics',
+      subtitle: 'Stats, performance metrics, and insights',
       icon: BarChart3,
       gradient: 'from-blue-500 via-indigo-500 to-violet-500',
       glowColor: 'hsl(230 80% 55% / 0.15)',
