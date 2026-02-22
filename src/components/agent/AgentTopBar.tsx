@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ChevronRight, Home, LogOut, User, Settings, Bell, Sun, Moon, Monitor } from "lucide-react";
+import { ChevronRight, Home, LogOut, User, Settings, Bell, Sun, Moon, Monitor, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -51,25 +51,35 @@ export default function AgentTopBar({ crumbs, onLogout }: AgentTopBarProps) {
   return (
     <div className="sticky top-0 z-50 border-b border-border bg-card/95 backdrop-blur-sm shadow-sm">
       <div className="mx-auto max-w-[1600px] px-4 py-2.5 flex items-center justify-between gap-4">
-        {/* Breadcrumb */}
-        <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-muted-foreground min-w-0">
-          <Link to="/" className="flex items-center gap-1 hover:text-foreground transition-colors shrink-0">
-            <Home className="w-3.5 h-3.5" />
-            <span>Home</span>
+        {/* Left: Back to Website + Breadcrumb */}
+        <div className="flex items-center gap-3 min-w-0">
+          <Link 
+            to="/" 
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-border bg-background text-xs font-medium text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-all shrink-0"
+          >
+            <Globe className="w-3.5 h-3.5" />
+            <span>Website</span>
           </Link>
-          {crumbs.map((crumb, i) => (
-            <span key={i} className="flex items-center gap-1.5 min-w-0">
-              <ChevronRight className="w-3 h-3 shrink-0" />
-              {crumb.href ? (
-                <Link to={crumb.href} className="hover:text-foreground transition-colors truncate">
-                  {crumb.label}
-                </Link>
-              ) : (
-                <span className="text-foreground font-medium truncate">{crumb.label}</span>
-              )}
-            </span>
-          ))}
-        </nav>
+          <div className="w-px h-4 bg-border shrink-0" />
+          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-muted-foreground min-w-0">
+            <Link to="/agent-login" className="flex items-center gap-1 hover:text-foreground transition-colors shrink-0">
+              <Home className="w-3.5 h-3.5" />
+              <span>Portal</span>
+            </Link>
+            {crumbs.map((crumb, i) => (
+              <span key={i} className="flex items-center gap-1.5 min-w-0">
+                <ChevronRight className="w-3 h-3 shrink-0" />
+                {crumb.href ? (
+                  <Link to={crumb.href} className="hover:text-foreground transition-colors truncate">
+                    {crumb.label}
+                  </Link>
+                ) : (
+                  <span className="text-foreground font-medium truncate">{crumb.label}</span>
+                )}
+              </span>
+            ))}
+          </nav>
+        </div>
 
         {/* Agent dropdown + notifications */}
         <div className="flex items-center gap-2 shrink-0">
