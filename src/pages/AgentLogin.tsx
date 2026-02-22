@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import SiteShell from "@/components/layout/SiteShell";
-import { Briefcase, Sparkles, Trophy, Key, MessageSquare, LayoutGrid, Medal, Ticket, Kanban, ArrowUpRight } from "lucide-react";
+import { Briefcase, Sparkles, Trophy, Key, LayoutGrid, Medal, Ticket, Kanban, ArrowUpRight } from "lucide-react";
 import AgentTopBar from "@/components/agent/AgentTopBar";
 import { AgentLoginModal } from "@/components/agent/AgentLoginModal";
 import PPCDemoModal from "@/components/demo/PPCDemoModal";
 import { OperationsCenterModal } from "@/components/agent/OperationsCenterModal";
 import { CoachingSummaryModal } from "@/components/coaching/CoachingSummaryModal";
-import { InternalMessagingModal } from "@/components/messaging/InternalMessagingModal";
 import { CombinedWorkspaceModal } from "@/components/agent/CombinedWorkspaceModal";
 import { AgentCommissionBoard } from "@/components/agent/AgentCommissionBoard";
 
@@ -23,8 +22,8 @@ const AGENT_TOOLS = [
   },
   {
     id: "workspace" as const,
-    title: "Workspace",
-    description: "CRM, Dialer & E-Sign",
+    title: "E-Sign & Dialer",
+    description: "Documents & calls",
     icon: LayoutGrid,
     external: false,
     accent: "hsl(221 83% 53%)",
@@ -40,7 +39,7 @@ const AGENT_TOOLS = [
   {
     id: "operations" as const,
     title: "Operations",
-    description: "Carriers & customers",
+    description: "Carriers, customers & messaging",
     icon: Briefcase,
     external: false,
     accent: "hsl(262 83% 58%)",
@@ -53,14 +52,6 @@ const AGENT_TOOLS = [
     external: true,
     href: "/admin/support-tickets",
     accent: "hsl(0 84% 60%)",
-  },
-  {
-    id: "messaging" as const,
-    title: "Messaging",
-    description: "Team chat",
-    icon: MessageSquare,
-    external: false,
-    accent: "hsl(199 89% 48%)",
   },
   {
     id: "coaching-summary" as const,
@@ -87,7 +78,6 @@ export default function AgentLogin() {
   const [ppcOpen, setPpcOpen] = useState(false);
   const [operationsOpen, setOperationsOpen] = useState(false);
   const [coachingSummaryOpen, setCoachingSummaryOpen] = useState(false);
-  const [messagingOpen, setMessagingOpen] = useState(false);
   const [workspaceOpen, setWorkspaceOpen] = useState(false);
   const [commissionBoardOpen, setCommissionBoardOpen] = useState(false);
 
@@ -102,7 +92,6 @@ export default function AgentLogin() {
     if (toolId === "ppc") setPpcOpen(true);
     else if (toolId === "operations") setOperationsOpen(true);
     else if (toolId === "coaching-summary") setCoachingSummaryOpen(true);
-    else if (toolId === "messaging") setMessagingOpen(true);
     else if (toolId === "workspace") setWorkspaceOpen(true);
     else if (toolId === "commission-board") setCommissionBoardOpen(true);
   };
@@ -124,7 +113,6 @@ export default function AgentLogin() {
       <PPCDemoModal open={ppcOpen} onOpenChange={setPpcOpen} />
       <OperationsCenterModal open={operationsOpen} onOpenChange={setOperationsOpen} />
       <CoachingSummaryModal open={coachingSummaryOpen} onOpenChange={setCoachingSummaryOpen} />
-      <InternalMessagingModal open={messagingOpen} onOpenChange={setMessagingOpen} />
       <CombinedWorkspaceModal open={workspaceOpen} onOpenChange={setWorkspaceOpen} />
       <AgentCommissionBoard open={commissionBoardOpen} onOpenChange={setCommissionBoardOpen} />
 
