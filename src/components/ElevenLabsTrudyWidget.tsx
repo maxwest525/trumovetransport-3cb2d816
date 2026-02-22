@@ -1,6 +1,6 @@
 import { useConversation } from '@elevenlabs/react';
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { PhoneOff, Loader2, X, Mic, Copy, Download, Check, Video, ChevronUp } from 'lucide-react';
+import { PhoneOff, Loader2, X, Mic, Copy, Download, Check, Video, ChevronUp, Phone } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import trudyAvatar from '@/assets/trudy-avatar.png';
@@ -174,13 +174,23 @@ export default function ElevenLabsTrudyWidget() {
 
       {/* Options popup */}
       {showOptions && !isConnected && !isConnecting && (
-        <button
-          onClick={() => { setShowOptions(false); navigate('/book'); }}
-          className="flex items-center gap-2 rounded-full border border-border bg-card/95 backdrop-blur-xl shadow-lg px-4 py-2 hover:bg-accent transition-all animate-in fade-in slide-in-from-bottom-1 duration-150"
-        >
-          <Video className="h-4 w-4 text-foreground" />
-          <span className="text-xs font-medium text-foreground">Video Consult</span>
-        </button>
+        <div className="flex flex-col items-end gap-1.5 animate-in fade-in slide-in-from-bottom-1 duration-150">
+          <a
+            href="tel:+16097277647"
+            onClick={() => setShowOptions(false)}
+            className="flex items-center gap-2 rounded-full border border-border bg-card/95 backdrop-blur-xl shadow-lg px-4 py-2 hover:bg-accent transition-all"
+          >
+            <Phone className="h-4 w-4 text-foreground" />
+            <span className="text-xs font-medium text-foreground">Call Us</span>
+          </a>
+          <button
+            onClick={() => { setShowOptions(false); navigate('/book'); }}
+            className="flex items-center gap-2 rounded-full border border-border bg-card/95 backdrop-blur-xl shadow-lg px-4 py-2 hover:bg-accent transition-all"
+          >
+            <Video className="h-4 w-4 text-foreground" />
+            <span className="text-xs font-medium text-foreground">Video Consult</span>
+          </button>
+        </div>
       )}
 
       {/* FAB */}
