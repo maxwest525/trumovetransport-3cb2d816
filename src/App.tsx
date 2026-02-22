@@ -32,6 +32,7 @@ import Demo from "./pages/Demo";
 import AgentLoginOld from "./pages/AgentLoginOld";
 import ManagerDashboard from "./pages/ManagerDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminUsersPage from "./pages/AdminUsersPage";
 import KpiDashboard from "./pages/KpiDashboard";
 import ResetPassword from "./pages/ResetPassword";
 
@@ -71,6 +72,7 @@ const App = () => (
             <Route path="/agent-login-old" element={<AgentLoginOld />} />
             <Route path="/manager/dashboard" element={<ManagerDashboard />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/admin/users" element={<AdminUsersPage />} />
             <Route path="/kpi" element={<KpiDashboard />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Home, Sun, Moon, Bell, Search, LayoutDashboard, Users, Link2, Package, Globe, Sparkles, LineChart, Zap, ScrollText, RotateCcw, MoreHorizontal, ChevronDown, ChevronUp, Gauge, LogOut } from "lucide-react";
+import { Home, Sun, Moon, Bell, LayoutDashboard, Users, Link2, Package, Globe, Sparkles, LineChart, Zap, ScrollText, RotateCcw, MoreHorizontal, ChevronDown, ChevronUp, Gauge } from "lucide-react";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
+import AdminUsersRoles from "./AdminUsersRoles";
 
 const NAV_ITEMS = [
   { label: "Dashboard", icon: LayoutDashboard, href: "/admin/dashboard" },
@@ -18,34 +19,7 @@ const NAV_ITEMS = [
   { label: "Audit Log", icon: ScrollText, href: "/admin/dashboard", advanced: true },
 ];
 
-const STATS = [
-  { label: "Total Users", value: "48", sub: "5 pending invites" },
-  { label: "Active Sessions", value: "23" },
-  { label: "Integrations", value: "0/4", sub: "Connected" },
-  { label: "Automations", value: "3", sub: "Active" },
-];
-
-const QUICK_SETUP = [
-  { title: "Add new user", sub: "Invite team members" },
-  { title: "Connect DashClicks", sub: "Set up API integration" },
-  { title: "Configure analytics", sub: "Connect tracking pixels" },
-];
-
-const INTEGRATIONS = [
-  { name: "DashClicks", status: "disconnected" },
-  { name: "Google Analytics", status: "disconnected" },
-  { name: "Meta Pixel", status: "disconnected" },
-  { name: "Stripe", status: "disconnected" },
-];
-
-const USERS_BY_ROLE = [
-  { role: "Admins", count: 3 },
-  { role: "Managers", count: 8 },
-  { role: "Agents", count: 35 },
-  { role: "Demos", count: 2 },
-];
-
-export default function AdminDashboard() {
+export default function AdminUsersPage() {
   const { theme, setTheme } = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
@@ -124,7 +98,7 @@ export default function AdminDashboard() {
               <Home className="w-3.5 h-3.5" />
               <span>Portal</span>
             </Link>
-            <span className="text-xs text-muted-foreground">/ Admin</span>
+            <span className="text-xs text-muted-foreground">/ Admin / Users</span>
           </div>
           <div className="flex items-center gap-2">
             <button onClick={() => setTheme(theme === "dark" ? "light" : "dark")} className="p-1.5 rounded-lg hover:bg-muted transition-colors">
@@ -138,59 +112,8 @@ export default function AdminDashboard() {
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto p-6 max-w-[1400px] mx-auto w-full space-y-6">
-          <div>
-            <h1 className="text-xl font-bold text-foreground">Admin Dashboard</h1>
-            <p className="text-sm text-muted-foreground">System configuration and settings</p>
-          </div>
-
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            {STATS.map((s) => (
-              <div key={s.label} className="rounded-xl border border-border bg-card p-4">
-                <span className="text-xs text-muted-foreground">{s.label}</span>
-                <div className="mt-2 text-2xl font-bold text-foreground">{s.value}</div>
-                {s.sub && <span className="text-[11px] text-muted-foreground">{s.sub}</span>}
-              </div>
-            ))}
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <div className="rounded-xl border border-border bg-card p-4">
-              <h2 className="text-sm font-semibold text-foreground mb-3">Quick Setup</h2>
-              {QUICK_SETUP.map((q, i) => (
-                <div key={i} className="flex items-center gap-3 py-3 px-2 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors">
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-foreground">{q.title}</p>
-                    <p className="text-xs text-muted-foreground">{q.sub}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="rounded-xl border border-border bg-card p-4">
-              <h2 className="text-sm font-semibold text-foreground mb-3">Integrations</h2>
-              {INTEGRATIONS.map((int, i) => (
-                <div key={i} className="flex items-center justify-between py-2.5 px-2">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-muted-foreground/30" />
-                    <span className="text-sm text-foreground">{int.name}</span>
-                  </div>
-                  <span className="text-[11px] text-muted-foreground border border-border rounded px-2 py-0.5">{int.status}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="rounded-xl border border-border bg-card p-4">
-            <h2 className="text-sm font-semibold text-foreground mb-3">Users by Role</h2>
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              {USERS_BY_ROLE.map((u) => (
-                <div key={u.role} className="rounded-lg border border-border p-4 text-center">
-                  <div className="text-2xl font-bold text-foreground">{u.count}</div>
-                  <div className="text-xs text-muted-foreground mt-1">{u.role}</div>
-                </div>
-              ))}
-            </div>
-          </div>
+        <main className="flex-1 overflow-y-auto p-6 max-w-[1400px] mx-auto w-full">
+          <AdminUsersRoles />
         </main>
       </div>
     </div>
