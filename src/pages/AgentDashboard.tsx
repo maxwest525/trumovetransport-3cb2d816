@@ -44,7 +44,7 @@ export default function AgentDashboard() {
             </button>
             <button className="p-1.5 rounded-lg hover:bg-muted transition-colors relative">
               <Bell className="w-4 h-4 text-muted-foreground" />
-              <span className="absolute top-0.5 right-0.5 w-2 h-2 bg-foreground rounded-full" />
+              <span className="absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full" style={{ background: "hsl(142 71% 45%)" }} />
             </button>
             <div className="w-7 h-7 rounded-full bg-muted flex items-center justify-center text-xs font-medium text-foreground ml-1">MW</div>
           </div>
