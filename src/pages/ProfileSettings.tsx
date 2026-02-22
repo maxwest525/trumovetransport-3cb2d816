@@ -144,7 +144,7 @@ export default function ProfileSettings() {
 
   if (loading) {
     return (
-      <SiteShell hideTrustStrip>
+      <SiteShell hideTrustStrip backendMode>
         <AgentTopBar crumbs={[{ label: "Agent Tools", href: "/agent-login" }, { label: "Profile Settings" }]} />
         <div className="flex items-center justify-center h-64">
           <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
@@ -154,7 +154,7 @@ export default function ProfileSettings() {
   }
 
   return (
-    <SiteShell hideTrustStrip>
+    <SiteShell hideTrustStrip backendMode>
       <AgentTopBar crumbs={[{ label: "Agent Tools", href: "/agent-login" }, { label: "Profile Settings" }]} />
       <div className="max-w-2xl mx-auto px-4 py-8 space-y-6">
         {/* Avatar & Name */}

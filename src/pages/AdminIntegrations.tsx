@@ -135,7 +135,7 @@ const INTEGRATIONS: IntegrationConfig[] = [
    };
  
    return (
-      <SiteShell centered>
+      <SiteShell centered backendMode>
         <AgentTopBar crumbs={[{ label: "Agent Tools", href: "/agent-login" }, { label: "API Keys" }]} />
         <div className="max-w-4xl mx-auto py-8 px-4">
  

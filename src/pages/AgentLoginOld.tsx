@@ -108,7 +108,7 @@ export default function AgentLoginOld() {
   };
 
   return (
-    <SiteShell centered>
+    <SiteShell centered backendMode>
       {isLoggedIn && (
         <AgentTopBar
           crumbs={[{ label: "Agent Tools (Old)" }]}
