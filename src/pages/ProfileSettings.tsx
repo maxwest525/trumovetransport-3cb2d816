@@ -18,7 +18,6 @@ interface ProfileData {
   display_name: string;
   email: string;
   avatar_url: string | null;
-  role: string | null;
 }
 
 export default function ProfileSettings() {
@@ -31,7 +30,6 @@ export default function ProfileSettings() {
     display_name: "",
     email: "",
     avatar_url: null,
-    role: null,
   });
 
   // Preferences (stored locally for now)
@@ -55,7 +53,7 @@ export default function ProfileSettings() {
 
       const { data } = await supabase
         .from("profiles")
-        .select("display_name, email, avatar_url, role")
+        .select("display_name, email, avatar_url")
         .eq("id", session.user.id)
         .single();
 
@@ -64,7 +62,6 @@ export default function ProfileSettings() {
           display_name: data.display_name || "",
           email: data.email || session.user.email || "",
           avatar_url: data.avatar_url,
-          role: data.role,
         });
       }
       setLoading(false);
@@ -193,11 +190,6 @@ export default function ProfileSettings() {
               <div className="space-y-1">
                 <p className="font-medium text-foreground">{profile.display_name || "Agent"}</p>
                 <p className="text-sm text-muted-foreground">{profile.email}</p>
-                {profile.role && (
-                  <span className="inline-block text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary capitalize">
-                    {profile.role}
-                  </span>
-                )}
               </div>
             </div>
 

@@ -19,7 +19,7 @@ interface Profile {
   email: string;
   display_name: string;
   avatar_url: string | null;
-  role: string;
+  role?: string;
   is_online: boolean;
   last_seen: string;
 }
