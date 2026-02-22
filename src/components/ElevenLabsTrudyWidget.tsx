@@ -1,7 +1,8 @@
 import { useConversation } from '@elevenlabs/react';
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { PhoneOff, Loader2, X, Mic, Copy, Download, Check } from 'lucide-react';
+import { PhoneOff, Loader2, X, Mic, Copy, Download, Check, Video, ChevronUp } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 import trudyAvatar from '@/assets/trudy-avatar.png';
 
 const TRUDY_AGENT_ID = 'agent_0501khwa2t2pfj0s3echetmjhx4n';
@@ -13,7 +14,9 @@ interface TranscriptEntry {
 }
 
 export default function ElevenLabsTrudyWidget() {
+  const navigate = useNavigate();
   const [isConnecting, setIsConnecting] = useState(false);
+  const [showOptions, setShowOptions] = useState(false);
   const [showTranscript, setShowTranscript] = useState(false);
   const [showPostCall, setShowPostCall] = useState(false);
   const [savedTranscript, setSavedTranscript] = useState<TranscriptEntry[]>([]);
@@ -169,27 +172,49 @@ export default function ElevenLabsTrudyWidget() {
         </button>
       )}
 
+      {/* Options popup */}
+      {showOptions && !isConnected && !isConnecting && (
+        <button
+          onClick={() => { setShowOptions(false); navigate('/book'); }}
+          className="flex items-center gap-2 rounded-full border border-border bg-card/95 backdrop-blur-xl shadow-lg px-4 py-2 hover:bg-accent transition-all animate-in fade-in slide-in-from-bottom-1 duration-150"
+        >
+          <Video className="h-4 w-4 text-foreground" />
+          <span className="text-xs font-medium text-foreground">Video Consult</span>
+        </button>
+      )}
+
       {/* FAB */}
-      <button
-        onClick={isConnected ? stopConversation : startConversation}
-        disabled={isConnecting}
-        className={`flex items-center gap-2 rounded-full shadow-lg transition-all hover:scale-105 active:scale-95 ${
-          isConnected
-            ? 'bg-destructive text-destructive-foreground px-4 py-2.5'
-            : isConnecting
-            ? 'bg-muted text-muted-foreground px-4 py-2.5'
-            : 'bg-foreground text-background pl-2.5 pr-4 py-2'
-        }`}
-        aria-label={isConnected ? 'End call' : 'Talk to Trudy'}
-      >
-        {isConnecting ? (
-          <><Loader2 className="h-4 w-4 animate-spin" /><span className="text-xs font-medium">Connecting…</span></>
-        ) : isConnected ? (
-          <><PhoneOff className="h-4 w-4" /><span className="text-xs font-medium">End Call</span></>
-        ) : (
-          <><Mic className="h-4 w-4" /><span className="text-xs font-medium">Talk to Trudy</span></>
+      <div className="flex items-center gap-1.5">
+        {!isConnected && !isConnecting && (
+          <button
+            onClick={() => setShowOptions(prev => !prev)}
+            className={`flex items-center justify-center w-8 h-8 rounded-full border border-border bg-card/95 backdrop-blur-xl shadow-md hover:bg-accent transition-all ${showOptions ? 'rotate-180' : ''}`}
+            aria-label="More options"
+          >
+            <ChevronUp className="h-3.5 w-3.5 text-muted-foreground" />
+          </button>
         )}
-      </button>
+        <button
+          onClick={isConnected ? stopConversation : startConversation}
+          disabled={isConnecting}
+          className={`flex items-center gap-2 rounded-full shadow-lg transition-all hover:scale-105 active:scale-95 ${
+            isConnected
+              ? 'bg-destructive text-destructive-foreground px-4 py-2.5'
+              : isConnecting
+              ? 'bg-muted text-muted-foreground px-4 py-2.5'
+              : 'bg-foreground text-background pl-2.5 pr-4 py-2'
+          }`}
+          aria-label={isConnected ? 'End call' : 'Talk to Trudy'}
+        >
+          {isConnecting ? (
+            <><Loader2 className="h-4 w-4 animate-spin" /><span className="text-xs font-medium">Connecting…</span></>
+          ) : isConnected ? (
+            <><PhoneOff className="h-4 w-4" /><span className="text-xs font-medium">End Call</span></>
+          ) : (
+            <><Mic className="h-4 w-4" /><span className="text-xs font-medium">Talk to Trudy</span></>
+          )}
+        </button>
+      </div>
     </div>
   );
 }
