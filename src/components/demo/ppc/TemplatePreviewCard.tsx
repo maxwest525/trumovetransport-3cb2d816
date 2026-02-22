@@ -180,7 +180,7 @@ export function TemplatePreviewCard({ template, isSelected, onSelect }: Template
         {/* Stats footer */}
         <div className="p-3 bg-muted/20 border-t border-border flex items-center justify-between">
           <div className="flex items-center gap-1 text-xs text-muted-foreground">
-            <TrendingUp className="w-3 h-3 text-green-500" />
+            <TrendingUp className="w-3 h-3 text-primary" />
             <span>Avg conversion: <strong className="text-foreground">{template.conversion}</strong></span>
           </div>
           <div className="flex items-center gap-1 text-xs text-primary">

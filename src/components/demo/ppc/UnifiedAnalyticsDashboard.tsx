@@ -96,7 +96,7 @@ interface UnifiedAnalyticsDashboardProps {
  ];
  
  const SEO_SCORES = [
-   { label: "Performance", score: 87, color: "#10B981" },
+   { label: "Performance", score: 87, color: "hsl(var(--primary))" },
    { label: "Accessibility", score: 92, color: "#3B82F6" },
    { label: "Best Practices", score: 85, color: "#8B5CF6" },
    { label: "SEO", score: 94, color: "#F59E0B" },
@@ -197,12 +197,12 @@ export function UnifiedAnalyticsDashboard({ onCreateLandingPage, liveMode }: Uni
         {/* KPI Strip - 8 Key Metrics */}
         <div className="grid grid-cols-8 gap-2">
           {[
-            { label: "Spend", value: totalSpend / 1000, prefix: "$", suffix: "K", decimals: 1, icon: DollarSign, color: "text-green-500" },
+            { label: "Spend", value: totalSpend / 1000, prefix: "$", suffix: "K", decimals: 1, icon: DollarSign, color: "text-primary" },
             { label: "Clicks", value: totalClicks, icon: MousePointer, color: "text-blue-500" },
             { label: "CTR", value: avgCTR, suffix: "%", decimals: 1, icon: Percent, color: "text-purple-500" },
             { label: "Conversions", value: totalConversions, icon: Target, color: "text-pink-500" },
             { label: "CPA", value: avgCPA, prefix: "$", decimals: 0, icon: DollarSign, color: "text-amber-500" },
-            { label: "ROAS", value: avgROAS, suffix: "x", decimals: 1, icon: TrendingUp, color: "text-green-500" },
+            { label: "ROAS", value: avgROAS, suffix: "x", decimals: 1, icon: TrendingUp, color: "text-primary" },
             { label: "SEO Score", value: 87, icon: Globe, color: "text-blue-500" },
             { label: "A/B Lifts", value: 27, prefix: "+", suffix: "%", icon: FlaskConical, color: "text-pink-500" },
           ].map((stat, idx) => (
@@ -266,7 +266,7 @@ export function UnifiedAnalyticsDashboard({ onCreateLandingPage, liveMode }: Uni
                          <span className={`text-xs font-medium truncate ${isSelected ? 'text-primary' : ''}`}>
                            {kw.keyword}
                          </span>
-                         {kw.trend === 'up' && <TrendingUp className={`w-3 h-3 text-green-500 shrink-0 ${liveMode ? 'animate-pulse' : ''}`} />}
+                         {kw.trend === 'up' && <TrendingUp className={`w-3 h-3 text-primary shrink-0 ${liveMode ? 'animate-pulse' : ''}`} />}
                          {kw.trend === 'down' && <TrendingDown className="w-3 h-3 text-destructive shrink-0" />}
                        </div>
                        <div className="flex items-center gap-2 shrink-0">
@@ -277,7 +277,7 @@ export function UnifiedAnalyticsDashboard({ onCreateLandingPage, liveMode }: Uni
                              `${kw.ctr}% CTR`
                            )}
                          </Badge>
-                         <Badge className="text-[9px] h-4 bg-green-500/10 text-green-600 border-0">
+                         <Badge className="text-[9px] h-4 bg-primary/10 text-primary border-0">
                            {liveMode ? (
                              <AnimatedNumber value={kw.cpa} prefix="$" decimals={2} liveMode={liveMode} />
                            ) : (
@@ -334,8 +334,8 @@ export function UnifiedAnalyticsDashboard({ onCreateLandingPage, liveMode }: Uni
                    <span className="text-muted-foreground">3 images missing alt</span>
                  </div>
                  <div className="flex items-center gap-2 text-xs">
-                   <CheckCircle2 className="w-3 h-3 text-green-500" />
-                   <span className="text-muted-foreground">SSL + Mobile OK</span>
+                    <CheckCircle2 className="w-3 h-3 text-primary" />
+                    <span className="text-muted-foreground">SSL + Mobile OK</span>
                  </div>
                </CardContent>
              </Card>
@@ -361,7 +361,7 @@ export function UnifiedAnalyticsDashboard({ onCreateLandingPage, liveMode }: Uni
                     >
                       <div className="flex items-center gap-2">
                         <span className="text-xs font-medium">{p.platform}</span>
-                        {p.trending === 'up' && <TrendingUp className={`w-3 h-3 text-green-500 ${liveMode ? 'animate-bounce' : ''}`} />}
+                        {p.trending === 'up' && <TrendingUp className={`w-3 h-3 text-primary ${liveMode ? 'animate-bounce' : ''}`} />}
                       </div>
                       <div className="flex items-center gap-2">
                         <span className="text-[10px] text-muted-foreground">
@@ -403,7 +403,7 @@ export function UnifiedAnalyticsDashboard({ onCreateLandingPage, liveMode }: Uni
                      </div>
                      <div className="flex items-center justify-between text-[10px]">
                        <span className="text-muted-foreground">Winner: {test.winner}</span>
-                       <span className="text-green-600 font-medium">{test.lift}</span>
+                       <span className="text-primary font-medium">{test.lift}</span>
                      </div>
                      <Progress value={test.confidence} className="h-1" />
                      <span className="text-[9px] text-muted-foreground">{test.confidence}% confidence</span>
@@ -416,7 +416,7 @@ export function UnifiedAnalyticsDashboard({ onCreateLandingPage, liveMode }: Uni
              <Card className="border-border">
                <CardHeader className="pb-2 pt-3 px-3">
                  <CardTitle className="text-xs font-semibold flex items-center gap-1.5">
-                   <Target className="w-3.5 h-3.5 text-green-500" />
+                   <Target className="w-3.5 h-3.5 text-primary" />
                    Conversion Funnel
                  </CardTitle>
                </CardHeader>
@@ -520,7 +520,7 @@ export function UnifiedAnalyticsDashboard({ onCreateLandingPage, liveMode }: Uni
                    <div key={demo.segment} className="p-2 rounded-lg bg-muted/50 space-y-1">
                      <div className="flex items-center justify-between">
                        <span className="text-xs font-medium">{demo.segment}</span>
-                       <Badge className="text-[9px] h-4 bg-green-500/10 text-green-600">${demo.aov}</Badge>
+                       <Badge className="text-[9px] h-4 bg-primary/10 text-primary">${demo.aov}</Badge>
                      </div>
                      <div className="flex items-center justify-between text-[10px] text-muted-foreground">
                        <span>{demo.percentage}% of traffic</span>
@@ -544,7 +544,7 @@ export function UnifiedAnalyticsDashboard({ onCreateLandingPage, liveMode }: Uni
                </CardHeader>
                <CardContent className="px-3 pb-3 space-y-2 text-xs">
                  <div className="p-2 rounded bg-background/50">
-                   <span className="text-green-600">↑</span> Increase NYC budget 25% (8.1% conv rate)
+                   <span className="text-primary">↑</span> Increase NYC budget 25% (8.1% conv rate)
                  </div>
                  <div className="p-2 rounded bg-background/50">
                    <span className="text-amber-600">→</span> Shift TikTok spend to Google (1.9x vs 4.2x ROAS)

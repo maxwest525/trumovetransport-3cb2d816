@@ -35,9 +35,9 @@
      large: 'px-6 py-3 text-base'
    };
    return (
-     <div className={`inline-flex items-center gap-2 ${sizeClasses[size]} bg-green-500/10 border border-green-500/30 rounded-full`}>
-       <Shield className="w-4 h-4 text-green-500" />
-       <span className="font-bold text-green-600">TruMove Guarantee</span>
+      <div className={`inline-flex items-center gap-2 ${sizeClasses[size]} bg-primary/10 border border-primary/30 rounded-full`}>
+        <Shield className="w-4 h-4 text-primary" />
+        <span className="font-bold text-primary">TruMove Guarantee</span>
      </div>
    );
  };

@@ -172,7 +172,7 @@ export function ConversionsPanel({ events, funnel, liveMode, onEmailExport }: Co
               </div>
               <div className="text-right">
                 <div className={`text-lg font-bold text-foreground ${liveMode ? "transition-all duration-300" : ""}`}>{event.count}</div>
-                <div className="text-[10px] text-green-500">{event.trend}</div>
+                <div className="text-[10px] text-primary">{event.trend}</div>
               </div>
               <div className="text-right">
                 <div className="text-sm font-medium" style={{ color: "#7C3AED" }}>{event.value}</div>

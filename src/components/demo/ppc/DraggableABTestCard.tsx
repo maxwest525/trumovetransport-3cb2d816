@@ -82,7 +82,7 @@ export function DraggableABTestCard({ test, liveMode }: DraggableABTestCardProps
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs font-medium text-foreground">{variant.name}</span>
               {variant.name === test.winner && (
-                <Trophy className="w-3 h-3 text-green-500" />
+                <Trophy className="w-3 h-3 text-primary" />
               )}
             </div>
             <div className="grid grid-cols-3 gap-2 text-center">

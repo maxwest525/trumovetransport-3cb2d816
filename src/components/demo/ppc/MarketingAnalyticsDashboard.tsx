@@ -339,7 +339,7 @@ const AUDIENCE_OPTIONS = [
           <CardTitle className="text-sm flex items-center gap-2">
             <BarChart3 className="w-4 h-4 text-primary" />
             Ad Platforms
-            <Badge className="bg-green-500/10 text-green-600 border-green-500/30 text-[10px]">AI Optimized</Badge>
+            <Badge className="bg-primary/10 text-primary border-primary/30 text-[10px]">AI Optimized</Badge>
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -393,14 +393,14 @@ const AUDIENCE_OPTIONS = [
 
        {/* Header Stats */}
       <div className="grid grid-cols-4 gap-3">
-        <Card className="bg-gradient-to-br from-green-500/10 to-green-500/5 border-green-500/20">
+        <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
           <CardContent className="p-3">
              <div className="flex items-center justify-between">
                <div>
                 <p className="text-xs text-muted-foreground">Historical Spend</p>
                 <p className="text-xl font-bold">${totalSpend.toLocaleString()}</p>
                </div>
-              <DollarSign className="w-6 h-6 text-green-500" />
+              <DollarSign className="w-6 h-6 text-primary" />
              </div>
            </CardContent>
          </Card>
@@ -470,7 +470,7 @@ const AUDIENCE_OPTIONS = [
                  <Star className="w-4 h-4 text-amber-500" />
                 Select Keywords for Campaign
                </h3>
-              <Badge className="bg-green-500/10 text-green-600 border-green-500/30">{selectedKeywords.length} selected</Badge>
+              <Badge className="bg-primary/10 text-primary border-primary/30">{selectedKeywords.length} selected</Badge>
              </div>
              {BEST_KEYWORDS.map((kw, i) => (
               <Card 
@@ -488,7 +488,7 @@ const AUDIENCE_OPTIONS = [
                       <Checkbox checked={selectedKeywords.includes(kw.keyword)} className="pointer-events-none" />
                        {i === 0 && <Badge className="bg-amber-500 text-white">🏆 #1</Badge>}
                        <span className="font-medium">{kw.keyword}</span>
-                       {kw.trend === 'up' && <TrendingUp className="w-4 h-4 text-green-500" />}
+                       {kw.trend === 'up' && <TrendingUp className="w-4 h-4 text-primary" />}
                        {kw.trend === 'down' && <TrendingDown className="w-4 h-4 text-red-500" />}
                      </div>
                      <Badge variant="outline" className="text-xs">${kw.cpa.toFixed(2)} CPA</Badge>
@@ -516,12 +516,12 @@ const AUDIENCE_OPTIONS = [
                <Badge className="bg-blue-500/10 text-blue-600 border-blue-500/30">By ROAS</Badge>
              </div>
              {BEST_PLATFORMS.sort((a, b) => b.roas - a.roas).map((p, i) => (
-               <Card key={i} className={p.roas >= 4 ? 'border-green-500/50 bg-green-500/5' : p.roas < 2 ? 'border-red-500/30 bg-red-500/5' : ''}>
+               <Card key={i} className={p.roas >= 4 ? 'border-primary/50 bg-primary/5' : p.roas < 2 ? 'border-red-500/30 bg-red-500/5' : ''}>
                  <CardContent className="p-4">
                    <div className="flex items-center justify-between mb-2">
                      <div className="flex items-center gap-2">
                        <span className="font-medium">{p.platform}</span>
-                       {p.trending === 'up' && <TrendingUp className="w-4 h-4 text-green-500" />}
+                       {p.trending === 'up' && <TrendingUp className="w-4 h-4 text-primary" />}
                        {p.trending === 'down' && <TrendingDown className="w-4 h-4 text-red-500" />}
                      </div>
                      <div className="flex items-center gap-2">
@@ -548,10 +548,10 @@ const AUDIENCE_OPTIONS = [
            <div className="space-y-3">
              <div className="flex items-center justify-between mb-4">
                <h3 className="font-semibold flex items-center gap-2">
-                 <Globe className="w-4 h-4 text-green-500" />
+                 <Globe className="w-4 h-4 text-primary" />
                  Top Performing Locations
                </h3>
-               <Badge className="bg-green-500/10 text-green-600 border-green-500/30">By Revenue</Badge>
+               <Badge className="bg-primary/10 text-primary border-primary/30">By Revenue</Badge>
              </div>
              {BEST_LOCATIONS.map((loc, i) => (
                <Card key={i}>
@@ -595,7 +595,7 @@ const AUDIENCE_OPTIONS = [
                        <span className="font-medium">{demo.segment}</span>
                        <Badge variant="secondary" className="text-xs">{demo.percentage}% of traffic</Badge>
                      </div>
-                     <Badge className="bg-green-500/10 text-green-600">${demo.avgOrderValue.toLocaleString()} AOV</Badge>
+                     <Badge className="bg-primary/10 text-primary">${demo.avgOrderValue.toLocaleString()} AOV</Badge>
                    </div>
                    <div className="grid grid-cols-2 gap-4 text-sm">
                      <div><span className="text-muted-foreground">Conversions:</span> {demo.conversions}</div>
@@ -619,12 +619,12 @@ const AUDIENCE_OPTIONS = [
              <Card>
                <CardHeader className="pb-2">
                  <CardTitle className="text-base flex items-center gap-2">
-                   <CheckCircle2 className="w-4 h-4 text-green-500" />
+                   <CheckCircle2 className="w-4 h-4 text-primary" />
                    SEO Opportunities
                  </CardTitle>
                </CardHeader>
                <CardContent className="space-y-3">
-                 <div className="p-3 bg-green-500/10 rounded-lg border border-green-500/20">
+                 <div className="p-3 bg-primary/10 rounded-lg border border-primary/20">
                    <p className="font-medium text-sm">"ai moving estimate" - Position 1.2</p>
                    <p className="text-xs text-muted-foreground">Emerging keyword with 340% YoY growth. Create pillar content page.</p>
                  </div>

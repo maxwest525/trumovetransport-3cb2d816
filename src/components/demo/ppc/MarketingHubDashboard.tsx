@@ -88,7 +88,7 @@ export function MarketingHubDashboard({
           <div className="space-y-2">
             {[
               { label: 'Total Spend', value: `$${stats.totalSpend.toLocaleString()}`, icon: DollarSign, color: 'hsl(var(--primary))' },
-              { label: 'Conversions', value: stats.conversions.toString(), icon: Target, color: 'hsl(142 71% 45%)' },
+              { label: 'Conversions', value: stats.conversions.toString(), icon: Target, color: 'hsl(var(--primary))' },
               { label: 'Active Pages', value: stats.activePages.toString(), icon: Layout, color: 'hsl(217 91% 60%)' },
               { label: 'Tests Running', value: stats.testsRunning.toString(), icon: BarChart3, color: 'hsl(330 81% 60%)' },
             ].map((stat) => (
@@ -144,9 +144,9 @@ export function MarketingHubDashboard({
           >
             <CardContent className="p-2.5 flex items-center gap-2">
               <div 
-                className="w-7 h-7 rounded-md flex items-center justify-center shrink-0 bg-green-500/10"
-              >
-                <Layout className="w-3.5 h-3.5 text-green-500" />
+                 className="w-7 h-7 rounded-md flex items-center justify-center shrink-0 bg-primary/10"
+               >
+                 <Layout className="w-3.5 h-3.5 text-primary" />
               </div>
               <span className="text-xs font-medium text-foreground group-hover:text-primary transition-colors flex-1">Pages ({stats.activePages})</span>
               <ChevronRight className="w-3.5 h-3.5 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" />

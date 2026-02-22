@@ -97,7 +97,7 @@
                onClick={() => handleCopy(headline, "Headline")}
                className="text-muted-foreground hover:text-foreground transition-colors p-1"
              >
-               {copied === "Headline" ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
+               {copied === "Headline" ? <Check className="w-4 h-4 text-primary" /> : <Copy className="w-4 h-4" />}
              </button>
            </div>
  
@@ -111,7 +111,7 @@
                onClick={() => handleCopy(description, "Description")}
                className="text-muted-foreground hover:text-foreground transition-colors p-1"
              >
-               {copied === "Description" ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
+               {copied === "Description" ? <Check className="w-4 h-4 text-primary" /> : <Copy className="w-4 h-4" />}
              </button>
            </div>
  
@@ -125,7 +125,7 @@
                onClick={() => handleCopy(cta, "CTA")}
                className="text-muted-foreground hover:text-foreground transition-colors p-1"
              >
-               {copied === "CTA" ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
+               {copied === "CTA" ? <Check className="w-4 h-4 text-primary" /> : <Copy className="w-4 h-4" />}
              </button>
            </div>
  

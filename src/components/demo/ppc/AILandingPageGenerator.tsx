@@ -1293,7 +1293,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
             <div className="flex gap-1">
               <button 
                 onClick={saveEdit}
-                className="p-1.5 rounded-lg bg-green-500 text-white hover:bg-green-600"
+                className="p-1.5 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90"
               >
                 <Check className="w-4 h-4" />
               </button>
@@ -2798,7 +2798,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
                 variant="outline" 
                 size="sm" 
                 onClick={() => setShowDataImport(true)}
-                className={importedData ? "border-green-500 text-green-600" : ""}
+                className={importedData ? "border-primary text-primary" : ""}
               >
                 <Upload className="w-3 h-3 mr-1" />
                 {importedData ? "Data Imported" : "Import Data"}
@@ -3000,8 +3000,8 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
                  onClick={handleImportData}
                  className="p-4 rounded-xl border border-border bg-card hover:border-blue-400 transition-all text-center"
                >
-                 <div className="w-10 h-10 rounded-lg bg-green-100 dark:bg-green-900 flex items-center justify-center mx-auto mb-2">
-                   <Upload className="w-5 h-5 text-green-600" />
+                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-2">
+                    <Upload className="w-5 h-5 text-primary" />
                  </div>
                  <p className="font-medium text-sm text-foreground">Upload CSV</p>
                  <p className="text-xs text-muted-foreground">Custom data</p>
@@ -3021,10 +3021,10 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
          {importedData && (
            <div className="rounded-xl border border-border bg-card overflow-hidden">
              {/* Header with stats */}
-             <div className="p-4 border-b border-border bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-950/30 dark:to-blue-950/30">
-               <div className="flex items-center justify-between mb-3">
-                 <div className="flex items-center gap-2">
-                   <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-green-500">
+              <div className="p-4 border-b border-border bg-gradient-to-r from-primary/5 to-blue-50 dark:from-primary/10 dark:to-blue-950/30">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-primary">
                      <CheckCircle2 className="w-4 h-4 text-white" />
                    </div>
                    <div>
@@ -3062,7 +3062,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
                    <p className="text-xs text-muted-foreground">Total Clicks</p>
                  </div>
                  <div className="text-center p-2 rounded-lg bg-white/50 dark:bg-slate-800/50">
-                   <p className="text-2xl font-bold text-green-600">{importedData.totalConversions.toLocaleString()}</p>
+                   <p className="text-2xl font-bold text-primary">{importedData.totalConversions.toLocaleString()}</p>
                    <p className="text-xs text-muted-foreground">Conversions</p>
                  </div>
                  <div className="text-center p-2 rounded-lg bg-white/50 dark:bg-slate-800/50">
@@ -3339,7 +3339,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
                        </div>
                        <div className="p-2 rounded-lg bg-muted">
                          <p className="text-xs text-muted-foreground flex items-center gap-1.5">
-                           <TrendingUp className="w-3.5 h-3.5 text-green-500" />
+                           <TrendingUp className="w-3.5 h-3.5 text-primary" />
                            <span><strong>Conversion Impact:</strong> {click.conversionImpact}</span>
                          </p>
                        </div>
@@ -3864,7 +3864,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
                    {importedData && (
                      <div className="p-3 rounded-xl border border-border bg-card">
                        <div className="flex items-center gap-2 mb-2">
-                         <Target className="w-4 h-4 text-green-500" />
+                         <Target className="w-4 h-4 text-primary" />
                          <h5 className="font-semibold text-xs text-foreground">Top Keywords</h5>
                        </div>
                        <div className="space-y-2">
@@ -3872,8 +3872,8 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
                            <div key={i} className="flex items-center justify-between text-xs">
                              <span className="text-muted-foreground truncate flex-1">{kw.keyword}</span>
                              <div className="flex items-center gap-2">
-                               <span className="text-green-600 font-medium">{kw.conversions}</span>
-                               {kw.trend === 'up' && <TrendingUp className="w-3 h-3 text-green-500" />}
+                                <span className="text-primary font-medium">{kw.conversions}</span>
+                                {kw.trend === 'up' && <TrendingUp className="w-3 h-3 text-primary" />}
                                {kw.trend === 'down' && <TrendingDown className="w-3 h-3 text-red-500" />}
                              </div>
                            </div>

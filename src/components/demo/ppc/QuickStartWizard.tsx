@@ -783,7 +783,7 @@ export function QuickStartWizard({ onComplete, onCancel, initialData }: QuickSta
               <div className="p-4 rounded-xl bg-muted/50 space-y-3 mt-4">
                 <div className="flex items-center gap-2 text-sm font-medium text-foreground">
                   {completionStatus.percent === 100 ? (
-                    <CheckCircle2 className="w-5 h-5 text-green-500" />
+                    <CheckCircle2 className="w-5 h-5 text-primary" />
                   ) : (
                     <AlertTriangle className="w-5 h-5 text-orange-500" />
                   )}
@@ -792,15 +792,15 @@ export function QuickStartWizard({ onComplete, onCancel, initialData }: QuickSta
                 <Progress value={completionStatus.percent} className="h-2" />
                 <div className="grid grid-cols-3 gap-2 text-xs">
                   <div className="flex items-center gap-1">
-                    <CheckCircle2 className={cn("w-3 h-3", pageData.headline ? "text-green-500" : "text-muted-foreground")} />
+                    <CheckCircle2 className={cn("w-3 h-3", pageData.headline ? "text-primary" : "text-muted-foreground")} />
                     <span className={pageData.headline ? "" : "text-muted-foreground"}>Headline</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <CheckCircle2 className={cn("w-3 h-3", pageData.description ? "text-green-500" : "text-muted-foreground")} />
+                    <CheckCircle2 className={cn("w-3 h-3", pageData.description ? "text-primary" : "text-muted-foreground")} />
                     <span className={pageData.description ? "" : "text-muted-foreground"}>Description</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <CheckCircle2 className={cn("w-3 h-3", pageData.redirectUrl ? "text-green-500" : "text-muted-foreground")} />
+                    <CheckCircle2 className={cn("w-3 h-3", pageData.redirectUrl ? "text-primary" : "text-muted-foreground")} />
                     <span className={pageData.redirectUrl ? "" : "text-muted-foreground"}>Redirect URL</span>
                   </div>
                 </div>

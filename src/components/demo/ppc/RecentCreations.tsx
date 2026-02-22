@@ -33,7 +33,7 @@ export function RecentCreations({ pages, onView, onEdit, onDelete }: RecentCreat
 
   const getStatusColor = (status: LandingPage['status']) => {
     switch (status) {
-      case 'active': return 'bg-green-500/20 text-green-400';
+      case 'active': return 'bg-primary/20 text-primary';
       case 'paused': return 'bg-yellow-500/20 text-yellow-400';
       case 'draft': return 'bg-muted text-muted-foreground';
     }
@@ -41,7 +41,7 @@ export function RecentCreations({ pages, onView, onEdit, onDelete }: RecentCreat
 
   const getPerformanceIndicator = (perf: LandingPage['performance']) => {
     switch (perf) {
-      case 'excellent': return { color: 'text-green-500', label: '↑ Top performer' };
+      case 'excellent': return { color: 'text-primary', label: '↑ Top performer' };
       case 'good': return { color: 'text-blue-500', label: '→ On track' };
       case 'poor': return { color: 'text-red-500', label: '↓ Needs attention' };
       case 'new': return { color: 'text-purple-500', label: '✨ New' };
@@ -99,7 +99,7 @@ export function RecentCreations({ pages, onView, onEdit, onDelete }: RecentCreat
                 <div className="text-right shrink-0 hidden sm:block">
                   <div className="flex items-center gap-1 text-xs font-medium">
                     {page.trend === 'up' ? (
-                      <TrendingUp className="w-3 h-3 text-green-500" />
+                      <TrendingUp className="w-3 h-3 text-primary" />
                     ) : page.trend === 'down' ? (
                       <TrendingDown className="w-3 h-3 text-red-500" />
                     ) : null}

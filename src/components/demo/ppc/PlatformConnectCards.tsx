@@ -80,14 +80,14 @@ export function PlatformConnectCards({ compact = false }: PlatformConnectCardsPr
               key={platform.id}
               className={`p-2 rounded-lg border text-center transition-all ${
                 platform.connected
-                  ? 'border-green-500/30 bg-green-500/5'
+                  ? 'border-primary/30 bg-primary/5'
                   : 'border-border bg-muted/30 hover:border-primary/50'
               }`}
             >
               <span className="text-xl">{platform.logo}</span>
               <p className="text-[10px] font-medium mt-1">{platform.name}</p>
               {platform.connected ? (
-                <Badge className="text-[8px] h-4 mt-1 bg-green-500/10 text-green-600">
+                <Badge className="text-[8px] h-4 mt-1 bg-primary/10 text-primary">
                   {platform.roas?.toFixed(1)}x ROAS
                 </Badge>
               ) : (
@@ -133,7 +133,7 @@ export function PlatformConnectCards({ compact = false }: PlatformConnectCardsPr
               key={platform.id}
               className={`overflow-hidden transition-all ${
                 platform.connected
-                  ? 'border-green-500/30'
+                  ? 'border-primary/30'
                   : 'border-dashed border-muted-foreground/30 hover:border-primary/50'
               }`}
             >
@@ -152,7 +152,7 @@ export function PlatformConnectCards({ compact = false }: PlatformConnectCardsPr
                   </div>
                   
                   {platform.connected && syncing !== platform.id && (
-                    <Badge className="bg-green-500/10 text-green-600 text-[10px]">
+                    <Badge className="bg-primary/10 text-primary text-[10px]">
                       <Check className="w-3 h-3 mr-1" />
                       Live
                     </Badge>
@@ -171,7 +171,7 @@ export function PlatformConnectCards({ compact = false }: PlatformConnectCardsPr
                       <div className="text-center p-1.5 rounded bg-muted/50">
                         <p className="text-xs font-bold flex items-center justify-center gap-1">
                           {platform.roas?.toFixed(1)}x
-                          {platform.trend === 'up' && <TrendingUp className="w-3 h-3 text-green-500" />}
+                          {platform.trend === 'up' && <TrendingUp className="w-3 h-3 text-primary" />}
                           {platform.trend === 'down' && <TrendingDown className="w-3 h-3 text-destructive" />}
                         </p>
                         <p className="text-[9px] text-muted-foreground">ROAS</p>
