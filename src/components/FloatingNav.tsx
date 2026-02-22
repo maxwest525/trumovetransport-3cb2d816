@@ -1,5 +1,5 @@
 import { useLocation, Link } from "react-router-dom";
-import { Sparkles, Shield, MessageSquare, MapPin, Video, Headphones, User, LucideIcon } from "lucide-react";
+import { Sparkles, Shield, MessageSquare, MapPin, Video, User, LucideIcon } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -26,7 +26,6 @@ const navItems: NavItem[] = [
   { icon: MessageSquare, label: "AI Chat", href: null, action: "chat" },
   { icon: MapPin, label: "Shipment Tracking", href: "/track" },
   { icon: Sparkles, label: "AI Estimator", href: "/online-estimate" },
-  { icon: Headphones, label: "Call Us", href: "tel:+16097277647" },
   { icon: User, label: "Agent Login", href: "/agent-login", isAgentLogin: true },
 ];
 
