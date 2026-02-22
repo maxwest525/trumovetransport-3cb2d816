@@ -243,7 +243,7 @@ export default function MarketingDashboard() {
                         </div>
                         <Button variant="ghost" size="sm">{ad.status === "active" ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}</Button>
                       </div>
-                      <div className="grid grid-cols-5 gap-4 pt-3 border-t border-border">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 pt-3 border-t border-border">
                         <div><div className="text-lg font-bold text-foreground">{ad.clicks.toLocaleString()}</div><div className="text-[10px] text-muted-foreground uppercase">Clicks</div></div>
                         <div><div className="text-lg font-bold text-foreground">{ad.impressions.toLocaleString()}</div><div className="text-[10px] text-muted-foreground uppercase">Impressions</div></div>
                         <div><div className="text-lg font-bold text-primary">{((ad.clicks / ad.impressions) * 100).toFixed(2)}%</div><div className="text-[10px] text-muted-foreground uppercase">CTR</div></div>

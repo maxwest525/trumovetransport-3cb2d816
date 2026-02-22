@@ -160,7 +160,7 @@ export function MarketingHubDashboard({
         </div>
 
         {/* Quick Stats Row with colored icons */}
-        <div className="grid grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {statItems.map((stat, idx) => (
             <div 
               key={stat.label} 
