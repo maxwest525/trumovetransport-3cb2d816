@@ -95,7 +95,7 @@ export default function ManagerDashboard() {
             </button>
             <button className="p-1.5 rounded-lg hover:bg-muted transition-colors relative">
               <Bell className="w-4 h-4 text-muted-foreground" />
-              <span className="absolute top-0.5 right-0.5 w-2 h-2 bg-foreground rounded-full" />
+              <span className="absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full" style={{ background: "hsl(142 71% 45%)" }} />
             </button>
             <div className="w-7 h-7 rounded-full bg-muted flex items-center justify-center text-xs font-medium text-foreground ml-1">MW</div>
           </div>
@@ -113,7 +113,7 @@ export default function ManagerDashboard() {
               <div key={s.label} className="rounded-xl border border-border bg-card p-4">
                 <span className="text-xs text-muted-foreground">{s.label}</span>
                 <div className="mt-2 text-2xl font-bold text-foreground">{s.value}</div>
-                {s.change && <span className="text-[11px] text-foreground font-medium">{s.change}</span>}
+                {s.change && <span className="text-[11px]" style={{ color: "hsl(142 71% 45%)" }}>{s.change}</span>}
                 {s.sub && <span className="text-[11px] text-muted-foreground">{s.sub}</span>}
               </div>
             ))}
@@ -164,7 +164,7 @@ export default function ManagerDashboard() {
                 </div>
                 <div className="text-right">
                   <p className="text-sm font-semibold text-foreground">{t.revenue}</p>
-                  <p className="text-[11px] text-foreground font-medium">{t.change}</p>
+                  <p className="text-[11px]" style={{ color: "hsl(142 71% 45%)" }}>{t.change}</p>
                 </div>
               </div>
             ))}

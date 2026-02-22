@@ -41,7 +41,7 @@ export default function AgentDashboardContent() {
                 <Icon className="w-4 h-4 text-muted-foreground/50" />
               </div>
               <div className="mt-2 text-2xl font-bold text-foreground">{s.value}</div>
-              {s.change && <span className="text-[11px] text-foreground font-medium">{s.change}</span>}
+              {s.change && <span className="text-[11px]" style={{ color: "hsl(142 71% 45%)" }}>{s.change}</span>}
               {s.sub && <span className="text-[11px] text-muted-foreground">{s.sub}</span>}
             </div>
           );
