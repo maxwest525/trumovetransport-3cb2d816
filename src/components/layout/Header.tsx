@@ -308,11 +308,6 @@ export default function Header({ whiteLogo = false }: HeaderProps) {
 
           {/* Action Cluster */}
           <div className="header-actions">
-            <a href="tel:+16097277647" className="header-btn header-btn-call">
-              <Phone className="w-4 h-4" />
-              <span>Call</span>
-            </a>
-            
             {/* Theme Toggle */}
             <ThemeToggle />
           </div>
@@ -356,10 +351,6 @@ export default function Header({ whiteLogo = false }: HeaderProps) {
               ))}
             </nav>
             <div className="header-mobile-actions">
-              <a href="tel:+16097277647" className="header-mobile-btn">
-                <Phone className="w-4 h-4" />
-                <span>Call Now</span>
-              </a>
               <Link 
                 to="/book" 
                 className="header-mobile-btn is-primary"
