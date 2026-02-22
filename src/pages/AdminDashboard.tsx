@@ -1,6 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Home, Sun, Moon, Bell, Search, LayoutDashboard, Users, Link2, Package, Globe, Sparkles, LineChart, Zap, ScrollText, RotateCcw } from "lucide-react";
+import { Home, Sun, Moon, Bell, Search, LayoutDashboard, Users, Link2, Package, Globe, Sparkles, LineChart, Zap, ScrollText, RotateCcw, MoreHorizontal, ChevronDown, ChevronUp } from "lucide-react";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 
@@ -8,12 +8,13 @@ const NAV_ITEMS = [
   { label: "Dashboard", icon: LayoutDashboard, href: "/admin/dashboard" },
   { label: "Users & Roles", icon: Users, href: "/admin/dashboard", disabled: true },
   { label: "Integrations", icon: Link2, href: "/admin/dashboard", disabled: true },
-  { label: "Products & Pricing", icon: Package, href: "/admin/dashboard", disabled: true },
-  { label: "Website Builder", icon: Globe, href: "/admin/dashboard", disabled: true },
-  { label: "AI Marketing Suite", icon: Sparkles, href: "/admin/dashboard", disabled: true },
-  { label: "Analytics Setup", icon: LineChart, href: "/admin/dashboard", disabled: true },
-  { label: "Automations", icon: Zap, href: "/admin/dashboard", disabled: true },
-  { label: "Audit Log", icon: ScrollText, href: "/admin/dashboard", disabled: true },
+  // Advanced
+  { label: "Products & Pricing", icon: Package, href: "/admin/dashboard", disabled: true, advanced: true },
+  { label: "Website Builder", icon: Globe, href: "/admin/dashboard", disabled: true, advanced: true },
+  { label: "AI Marketing Suite", icon: Sparkles, href: "/admin/dashboard", disabled: true, advanced: true },
+  { label: "Analytics Setup", icon: LineChart, href: "/admin/dashboard", disabled: true, advanced: true },
+  { label: "Automations", icon: Zap, href: "/admin/dashboard", disabled: true, advanced: true },
+  { label: "Audit Log", icon: ScrollText, href: "/admin/dashboard", disabled: true, advanced: true },
 ];
 
 const STATS = [
@@ -47,6 +48,7 @@ export default function AdminDashboard() {
   const { theme, setTheme } = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
+  const [showAdvanced, setShowAdvanced] = useState(false);
 
   const handleResetPreference = () => {
     localStorage.removeItem("truemove_remembered_role");
@@ -66,7 +68,7 @@ export default function AdminDashboard() {
           <span className="text-[10px] text-muted-foreground ml-1">Admin</span>
         </div>
         <nav className="flex-1 px-2 py-2 space-y-0.5">
-          {NAV_ITEMS.map((item) => {
+          {NAV_ITEMS.filter(i => !i.advanced).map((item) => {
             const Icon = item.icon;
             const active = location.pathname === item.href && !item.disabled;
             return item.disabled ? (
@@ -79,6 +81,28 @@ export default function AdminDashboard() {
               </Link>
             );
           })}
+
+          <button
+            onClick={() => setShowAdvanced(!showAdvanced)}
+            className="w-full flex items-center gap-2.5 px-3 py-2 mt-1 rounded-lg text-xs text-muted-foreground/60 hover:text-muted-foreground hover:bg-muted/50 transition-colors"
+          >
+            <MoreHorizontal className="w-4 h-4" />
+            <span>More Tools</span>
+            {showAdvanced ? <ChevronUp className="w-3 h-3 ml-auto" /> : <ChevronDown className="w-3 h-3 ml-auto" />}
+          </button>
+
+          {showAdvanced && (
+            <div className="space-y-0.5 pl-1 border-l-2 border-border/50 ml-4 animate-in fade-in slide-in-from-top-1 duration-200">
+              {NAV_ITEMS.filter(i => i.advanced).map((item) => {
+                const Icon = item.icon;
+                return (
+                  <div key={item.label} className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs text-muted-foreground/50 cursor-not-allowed">
+                    <Icon className="w-4 h-4" /><span>{item.label}</span>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </nav>
         <div className="px-2 pb-4 space-y-0.5">
           <button onClick={handleResetPreference} className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">

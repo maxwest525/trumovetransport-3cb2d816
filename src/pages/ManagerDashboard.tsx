@@ -1,18 +1,19 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Home, Sun, Moon, Bell, Search, LayoutDashboard, Users, Target, CalendarCheck, Headphones, AlertTriangle, CheckCircle, BarChart3, RotateCcw } from "lucide-react";
+import { Home, Sun, Moon, Bell, Search, LayoutDashboard, Users, Target, CalendarCheck, Headphones, AlertTriangle, CheckCircle, BarChart3, RotateCcw, MoreHorizontal, ChevronDown, ChevronUp } from "lucide-react";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
   { label: "Dashboard", icon: LayoutDashboard, href: "/manager/dashboard" },
   { label: "Team Pipeline", icon: Users, href: "/manager/dashboard", disabled: true },
-  { label: "Estimates Oversight", icon: Target, href: "/manager/dashboard", disabled: true },
   { label: "Bookings Oversight", icon: CalendarCheck, href: "/manager/dashboard", disabled: true },
-  { label: "Call Monitoring", icon: Headphones, href: "/manager/dashboard", disabled: true },
-  { label: "Alerts", icon: AlertTriangle, href: "/manager/dashboard", disabled: true, badge: 3 },
-  { label: "Approvals", icon: CheckCircle, href: "/manager/dashboard", disabled: true, badge: 2 },
-  { label: "Reports", icon: BarChart3, href: "/manager/dashboard", disabled: true },
+  // Advanced
+  { label: "Estimates Oversight", icon: Target, href: "/manager/dashboard", disabled: true, advanced: true },
+  { label: "Call Monitoring", icon: Headphones, href: "/manager/dashboard", disabled: true, advanced: true },
+  { label: "Alerts", icon: AlertTriangle, href: "/manager/dashboard", disabled: true, badge: 3, advanced: true },
+  { label: "Approvals", icon: CheckCircle, href: "/manager/dashboard", disabled: true, badge: 2, advanced: true },
+  { label: "Reports", icon: BarChart3, href: "/manager/dashboard", disabled: true, advanced: true },
 ];
 
 const STATS = [
@@ -44,6 +45,7 @@ export default function ManagerDashboard() {
   const { theme, setTheme } = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
+  const [showAdvanced, setShowAdvanced] = useState(false);
 
   const handleResetPreference = () => {
     localStorage.removeItem("truemove_remembered_role");
@@ -64,7 +66,7 @@ export default function ManagerDashboard() {
           <span className="text-[10px] text-muted-foreground ml-1">Manager</span>
         </div>
         <nav className="flex-1 px-2 py-2 space-y-0.5">
-          {NAV_ITEMS.map((item) => {
+          {NAV_ITEMS.filter(i => !i.advanced).map((item) => {
             const Icon = item.icon;
             const active = location.pathname === item.href && !item.disabled;
             const badge = item.badge ? (
@@ -84,6 +86,29 @@ export default function ManagerDashboard() {
               </Link>
             );
           })}
+
+          <button
+            onClick={() => setShowAdvanced(!showAdvanced)}
+            className="w-full flex items-center gap-2.5 px-3 py-2 mt-1 rounded-lg text-xs text-muted-foreground/60 hover:text-muted-foreground hover:bg-muted/50 transition-colors"
+          >
+            <MoreHorizontal className="w-4 h-4" />
+            <span>More Tools</span>
+            {showAdvanced ? <ChevronUp className="w-3 h-3 ml-auto" /> : <ChevronDown className="w-3 h-3 ml-auto" />}
+          </button>
+
+          {showAdvanced && (
+            <div className="space-y-0.5 pl-1 border-l-2 border-border/50 ml-4 animate-in fade-in slide-in-from-top-1 duration-200">
+              {NAV_ITEMS.filter(i => i.advanced).map((item) => {
+                const Icon = item.icon;
+                return (
+                  <div key={item.label} className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs text-muted-foreground/50 cursor-not-allowed">
+                    <Icon className="w-4 h-4" /><span>{item.label}</span>
+                    {item.badge ? <span className="ml-auto min-w-[18px] h-[18px] flex items-center justify-center rounded-full text-[10px] font-semibold bg-muted-foreground/20 text-muted-foreground leading-none px-1">{item.badge}</span> : null}
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </nav>
         <div className="px-2 pb-4 space-y-0.5">
           <button onClick={handleResetPreference} className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">
