@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard, Users, Package, FileText, CalendarCheck,
   Phone, FileSignature, MessageSquare, CheckSquare, Home, RotateCcw,
-  ChevronDown, ChevronUp, MoreHorizontal, Gauge
+  Gauge
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
