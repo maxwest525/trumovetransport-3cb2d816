@@ -27,6 +27,8 @@ import CustomerService from "./pages/CustomerService";
 import AdminSupportTickets from "./pages/AdminSupportTickets";
 import AgentPipeline from "./pages/AgentPipeline";
 import ProfileSettings from "./pages/ProfileSettings";
+import Demo from "./pages/Demo";
+import AgentLoginOld from "./pages/AgentLoginOld";
 
 const queryClient = new QueryClient();
 
@@ -59,6 +61,8 @@ const App = () => (
             <Route path="/admin/support-tickets" element={<AdminSupportTickets />} />
             <Route path="/agent/pipeline" element={<AgentPipeline />} />
             <Route path="/agent/profile" element={<ProfileSettings />} />
+            <Route path="/demo" element={<Demo />} />
+            <Route path="/agent-login-old" element={<AgentLoginOld />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
