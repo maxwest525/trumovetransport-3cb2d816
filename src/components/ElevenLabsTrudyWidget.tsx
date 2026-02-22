@@ -194,22 +194,26 @@ export default function ElevenLabsTrudyWidget() {
           <a
             href="tel:+16097277647"
             onClick={() => closeOptions()}
-            className={`flex items-center gap-2 rounded-full border border-border bg-card/95 backdrop-blur-xl shadow-lg px-4 py-2 hover:bg-accent transition-all ${
+            className={`flex items-center gap-2 rounded-full border border-emerald-500/30 bg-card/95 backdrop-blur-xl shadow-lg px-4 py-2 hover:bg-emerald-500/10 transition-all ${
               optionsClosing ? '' : 'animate-in fade-in slide-in-from-bottom-2 duration-200'
             }`}
             style={optionsClosing ? {} : { animationDelay: '50ms', animationFillMode: 'both' }}
           >
-            <Phone className="h-4 w-4 text-foreground" />
+            <div className="w-6 h-6 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center">
+              <Phone className="h-3 w-3 text-white" />
+            </div>
             <span className="text-xs font-medium text-foreground">Call Us</span>
           </a>
           <button
             onClick={() => { closeOptions(); navigate('/book'); }}
-            className={`flex items-center gap-2 rounded-full border border-border bg-card/95 backdrop-blur-xl shadow-lg px-4 py-2 hover:bg-accent transition-all ${
+            className={`flex items-center gap-2 rounded-full border border-blue-500/30 bg-card/95 backdrop-blur-xl shadow-lg px-4 py-2 hover:bg-blue-500/10 transition-all ${
               optionsClosing ? '' : 'animate-in fade-in slide-in-from-bottom-2 duration-200'
             }`}
             style={optionsClosing ? {} : { animationDelay: '0ms', animationFillMode: 'both' }}
           >
-            <Video className="h-4 w-4 text-foreground" />
+            <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-400 to-indigo-600 flex items-center justify-center">
+              <Video className="h-3 w-3 text-white" />
+            </div>
             <span className="text-xs font-medium text-foreground">Video Consult</span>
           </button>
         </div>
@@ -220,10 +224,10 @@ export default function ElevenLabsTrudyWidget() {
         {!isConnected && !isConnecting && (
           <button
             onClick={toggleOptions}
-            className={`flex items-center justify-center w-8 h-8 rounded-full border border-border bg-card/95 backdrop-blur-xl shadow-md hover:bg-accent transition-all ${showOptions && !optionsClosing ? 'rotate-180' : ''}`}
+            className={`flex items-center justify-center w-8 h-8 rounded-full border border-violet-500/30 bg-card/95 backdrop-blur-xl shadow-md hover:bg-violet-500/10 transition-all ${showOptions && !optionsClosing ? 'rotate-180' : ''}`}
             aria-label="More options"
           >
-            <ChevronUp className="h-3.5 w-3.5 text-muted-foreground" />
+            <ChevronUp className="h-3.5 w-3.5 text-violet-500" />
           </button>
         )}
         <button
