@@ -10,8 +10,8 @@ const NAV_ITEMS = [
   { label: "Estimates Oversight", icon: Target, href: "/manager/dashboard", disabled: true },
   { label: "Bookings Oversight", icon: CalendarCheck, href: "/manager/dashboard", disabled: true },
   { label: "Call Monitoring", icon: Headphones, href: "/manager/dashboard", disabled: true },
-  { label: "Alerts", icon: AlertTriangle, href: "/manager/dashboard", disabled: true },
-  { label: "Approvals", icon: CheckCircle, href: "/manager/dashboard", disabled: true },
+  { label: "Alerts", icon: AlertTriangle, href: "/manager/dashboard", disabled: true, badge: 3 },
+  { label: "Approvals", icon: CheckCircle, href: "/manager/dashboard", disabled: true, badge: 2 },
   { label: "Reports", icon: BarChart3, href: "/manager/dashboard", disabled: true },
 ];
 
@@ -61,13 +61,20 @@ export default function ManagerDashboard() {
           {NAV_ITEMS.map((item) => {
             const Icon = item.icon;
             const active = location.pathname === item.href && !item.disabled;
+            const badge = item.badge ? (
+              <span className="ml-auto min-w-[18px] h-[18px] flex items-center justify-center rounded-full text-[10px] font-semibold bg-foreground text-background leading-none px-1">
+                {item.badge}
+              </span>
+            ) : null;
             return item.disabled ? (
               <div key={item.label} className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs text-muted-foreground/50 cursor-not-allowed">
                 <Icon className="w-4 h-4" /><span>{item.label}</span>
+                {item.badge ? <span className="ml-auto min-w-[18px] h-[18px] flex items-center justify-center rounded-full text-[10px] font-semibold bg-muted-foreground/20 text-muted-foreground leading-none px-1">{item.badge}</span> : null}
               </div>
             ) : (
               <Link key={item.label} to={item.href} className={cn("flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors", active ? "bg-foreground text-background" : "text-muted-foreground hover:bg-muted hover:text-foreground")}>
                 <Icon className="w-4 h-4" /><span>{item.label}</span>
+                {active ? (item.badge ? <span className="ml-auto min-w-[18px] h-[18px] flex items-center justify-center rounded-full text-[10px] font-semibold bg-background text-foreground leading-none px-1">{item.badge}</span> : null) : badge}
               </Link>
             );
           })}

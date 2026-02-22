@@ -12,6 +12,7 @@ interface NavItem {
   icon: React.ElementType;
   href?: string;
   action?: SidebarAction;
+  badge?: number;
 }
 
 const NAV_ITEMS: NavItem[] = [
@@ -22,8 +23,8 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Bookings", icon: CalendarCheck, action: "operations" },
   { label: "Calls", icon: Phone, action: "workspace" },
   { label: "Documents", icon: FileSignature, action: "workspace" },
-  { label: "Tasks", icon: CheckSquare, action: "coaching" },
-  { label: "Messages", icon: MessageSquare, action: "messaging" },
+  { label: "Tasks", icon: CheckSquare, action: "coaching", badge: 2 },
+  { label: "Messages", icon: MessageSquare, action: "messaging", badge: 5 },
 ];
 
 interface AgentSidebarProps {
@@ -47,6 +48,12 @@ export default function AgentSidebar({ onAction }: AgentSidebarProps) {
         {NAV_ITEMS.map((item) => {
           const Icon = item.icon;
 
+          const badge = item.badge ? (
+            <span className="ml-auto min-w-[18px] h-[18px] flex items-center justify-center rounded-full text-[10px] font-semibold bg-foreground text-background leading-none px-1">
+              {item.badge}
+            </span>
+          ) : null;
+
           if (item.href) {
             const active = location.pathname === item.href;
             return (
@@ -62,6 +69,9 @@ export default function AgentSidebar({ onAction }: AgentSidebarProps) {
               >
                 <Icon className="w-4 h-4" />
                 <span>{item.label}</span>
+                {active ? (
+                  item.badge ? <span className="ml-auto min-w-[18px] h-[18px] flex items-center justify-center rounded-full text-[10px] font-semibold bg-background text-foreground leading-none px-1">{item.badge}</span> : null
+                ) : badge}
               </Link>
             );
           }
@@ -74,6 +84,7 @@ export default function AgentSidebar({ onAction }: AgentSidebarProps) {
             >
               <Icon className="w-4 h-4" />
               <span>{item.label}</span>
+              {badge}
             </button>
           );
         })}
