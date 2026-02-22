@@ -1,6 +1,7 @@
- import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { X, GripHorizontal, Maximize2, Minimize2 } from "lucide-react";
- import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/use-mobile";
  
 type SnapZone = 'center' | 'left' | 'right' | 'top' | 'bottom' | null;
 type ResizeDirection = 'n' | 's' | 'e' | 'w' | 'ne' | 'nw' | 'se' | 'sw' | null;
@@ -95,6 +96,7 @@ const saveState = (
   footer,
   showMaximize = true
  }: DraggableModalProps) {
+  const isMobile = useIsMobile();
    const [position, setPosition] = useState(() => {
      const stored = getStoredState(storageKey);
      return stored?.position ?? { x: 100, y: 60 };
@@ -313,6 +315,34 @@ const saveState = (
   }, [isDragging, isResizing, size.width, size.height, minWidth, maxWidth, minHeight, maxHeight, storageKey, getSnappedPosition, size, resizeDirection, position, sizePresetHint]);
  
    if (!isOpen) return null;
+
+   // Mobile: render a simple full-screen modal
+   if (isMobile) {
+     return (
+       <>
+         <div className="fixed inset-0 bg-black/30 z-[100]" onClick={onClose} />
+         <div className="fixed inset-0 z-[110] bg-background flex flex-col">
+           <div
+             className={cn("flex items-center justify-between px-4 py-3 shrink-0", headerClassName)}
+             style={headerStyle}
+           >
+             <div className="flex items-center gap-2 flex-1 min-w-0">
+               {title}
+             </div>
+             <button
+               onClick={onClose}
+               className="p-2 rounded-lg bg-white/10 hover:bg-red-500/80 border border-white/20 hover:border-red-400 transition-all ml-2 flex-shrink-0"
+               title="Close"
+             >
+               <X className="w-5 h-5 text-white" />
+             </button>
+           </div>
+           <div className="flex-1 overflow-hidden flex flex-col">{children}</div>
+           {footer && <div className="shrink-0">{footer}</div>}
+         </div>
+       </>
+     );
+   }
  
    return (
      <>
