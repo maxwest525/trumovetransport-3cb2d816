@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useUserRole } from "@/hooks/useUserRole";
-import { Users, Plus, Shield, Crown, BarChart3, UserCheck, Loader2, Mail, X } from "lucide-react";
+import { Users, Plus, Shield, Crown, BarChart3, UserCheck, Loader2, Mail, X, Sparkles, DollarSign } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-type AppRole = "owner" | "admin" | "manager" | "agent";
+type AppRole = "owner" | "admin" | "manager" | "agent" | "marketing" | "accounting";
 
 interface UserWithRole {
   id: string;
@@ -21,6 +21,8 @@ const ROLE_CONFIG: Record<AppRole, { label: string; icon: React.ElementType; col
   admin: { label: "Admin", icon: Shield, color: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400" },
   manager: { label: "Manager", icon: BarChart3, color: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400" },
   agent: { label: "Agent", icon: UserCheck, color: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400" },
+  marketing: { label: "Marketing", icon: Sparkles, color: "bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-400" },
+  accounting: { label: "Accounting", icon: DollarSign, color: "bg-teal-100 text-teal-800 dark:bg-teal-900/30 dark:text-teal-400" },
 };
 
 export default function AdminUsersRoles() {
@@ -53,7 +55,7 @@ export default function AdminUsersRoles() {
     }));
 
     // Sort: owners first, then admin, manager, agent, unassigned
-    const order: Record<string, number> = { owner: 0, admin: 1, manager: 2, agent: 3 };
+    const order: Record<string, number> = { owner: 0, admin: 1, manager: 2, agent: 3, marketing: 4, accounting: 5 };
     combined.sort((a, b) => (order[a.role ?? ""] ?? 4) - (order[b.role ?? ""] ?? 4));
 
     setUsers(combined);
@@ -112,8 +114,8 @@ export default function AdminUsersRoles() {
   };
 
   const availableRoles: AppRole[] = isOwner
-    ? ["owner", "admin", "manager", "agent"]
-    : ["admin", "manager", "agent"];
+    ? ["owner", "admin", "manager", "agent", "marketing", "accounting"]
+    : ["admin", "manager", "agent", "marketing", "accounting"];
 
   return (
     <div className="space-y-6">

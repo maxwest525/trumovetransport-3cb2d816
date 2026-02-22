@@ -710,7 +710,13 @@ export type Database = {
         | "meeting"
         | "text"
         | "stage_change"
-      app_role: "owner" | "admin" | "manager" | "agent"
+      app_role:
+        | "owner"
+        | "admin"
+        | "manager"
+        | "agent"
+        | "marketing"
+        | "accounting"
       call_outcome:
         | "booked"
         | "follow_up"
@@ -874,7 +880,14 @@ export const Constants = {
         "text",
         "stage_change",
       ],
-      app_role: ["owner", "admin", "manager", "agent"],
+      app_role: [
+        "owner",
+        "admin",
+        "manager",
+        "agent",
+        "marketing",
+        "accounting",
+      ],
       call_outcome: [
         "booked",
         "follow_up",

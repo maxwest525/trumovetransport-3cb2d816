@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
-export type AppRole = "owner" | "admin" | "manager" | "agent";
+export type AppRole = "owner" | "admin" | "manager" | "agent" | "marketing" | "accounting";
 
 export function useUserRole() {
   const [roles, setRoles] = useState<AppRole[]>([]);
@@ -55,6 +55,8 @@ export function useUserRole() {
     isAdmin: roles.includes("admin"),
     isManager: roles.includes("manager"),
     isAgent: roles.includes("agent"),
+    isMarketing: roles.includes("marketing"),
+    isAccounting: roles.includes("accounting"),
     hasRole: (role: AppRole) => roles.includes(role),
     highestRole: roles.includes("owner")
       ? "owner"
@@ -62,6 +64,10 @@ export function useUserRole() {
       ? "admin"
       : roles.includes("manager")
       ? "manager"
+      : roles.includes("marketing")
+      ? "marketing"
+      : roles.includes("accounting")
+      ? "accounting"
       : roles.includes("agent")
       ? "agent"
       : null,
