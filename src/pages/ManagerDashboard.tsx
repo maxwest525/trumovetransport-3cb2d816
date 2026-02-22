@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Home, Sun, Moon, Bell, Search, LayoutDashboard, Users, Target, CalendarCheck, Headphones, AlertTriangle, CheckCircle, BarChart3, RotateCcw, MoreHorizontal, ChevronDown, ChevronUp, Gauge } from "lucide-react";
+import { Home, Sun, Moon, Bell, Search, LayoutDashboard, Users, Target, CalendarCheck, Headphones, AlertTriangle, CheckCircle, BarChart3, RotateCcw, MoreHorizontal, ChevronDown, ChevronUp, Gauge, Globe, LogOut } from "lucide-react";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 
@@ -123,15 +123,19 @@ export default function ManagerDashboard() {
 
       <div className="flex-1 flex flex-col min-h-screen">
         <header className="h-12 border-b border-border bg-card flex items-center justify-between px-4 shrink-0">
-          <span className="text-sm text-muted-foreground">Management Workspace</span>
-          <div className="flex-1 max-w-md mx-8">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
-              <input type="text" placeholder="Search..." className="w-full h-8 pl-9 pr-3 rounded-lg border border-border bg-background text-xs focus:outline-none focus:ring-1 focus:ring-ring" />
-            </div>
+          <div className="flex items-center gap-3">
+            <Link to="/" className="flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-border bg-background text-xs font-medium text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-all">
+              <Globe className="w-3.5 h-3.5" />
+              <span>Website</span>
+            </Link>
+            <div className="w-px h-4 bg-border" />
+            <Link to="/agent-login" className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
+              <Home className="w-3.5 h-3.5" />
+              <span>Portal</span>
+            </Link>
+            <span className="text-xs text-muted-foreground">/ Management</span>
           </div>
           <div className="flex items-center gap-2">
-            <Link to="/" className="p-1.5 rounded-lg hover:bg-muted transition-colors"><Home className="w-4 h-4 text-muted-foreground" /></Link>
             <button onClick={() => setTheme(theme === "dark" ? "light" : "dark")} className="p-1.5 rounded-lg hover:bg-muted transition-colors">
               {theme === "dark" ? <Sun className="w-4 h-4 text-muted-foreground" /> : <Moon className="w-4 h-4 text-muted-foreground" />}
             </button>
