@@ -17,6 +17,7 @@ export default function ElevenLabsTrudyWidget() {
   const navigate = useNavigate();
   const [isConnecting, setIsConnecting] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
+  const [optionsClosing, setOptionsClosing] = useState(false);
   const [showTranscript, setShowTranscript] = useState(false);
   const [showPostCall, setShowPostCall] = useState(false);
   const [savedTranscript, setSavedTranscript] = useState<TranscriptEntry[]>([]);
@@ -106,6 +107,21 @@ export default function ElevenLabsTrudyWidget() {
 
   const isConnected = conversation.status === 'connected';
 
+  const closeOptions = useCallback(() => {
+    setOptionsClosing(true);
+    setTimeout(() => {
+      setShowOptions(false);
+      setOptionsClosing(false);
+    }, 200);
+  }, []);
+
+  const toggleOptions = useCallback(() => {
+    if (showOptions) {
+      closeOptions();
+    } else {
+      setShowOptions(true);
+    }
+  }, [showOptions, closeOptions]);
   // Shared message list renderer
   const renderMessages = (entries: TranscriptEntry[]) => (
     <div ref={scrollRef} className="max-h-48 overflow-y-auto px-3 py-2 space-y-1.5">
@@ -174,20 +190,24 @@ export default function ElevenLabsTrudyWidget() {
 
       {/* Options popup */}
       {showOptions && !isConnected && !isConnecting && (
-        <div className="flex flex-col items-end gap-1.5">
+        <div className={`flex flex-col items-end gap-1.5 ${optionsClosing ? 'animate-out fade-out slide-out-to-bottom-2 duration-200 fill-mode-forwards' : ''}`}>
           <a
             href="tel:+16097277647"
-            onClick={() => setShowOptions(false)}
-            className="flex items-center gap-2 rounded-full border border-border bg-card/95 backdrop-blur-xl shadow-lg px-4 py-2 hover:bg-accent transition-all animate-in fade-in slide-in-from-bottom-2 duration-200"
-            style={{ animationDelay: '50ms', animationFillMode: 'both' }}
+            onClick={() => closeOptions()}
+            className={`flex items-center gap-2 rounded-full border border-border bg-card/95 backdrop-blur-xl shadow-lg px-4 py-2 hover:bg-accent transition-all ${
+              optionsClosing ? '' : 'animate-in fade-in slide-in-from-bottom-2 duration-200'
+            }`}
+            style={optionsClosing ? {} : { animationDelay: '50ms', animationFillMode: 'both' }}
           >
             <Phone className="h-4 w-4 text-foreground" />
             <span className="text-xs font-medium text-foreground">Call Us</span>
           </a>
           <button
-            onClick={() => { setShowOptions(false); navigate('/book'); }}
-            className="flex items-center gap-2 rounded-full border border-border bg-card/95 backdrop-blur-xl shadow-lg px-4 py-2 hover:bg-accent transition-all animate-in fade-in slide-in-from-bottom-2 duration-200"
-            style={{ animationDelay: '0ms', animationFillMode: 'both' }}
+            onClick={() => { closeOptions(); navigate('/book'); }}
+            className={`flex items-center gap-2 rounded-full border border-border bg-card/95 backdrop-blur-xl shadow-lg px-4 py-2 hover:bg-accent transition-all ${
+              optionsClosing ? '' : 'animate-in fade-in slide-in-from-bottom-2 duration-200'
+            }`}
+            style={optionsClosing ? {} : { animationDelay: '0ms', animationFillMode: 'both' }}
           >
             <Video className="h-4 w-4 text-foreground" />
             <span className="text-xs font-medium text-foreground">Video Consult</span>
@@ -199,8 +219,8 @@ export default function ElevenLabsTrudyWidget() {
       <div className="flex items-center gap-1.5">
         {!isConnected && !isConnecting && (
           <button
-            onClick={() => setShowOptions(prev => !prev)}
-            className={`flex items-center justify-center w-8 h-8 rounded-full border border-border bg-card/95 backdrop-blur-xl shadow-md hover:bg-accent transition-all ${showOptions ? 'rotate-180' : ''}`}
+            onClick={toggleOptions}
+            className={`flex items-center justify-center w-8 h-8 rounded-full border border-border bg-card/95 backdrop-blur-xl shadow-md hover:bg-accent transition-all ${showOptions && !optionsClosing ? 'rotate-180' : ''}`}
             aria-label="More options"
           >
             <ChevronUp className="h-3.5 w-3.5 text-muted-foreground" />
