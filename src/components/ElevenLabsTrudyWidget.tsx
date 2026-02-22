@@ -154,8 +154,8 @@ export default function ElevenLabsTrudyWidget() {
   );
 
   // Hide on portal pages
-  const portalPrefixes = ['/agent', '/admin', '/manager', '/kpi'];
-  const isPortal = portalPrefixes.some(p => location.pathname.startsWith(p));
+  const portalPrefixes = ['/agent/', '/admin/', '/manager/', '/kpi'];
+  const isPortal = portalPrefixes.some(p => location.pathname.startsWith(p)) || location.pathname === '/kpi';
   if (isPortal) return null;
 
   return (
