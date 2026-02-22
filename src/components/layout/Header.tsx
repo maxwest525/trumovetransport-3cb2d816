@@ -324,14 +324,14 @@ export default function Header({ whiteLogo = false }: HeaderProps) {
         </div>
 
         {/* Company Portal Button - Absolute Far Right (outside header-inner) */}
-        <a 
-          href="/agent-login" 
+        <Link 
+          to="/agent-login" 
           className="header-btn header-btn-agent"
           aria-label="Company Portal"
         >
           <User className="w-4 h-4" />
           <span>Portal</span>
-        </a>
+        </Link>
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
