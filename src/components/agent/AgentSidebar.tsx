@@ -1,28 +1,40 @@
 import { Link, useLocation } from "react-router-dom";
 import {
   LayoutDashboard, Users, Package, FileText, CalendarCheck,
-  Phone, FileSignature, MessageSquare, BarChart3, Home
+  Phone, FileSignature, MessageSquare, CheckSquare, Home
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const NAV_ITEMS = [
+export type SidebarAction = "workspace" | "operations" | "coaching" | "messaging";
+
+interface NavItem {
+  label: string;
+  icon: React.ElementType;
+  href?: string;
+  action?: SidebarAction;
+}
+
+const NAV_ITEMS: NavItem[] = [
   { label: "Dashboard", icon: LayoutDashboard, href: "/agent/dashboard" },
   { label: "Leads", icon: Users, href: "/agent/pipeline" },
-  { label: "Inventory", icon: Package, href: "/agent/dashboard", disabled: true },
-  { label: "Estimates", icon: FileText, href: "/agent/dashboard", disabled: true },
-  { label: "Bookings", icon: CalendarCheck, href: "/agent/dashboard", disabled: true },
-  { label: "Calls", icon: Phone, href: "/agent/dashboard", disabled: true },
-  { label: "Documents", icon: FileSignature, href: "/agent/dashboard", disabled: true },
-  { label: "Tasks", icon: LayoutDashboard, href: "/agent/dashboard", disabled: true },
-  { label: "Messages", icon: MessageSquare, href: "/agent/dashboard", disabled: true },
+  { label: "Inventory", icon: Package, action: "workspace" },
+  { label: "Estimates", icon: FileText, action: "workspace" },
+  { label: "Bookings", icon: CalendarCheck, action: "operations" },
+  { label: "Calls", icon: Phone, action: "workspace" },
+  { label: "Documents", icon: FileSignature, action: "workspace" },
+  { label: "Tasks", icon: CheckSquare, action: "coaching" },
+  { label: "Messages", icon: MessageSquare, action: "messaging" },
 ];
 
-export default function AgentSidebar() {
+interface AgentSidebarProps {
+  onAction?: (action: SidebarAction) => void;
+}
+
+export default function AgentSidebar({ onAction }: AgentSidebarProps) {
   const location = useLocation();
 
   return (
     <aside className="w-52 shrink-0 border-r border-border bg-card flex flex-col min-h-screen">
-      {/* Brand */}
       <div className="px-4 py-4 flex items-center gap-2">
         <div className="w-7 h-7 rounded-lg bg-foreground flex items-center justify-center">
           <span className="text-background text-xs font-bold">G</span>
@@ -31,38 +43,42 @@ export default function AgentSidebar() {
         <span className="text-[10px] text-muted-foreground ml-1">Agent</span>
       </div>
 
-      {/* Nav */}
       <nav className="flex-1 px-2 py-2 space-y-0.5">
         {NAV_ITEMS.map((item) => {
           const Icon = item.icon;
-          const active = location.pathname === item.href && !item.disabled;
-          return item.disabled ? (
-            <div
+
+          if (item.href) {
+            const active = location.pathname === item.href;
+            return (
+              <Link
+                key={item.label}
+                to={item.href}
+                className={cn(
+                  "flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors",
+                  active
+                    ? "bg-foreground text-background"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                )}
+              >
+                <Icon className="w-4 h-4" />
+                <span>{item.label}</span>
+              </Link>
+            );
+          }
+
+          return (
+            <button
               key={item.label}
-              className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs text-muted-foreground/50 cursor-not-allowed"
+              onClick={() => item.action && onAction?.(item.action)}
+              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
             >
               <Icon className="w-4 h-4" />
               <span>{item.label}</span>
-            </div>
-          ) : (
-            <Link
-              key={item.label}
-              to={item.href}
-              className={cn(
-                "flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors",
-                active
-                  ? "bg-foreground text-background"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
-              )}
-            >
-              <Icon className="w-4 h-4" />
-              <span>{item.label}</span>
-            </Link>
+            </button>
           );
         })}
       </nav>
 
-      {/* Bottom */}
       <div className="px-2 pb-4">
         <Link
           to="/agent-login"
