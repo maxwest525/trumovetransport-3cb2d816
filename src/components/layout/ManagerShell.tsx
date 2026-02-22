@@ -5,6 +5,7 @@ import {
   Target, Headphones, AlertTriangle, CheckCircle, BarChart3,
   RotateCcw, MoreHorizontal, ChevronDown, ChevronUp, Gauge, Globe,
 } from "lucide-react";
+import { toast } from "sonner";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 import { setPortalContext } from "@/hooks/usePortalContext";
@@ -12,16 +13,16 @@ import { setPortalContext } from "@/hooks/usePortalContext";
 const NAV_ITEMS = [
   { label: "Dashboard", icon: LayoutDashboard, href: "/manager/dashboard" },
   { label: "My KPIs", icon: Gauge, href: "/kpi" },
-  { label: "Team Pipeline", icon: Users, href: "/manager/dashboard", disabled: true },
-  { label: "Bookings Oversight", icon: CalendarCheck, href: "/manager/dashboard", disabled: true },
+  { label: "Team Pipeline", icon: Users, href: "/manager/dashboard" },
+  { label: "Bookings Oversight", icon: CalendarCheck, href: "/manager/dashboard" },
 ];
 
 const ADVANCED_ITEMS = [
-  { label: "Estimates Oversight", icon: Target, disabled: true },
-  { label: "Call Monitoring", icon: Headphones, disabled: true },
-  { label: "Alerts", icon: AlertTriangle, disabled: true, badge: 3 },
-  { label: "Approvals", icon: CheckCircle, disabled: true, badge: 2 },
-  { label: "Reports", icon: BarChart3, disabled: true },
+  { label: "Estimates Oversight", icon: Target },
+  { label: "Call Monitoring", icon: Headphones },
+  { label: "Alerts", icon: AlertTriangle, badge: 3 },
+  { label: "Approvals", icon: CheckCircle, badge: 2 },
+  { label: "Reports", icon: BarChart3 },
 ];
 
 interface ManagerShellProps {
@@ -60,12 +61,8 @@ export default function ManagerShell({ children, breadcrumb = "" }: ManagerShell
         <nav className="flex-1 px-2 py-2 space-y-0.5">
           {NAV_ITEMS.map((item) => {
             const Icon = item.icon;
-            const active = location.pathname === item.href && !item.disabled;
-            return item.disabled ? (
-              <div key={item.label} className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs text-muted-foreground/50 cursor-not-allowed">
-                <Icon className="w-4 h-4" /><span>{item.label}</span>
-              </div>
-            ) : (
+            const active = location.pathname === item.href;
+            return (
               <Link
                 key={item.label}
                 to={item.href}
@@ -93,10 +90,14 @@ export default function ManagerShell({ children, breadcrumb = "" }: ManagerShell
               {ADVANCED_ITEMS.map((item) => {
                 const Icon = item.icon;
                 return (
-                  <div key={item.label} className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs text-muted-foreground/50 cursor-not-allowed">
+                  <button
+                    key={item.label}
+                    onClick={() => toast.info(`${item.label} coming soon`)}
+                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+                  >
                     <Icon className="w-4 h-4" /><span>{item.label}</span>
-                    {item.badge ? <span className="ml-auto min-w-[18px] h-[18px] flex items-center justify-center rounded-full text-[10px] font-semibold bg-muted-foreground/20 text-muted-foreground leading-none px-1">{item.badge}</span> : null}
-                  </div>
+                    {item.badge ? <span className="ml-auto min-w-[18px] h-[18px] flex items-center justify-center rounded-full text-[10px] font-semibold bg-foreground text-background leading-none px-1">{item.badge}</span> : null}
+                  </button>
                 );
               })}
             </div>
