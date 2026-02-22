@@ -72,8 +72,8 @@ export function MarketingHubDashboard({
       title: 'Build Manual',
       subtitle: 'Choose template, customize, and publish',
       icon: Wand2,
-      gradient: 'from-emerald-400 via-teal-500 to-cyan-500',
-      glowColor: 'hsl(170 80% 45% / 0.15)',
+      gradient: 'from-sky-400 via-cyan-500 to-blue-500',
+      glowColor: 'hsl(200 80% 50% / 0.15)',
       action: () => handleCreateLandingPage(),
     },
     {
@@ -97,7 +97,7 @@ export function MarketingHubDashboard({
   ];
 
   const statItems = [
-    { label: 'Spend', value: `$${stats.totalSpend.toLocaleString()}`, icon: DollarSign, color: 'from-emerald-400 to-emerald-600', textColor: 'text-emerald-500' },
+    { label: 'Spend', value: `$${stats.totalSpend.toLocaleString()}`, icon: DollarSign, color: 'from-sky-400 to-sky-600', textColor: 'text-sky-500' },
     { label: 'Conversions', value: stats.conversions.toString(), icon: Target, color: 'from-pink-400 to-rose-600', textColor: 'text-pink-500' },
     { label: 'Active Pages', value: stats.activePages.toString(), icon: Layout, color: 'from-blue-400 to-indigo-600', textColor: 'text-blue-500' },
     { label: 'Tests Running', value: stats.testsRunning.toString(), icon: TrendingUp, color: 'from-violet-400 to-purple-600', textColor: 'text-violet-500' },

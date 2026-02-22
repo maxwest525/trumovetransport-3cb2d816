@@ -211,7 +211,7 @@ export function UnifiedAnalyticsDashboard({ onCreateLandingPage, liveMode, simpl
         {/* KPI Strip - Vibrant */}
         <div className={`grid gap-2 ${simplified ? 'grid-cols-2 sm:grid-cols-4' : 'grid-cols-2 sm:grid-cols-4 lg:grid-cols-8'}`}>
           {[
-            { label: "Spend", value: totalSpend / 1000, prefix: "$", suffix: "K", decimals: 1, icon: DollarSign, gradient: "from-emerald-400 to-emerald-600", textColor: "text-emerald-500" },
+            { label: "Spend", value: totalSpend / 1000, prefix: "$", suffix: "K", decimals: 1, icon: DollarSign, gradient: "from-sky-400 to-sky-600", textColor: "text-sky-500" },
             ...(simplified ? [] : [
               { label: "Clicks", value: totalClicks, icon: MousePointer, gradient: "from-blue-400 to-blue-600", textColor: "text-blue-500" },
               { label: "CTR", value: avgCTR, suffix: "%", decimals: 1, icon: Percent, gradient: "from-violet-400 to-purple-600", textColor: "text-violet-500" },
@@ -761,8 +761,8 @@ export function UnifiedAnalyticsDashboard({ onCreateLandingPage, liveMode, simpl
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="px-3 pb-3 space-y-2 text-xs relative z-10">
-                  <div className="p-2 rounded-lg bg-background/60 border border-emerald-500/20">
-                    <span className="text-emerald-500 font-bold">↑</span> Increase NYC budget 25% (8.1% conv rate)
+                   <div className="p-2 rounded-lg bg-background/60 border border-sky-500/20">
+                     <span className="text-sky-500 font-bold">↑</span> Increase NYC budget 25% (8.1% conv rate)
                   </div>
                   <div className="p-2 rounded-lg bg-background/60 border border-amber-500/20">
                     <span className="text-amber-500 font-bold">→</span> Shift TikTok spend to Google (1.9x vs 4.2x ROAS)
