@@ -1,10 +1,17 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import SiteShell from "@/components/layout/SiteShell";
-import { Users, BarChart3, Shield, ArrowRight } from "lucide-react";
+import { Users, BarChart3, Shield, Crown, ArrowRight } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 
 const ROLES = [
+  {
+    id: "owner",
+    title: "Owner",
+    description: "Full access to everything — team, data, billing, and all settings.",
+    icon: Crown,
+    href: "/admin/dashboard",
+  },
   {
     id: "agent",
     title: "Agent",
@@ -59,7 +66,7 @@ export default function AgentLogin() {
         <h1 className="text-2xl font-bold tracking-tight text-foreground mb-1">Choose your workspace</h1>
         <p className="text-sm text-muted-foreground mb-10">Select where you'd like to go</p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 w-full max-w-3xl">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 w-full max-w-4xl">
           {ROLES.map((role) => {
             const Icon = role.icon;
             return (
