@@ -1257,7 +1257,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
   const renderQuoteFunnelPage = () => (
     <div className="bg-white dark:bg-slate-900 relative">
       {/* Sticky Header */}
-      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b-2" style={{ borderColor: theme.primary }}>
+      <header className="relative z-10 bg-white/95 border-b-2" style={{ borderColor: theme.primary }}>
         <div className="flex items-center justify-between px-6 py-3">
           <TruMoveLogo className="h-8" />
           <div className="flex items-center gap-4">
@@ -1538,31 +1538,26 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
       {/* Footer */}
       <TruMoveFooter />
 
-      {/* Floating Elements */}
-      <button 
-        className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-3 rounded-full text-white shadow-lg hover:shadow-xl transition-shadow"
-        style={{ background: `linear-gradient(135deg, ${theme.primary}, ${theme.primaryDark})` }}
-      >
-        <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center relative">
-          <Truck className="w-4 h-4" />
-          <Sparkles className="w-2.5 h-2.5 absolute -top-0.5 -right-0.5 text-amber-300" />
+      {/* Chat CTA Banner (non-fixed for preview compatibility) */}
+      <div className="py-4 px-8 bg-slate-900 flex items-center justify-center gap-3">
+        <div 
+          className="flex items-center gap-2 px-6 py-3 rounded-full text-white shadow-lg cursor-pointer"
+          style={{ background: `linear-gradient(135deg, ${theme.primary}, ${theme.primaryDark})` }}
+        >
+          <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center relative">
+            <Truck className="w-4 h-4" />
+            <Sparkles className="w-2.5 h-2.5 absolute -top-0.5 -right-0.5 text-amber-300" />
+          </div>
+          <span className="font-medium">Chat with Trudy</span>
         </div>
-        <span className="font-medium">Chat with Trudy</span>
-      </button>
-
-      <button 
-        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        className="fixed bottom-6 left-6 z-50 w-12 h-12 rounded-full bg-slate-900 text-white shadow-lg hover:bg-slate-800 transition-colors flex items-center justify-center"
-      >
-        <ArrowUp className="w-5 h-5" />
-      </button>
+      </div>
     </div>
   );
 
   const renderComparisonPage = () => (
     <div className="min-h-screen bg-white dark:bg-slate-900">
       {/* Sticky Header */}
-      <header className="sticky top-0 z-50 bg-white border-b-2 shadow-sm" style={{ borderColor: theme.primary }}>
+      <header className="relative z-10 bg-white border-b-2 shadow-sm" style={{ borderColor: theme.primary }}>
         <div className="flex items-center justify-between px-6 py-3">
           <img src={logoImg} alt={businessName} className="h-8" />
           <div className="flex items-center gap-4">
@@ -1781,7 +1776,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
   const renderCalculatorPage = () => (
     <div className="min-h-screen bg-white dark:bg-slate-900">
       {/* Sticky Header */}
-      <header className="sticky top-0 z-50 bg-white border-b-2 shadow-sm" style={{ borderColor: theme.primary }}>
+      <header className="relative z-10 bg-white border-b-2 shadow-sm" style={{ borderColor: theme.primary }}>
         <div className="flex items-center justify-between px-6 py-3">
           <img src={logoImg} alt={businessName} className="h-8" />
           <div className="flex items-center gap-4">
@@ -1979,7 +1974,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
   const renderTestimonialPage = () => (
     <div className="min-h-screen bg-white dark:bg-slate-900">
       {/* Sticky Header */}
-      <header className="sticky top-0 z-50 bg-white border-b-2 shadow-sm" style={{ borderColor: theme.primary }}>
+      <header className="relative z-10 bg-white border-b-2 shadow-sm" style={{ borderColor: theme.primary }}>
         <div className="flex items-center justify-between px-6 py-3">
           <img src={logoImg} alt={businessName} className="h-8" />
           <div className="flex items-center gap-4">
@@ -2210,7 +2205,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
     return (
       <div className="min-h-screen bg-white dark:bg-slate-900">
         {/* Sticky Header with Local Phone */}
-        <header className="sticky top-0 z-50 bg-white border-b-2 shadow-sm" style={{ borderColor: theme.primary }}>
+        <header className="relative z-10 bg-white border-b-2 shadow-sm" style={{ borderColor: theme.primary }}>
           <div className="flex items-center justify-between px-6 py-3">
             <div className="flex items-center gap-3">
               <img src={logoImg} alt={businessName} className="h-8" />
@@ -2432,7 +2427,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
   const renderLongFormPage = () => (
     <div className="min-h-screen bg-white dark:bg-slate-900">
       {/* Minimal Sticky Header */}
-      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-slate-200 dark:border-slate-700">
+      <header className="relative z-10 bg-white/95 border-b border-slate-200 dark:border-slate-700">
         <div className="flex items-center justify-between px-6 py-3 max-w-4xl mx-auto">
           <img src={logoImg} alt={businessName} className="h-7" />
           <div className="flex items-center gap-4">
@@ -2646,7 +2641,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
       <FinalCTASection theme={theme} />
 
       {/* Sticky Bottom CTA Bar (Mobile-First) */}
-      <div className="sticky bottom-0 px-4 py-3 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700 shadow-lg md:hidden">
+      <div className="px-4 py-3 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700 shadow-lg md:hidden">
         <Button className="w-full py-4 font-bold gap-2 text-white" style={{ background: theme.primary }}>
           Get My Free Quote <ArrowRight className="w-4 h-4" />
         </Button>
@@ -2778,7 +2773,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
            </div>
  
            {/* Actual Landing Page Content - scrollable preview */}
-           <ScaledPreview scrollable className="max-h-[600px]">
+           <ScaledPreview scrollable className="max-h-[70vh]">
              {renderSelectedTemplate()}
            </ScaledPreview>
           </div>
@@ -2788,8 +2783,8 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
         {isPopoutOpen && (
           <div className="fixed inset-0 z-50 bg-background flex flex-col">
             {/* Header bar */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-card shrink-0">
-              <div className="flex items-center gap-3">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-card shrink-0 flex-wrap gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <Badge className="gap-1 bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300 border-purple-200 dark:border-purple-700">
                   <Sparkles className="w-3 h-3" />
                   {LANDING_PAGE_TEMPLATES.find(t => t.id === selectedTemplate)?.name}
@@ -2801,7 +2796,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
                     <ChevronLeft className="w-4 h-4" />
                   </Button>
                   <Select value={selectedTemplate} onValueChange={(v) => { setSelectedTemplate(v); setIsPublished(false); }}>
-                    <SelectTrigger className="w-[140px] h-7 text-xs border-0 bg-transparent">
+                    <SelectTrigger className="w-[120px] h-7 text-xs border-0 bg-transparent">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -2818,7 +2813,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
                 </div>
                 
                 <Select value={selectedTheme} onValueChange={(v) => { setSelectedTheme(v); setIsPublished(false); }}>
-                  <SelectTrigger className="w-[120px] h-8 text-xs">
+                  <SelectTrigger className="w-[110px] h-8 text-xs">
                     <Palette className="w-3 h-3 mr-1" />
                     <SelectValue placeholder="Theme" />
                   </SelectTrigger>
@@ -2911,7 +2906,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
               )}
               
               {/* Full page preview - scrolls from top */}
-              <div className="flex-1 overflow-auto">
+              <div className="flex-1 overflow-auto" ref={(el) => { if (el) el.scrollTop = 0; }}>
                 <ScaledPreview scrollable contentWidth={1440} className="min-h-full">
                   {renderSelectedTemplate()}
                 </ScaledPreview>

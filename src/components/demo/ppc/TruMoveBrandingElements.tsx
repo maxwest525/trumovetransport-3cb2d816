@@ -131,7 +131,7 @@
  
  // Sticky Header Bar
  export const StickyHeader = ({ businessName = "TruMove" }: { businessName?: string }) => (
-    <header className="sticky top-0 z-50 bg-white border-b-2 border-blue-500 shadow-sm">
+    <header className="relative z-10 bg-white border-b-2 border-blue-500 shadow-sm">
       <div className="flex items-center justify-between px-6 py-3">
         <TruMoveLogo className="h-8" />
         <div className="flex items-center gap-4">
