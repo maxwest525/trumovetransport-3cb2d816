@@ -33,9 +33,6 @@ export default function Footer() {
           <Link className="footer-link footer-link-muted" to="/classic">
             Classic
           </Link>
-          <Link className="footer-link footer-link-muted" to="/demo">
-            Demo
-          </Link>
         </nav>
       </div>
     </footer>

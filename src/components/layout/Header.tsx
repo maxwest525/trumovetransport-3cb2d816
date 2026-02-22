@@ -323,16 +323,14 @@ export default function Header({ whiteLogo = false }: HeaderProps) {
           </button>
         </div>
 
-        {/* Agent Login Button - Absolute Far Right (outside header-inner) */}
+        {/* Company Portal Button - Absolute Far Right (outside header-inner) */}
         <a 
-          href="https://id-preview--2cb8e9d7-61fe-407b-b7c3-1e362f31e427.lovable.app/auth" 
+          href="/agent-login" 
           className="header-btn header-btn-agent"
-          aria-label="Agent Login"
-          target="_blank"
-          rel="noopener noreferrer"
+          aria-label="Company Portal"
         >
           <User className="w-4 h-4" />
-          <span>Agent Login</span>
+          <span>Portal</span>
         </a>
 
         {/* Mobile Menu */}
@@ -359,15 +357,13 @@ export default function Header({ whiteLogo = false }: HeaderProps) {
                 <Video className="w-4 h-4" />
                 <span>Book Video Consult</span>
               </Link>
-              {/* Agent Login Button (Mobile) */}
+              {/* Company Portal Button (Mobile) */}
               <a 
-                href="https://id-preview--2cb8e9d7-61fe-407b-b7c3-1e362f31e427.lovable.app/auth" 
+                href="/agent-login" 
                 className="header-mobile-btn"
-                target="_blank"
-                rel="noopener noreferrer"
               >
                 <User className="w-4 h-4" />
-                <span>Agent Login</span>
+                <span>Portal</span>
               </a>
               {/* Theme Toggle (Mobile) */}
               <div className="flex justify-center pt-4 border-t border-border/40 mt-4">
