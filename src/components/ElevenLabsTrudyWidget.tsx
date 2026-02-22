@@ -2,7 +2,7 @@ import { useConversation } from '@elevenlabs/react';
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { PhoneOff, Loader2, X, Mic, Copy, Download, Check, Video, ChevronUp, Phone } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import trudyAvatar from '@/assets/trudy-avatar.png';
 
 const TRUDY_AGENT_ID = 'agent_0501khwa2t2pfj0s3echetmjhx4n';
@@ -15,6 +15,7 @@ interface TranscriptEntry {
 
 export default function ElevenLabsTrudyWidget() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isConnecting, setIsConnecting] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
   const [optionsClosing, setOptionsClosing] = useState(false);
@@ -151,6 +152,11 @@ export default function ElevenLabsTrudyWidget() {
       </button>
     </div>
   );
+
+  // Hide on portal pages
+  const portalPrefixes = ['/agent', '/admin', '/manager', '/kpi'];
+  const isPortal = portalPrefixes.some(p => location.pathname.startsWith(p));
+  if (isPortal) return null;
 
   return (
     <div className="fixed bottom-5 right-5 z-[9999] flex flex-col items-end gap-2">
