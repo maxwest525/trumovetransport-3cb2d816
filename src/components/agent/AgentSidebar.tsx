@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard, Users, Package, FileText, CalendarCheck,
   Phone, FileSignature, MessageSquare, CheckSquare, Home, RotateCcw,
-  ChevronDown, ChevronUp, MoreHorizontal
+  ChevronDown, ChevronUp, MoreHorizontal, Gauge
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -20,6 +20,7 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { label: "Dashboard", icon: LayoutDashboard, href: "/agent/dashboard" },
+  { label: "My KPIs", icon: Gauge, href: "/kpi" },
   { label: "Leads", icon: Users, href: "/agent/pipeline" },
   { label: "Bookings", icon: CalendarCheck, action: "operations" },
   { label: "Messages", icon: MessageSquare, action: "messaging", badge: 5 },

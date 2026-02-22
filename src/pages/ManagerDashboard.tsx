@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Home, Sun, Moon, Bell, Search, LayoutDashboard, Users, Target, CalendarCheck, Headphones, AlertTriangle, CheckCircle, BarChart3, RotateCcw, MoreHorizontal, ChevronDown, ChevronUp } from "lucide-react";
+import { Home, Sun, Moon, Bell, Search, LayoutDashboard, Users, Target, CalendarCheck, Headphones, AlertTriangle, CheckCircle, BarChart3, RotateCcw, MoreHorizontal, ChevronDown, ChevronUp, Gauge } from "lucide-react";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
   { label: "Dashboard", icon: LayoutDashboard, href: "/manager/dashboard" },
+  { label: "My KPIs", icon: Gauge, href: "/kpi" },
   { label: "Team Pipeline", icon: Users, href: "/manager/dashboard", disabled: true },
   { label: "Bookings Oversight", icon: CalendarCheck, href: "/manager/dashboard", disabled: true },
   // Advanced
