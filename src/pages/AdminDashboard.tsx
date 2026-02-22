@@ -7,15 +7,15 @@ import { cn } from "@/lib/utils";
 const NAV_ITEMS = [
   { label: "Dashboard", icon: LayoutDashboard, href: "/admin/dashboard" },
   { label: "My KPIs", icon: Gauge, href: "/kpi" },
-  { label: "Users & Roles", icon: Users, href: "/admin/dashboard", disabled: true },
-  { label: "Integrations", icon: Link2, href: "/admin/dashboard", disabled: true },
+  { label: "Users & Roles", icon: Users, href: "/admin/dashboard" },
+  { label: "Integrations", icon: Link2, href: "/admin/integrations" },
   // Advanced
-  { label: "Products & Pricing", icon: Package, href: "/admin/dashboard", disabled: true, advanced: true },
-  { label: "Website Builder", icon: Globe, href: "/admin/dashboard", disabled: true, advanced: true },
-  { label: "AI Marketing Suite", icon: Sparkles, href: "/admin/dashboard", disabled: true, advanced: true },
-  { label: "Analytics Setup", icon: LineChart, href: "/admin/dashboard", disabled: true, advanced: true },
-  { label: "Automations", icon: Zap, href: "/admin/dashboard", disabled: true, advanced: true },
-  { label: "Audit Log", icon: ScrollText, href: "/admin/dashboard", disabled: true, advanced: true },
+  { label: "Products & Pricing", icon: Package, href: "/admin/dashboard", advanced: true },
+  { label: "Website Builder", icon: Globe, href: "/admin/dashboard", advanced: true },
+  { label: "AI Marketing Suite", icon: Sparkles, href: "/admin/dashboard", advanced: true },
+  { label: "Analytics Setup", icon: LineChart, href: "/admin/dashboard", advanced: true },
+  { label: "Automations", icon: Zap, href: "/admin/dashboard", advanced: true },
+  { label: "Audit Log", icon: ScrollText, href: "/admin/dashboard", advanced: true },
 ];
 
 const STATS = [
@@ -71,12 +71,8 @@ export default function AdminDashboard() {
         <nav className="flex-1 px-2 py-2 space-y-0.5">
           {NAV_ITEMS.filter(i => !i.advanced).map((item) => {
             const Icon = item.icon;
-            const active = location.pathname === item.href && !item.disabled;
-            return item.disabled ? (
-              <div key={item.label} className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs text-muted-foreground/50 cursor-not-allowed">
-                <Icon className="w-4 h-4" /><span>{item.label}</span>
-              </div>
-            ) : (
+            const active = location.pathname === item.href;
+            return (
               <Link key={item.label} to={item.href} className={cn("flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors", active ? "bg-foreground text-background" : "text-muted-foreground hover:bg-muted hover:text-foreground")}>
                 <Icon className="w-4 h-4" /><span>{item.label}</span>
               </Link>
@@ -96,10 +92,11 @@ export default function AdminDashboard() {
             <div className="space-y-0.5 pl-1 border-l-2 border-border/50 ml-4 animate-in fade-in slide-in-from-top-1 duration-200">
               {NAV_ITEMS.filter(i => i.advanced).map((item) => {
                 const Icon = item.icon;
+                const active = location.pathname === item.href;
                 return (
-                  <div key={item.label} className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs text-muted-foreground/50 cursor-not-allowed">
+                  <Link key={item.label} to={item.href} className={cn("flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors", active ? "bg-foreground text-background" : "text-muted-foreground hover:bg-muted hover:text-foreground")}>
                     <Icon className="w-4 h-4" /><span>{item.label}</span>
-                  </div>
+                  </Link>
                 );
               })}
             </div>
