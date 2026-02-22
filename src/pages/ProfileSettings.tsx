@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import SiteShell from "@/components/layout/SiteShell";
-import AgentTopBar from "@/components/agent/AgentTopBar";
+import AgentShell from "@/components/layout/AgentShell";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -12,7 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { Camera, Loader2, Save, User } from "lucide-react";
+import { Camera, Loader2, Save } from "lucide-react";
 
 interface ProfileData {
   display_name: string;
@@ -32,7 +31,6 @@ export default function ProfileSettings() {
     avatar_url: null,
   });
 
-  // Preferences (stored locally for now)
   const [prefs, setPrefs] = useState({
     emailNotifications: true,
     soundAlerts: true,
@@ -76,9 +74,7 @@ export default function ProfileSettings() {
 
     const { error } = await supabase
       .from("profiles")
-      .update({
-        display_name: profile.display_name,
-      })
+      .update({ display_name: profile.display_name })
       .eq("id", session.user.id);
 
     if (error) {
@@ -121,8 +117,6 @@ export default function ProfileSettings() {
     }
 
     const { data: { publicUrl } } = supabase.storage.from("avatars").getPublicUrl(path);
-
-    // Add cache-bust to URL
     const avatarUrl = `${publicUrl}?t=${Date.now()}`;
 
     await supabase
@@ -141,18 +135,16 @@ export default function ProfileSettings() {
 
   if (loading) {
     return (
-      <SiteShell hideTrustStrip backendMode>
-        <AgentTopBar crumbs={[{ label: "Agent Tools", href: "/agent-login" }, { label: "Profile Settings" }]} />
+      <AgentShell breadcrumb=" / Profile">
         <div className="flex items-center justify-center h-64">
           <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
         </div>
-      </SiteShell>
+      </AgentShell>
     );
   }
 
   return (
-    <SiteShell hideTrustStrip backendMode>
-      <AgentTopBar crumbs={[{ label: "Agent Tools", href: "/agent-login" }, { label: "Profile Settings" }]} />
+    <AgentShell breadcrumb=" / Profile">
       <div className="max-w-2xl mx-auto px-4 py-8 space-y-6">
         {/* Avatar & Name */}
         <Card>
@@ -161,7 +153,6 @@ export default function ProfileSettings() {
             <CardDescription>Your personal information and avatar</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            {/* Avatar */}
             <div className="flex items-center gap-5">
               <div className="relative group">
                 <Avatar className="w-20 h-20 border-2 border-border">
@@ -173,19 +164,9 @@ export default function ProfileSettings() {
                   disabled={uploading}
                   className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
                 >
-                  {uploading ? (
-                    <Loader2 className="w-5 h-5 text-white animate-spin" />
-                  ) : (
-                    <Camera className="w-5 h-5 text-white" />
-                  )}
+                  {uploading ? <Loader2 className="w-5 h-5 text-white animate-spin" /> : <Camera className="w-5 h-5 text-white" />}
                 </button>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/png,image/jpeg,image/webp"
-                  className="hidden"
-                  onChange={handleAvatarUpload}
-                />
+                <input ref={fileInputRef} type="file" accept="image/png,image/jpeg,image/webp" className="hidden" onChange={handleAvatarUpload} />
               </div>
               <div className="space-y-1">
                 <p className="font-medium text-foreground">{profile.display_name || "Agent"}</p>
@@ -195,18 +176,11 @@ export default function ProfileSettings() {
 
             <Separator />
 
-            {/* Display Name */}
             <div className="space-y-2">
               <Label htmlFor="displayName">Display Name</Label>
-              <Input
-                id="displayName"
-                value={profile.display_name}
-                onChange={(e) => setProfile((p) => ({ ...p, display_name: e.target.value }))}
-                placeholder="Enter your display name"
-              />
+              <Input id="displayName" value={profile.display_name} onChange={(e) => setProfile((p) => ({ ...p, display_name: e.target.value }))} placeholder="Enter your display name" />
             </div>
 
-            {/* Email (read-only) */}
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input id="email" value={profile.email} disabled className="opacity-60" />
@@ -232,46 +206,29 @@ export default function ProfileSettings() {
                 <p className="text-sm font-medium text-foreground">Email Notifications</p>
                 <p className="text-xs text-muted-foreground">Receive email alerts for deal updates</p>
               </div>
-              <Switch
-                checked={prefs.emailNotifications}
-                onCheckedChange={(v) => setPrefs((p) => ({ ...p, emailNotifications: v }))}
-              />
+              <Switch checked={prefs.emailNotifications} onCheckedChange={(v) => setPrefs((p) => ({ ...p, emailNotifications: v }))} />
             </div>
-
             <Separator />
-
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-foreground">Sound Alerts</p>
                 <p className="text-xs text-muted-foreground">Play sound on new notifications</p>
               </div>
-              <Switch
-                checked={prefs.soundAlerts}
-                onCheckedChange={(v) => setPrefs((p) => ({ ...p, soundAlerts: v }))}
-              />
+              <Switch checked={prefs.soundAlerts} onCheckedChange={(v) => setPrefs((p) => ({ ...p, soundAlerts: v }))} />
             </div>
-
             <Separator />
-
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-foreground">Desktop Notifications</p>
                 <p className="text-xs text-muted-foreground">Browser push notifications</p>
               </div>
-              <Switch
-                checked={prefs.desktopNotifications}
-                onCheckedChange={(v) => setPrefs((p) => ({ ...p, desktopNotifications: v }))}
-              />
+              <Switch checked={prefs.desktopNotifications} onCheckedChange={(v) => setPrefs((p) => ({ ...p, desktopNotifications: v }))} />
             </div>
-
             <Separator />
-
             <div className="space-y-2">
               <Label>Timezone</Label>
               <Select value={prefs.timezone} onValueChange={(v) => setPrefs((p) => ({ ...p, timezone: v }))}>
-                <SelectTrigger className="w-full">
-                  <SelectValue />
-                </SelectTrigger>
+                <SelectTrigger className="w-full"><SelectValue /></SelectTrigger>
                 <SelectContent className="bg-popover z-[100]">
                   <SelectItem value="auto">Auto-detect</SelectItem>
                   <SelectItem value="America/New_York">Eastern (ET)</SelectItem>
@@ -283,7 +240,6 @@ export default function ProfileSettings() {
                 </SelectContent>
               </Select>
             </div>
-
             <Button onClick={handleSavePreferences} variant="outline" className="gap-2">
               <Save className="w-4 h-4" />
               Save Preferences
@@ -291,6 +247,6 @@ export default function ProfileSettings() {
           </CardContent>
         </Card>
       </div>
-    </SiteShell>
+    </AgentShell>
   );
 }
