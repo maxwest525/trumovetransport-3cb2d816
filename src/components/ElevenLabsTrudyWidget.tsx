@@ -174,18 +174,20 @@ export default function ElevenLabsTrudyWidget() {
 
       {/* Options popup */}
       {showOptions && !isConnected && !isConnecting && (
-        <div className="flex flex-col items-end gap-1.5 animate-in fade-in slide-in-from-bottom-1 duration-150">
+        <div className="flex flex-col items-end gap-1.5">
           <a
             href="tel:+16097277647"
             onClick={() => setShowOptions(false)}
-            className="flex items-center gap-2 rounded-full border border-border bg-card/95 backdrop-blur-xl shadow-lg px-4 py-2 hover:bg-accent transition-all"
+            className="flex items-center gap-2 rounded-full border border-border bg-card/95 backdrop-blur-xl shadow-lg px-4 py-2 hover:bg-accent transition-all animate-in fade-in slide-in-from-bottom-2 duration-200"
+            style={{ animationDelay: '50ms', animationFillMode: 'both' }}
           >
             <Phone className="h-4 w-4 text-foreground" />
             <span className="text-xs font-medium text-foreground">Call Us</span>
           </a>
           <button
             onClick={() => { setShowOptions(false); navigate('/book'); }}
-            className="flex items-center gap-2 rounded-full border border-border bg-card/95 backdrop-blur-xl shadow-lg px-4 py-2 hover:bg-accent transition-all"
+            className="flex items-center gap-2 rounded-full border border-border bg-card/95 backdrop-blur-xl shadow-lg px-4 py-2 hover:bg-accent transition-all animate-in fade-in slide-in-from-bottom-2 duration-200"
+            style={{ animationDelay: '0ms', animationFillMode: 'both' }}
           >
             <Video className="h-4 w-4 text-foreground" />
             <span className="text-xs font-medium text-foreground">Video Consult</span>
