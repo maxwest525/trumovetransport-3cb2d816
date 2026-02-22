@@ -36,7 +36,7 @@ export default function AdminShell({ children, breadcrumb = "" }: AdminShellProp
   const { theme, setTheme } = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
-  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [showAdvanced] = useState(true);
 
   useEffect(() => {
     setPortalContext("admin");
@@ -79,32 +79,21 @@ export default function AdminShell({ children, breadcrumb = "" }: AdminShellProp
             );
           })}
 
-          <button
-            onClick={() => setShowAdvanced(!showAdvanced)}
-            className="w-full flex items-center gap-2.5 px-3 py-2 mt-1 rounded-lg text-xs text-muted-foreground/60 hover:text-muted-foreground hover:bg-muted/50 transition-colors"
-          >
-            <MoreHorizontal className="w-4 h-4" />
-            <span>More Tools</span>
-            {showAdvanced ? <ChevronUp className="w-3 h-3 ml-auto" /> : <ChevronDown className="w-3 h-3 ml-auto" />}
-          </button>
+          <div className="h-px bg-border/50 mx-2 my-1" />
 
-          {showAdvanced && (
-            <div className="space-y-0.5 pl-1 border-l-2 border-border/50 ml-4 animate-in fade-in slide-in-from-top-1 duration-200">
-              {ADVANCED_ITEMS.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <button
-                    key={item.label}
-                    onClick={() => toast.info(`${item.label} coming soon`)}
-                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
-                  >
-                    <Icon className="w-4 h-4" />
-                    <span>{item.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-          )}
+          {ADVANCED_ITEMS.map((item) => {
+            const Icon = item.icon;
+            return (
+              <button
+                key={item.label}
+                onClick={() => toast.info(`${item.label} coming soon`)}
+                className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+              >
+                <Icon className="w-4 h-4" />
+                <span>{item.label}</span>
+              </button>
+            );
+          })}
         </nav>
 
         <div className="px-2 pb-4 space-y-0.5">
