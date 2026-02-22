@@ -106,13 +106,26 @@ export default function MarketingDashboard() {
     setIsExporting(true); await new Promise(r => setTimeout(r, 2000)); setIsExporting(false); setShowEmailModal(false); setExportEmail(""); toast.success(`Report sent to ${exportEmail}!`);
   };
   const openEmailModal = (type: "abtest" | "conversions") => { setExportType(type); setShowEmailModal(true); };
-  const handleQuickCreate = (type: 'ad' | 'landing' | 'campaign') => { setQuickCreateType(type); setViewMode('quickcreate'); };
+  const handleQuickCreate = (type: 'ad' | 'landing' | 'campaign') => { 
+    if (type === 'landing') {
+      // Skip SimpleMarketingFlow for landing pages - go directly to generator
+      setViewMode('detail');
+      setActiveTab('landing');
+      return;
+    }
+    setQuickCreateType(type); 
+    setViewMode('quickcreate'); 
+  };
   const handleFlowComplete = (result: { type: string; data: any }) => { setViewMode('detail'); if (result.type === 'landing') setActiveTab('landing'); else if (result.type === 'ad' || result.type === 'campaign') setActiveTab('ads'); };
 
   const handleNavigate = (section: string) => {
     if (section === 'trudy-chat') { setViewMode('trudy-chat'); }
     else if (section === 'auto-build') { setViewMode('auto-build'); }
-    else if (section === 'ai-create' || section === 'landing') { handleQuickCreate('landing'); }
+    else if (section === 'ai-create' || section === 'landing') { 
+      // Go directly to landing page generator - no intermediate flow
+      setViewMode('detail'); 
+      setActiveTab('landing'); 
+    }
     else if (section === 'performance') { setViewMode('detail'); setActiveTab('analytics'); }
     else if (section === 'abtest') { setViewMode('detail'); setActiveTab('abtest'); }
     else if (section === 'keywords' || section === 'seo') { setViewMode('detail'); setActiveTab('analytics'); }

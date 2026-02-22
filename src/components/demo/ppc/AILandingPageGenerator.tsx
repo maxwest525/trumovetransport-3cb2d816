@@ -25,9 +25,8 @@ import { Upload, MousePointerClick, PieChart, UserCheck, Map, TrendingDown, Lock
  import jsPDF from "jspdf";
  import autoTable from "jspdf-autotable";
  import logoImg from "@/assets/logo.png";
-import DraggableModal from "@/components/ui/DraggableModal";
 import ScaledPreview from "@/components/ui/ScaledPreview";
-import { 
+import {
   TruMoveLogo, 
   PoweredByBadge, 
   TruMoveGuaranteeBadge,
@@ -43,10 +42,6 @@ import {
   FinalCTASection,
   TruMoveFooter
 } from "./TruMoveBrandingElements";
-import { MarketingAnalyticsDashboard } from "./MarketingAnalyticsDashboard";
-import { LandingPageBoard, INITIAL_MOCK_PAGES } from "./LandingPageBoard";
-import { LandingPage } from "./types";
-import { AIEditRecommendations } from "./AIEditRecommendations";
 import { TemplatePreviewCard } from "./TemplatePreviewCard";
 import { PostGenerationEditor } from "./PostGenerationEditor";
 
@@ -494,14 +489,8 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
      TEMPLATE_HEATMAP_POSITIONS["quote-funnel"]
    );
    const [editingHeatmapId, setEditingHeatmapId] = useState<string | null>(null);
-  const [mainView, setMainView] = useState<'analytics' | 'create' | 'manage'>('analytics');
   const [isPublishing, setIsPublishing] = useState(false);
   const [isPublished, setIsPublished] = useState(false);
-  const [managedPages, setManagedPages] = useState<LandingPage[]>(INITIAL_MOCK_PAGES);
-  const [publishedPageId, setPublishedPageId] = useState<string | null>(null);
-  const [showDomainConnect, setShowDomainConnect] = useState(false);
-  const [domainInput, setDomainInput] = useState('');
-  const [isVerifyingDomain, setIsVerifyingDomain] = useState(false);
   const [showPostGenEditor, setShowPostGenEditor] = useState(false);
 
    // Update heatmap positions when template changes
@@ -536,69 +525,11 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
     setIsPublishing(false);
     setIsPublished(true);
     
-    // Create new page entry for the board
-    const templateInfo = LANDING_PAGE_TEMPLATES.find(t => t.id === selectedTemplate);
-    const newPageId = crypto.randomUUID();
-    const newPage: LandingPage = {
-      id: newPageId,
-      name: `${businessName} - ${targetLocation.split(',')[0].trim()}`,
-      template: templateInfo?.name || 'Quote Funnel',
-      status: 'active',
-      dailyBudget: 100,
-      totalSpend: 0,
-      conversions: 0,
-      conversionRate: 0,
-      cpa: 0,
-      trend: 'stable',
-      url: `${businessName.toLowerCase().replace(/\s/g, '')}.lovable.app/${selectedTemplate}`,
-      createdAt: new Date().toISOString().split('T')[0],
-      performance: 'new',
-      customDomain: null,
-      domainStatus: null
-    };
-    
-    setManagedPages(prev => [newPage, ...prev]);
-    setPublishedPageId(newPageId);
-    
     toast.success("🎉 Landing page published!", {
-      description: `Now tracking in Manage Pages`,
-      action: {
-        label: "View Board",
-        onClick: () => setMainView('manage')
-      }
+      description: "Your page is now live"
     });
   };
   
-  const handleVerifyDomain = async () => {
-    if (!domainInput || !publishedPageId) return;
-    setIsVerifyingDomain(true);
-    await new Promise(r => setTimeout(r, 2000));
-    setIsVerifyingDomain(false);
-    
-    // Simulate 70% success rate
-    const success = Math.random() > 0.3;
-    
-    if (success) {
-      setManagedPages(prev => prev.map(p => 
-        p.id === publishedPageId 
-          ? { ...p, customDomain: domainInput, domainStatus: 'active' as const }
-          : p
-      ));
-      toast.success(`Domain connected: ${domainInput}`, {
-        description: "Your landing page is now live on your custom domain"
-      });
-      setShowDomainConnect(false);
-    } else {
-      setManagedPages(prev => prev.map(p => 
-        p.id === publishedPageId 
-          ? { ...p, customDomain: domainInput, domainStatus: 'pending' as const }
-          : p
-      ));
-      toast.warning("DNS not yet propagated", {
-        description: "Check back in a few hours. Propagation can take up to 72 hours."
-      });
-    }
-  };
 
    // Get current heatmap positions
    const getCurrentHeatmapPositions = () => {
@@ -1307,14 +1238,6 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
             </div>
           </div>
           
-          {/* AI Recommendations Panel */}
-          <AIEditRecommendations
-            sectionType={sectionType}
-            currentContent={tempEditValue}
-            targetAudience={targetAudience}
-            targetLocation={targetLocation}
-            onApplySuggestion={(newText) => setTempEditValue(newText)}
-          />
         </div>
       );
     }
@@ -2758,7 +2681,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
                 AI Generated
               </Badge>
              <span className="text-sm text-muted-foreground">
-               {LANDING_PAGE_TEMPLATES.find(t => t.id === selectedTemplate)?.name} • Click text to edit
+               {LANDING_PAGE_TEMPLATES.find(t => t.id === selectedTemplate)?.name}
              </span>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -2791,1266 +2714,219 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
                 <Download className="w-3 h-3 mr-1" />
                 Export HTML
               </Button>
-              <Button variant="outline" size="sm" onClick={copyHtmlToClipboard}>
-                <Copy className="w-3 h-3 mr-1" />
-                Copy HTML
+              <Button 
+                variant="default" 
+                size="sm" 
+                onClick={() => setShowPostGenEditor(!showPostGenEditor)}
+                className="gap-1.5"
+              >
+                <Pencil className="w-3.5 h-3.5" />
+                {showPostGenEditor ? 'Close Editor' : 'Edit Page'}
               </Button>
-               <Button 
-                 variant="outline" 
-                 size="sm" 
-                 onClick={() => setShowDataImport(true)}
-                 className={importedData ? "border-primary text-primary" : ""}
-               >
-                 <Upload className="w-3 h-3 mr-1" />
-                 {importedData ? "Data Imported" : "Import Data"}
-               </Button>
                <Button 
                  variant="default" 
                  size="sm" 
                  onClick={() => setIsPopoutOpen(true)}
                  className="bg-purple-600 hover:bg-purple-700 text-white gap-1.5 shadow-lg"
                >
-                 <ExternalLink className="w-4 h-4" />
-                 View Full Page
+                 <Maximize2 className="w-4 h-4" />
+                 View Full Screen
                </Button>
-              <Button size="sm" style={{ background: "linear-gradient(135deg, #7C3AED 0%, #A855F7 100%)" }}>
-                Publish Page
-              </Button>
             </div>
           </div>
  
-         {/* Generated Landing Page Preview */}
-          <div className="rounded-xl border-2 border-purple-300 overflow-hidden shadow-lg relative group">
-            {/* Always Visible Pop Out Button on Preview */}
-            <button
-              onClick={() => setIsPopoutOpen(true)}
-              className="absolute top-14 right-3 z-10 px-3 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white shadow-lg border-2 border-purple-400 flex items-center gap-2 transition-all hover:scale-105"
-              title="Pop out to larger view"
-            >
-              <ExternalLink className="w-4 h-4" />
-              <span className="text-sm font-medium">View Full</span>
-            </button>
+          {/* Editor Panel + Preview */}
+          {showPostGenEditor && (
+            <div className="rounded-xl border border-border overflow-hidden bg-card">
+              <PostGenerationEditor
+                sections={sections.map(s => ({
+                  id: s.id,
+                  label: s.id.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+                  type: s.type,
+                  content: s.content,
+                  maxLength: s.type === 'headline' ? 60 : s.type === 'body' ? 300 : 100
+                }))}
+                onSave={(updatedSections) => {
+                  setSections(updatedSections.map(s => ({
+                    id: s.id,
+                    type: s.type,
+                    content: s.content
+                  })));
+                  setShowPostGenEditor(false);
+                }}
+                onCancel={() => setShowPostGenEditor(false)}
+                businessName={businessName}
+                targetLocation={targetLocation}
+              />
+            </div>
+          )}
+
+         {/* Generated Landing Page Preview - Scrollable */}
+          <div className="rounded-xl border-2 border-purple-300 overflow-hidden shadow-lg relative">
            {/* Browser Chrome */}
-           <div className="flex items-center gap-2 px-3 py-2 bg-slate-100 dark:bg-slate-800 border-b border-border">
+           <div className="flex items-center gap-2 px-3 py-2 bg-muted border-b border-border">
              <div className="flex gap-1.5">
                <div className="w-3 h-3 rounded-full bg-red-400" />
                <div className="w-3 h-3 rounded-full bg-amber-400" />
                <div className="w-3 h-3 rounded-full bg-green-400" />
              </div>
              <div className="flex-1 mx-4">
-               <div className="bg-white dark:bg-slate-700 rounded-md px-3 py-1 text-xs text-muted-foreground font-mono">
+               <div className="bg-background rounded-md px-3 py-1 text-xs text-muted-foreground font-mono">
                  https://{businessName.toLowerCase().replace(/\s/g, '')}.com/{selectedTemplate}
                </div>
              </div>
            </div>
  
-           {/* Actual Landing Page Content - scaled to fit */}
-           <ScaledPreview className="h-[450px]">
-             <div className="relative">
-               {renderSelectedTemplate()}
-                 
-               {/* Heatmap Overlay */}
-               {showHeatmapOverlay && importedData && (
-                 <div className="absolute inset-0 pointer-events-none z-20">
-                    {getCurrentHeatmapPositions().map((pos, i) => {
-                      const clickData = importedData.clickBehavior.find(c => 
-                        c.element.toLowerCase().includes(pos.element.toLowerCase().split(' ')[0])
-                      );
-                      const intensity = pos.intensity;
-                      const colors = {
-                        high: { bg: "rgba(239, 68, 68, 0.6)", shadow: "0 0 40px 20px rgba(239, 68, 68, 0.4)", badge: "bg-red-600" },
-                        medium: { bg: "rgba(249, 115, 22, 0.5)", shadow: "0 0 30px 15px rgba(249, 115, 22, 0.3)", badge: "bg-orange-500" },
-                        low: { bg: "rgba(59, 130, 246, 0.4)", shadow: "0 0 25px 10px rgba(59, 130, 246, 0.25)", badge: "bg-blue-500" },
-                      };
-                      const color = colors[intensity];
-                      
-                      return (
-                        <div 
-                          key={pos.id}
-                          className={`absolute -translate-x-1/2 -translate-y-1/2 rounded-lg ${intensity === 'high' ? 'animate-pulse' : ''}`}
-                          style={{ 
-                            top: pos.top,
-                            left: pos.left,
-                            width: pos.width,
-                            height: pos.height,
-                            background: `radial-gradient(ellipse, ${color.bg} 0%, ${color.bg.replace(/0\.[456]/g, '0.15')} 40%, transparent 70%)`,
-                            boxShadow: color.shadow
-                          }}
-                        >
-                          <div className={`absolute -top-6 left-1/2 -translate-x-1/2 ${color.badge} text-white text-[9px] px-2 py-0.5 rounded-full whitespace-nowrap font-medium`}>
-                            {intensity === 'high' ? '🔥' : intensity === 'medium' ? '⚡' : '❄️'} {clickData?.percentage || ((5 - i) * 8)}% • {pos.element}
-                          </div>
-                        </div>
-                      );
-                    })}
-                 </div>
-               )}
-             </div>
+           {/* Actual Landing Page Content - scrollable preview */}
+           <ScaledPreview scrollable className="max-h-[600px]">
+             {renderSelectedTemplate()}
            </ScaledPreview>
-             
-             {/* Heatmap Legend - Fixed position outside ScrollArea */}
-             {showHeatmapOverlay && importedData && (
-               <div className="absolute bottom-4 right-4 p-2 rounded-lg bg-black/80 backdrop-blur-sm text-white text-[10px] space-y-1 z-30">
-                 <div className="font-semibold mb-1">Click Heatmap</div>
-                 <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-red-500"></span> Hot (25%+)</div>
-                 <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-orange-500"></span> Warm (10-25%)</div>
-                 <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-blue-500"></span> Cool (&lt;10%)</div>
-               </div>
-             )}
-           </div>
-         </div>
- 
-        {/* SEO & Keyword Analysis */}
-        <div className="grid grid-cols-2 gap-4">
-          {/* Keywords Used */}
-          <div className="p-4 rounded-xl border border-border bg-card">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: "#7C3AED20" }}>
-                <Hash className="w-4 h-4" style={{ color: "#7C3AED" }} />
-              </div>
-              <h4 className="font-semibold text-sm text-foreground">Keywords Targeted</h4>
-             </div>
-            <div className="flex flex-wrap gap-1.5">
-              {[
-                { keyword: "long distance moving", volume: "12.4K", difficulty: "high" },
-                { keyword: "moving quote", volume: "8.2K", difficulty: "medium" },
-                { keyword: "cross country movers", volume: "6.8K", difficulty: "high" },
-                { keyword: "moving cost calculator", volume: "9.1K", difficulty: "medium" },
-                { keyword: "cheap movers", volume: "14.2K", difficulty: "high" },
-                { keyword: "AI moving estimate", volume: "890", difficulty: "low" },
-              ].map((kw) => (
-                <Badge 
-                  key={kw.keyword} 
-                  variant="secondary" 
-                  className="text-[10px] gap-1"
-                >
-                  {kw.keyword}
-                  <span className="text-muted-foreground">({kw.volume})</span>
-                </Badge>
-              ))}
-             </div>
-           </div>
-
-          {/* Geographic Targeting */}
-          <div className="p-4 rounded-xl border border-border bg-card">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: "#EC489920" }}>
-                <MapPin className="w-4 h-4" style={{ color: "#EC4899" }} />
-              </div>
-              <h4 className="font-semibold text-sm text-foreground">Geographic Targeting</h4>
-            </div>
-            <div className="space-y-2 text-sm">
-              <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">Primary Markets:</span>
-                <span className="font-medium text-foreground">CA, TX, FL, NY</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">Search Intent:</span>
-                <Badge variant="secondary" className="text-[10px]">Transactional</Badge>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">Local Modifiers:</span>
-                <span className="text-xs text-muted-foreground">"near me", city names</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Why These Choices - SEO Reasoning */}
-         {/* Data Import Modal */}
-         {showDataImport && (
-           <div className="p-4 rounded-xl border-2 border-dashed border-blue-300 bg-blue-50 dark:bg-blue-950/30 dark:border-blue-700">
-             <div className="flex items-center justify-between mb-4">
-               <div className="flex items-center gap-2">
-                 <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-blue-500">
-                   <FileUp className="w-4 h-4 text-white" />
-                 </div>
-                 <div>
-                   <h4 className="font-semibold text-blue-900 dark:text-blue-200">Import Analytics Data</h4>
-                   <p className="text-xs text-blue-600 dark:text-blue-400">Connect your Google Ads, Analytics, or upload CSV</p>
-                 </div>
-               </div>
-               <Button variant="ghost" size="sm" onClick={() => setShowDataImport(false)}>
-                 <X className="w-4 h-4" />
-               </Button>
-             </div>
-             
-             <div className="grid grid-cols-3 gap-3 mb-4">
-               <button 
-                 onClick={handleImportData}
-                 className="p-4 rounded-xl border border-border bg-card hover:border-blue-400 transition-all text-center"
-               >
-                 <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900 flex items-center justify-center mx-auto mb-2">
-                   <BarChart3 className="w-5 h-5 text-blue-600" />
-                 </div>
-                 <p className="font-medium text-sm text-foreground">Google Ads</p>
-                 <p className="text-xs text-muted-foreground">Import campaigns</p>
-               </button>
-               <button 
-                 onClick={handleImportData}
-                 className="p-4 rounded-xl border border-border bg-card hover:border-blue-400 transition-all text-center"
-               >
-                 <div className="w-10 h-10 rounded-lg bg-orange-100 dark:bg-orange-900 flex items-center justify-center mx-auto mb-2">
-                   <PieChart className="w-5 h-5 text-orange-600" />
-                 </div>
-                 <p className="font-medium text-sm text-foreground">Google Analytics</p>
-                 <p className="text-xs text-muted-foreground">Import behavior</p>
-               </button>
-               <button 
-                 onClick={handleImportData}
-                 className="p-4 rounded-xl border border-border bg-card hover:border-blue-400 transition-all text-center"
-               >
-                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-2">
-                    <Upload className="w-5 h-5 text-primary" />
-                 </div>
-                 <p className="font-medium text-sm text-foreground">Upload CSV</p>
-                 <p className="text-xs text-muted-foreground">Custom data</p>
-               </button>
-             </div>
-             
-             <div className="flex items-center gap-2 p-3 rounded-lg bg-blue-100 dark:bg-blue-900/50">
-               <CheckCircle2 className="w-4 h-4 text-blue-600" />
-               <p className="text-xs text-blue-700 dark:text-blue-300">
-                 <strong>Demo Mode:</strong> Click any source to load sample data with keyword performance, geographic & demographic insights.
-               </p>
-             </div>
-           </div>
-         )}
- 
-         {/* Imported Data Analytics Panel */}
-         {importedData && (
-           <div className="rounded-xl border border-border bg-card overflow-hidden">
-             {/* Header with stats */}
-              <div className="p-4 border-b border-border bg-gradient-to-r from-primary/5 to-blue-50 dark:from-primary/10 dark:to-blue-950/30">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-primary">
-                     <CheckCircle2 className="w-4 h-4 text-white" />
-                   </div>
-                   <div>
-                     <h4 className="font-semibold text-foreground">Imported Analytics Data</h4>
-                     <p className="text-xs text-muted-foreground">{importedData.dateRange}</p>
-                   </div>
-                 </div>
-                  <div className="flex items-center gap-2">
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      onClick={() => setShowHeatmapOverlay(!showHeatmapOverlay)}
-                      className={showHeatmapOverlay ? "border-red-400 bg-red-50 text-red-600 dark:bg-red-950/30" : ""}
-                    >
-                      {showHeatmapOverlay ? <EyeOff className="w-3.5 h-3.5 mr-1" /> : <Eye className="w-3.5 h-3.5 mr-1" />}
-                      {showHeatmapOverlay ? "Hide" : "Show"} Heatmap
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      onClick={exportAnalyticsPdf}
-                      className="gap-1"
-                    >
-                      <FileText className="w-3.5 h-3.5" />
-                      Export PDF
-                    </Button>
-                    <Button variant="ghost" size="sm" onClick={() => setImportedData(null)}>
-                      <X className="w-4 h-4" />
-                    </Button>
-                  </div>
-               </div>
-               <div className="grid grid-cols-3 gap-4">
-                 <div className="text-center p-2 rounded-lg bg-white/50 dark:bg-slate-800/50">
-                   <p className="text-2xl font-bold text-foreground">{importedData.totalClicks.toLocaleString()}</p>
-                   <p className="text-xs text-muted-foreground">Total Clicks</p>
-                 </div>
-                 <div className="text-center p-2 rounded-lg bg-white/50 dark:bg-slate-800/50">
-                   <p className="text-2xl font-bold text-primary">{importedData.totalConversions.toLocaleString()}</p>
-                   <p className="text-xs text-muted-foreground">Conversions</p>
-                 </div>
-                 <div className="text-center p-2 rounded-lg bg-white/50 dark:bg-slate-800/50">
-                   <p className="text-2xl font-bold text-blue-600">${(importedData.totalRevenue / 1000).toFixed(1)}K</p>
-                   <p className="text-xs text-muted-foreground">Revenue</p>
-                 </div>
-               </div>
-             </div>
-             
-             {/* Tabs */}
-             <div className="flex border-b border-border">
-               {[
-                 { id: 'keywords', label: 'Keywords', icon: Hash },
-                 { id: 'geographic', label: 'Geographic', icon: Map },
-                 { id: 'demographic', label: 'Demographics', icon: UserCheck },
-                 { id: 'clicks', label: 'Click Behavior', icon: MousePointerClick },
-               ].map((tab) => (
-                 <button
-                   key={tab.id}
-                   onClick={() => setActiveDataTab(tab.id as typeof activeDataTab)}
-                   className={`flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 text-sm font-medium transition-colors ${
-                     activeDataTab === tab.id 
-                       ? "text-primary border-b-2 border-primary bg-primary/5" 
-                       : "text-muted-foreground hover:text-foreground"
-                   }`}
-                 >
-                   <tab.icon className="w-3.5 h-3.5" />
-                   {tab.label}
-                 </button>
-               ))}
-             </div>
-             
-             {/* Tab Content */}
-             <div className="p-4">
-               {activeDataTab === 'keywords' && (
-                 <div className="space-y-3">
-                   <div className="flex items-center justify-between mb-2">
-                     <h5 className="font-medium text-sm text-foreground">Keyword Performance & Why They're Winning</h5>
-                      <div className="flex items-center gap-2">
-                        {/* Trend Filter */}
-                        <Select value={keywordTrendFilter} onValueChange={(v: 'all' | 'up' | 'down' | 'stable') => setKeywordTrendFilter(v)}>
-                          <SelectTrigger className="h-7 w-[100px] text-xs">
-                            <TrendingUp className="w-3 h-3 mr-1" />
-                            <SelectValue placeholder="Trend" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="all">All Trends</SelectItem>
-                            <SelectItem value="up">↑ Trending Up</SelectItem>
-                            <SelectItem value="down">↓ Trending Down</SelectItem>
-                            <SelectItem value="stable">→ Stable</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        
-                        {/* Conversion Filter */}
-                        <Select value={keywordConversionFilter} onValueChange={(v: 'all' | 'high' | 'medium' | 'low') => setKeywordConversionFilter(v)}>
-                          <SelectTrigger className="h-7 w-[110px] text-xs">
-                            <FilterIcon className="w-3 h-3 mr-1" />
-                            <SelectValue placeholder="Conv Rate" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="all">All Rates</SelectItem>
-                            <SelectItem value="high">High (&gt;8%)</SelectItem>
-                            <SelectItem value="medium">Medium (5-8%)</SelectItem>
-                            <SelectItem value="low">Low (&lt;5%)</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        
-                        <Badge variant="secondary" className="text-[10px]">
-                          {getFilteredKeywords().length} of {importedData.keywords.length}
-                        </Badge>
-                      </div>
-                   </div>
-                    {getFilteredKeywords().length === 0 ? (
-                      <div className="p-6 text-center text-muted-foreground">
-                        <FilterIcon className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                        <p className="text-sm">No keywords match your filters</p>
-                        <button 
-                          onClick={() => { setKeywordTrendFilter('all'); setKeywordConversionFilter('all'); }}
-                          className="text-xs text-primary hover:underline mt-1"
-                        >
-                          Clear filters
-                        </button>
-                      </div>
-                    ) : getFilteredKeywords().map((kw, i) => (
-                     <div key={i} className="p-3 rounded-xl border border-border bg-card hover:border-primary/30 transition-colors">
-                       <div className="flex items-start justify-between mb-2">
-                         <div className="flex items-center gap-2">
-                           <Badge 
-                             variant="secondary" 
-                             className={`text-xs ${
-                               kw.trend === 'up' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300' :
-                               kw.trend === 'down' ? 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300' :
-                               ''
-                             }`}
-                           >
-                             {kw.trend === 'up' ? <TrendingUp className="w-3 h-3 mr-1" /> : 
-                              kw.trend === 'down' ? <TrendingDown className="w-3 h-3 mr-1" /> : null}
-                             #{kw.position.toFixed(1)}
-                           </Badge>
-                           <span className="font-medium text-sm text-foreground">{kw.keyword}</span>
-                         </div>
-                         <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                           <span>{kw.clicks.toLocaleString()} clicks</span>
-                           <span className="text-blue-600 font-medium">{kw.conversions} conv</span>
-                           <span>{kw.ctr.toFixed(2)}% CTR</span>
-                         </div>
-                       </div>
-                       <div className="p-2 rounded-lg bg-purple-50 dark:bg-purple-950/30 border border-purple-100 dark:border-purple-800">
-                         <p className="text-xs text-purple-700 dark:text-purple-300 flex items-start gap-1.5">
-                           <Sparkles className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
-                           <span><strong>Why it's winning:</strong> {kw.winningReason}</span>
-                         </p>
-                       </div>
-                     </div>
-                   ))}
-                 </div>
-               )}
-               
-               {activeDataTab === 'geographic' && (
-                 <div className="space-y-3">
-                   <div className="flex items-center justify-between mb-2">
-                     <h5 className="font-medium text-sm text-foreground">Geographic Markets Performance</h5>
-                     <Badge variant="secondary" className="text-xs">
-                       <Map className="w-3 h-3 mr-1" />
-                       Top 6 States
-                     </Badge>
-                   </div>
-                   <div className="grid grid-cols-2 gap-3">
-                     {importedData.geographic.map((geo, i) => (
-                       <div key={i} className="p-3 rounded-xl border border-border bg-card">
-                         <div className="flex items-center justify-between mb-2">
-                           <div className="flex items-center gap-2">
-                             <div className="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
-                               <MapPin className="w-4 h-4 text-blue-600" />
-                             </div>
-                             <div>
-                               <p className="font-medium text-sm text-foreground">{geo.state}</p>
-                               <p className="text-xs text-muted-foreground">{geo.region} • {geo.topCity}</p>
-                             </div>
-                           </div>
-                           <Badge variant="secondary" className="text-xs bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300">
-                             {geo.convRate.toFixed(1)}% CVR
-                           </Badge>
-                         </div>
-                         <div className="grid grid-cols-3 gap-2 text-center text-xs">
-                           <div className="p-1.5 rounded bg-muted">
-                             <p className="font-semibold text-foreground">{geo.clicks.toLocaleString()}</p>
-                             <p className="text-muted-foreground">Clicks</p>
-                           </div>
-                           <div className="p-1.5 rounded bg-muted">
-                             <p className="font-semibold text-blue-600">{geo.conversions}</p>
-                             <p className="text-muted-foreground">Conv</p>
-                           </div>
-                           <div className="p-1.5 rounded bg-muted">
-                             <p className="font-semibold text-blue-600">${(geo.revenue / 1000).toFixed(1)}K</p>
-                             <p className="text-muted-foreground">Revenue</p>
-                           </div>
-                         </div>
-                       </div>
-                     ))}
-                   </div>
-                 </div>
-               )}
-               
-               {activeDataTab === 'demographic' && (
-                 <div className="space-y-3">
-                   <div className="flex items-center justify-between mb-2">
-                     <h5 className="font-medium text-sm text-foreground">Who's Clicking & Converting</h5>
-                     <Badge variant="secondary" className="text-xs">
-                       <UserCheck className="w-3 h-3 mr-1" />
-                       Audience Segments
-                     </Badge>
-                   </div>
-                   {importedData.demographic.map((demo, i) => (
-                     <div key={i} className="p-3 rounded-xl border border-border bg-card">
-                       <div className="flex items-center justify-between mb-2">
-                         <div className="flex items-center gap-2">
-                           <div 
-                             className="w-10 h-10 rounded-lg flex items-center justify-center font-bold text-white"
-                             style={{ 
-                               background: `linear-gradient(135deg, ${
-                                  i === 0 ? '#3B82F6' : i === 1 ? '#8B5CF6' : i === 2 ? '#EC4899' : i === 3 ? '#F59E0B' : '#06B6D4'
-                                } 0%, ${
-                                  i === 0 ? '#1D4ED8' : i === 1 ? '#7C3AED' : i === 2 ? '#DB2777' : i === 3 ? '#D97706' : '#0891B2'
-                               } 100%)` 
-                             }}
-                           >
-                             {demo.percentage}%
-                           </div>
-                           <div>
-                             <p className="font-medium text-sm text-foreground">{demo.segment}</p>
-                             <p className="text-xs text-muted-foreground">{demo.device}</p>
-                           </div>
-                         </div>
-                         <div className="text-right">
-                           <p className="font-semibold text-sm text-blue-600">${demo.avgOrderValue.toLocaleString()}</p>
-                           <p className="text-xs text-muted-foreground">Avg Order</p>
-                         </div>
-                       </div>
-                       <div className="flex items-center gap-4 text-xs">
-                         <div className="flex-1">
-                           <div className="flex items-center justify-between mb-1">
-                             <span className="text-muted-foreground">Clicks</span>
-                             <span className="font-medium text-foreground">{demo.clicks.toLocaleString()}</span>
-                           </div>
-                           <div className="h-1.5 rounded-full bg-muted overflow-hidden">
-                             <div 
-                               className="h-full rounded-full bg-blue-500" 
-                               style={{ width: `${(demo.clicks / 9442) * 100}%` }}
-                             />
-                           </div>
-                         </div>
-                         <div className="flex-1">
-                           <div className="flex items-center justify-between mb-1">
-                             <span className="text-muted-foreground">Conversions</span>
-                             <span className="font-medium text-blue-600">{demo.conversions}</span>
-                           </div>
-                           <div className="h-1.5 rounded-full bg-muted overflow-hidden">
-                             <div 
-                               className="h-full rounded-full bg-blue-500" 
-                               style={{ width: `${(demo.conversions / 812) * 100}%` }}
-                             />
-                           </div>
-                         </div>
-                       </div>
-                     </div>
-                   ))}
-                 </div>
-               )}
-               
-               {activeDataTab === 'clicks' && (
-                 <div className="space-y-3">
-                   <div className="flex items-center justify-between mb-2">
-                     <h5 className="font-medium text-sm text-foreground">Click Behavior & Heatmap Insights</h5>
-                     <Badge variant="secondary" className="text-xs">
-                       <MousePointerClick className="w-3 h-3 mr-1" />
-                       Element Analysis
-                     </Badge>
-                   </div>
-                   {importedData.clickBehavior.map((click, i) => (
-                     <div key={i} className="p-3 rounded-xl border border-border bg-card">
-                       <div className="flex items-center justify-between mb-2">
-                         <div className="flex items-center gap-2">
-                           <div 
-                             className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                               click.heatmapIntensity === 'high' ? 'bg-red-100 dark:bg-red-900' :
-                               click.heatmapIntensity === 'medium' ? 'bg-amber-100 dark:bg-amber-900' :
-                               'bg-blue-100 dark:bg-blue-900'
-                             }`}
-                           >
-                             <MousePointerClick className={`w-4 h-4 ${
-                               click.heatmapIntensity === 'high' ? 'text-red-600' :
-                               click.heatmapIntensity === 'medium' ? 'text-amber-600' :
-                               'text-blue-600'
-                             }`} />
-                           </div>
-                           <div>
-                             <p className="font-medium text-sm text-foreground">{click.element}</p>
-                             <p className="text-xs text-muted-foreground">{click.clicks.toLocaleString()} clicks ({click.percentage}%)</p>
-                           </div>
-                         </div>
-                         <Badge 
-                           variant="secondary" 
-                           className={`text-xs ${
-                             click.heatmapIntensity === 'high' ? 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300' :
-                             click.heatmapIntensity === 'medium' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300' :
-                             'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
-                           }`}
-                         >
-                           {click.heatmapIntensity === 'high' ? '🔥 Hot' : 
-                            click.heatmapIntensity === 'medium' ? '⚡ Warm' : 
-                            '❄️ Cool'}
-                         </Badge>
-                       </div>
-                       <div className="p-2 rounded-lg bg-muted">
-                         <p className="text-xs text-muted-foreground flex items-center gap-1.5">
-                           <TrendingUp className="w-3.5 h-3.5 text-primary" />
-                           <span><strong>Conversion Impact:</strong> {click.conversionImpact}</span>
-                         </p>
-                       </div>
-                     </div>
-                   ))}
-                 </div>
-               )}
-             </div>
-           </div>
-         )}
- 
-         {/* Why These Choices - SEO Reasoning */}
-         <div className="p-4 rounded-xl border border-purple-200 bg-purple-50 dark:bg-purple-950/30 dark:border-purple-800">
-          <div className="flex items-center gap-2 mb-3">
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-purple-500">
-              <Sparkles className="w-4 h-4 text-white" />
-            </div>
-            <h4 className="font-semibold text-purple-900 dark:text-purple-200">Why AI Made These Choices</h4>
-          </div>
-          
-          <div className="grid grid-cols-2 gap-4 text-sm">
-            <div className="space-y-3">
-              <div>
-                <div className="flex items-center gap-1.5 font-medium text-purple-800 dark:text-purple-300 mb-1">
-                  <Target className="w-3.5 h-3.5" /> Headline Strategy
-                </div>
-                <p className="text-purple-700 dark:text-purple-400 text-xs">
-                  "Stop Overpaying" triggers loss aversion (2x more powerful than gain). 
-                  Pain-point headlines convert 34% better than feature-focused ones.
-                </p>
-              </div>
-              <div>
-                <div className="flex items-center gap-1.5 font-medium text-purple-800 dark:text-purple-300 mb-1">
-                  <BarChart3 className="w-3.5 h-3.5" /> Specific Numbers
-                </div>
-                <p className="text-purple-700 dark:text-purple-400 text-xs">
-                  "$847 saved" and "50,000+ families" are specific, not rounded. 
-                  Specific numbers increase trust by 27% vs generic claims.
-                </p>
-              </div>
-            </div>
-            <div className="space-y-3">
-              <div>
-                <div className="flex items-center gap-1.5 font-medium text-purple-800 dark:text-purple-300 mb-1">
-                  <Globe className="w-3.5 h-3.5" /> SEO Structure
-                </div>
-                <p className="text-purple-700 dark:text-purple-400 text-xs">
-                  H1 contains primary keyword "move" + modifier "AI-powered". 
-                  Schema markup ready for FAQ rich snippets. Mobile-first layout for Core Web Vitals.
-                </p>
-              </div>
-              <div>
-                <div className="flex items-center gap-1.5 font-medium text-purple-800 dark:text-purple-300 mb-1">
-                  <Zap className="w-3.5 h-3.5" /> CTA Psychology
-                </div>
-                <p className="text-purple-700 dark:text-purple-400 text-xs">
-                   Bold CTA buttons on dark backgrounds have 21% higher CTR. 
-                   "Get My" uses possessive language increasing ownership feeling.
-                </p>
-              </div>
-            </div>
           </div>
          </div>
-      
-       {/* Popout Modal using DraggableModal */}
-       <DraggableModal
-         isOpen={isPopoutOpen}
-         onClose={() => setIsPopoutOpen(false)}
-         title={
-           <div className="flex items-center gap-3">
-             <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center">
-               <Sparkles className="w-5 h-5 text-white" />
-             </div>
-             <div>
-               <span className="text-white font-bold text-lg">Landing Page Preview</span>
-               <div className="flex items-center gap-2 mt-0.5">
-                 <Badge className="bg-white/20 text-white border-white/30 text-xs">
-                   {LANDING_PAGE_TEMPLATES.find(t => t.id === selectedTemplate)?.name}
-                 </Badge>
-                 {isSideBySide && (
-                   <Badge className="bg-blue-500/30 text-blue-200 border-blue-400/30 text-xs">
-                     Side-by-Side
-                   </Badge>
-                 )}
-               </div>
-             </div>
-           </div>
-         }
-         storageKey="tm_landing_page_popout"
-         defaultWidth={1400}
-         defaultHeight={900}
-         minWidth={800}
-         minHeight={500}
-         maxWidth={2000}
-         maxHeight={1600}
-         headerStyle={{ background: "linear-gradient(135deg, #7C3AED 0%, #A855F7 50%, #EC4899 100%)" }}
-         footer={
-            <div className="flex items-center justify-between px-4 py-3 border-t border-border bg-muted/30">
-              {/* Left: Template Switcher */}
+ 
+        {/* Full Screen Preview Dialog */}
+        {isPopoutOpen && (
+          <div className="fixed inset-0 z-50 bg-background flex flex-col">
+            {/* Header bar */}
+            <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-card shrink-0">
               <div className="flex items-center gap-3">
-                <div className="flex items-center gap-1 bg-background rounded-lg border border-border p-1">
-                  <Button 
-                    variant="ghost" 
-                    size="icon"
-                    className="h-7 w-7"
-                    onClick={goToPrevTemplate}
-                  >
+                <Badge className="gap-1 bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300 border-purple-200 dark:border-purple-700">
+                  <Sparkles className="w-3 h-3" />
+                  {LANDING_PAGE_TEMPLATES.find(t => t.id === selectedTemplate)?.name}
+                </Badge>
+                
+                {/* Template Switcher */}
+                <div className="flex items-center gap-1 bg-muted rounded-lg border border-border p-0.5">
+                  <Button variant="ghost" size="icon" className="h-7 w-7" onClick={goToPrevTemplate}>
                     <ChevronLeft className="w-4 h-4" />
                   </Button>
                   <Select value={selectedTemplate} onValueChange={(v) => { setSelectedTemplate(v); setIsPublished(false); }}>
                     <SelectTrigger className="w-[140px] h-7 text-xs border-0 bg-transparent">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-popover z-[200]">
+                    <SelectContent>
                       {LANDING_PAGE_TEMPLATES.map((template) => (
                         <SelectItem key={template.id} value={template.id}>
-                          <div className="flex items-center justify-between gap-2 w-full">
-                            <span>{template.name}</span>
-                            <Badge variant="secondary" className="text-[9px] ml-1">{template.conversion}</Badge>
-                          </div>
+                          {template.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
-                  <Button 
-                    variant="ghost" 
-                    size="icon"
-                    className="h-7 w-7"
-                    onClick={goToNextTemplate}
-                  >
+                  <Button variant="ghost" size="icon" className="h-7 w-7" onClick={goToNextTemplate}>
                     <ChevronRight className="w-4 h-4" />
                   </Button>
                 </div>
                 
-                <div className="h-6 w-px bg-border" />
-                
+                <Select value={selectedTheme} onValueChange={(v) => { setSelectedTheme(v); setIsPublished(false); }}>
+                  <SelectTrigger className="w-[120px] h-8 text-xs">
+                    <Palette className="w-3 h-3 mr-1" />
+                    <SelectValue placeholder="Theme" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {COLOR_THEMES.map((colorTheme) => (
+                      <SelectItem key={colorTheme.id} value={colorTheme.id}>
+                        <div className="flex items-center gap-2">
+                          <div 
+                            className="w-4 h-4 rounded-full border border-border"
+                            style={{ background: `linear-gradient(135deg, ${colorTheme.primary}, ${colorTheme.accent})` }}
+                          />
+                          {colorTheme.name}
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="flex items-center gap-2">
                 <Button 
-                  variant={showPostGenEditor ? "default" : "default"}
+                  variant={showPostGenEditor ? "default" : "outline"}
                   size="sm" 
                   onClick={() => setShowPostGenEditor(!showPostGenEditor)}
-                  className={`h-7 text-xs gap-1 ${showPostGenEditor ? 'bg-primary text-primary-foreground' : 'bg-primary text-primary-foreground'}`}
+                  className="gap-1 text-xs"
                 >
                   <Pencil className="w-3 h-3" />
-                  {showPostGenEditor ? 'Close Editor' : '✏️ Edit Page'}
+                  {showPostGenEditor ? 'Close Editor' : 'Edit Page'}
                 </Button>
-                
-                <Button 
-                 variant="ghost" 
-                 size="sm" 
-                 onClick={() => setIsSideBySide(!isSideBySide)}
-                  className={`h-7 text-xs ${isSideBySide ? 'bg-primary/20' : ''}`}
-               >
-                  <BarChart3 className="w-3 h-3 mr-1" />
-                 {isSideBySide ? 'Preview Only' : 'Side-by-Side'}
-               </Button>
-                <Select value={selectedTheme} onValueChange={(v) => { setSelectedTheme(v); setIsPublished(false); }}>
-                  <SelectTrigger className="w-[120px] h-7 text-xs">
-                    <Palette className="w-3 h-3 mr-1" />
-                   <SelectValue placeholder="Theme" />
-                 </SelectTrigger>
-                  <SelectContent className="bg-popover z-[200]">
-                   {COLOR_THEMES.map((colorTheme) => (
-                     <SelectItem key={colorTheme.id} value={colorTheme.id}>
-                       <div className="flex items-center gap-2">
-                         <div 
-                           className="w-4 h-4 rounded-full border border-border"
-                           style={{ background: `linear-gradient(135deg, ${colorTheme.primary}, ${colorTheme.accent})` }}
-                         />
-                         {colorTheme.name}
-                       </div>
-                     </SelectItem>
-                   ))}
-                 </SelectContent>
-               </Select>
-             </div>
-              
-              {/* Right: Export + Publish */}
-             <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm" onClick={exportAsHtml} className="h-7 gap-1 text-xs">
-                  <Download className="w-3 h-3" /> HTML
-               </Button>
-                <Button variant="outline" size="sm" onClick={copyHtmlToClipboard} className="h-7 gap-1 text-xs">
+                <Button variant="outline" size="sm" onClick={exportAsHtml} className="gap-1 text-xs">
+                  <Download className="w-3 h-3" /> Export
+                </Button>
+                <Button variant="outline" size="sm" onClick={copyHtmlToClipboard} className="gap-1 text-xs">
                   <Copy className="w-3 h-3" /> Copy
-               </Button>
-               {importedData && (
-                  <Button variant="outline" size="sm" onClick={exportAnalyticsPdf} className="h-7 gap-1 text-xs">
-                    <FileText className="w-3 h-3" /> PDF
-                 </Button>
-               )}
-                
-                <div className="h-6 w-px bg-border" />
-                
-                {isPublished ? (
-                  <div className="flex items-center gap-2">
-                    <Button 
-                      size="sm" 
-                      className="h-8 gap-1.5 bg-blue-600 hover:bg-blue-700 text-white"
-                      onClick={() => window.open("#", "_blank")}
-                    >
-                      <CheckCircle2 className="w-3.5 h-3.5" />
-                      Published
-                      <ExternalLink className="w-3 h-3 ml-1" />
-                    </Button>
-                    
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="h-8 gap-1.5"
-                      onClick={() => setShowDomainConnect(!showDomainConnect)}
-                    >
-                      <Globe className="w-3.5 h-3.5" />
-                      {showDomainConnect ? 'Hide Domain' : 'Connect Domain'}
-                    </Button>
-                  </div>
-                ) : (
+                </Button>
+
+                {!isPublished ? (
                   <Button 
                     size="sm" 
-                    className="h-8 gap-1.5"
-                    style={{ background: "linear-gradient(135deg, #7C3AED 0%, #A855F7 100%)" }}
                     onClick={handlePublish}
                     disabled={isPublishing}
+                    className="gap-1 text-xs text-white"
+                    style={{ background: "linear-gradient(135deg, #7C3AED 0%, #A855F7 100%)" }}
                   >
-                    {isPublishing ? (
-                      <>
-                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                        Publishing...
-                      </>
-                    ) : (
-                      <>
-                        <Rocket className="w-3.5 h-3.5" />
-                        Publish
-                      </>
-                    )}
+                    {isPublishing ? <Loader2 className="w-3 h-3 animate-spin" /> : <Rocket className="w-3 h-3" />}
+                    {isPublishing ? 'Publishing...' : 'Publish Page'}
                   </Button>
+                ) : (
+                  <Badge className="bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300 gap-1">
+                    <CheckCircle2 className="w-3 h-3" /> Published
+                  </Badge>
                 )}
-             </div>
-           </div>
-         }
-       >
-         {/* Domain Connection Panel (expandable) */}
-         {showDomainConnect && isPublished && (
-           <div className="border-b border-border bg-muted/30 p-4 shrink-0">
-             <div className="max-w-xl mx-auto space-y-4">
-               <div className="flex items-center justify-between">
-                 <div className="flex items-center gap-2">
-                   <Globe className="w-5 h-5 text-primary" />
-                   <h4 className="font-semibold text-sm">Connect Custom Domain</h4>
-                 </div>
-                 <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setShowDomainConnect(false)}>
-                   <X className="w-3.5 h-3.5" />
-                 </Button>
-               </div>
-               
-                <div className="p-3 rounded-lg bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800">
-                  <p className="text-xs font-medium text-blue-700 dark:text-blue-300 mb-1">🌐 Your page is live at:</p>
-                  <code className="text-sm font-mono text-blue-600 dark:text-blue-400">
-                   https://{businessName.toLowerCase().replace(/\s/g, '')}.lovable.app/{selectedTemplate}
-                 </code>
-               </div>
-               
-               <div className="space-y-2">
-                 <label className="text-xs font-medium text-muted-foreground">Enter your custom domain:</label>
-                 <div className="flex gap-2">
-                   <Input 
-                     value={domainInput}
-                     onChange={(e) => setDomainInput(e.target.value)}
-                     placeholder="moves.yourcompany.com"
-                     className="h-9"
-                   />
-                   <Button 
-                     onClick={handleVerifyDomain}
-                     disabled={!domainInput || isVerifyingDomain}
-                     className="h-9 gap-1.5"
-                   >
-                     {isVerifyingDomain ? (
-                       <>
-                         <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                         Verifying...
-                       </>
-                     ) : (
-                       <>
-                         <CheckCircle2 className="w-3.5 h-3.5" />
-                         Verify DNS
-                       </>
-                     )}
-                   </Button>
-                 </div>
-               </div>
-               
-               <div className="p-3 rounded-lg bg-muted border border-border">
-                 <p className="text-xs font-medium text-foreground mb-2">DNS Configuration Required:</p>
-                 <div className="font-mono text-xs text-muted-foreground space-y-1">
-                   <p><span className="text-foreground font-medium">Type:</span> A Record</p>
-                   <p><span className="text-foreground font-medium">Name:</span> @ (or subdomain)</p>
-                   <p><span className="text-foreground font-medium">Value:</span> 185.158.133.1</p>
-                 </div>
-               </div>
-               
-               <div className="flex items-center justify-between">
-                 <a 
-                   href="https://docs.lovable.dev/features/custom-domain"
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   className="text-xs text-primary hover:underline flex items-center gap-1"
-                 >
-                   📚 Full setup guide <ExternalLink className="w-3 h-3" />
-                 </a>
-                 <Button variant="outline" size="sm" className="h-7 gap-1 text-xs" asChild>
-                   <a href="https://www.godaddy.com/domains" target="_blank" rel="noopener noreferrer">
-                     Get a Domain <ExternalLink className="w-3 h-3" />
-                   </a>
-                 </Button>
-               </div>
-               
-               <p className="text-[10px] text-muted-foreground text-center">
-                 ⏳ DNS propagation can take up to 72 hours
-               </p>
-             </div>
-           </div>
-         )}
-         
-         {/* Browser Chrome */}
-         <div className="flex items-center gap-2 px-4 py-2 bg-muted/50 border-b border-border shrink-0">
-           <div className="flex gap-1.5">
-             <div className="w-3 h-3 rounded-full bg-red-400" />
-             <div className="w-3 h-3 rounded-full bg-amber-400" />
-             <div className="w-3 h-3 rounded-full bg-green-400" />
-           </div>
-           <div className="flex-1 mx-4">
-             <div className="bg-background rounded-md px-3 py-1.5 text-sm text-muted-foreground font-mono border border-border">
-               https://{businessName.toLowerCase().replace(/\s/g, '')}.com/{selectedTemplate}
-             </div>
-           </div>
-           {/* Video Preview Toggle */}
-           <Button 
-             variant={showVideoPreview ? "default" : "outline"} 
-             size="sm" 
-             onClick={() => setShowVideoPreview(!showVideoPreview)}
-             className={`h-7 text-xs gap-1 ${showVideoPreview ? 'bg-purple-600 hover:bg-purple-700 text-white' : ''}`}
-           >
-             <Video className="w-3 h-3" />
-             {showVideoPreview ? 'Hide Preview' : 'Video Demo'}
-           </Button>
-           {importedData && (
-             <Button 
-               variant={showHeatmapOverlay ? "default" : "outline"} 
-               size="sm" 
-               onClick={() => setShowHeatmapOverlay(!showHeatmapOverlay)}
-               className="h-7 text-xs"
-             >
-               {showHeatmapOverlay ? <EyeOff className="w-3 h-3 mr-1" /> : <Eye className="w-3 h-3 mr-1" />}
-               Heatmap
-             </Button>
-           )}
-         </div>
-         
-         {/* Video Preview Mode */}
-         {showVideoPreview ? (
-           <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900/30 to-slate-900 p-8">
-             <div className="max-w-4xl w-full space-y-6">
-               {/* Video Player Mockup */}
-               <div className="relative rounded-2xl overflow-hidden shadow-2xl border-4 border-purple-500/30">
-                 {/* Video Container */}
-                 <div className="aspect-video bg-black relative">
-                   {/* Sample Thumbnail/Preview */}
-                   <img 
-                     src="/inventory/living-room/sofa-3-cushion.png" 
-                     alt="Landing Page Preview" 
-                     className="w-full h-full object-cover opacity-60"
-                   />
-                   
-                   {/* Video Overlay */}
-                   <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-t from-black/80 via-transparent to-black/40">
-                     {/* Play Button */}
-                     <button className="w-24 h-24 rounded-full bg-purple-600 hover:bg-purple-500 flex items-center justify-center shadow-2xl shadow-purple-500/50 transition-all hover:scale-110 group">
-                       <Play className="w-10 h-10 text-white ml-1 group-hover:scale-110 transition-transform" />
-                     </button>
-                     <p className="mt-4 text-white/80 text-lg font-medium">Click to Play Demo</p>
-                   </div>
-                   
-                   {/* Template Info Overlay */}
-                   <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/90 to-transparent">
-                     <div className="flex items-end justify-between">
-                       <div>
-                         <Badge className="bg-purple-600 text-white mb-2">
-                           {LANDING_PAGE_TEMPLATES.find(t => t.id === selectedTemplate)?.name}
-                         </Badge>
-                         <h3 className="text-2xl font-bold text-white">
-                           {businessName} - Landing Page Demo
-                         </h3>
-                         <p className="text-white/70 mt-1">
-                           See how your high-converting page looks and works in action
-                         </p>
-                       </div>
-                       <div className="flex flex-col items-end gap-2">
-                         <Badge className="bg-blue-600 text-white text-lg px-4 py-1">
-                           {LANDING_PAGE_TEMPLATES.find(t => t.id === selectedTemplate)?.conversion} Conversion
-                         </Badge>
-                         <span className="text-white/50 text-sm">Avg. performance</span>
-                       </div>
-                     </div>
-                   </div>
-                   
-                   {/* Video Progress Bar */}
-                   <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/20">
-                     <div className="h-full w-0 bg-purple-500 animate-[progressDemo_8s_ease-in-out_infinite]" />
-                   </div>
-                 </div>
-                 
-                 {/* Video Controls */}
-                 <div className="bg-slate-900 px-4 py-3 flex items-center justify-between">
-                   <div className="flex items-center gap-4">
-                     <button className="p-2 hover:bg-white/10 rounded-lg transition-colors">
-                       <Play className="w-5 h-5 text-white" />
-                     </button>
-                     <div className="text-white/60 text-sm font-mono">0:00 / 2:34</div>
-                   </div>
-                   <div className="flex items-center gap-3">
-                     <Badge variant="outline" className="text-purple-400 border-purple-400/50">
-                       HD 1080p
-                     </Badge>
-                     <button className="p-2 hover:bg-white/10 rounded-lg transition-colors">
-                       <Maximize2 className="w-5 h-5 text-white" />
-                     </button>
-                   </div>
-                 </div>
-               </div>
-               
-               {/* Key Features Below Video */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                 {[
-                   { icon: TrendingUp, label: "Conversion Tracking", desc: "Real-time analytics" },
-                   { icon: Users, label: "Lead Capture", desc: "Instant notifications" },
-                   { icon: Zap, label: "Fast Loading", desc: "< 2s load time" }
-                 ].map((feature, i) => (
-                   <div key={i} className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10 text-center">
-                     <feature.icon className="w-8 h-8 text-purple-400 mx-auto mb-2" />
-                     <h4 className="text-white font-semibold text-sm">{feature.label}</h4>
-                     <p className="text-white/50 text-xs mt-1">{feature.desc}</p>
-                   </div>
-                 ))}
-               </div>
-             </div>
-           </div>
-         ) : isSideBySide ? (
-           <div className="flex flex-col lg:flex-row flex-1 overflow-hidden">
-             {/* Landing Page Preview */}
-             <div className="flex-1 border-r border-border relative">
-                <ScaledPreview className="h-full">
+                
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  onClick={() => setIsPopoutOpen(false)}
+                  className="h-8 w-8"
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+            
+            {/* Content area */}
+            <div className="flex-1 flex overflow-hidden">
+              {/* Editor Panel (side) */}
+              {showPostGenEditor && (
+                <div className="w-full max-w-sm border-r border-border bg-card overflow-y-auto shrink-0">
+                  <PostGenerationEditor
+                    sections={sections.map(s => ({
+                      id: s.id,
+                      label: s.id.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+                      type: s.type,
+                      content: s.content,
+                      maxLength: s.type === 'headline' ? 60 : s.type === 'body' ? 300 : 100
+                    }))}
+                    onSave={(updatedSections) => {
+                      setSections(updatedSections.map(s => ({
+                        id: s.id,
+                        type: s.type,
+                        content: s.content
+                      })));
+                    }}
+                    onCancel={() => setShowPostGenEditor(false)}
+                    businessName={businessName}
+                    targetLocation={targetLocation}
+                  />
+                </div>
+              )}
+              
+              {/* Full page preview - scrolls from top */}
+              <div className="flex-1 overflow-auto">
+                <ScaledPreview scrollable contentWidth={1440} className="min-h-full">
                   {renderSelectedTemplate()}
                 </ScaledPreview>
-               
-               {/* Heatmap Overlay in side-by-side */}
-               {showHeatmapOverlay && importedData && (
-                 <div className="absolute inset-0 pointer-events-none z-20">
-                   {getCurrentHeatmapPositions().map((pos, i) => {
-                     const clickData = importedData.clickBehavior.find(c => c.element.toLowerCase().includes(pos.element.toLowerCase().split(' ')[0]));
-                     const intensity = pos.intensity;
-                     const colors = {
-                       high: { bg: "rgba(239, 68, 68, 0.6)", shadow: "rgba(239, 68, 68, 0.4)", badge: "bg-red-600" },
-                       medium: { bg: "rgba(249, 115, 22, 0.5)", shadow: "rgba(249, 115, 22, 0.3)", badge: "bg-amber-600" },
-                       low: { bg: "rgba(59, 130, 246, 0.4)", shadow: "rgba(59, 130, 246, 0.2)", badge: "bg-blue-600" },
-                     };
-                     const color = colors[intensity];
-                     
-                     return (
-                       <div 
-                         key={pos.id}
-                         className={`absolute -translate-x-1/2 -translate-y-1/2 rounded-lg ${intensity === 'high' ? 'animate-pulse' : ''}`}
-                         style={{ 
-                           top: pos.top,
-                           left: pos.left,
-                           width: pos.width,
-                           height: pos.height,
-                           background: `radial-gradient(ellipse, ${color.bg} 0%, ${color.bg.replace('0.6', '0.2').replace('0.5', '0.15').replace('0.4', '0.1')} 40%, transparent 70%)`,
-                           boxShadow: intensity === 'high' ? `0 0 40px 20px ${color.shadow}` : undefined
-                         }}
-                       >
-                         <div className={`absolute -top-6 left-1/2 -translate-x-1/2 ${color.badge} text-white text-[9px] px-2 py-0.5 rounded-full whitespace-nowrap font-medium`}>
-                           {intensity === 'high' ? '🔥' : intensity === 'medium' ? '⚡' : '❄️'} {clickData?.percentage || ((5 - i) * 8)}% clicks
-                         </div>
-                       </div>
-                     );
-                   })}
-                 </div>
-               )}
-             </div>
-             
-             {/* Analytics Panel */}
-             <div className="w-full lg:w-[380px] flex flex-col bg-muted/30 max-h-[50vh] lg:max-h-none">
-               <div className="p-3 border-b border-border bg-card shrink-0">
-                 <div className="flex items-center justify-between">
-                   <h4 className="font-semibold text-sm text-foreground flex items-center gap-2">
-                     <BarChart3 className="w-4 h-4 text-purple-500" />
-                     Analytics & SEO
-                   </h4>
-                 </div>
-               </div>
-               
-               <ScrollArea className="flex-1">
-                 <div className="p-3 space-y-4">
-                   {/* Quick Stats */}
-                   {importedData && (
-                     <div className="grid grid-cols-3 gap-2">
-                       <div className="p-2 rounded-lg bg-card border border-border text-center">
-                         <p className="text-lg font-bold text-foreground">{(importedData.totalClicks / 1000).toFixed(1)}K</p>
-                         <p className="text-[10px] text-muted-foreground">Clicks</p>
-                       </div>
-                       <div className="p-2 rounded-lg bg-card border border-border text-center">
-                         <p className="text-lg font-bold text-blue-600">{importedData.totalConversions.toLocaleString()}</p>
-                         <p className="text-[10px] text-muted-foreground">Conversions</p>
-                       </div>
-                       <div className="p-2 rounded-lg bg-card border border-border text-center">
-                         <p className="text-lg font-bold text-blue-600">${(importedData.totalRevenue / 1000).toFixed(0)}K</p>
-                         <p className="text-[10px] text-muted-foreground">Revenue</p>
-                       </div>
-                     </div>
-                   )}
-                   
-                   {/* Top Keywords */}
-                   {importedData && (
-                     <div className="p-3 rounded-xl border border-border bg-card">
-                       <div className="flex items-center gap-2 mb-2">
-                         <Target className="w-4 h-4 text-primary" />
-                         <h5 className="font-semibold text-xs text-foreground">Top Keywords</h5>
-                       </div>
-                       <div className="space-y-2">
-                         {importedData.keywords.slice(0, 4).map((kw, i) => (
-                           <div key={i} className="flex items-center justify-between text-xs">
-                             <span className="text-muted-foreground truncate flex-1">{kw.keyword}</span>
-                             <div className="flex items-center gap-2">
-                                <span className="text-primary font-medium">{kw.conversions}</span>
-                                {kw.trend === 'up' && <TrendingUp className="w-3 h-3 text-primary" />}
-                               {kw.trend === 'down' && <TrendingDown className="w-3 h-3 text-red-500" />}
-                             </div>
-                           </div>
-                         ))}
-                       </div>
-                     </div>
-                   )}
-                   
-                   {/* Click Behavior */}
-                   {importedData && (
-                     <div className="p-3 rounded-xl border border-border bg-card">
-                       <div className="flex items-center gap-2 mb-2">
-                         <MousePointerClick className="w-4 h-4 text-red-500" />
-                         <h5 className="font-semibold text-xs text-foreground">Click Behavior</h5>
-                       </div>
-                       <div className="space-y-2">
-                         {importedData.clickBehavior.slice(0, 4).map((click, i) => (
-                           <div key={i} className="flex items-center justify-between text-xs">
-                             <div className="flex items-center gap-1.5">
-                               <span 
-                                 className={`w-2 h-2 rounded-full ${
-                                   click.heatmapIntensity === 'high' ? 'bg-red-500' :
-                                   click.heatmapIntensity === 'medium' ? 'bg-amber-500' : 'bg-blue-500'
-                                 }`}
-                               />
-                               <span className="text-muted-foreground truncate">{click.element}</span>
-                             </div>
-                             <span className="font-medium text-foreground">{click.percentage}%</span>
-                           </div>
-                         ))}
-                       </div>
-                     </div>
-                   )}
-                   
-                   {/* AI Insights */}
-                   <div className="p-3 rounded-xl border border-purple-200 bg-purple-50 dark:bg-purple-950/30 dark:border-purple-800">
-                     <div className="flex items-center gap-2 mb-2">
-                       <Sparkles className="w-4 h-4 text-purple-500" />
-                       <h5 className="font-semibold text-xs text-purple-900 dark:text-purple-200">AI Insights</h5>
-                     </div>
-                     <div className="space-y-2 text-[10px] text-purple-700 dark:text-purple-300">
-                       <p>• "Stop Overpaying" triggers loss aversion (2x more powerful)</p>
-                       <p>• Specific numbers ($847) increase trust by 27%</p>
-                       <p>• Bold CTAs on dark backgrounds have 21% higher CTR</p>
-                     </div>
-                   </div>
-                   
-                   {!importedData && (
-                     <div className="p-4 text-center border-2 border-dashed border-border rounded-xl">
-                       <Upload className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-                       <p className="text-xs text-muted-foreground">No analytics data imported</p>
-                       <p className="text-[10px] text-muted-foreground mt-1">Import before generating to see insights</p>
-                     </div>
-                   )}
-                 </div>
-               </ScrollArea>
-             </div>
-           </div>
-           ) : showPostGenEditor ? (
-             /* Post-generation Editor + Preview */
-             <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
-               <div className="w-full lg:w-[400px] border-b lg:border-b-0 lg:border-r border-border bg-background overflow-hidden flex flex-col max-h-[50vh] lg:max-h-none">
-                <PostGenerationEditor
-                  sections={sections.map(s => ({
-                    id: s.id,
-                    label: s.id.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
-                    type: s.type,
-                    content: s.content,
-                    maxLength: s.type === 'headline' ? 60 : s.type === 'body' ? 300 : 100
-                  }))}
-                  onSave={(updatedSections) => {
-                    setSections(updatedSections.map(s => ({
-                      id: s.id,
-                      type: s.type,
-                      content: s.content
-                    })));
-                    setShowPostGenEditor(false);
-                  }}
-                  onCancel={() => setShowPostGenEditor(false)}
-                  businessName={businessName}
-                  targetLocation={targetLocation}
-                />
               </div>
-               <div className="flex-1 overflow-auto">
-                 <ScaledPreview scrollable className="min-h-full">
-                   {renderSelectedTemplate()}
-                 </ScaledPreview>
-               </div>
-             </div>
-           ) : (
-             /* Full width preview only - scrollable */
-             <div className="flex-1 overflow-auto">
-               <ScaledPreview scrollable className="min-h-full">
-                 {renderSelectedTemplate()}
-               </ScaledPreview>
-             </div>
-           )}
-       </DraggableModal>
-     </>
-   );
- }
+            </div>
+          </div>
+        )}
+       </>
+     );
+   }
 
-  const handleProceedToCreate = () => {
-    // Pre-populate from analytics data
-    setTargetLocation("California, Texas, Florida");
-    setTargetAudience("Homeowners 35-54 (Desktop 62%)");
-    setMainView('create');
-  };
 
-  const handleEditPage = (pageId: string) => {
-    // Switch to create view to edit existing page
-    setMainView('create');
-    // Would load page data here
-  };
-
-  return (
-     <div className="space-y-4">
-      {/* View Tabs */}
-      <div className="flex items-center gap-2 p-1 rounded-xl bg-muted/50 border border-border">
-        <button
-          onClick={() => setMainView('analytics')}
-          className={`flex-1 py-2.5 px-4 rounded-lg text-sm font-medium transition-all ${
-            mainView === 'analytics' 
-              ? 'bg-background text-foreground shadow-sm' 
-              : 'text-muted-foreground hover:text-foreground'
-          }`}
-        >
-          <span className="flex items-center justify-center gap-2">
-            <BarChart3 className="w-4 h-4" />
-            Analytics & Insights
-          </span>
-        </button>
-        <button
-          onClick={() => setMainView('create')}
-          className={`flex-1 py-2.5 px-4 rounded-lg text-sm font-medium transition-all ${
-            mainView === 'create' 
-              ? 'bg-background text-foreground shadow-sm' 
-              : 'text-muted-foreground hover:text-foreground'
-          }`}
-        >
-          <span className="flex items-center justify-center gap-2">
-            <Sparkles className="w-4 h-4" />
-            Create Page
-          </span>
-        </button>
-        <button
-          onClick={() => setMainView('manage')}
-          className={`flex-1 py-2.5 px-4 rounded-lg text-sm font-medium transition-all ${
-            mainView === 'manage' 
-              ? 'bg-background text-foreground shadow-sm' 
-              : 'text-muted-foreground hover:text-foreground'
-          }`}
-        >
-          <span className="flex items-center justify-center gap-2">
-            <Target className="w-4 h-4" />
-            Manage Pages
-          </span>
-        </button>
-      </div>
-
-      {/* Analytics Dashboard View */}
-      {mainView === 'analytics' && (
-        <MarketingAnalyticsDashboard onProceedToCreate={handleProceedToCreate} />
-      )}
-
-      {/* Landing Page Board View */}
-      {mainView === 'manage' && (
-        <LandingPageBoard 
-          onCreateNew={() => setMainView('create')} 
-          onEditPage={handleEditPage}
-          pages={managedPages}
-          onPagesChange={setManagedPages}
-        />
-      )}
-
-      {/* Create Page View */}
-      {mainView === 'create' && (
-      <>
+   // No more tabs - just show the create flow directly
+   return (
+      <div className="space-y-4">
         {/* Auto-Populated Data Banner */}
         {autoPopulatedFields.size > 0 && (
           <div className="p-4 rounded-xl border border-primary/30 bg-gradient-to-r from-primary/5 via-primary/10 to-pink-500/5">
@@ -4066,13 +2942,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
                   </Badge>
                 </h4>
                 <p className="text-xs text-muted-foreground">
-                  We've pre-populated your form with insights from your selected keywords and locations. 
-                  {prefillData?.keywords && prefillData.keywords.length > 0 && (
-                    <span className="text-primary font-medium"> {prefillData.keywords.length} keywords</span>
-                  )}
-                  {prefillData?.locations && prefillData.locations.length > 0 && (
-                    <span className="text-primary font-medium"> • {prefillData.locations.length} locations</span>
-                  )}
+                  Pre-populated with insights from your analytics.
                 </p>
               </div>
               <Button 
@@ -4092,7 +2962,6 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
          <h4 className="font-semibold text-sm text-foreground mb-4 flex items-center gap-2">
            <span className="w-6 h-6 rounded-full bg-primary/20 text-primary flex items-center justify-center text-xs font-bold">1</span>
            Choose a template style
-           <span className="text-xs text-muted-foreground font-normal ml-auto">Hover to preview</span>
          </h4>
          
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -4107,7 +2976,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
          </div>
        </div>
  
-       {/* Generate Button - Direct after template */}
+       {/* Generate Button */}
        <Button 
          onClick={handleGenerateLandingPage}
          disabled={isGenerating || generationStep > 0}
@@ -4126,7 +2995,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
          ) : (
            <>
              <Sparkles className="w-5 h-5" />
-             Generate Landing Page with AI
+             Generate Landing Page
            </>
          )}
        </Button>
@@ -4161,8 +3030,6 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
            </div>
          </div>
        )}
-      </>
-      )}
-    </div>
-  );
-}
+     </div>
+   );
+ }
