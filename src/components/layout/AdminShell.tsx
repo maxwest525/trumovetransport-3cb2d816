@@ -15,6 +15,7 @@ const NAV_ITEMS = [
   { label: "My KPIs", icon: Gauge, href: "/kpi" },
   { label: "Users & Roles", icon: Users, href: "/admin/users" },
   { label: "Integrations", icon: Link2, href: "/admin/integrations" },
+  { label: "Support Tickets", icon: ScrollText, href: "/admin/support-tickets" },
 ];
 
 const ADVANCED_ITEMS = [
