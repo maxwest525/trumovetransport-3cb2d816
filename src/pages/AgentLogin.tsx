@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import SiteShell from "@/components/layout/SiteShell";
-import { Users, BarChart3, Shield, Crown, ArrowRight } from "lucide-react";
+import PortalAuthForm from "@/components/auth/PortalAuthForm";
+import { Users, BarChart3, Shield, Crown, ArrowRight, LogOut } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
+import type { Session } from "@supabase/supabase-js";
 
 const ROLES = [
   {
@@ -40,18 +43,35 @@ const STORAGE_KEY = "trumove_remembered_role";
 export default function AgentLogin() {
   const navigate = useNavigate();
   const [remember, setRemember] = useState(false);
+  const [session, setSession] = useState<Session | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Set up listener BEFORE getSession
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      setLoading(false);
+    });
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (!session) return;
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       const role = ROLES.find((r) => r.id === saved);
       if (role) {
         navigate(role.href, { replace: true });
-        return;
       }
     }
     window.scrollTo(0, 0);
-  }, [navigate]);
+  }, [session, navigate]);
 
   const handleClick = (roleId: string, href: string) => {
     if (remember) {
@@ -60,11 +80,43 @@ export default function AgentLogin() {
     navigate(href);
   };
 
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    localStorage.removeItem(STORAGE_KEY);
+  };
+
+  if (loading) {
+    return (
+      <SiteShell centered backendMode>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="w-6 h-6 border-2 border-foreground/20 border-t-foreground rounded-full animate-spin" />
+        </div>
+      </SiteShell>
+    );
+  }
+
+  // Not authenticated — show login/signup form
+  if (!session) {
+    return (
+      <SiteShell centered backendMode>
+        <div className="flex items-center justify-center min-h-[60vh] px-4 py-16">
+          <PortalAuthForm onAuthenticated={() => {}} />
+        </div>
+      </SiteShell>
+    );
+  }
+
+  // Authenticated — show role picker
   return (
     <SiteShell centered backendMode>
       <div className="flex flex-col items-center justify-center min-h-[60vh] px-4 py-16">
         <h1 className="text-2xl font-bold tracking-tight text-foreground mb-1">Choose your workspace</h1>
-        <p className="text-sm text-muted-foreground mb-10">Select where you'd like to go</p>
+        <p className="text-sm text-muted-foreground mb-10">
+          Signed in as <span className="text-foreground font-medium">{session.user.email}</span>
+          <button onClick={handleSignOut} className="ml-2 inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
+            <LogOut className="w-3 h-3" /> Sign out
+          </button>
+        </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 w-full max-w-4xl">
           {ROLES.map((role) => {
