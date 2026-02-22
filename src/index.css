@@ -35009,3 +35009,168 @@ gmp-map-3d-element .gmnoprint {
     max-height: 360px !important;
   }
 }
+
+/* =============================================
+   FLOATING CONTACT PILL
+   ============================================= */
+
+.floating-contact-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 16px 6px 6px;
+  border-radius: 999px;
+  background: hsl(var(--foreground));
+  color: hsl(var(--background));
+  border: none;
+  cursor: pointer;
+  box-shadow:
+    0 4px 16px hsl(var(--tm-ink) / 0.2),
+    0 1px 3px hsl(var(--tm-ink) / 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.floating-contact-pill:hover {
+  transform: scale(1.04);
+  box-shadow:
+    0 8px 28px hsl(var(--tm-ink) / 0.3),
+    0 2px 6px hsl(var(--tm-ink) / 0.15);
+}
+
+.floating-contact-pill-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: hsl(var(--primary));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.floating-contact-pill-label {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.floating-contact-pill-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: hsl(142 71% 45%);
+  animation: contact-pulse 2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+@keyframes contact-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
+}
+
+/* Options panel */
+.floating-contact-options {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: 16px;
+  padding: 6px;
+  box-shadow:
+    0 8px 32px hsl(var(--tm-ink) / 0.12),
+    0 2px 8px hsl(var(--tm-ink) / 0.06);
+  min-width: 220px;
+  animation: contact-slide-up 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes contact-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.floating-contact-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  color: inherit;
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+}
+
+.floating-contact-option:hover {
+  background: hsl(var(--accent));
+}
+
+.floating-contact-option-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.floating-contact-option-video {
+  background: hsl(221 83% 53% / 0.12);
+  color: hsl(221 83% 53%);
+}
+
+.floating-contact-option-phone {
+  background: hsl(142 71% 45% / 0.12);
+  color: hsl(142 71% 45%);
+}
+
+.floating-contact-option-trudy {
+  background: hsl(280 87% 55% / 0.12);
+  color: hsl(280 87% 55%);
+}
+
+.floating-contact-option-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.floating-contact-option-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: hsl(var(--foreground));
+  line-height: 1.2;
+}
+
+.floating-contact-option-desc {
+  font-size: 11px;
+  color: hsl(var(--muted-foreground));
+  line-height: 1.2;
+}
+
+/* Dark mode adjustments */
+.dark .floating-contact-option-video {
+  background: hsl(221 83% 53% / 0.2);
+}
+
+.dark .floating-contact-option-phone {
+  background: hsl(142 71% 45% / 0.2);
+}
+
+.dark .floating-contact-option-trudy {
+  background: hsl(280 87% 55% / 0.2);
+}
