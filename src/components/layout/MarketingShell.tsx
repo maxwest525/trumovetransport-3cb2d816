@@ -143,7 +143,7 @@ export default function MarketingShell({ children, breadcrumb = "" }: MarketingS
               className="flex items-center gap-1.5 px-2 py-1 rounded-md border border-border bg-background text-xs font-medium text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-all shrink-0"
             >
               <Globe className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Website</span>
+              <span>Website</span>
             </Link>
             <div className="w-px h-4 bg-border hidden sm:block" />
             <Link to="/agent-login" className="hidden sm:flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
