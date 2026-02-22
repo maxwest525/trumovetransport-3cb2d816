@@ -13,7 +13,7 @@ export default function AgentPipeline() {
   const [refreshKey, setRefreshKey] = useState(0);
 
   return (
-    <SiteShell hideTrustStrip>
+    <SiteShell hideTrustStrip backendMode>
       <AgentTopBar crumbs={[{ label: "Agent Tools", href: "/agent-login" }, { label: "Pipeline" }]} />
       <div className="px-4 py-6 max-w-[1600px] mx-auto">
         <div className="flex items-center justify-between mb-4">

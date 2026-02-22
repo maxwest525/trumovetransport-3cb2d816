@@ -61,7 +61,7 @@ export default function AgentLogin() {
   };
 
   return (
-    <SiteShell centered>
+    <SiteShell centered backendMode>
       <div className="flex flex-col items-center justify-center min-h-[60vh] px-4 py-16">
         <h1 className="text-2xl font-bold tracking-tight text-foreground mb-1">Choose your workspace</h1>
         <p className="text-sm text-muted-foreground mb-10">Select where you'd like to go</p>
