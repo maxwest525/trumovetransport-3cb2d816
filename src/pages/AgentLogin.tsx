@@ -87,7 +87,7 @@ export default function AgentLogin() {
 
   if (loading) {
     return (
-      <SiteShell centered backendMode>
+      <SiteShell centered backendMode hideHeader>
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="w-6 h-6 border-2 border-foreground/20 border-t-foreground rounded-full animate-spin" />
         </div>
@@ -98,7 +98,7 @@ export default function AgentLogin() {
   // Not authenticated — show login/signup form
   if (!session) {
     return (
-      <SiteShell centered backendMode>
+      <SiteShell centered backendMode hideHeader>
         <div className="flex items-center justify-center min-h-[60vh] px-4 py-16">
           <PortalAuthForm onAuthenticated={() => {}} />
         </div>
@@ -108,7 +108,7 @@ export default function AgentLogin() {
 
   // Authenticated — show role picker
   return (
-    <SiteShell centered backendMode>
+    <SiteShell centered backendMode hideHeader>
       <div className="flex flex-col items-center justify-center min-h-[60vh] px-4 py-16">
         <h1 className="text-2xl font-bold tracking-tight text-foreground mb-1">Choose your workspace</h1>
         <p className="text-sm text-muted-foreground mb-10">
