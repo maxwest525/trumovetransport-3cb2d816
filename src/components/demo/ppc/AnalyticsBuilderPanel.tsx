@@ -89,12 +89,15 @@ interface AnalyticsBuilderPanelProps {
   onCancel: () => void;
 }
 
+export type OutputType = 'landing' | 'website' | 'ad';
+
 export interface BuildSelections {
   keywords: string[];
   locations: string[];
   demographics: string[];
   platforms: string[];
   template: string;
+  outputType: OutputType;
 }
 
 // ── Component ───────────────────────────────────────────────────────────
@@ -125,6 +128,7 @@ export function AnalyticsBuilderPanel({ mode, onBuild, onCancel }: AnalyticsBuil
   const [showNonConvertingGeo, setShowNonConvertingGeo] = useState(false);
   const [showNonConvertingDemo, setShowNonConvertingDemo] = useState(false);
   const [showNonConvertingPlatforms, setShowNonConvertingPlatforms] = useState(false);
+  const [selectedOutputType, setSelectedOutputType] = useState<OutputType>('landing');
 
   const toggle = (list: string[], item: string, setter: (v: string[]) => void) => {
     setter(list.includes(item) ? list.filter(i => i !== item) : [...list, item]);
@@ -136,7 +140,7 @@ export function AnalyticsBuilderPanel({ mode, onBuild, onCancel }: AnalyticsBuil
     const template = selectedKeywords.some(k => k.includes("calculator")) ? "calculator"
       : selectedLocations.length > 0 && selectedLocations.length <= 2 ? "local-seo"
       : "quote-funnel";
-    onBuild({ keywords: selectedKeywords, locations: selectedLocations, demographics: selectedDemographics, platforms: selectedPlatforms, template });
+    onBuild({ keywords: selectedKeywords, locations: selectedLocations, demographics: selectedDemographics, platforms: selectedPlatforms, template, outputType: selectedOutputType });
   };
 
   // ── Auto mode: compact summary view ──────────────────────────────────
@@ -634,13 +638,47 @@ export function AnalyticsBuilderPanel({ mode, onBuild, onCancel }: AnalyticsBuil
         </div>
       </ScrollArea>
 
+      {/* Output Type Selector */}
+      <Card className="border-border">
+        <CardHeader className="pb-2 pt-3 px-3">
+          <CardTitle className="text-xs font-semibold flex items-center gap-1.5">
+            <Rocket className="w-3.5 h-3.5 text-violet-500" />
+            What do you want to generate?
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="px-3 pb-3">
+          <div className="grid grid-cols-3 gap-2">
+            {([
+              { type: 'landing' as OutputType, label: 'Landing Page', desc: 'Conversion-focused single page', icon: Layout },
+              { type: 'website' as OutputType, label: 'Website', desc: 'Multi-page site with nav', icon: Globe },
+              { type: 'ad' as OutputType, label: 'Ad Campaign', desc: 'Headlines + descriptions', icon: Target },
+            ]).map(opt => (
+              <button
+                key={opt.type}
+                onClick={() => setSelectedOutputType(opt.type)}
+                className={cn(
+                  "flex flex-col items-center gap-1.5 p-3 rounded-lg border-2 transition-all text-center",
+                  selectedOutputType === opt.type
+                    ? "border-primary bg-primary/5 shadow-sm shadow-primary/10"
+                    : "border-border hover:border-foreground/20 hover:bg-muted/50"
+                )}
+              >
+                <opt.icon className={cn("w-5 h-5", selectedOutputType === opt.type ? "text-primary" : "text-muted-foreground")} />
+                <span className={cn("text-xs font-semibold", selectedOutputType === opt.type ? "text-primary" : "text-foreground")}>{opt.label}</span>
+                <span className="text-[10px] text-muted-foreground leading-tight">{opt.desc}</span>
+              </button>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Build Action Bar */}
       <Card className="border-primary/30 bg-gradient-to-r from-primary/10 via-fuchsia-500/5 to-pink-500/10 overflow-hidden relative">
         <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-pink-500/5" />
         <CardContent className="p-4 flex items-center justify-between relative z-10">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-fuchsia-500 flex items-center justify-center shadow-lg shadow-primary/20">
-              <Layout className="w-5 h-5 text-white" />
+              {selectedOutputType === 'landing' ? <Layout className="w-5 h-5 text-white" /> : selectedOutputType === 'website' ? <Globe className="w-5 h-5 text-white" /> : <Target className="w-5 h-5 text-white" />}
             </div>
             <div>
               <p className="text-sm font-semibold text-foreground">
@@ -666,7 +704,7 @@ export function AnalyticsBuilderPanel({ mode, onBuild, onCancel }: AnalyticsBuil
               style={{ background: "linear-gradient(135deg, hsl(var(--primary)) 0%, #A855F7 50%, #EC4899 100%)" }}
             >
               <Sparkles className="w-4 h-4" />
-              Generate Page
+              Generate {selectedOutputType === 'landing' ? 'Landing Page' : selectedOutputType === 'website' ? 'Website' : 'Ad Campaign'}
               <ArrowRight className="w-4 h-4" />
             </Button>
           </div>

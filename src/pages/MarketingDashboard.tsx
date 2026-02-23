@@ -162,7 +162,12 @@ export default function MarketingDashboard() {
     });
     setAutoOpenFullScreen(true);
     setViewMode('detail');
-    setActiveTab('landing');
+    // Route based on output type
+    if (selections.outputType === 'ad') {
+      setActiveTab('ads');
+    } else {
+      setActiveTab('landing');
+    }
   };
 
   return (
