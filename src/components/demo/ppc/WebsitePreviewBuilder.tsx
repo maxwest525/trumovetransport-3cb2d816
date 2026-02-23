@@ -11,7 +11,7 @@ interface WebsitePreviewBuilderProps {
   onBack: () => void;
 }
 
-type TemplateStyle = 'editorial-dark' | 'clean-split-light' | 'enterprise-dark-form' | 'promo-dark-gradient' | 'corporate-light-video';
+type TemplateStyle = 'editorial-dark' | 'clean-split-light' | 'enterprise-dark-form' | 'promo-dark-gradient' | 'corporate-light-video' | 'top10-listicle';
 type PageTab = 'home' | 'services' | 'reviews' | 'quote';
 
 const TEMPLATES: { id: TemplateStyle; label: string; desc: string }[] = [
@@ -20,6 +20,7 @@ const TEMPLATES: { id: TemplateStyle; label: string; desc: string }[] = [
   { id: 'enterprise-dark-form', label: 'Enterprise Dark Form', desc: 'Dark, form right' },
   { id: 'promo-dark-gradient', label: 'Promo Dark Gradient', desc: 'Navy-purple gradient' },
   { id: 'corporate-light-video', label: 'Corporate Light Video', desc: 'Light, blue accent' },
+  { id: 'top10-listicle', label: 'Top 10 Listicle', desc: 'Review/ranking site' },
 ];
 
 function getContent(selections: BuildSelections) {
@@ -468,6 +469,168 @@ function CorporateLightVideo({ content, page, darkMode }: { content: ReturnType<
   );
 }
 
+function Top10Listicle({ content, page, darkMode }: { content: ReturnType<typeof getContent>; page: PageTab; darkMode: boolean }) {
+  const bg = darkMode ? '#0f1117' : '#ffffff';
+  const fg = darkMode ? '#f1f5f9' : '#1a1a2e';
+  const muted = darkMode ? '#94a3b8' : '#64748b';
+  const accent = '#f59e0b';
+  const cardBg = darkMode ? '#1a1d2e' : '#f8fafc';
+  const border = darkMode ? '#2a2d3e' : '#e5e7eb';
+  const greenBg = darkMode ? '#16a34a15' : '#16a34a10';
+  const green = '#16a34a';
+
+  const competitors = [
+    { rank: 1, name: 'TruMove', rating: 4.9, reviews: 12847, badge: '🏆 Editor\'s Choice', highlight: true, pros: ['AI-powered instant quotes', 'Real-time GPS tracking', 'Full-value protection', '$0 hidden fees'], cons: ['Premium pricing'] },
+    { rank: 2, name: 'SafeShip Movers', rating: 4.6, reviews: 8234, badge: null, highlight: false, pros: ['Good customer service', 'Nationwide coverage'], cons: ['Slow quote process', 'Extra fees for stairs'] },
+    { rank: 3, name: 'QuickHaul Express', rating: 4.5, reviews: 6891, badge: null, highlight: false, pros: ['Fast delivery times', 'Budget options'], cons: ['Limited tracking', 'Insurance extra'] },
+    { rank: 4, name: 'HomeRun Relocations', rating: 4.3, reviews: 5102, badge: null, highlight: false, pros: ['Family-owned', 'Flexible scheduling'], cons: ['Regional only', 'No online booking'] },
+    { rank: 5, name: 'PrimeMove Co.', rating: 4.2, reviews: 4567, badge: null, highlight: false, pros: ['Corporate packages', 'Storage options'], cons: ['Higher minimums', 'Slower response'] },
+    { rank: 6, name: 'EasyGo Movers', rating: 4.1, reviews: 3890, badge: null, highlight: false, pros: ['Low prices', 'Simple booking'], cons: ['Limited insurance', 'Few reviews'] },
+    { rank: 7, name: 'TransNation', rating: 4.0, reviews: 3201, badge: null, highlight: false, pros: ['International moves', 'Multi-language'], cons: ['Complex pricing', 'Long wait times'] },
+    { rank: 8, name: 'BudgetBox Movers', rating: 3.9, reviews: 2890, badge: null, highlight: false, pros: ['Cheapest option', 'DIY packages'], cons: ['Minimal service', 'No packing help'] },
+    { rank: 9, name: 'SwiftLine Moving', rating: 3.8, reviews: 2345, badge: null, highlight: false, pros: ['Fast estimates', 'Weekend availability'], cons: ['Small fleet', 'Limited areas'] },
+    { rank: 10, name: 'ValuePack Relocation', rating: 3.7, reviews: 1980, badge: null, highlight: false, pros: ['Bundle deals', 'Student discounts'], cons: ['Inconsistent quality', 'Few trucks'] },
+  ];
+
+  const kw = content.headline.split(' in ')[0]?.replace('Expert ', '') || 'Long Distance Moving';
+  const loc = content.headline.split(' in ')[1] || 'Your Area';
+  const year = new Date().getFullYear();
+
+  return (
+    <div style={{ background: bg, color: fg, fontFamily: "'Inter', system-ui, sans-serif", minHeight: 900 }}>
+      {/* Nav */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 80px', borderBottom: `1px solid ${border}` }}>
+        <span style={{ fontSize: 18, fontWeight: 700 }}>MovingReviews<span style={{ color: accent }}>.com</span></span>
+        <div style={{ display: 'flex', gap: 28, fontSize: 14, color: muted }}>
+          <span>Home</span><span>Categories</span><span>How We Rank</span><span>About</span>
+        </div>
+        <div style={{ fontSize: 12, color: muted }}>Last Updated: Feb {year}</div>
+      </div>
+
+      {page === 'home' && (
+        <>
+          {/* Hero */}
+          <div style={{ padding: '64px 80px 48px', maxWidth: 900 }}>
+            <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+              <span style={{ background: accent + '20', color: accent, padding: '4px 12px', borderRadius: 999, fontSize: 12, fontWeight: 600 }}>✅ Updated for {year}</span>
+              <span style={{ background: greenBg, color: green, padding: '4px 12px', borderRadius: 999, fontSize: 12, fontWeight: 600 }}>Independently Reviewed</span>
+            </div>
+            <h1 style={{ fontSize: 42, fontWeight: 800, lineHeight: 1.15, letterSpacing: -1 }}>
+              Top 10 Best {kw} Companies in {loc} ({year})
+            </h1>
+            <p style={{ fontSize: 17, color: muted, marginTop: 16, lineHeight: 1.7 }}>
+              We researched and compared {competitors.length} {kw.toLowerCase()} companies based on pricing, customer reviews, insurance coverage, and service quality. Here are our top picks.
+            </p>
+            <div style={{ display: 'flex', gap: 24, marginTop: 24, fontSize: 13, color: muted }}>
+              <span>📋 {competitors.length} Companies Reviewed</span>
+              <span>⏱️ 47 Hours of Research</span>
+              <span>👥 12,000+ Customer Surveys</span>
+            </div>
+          </div>
+
+          {/* Quick comparison strip */}
+          <div style={{ margin: '0 80px', padding: '20px 24px', background: cardBg, borderRadius: 12, border: `1px solid ${border}`, display: 'flex', alignItems: 'center', gap: 16, marginBottom: 32 }}>
+            <span style={{ fontSize: 13, fontWeight: 700, whiteSpace: 'nowrap' }}>🏆 Quick Pick:</span>
+            <span style={{ fontSize: 14 }}><strong>TruMove</strong> — Best overall for {kw.toLowerCase()}. AI-powered quotes, 4.9★ rating, full-value protection.</span>
+            <div style={{ marginLeft: 'auto', background: green, color: '#fff', padding: '10px 24px', borderRadius: 8, fontSize: 13, fontWeight: 600, whiteSpace: 'nowrap' }}>Get Free Quote →</div>
+          </div>
+
+          {/* Rankings */}
+          <div style={{ padding: '0 80px 64px' }}>
+            {competitors.map((c) => (
+              <div key={c.rank} style={{
+                padding: 28,
+                marginBottom: 16,
+                borderRadius: 12,
+                border: c.highlight ? `2px solid ${accent}` : `1px solid ${border}`,
+                background: c.highlight ? (darkMode ? '#1a1d2e' : '#fffbeb') : cardBg,
+                position: 'relative',
+              }}>
+                {c.badge && (
+                  <div style={{ position: 'absolute', top: -12, left: 24, background: accent, color: '#fff', padding: '4px 14px', borderRadius: 999, fontSize: 12, fontWeight: 700 }}>{c.badge}</div>
+                )}
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 24 }}>
+                  {/* Rank */}
+                  <div style={{ fontSize: 36, fontWeight: 900, color: c.highlight ? accent : muted, minWidth: 48, textAlign: 'center', lineHeight: 1 }}>
+                    #{c.rank}
+                  </div>
+                  {/* Info */}
+                  <div style={{ flex: 1 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
+                      <span style={{ fontSize: 22, fontWeight: 800 }}>{c.name}</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                        {[1,2,3,4,5].map(s => (
+                          <Star key={s} size={16} fill={s <= Math.floor(c.rating) ? accent : 'transparent'} color={accent} />
+                        ))}
+                        <span style={{ fontSize: 14, fontWeight: 700, marginLeft: 4 }}>{c.rating}</span>
+                        <span style={{ fontSize: 12, color: muted }}>({c.reviews.toLocaleString()} reviews)</span>
+                      </div>
+                    </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 12 }}>
+                      <div>
+                        <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, color: green, marginBottom: 6 }}>Pros</div>
+                        {c.pros.map((p, i) => (
+                          <div key={i} style={{ fontSize: 13, color: fg, display: 'flex', gap: 6, marginBottom: 4 }}>
+                            <CheckCircle2 size={14} color={green} style={{ marginTop: 2, flexShrink: 0 }} /> {p}
+                          </div>
+                        ))}
+                      </div>
+                      <div>
+                        <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, color: '#ef4444', marginBottom: 6 }}>Cons</div>
+                        {c.cons.map((con, i) => (
+                          <div key={i} style={{ fontSize: 13, color: muted, display: 'flex', gap: 6, marginBottom: 4 }}>
+                            <span style={{ color: '#ef4444', flexShrink: 0 }}>−</span> {con}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  {/* CTA */}
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, minWidth: 140 }}>
+                    <div style={{
+                      background: c.highlight ? green : (darkMode ? '#ffffff15' : '#f1f5f9'),
+                      color: c.highlight ? '#fff' : fg,
+                      padding: '12px 24px',
+                      borderRadius: 8,
+                      fontSize: 14,
+                      fontWeight: 700,
+                      textAlign: 'center',
+                      width: '100%',
+                    }}>
+                      {c.highlight ? 'Get Free Quote' : 'Visit Site'}
+                    </div>
+                    <span style={{ fontSize: 11, color: muted }}>Free · No obligation</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Methodology */}
+          <div style={{ padding: '48px 80px', borderTop: `1px solid ${border}`, background: cardBg }}>
+            <h2 style={{ fontSize: 24, fontWeight: 800, marginBottom: 16 }}>How We Rank</h2>
+            <p style={{ fontSize: 14, color: muted, lineHeight: 1.7, maxWidth: 700 }}>
+              Our rankings are based on a weighted scoring system: Customer Reviews (35%), Pricing Transparency (25%), Insurance & Protection (20%), Service Coverage (10%), and Technology & Tracking (10%). We update our rankings monthly and accept no payment for placement.
+            </p>
+          </div>
+        </>
+      )}
+
+      {page !== 'home' && (
+        <div style={{ padding: 80 }}>
+          <h2 style={{ fontSize: 40, fontWeight: 800, marginBottom: 40 }}>{page === 'services' ? 'How We Review' : page === 'reviews' ? 'Reader Reviews' : 'Get Listed'}</h2>
+          <p style={{ fontSize: 16, color: muted }}>Content section for {page} page.</p>
+        </div>
+      )}
+
+      <div style={{ padding: '48px 80px', borderTop: `1px solid ${border}`, display: 'flex', justifyContent: 'space-between', color: muted, fontSize: 13, marginTop: 40 }}>
+        <span>© {year} MovingReviews.com · Editorial Guidelines · Advertiser Disclosure</span>
+        <div style={{ display: 'flex', gap: 24 }}><span>Privacy</span><span>Terms</span><span>Contact</span></div>
+      </div>
+    </div>
+  );
+}
+
 // ── Main Component ─────────────────────────────────────────────────────
 
 export function WebsitePreviewBuilder({ selections, onBack }: WebsitePreviewBuilderProps) {
@@ -486,6 +649,7 @@ export function WebsitePreviewBuilder({ selections, onBack }: WebsitePreviewBuil
       case 'enterprise-dark-form': return <EnterpriseDarkForm {...props} />;
       case 'promo-dark-gradient': return <PromoDarkGradient {...props} />;
       case 'corporate-light-video': return <CorporateLightVideo {...props} />;
+      case 'top10-listicle': return <Top10Listicle {...props} />;
     }
   };
 
