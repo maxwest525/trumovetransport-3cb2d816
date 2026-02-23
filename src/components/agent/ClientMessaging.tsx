@@ -6,10 +6,19 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Mail, MessageSquare, Send, FileText, Sparkles, Copy, Check } from "lucide-react";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Mail, MessageSquare, Send, FileText, Sparkles, Copy, Check, UserRound } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { formatPhoneNumber } from "@/lib/phoneFormat";
+
+const DEMO_CUSTOMERS = [
+  { id: "1", name: "Sarah Johnson", email: "sarah.johnson@email.com", phone: "(555) 123-4567" },
+  { id: "2", name: "Michael Chen", email: "m.chen@email.com", phone: "(555) 234-5678" },
+  { id: "3", name: "Emily Rodriguez", email: "emily.r@email.com", phone: "(555) 345-6789" },
+  { id: "4", name: "David Kim", email: "d.kim@email.com", phone: "(555) 456-7890" },
+  { id: "5", name: "Jessica Williams", email: "j.williams@email.com", phone: "(555) 567-8901" },
+];
 
 const EMAIL_TEMPLATES = [
   {
@@ -109,6 +118,8 @@ export function ClientMessaging() {
   const [recipient, setRecipient] = useState("");
   const [copied, setCopied] = useState(false);
 
+  const [selectedCustomer, setSelectedCustomer] = useState("");
+
   const handleTemplateSelect = (templateId: string) => {
     setSelectedTemplate(templateId);
     if (activeTab === "email") {
@@ -126,9 +137,13 @@ export function ClientMessaging() {
     toast.success("Template loaded");
   };
 
-  const fillDemoRecipient = () => {
-    setRecipient(activeTab === "email" ? "sarah.johnson@email.com" : "(555) 123-4567");
-    toast.success("Demo recipient added");
+  const handleCustomerSelect = (customerId: string) => {
+    setSelectedCustomer(customerId);
+    const customer = DEMO_CUSTOMERS.find((c) => c.id === customerId);
+    if (customer) {
+      setRecipient(activeTab === "email" ? customer.email : customer.phone);
+      toast.success(`Selected ${customer.name}`);
+    }
   };
 
   const handleCopy = () => {
@@ -151,16 +166,38 @@ export function ClientMessaging() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold flex items-center gap-2">
-          <Mail className="w-6 h-6" />
-          Client Messaging
-        </h2>
-        <Button onClick={fillDemoRecipient} variant="outline" size="sm" className="gap-2">
-          <Sparkles className="w-4 h-4" />
-          Demo Recipient
-        </Button>
+    <div className="space-y-5">
+      {/* Customer Picker */}
+      <div className="flex items-center gap-3 p-3 rounded-xl border bg-muted/30">
+        <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground shrink-0">
+          <UserRound className="w-4 h-4" />
+          Send to:
+        </div>
+        <div className="flex gap-2 flex-wrap">
+          {DEMO_CUSTOMERS.map((customer) => {
+            const initials = customer.name.split(" ").map(n => n[0]).join("");
+            const isSelected = selectedCustomer === customer.id;
+            return (
+              <button
+                key={customer.id}
+                onClick={() => handleCustomerSelect(customer.id)}
+                className={cn(
+                  "flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-medium transition-all",
+                  isSelected
+                    ? "bg-primary text-primary-foreground shadow-sm scale-105"
+                    : "bg-background border hover:bg-accent hover:text-accent-foreground"
+                )}
+              >
+                <Avatar className="h-5 w-5">
+                  <AvatarFallback className={cn("text-[9px]", isSelected ? "bg-primary-foreground/20 text-primary-foreground" : "bg-primary/10 text-primary")}>
+                    {initials}
+                  </AvatarFallback>
+                </Avatar>
+                {customer.name.split(" ")[0]}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
