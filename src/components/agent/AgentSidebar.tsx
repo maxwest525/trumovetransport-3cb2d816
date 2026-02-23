@@ -19,15 +19,17 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
+  // Primary tools
+  { label: "CRM Pipeline", icon: Users, href: "/agent/pipeline" },
+  { label: "Dialer", icon: Phone, action: "workspace" },
+  // Core
   { label: "Dashboard", icon: LayoutDashboard, href: "/agent/dashboard" },
   { label: "My KPIs", icon: Gauge, href: "/kpi" },
-  { label: "Leads", icon: Users, href: "/agent/pipeline" },
   { label: "Bookings", icon: CalendarCheck, action: "operations" },
   { label: "Messages", icon: MessageSquare, action: "messaging", badge: 5 },
   // Advanced tools
   { label: "Inventory", icon: Package, action: "workspace", advanced: true },
   { label: "Estimates", icon: FileText, action: "workspace", advanced: true },
-  { label: "Calls", icon: Phone, action: "workspace", advanced: true },
   { label: "Documents", icon: FileSignature, action: "workspace", advanced: true },
   { label: "Tasks", icon: CheckSquare, action: "coaching", badge: 2, advanced: true },
 ];
