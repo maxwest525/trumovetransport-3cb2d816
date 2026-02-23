@@ -77,7 +77,7 @@ export default function AgentDialerPage() {
     setPlayingId((prev) => (prev === id ? null : id));
   };
 
-  const CallRow = ({ call }: { call: CallRecord }) => {
+  const CallRow = ({ call, onRedial }: { call: CallRecord; onRedial?: (num: string) => void }) => {
     const Icon = callTypeIcon(call.call_type, call.status);
     const isMissed = call.status === "missed";
     const isPlaying = playingId === call.id;
@@ -146,6 +146,7 @@ export default function AgentDialerPage() {
               size="icon"
               className="h-8 w-8 rounded-full"
               title={`Call ${call.customer_phone}`}
+              onClick={() => onRedial?.(call.customer_phone!)}
             >
               <Phone className="w-3.5 h-3.5 text-foreground" />
             </Button>
@@ -162,13 +163,13 @@ export default function AgentDialerPage() {
     </div>
   );
 
-  const CallList = ({ items, emptyMsg }: { items: CallRecord[]; emptyMsg: string }) => (
+  const CallList = ({ items, emptyMsg, onRedial }: { items: CallRecord[]; emptyMsg: string; onRedial?: (num: string) => void }) => (
     items.length === 0 ? (
       <EmptyState message={emptyMsg} />
     ) : (
       <div className="space-y-1.5">
         {items.map((call) => (
-          <CallRow key={call.id} call={call} />
+          <CallRow key={call.id} call={call} onRedial={onRedial} />
         ))}
       </div>
     )
@@ -184,7 +185,7 @@ export default function AgentDialerPage() {
               <p className="text-sm text-muted-foreground">Call history, recordings & redial</p>
             </div>
             <div className="flex items-center gap-2">
-              <Button onClick={openDialer} size="sm" className="gap-1.5 text-xs">
+              <Button onClick={() => openDialer()} size="sm" className="gap-1.5 text-xs">
                 <Phone className="w-3.5 h-3.5" />
                 Quick Dial
               </Button>
@@ -225,13 +226,13 @@ export default function AgentDialerPage() {
 
               <div className="mt-3">
                 <TabsContent value="all" className="mt-0">
-                  <CallList items={allCalls} emptyMsg="No calls yet. Your call history will appear here." />
+                  <CallList items={allCalls} emptyMsg="No calls yet. Your call history will appear here." onRedial={openDialer} />
                 </TabsContent>
                 <TabsContent value="missed" className="mt-0">
-                  <CallList items={missedCalls} emptyMsg="No missed calls. You're all caught up!" />
+                  <CallList items={missedCalls} emptyMsg="No missed calls. You're all caught up!" onRedial={openDialer} />
                 </TabsContent>
                 <TabsContent value="recordings" className="mt-0">
-                  <CallList items={completedCalls} emptyMsg="No recordings yet. Completed calls will appear here." />
+                  <CallList items={completedCalls} emptyMsg="No recordings yet. Completed calls will appear here." onRedial={openDialer} />
                 </TabsContent>
               </div>
             </Tabs>

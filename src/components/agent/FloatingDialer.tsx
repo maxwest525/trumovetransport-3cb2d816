@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 interface FloatingDialerProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  prefillNumber?: string;
 }
 
 const KEYS = [
@@ -27,8 +28,8 @@ const KEYS = [
   { label: "#", sub: "" },
 ];
 
-export function FloatingDialer({ open, onOpenChange }: FloatingDialerProps) {
-  const [number, setNumber] = useState("");
+export function FloatingDialer({ open, onOpenChange, prefillNumber }: FloatingDialerProps) {
+  const [number, setNumber] = useState(prefillNumber || "");
   const [calling, setCalling] = useState(false);
   const [minimized, setMinimized] = useState(false);
   const [muted, setMuted] = useState(false);
@@ -43,6 +44,13 @@ export function FloatingDialer({ open, onOpenChange }: FloatingDialerProps) {
   const dragOffset = useRef({ x: 0, y: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
   const initialized = useRef(false);
+
+  // Sync prefill number
+  useEffect(() => {
+    if (prefillNumber && !calling) {
+      setNumber(prefillNumber);
+    }
+  }, [prefillNumber]);
 
   // Initialize position to bottom-right
   useEffect(() => {

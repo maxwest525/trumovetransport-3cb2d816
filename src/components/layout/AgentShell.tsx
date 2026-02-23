@@ -7,7 +7,7 @@ import { FloatingDialer } from "@/components/agent/FloatingDialer";
 import { setPortalContext } from "@/hooks/usePortalContext";
 
 interface AgentShellProps {
-  children: ReactNode | ((props: { openDialer: () => void }) => ReactNode);
+  children: ReactNode | ((props: { openDialer: (number?: string) => void }) => ReactNode);
   breadcrumb?: string;
 }
 
@@ -15,6 +15,7 @@ export default function AgentShell({ children, breadcrumb = "" }: AgentShellProp
   const { theme, setTheme } = useTheme();
   const location = useLocation();
   const [dialerOpen, setDialerOpen] = useState(false);
+  const [dialerPrefill, setDialerPrefill] = useState<string | undefined>();
 
   useEffect(() => {
     setPortalContext("agent");
@@ -51,10 +52,10 @@ export default function AgentShell({ children, breadcrumb = "" }: AgentShellProp
           </div>
         </header>
         <main className="flex-1 overflow-y-auto">
-          {typeof children === "function" ? children({ openDialer: () => setDialerOpen(true) }) : children}
+          {typeof children === "function" ? children({ openDialer: (num?: string) => { setDialerPrefill(num); setDialerOpen(true); } }) : children}
         </main>
       </div>
-      <FloatingDialer open={dialerOpen} onOpenChange={setDialerOpen} />
+      <FloatingDialer open={dialerOpen} onOpenChange={setDialerOpen} prefillNumber={dialerPrefill} />
     </div>
   );
 }
