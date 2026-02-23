@@ -37,6 +37,7 @@ import KpiDashboard from "./pages/KpiDashboard";
 import ResetPassword from "./pages/ResetPassword";
 import MarketingDashboard from "./pages/MarketingDashboard";
 import AccountingDashboard from "./pages/AccountingDashboard";
+import ManagerCoaching from "./pages/ManagerCoaching";
 
 const queryClient = new QueryClient();
 
@@ -73,6 +74,7 @@ const App = () => (
             <Route path="/demo" element={<Demo />} />
             <Route path="/agent-login-old" element={<AgentLoginOld />} />
             <Route path="/manager/dashboard" element={<ManagerDashboard />} />
+            <Route path="/manager/coaching" element={<ManagerCoaching />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/users" element={<AdminUsersPage />} />
             <Route path="/kpi" element={<KpiDashboard />} />

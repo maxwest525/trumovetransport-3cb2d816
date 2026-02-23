@@ -17,9 +17,9 @@ const NAV_ITEMS = [
   { label: "Bookings Oversight", icon: CalendarCheck, href: "/manager/dashboard" },
 ];
 
-const ADVANCED_ITEMS = [
+const ADVANCED_ITEMS: { label: string; icon: typeof Target; badge?: number; href?: string }[] = [
   { label: "Estimates Oversight", icon: Target },
-  { label: "Call Monitoring", icon: Headphones },
+  { label: "Coaching & Monitoring", icon: Headphones, href: "/manager/coaching" },
   { label: "Alerts", icon: AlertTriangle, badge: 3 },
   { label: "Approvals", icon: CheckCircle, badge: 2 },
   { label: "Reports", icon: BarChart3 },
@@ -80,6 +80,22 @@ export default function ManagerShell({ children, breadcrumb = "" }: ManagerShell
 
           {ADVANCED_ITEMS.map((item) => {
             const Icon = item.icon;
+            if (item.href) {
+              const active = location.pathname === item.href;
+              return (
+                <Link
+                  key={item.label}
+                  to={item.href}
+                  className={cn(
+                    "flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors",
+                    active ? "bg-foreground text-background" : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                  )}
+                >
+                  <Icon className="w-4 h-4" /><span>{item.label}</span>
+                  {item.badge ? <span className="ml-auto min-w-[18px] h-[18px] flex items-center justify-center rounded-full text-[10px] font-semibold bg-foreground text-background leading-none px-1">{item.badge}</span> : null}
+                </Link>
+              );
+            }
             return (
               <button
                 key={item.label}
