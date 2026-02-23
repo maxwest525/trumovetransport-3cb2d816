@@ -9,11 +9,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
  import { 
    FileText, Send, Mail, MessageSquare, Monitor, CheckCircle2, 
    Clock, Eye, Loader2, Phone, Video, Users, AlertCircle,
-   RefreshCw, ExternalLink, Sparkles
+   RefreshCw, ExternalLink, Sparkles, CreditCard
  } from "lucide-react";
  import { toast } from "sonner";
  import { cn } from "@/lib/utils";
  import { ClientSearchModal, type ClientData } from "./ClientSearchModal";
+ import { CollectPaymentModal } from "./CollectPaymentModal";
  
  type DocumentType = "estimate" | "ccach" | "bol";
  type DeliveryMethod = "email" | "sms";
@@ -94,6 +95,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
    const [showClientSearch, setShowClientSearch] = useState(false);
    const [isSending, setIsSending] = useState(false);
    const [isScreensharing, setIsScreensharing] = useState(false);
+   const [paymentOpen, setPaymentOpen] = useState(false);
+   const [paymentPrefill, setPaymentPrefill] = useState<{ name: string; email: string; phone: string } | null>(null);
    
    // New document form
    const [newDoc, setNewDoc] = useState({
@@ -584,16 +587,31 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
                            </p>
                          </div>
                        </div>
-                       <div className="flex gap-2">
-                         <Button size="sm" variant="outline" className="gap-1.5 text-xs h-8">
-                           <Eye className="w-3 h-3" />
-                           View
-                         </Button>
-                         <Button size="sm" variant="outline" className="gap-1.5 text-xs h-8">
-                           <ExternalLink className="w-3 h-3" />
-                           Download
-                         </Button>
-                       </div>
+                        <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            className="gap-1.5 text-xs h-8"
+                            onClick={() => {
+                              setPaymentPrefill({
+                                name: doc.customerName,
+                                email: doc.customerEmail,
+                                phone: doc.customerPhone,
+                              });
+                              setPaymentOpen(true);
+                            }}
+                          >
+                            <CreditCard className="w-3 h-3" />
+                            Collect Payment
+                          </Button>
+                          <Button size="sm" variant="outline" className="gap-1.5 text-xs h-8">
+                            <Eye className="w-3 h-3" />
+                            View
+                          </Button>
+                          <Button size="sm" variant="outline" className="gap-1.5 text-xs h-8">
+                            <ExternalLink className="w-3 h-3" />
+                            Download
+                          </Button>
+                        </div>
                      </div>
                    </CardContent>
                  </Card>
@@ -602,6 +620,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
            )}
          </TabsContent>
        </Tabs>
+
+       <CollectPaymentModal
+         open={paymentOpen}
+         onOpenChange={setPaymentOpen}
+         prefillCustomer={paymentPrefill}
+       />
      </div>
    );
  }
