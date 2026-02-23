@@ -121,6 +121,10 @@ export function AnalyticsBuilderPanel({ mode, onBuild, onCancel }: AnalyticsBuil
     mode === "auto" ? convertingPlatforms.map(p => p.platform) : []
   );
   const [showNonConverting, setShowNonConverting] = useState(false);
+  const [showNonConvertingKeywords, setShowNonConvertingKeywords] = useState(false);
+  const [showNonConvertingGeo, setShowNonConvertingGeo] = useState(false);
+  const [showNonConvertingDemo, setShowNonConvertingDemo] = useState(false);
+  const [showNonConvertingPlatforms, setShowNonConvertingPlatforms] = useState(false);
 
   const toggle = (list: string[], item: string, setter: (v: string[]) => void) => {
     setter(list.includes(item) ? list.filter(i => i !== item) : [...list, item]);
@@ -370,6 +374,29 @@ export function AnalyticsBuilderPanel({ mode, onBuild, onCancel }: AnalyticsBuil
                   trend={kw.trend}
                 />
               ))}
+              {nonConvertingKeywords.length > 0 && (
+                <Collapsible open={showNonConvertingKeywords} onOpenChange={setShowNonConvertingKeywords}>
+                  <CollapsibleTrigger className="flex items-center gap-1.5 w-full justify-center py-1.5 mt-1 text-[10px] font-medium text-muted-foreground hover:text-foreground transition-colors rounded border border-dashed border-border hover:border-foreground/30">
+                    <AlertTriangle className="w-3 h-3 text-amber-500" />
+                    {showNonConvertingKeywords ? "Hide" : "Show"} {nonConvertingKeywords.length} non-converting
+                    <ChevronDown className={cn("w-3 h-3 transition-transform", showNonConvertingKeywords && "rotate-180")} />
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="mt-1 space-y-1">
+                    {nonConvertingKeywords.map(kw => (
+                      <SelectableRow
+                        key={kw.keyword}
+                        selected={selectedKeywords.includes(kw.keyword)}
+                        onToggle={() => toggle(selectedKeywords, kw.keyword, setSelectedKeywords)}
+                        label={kw.keyword}
+                        badge={`$${kw.cpa} CPA`}
+                        trend={kw.trend}
+                        reason={kw.reason}
+                        dimmed
+                      />
+                    ))}
+                  </CollapsibleContent>
+                </Collapsible>
+              )}
             </CardContent>
           </Card>
 
@@ -401,6 +428,32 @@ export function AnalyticsBuilderPanel({ mode, onBuild, onCancel }: AnalyticsBuil
                   />
                 );
               })}
+              {nonConvertingGeo.length > 0 && (
+                <Collapsible open={showNonConvertingGeo} onOpenChange={setShowNonConvertingGeo}>
+                  <CollapsibleTrigger className="flex items-center gap-1.5 w-full justify-center py-1.5 mt-1 text-[10px] font-medium text-muted-foreground hover:text-foreground transition-colors rounded border border-dashed border-border hover:border-foreground/30">
+                    <AlertTriangle className="w-3 h-3 text-amber-500" />
+                    {showNonConvertingGeo ? "Hide" : "Show"} {nonConvertingGeo.length} non-converting
+                    <ChevronDown className={cn("w-3 h-3 transition-transform", showNonConvertingGeo && "rotate-180")} />
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="mt-1 space-y-1">
+                    {nonConvertingGeo.map(loc => {
+                      const locStr = `${loc.city}, ${loc.state}`;
+                      return (
+                        <SelectableRow
+                          key={locStr}
+                          selected={selectedLocations.includes(locStr)}
+                          onToggle={() => toggle(selectedLocations, locStr, setSelectedLocations)}
+                          label={loc.city}
+                          sublabel={loc.state}
+                          badge={`${loc.rate}% conv`}
+                          reason={loc.reason}
+                          dimmed
+                        />
+                      );
+                    })}
+                  </CollapsibleContent>
+                </Collapsible>
+              )}
             </CardContent>
           </Card>
 
@@ -429,6 +482,28 @@ export function AnalyticsBuilderPanel({ mode, onBuild, onCancel }: AnalyticsBuil
                   icon={demo.device.includes("Mobile") ? <Smartphone className="w-3 h-3 text-muted-foreground" /> : <Monitor className="w-3 h-3 text-muted-foreground" />}
                 />
               ))}
+              {nonConvertingDemo.length > 0 && (
+                <Collapsible open={showNonConvertingDemo} onOpenChange={setShowNonConvertingDemo}>
+                  <CollapsibleTrigger className="flex items-center gap-1.5 w-full justify-center py-1.5 mt-1 text-[10px] font-medium text-muted-foreground hover:text-foreground transition-colors rounded border border-dashed border-border hover:border-foreground/30">
+                    <AlertTriangle className="w-3 h-3 text-amber-500" />
+                    {showNonConvertingDemo ? "Hide" : "Show"} {nonConvertingDemo.length} non-converting
+                    <ChevronDown className={cn("w-3 h-3 transition-transform", showNonConvertingDemo && "rotate-180")} />
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="mt-1 space-y-1">
+                    {nonConvertingDemo.map(d => (
+                      <SelectableRow
+                        key={d.segment}
+                        selected={selectedDemographics.includes(d.segment)}
+                        onToggle={() => toggle(selectedDemographics, d.segment, setSelectedDemographics)}
+                        label={d.segment}
+                        badge={`$${d.aov} AOV`}
+                        reason={d.reason}
+                        dimmed
+                      />
+                    ))}
+                  </CollapsibleContent>
+                </Collapsible>
+              )}
             </CardContent>
           </Card>
 
@@ -457,6 +532,28 @@ export function AnalyticsBuilderPanel({ mode, onBuild, onCancel }: AnalyticsBuil
                   badgeVariant={p.roas >= 3.5 ? "default" : "secondary"}
                 />
               ))}
+              {nonConvertingPlatforms.length > 0 && (
+                <Collapsible open={showNonConvertingPlatforms} onOpenChange={setShowNonConvertingPlatforms}>
+                  <CollapsibleTrigger className="flex items-center gap-1.5 w-full justify-center py-1.5 mt-1 text-[10px] font-medium text-muted-foreground hover:text-foreground transition-colors rounded border border-dashed border-border hover:border-foreground/30">
+                    <AlertTriangle className="w-3 h-3 text-amber-500" />
+                    {showNonConvertingPlatforms ? "Hide" : "Show"} {nonConvertingPlatforms.length} non-converting
+                    <ChevronDown className={cn("w-3 h-3 transition-transform", showNonConvertingPlatforms && "rotate-180")} />
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="mt-1 space-y-1">
+                    {nonConvertingPlatforms.map(p => (
+                      <SelectableRow
+                        key={p.platform}
+                        selected={selectedPlatforms.includes(p.platform)}
+                        onToggle={() => toggle(selectedPlatforms, p.platform, setSelectedPlatforms)}
+                        label={p.platform}
+                        badge={`${p.roas}x ROAS`}
+                        reason={p.reason}
+                        dimmed
+                      />
+                    ))}
+                  </CollapsibleContent>
+                </Collapsible>
+              )}
             </CardContent>
           </Card>
 
@@ -535,87 +632,6 @@ export function AnalyticsBuilderPanel({ mode, onBuild, onCancel }: AnalyticsBuil
             </CardContent>
           </Card>
         </div>
-
-        {/* ── Non-Converting Slide-Out ───────────────────────── */}
-        <Collapsible open={showNonConverting} onOpenChange={setShowNonConverting} className="mt-4">
-          <CollapsibleTrigger className="flex items-center gap-2 w-full justify-center py-2.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors rounded-lg border border-dashed border-border hover:border-foreground/30">
-            {showNonConverting ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-            {showNonConverting ? "Hide Non-Converting Options" : "Show Non-Converting Options"}
-            <Badge variant="outline" className="text-[9px] h-4 text-muted-foreground">
-              {nonConvertingKeywords.length + nonConvertingGeo.length + nonConvertingDemo.length + nonConvertingPlatforms.length} items
-            </Badge>
-            <ChevronDown className={cn("w-3.5 h-3.5 transition-transform", showNonConverting && "rotate-180")} />
-          </CollapsibleTrigger>
-          <CollapsibleContent className="mt-3">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 rounded-xl border border-dashed border-amber-500/30 bg-amber-500/5">
-              <div className="space-y-2">
-                <div className="flex items-center gap-1.5 text-xs font-semibold text-amber-600 dark:text-amber-400">
-                  <AlertTriangle className="w-3.5 h-3.5" /> Low-Performing Keywords
-                </div>
-                {nonConvertingKeywords.map(kw => (
-                  <SelectableRow
-                    key={kw.keyword}
-                    selected={selectedKeywords.includes(kw.keyword)}
-                    onToggle={() => toggle(selectedKeywords, kw.keyword, setSelectedKeywords)}
-                    label={kw.keyword}
-                    badge={`$${kw.cpa} CPA`}
-                    trend={kw.trend}
-                    reason={kw.reason}
-                    dimmed
-                  />
-                ))}
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center gap-1.5 text-xs font-semibold text-amber-600 dark:text-amber-400">
-                  <AlertTriangle className="w-3.5 h-3.5" /> Low-Performing Locations
-                </div>
-                {nonConvertingGeo.map(loc => {
-                  const locStr = `${loc.city}, ${loc.state}`;
-                  return (
-                    <SelectableRow
-                      key={locStr}
-                      selected={selectedLocations.includes(locStr)}
-                      onToggle={() => toggle(selectedLocations, locStr, setSelectedLocations)}
-                      label={loc.city}
-                      sublabel={loc.state}
-                      badge={`${loc.rate}% conv`}
-                      reason={loc.reason}
-                      dimmed
-                    />
-                  );
-                })}
-                <div className="flex items-center gap-1.5 text-xs font-semibold text-amber-600 dark:text-amber-400 mt-3">
-                  <AlertTriangle className="w-3.5 h-3.5" /> Low-Performing Audiences
-                </div>
-                {nonConvertingDemo.map(d => (
-                  <SelectableRow
-                    key={d.segment}
-                    selected={selectedDemographics.includes(d.segment)}
-                    onToggle={() => toggle(selectedDemographics, d.segment, setSelectedDemographics)}
-                    label={d.segment}
-                    badge={`$${d.aov} AOV`}
-                    reason={d.reason}
-                    dimmed
-                  />
-                ))}
-                <div className="flex items-center gap-1.5 text-xs font-semibold text-amber-600 dark:text-amber-400 mt-3">
-                  <AlertTriangle className="w-3.5 h-3.5" /> Low ROAS Platforms
-                </div>
-                {nonConvertingPlatforms.map(p => (
-                  <SelectableRow
-                    key={p.platform}
-                    selected={selectedPlatforms.includes(p.platform)}
-                    onToggle={() => toggle(selectedPlatforms, p.platform, setSelectedPlatforms)}
-                    label={p.platform}
-                    badge={`${p.roas}x ROAS`}
-                    reason={p.reason}
-                    dimmed
-                  />
-                ))}
-              </div>
-            </div>
-          </CollapsibleContent>
-        </Collapsible>
       </ScrollArea>
 
       {/* Build Action Bar */}
