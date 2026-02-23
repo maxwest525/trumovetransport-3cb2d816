@@ -60,23 +60,21 @@ export default function AgentNewCustomer() {
   };
 
   return (
-    <AgentShell breadcrumb=" / New Customer">
-      <div className="p-6 max-w-lg mx-auto">
+    <AgentShell breadcrumb=" / New Lead">
+      <div className="p-6 max-w-4xl mx-auto">
         <h1 className="text-xl font-semibold mb-4 flex items-center gap-2">
           <UserPlus className="w-5 h-5" />
-          Create New Customer
+          Create New Lead
         </h1>
 
         <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-4 gap-3">
             <div className="space-y-1.5"><Label className="text-xs">First Name *</Label><Input value={form.firstName} onChange={e => updateField("firstName", e.target.value)} placeholder="John" /></div>
             <div className="space-y-1.5"><Label className="text-xs">Last Name *</Label><Input value={form.lastName} onChange={e => updateField("lastName", e.target.value)} placeholder="Smith" /></div>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5"><Label className="text-xs">Email</Label><Input type="email" value={form.email} onChange={e => updateField("email", e.target.value)} placeholder="john@email.com" /></div>
             <div className="space-y-1.5"><Label className="text-xs">Phone</Label><Input value={form.phone} onChange={e => updateField("phone", e.target.value)} placeholder="(555) 123-4567" /></div>
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-4 gap-3">
             <div className="space-y-1.5">
               <Label className="text-xs">Lead Source</Label>
               <Select value={form.source} onValueChange={v => updateField("source", v)}>
@@ -91,13 +89,8 @@ export default function AgentNewCustomer() {
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-1.5"><Label className="text-xs">Estimated Value ($)</Label><Input type="number" value={form.estimatedValue} onChange={e => updateField("estimatedValue", e.target.value)} placeholder="3500" /></div>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5"><Label className="text-xs">Origin Address</Label><Input value={form.originAddress} onChange={e => updateField("originAddress", e.target.value)} placeholder="123 Main St, City, ST" /></div>
             <div className="space-y-1.5"><Label className="text-xs">Destination Address</Label><Input value={form.destinationAddress} onChange={e => updateField("destinationAddress", e.target.value)} placeholder="456 Oak Ave, City, ST" /></div>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5"><Label className="text-xs">Move Date</Label><Input type="date" value={form.moveDate} onChange={e => updateField("moveDate", e.target.value)} /></div>
           </div>
           <div className="space-y-1.5"><Label className="text-xs">Notes</Label><Textarea value={form.notes} onChange={e => updateField("notes", e.target.value)} placeholder="Any additional notes..." rows={2} /></div>
