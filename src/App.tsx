@@ -42,6 +42,9 @@ import AgentWorkspace from "./pages/AgentWorkspace";
 import AgentOperations from "./pages/AgentOperations";
 import AgentNewCustomer from "./pages/AgentNewCustomer";
 import AgentRecordings from "./pages/AgentRecordings";
+import AgentESign from "./pages/AgentESign";
+import AgentPayment from "./pages/AgentPayment";
+import AgentCustomers from "./pages/AgentCustomers";
 
 const queryClient = new QueryClient();
 
@@ -89,6 +92,9 @@ const App = () => (
             <Route path="/agent/operations" element={<AgentOperations />} />
             <Route path="/agent/new-customer" element={<AgentNewCustomer />} />
             <Route path="/agent/recordings" element={<AgentRecordings />} />
+            <Route path="/agent/esign" element={<AgentESign />} />
+            <Route path="/agent/payment" element={<AgentPayment />} />
+            <Route path="/agent/customers" element={<AgentCustomers />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
