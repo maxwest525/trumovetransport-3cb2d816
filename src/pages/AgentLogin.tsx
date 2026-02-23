@@ -20,7 +20,7 @@ const ROLES = [
     title: "Agent",
     description: "Manage leads, deals, and customer relationships from your personal dashboard.",
     icon: Users,
-    href: "/agent/dashboard",
+    href: "/agent/pipeline",
   },
   {
     id: "manager",
