@@ -194,7 +194,28 @@ export function AdCampaignBuilder({ selections, onBack, onMatchLanding }: AdCamp
 
       {/* Generated Copy */}
       {generated && (
-        <div className="space-y-4">
+        <div className="space-y-5">
+          {/* KPI Summary Boxes — like the reference image stat row */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {[
+              { label: 'Keywords', value: selections.keywords.length.toString(), sub: selections.keywords[0] || '—', color: 'from-violet-500 to-purple-600' },
+              { label: 'Regions', value: selections.locations.length.toString(), sub: selections.locations[0]?.split(',')[0] || '—', color: 'from-sky-500 to-blue-600' },
+              { label: 'Platforms', value: selectedPlatforms.length.toString(), sub: `${Object.keys(groups).length} groups`, color: 'from-emerald-500 to-teal-600' },
+              { label: 'Audience', value: selections.demographics.length.toString(), sub: selections.demographics[0] || '—', color: 'from-amber-500 to-orange-600' },
+            ].map(stat => (
+              <div key={stat.label} className="rounded-xl border border-border bg-card p-4 space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">{stat.label}</span>
+                  <div className={cn("w-6 h-6 rounded-md bg-gradient-to-br flex items-center justify-center", stat.color)}>
+                    <span className="text-[10px] font-bold text-white">{stat.value}</span>
+                  </div>
+                </div>
+                <div className="text-lg font-bold text-foreground">{stat.value}</div>
+                <div className="text-[11px] text-muted-foreground truncate">{stat.sub}</div>
+              </div>
+            ))}
+          </div>
+
           {/* Preview toggle */}
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-semibold text-foreground">Generated Ad Copy</h3>
@@ -210,41 +231,58 @@ export function AdCampaignBuilder({ selections, onBack, onMatchLanding }: AdCamp
             </button>
           </div>
 
+          {/* Platform Groups — box grid layout */}
           {Object.entries(groups).map(([group, platforms]) => {
             const copy = generateCopy(platforms[0].id, selections);
             return (
-              <Card key={group} className="border-border">
-                <CardContent className="p-4 space-y-3">
-                  <div className="flex items-center gap-2">
+              <Card key={group} className="border-border overflow-hidden">
+                <CardContent className="p-0">
+                  {/* Group header */}
+                  <div className="flex items-center gap-2 px-4 py-3 border-b border-border bg-muted/30">
                     <h4 className="text-sm font-semibold text-foreground">{group}</h4>
-                    <div className="flex gap-1">
+                    <div className="flex gap-1 flex-wrap">
                       {platforms.map(p => <Badge key={p.id} variant="secondary" className="text-[10px]">{p.label}</Badge>)}
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <div>
-                      <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide mb-1">Headlines</div>
+                  {/* Headline boxes — horizontal grid */}
+                  <div className="p-4 space-y-3">
+                    <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Headlines</div>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                       {copy.headlines.map((h, i) => (
-                        <div key={i} className="text-sm font-semibold text-foreground py-1 border-b border-border last:border-0">{h}</div>
+                        <div key={i} className="rounded-lg border border-border bg-muted/20 p-3 space-y-1">
+                          <div className="text-[9px] font-semibold text-muted-foreground uppercase">H{i + 1}</div>
+                          <div className="text-sm font-semibold text-foreground leading-snug">{h}</div>
+                        </div>
                       ))}
                     </div>
-                    <div>
-                      <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide mb-1">Descriptions</div>
+                  </div>
+
+                  {/* Description boxes */}
+                  <div className="px-4 pb-4 space-y-3">
+                    <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Descriptions</div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                       {copy.descriptions.map((d, i) => (
-                        <p key={i} className="text-xs text-muted-foreground leading-relaxed py-1">{d}</p>
+                        <div key={i} className="rounded-lg border border-border bg-muted/20 p-3 space-y-1">
+                          <div className="text-[9px] font-semibold text-muted-foreground uppercase">D{i + 1}</div>
+                          <p className="text-xs text-muted-foreground leading-relaxed">{d}</p>
+                        </div>
                       ))}
                     </div>
-                    <div className="flex items-center gap-2 pt-1">
-                      <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">CTA:</div>
-                      <Badge className="text-[10px]">{copy.cta}</Badge>
+                  </div>
+
+                  {/* CTA box */}
+                  <div className="px-4 pb-4">
+                    <div className="inline-flex items-center gap-2 rounded-lg border border-border bg-muted/20 px-4 py-2.5">
+                      <span className="text-[9px] font-semibold text-muted-foreground uppercase">CTA</span>
+                      <Badge className="text-xs">{copy.cta}</Badge>
                     </div>
                   </div>
 
                   {/* Visual Ad Previews */}
                   {showPreviews && (
-                    <div className="pt-3 border-t border-border">
-                      <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide mb-3">Ad Preview Mockups</div>
+                    <div className="border-t border-border p-4">
+                      <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-3">Ad Preview Mockups</div>
                       <div className="flex gap-4 overflow-x-auto pb-2">
                         {platforms.map(p => (
                           <div key={p.id} className="shrink-0">
