@@ -96,9 +96,13 @@ export default function AgentDialerPage() {
         {/* Info */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-foreground truncate">
+            <button
+              className="text-sm font-medium text-foreground truncate hover:text-primary hover:underline transition-colors text-left"
+              onClick={() => call.customer_phone && onRedial?.(call.customer_phone)}
+              title={call.customer_phone ? `Quick dial ${call.customer_phone}` : undefined}
+            >
               {call.customer_name || "Unknown"}
-            </span>
+            </button>
             <Badge
               variant="secondary"
               className={cn(
@@ -185,10 +189,6 @@ export default function AgentDialerPage() {
               <p className="text-sm text-muted-foreground">Call history, recordings & redial</p>
             </div>
             <div className="flex items-center gap-2">
-              <Button onClick={() => openDialer()} size="sm" className="gap-1.5 text-xs">
-                <Phone className="w-3.5 h-3.5" />
-                Quick Dial
-              </Button>
               <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-muted text-xs text-muted-foreground">
                 <User className="w-3.5 h-3.5" />
                 <span>{calls.length} calls</span>

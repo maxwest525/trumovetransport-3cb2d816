@@ -2,10 +2,18 @@ import { useState, useCallback, useRef, useEffect } from "react";
 import {
   Phone, X, Minus, Delete, PhoneCall, PhoneOff,
   Mic, MicOff, Volume2, VolumeX, Pause, Play,
-  Grid3X3, User, GripHorizontal,
+  Grid3X3, GripHorizontal, Maximize2, Minimize2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+
+type DialerSize = "compact" | "normal" | "large";
+const SIZE_CONFIG: Record<DialerSize, { width: number; keyH: string; numText: string; keyText: string }> = {
+  compact: { width: 240, keyH: "h-9", numText: "text-base", keyText: "text-sm" },
+  normal: { width: 288, keyH: "h-11", numText: "text-xl", keyText: "text-lg" },
+  large: { width: 340, keyH: "h-13", numText: "text-2xl", keyText: "text-xl" },
+};
+const SIZE_ORDER: DialerSize[] = ["compact", "normal", "large"];
 
 interface FloatingDialerProps {
   open: boolean;
@@ -37,6 +45,7 @@ export function FloatingDialer({ open, onOpenChange, prefillNumber }: FloatingDi
   const [speaker, setSpeaker] = useState(false);
   const [showKeypad, setShowKeypad] = useState(true);
   const [callSeconds, setCallSeconds] = useState(0);
+  const [size, setSize] = useState<DialerSize>("normal");
 
   // Drag state
   const [pos, setPos] = useState({ x: 0, y: 0 });
@@ -106,6 +115,13 @@ export function FloatingDialer({ open, onOpenChange, prefillNumber }: FloatingDi
     setShowKeypad(true);
   };
 
+  const cycleSize = () => {
+    const idx = SIZE_ORDER.indexOf(size);
+    setSize(SIZE_ORDER[(idx + 1) % SIZE_ORDER.length]);
+  };
+
+  const cfg = SIZE_CONFIG[size];
+
   // Drag handlers
   const onMouseDown = (e: React.MouseEvent) => {
     if (!containerRef.current) return;
@@ -166,22 +182,25 @@ export function FloatingDialer({ open, onOpenChange, prefillNumber }: FloatingDi
     <div
       ref={containerRef}
       className={cn(
-        "fixed z-50 w-72 bg-card border border-border rounded-2xl shadow-2xl flex flex-col overflow-hidden",
+        "fixed z-50 bg-card border border-border rounded-2xl shadow-2xl flex flex-col overflow-hidden",
         dragging && "select-none"
       )}
-      style={{ left: pos.x, top: pos.y }}
+      style={{ left: pos.x, top: pos.y, width: cfg.width }}
     >
       {/* Draggable header */}
       <div
-        className="flex items-center justify-between px-4 py-2.5 border-b border-border cursor-grab active:cursor-grabbing"
+        className="flex items-center justify-between px-3 py-2 border-b border-border cursor-grab active:cursor-grabbing"
         onMouseDown={onMouseDown}
       >
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
           <GripHorizontal className="w-3.5 h-3.5 text-muted-foreground/50" />
           <Phone className="w-3.5 h-3.5 text-primary" />
-          <span className="text-sm font-semibold text-foreground">Phone</span>
+          <span className="text-xs font-semibold text-foreground">Phone</span>
         </div>
         <div className="flex items-center gap-0.5">
+          <button onClick={cycleSize} className="p-1 rounded-md hover:bg-muted transition-colors" title={`Size: ${size}`}>
+            {size === "large" ? <Minimize2 className="w-3 h-3 text-muted-foreground" /> : <Maximize2 className="w-3 h-3 text-muted-foreground" />}
+          </button>
           <button onClick={() => setMinimized(true)} className="p-1 rounded-md hover:bg-muted transition-colors">
             <Minus className="w-3.5 h-3.5 text-muted-foreground" />
           </button>
@@ -208,7 +227,7 @@ export function FloatingDialer({ open, onOpenChange, prefillNumber }: FloatingDi
         ) : (
           <>
             <span className={cn(
-              "text-xl font-semibold tracking-wider transition-colors",
+              "font-semibold tracking-wider transition-colors", cfg.numText,
               number ? "text-foreground" : "text-muted-foreground/40"
             )}>
               {number || "Enter number"}
@@ -270,14 +289,14 @@ export function FloatingDialer({ open, onOpenChange, prefillNumber }: FloatingDi
 
       {/* Keypad */}
       {showKeypad && (
-        <div className="grid grid-cols-3 gap-1 px-4 pb-2">
+        <div className="grid grid-cols-3 gap-1 px-3 pb-2">
           {KEYS.map((key) => (
             <button
               key={key.label}
               onClick={() => handleKey(key.label)}
-              className="flex flex-col items-center justify-center h-11 rounded-xl hover:bg-muted active:bg-muted/70 transition-colors"
+              className={cn("flex flex-col items-center justify-center rounded-xl hover:bg-muted active:bg-muted/70 transition-colors", cfg.keyH)}
             >
-              <span className="text-lg font-semibold text-foreground leading-none">{key.label}</span>
+              <span className={cn("font-semibold text-foreground leading-none", cfg.keyText)}>{key.label}</span>
               {key.sub && <span className="text-[8px] text-muted-foreground tracking-widest leading-none mt-0.5">{key.sub}</span>}
             </button>
           ))}

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import AgentShell from "@/components/layout/AgentShell";
 import { supabase } from "@/integrations/supabase/client";
-import { Users, Mail, Phone, MapPin, Calendar, ChevronRight, Search, MessageSquare } from "lucide-react";
+import { Users, Mail, Phone, PhoneCall, MapPin, Calendar, ChevronRight, Search, MessageSquare } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -55,6 +55,7 @@ export default function AgentCustomers() {
 
   return (
     <AgentShell breadcrumb=" / My Customers">
+      {({ openDialer }) => (
       <div className="p-6 max-w-4xl mx-auto space-y-4">
         <div className="flex items-center justify-between">
           <div>
@@ -109,6 +110,20 @@ export default function AgentCustomers() {
                     </p>
                   )}
                 </div>
+                {c.phone && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="shrink-0 h-8 w-8 rounded-full text-muted-foreground hover:text-primary"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openDialer(c.phone!);
+                    }}
+                    title={`Call ${c.phone}`}
+                  >
+                    <PhoneCall className="w-3.5 h-3.5" />
+                  </Button>
+                )}
                 <Button
                   variant="ghost"
                   size="sm"
@@ -127,6 +142,7 @@ export default function AgentCustomers() {
           </div>
         )}
       </div>
+      )}
     </AgentShell>
   );
 }
