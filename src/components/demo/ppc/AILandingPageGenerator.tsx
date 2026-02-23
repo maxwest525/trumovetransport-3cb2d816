@@ -188,6 +188,7 @@ interface AILandingPageGeneratorProps {
   isGenerating: boolean;
   onGenerate: () => void;
   prefillData?: AnalyticsPrefillData | null;
+  autoOpenFullScreen?: boolean;
 }
  
 const LANDING_PAGE_TEMPLATES = [
@@ -407,7 +408,7 @@ interface EditableSection {
    ],
  };
  
-export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }: AILandingPageGeneratorProps) {
+export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, autoOpenFullScreen }: AILandingPageGeneratorProps) {
    const [showLandingPage, setShowLandingPage] = useState(false);
    const [businessName, setBusinessName] = useState("TruMove");
    const [targetAudience, setTargetAudience] = useState("Homeowners planning long-distance moves");
@@ -493,10 +494,32 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
   const [isPublished, setIsPublished] = useState(false);
   const [showPostGenEditor, setShowPostGenEditor] = useState(false);
 
-   // Update heatmap positions when template changes
-   useEffect(() => {
-     setCustomHeatmapPositions(TEMPLATE_HEATMAP_POSITIONS[selectedTemplate] || TEMPLATE_HEATMAP_POSITIONS["quote-funnel"]);
-   }, [selectedTemplate]);
+    // Update heatmap positions when template changes
+    useEffect(() => {
+      setCustomHeatmapPositions(TEMPLATE_HEATMAP_POSITIONS[selectedTemplate] || TEMPLATE_HEATMAP_POSITIONS["quote-funnel"]);
+    }, [selectedTemplate]);
+
+    // Auto-open full screen when coming from auto-build
+    useEffect(() => {
+      if (autoOpenFullScreen && !showLandingPage) {
+        // Trigger immediate generation
+        setGenerationStep(1);
+        onGenerate();
+        const steps = [1, 2, 3, 4, 5];
+        steps.forEach((step, index) => {
+          setTimeout(() => {
+            setGenerationStep(step);
+            if (step === 5) {
+              setTimeout(() => {
+                setShowLandingPage(true);
+                setIsPopoutOpen(true);
+                setGenerationStep(0);
+              }, 400);
+            }
+          }, (index + 1) * 400);
+        });
+      }
+    }, [autoOpenFullScreen]);
 
   // Get current template index for navigation
   const currentTemplateIndex = LANDING_PAGE_TEMPLATES.findIndex(t => t.id === selectedTemplate);
@@ -543,25 +566,25 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
      );
    };
  
-   const handleGenerateLandingPage = () => {
-     setGenerationStep(1);
-     onGenerate();
-     
-     // Simulate generation steps
-     const steps = [1, 2, 3, 4, 5];
-     steps.forEach((step, index) => {
-       setTimeout(() => {
-         setGenerationStep(step);
-         if (step === 5) {
-           setTimeout(() => {
-             setShowLandingPage(true);
-             setShowPostGenEditor(true); // Show editor immediately after generation
-             setGenerationStep(0);
-           }, 800);
-         }
-       }, (index + 1) * 600);
-     });
-   };
+    const handleGenerateLandingPage = () => {
+      setGenerationStep(1);
+      onGenerate();
+      
+      // Simulate generation steps then open full-screen
+      const steps = [1, 2, 3, 4, 5];
+      steps.forEach((step, index) => {
+        setTimeout(() => {
+          setGenerationStep(step);
+          if (step === 5) {
+            setTimeout(() => {
+              setShowLandingPage(true);
+              setIsPopoutOpen(true);
+              setGenerationStep(0);
+            }, 400);
+          }
+        }, (index + 1) * 400);
+      });
+    };
  
    // Simulate data import
    const handleImportData = () => {
@@ -2919,7 +2942,31 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
    }
 
 
-   // No more tabs - just show the create flow directly
+   // Smart template filtering: recommended (>10% conversion) vs rest
+   const recommendedTemplates = LANDING_PAGE_TEMPLATES.filter(t => parseFloat(t.conversion) >= 10);
+   const otherTemplates = LANDING_PAGE_TEMPLATES.filter(t => parseFloat(t.conversion) < 10);
+
+   const handleTemplateClick = (templateId: string) => {
+     setSelectedTemplate(templateId);
+     setGenerationStep(1);
+     onGenerate();
+     
+     // Brief loading then open full-screen
+     const steps = [1, 2, 3, 4, 5];
+     steps.forEach((step, index) => {
+       setTimeout(() => {
+         setGenerationStep(step);
+         if (step === 5) {
+           setTimeout(() => {
+             setShowLandingPage(true);
+             setIsPopoutOpen(true);
+             setGenerationStep(0);
+           }, 400);
+         }
+       }, (index + 1) * 400);
+     });
+   };
+
    return (
       <div className="space-y-4">
         {/* Auto-Populated Data Banner */}
@@ -2952,78 +2999,118 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
           </div>
         )}
 
-       {/* Template Selection - Direct to Generate */}
+       {/* Loading overlay */}
+       {generationStep > 0 && (
+         <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center">
+           <div className="bg-card rounded-2xl border border-border shadow-2xl p-8 max-w-sm w-full space-y-6">
+             <div className="text-center space-y-2">
+               <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center mx-auto">
+                 <Sparkles className="w-8 h-8 text-white animate-pulse" />
+               </div>
+               <h3 className="text-lg font-bold text-foreground">Building your page...</h3>
+               <p className="text-sm text-muted-foreground">
+                 {LANDING_PAGE_TEMPLATES.find(t => t.id === selectedTemplate)?.name}
+               </p>
+             </div>
+             <div className="space-y-2">
+               {[
+                 { step: 1, label: "Analyzing inputs" },
+                 { step: 2, label: "Generating copy" },
+                 { step: 3, label: "Building structure" },
+                 { step: 4, label: "Adding trust elements" },
+                 { step: 5, label: "Optimizing conversions" },
+               ].map((item) => (
+                 <div 
+                   key={item.step} 
+                   className={`flex items-center gap-2 text-sm transition-all ${
+                     generationStep >= item.step ? "text-foreground" : "text-muted-foreground/40"
+                   }`}
+                 >
+                   {generationStep > item.step ? (
+                     <CheckCircle2 className="w-4 h-4 text-green-500" />
+                   ) : generationStep === item.step ? (
+                     <RefreshCw className="w-4 h-4 animate-spin text-purple-500" />
+                   ) : (
+                     <div className="w-4 h-4 rounded-full border border-muted-foreground/30" />
+                   )}
+                   {item.label}
+                 </div>
+               ))}
+             </div>
+           </div>
+         </div>
+       )}
+
+       {/* Recommended Templates */}
        <div className="rounded-xl border border-border bg-card p-5">
-         <h4 className="font-semibold text-sm text-foreground mb-4 flex items-center gap-2">
-           <span className="w-6 h-6 rounded-full bg-primary/20 text-primary flex items-center justify-center text-xs font-bold">1</span>
-           Choose a template style
+         <h4 className="font-semibold text-sm text-foreground mb-1 flex items-center gap-2">
+           <Star className="w-4 h-4 text-amber-500" />
+           Recommended Templates
          </h4>
+         <p className="text-xs text-muted-foreground mb-4">
+           Top performers based on analytics — click to build instantly
+         </p>
          
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-           {LANDING_PAGE_TEMPLATES.map((template) => (
-             <TemplatePreviewCard
+         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+           {recommendedTemplates.map((template) => (
+             <button
                key={template.id}
-               template={template}
-               isSelected={selectedTemplate === template.id}
-               onSelect={setSelectedTemplate}
-             />
+               onClick={() => handleTemplateClick(template.id)}
+               disabled={generationStep > 0}
+               className="group text-left p-4 rounded-xl border-2 border-primary/30 bg-gradient-to-br from-primary/5 to-transparent hover:border-primary hover:shadow-lg transition-all relative overflow-hidden"
+             >
+               <div className="flex items-center gap-2 mb-2">
+                 <div className="w-2.5 h-2.5 rounded-full bg-green-500" />
+                 <span className="font-semibold text-sm text-foreground">{template.name}</span>
+                 <Badge className="ml-auto text-[10px] bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300">
+                   {template.conversion}
+                 </Badge>
+               </div>
+               <p className="text-xs text-muted-foreground mb-2">{template.description}</p>
+               <div className="flex items-center gap-2 text-xs text-primary font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                 <Sparkles className="w-3 h-3" />
+                 Click to build
+                 <ArrowRight className="w-3 h-3" />
+               </div>
+             </button>
            ))}
          </div>
        </div>
- 
-       {/* Generate Button */}
-       <Button 
-         onClick={handleGenerateLandingPage}
-         disabled={isGenerating || generationStep > 0}
-         className="w-full py-6 text-lg font-bold gap-2 text-white"
-         style={{ background: "linear-gradient(135deg, #7C3AED 0%, #A855F7 100%)" }}
-       >
-         {generationStep > 0 ? (
-           <>
-             <RefreshCw className="w-5 h-5 animate-spin" />
-             {generationStep === 1 && "Analyzing your inputs..."}
-             {generationStep === 2 && "Generating headline copy..."}
-             {generationStep === 3 && "Building page structure..."}
-             {generationStep === 4 && "Adding trust elements..."}
-             {generationStep === 5 && "Optimizing for conversions..."}
-           </>
-         ) : (
-           <>
-             <Sparkles className="w-5 h-5" />
-             Generate Landing Page
-           </>
-         )}
-       </Button>
- 
-       {/* Generation Steps Indicator */}
-       {generationStep > 0 && (
-         <div className="p-4 rounded-xl border border-border bg-card">
-           <div className="space-y-2">
-             {[
-               { step: 1, label: "Analyzing inputs" },
-               { step: 2, label: "Generating headline copy" },
-               { step: 3, label: "Building page structure" },
-               { step: 4, label: "Adding trust elements" },
-               { step: 5, label: "Optimizing for conversions" },
-             ].map((item) => (
-               <div 
-                 key={item.step} 
-                 className={`flex items-center gap-2 text-sm transition-all ${
-                   generationStep >= item.step ? "text-foreground" : "text-muted-foreground/50"
-                 }`}
-               >
-                 {generationStep > item.step ? (
-                   <CheckCircle2 className="w-4 h-4 text-green-500" />
-                 ) : generationStep === item.step ? (
-                   <RefreshCw className="w-4 h-4 animate-spin text-purple-500" />
-                 ) : (
-                   <div className="w-4 h-4 rounded-full border border-muted-foreground/30" />
-                 )}
-                 {item.label}
-               </div>
-             ))}
+
+       {/* More Templates (Accordion) */}
+       {otherTemplates.length > 0 && (
+         <details className="rounded-xl border border-border bg-card overflow-hidden">
+           <summary className="p-4 cursor-pointer text-sm font-medium text-muted-foreground hover:text-foreground flex items-center gap-2 list-none [&::-webkit-details-marker]:hidden">
+             <ChevronDown className="w-4 h-4 transition-transform [[open]>&]:rotate-180" />
+             More templates ({otherTemplates.length})
+           </summary>
+           <div className="px-4 pb-4">
+             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+               {otherTemplates.map((template) => (
+                 <button
+                   key={template.id}
+                   onClick={() => handleTemplateClick(template.id)}
+                   disabled={generationStep > 0}
+                   className="group text-left p-4 rounded-xl border border-border hover:border-primary/50 hover:shadow-md transition-all"
+                 >
+                   <div className="flex items-center gap-2 mb-2">
+                     <div className="w-2.5 h-2.5 rounded-full bg-amber-400" />
+                     <span className="font-semibold text-sm text-foreground">{template.name}</span>
+                     <Badge variant="secondary" className="ml-auto text-[10px]">
+                       {template.conversion}
+                     </Badge>
+                   </div>
+                   <p className="text-xs text-muted-foreground mb-2">{template.description}</p>
+                   <div className="flex items-center gap-2 text-xs text-primary font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                     <Sparkles className="w-3 h-3" />
+                     Click to build
+                     <ArrowRight className="w-3 h-3" />
+                   </div>
+                 </button>
+               ))}
+             </div>
            </div>
-         </div>
+         </details>
        )}
      </div>
    );

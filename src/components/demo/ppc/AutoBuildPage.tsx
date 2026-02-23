@@ -2,10 +2,9 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 import {
-  Sparkles, CheckCircle2, Rocket, Loader2, Star,
-  TrendingUp, Zap, ArrowRight, Target, Users
+  Sparkles, Rocket, Star,
+  Zap, ArrowRight, Target, Users
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -51,78 +50,6 @@ const AI_VARIATIONS = [
 ];
 
 export function AutoBuildPage({ onBuild, onCancel }: AutoBuildPageProps) {
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [isBuilding, setIsBuilding] = useState(false);
-  const [buildStep, setBuildStep] = useState(0);
-
-  const buildSteps = [
-    "Analyzing your data...",
-    "Generating optimized copy...",
-    "Building page structure...",
-    "Adding trust elements...",
-    "Finalizing your page...",
-  ];
-
-  const handleBuild = (id: string) => {
-    setSelectedId(id);
-    setIsBuilding(true);
-    setBuildStep(0);
-
-    let step = 0;
-    const interval = setInterval(() => {
-      step++;
-      setBuildStep(step);
-      if (step >= buildSteps.length) {
-        clearInterval(interval);
-        setTimeout(() => onBuild(id), 400);
-      }
-    }, 500);
-  };
-
-  if (isBuilding) {
-    return (
-      <div className="flex flex-col items-center justify-center py-20 space-y-8">
-        <div className="relative">
-          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-amber-500 to-rose-500 flex items-center justify-center">
-            <Rocket className="w-10 h-10 text-white animate-pulse" />
-          </div>
-          <div className="absolute -bottom-2 -right-2 w-8 h-8 rounded-full bg-primary flex items-center justify-center">
-            <Loader2 className="w-4 h-4 text-primary-foreground animate-spin" />
-          </div>
-        </div>
-        <div className="text-center space-y-1">
-          <h2 className="text-xl font-bold text-foreground">Building your page...</h2>
-          <p className="text-sm text-muted-foreground">
-            AI is creating your {AI_VARIATIONS.find(v => v.id === selectedId)?.title}
-          </p>
-        </div>
-        <div className="w-full max-w-xs space-y-3">
-          <Progress value={(buildStep / buildSteps.length) * 100} className="h-2" />
-          <div className="space-y-1.5">
-            {buildSteps.map((stepText, i) => (
-              <div
-                key={i}
-                className={cn(
-                  "flex items-center gap-2 text-sm transition-all duration-300",
-                  i < buildStep ? "text-primary" : i === buildStep ? "text-foreground" : "text-muted-foreground/40"
-                )}
-              >
-                {i < buildStep ? (
-                  <CheckCircle2 className="w-4 h-4 text-primary" />
-                ) : i === buildStep ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <div className="w-4 h-4 rounded-full border border-muted-foreground/30" />
-                )}
-                {stepText}
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -137,7 +64,7 @@ export function AutoBuildPage({ onBuild, onCancel }: AutoBuildPageProps) {
         </p>
       </div>
 
-      {/* 3 Variations */}
+      {/* 3 Variations - clicking immediately triggers build */}
       <div className="space-y-4">
         {AI_VARIATIONS.map((variation) => (
           <Card
@@ -148,7 +75,7 @@ export function AutoBuildPage({ onBuild, onCancel }: AutoBuildPageProps) {
                 ? "border-primary/50 bg-gradient-to-r from-primary/5 to-transparent"
                 : "border-transparent hover:border-border"
             )}
-            onClick={() => handleBuild(variation.id)}
+            onClick={() => onBuild(variation.id)}
           >
             {variation.recommended && (
               <div className="absolute top-3 right-3">
@@ -199,26 +126,18 @@ export function AutoBuildPage({ onBuild, onCancel }: AutoBuildPageProps) {
                 </p>
               </div>
 
-              {/* Tags + Build Button */}
+              {/* Tags + Build indicator */}
               <div className="flex items-center justify-between">
                 <div className="flex gap-2">
                   {variation.tags.map((tag) => (
                     <Badge key={tag} variant="secondary" className="text-[10px]">{tag}</Badge>
                   ))}
                 </div>
-                <Button
-                  size="sm"
-                  className="gap-1.5 group-hover:translate-x-1 transition-transform"
-                  style={variation.recommended
-                    ? { background: "linear-gradient(135deg, #7C3AED 0%, #A855F7 100%)" }
-                    : undefined
-                  }
-                  variant={variation.recommended ? "default" : "outline"}
-                >
+                <div className="flex items-center gap-1.5 text-sm font-medium text-primary opacity-0 group-hover:opacity-100 transition-opacity">
                   <Rocket className="w-3.5 h-3.5" />
-                  Build This
+                  Click to build instantly
                   <ArrowRight className="w-3.5 h-3.5" />
-                </Button>
+                </div>
               </div>
             </div>
           </Card>

@@ -65,6 +65,7 @@ export default function MarketingDashboard() {
   const [viewMode, setViewMode] = useState<'hub' | 'quickcreate' | 'detail' | 'trudy-chat' | 'auto-build'>('hub');
   const [quickCreateType, setQuickCreateType] = useState<'ad' | 'landing' | 'campaign' | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [autoOpenFullScreen, setAutoOpenFullScreen] = useState(false);
   const { preferences, completeTour, isReturningUser } = useMarketingPreferences();
   const [liveMode, setLiveMode] = useState(false);
   const [stats, setStats] = useState(INITIAL_STATS);
@@ -134,12 +135,7 @@ export default function MarketingDashboard() {
   };
 
   const handleAutoBuild = (variationId: string) => {
-    // Map variation to template and go directly to landing page editor with it generated
-    const templateMap: Record<string, string> = {
-      'high-convert': 'quote-funnel',
-      'calculator': 'calculator',
-      'social-proof': 'testimonial',
-    };
+    // Auto-build: go directly to landing page generator which handles its own full-screen open
     setLandingPagePrefill({
       topKeyword: 'long distance moving company',
       topLocation: 'California',
@@ -149,6 +145,7 @@ export default function MarketingDashboard() {
       avgCPA: 24.80,
       autoPopulatedFields: ['keywords', 'locations', 'audience', 'headline'],
     });
+    setAutoOpenFullScreen(true);
     setViewMode('detail');
     setActiveTab('landing');
   };
@@ -287,7 +284,7 @@ export default function MarketingDashboard() {
             )}
 
             {activeTab === "landing" && (
-              <AILandingPageGenerator isGenerating={isGenerating} onGenerate={handleGenerateContent} prefillData={landingPagePrefill} />
+              <AILandingPageGenerator isGenerating={isGenerating} onGenerate={handleGenerateContent} prefillData={landingPagePrefill} autoOpenFullScreen={autoOpenFullScreen} />
             )}
 
             {activeTab === "abtest" && (
