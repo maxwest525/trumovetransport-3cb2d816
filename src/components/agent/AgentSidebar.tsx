@@ -42,6 +42,7 @@ export default function AgentSidebar({ onAction }: AgentSidebarProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const [showAdvanced] = useState(true);
+  const [activeAction, setActiveAction] = useState<SidebarAction | null>(null);
 
   const handleResetPreference = () => {
     localStorage.removeItem("truemove_remembered_role");
@@ -61,10 +62,12 @@ export default function AgentSidebar({ onAction }: AgentSidebarProps) {
 
     if (item.href) {
       const active = location.pathname === item.href;
+      const handleRouteClick = () => setActiveAction(null);
       return (
         <Link
           key={item.label}
           to={item.href}
+          onClick={handleRouteClick}
           className={cn(
             "flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors",
             active
@@ -84,8 +87,18 @@ export default function AgentSidebar({ onAction }: AgentSidebarProps) {
     return (
       <button
         key={item.label}
-        onClick={() => item.action && onAction?.(item.action)}
-        className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+        onClick={() => {
+          if (item.action) {
+            setActiveAction(item.action);
+            onAction?.(item.action);
+          }
+        }}
+        className={cn(
+          "w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors",
+          activeAction === item.action && !location.pathname.startsWith("/agent/")
+            ? "bg-foreground text-background"
+            : "text-muted-foreground hover:bg-muted hover:text-foreground"
+        )}
       >
         <Icon className="w-4 h-4" />
         <span>{item.label}</span>
