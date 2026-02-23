@@ -2,18 +2,13 @@ import { useState, useCallback, useRef, useEffect } from "react";
 import {
   Phone, X, Minus, Delete, PhoneCall, PhoneOff,
   Mic, MicOff, Volume2, VolumeX, Pause, Play,
-  Grid3X3, GripHorizontal, Maximize2, Minimize2,
+  Grid3X3, GripHorizontal,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-type DialerSize = "compact" | "normal" | "large";
-const SIZE_CONFIG: Record<DialerSize, { width: number; keyH: string; numText: string; keyText: string }> = {
-  compact: { width: 240, keyH: "h-9", numText: "text-base", keyText: "text-sm" },
-  normal: { width: 288, keyH: "h-11", numText: "text-xl", keyText: "text-lg" },
-  large: { width: 340, keyH: "h-13", numText: "text-2xl", keyText: "text-xl" },
-};
-const SIZE_ORDER: DialerSize[] = ["compact", "normal", "large"];
+const MIN_WIDTH = 240;
+const MAX_WIDTH = 420;
 
 interface FloatingDialerProps {
   open: boolean;
@@ -45,14 +40,22 @@ export function FloatingDialer({ open, onOpenChange, prefillNumber }: FloatingDi
   const [speaker, setSpeaker] = useState(false);
   const [showKeypad, setShowKeypad] = useState(true);
   const [callSeconds, setCallSeconds] = useState(0);
-  const [size, setSize] = useState<DialerSize>("normal");
+  const [width, setWidth] = useState(320);
 
   // Drag state
   const [pos, setPos] = useState({ x: 0, y: 0 });
   const [dragging, setDragging] = useState(false);
+  const [resizing, setResizing] = useState(false);
   const dragOffset = useRef({ x: 0, y: 0 });
+  const resizeStart = useRef({ mouseX: 0, startWidth: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
   const initialized = useRef(false);
+
+  // Derived sizing from width
+  const scale = (width - MIN_WIDTH) / (MAX_WIDTH - MIN_WIDTH); // 0..1
+  const keyH = scale < 0.3 ? "h-9" : scale < 0.7 ? "h-11" : "h-13";
+  const numText = scale < 0.3 ? "text-lg" : scale < 0.7 ? "text-xl" : "text-2xl";
+  const keyText = scale < 0.3 ? "text-sm" : scale < 0.7 ? "text-lg" : "text-xl";
 
   // Sync prefill number
   useEffect(() => {
@@ -61,12 +64,12 @@ export function FloatingDialer({ open, onOpenChange, prefillNumber }: FloatingDi
     }
   }, [prefillNumber]);
 
-  // Initialize position to bottom-right
+  // Initialize position to left-center
   useEffect(() => {
     if (open && !initialized.current) {
       setPos({
-        x: window.innerWidth - 296,
-        y: window.innerHeight - 580,
+        x: 16,
+        y: Math.max(16, Math.floor((window.innerHeight - 580) / 2)),
       });
       initialized.current = true;
     }
@@ -115,13 +118,6 @@ export function FloatingDialer({ open, onOpenChange, prefillNumber }: FloatingDi
     setShowKeypad(true);
   };
 
-  const cycleSize = () => {
-    const idx = SIZE_ORDER.indexOf(size);
-    setSize(SIZE_ORDER[(idx + 1) % SIZE_ORDER.length]);
-  };
-
-  const cfg = SIZE_CONFIG[size];
-
   // Drag handlers
   const onMouseDown = (e: React.MouseEvent) => {
     if (!containerRef.current) return;
@@ -136,7 +132,7 @@ export function FloatingDialer({ open, onOpenChange, prefillNumber }: FloatingDi
   useEffect(() => {
     if (!dragging) return;
     const onMove = (e: MouseEvent) => {
-      const newX = Math.max(0, Math.min(window.innerWidth - 288, e.clientX - dragOffset.current.x));
+      const newX = Math.max(0, Math.min(window.innerWidth - width, e.clientX - dragOffset.current.x));
       const newY = Math.max(0, Math.min(window.innerHeight - 100, e.clientY - dragOffset.current.y));
       setPos({ x: newX, y: newY });
     };
@@ -147,7 +143,31 @@ export function FloatingDialer({ open, onOpenChange, prefillNumber }: FloatingDi
       window.removeEventListener("mousemove", onMove);
       window.removeEventListener("mouseup", onUp);
     };
-  }, [dragging]);
+  }, [dragging, width]);
+
+  // Resize handlers
+  const onResizeMouseDown = (e: React.MouseEvent) => {
+    setResizing(true);
+    resizeStart.current = { mouseX: e.clientX, startWidth: width };
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  useEffect(() => {
+    if (!resizing) return;
+    const onMove = (e: MouseEvent) => {
+      const delta = e.clientX - resizeStart.current.mouseX;
+      const newWidth = Math.max(MIN_WIDTH, Math.min(MAX_WIDTH, resizeStart.current.startWidth + delta));
+      setWidth(newWidth);
+    };
+    const onUp = () => setResizing(false);
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+    };
+  }, [resizing]);
 
   if (!open) return null;
 
@@ -183,9 +203,9 @@ export function FloatingDialer({ open, onOpenChange, prefillNumber }: FloatingDi
       ref={containerRef}
       className={cn(
         "fixed z-50 bg-card border border-border rounded-2xl shadow-2xl flex flex-col overflow-hidden",
-        dragging && "select-none"
+        (dragging || resizing) && "select-none"
       )}
-      style={{ left: pos.x, top: pos.y, width: cfg.width }}
+      style={{ left: pos.x, top: pos.y, width }}
     >
       {/* Draggable header */}
       <div
@@ -198,9 +218,6 @@ export function FloatingDialer({ open, onOpenChange, prefillNumber }: FloatingDi
           <span className="text-xs font-semibold text-foreground">Phone</span>
         </div>
         <div className="flex items-center gap-0.5">
-          <button onClick={cycleSize} className="p-1 rounded-md hover:bg-muted transition-colors" title={`Size: ${size}`}>
-            {size === "large" ? <Minimize2 className="w-3 h-3 text-muted-foreground" /> : <Maximize2 className="w-3 h-3 text-muted-foreground" />}
-          </button>
           <button onClick={() => setMinimized(true)} className="p-1 rounded-md hover:bg-muted transition-colors">
             <Minus className="w-3.5 h-3.5 text-muted-foreground" />
           </button>
@@ -227,7 +244,7 @@ export function FloatingDialer({ open, onOpenChange, prefillNumber }: FloatingDi
         ) : (
           <>
             <span className={cn(
-              "font-semibold tracking-wider transition-colors", cfg.numText,
+              "font-semibold tracking-wider transition-colors", numText,
               number ? "text-foreground" : "text-muted-foreground/40"
             )}>
               {number || "Enter number"}
@@ -294,9 +311,9 @@ export function FloatingDialer({ open, onOpenChange, prefillNumber }: FloatingDi
             <button
               key={key.label}
               onClick={() => handleKey(key.label)}
-              className={cn("flex flex-col items-center justify-center rounded-xl hover:bg-muted active:bg-muted/70 transition-colors", cfg.keyH)}
+              className={cn("flex flex-col items-center justify-center rounded-xl hover:bg-muted active:bg-muted/70 transition-colors", keyH)}
             >
-              <span className={cn("font-semibold text-foreground leading-none", cfg.keyText)}>{key.label}</span>
+              <span className={cn("font-semibold text-foreground leading-none", keyText)}>{key.label}</span>
               {key.sub && <span className="text-[8px] text-muted-foreground tracking-widest leading-none mt-0.5">{key.sub}</span>}
             </button>
           ))}
@@ -335,6 +352,16 @@ export function FloatingDialer({ open, onOpenChange, prefillNumber }: FloatingDi
             <PhoneOff className="w-5 h-5" />
           </button>
         )}
+      </div>
+
+      {/* Resize handle - bottom right corner */}
+      <div
+        className="absolute bottom-0 right-0 w-4 h-4 cursor-ew-resize flex items-end justify-end p-0.5"
+        onMouseDown={onResizeMouseDown}
+      >
+        <svg width="8" height="8" viewBox="0 0 8 8" className="text-muted-foreground/40">
+          <path d="M7 1L1 7M7 4L4 7M7 7L7 7" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
+        </svg>
       </div>
     </div>
   );
