@@ -99,7 +99,7 @@ const DEMO_JOBS: Job[] = [
   },
 ];
 
-export function CarrierDashboard() {
+export function CarrierDashboard({ onCallCarrier }: { onCallCarrier?: (number?: string) => void }) {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [activeTab, setActiveTab] = useState("today");
 
@@ -276,7 +276,7 @@ export function CarrierDashboard() {
                           <ChevronRight className="w-4 h-4" />
                           View
                         </Button>
-                        <Button size="sm" variant="outline" className="gap-1">
+                        <Button size="sm" variant="outline" className="gap-1" onClick={() => onCallCarrier?.(job.phone)}>
                           <Phone className="w-4 h-4" />
                           Call
                         </Button>
