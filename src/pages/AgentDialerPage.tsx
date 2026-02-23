@@ -176,62 +176,68 @@ export default function AgentDialerPage() {
 
   return (
     <AgentShell breadcrumb=" / Dialer">
-      <div className="p-6 max-w-3xl mx-auto space-y-5">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-xl font-bold text-foreground">Dialer</h1>
-            <p className="text-sm text-muted-foreground">Call history, recordings & redial</p>
-          </div>
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-muted">
-              <User className="w-3.5 h-3.5" />
-              <span>{calls.length} calls</span>
+      {({ openDialer }) => (
+        <div className="p-6 max-w-3xl mx-auto space-y-5">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-xl font-bold text-foreground">Dialer</h1>
+              <p className="text-sm text-muted-foreground">Call history, recordings & redial</p>
             </div>
-            <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-destructive/10 text-destructive">
-              <PhoneMissed className="w-3.5 h-3.5" />
-              <span>{missedCalls.length} missed</span>
+            <div className="flex items-center gap-2">
+              <Button onClick={openDialer} size="sm" className="gap-1.5 text-xs">
+                <Phone className="w-3.5 h-3.5" />
+                Quick Dial
+              </Button>
+              <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-muted text-xs text-muted-foreground">
+                <User className="w-3.5 h-3.5" />
+                <span>{calls.length} calls</span>
+              </div>
+              <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-destructive/10 text-destructive text-xs">
+                <PhoneMissed className="w-3.5 h-3.5" />
+                <span>{missedCalls.length} missed</span>
+              </div>
             </div>
           </div>
+
+          {loading ? (
+            <p className="text-sm text-muted-foreground text-center py-12">Loading call history...</p>
+          ) : (
+            <Tabs defaultValue="all" className="flex flex-col">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="all" className="gap-1.5 text-xs">
+                  <Phone className="h-3.5 w-3.5" />
+                  All Calls
+                </TabsTrigger>
+                <TabsTrigger value="missed" className="gap-1.5 text-xs">
+                  <PhoneMissed className="h-3.5 w-3.5" />
+                  Missed
+                  {missedCalls.length > 0 && (
+                    <Badge variant="destructive" className="text-[9px] h-4 px-1 ml-1">
+                      {missedCalls.length}
+                    </Badge>
+                  )}
+                </TabsTrigger>
+                <TabsTrigger value="recordings" className="gap-1.5 text-xs">
+                  <Play className="h-3.5 w-3.5" />
+                  Recordings
+                </TabsTrigger>
+              </TabsList>
+
+              <div className="mt-3">
+                <TabsContent value="all" className="mt-0">
+                  <CallList items={allCalls} emptyMsg="No calls yet. Your call history will appear here." />
+                </TabsContent>
+                <TabsContent value="missed" className="mt-0">
+                  <CallList items={missedCalls} emptyMsg="No missed calls. You're all caught up!" />
+                </TabsContent>
+                <TabsContent value="recordings" className="mt-0">
+                  <CallList items={completedCalls} emptyMsg="No recordings yet. Completed calls will appear here." />
+                </TabsContent>
+              </div>
+            </Tabs>
+          )}
         </div>
-
-        {loading ? (
-          <p className="text-sm text-muted-foreground text-center py-12">Loading call history...</p>
-        ) : (
-          <Tabs defaultValue="all" className="flex flex-col">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="all" className="gap-1.5 text-xs">
-                <Phone className="h-3.5 w-3.5" />
-                All Calls
-              </TabsTrigger>
-              <TabsTrigger value="missed" className="gap-1.5 text-xs">
-                <PhoneMissed className="h-3.5 w-3.5" />
-                Missed
-                {missedCalls.length > 0 && (
-                  <Badge variant="destructive" className="text-[9px] h-4 px-1 ml-1">
-                    {missedCalls.length}
-                  </Badge>
-                )}
-              </TabsTrigger>
-              <TabsTrigger value="recordings" className="gap-1.5 text-xs">
-                <Play className="h-3.5 w-3.5" />
-                Recordings
-              </TabsTrigger>
-            </TabsList>
-
-            <div className="mt-3">
-              <TabsContent value="all" className="mt-0">
-                <CallList items={allCalls} emptyMsg="No calls yet. Your call history will appear here." />
-              </TabsContent>
-              <TabsContent value="missed" className="mt-0">
-                <CallList items={missedCalls} emptyMsg="No missed calls. You're all caught up!" />
-              </TabsContent>
-              <TabsContent value="recordings" className="mt-0">
-                <CallList items={completedCalls} emptyMsg="No recordings yet. Completed calls will appear here." />
-              </TabsContent>
-            </div>
-          </Tabs>
-        )}
-      </div>
+      )}
     </AgentShell>
   );
 }
