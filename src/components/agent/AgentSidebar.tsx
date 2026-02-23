@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
-  LayoutDashboard, UserPlus, CalendarCheck, Mic, Home, RotateCcw,
+  LayoutDashboard, UserPlus, CalendarCheck, Mic, Home, RotateCcw, Users,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -8,12 +8,12 @@ interface NavItem {
   label: string;
   icon: React.ElementType;
   href: string;
-  badge?: number;
 }
 
 const NAV_ITEMS: NavItem[] = [
   { label: "Dashboard", icon: LayoutDashboard, href: "/agent/dashboard" },
   { label: "New Customer", icon: UserPlus, href: "/agent/new-customer" },
+  { label: "My Customers", icon: Users, href: "/agent/customers" },
   { label: "Bookings", icon: CalendarCheck, href: "/agent/operations" },
   { label: "Recordings", icon: Mic, href: "/agent/recordings" },
 ];
