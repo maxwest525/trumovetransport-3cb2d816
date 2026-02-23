@@ -3,10 +3,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ArrowLeft, Sparkles, RefreshCw, Layout } from "lucide-react";
+import { ArrowLeft, Sparkles, RefreshCw, Layout, Eye } from "lucide-react";
 import { BuildSelections } from "./AnalyticsBuilderPanel";
 import { cn } from "@/lib/utils";
 import { AutomationModeSelector } from "./AutomationModeSelector";
+import { PlatformAdPreview } from "./AdPreviewMockups";
 
 interface AdCampaignBuilderProps {
   selections: BuildSelections;
@@ -104,6 +105,7 @@ export function AdCampaignBuilder({ selections, onBack, onMatchLanding }: AdCamp
   const [generated, setGenerated] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [matchStyle, setMatchStyle] = useState('');
+  const [showPreviews, setShowPreviews] = useState(true);
 
   const toggle = (id: string) => {
     setSelectedPlatforms(prev => prev.includes(id) ? prev.filter(p => p !== id) : [...prev, id]);
@@ -158,6 +160,21 @@ export function AdCampaignBuilder({ selections, onBack, onMatchLanding }: AdCamp
       {/* Generated Copy */}
       {generated && (
         <div className="space-y-4">
+          {/* Preview toggle */}
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-semibold text-foreground">Generated Ad Copy</h3>
+            <button
+              onClick={() => setShowPreviews(!showPreviews)}
+              className={cn(
+                "flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors",
+                showPreviews ? 'bg-foreground text-background border-foreground' : 'text-muted-foreground border-border hover:border-foreground/30'
+              )}
+            >
+              <Eye className="w-3.5 h-3.5" />
+              {showPreviews ? 'Previews On' : 'Previews Off'}
+            </button>
+          </div>
+
           {Object.entries(groups).map(([group, platforms]) => {
             const copy = generateCopy(platforms[0].id, selections);
             return (
@@ -188,6 +205,23 @@ export function AdCampaignBuilder({ selections, onBack, onMatchLanding }: AdCamp
                       <Badge className="text-[10px]">{copy.cta}</Badge>
                     </div>
                   </div>
+
+                  {/* Visual Ad Previews */}
+                  {showPreviews && (
+                    <div className="pt-3 border-t border-border">
+                      <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide mb-3">Ad Preview Mockups</div>
+                      <div className="flex gap-4 overflow-x-auto pb-2">
+                        {platforms.map(p => (
+                          <div key={p.id} className="shrink-0">
+                            <div className="text-[10px] font-medium text-muted-foreground mb-2 text-center">{p.label}</div>
+                            <div className="rounded-lg overflow-hidden shadow-sm border border-border/50">
+                              <PlatformAdPreview platformId={p.id} copy={copy} />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             );
