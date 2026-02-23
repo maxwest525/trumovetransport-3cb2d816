@@ -9,6 +9,9 @@ import { cn } from "@/lib/utils";
 
 const MIN_WIDTH = 240;
 const MAX_WIDTH = 420;
+const MIN_HEIGHT = 380;
+const MAX_HEIGHT = 700;
+const SIDEBAR_WIDTH = 216;
 
 interface FloatingDialerProps {
   open: boolean;
@@ -41,13 +44,14 @@ export function FloatingDialer({ open, onOpenChange, prefillNumber }: FloatingDi
   const [showKeypad, setShowKeypad] = useState(true);
   const [callSeconds, setCallSeconds] = useState(0);
   const [width, setWidth] = useState(320);
+  const [height, setHeight] = useState<number | undefined>(undefined);
 
   // Drag state
   const [pos, setPos] = useState({ x: 0, y: 0 });
   const [dragging, setDragging] = useState(false);
   const [resizing, setResizing] = useState(false);
   const dragOffset = useRef({ x: 0, y: 0 });
-  const resizeStart = useRef({ mouseX: 0, startWidth: 0 });
+  const resizeStart = useRef({ mouseX: 0, mouseY: 0, startWidth: 0, startHeight: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
   const initialized = useRef(false);
 
@@ -64,11 +68,11 @@ export function FloatingDialer({ open, onOpenChange, prefillNumber }: FloatingDi
     }
   }, [prefillNumber]);
 
-  // Initialize position to left-center
+  // Initialize position to left-center, past sidebar
   useEffect(() => {
     if (open && !initialized.current) {
       setPos({
-        x: 16,
+        x: SIDEBAR_WIDTH + 16,
         y: Math.max(16, Math.floor((window.innerHeight - 580) / 2)),
       });
       initialized.current = true;
@@ -132,7 +136,7 @@ export function FloatingDialer({ open, onOpenChange, prefillNumber }: FloatingDi
   useEffect(() => {
     if (!dragging) return;
     const onMove = (e: MouseEvent) => {
-      const newX = Math.max(0, Math.min(window.innerWidth - width, e.clientX - dragOffset.current.x));
+      const newX = Math.max(SIDEBAR_WIDTH, Math.min(window.innerWidth - width, e.clientX - dragOffset.current.x));
       const newY = Math.max(0, Math.min(window.innerHeight - 100, e.clientY - dragOffset.current.y));
       setPos({ x: newX, y: newY });
     };
@@ -148,7 +152,13 @@ export function FloatingDialer({ open, onOpenChange, prefillNumber }: FloatingDi
   // Resize handlers
   const onResizeMouseDown = (e: React.MouseEvent) => {
     setResizing(true);
-    resizeStart.current = { mouseX: e.clientX, startWidth: width };
+    const el = containerRef.current;
+    resizeStart.current = {
+      mouseX: e.clientX,
+      mouseY: e.clientY,
+      startWidth: width,
+      startHeight: el ? el.offsetHeight : 500,
+    };
     e.preventDefault();
     e.stopPropagation();
   };
@@ -156,9 +166,12 @@ export function FloatingDialer({ open, onOpenChange, prefillNumber }: FloatingDi
   useEffect(() => {
     if (!resizing) return;
     const onMove = (e: MouseEvent) => {
-      const delta = e.clientX - resizeStart.current.mouseX;
-      const newWidth = Math.max(MIN_WIDTH, Math.min(MAX_WIDTH, resizeStart.current.startWidth + delta));
+      const deltaX = e.clientX - resizeStart.current.mouseX;
+      const deltaY = e.clientY - resizeStart.current.mouseY;
+      const newWidth = Math.max(MIN_WIDTH, Math.min(MAX_WIDTH, resizeStart.current.startWidth + deltaX));
+      const newHeight = Math.max(MIN_HEIGHT, Math.min(MAX_HEIGHT, resizeStart.current.startHeight + deltaY));
       setWidth(newWidth);
+      setHeight(newHeight);
     };
     const onUp = () => setResizing(false);
     window.addEventListener("mousemove", onMove);
@@ -205,7 +218,7 @@ export function FloatingDialer({ open, onOpenChange, prefillNumber }: FloatingDi
         "fixed z-50 bg-card border border-border rounded-2xl shadow-2xl flex flex-col overflow-hidden",
         (dragging || resizing) && "select-none"
       )}
-      style={{ left: pos.x, top: pos.y, width }}
+      style={{ left: pos.x, top: pos.y, width, ...(height ? { height, overflow: "auto" } : {}) }}
     >
       {/* Draggable header */}
       <div
@@ -356,7 +369,7 @@ export function FloatingDialer({ open, onOpenChange, prefillNumber }: FloatingDi
 
       {/* Resize handle - bottom right corner */}
       <div
-        className="absolute bottom-0 right-0 w-4 h-4 cursor-ew-resize flex items-end justify-end p-0.5"
+        className="absolute bottom-0 right-0 w-5 h-5 cursor-nwse-resize flex items-end justify-end p-0.5"
         onMouseDown={onResizeMouseDown}
       >
         <svg width="8" height="8" viewBox="0 0 8 8" className="text-muted-foreground/40">
