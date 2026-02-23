@@ -146,8 +146,8 @@ export default function AgentTeamChat() {
         <div className="w-80 border-r flex flex-col">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col flex-1">
             <TabsList className="grid w-full grid-cols-2 rounded-none border-b">
-              <TabsTrigger value="messages" className="gap-1.5"><MessageSquare className="w-4 h-4" />Chats</TabsTrigger>
               <TabsTrigger value="team" className="gap-1.5"><Users className="w-4 h-4" />Team</TabsTrigger>
+              <TabsTrigger value="messages" className="gap-1.5"><MessageSquare className="w-4 h-4" />Chats</TabsTrigger>
             </TabsList>
             <div className="p-2">
               <div className="relative">
