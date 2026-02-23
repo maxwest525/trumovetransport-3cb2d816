@@ -21,6 +21,9 @@ import { TrudyMarketingChat } from "@/components/demo/ppc/TrudyMarketingChat";
 import { AutoBuildPage } from "@/components/demo/ppc/AutoBuildPage";
 import { AnalyticsBuilderPanel, BuildSelections } from "@/components/demo/ppc/AnalyticsBuilderPanel";
 import { useMarketingPreferences } from "@/hooks/useMarketingPreferences";
+import { GeneratorPickerCard } from "@/components/demo/ppc/GeneratorPickerCard";
+import { WebsitePreviewBuilder } from "@/components/demo/ppc/WebsitePreviewBuilder";
+import { AdCampaignBuilder } from "@/components/demo/ppc/AdCampaignBuilder";
 
 const INITIAL_KEYWORDS = [
   { keyword: "long distance moving", volume: 12400, cpc: "$4.82", competition: "High", score: 92, trend: "up" },
@@ -63,7 +66,8 @@ const INITIAL_STATS: Stats = { totalSpend: 1736, clicks: 2373, conversions: 70, 
 
 export default function MarketingDashboard() {
   const [activeTab, setActiveTab] = useState("dashboard");
-  const [viewMode, setViewMode] = useState<'hub' | 'quickcreate' | 'detail' | 'trudy-chat' | 'auto-build' | 'manual-build'>('hub');
+  const [viewMode, setViewMode] = useState<'hub' | 'quickcreate' | 'detail' | 'trudy-chat' | 'auto-build' | 'manual-build' | 'generator-picker' | 'website-builder' | 'ad-builder'>('hub');
+  const [buildSelections, setBuildSelections] = useState<BuildSelections | null>(null);
   const [quickCreateType, setQuickCreateType] = useState<'ad' | 'landing' | 'campaign' | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [autoOpenFullScreen, setAutoOpenFullScreen] = useState(false);
@@ -151,6 +155,16 @@ export default function MarketingDashboard() {
   };
 
   const handleManualBuild = (selections: BuildSelections) => {
+    setBuildSelections(selections);
+    if (selections.outputType === 'website') {
+      setViewMode('generator-picker');
+      return;
+    }
+    if (selections.outputType === 'ad') {
+      setViewMode('generator-picker');
+      return;
+    }
+    // Landing page - existing flow
     setLandingPagePrefill({
       topKeyword: selections.keywords[0] || 'long distance moving company',
       topLocation: selections.locations[0] || 'California',
@@ -162,12 +176,7 @@ export default function MarketingDashboard() {
     });
     setAutoOpenFullScreen(true);
     setViewMode('detail');
-    // Route based on output type
-    if (selections.outputType === 'ad') {
-      setActiveTab('ads');
-    } else {
-      setActiveTab('landing');
-    }
+    setActiveTab('landing');
   };
 
   return (
@@ -182,7 +191,7 @@ export default function MarketingDashboard() {
               </Button>
             )}
             <h1 className="text-xl font-bold text-foreground">
-              {viewMode === 'hub' ? 'AI Marketing Suite' : viewMode === 'trudy-chat' ? 'Ask Trudy' : viewMode === 'quickcreate' ? 'Quick Create' : viewMode === 'manual-build' ? 'Build Manual' : viewMode === 'auto-build' ? 'AI Auto-Build' : 'Marketing Tools'}
+              {viewMode === 'hub' ? 'AI Marketing Suite' : viewMode === 'trudy-chat' ? 'Ask Trudy' : viewMode === 'quickcreate' ? 'Quick Create' : viewMode === 'manual-build' ? 'Build Manual' : viewMode === 'auto-build' ? 'AI Auto-Build' : viewMode === 'generator-picker' ? 'Choose Generator' : viewMode === 'website-builder' ? 'Website Preview Builder' : viewMode === 'ad-builder' ? 'Ad Campaign Builder' : 'Marketing Tools'}
             </h1>
           </div>
           <button
@@ -270,6 +279,33 @@ export default function MarketingDashboard() {
             mode="manual"
             onBuild={handleManualBuild}
             onCancel={() => setViewMode('hub')}
+          />
+        )}
+
+        {/* Generator Picker View */}
+        {viewMode === 'generator-picker' && buildSelections && (
+          <GeneratorPickerCard
+            selections={buildSelections}
+            onOpenWebsiteBuilder={() => setViewMode('website-builder')}
+            onOpenAdBuilder={() => setViewMode('ad-builder')}
+            onCancel={() => setViewMode('manual-build')}
+          />
+        )}
+
+        {/* Website Preview Builder */}
+        {viewMode === 'website-builder' && buildSelections && (
+          <WebsitePreviewBuilder
+            selections={buildSelections}
+            onBack={() => setViewMode('generator-picker')}
+          />
+        )}
+
+        {/* Ad Campaign Builder */}
+        {viewMode === 'ad-builder' && buildSelections && (
+          <AdCampaignBuilder
+            selections={buildSelections}
+            onBack={() => setViewMode('generator-picker')}
+            onMatchLanding={(style) => { /* future: open matching landing preview */ }}
           />
         )}
 
