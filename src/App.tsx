@@ -46,6 +46,7 @@ import AgentESign from "./pages/AgentESign";
 import AgentPayment from "./pages/AgentPayment";
 import AgentCustomers from "./pages/AgentCustomers";
 import AgentMessaging from "./pages/AgentMessaging";
+import AgentTeamChat from "./pages/AgentTeamChat";
 
 
 const queryClient = new QueryClient();
@@ -98,6 +99,7 @@ const App = () => (
             <Route path="/agent/payment" element={<AgentPayment />} />
             <Route path="/agent/customers" element={<AgentCustomers />} />
             <Route path="/agent/messages" element={<AgentMessaging />} />
+            <Route path="/agent/team-chat" element={<AgentTeamChat />} />
             
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
