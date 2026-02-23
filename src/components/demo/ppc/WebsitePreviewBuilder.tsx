@@ -319,10 +319,62 @@ function EnterpriseDarkForm({ content, page, darkMode }: { content: ReturnType<t
         </>
       )}
 
-      {page !== 'home' && (
-        <div style={{ padding: 80 }}>
-          <h2 style={{ fontSize: 40, fontWeight: 800, marginBottom: 40 }}>{page === 'services' ? 'Enterprise Services' : page === 'reviews' ? 'Client Testimonials' : 'Request Consultation'}</h2>
-          <p style={{ fontSize: 16, color: muted }}>Content section for {page} page.</p>
+      {page === 'services' && (
+        <div style={{ padding: '80px' }}>
+          <h2 style={{ fontSize: 40, fontWeight: 800, marginBottom: 12 }}>Enterprise Services</h2>
+          <p style={{ fontSize: 16, color: muted, marginBottom: 48, maxWidth: 600 }}>End-to-end relocation solutions for organizations of every size.</p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 20 }}>
+            {[
+              { title: 'Corporate Relocation', desc: 'Full-service employee relocation with dedicated project managers, temporary housing coordination, and spousal career assistance.' },
+              { title: 'Office & Commercial Moves', desc: 'Minimize downtime with after-hours and weekend scheduling. IT equipment handling and furniture installation included.' },
+              { title: 'Executive Moving', desc: 'White-glove service for C-suite relocations. Confidential, insured, and handled by our most experienced crews.' },
+              { title: 'International Transfers', desc: 'Customs brokerage, freight forwarding, and destination services across 40+ countries.' },
+              { title: 'Asset Management', desc: 'Inventory tracking, secure warehousing, and disposition services for surplus office assets.' },
+              { title: 'Policy Consulting', desc: 'Optimize your mobility program with data-driven benchmarking and policy design.' },
+            ].map(s => (
+              <div key={s.title} style={{ padding: 28, border: `1px solid ${border}`, borderRadius: 10, background: cardBg }}>
+                <div style={{ fontSize: 18, fontWeight: 700, marginBottom: 8 }}>{s.title}</div>
+                <p style={{ fontSize: 14, color: muted, lineHeight: 1.7 }}>{s.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {page === 'reviews' && (
+        <div style={{ padding: '80px' }}>
+          <h2 style={{ fontSize: 40, fontWeight: 800, marginBottom: 12 }}>Client Testimonials</h2>
+          <p style={{ fontSize: 16, color: muted, marginBottom: 48 }}>What enterprise clients say about working with TruMove.</p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 20 }}>
+            {[
+              { name: 'Sarah Mitchell', role: 'VP People Ops, Acme Corp', text: 'TruMove relocated 120 employees across 3 states in under 60 days. Zero complaints, zero delays.', location: content.testimonials[0]?.location },
+              { name: 'James Park', role: 'CFO, Summit Healthcare', text: 'The cost transparency was refreshing. No surprise invoices — exactly what was quoted is what we paid.', location: content.testimonials[1]?.location },
+              { name: 'Linda Torres', role: 'HR Director, Finova Inc.', text: 'Their dedicated PM made the entire office move seamless. Our team was back online within 24 hours.', location: 'New York' },
+              { name: 'David Chen', role: 'COO, TechBridge', text: 'International relocation used to be a nightmare. TruMove handled customs, housing, and onboarding support flawlessly.', location: 'San Francisco' },
+            ].map((t, i) => (
+              <div key={i} style={{ padding: 28, border: `1px solid ${border}`, borderRadius: 10, background: cardBg }}>
+                <div style={{ display: 'flex', gap: 4, marginBottom: 16 }}>{[1,2,3,4,5].map(s => <Star key={s} size={14} fill={fg} color={fg} />)}</div>
+                <p style={{ fontSize: 15, lineHeight: 1.7, marginBottom: 16 }}>"{t.text}"</p>
+                <div style={{ fontSize: 14, fontWeight: 700 }}>{t.name}</div>
+                <div style={{ fontSize: 12, color: muted }}>{t.role} · {t.location}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {page === 'quote' && (
+        <div style={{ padding: '80px', maxWidth: 560, margin: '0 auto' }}>
+          <h2 style={{ fontSize: 40, fontWeight: 800, textAlign: 'center', marginBottom: 8 }}>Request a Consultation</h2>
+          <p style={{ fontSize: 15, color: muted, textAlign: 'center', marginBottom: 40 }}>Tell us about your relocation needs and we'll prepare a custom proposal within 24 hours.</p>
+          {['Company Name', 'Contact Name', 'Work Email', 'Phone Number', 'Number of Employees', 'Origin Location', 'Destination', 'Preferred Timeline'].map(f => (
+            <div key={f} style={{ marginBottom: 14 }}>
+              <label style={{ fontSize: 11, fontWeight: 600, display: 'block', marginBottom: 4, textTransform: 'uppercase', letterSpacing: 0.5, color: muted }}>{f}</label>
+              <div style={{ background: cardBg, border: `1px solid ${border}`, borderRadius: 6, padding: '11px 14px', fontSize: 14, color: muted }}>{f}...</div>
+            </div>
+          ))}
+          <div style={{ background: fg, color: bg, padding: 14, borderRadius: 6, textAlign: 'center', fontWeight: 600, fontSize: 15, marginTop: 20 }}>Submit Request</div>
+          <p style={{ fontSize: 12, color: muted, textAlign: 'center', marginTop: 12 }}>We'll respond within 1 business day. No obligation.</p>
         </div>
       )}
 
@@ -385,10 +437,69 @@ function PromoDarkGradient({ content, page, darkMode }: { content: ReturnType<ty
         </>
       )}
 
-      {page !== 'home' && (
-        <div style={{ padding: 80 }}>
-          <h2 style={{ fontSize: 40, fontWeight: 800, marginBottom: 40 }}>{page === 'services' ? 'Our Services' : page === 'reviews' ? 'Reviews' : content.cta}</h2>
-          <p style={{ fontSize: 16, color: mutedText }}>Content section for {page} page.</p>
+      {page === 'services' && (
+        <div style={{ padding: '64px 80px' }}>
+          <div style={{ textAlign: 'center', marginBottom: 48 }}>
+            <div style={{ fontSize: 14, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 4, color: muted, marginBottom: 16 }}>WHAT WE OFFER</div>
+            <h2 style={{ fontSize: 44, fontWeight: 900, textTransform: 'uppercase' }}>Our Services</h2>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
+            {[
+              { icon: '🚛', title: 'Long Distance Moving', desc: 'Coast-to-coast relocations with guaranteed delivery windows and full GPS tracking.' },
+              { icon: '📦', title: 'Packing & Crating', desc: 'Professional packing with custom crating for fragile, high-value, and oversized items.' },
+              { icon: '🏢', title: 'Commercial Moves', desc: 'Office relocations with minimal downtime. Weekend and after-hours scheduling available.' },
+              { icon: '🔒', title: 'Secure Storage', desc: 'Climate-controlled, 24/7 monitored storage facilities in all major metros.' },
+              { icon: '🌍', title: 'International Shipping', desc: 'Door-to-door international moves with customs clearance and destination support.' },
+              { icon: '🚗', title: 'Auto Transport', desc: 'Open and enclosed vehicle shipping anywhere in the continental US.' },
+            ].map(s => (
+              <div key={s.title} style={{ padding: 28, borderRadius: 12, border: `1px solid ${border}`, background: cardBg, textAlign: 'center' }}>
+                <div style={{ fontSize: 36, marginBottom: 12 }}>{s.icon}</div>
+                <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 8 }}>{s.title}</div>
+                <p style={{ fontSize: 13, color: mutedText, lineHeight: 1.6 }}>{s.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {page === 'reviews' && (
+        <div style={{ padding: '64px 80px' }}>
+          <div style={{ textAlign: 'center', marginBottom: 48 }}>
+            <div style={{ fontSize: 14, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 4, color: muted, marginBottom: 16 }}>TESTIMONIALS</div>
+            <h2 style={{ fontSize: 44, fontWeight: 900, textTransform: 'uppercase' }}>What Customers Say</h2>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 20 }}>
+            {[
+              ...content.testimonials,
+              { name: 'Maria G.', location: 'Phoenix', text: 'The promo discount was real — no bait and switch. Saved over $800 on our cross-country move.' },
+              { name: 'Robert L.', location: 'Chicago', text: 'From the first call to final delivery, everything was handled with care. Will absolutely use again.' },
+            ].map((t, i) => (
+              <div key={i} style={{ padding: 28, borderRadius: 12, border: `1px solid ${border}`, background: cardBg }}>
+                <div style={{ display: 'flex', gap: 4, marginBottom: 16 }}>{[1,2,3,4,5].map(s => <Star key={s} size={16} fill={accent} color={accent} />)}</div>
+                <p style={{ fontSize: 15, lineHeight: 1.7, marginBottom: 16 }}>"{t.text}"</p>
+                <div style={{ fontSize: 14, fontWeight: 700 }}>{t.name}</div>
+                <div style={{ fontSize: 12, color: mutedText }}>{t.location}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {page === 'quote' && (
+        <div style={{ padding: '64px 80px', maxWidth: 600, margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: 40 }}>
+            <div style={{ fontSize: 14, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 4, color: muted, marginBottom: 16 }}>LIMITED TIME OFFER</div>
+            <h2 style={{ fontSize: 40, fontWeight: 900 }}>{content.cta}</h2>
+            <p style={{ fontSize: 16, color: mutedText, marginTop: 12 }}>Lock in 30% savings when you book this week. AI-powered estimates in under 60 seconds.</p>
+          </div>
+          {['Full Name', 'Email Address', 'Phone Number', 'Moving From', 'Moving To', 'Preferred Move Date'].map(f => (
+            <div key={f} style={{ marginBottom: 14 }}>
+              <label style={{ fontSize: 12, fontWeight: 600, display: 'block', marginBottom: 4, color: mutedText }}>{f}</label>
+              <div style={{ background: cardBg, border: `1px solid ${border}`, borderRadius: 8, padding: '12px 16px', fontSize: 14, color: mutedText }}>{f}...</div>
+            </div>
+          ))}
+          <div style={{ background: `linear-gradient(135deg, ${accent}, #6366f1)`, color: '#fff', padding: '16px', borderRadius: 10, textAlign: 'center', fontWeight: 700, fontSize: 16, marginTop: 20, boxShadow: `0 8px 32px ${accent}40` }}>{content.cta} — Save 30%</div>
+          <p style={{ fontSize: 12, color: mutedText, textAlign: 'center', marginTop: 12 }}>No credit card required · Free cancellation</p>
         </div>
       )}
 
@@ -454,10 +565,103 @@ function CorporateLightVideo({ content, page, darkMode }: { content: ReturnType<
         </>
       )}
 
-      {page !== 'home' && (
-        <div style={{ padding: 80 }}>
-          <h2 style={{ fontSize: 40, fontWeight: 800, marginBottom: 40 }}>{page === 'services' ? 'Platform Features' : page === 'reviews' ? 'Customer Success Stories' : 'Get Started'}</h2>
-          <p style={{ fontSize: 16, color: muted }}>Content section for {page} page.</p>
+      {page === 'services' && (
+        <div style={{ padding: '64px 80px' }}>
+          <div style={{ marginBottom: 48 }}>
+            <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+              {['All Features', 'Quoting', 'Tracking', 'CRM'].map((tab, i) => (
+                <div key={tab} style={{ background: i === 0 ? accent : 'transparent', color: i === 0 ? '#fff' : muted, padding: '6px 16px', borderRadius: 999, fontSize: 13, fontWeight: 600, border: i === 0 ? 'none' : `1px solid ${border}` }}>{tab}</div>
+              ))}
+            </div>
+            <h2 style={{ fontSize: 40, fontWeight: 800, marginBottom: 8 }}>Platform Features</h2>
+            <p style={{ fontSize: 16, color: muted }}>Everything you need to run your moving business, in one place.</p>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
+            {[
+              { icon: '⚡', title: 'AI Instant Quotes', desc: 'Customers get accurate estimates in under 60 seconds using our AI inventory scanner.' },
+              { icon: '📍', title: 'Real-Time Tracking', desc: 'GPS-powered shipment tracking with automated customer notifications at every milestone.' },
+              { icon: '📊', title: 'Analytics Dashboard', desc: 'Revenue forecasting, lead attribution, and crew performance metrics at a glance.' },
+              { icon: '🤝', title: 'Built-In CRM', desc: 'Manage leads, follow-ups, and customer communications from a single inbox.' },
+              { icon: '📱', title: 'Mobile App', desc: 'Crew management, digital BOLs, and photo documentation from any device.' },
+              { icon: '🔗', title: 'Integrations', desc: 'Connect with QuickBooks, Google Ads, Zapier, and 50+ tools out of the box.' },
+            ].map(f => (
+              <div key={f.title} style={{ padding: 24, borderRadius: 12, border: `1px solid ${border}`, background: cardBg }}>
+                <div style={{ fontSize: 32, marginBottom: 12 }}>{f.icon}</div>
+                <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 6 }}>{f.title}</div>
+                <p style={{ fontSize: 13, color: muted, lineHeight: 1.6 }}>{f.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {page === 'reviews' && (
+        <div style={{ padding: '64px 80px' }}>
+          <h2 style={{ fontSize: 40, fontWeight: 800, marginBottom: 8 }}>Customer Success Stories</h2>
+          <p style={{ fontSize: 16, color: muted, marginBottom: 40 }}>See how moving companies grow with TruMove.</p>
+
+          {/* Featured case study */}
+          <div style={{ padding: 32, borderRadius: 12, border: `1px solid ${border}`, background: cardBg, marginBottom: 24 }}>
+            <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+              <div style={{ background: accentBg, color: accent, padding: '4px 12px', borderRadius: 999, fontSize: 11, fontWeight: 600 }}>Case Study</div>
+              <div style={{ background: accentBg, color: accent, padding: '4px 12px', borderRadius: 999, fontSize: 11, fontWeight: 600 }}>+340% Lead Growth</div>
+            </div>
+            <h3 style={{ fontSize: 22, fontWeight: 800, marginBottom: 8 }}>How Summit Movers Tripled Their Revenue in 6 Months</h3>
+            <p style={{ fontSize: 15, color: muted, lineHeight: 1.7 }}>"TruMove's AI quoting converted 3x more website visitors into booked moves. The analytics dashboard helped us cut our ad spend by 40% while increasing leads."</p>
+            <div style={{ marginTop: 16, fontSize: 14, fontWeight: 600 }}>— Alex Rivera, Owner, Summit Movers</div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>
+            {[
+              ...content.testimonials,
+              { name: 'Chris W.', location: 'Denver', text: 'Switched from spreadsheets to TruMove. Now I can see every lead, every truck, and every dollar in real time.' },
+              { name: 'Priya S.', location: 'Austin', text: 'The mobile app alone was worth it. My crews do everything from their phones now — no more paperwork.' },
+            ].map((t, i) => (
+              <div key={i} style={{ padding: 24, borderRadius: 12, border: `1px solid ${border}`, background: cardBg }}>
+                <div style={{ display: 'flex', gap: 4, marginBottom: 12 }}>{[1,2,3,4,5].map(s => <Star key={s} size={14} fill={accent} color={accent} />)}</div>
+                <p style={{ fontSize: 14, lineHeight: 1.7, marginBottom: 12 }}>"{t.text}"</p>
+                <div style={{ fontSize: 13, fontWeight: 600 }}>{t.name} · <span style={{ color: muted, fontWeight: 400 }}>{t.location}</span></div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {page === 'quote' && (
+        <div style={{ padding: '64px 80px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 60, alignItems: 'start' }}>
+            <div>
+              <h2 style={{ fontSize: 40, fontWeight: 800, marginBottom: 12 }}>Get Started Free</h2>
+              <p style={{ fontSize: 16, color: muted, lineHeight: 1.7, marginBottom: 32 }}>Start your 14-day free trial. No credit card required. Set up in under 5 minutes.</p>
+              <div style={{ display: 'grid', gap: 16 }}>
+                {[
+                  { label: 'Unlimited quotes', desc: 'AI-powered instant estimates for your customers' },
+                  { label: 'Full CRM access', desc: 'Manage leads, deals, and follow-ups from day one' },
+                  { label: 'Analytics dashboard', desc: 'Track every metric that matters to your business' },
+                  { label: 'Priority support', desc: 'Live chat and phone support during your trial' },
+                ].map(f => (
+                  <div key={f.label} style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+                    <CheckCircle2 size={18} color={accent} style={{ marginTop: 2, flexShrink: 0 }} />
+                    <div>
+                      <div style={{ fontSize: 14, fontWeight: 700 }}>{f.label}</div>
+                      <div style={{ fontSize: 13, color: muted }}>{f.desc}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div style={{ background: cardBg, borderRadius: 12, padding: 32, border: `1px solid ${border}` }}>
+              <div style={{ fontSize: 18, fontWeight: 700, marginBottom: 24 }}>Create Your Account</div>
+              {['Full Name', 'Work Email', 'Company Name', 'Phone Number', 'Company Size'].map(f => (
+                <div key={f} style={{ marginBottom: 14 }}>
+                  <label style={{ fontSize: 12, fontWeight: 600, display: 'block', marginBottom: 4, color: muted }}>{f}</label>
+                  <div style={{ background: bg, border: `1px solid ${border}`, borderRadius: 8, padding: '11px 14px', fontSize: 14 }}>{f}...</div>
+                </div>
+              ))}
+              <div style={{ background: accent, color: '#fff', padding: 14, borderRadius: 8, textAlign: 'center', fontWeight: 600, fontSize: 15, marginTop: 8 }}>Start Free Trial →</div>
+              <p style={{ fontSize: 11, color: muted, textAlign: 'center', marginTop: 10 }}>No credit card required · Cancel anytime</p>
+            </div>
+          </div>
         </div>
       )}
 
