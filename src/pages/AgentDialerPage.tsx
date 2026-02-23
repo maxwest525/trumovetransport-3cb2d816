@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Phone, PhoneIncoming, PhoneOutgoing, PhoneMissed, PhoneForwarded,
-  Play, Pause, Clock, Calendar, RotateCcw, User,
+  Play, Pause, Clock, RotateCcw,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -183,21 +183,9 @@ export default function AgentDialerPage() {
     <AgentShell breadcrumb=" / Dialer">
       {({ openDialer }) => (
         <div className="p-6 max-w-3xl mx-auto space-y-5">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-xl font-bold text-foreground">Dialer</h1>
-              <p className="text-sm text-muted-foreground">Call history, recordings & redial</p>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-muted text-xs text-muted-foreground">
-                <User className="w-3.5 h-3.5" />
-                <span>{calls.length} calls</span>
-              </div>
-              <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-destructive/10 text-destructive text-xs">
-                <PhoneMissed className="w-3.5 h-3.5" />
-                <span>{missedCalls.length} missed</span>
-              </div>
-            </div>
+          <div>
+            <h1 className="text-xl font-bold text-foreground">Dialer</h1>
+            <p className="text-sm text-muted-foreground">Call history, recordings & redial</p>
           </div>
 
           {loading ? (
