@@ -6,19 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Mail, MessageSquare, Send, FileText, Sparkles, Copy, Check, UserRound } from "lucide-react";
+import { Mail, MessageSquare, Send, FileText, Copy, Check, UserRound } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { formatPhoneNumber } from "@/lib/phoneFormat";
-
-const DEMO_CUSTOMERS = [
-  { id: "1", name: "Sarah Johnson", email: "sarah.johnson@email.com", phone: "(555) 123-4567" },
-  { id: "2", name: "Michael Chen", email: "m.chen@email.com", phone: "(555) 234-5678" },
-  { id: "3", name: "Emily Rodriguez", email: "emily.r@email.com", phone: "(555) 345-6789" },
-  { id: "4", name: "David Kim", email: "d.kim@email.com", phone: "(555) 456-7890" },
-  { id: "5", name: "Jessica Williams", email: "j.williams@email.com", phone: "(555) 567-8901" },
-];
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const EMAIL_TEMPLATES = [
   {
@@ -117,8 +110,19 @@ export function ClientMessaging() {
   const [messageBody, setMessageBody] = useState("");
   const [recipient, setRecipient] = useState("");
   const [copied, setCopied] = useState(false);
-
   const [selectedCustomer, setSelectedCustomer] = useState("");
+
+  const { data: leads = [] } = useQuery({
+    queryKey: ["leads-for-messaging"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("leads")
+        .select("id, first_name, last_name, email, phone")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data;
+    },
+  });
 
   const handleTemplateSelect = (templateId: string) => {
     setSelectedTemplate(templateId);
@@ -137,12 +141,11 @@ export function ClientMessaging() {
     toast.success("Template loaded");
   };
 
-  const handleCustomerSelect = (customerId: string) => {
-    setSelectedCustomer(customerId);
-    const customer = DEMO_CUSTOMERS.find((c) => c.id === customerId);
-    if (customer) {
-      setRecipient(activeTab === "email" ? customer.email : customer.phone);
-      toast.success(`Selected ${customer.name}`);
+  const handleCustomerSelect = (leadId: string) => {
+    setSelectedCustomer(leadId);
+    const lead = leads.find((l) => l.id === leadId);
+    if (lead) {
+      setRecipient(activeTab === "email" ? (lead.email || "") : (lead.phone || ""));
     }
   };
 
@@ -165,6 +168,8 @@ export function ClientMessaging() {
     toast.success(`${activeTab === "email" ? "Email" : "SMS"} sent successfully!`);
   };
 
+  const selectedLead = leads.find((l) => l.id === selectedCustomer);
+
   return (
     <div className="space-y-5">
       {/* Customer Picker */}
@@ -173,31 +178,32 @@ export function ClientMessaging() {
           <UserRound className="w-4 h-4" />
           Send to:
         </div>
-        <div className="flex gap-2 flex-wrap">
-          {DEMO_CUSTOMERS.map((customer) => {
-            const initials = customer.name.split(" ").map(n => n[0]).join("");
-            const isSelected = selectedCustomer === customer.id;
-            return (
-              <button
-                key={customer.id}
-                onClick={() => handleCustomerSelect(customer.id)}
-                className={cn(
-                  "flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-medium transition-all",
-                  isSelected
-                    ? "bg-primary text-primary-foreground shadow-sm scale-105"
-                    : "bg-background border hover:bg-accent hover:text-accent-foreground"
-                )}
-              >
-                <Avatar className="h-5 w-5">
-                  <AvatarFallback className={cn("text-[9px]", isSelected ? "bg-primary-foreground/20 text-primary-foreground" : "bg-primary/10 text-primary")}>
-                    {initials}
-                  </AvatarFallback>
-                </Avatar>
-                {customer.name.split(" ")[0]}
-              </button>
-            );
-          })}
-        </div>
+        <Select value={selectedCustomer} onValueChange={handleCustomerSelect}>
+          <SelectTrigger className="w-64 bg-background">
+            <SelectValue placeholder="Choose a customer…" />
+          </SelectTrigger>
+          <SelectContent className="bg-popover z-50">
+            {leads.length === 0 ? (
+              <SelectItem value="_none" disabled>No leads found</SelectItem>
+            ) : (
+              leads.map((lead) => (
+                <SelectItem key={lead.id} value={lead.id}>
+                  <span className="flex items-center gap-2">
+                    <span className="font-medium">{lead.first_name} {lead.last_name}</span>
+                    <span className="text-muted-foreground text-xs">
+                      {activeTab === "email" ? (lead.email || "no email") : (lead.phone || "no phone")}
+                    </span>
+                  </span>
+                </SelectItem>
+              ))
+            )}
+          </SelectContent>
+        </Select>
+        {selectedLead && (
+          <span className="text-xs text-muted-foreground">
+            → {activeTab === "email" ? selectedLead.email : selectedLead.phone}
+          </span>
+        )}
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
