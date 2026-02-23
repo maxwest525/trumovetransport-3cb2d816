@@ -36,6 +36,7 @@ const LANDING_STYLES = [
   { id: 'enterprise-dark-form', label: 'Enterprise Dark Form' },
   { id: 'promo-dark-gradient', label: 'Promo Dark Gradient' },
   { id: 'corporate-light-video', label: 'Corporate Light Video' },
+  { id: 'top10-listicle', label: 'Top 10 Listicle' },
 ];
 
 function generateCopy(platform: string, selections: BuildSelections) {
