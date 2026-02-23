@@ -8,7 +8,7 @@ import PPCDemoModal from "@/components/demo/PPCDemoModal";
 import { OperationsCenterModal } from "@/components/agent/OperationsCenterModal";
 import { CoachingSummaryModal } from "@/components/coaching/CoachingSummaryModal";
 import { InternalMessagingModal } from "@/components/messaging/InternalMessagingModal";
-import { CombinedWorkspaceModal } from "@/components/agent/CombinedWorkspaceModal";
+
 import { AgentCommissionBoard } from "@/components/agent/AgentCommissionBoard";
 
 const AGENT_TOOLS = [
@@ -125,7 +125,7 @@ export default function AgentLoginOld() {
       <OperationsCenterModal open={operationsOpen} onOpenChange={setOperationsOpen} />
       <CoachingSummaryModal open={coachingSummaryOpen} onOpenChange={setCoachingSummaryOpen} />
       <InternalMessagingModal open={messagingOpen} onOpenChange={setMessagingOpen} />
-      <CombinedWorkspaceModal open={workspaceOpen} onOpenChange={setWorkspaceOpen} />
+      
       <AgentCommissionBoard open={commissionBoardOpen} onOpenChange={setCommissionBoardOpen} />
 
       <div className="agent-dashboard-page">
