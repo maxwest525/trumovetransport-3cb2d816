@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Eye, CheckSquare, FileText, CalendarCheck, ChevronRight } from "lucide-react";
+import { Eye, CheckSquare, FileText, CalendarCheck, ChevronRight, DollarSign, TrendingUp, Users, Clock } from "lucide-react";
 import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -10,23 +10,33 @@ const PIPELINE_COLORS = [
   "hsl(var(--chart-4))",
 ];
 
+interface TaskItem {
+  id: string;
+  subject: string | null;
+  description: string | null;
+  due_date: string | null;
+  type: string;
+}
+
 export default function AgentDashboardContent() {
   const [loading, setLoading] = useState(true);
-  const [stats, setStats] = useState({ newLeadsToday: 0, tasksDue: 0, tasksOverdue: 0, activeEstimates: 0, bookingsThisWeek: 0 });
+  const [stats, setStats] = useState({
+    newLeadsToday: 0, tasksDue: 0, tasksOverdue: 0, activeEstimates: 0, bookingsThisWeek: 0,
+    totalRevenue: 0, conversionRate: 0, totalCustomers: 0, avgResponseTime: 0,
+  });
   const [weeklyLeads, setWeeklyLeads] = useState<{ day: string; leads: number; booked: number }[]>([]);
   const [pipelineData, setPipelineData] = useState<{ stage: string; count: number }[]>([]);
-  const [nextActions, setNextActions] = useState<{ title: string; sub: string; icon: React.ElementType }[]>([]);
-  const [clientActivity, setClientActivity] = useState<{ name: string; action: string; time: string }[]>([]);
+  const [tasks, setTasks] = useState<TaskItem[]>([]);
 
   useEffect(() => {
-    const fetch = async () => {
+    const fetchData = async () => {
       const now = new Date();
       const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
       const weekStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() - now.getDay() + 1).toISOString();
 
       const [leadsRes, dealsRes, activitiesRes, stagesRes] = await Promise.all([
         supabase.from("leads").select("id, created_at, first_name, last_name, status"),
-        supabase.from("deals").select("id, stage, lead_id, created_at, deal_value, leads(first_name, last_name)"),
+        supabase.from("deals").select("id, stage, lead_id, created_at, deal_value, actual_revenue, leads(first_name, last_name)"),
         supabase.from("activities").select("id, subject, description, type, due_date, is_done, created_at"),
         supabase.from("pipeline_stages").select("*").order("display_order"),
       ]);
@@ -43,16 +53,24 @@ export default function AgentDashboardContent() {
       const activeEstimates = deals.filter(d => d.stage === "estimate_sent").length;
       const bookingsThisWeek = deals.filter(d => d.stage === "booked" && d.created_at >= weekStart).length;
 
-      setStats({ newLeadsToday, tasksDue, tasksOverdue, activeEstimates, bookingsThisWeek });
+      // KPI stats
+      const totalRevenue = deals.reduce((sum, d) => sum + (d.actual_revenue || d.deal_value || 0), 0);
+      const closedWon = deals.filter(d => d.stage === "closed_won").length;
+      const conversionRate = leads.length > 0 ? Math.round((closedWon / leads.length) * 100) : 0;
+      const totalCustomers = leads.length;
 
-      // Weekly leads (last 7 days)
+      setStats({
+        newLeadsToday, tasksDue, tasksOverdue, activeEstimates, bookingsThisWeek,
+        totalRevenue, conversionRate, totalCustomers, avgResponseTime: 0,
+      });
+
+      // Weekly leads
       const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
       const weekly: Record<string, { leads: number; booked: number }> = {};
       for (let i = 6; i >= 0; i--) {
         const d = new Date(now);
         d.setDate(d.getDate() - i);
-        const key = dayNames[d.getDay()];
-        weekly[key] = { leads: 0, booked: 0 };
+        weekly[dayNames[d.getDay()]] = { leads: 0, booked: 0 };
       }
       leads.forEach(l => {
         const d = new Date(l.created_at);
@@ -80,34 +98,23 @@ export default function AgentDashboardContent() {
       })).filter(d => d.count > 0);
       setPipelineData(pipeline);
 
-      // Next actions: pending activities
+      // Pending tasks
       const pending = activities
         .filter(a => !a.is_done)
         .sort((a, b) => (a.due_date || a.created_at).localeCompare(b.due_date || b.created_at))
-        .slice(0, 5)
-        .map(a => ({
-          title: a.subject || "Untitled task",
-          sub: a.description || a.type?.replace("_", " ") || "",
-          icon: a.type === "meeting" ? CalendarCheck : a.type === "call" ? Eye : FileText,
-        }));
-      setNextActions(pending);
-
-      // Client activity: recent completed activities
-      const recent = activities
-        .filter(a => a.is_done)
-        .sort((a, b) => (b.completed_at || b.created_at).localeCompare(a.completed_at || a.created_at))
-        .slice(0, 4)
-        .map(a => {
-          const mins = Math.floor((now.getTime() - new Date(a.created_at).getTime()) / 60000);
-          const time = mins < 60 ? `${mins} min ago` : mins < 1440 ? `${Math.floor(mins / 60)} hours ago` : `${Math.floor(mins / 1440)}d ago`;
-          return { name: a.subject || "Activity", action: a.type?.replace("_", " ") || "", time };
-        });
-      setClientActivity(recent);
+        .slice(0, 8);
+      setTasks(pending);
 
       setLoading(false);
     };
-    fetch();
+    fetchData();
   }, []);
+
+  const toggleTask = async (taskId: string) => {
+    await supabase.from("activities").update({ is_done: true, completed_at: new Date().toISOString() }).eq("id", taskId);
+    setTasks(prev => prev.filter(t => t.id !== taskId));
+    setStats(prev => ({ ...prev, tasksDue: prev.tasksDue - 1 }));
+  };
 
   if (loading) {
     return (
@@ -117,10 +124,12 @@ export default function AgentDashboardContent() {
     );
   }
 
-  const STATS = [
+  const KPI_STATS = [
     { label: "New Leads Today", value: String(stats.newLeadsToday), icon: Eye },
     { label: "Tasks Due", value: String(stats.tasksDue), sub: stats.tasksOverdue > 0 ? `${stats.tasksOverdue} overdue` : undefined, icon: CheckSquare },
-    { label: "Active Estimates", value: String(stats.activeEstimates), icon: FileText },
+    { label: "Revenue", value: `$${stats.totalRevenue.toLocaleString()}`, icon: DollarSign },
+    { label: "Conversion Rate", value: `${stats.conversionRate}%`, icon: TrendingUp },
+    { label: "Total Customers", value: String(stats.totalCustomers), icon: Users },
     { label: "Bookings This Week", value: String(stats.bookingsThisWeek), icon: CalendarCheck },
   ];
 
@@ -131,9 +140,9 @@ export default function AgentDashboardContent() {
         <p className="text-sm text-muted-foreground">Welcome back! Here's what needs your attention today.</p>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {STATS.map((s) => {
+      {/* KPI Stats */}
+      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+        {KPI_STATS.map((s) => {
           const Icon = s.icon;
           return (
             <div key={s.label} className="rounded-xl border border-border bg-card p-4">
@@ -148,8 +157,9 @@ export default function AgentDashboardContent() {
         })}
       </div>
 
-      {/* Charts */}
+      {/* Charts + Tasks */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        {/* Weekly Leads Chart */}
         <div className="lg:col-span-2 rounded-xl border border-border bg-card p-4">
           <h2 className="text-sm font-semibold text-foreground mb-3">Weekly Leads</h2>
           <ResponsiveContainer width="100%" height={180}>
@@ -163,6 +173,8 @@ export default function AgentDashboardContent() {
             </BarChart>
           </ResponsiveContainer>
         </div>
+
+        {/* Pipeline Breakdown */}
         <div className="rounded-xl border border-border bg-card p-4">
           <h2 className="text-sm font-semibold text-foreground mb-3">Pipeline Breakdown</h2>
           {pipelineData.length > 0 ? (
@@ -192,46 +204,36 @@ export default function AgentDashboardContent() {
         </div>
       </div>
 
-      {/* Two-column: Next Actions + Recent Activity */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-        <div className="lg:col-span-3 rounded-xl border border-border bg-card p-4">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-semibold text-foreground">Next Actions</h2>
-          </div>
-          <div className="space-y-0">
-            {nextActions.length > 0 ? nextActions.map((a, i) => {
-              const Icon = a.icon;
-              return (
-                <div key={i} className="flex items-center gap-3 py-3 px-2 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors group">
-                  <Icon className="w-4 h-4 text-muted-foreground shrink-0" />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-foreground truncate">{a.title}</p>
-                    <p className="text-xs text-muted-foreground">{a.sub}</p>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-muted-foreground/30 group-hover:text-muted-foreground transition-colors" />
-                </div>
-              );
-            }) : (
-              <p className="text-xs text-muted-foreground text-center py-6">No pending actions</p>
-            )}
-          </div>
+      {/* Tasks */}
+      <div className="rounded-xl border border-border bg-card p-4">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-sm font-semibold text-foreground">My Tasks</h2>
+          <span className="text-xs text-muted-foreground">{tasks.length} pending</span>
         </div>
-
-        <div className="lg:col-span-2 rounded-xl border border-border bg-card p-4">
-          <h2 className="text-sm font-semibold text-foreground mb-3">Recent Activity</h2>
-          <div className="space-y-0">
-            {clientActivity.length > 0 ? clientActivity.map((c, i) => (
-              <div key={i} className="flex items-center justify-between py-3 px-2">
-                <div>
-                  <p className="text-sm font-medium text-foreground">{c.name}</p>
-                  <p className="text-xs text-muted-foreground">{c.action}</p>
+        <div className="space-y-0">
+          {tasks.length > 0 ? tasks.map((t) => {
+            const isOverdue = t.due_date && new Date(t.due_date) < new Date();
+            return (
+              <div key={t.id} className="flex items-center gap-3 py-3 px-2 rounded-lg hover:bg-muted/50 transition-colors group">
+                <button
+                  onClick={() => toggleTask(t.id)}
+                  className="w-4 h-4 rounded border border-border shrink-0 hover:border-primary hover:bg-primary/10 transition-colors"
+                />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-foreground truncate">{t.subject || "Untitled task"}</p>
+                  <p className="text-xs text-muted-foreground truncate">{t.description || t.type?.replace("_", " ") || ""}</p>
                 </div>
-                <span className="text-[11px] text-muted-foreground whitespace-nowrap">{c.time}</span>
+                {t.due_date && (
+                  <span className={`text-[11px] shrink-0 flex items-center gap-1 ${isOverdue ? "text-destructive" : "text-muted-foreground"}`}>
+                    <Clock className="w-3 h-3" />
+                    {new Date(t.due_date).toLocaleDateString()}
+                  </span>
+                )}
               </div>
-            )) : (
-              <p className="text-xs text-muted-foreground text-center py-6">No recent activity</p>
-            )}
-          </div>
+            );
+          }) : (
+            <p className="text-xs text-muted-foreground text-center py-6">No pending tasks 🎉</p>
+          )}
         </div>
       </div>
     </div>

@@ -1,9 +1,6 @@
-import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
-  LayoutDashboard, Users, Package, FileText, CalendarCheck,
-  Phone, FileSignature, MessageSquare, CheckSquare, Home, RotateCcw,
-  Gauge, UserPlus, CreditCard
+  LayoutDashboard, UserPlus, CalendarCheck, Mic, Home, RotateCcw,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -12,25 +9,13 @@ interface NavItem {
   icon: React.ElementType;
   href: string;
   badge?: number;
-  advanced?: boolean;
 }
 
 const NAV_ITEMS: NavItem[] = [
-  // Primary tools
-  { label: "New Customer", icon: UserPlus, href: "/agent/new-customer" },
-  { label: "CRM Pipeline", icon: Users, href: "/agent/pipeline" },
-  { label: "Dialer", icon: Phone, href: "/agent/workspace" },
-  // Core
   { label: "Dashboard", icon: LayoutDashboard, href: "/agent/dashboard" },
-  { label: "My KPIs", icon: Gauge, href: "/kpi" },
+  { label: "New Customer", icon: UserPlus, href: "/agent/new-customer" },
   { label: "Bookings", icon: CalendarCheck, href: "/agent/operations" },
-  { label: "Payments", icon: CreditCard, href: "/agent/payments" },
-  { label: "Messages", icon: MessageSquare, href: "/agent/messages", badge: 5 },
-  // Advanced tools
-  { label: "Inventory", icon: Package, href: "/agent/workspace", advanced: true },
-  { label: "Estimates", icon: FileText, href: "/agent/workspace", advanced: true },
-  { label: "Documents", icon: FileSignature, href: "/agent/workspace", advanced: true },
-  { label: "Tasks", icon: CheckSquare, href: "/agent/coaching", badge: 2, advanced: true },
+  { label: "Recordings", icon: Mic, href: "/agent/recordings" },
 ];
 
 export default function AgentSidebar() {
@@ -40,39 +25,6 @@ export default function AgentSidebar() {
   const handleResetPreference = () => {
     localStorage.removeItem("truemove_remembered_role");
     navigate("/agent-login");
-  };
-
-  const essentialItems = NAV_ITEMS.filter(i => !i.advanced);
-  const advancedItems = NAV_ITEMS.filter(i => i.advanced);
-
-  const renderItem = (item: NavItem) => {
-    const Icon = item.icon;
-    const active = location.pathname === item.href;
-    const badge = item.badge ? (
-      <span className={cn(
-        "ml-auto min-w-[18px] h-[18px] flex items-center justify-center rounded-full text-[10px] font-semibold leading-none px-1",
-        active ? "bg-background text-foreground" : "bg-foreground text-background"
-      )}>
-        {item.badge}
-      </span>
-    ) : null;
-
-    return (
-      <Link
-        key={item.label}
-        to={item.href}
-        className={cn(
-          "flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors",
-          active
-            ? "bg-foreground text-background"
-            : "text-muted-foreground hover:bg-muted hover:text-foreground"
-        )}
-      >
-        <Icon className="w-4 h-4" />
-        <span>{item.label}</span>
-        {badge}
-      </Link>
-    );
   };
 
   return (
@@ -86,9 +38,25 @@ export default function AgentSidebar() {
       </div>
 
       <nav className="flex-1 px-2 py-2 space-y-0.5">
-        {essentialItems.map(renderItem)}
-        <div className="h-px bg-border/50 mx-2 my-1" />
-        {advancedItems.map(renderItem)}
+        {NAV_ITEMS.map((item) => {
+          const Icon = item.icon;
+          const active = location.pathname === item.href;
+          return (
+            <Link
+              key={item.label}
+              to={item.href}
+              className={cn(
+                "flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors",
+                active
+                  ? "bg-foreground text-background"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+              )}
+            >
+              <Icon className="w-4 h-4" />
+              <span>{item.label}</span>
+            </Link>
+          );
+        })}
       </nav>
 
       <div className="px-2 pb-4 space-y-0.5">

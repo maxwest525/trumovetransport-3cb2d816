@@ -40,10 +40,8 @@ import AccountingDashboard from "./pages/AccountingDashboard";
 import ManagerCoaching from "./pages/ManagerCoaching";
 import AgentWorkspace from "./pages/AgentWorkspace";
 import AgentOperations from "./pages/AgentOperations";
-import AgentMessaging from "./pages/AgentMessaging";
 import AgentNewCustomer from "./pages/AgentNewCustomer";
-import AgentPayments from "./pages/AgentPayments";
-import AgentCoaching from "./pages/AgentCoaching";
+import AgentRecordings from "./pages/AgentRecordings";
 
 const queryClient = new QueryClient();
 
@@ -89,10 +87,8 @@ const App = () => (
             <Route path="/accounting/dashboard" element={<AccountingDashboard />} />
             <Route path="/agent/workspace" element={<AgentWorkspace />} />
             <Route path="/agent/operations" element={<AgentOperations />} />
-            <Route path="/agent/messages" element={<AgentMessaging />} />
             <Route path="/agent/new-customer" element={<AgentNewCustomer />} />
-            <Route path="/agent/payments" element={<AgentPayments />} />
-            <Route path="/agent/coaching" element={<AgentCoaching />} />
+            <Route path="/agent/recordings" element={<AgentRecordings />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
