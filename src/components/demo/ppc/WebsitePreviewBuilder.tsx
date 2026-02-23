@@ -820,10 +820,141 @@ function Top10Listicle({ content, page, darkMode }: { content: ReturnType<typeof
         </>
       )}
 
-      {page !== 'home' && (
-        <div style={{ padding: 80 }}>
-          <h2 style={{ fontSize: 40, fontWeight: 800, marginBottom: 40 }}>{page === 'services' ? 'How We Review' : page === 'reviews' ? 'Reader Reviews' : 'Get Listed'}</h2>
-          <p style={{ fontSize: 16, color: muted }}>Content section for {page} page.</p>
+      {page === 'services' && (
+        <div style={{ padding: '64px 80px' }}>
+          <h2 style={{ fontSize: 36, fontWeight: 800, marginBottom: 8 }}>How We Review Moving Companies</h2>
+          <p style={{ fontSize: 15, color: muted, marginBottom: 40, lineHeight: 1.7, maxWidth: 700 }}>
+            Our editorial team evaluates every company using a rigorous, multi-factor methodology. No company can pay for a higher ranking.
+          </p>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 20, marginBottom: 48 }}>
+            {[
+              { title: 'Customer Reviews', weight: '35%', desc: 'We aggregate reviews from Google, BBB, Yelp, and proprietary surveys. Only verified moves count.' },
+              { title: 'Pricing Transparency', weight: '25%', desc: 'We request and compare quotes, checking for hidden fees, binding estimates, and price accuracy.' },
+              { title: 'Insurance & Protection', weight: '20%', desc: 'We verify FMCSA licensing, liability coverage, full-value protection options, and claims resolution rates.' },
+              { title: 'Service Coverage', weight: '10%', desc: 'We evaluate geographic reach, specialty services (auto transport, storage), and response times.' },
+              { title: 'Technology & Tracking', weight: '10%', desc: 'We assess online booking, GPS tracking, digital inventory tools, and communication quality.' },
+              { title: 'Monthly Re-evaluation', weight: 'Ongoing', desc: 'Rankings are updated monthly as we collect new data, monitor complaints, and re-score all companies.' },
+            ].map((item) => (
+              <div key={item.title} style={{ padding: 24, borderRadius: 12, border: `1px solid ${border}`, background: cardBg }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                  <span style={{ fontSize: 16, fontWeight: 700 }}>{item.title}</span>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: accent, background: accent + '15', padding: '3px 10px', borderRadius: 999 }}>{item.weight}</span>
+                </div>
+                <p style={{ fontSize: 13, color: muted, lineHeight: 1.6 }}>{item.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ padding: 28, borderRadius: 12, border: `1px solid ${border}`, background: cardBg }}>
+            <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 12 }}>Editorial Independence</h3>
+            <p style={{ fontSize: 14, color: muted, lineHeight: 1.7 }}>
+              MovingReviews.com maintains full editorial independence. Companies cannot pay for rankings or influence our scores. We may earn a referral fee when you request a quote through our links, but this never affects our rankings. Our team includes licensed moving industry professionals and consumer advocates with 50+ combined years of experience.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {page === 'reviews' && (
+        <div style={{ padding: '64px 80px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 40 }}>
+            <div>
+              <h2 style={{ fontSize: 36, fontWeight: 800, marginBottom: 8 }}>Reader Reviews & Ratings</h2>
+              <p style={{ fontSize: 15, color: muted }}>Real experiences from verified customers across {loc}.</p>
+            </div>
+            <div style={{ textAlign: 'right' }}>
+              <div style={{ fontSize: 48, fontWeight: 900, color: accent, lineHeight: 1 }}>4.9</div>
+              <div style={{ display: 'flex', gap: 2, justifyContent: 'center', margin: '6px 0' }}>{[1,2,3,4,5].map(s => <Star key={s} size={14} fill={accent} color={accent} />)}</div>
+              <div style={{ fontSize: 12, color: muted }}>12,847 verified reviews</div>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: 24, marginBottom: 32, padding: 24, background: cardBg, borderRadius: 12, border: `1px solid ${border}` }}>
+            {[
+              { stars: 5, pct: 78 }, { stars: 4, pct: 14 }, { stars: 3, pct: 5 }, { stars: 2, pct: 2 }, { stars: 1, pct: 1 },
+            ].map(r => (
+              <div key={r.stars} style={{ flex: 1, textAlign: 'center' }}>
+                <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 4 }}>{r.stars}★</div>
+                <div style={{ height: 6, borderRadius: 3, background: border, overflow: 'hidden' }}>
+                  <div style={{ width: `${r.pct}%`, height: '100%', background: accent, borderRadius: 3 }} />
+                </div>
+                <div style={{ fontSize: 11, color: muted, marginTop: 4 }}>{r.pct}%</div>
+              </div>
+            ))}
+          </div>
+
+          {[
+            { name: 'Patricia L.', loc: loc, date: 'Jan 2026', rating: 5, title: 'Best moving experience ever', text: `TruMove made our ${kw.toLowerCase()} completely stress-free. The AI quote was within $50 of the final price and we could track our belongings the entire way. The crew was professional, on time, and handled our antiques with incredible care.`, helpful: 47 },
+            { name: 'David R.', loc: 'Houston, TX', date: 'Dec 2025', rating: 5, title: 'Accurate quotes, no surprises', text: 'After getting wildly different estimates from 5 other companies, TruMove\'s AI gave us an accurate price instantly. The movers arrived exactly on schedule and nothing was damaged. Worth every penny.', helpful: 38 },
+            { name: 'Michelle T.', loc: 'Miami, FL', date: 'Dec 2025', rating: 5, title: 'GPS tracking was a game-changer', text: 'Being able to see exactly where our stuff was during a cross-country move gave us so much peace of mind. Customer service was incredibly responsive too. Highly recommend for anyone doing a long distance move.', helpful: 31 },
+            { name: 'Robert K.', loc: 'Phoenix, AZ', date: 'Nov 2025', rating: 4, title: 'Great service, minor delay', text: 'Overall an excellent experience. The only reason for 4 stars is a one-day delay in delivery due to weather, but they communicated proactively and offered a discount. Would still recommend.', helpful: 22 },
+          ].map((review, i) => (
+            <div key={i} style={{ padding: 24, borderRadius: 12, border: `1px solid ${border}`, background: cardBg, marginBottom: 16 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <div style={{ width: 40, height: 40, borderRadius: 999, background: accent + '20', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, fontWeight: 700, color: accent }}>{review.name[0]}</div>
+                  <div>
+                    <div style={{ fontSize: 14, fontWeight: 700 }}>{review.name}</div>
+                    <div style={{ fontSize: 12, color: muted }}>{review.loc} · {review.date}</div>
+                  </div>
+                </div>
+                <div style={{ display: 'flex', gap: 2 }}>{[1,2,3,4,5].map(s => <Star key={s} size={14} fill={s <= review.rating ? accent : 'transparent'} color={accent} />)}</div>
+              </div>
+              <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 8 }}>{review.title}</div>
+              <p style={{ fontSize: 13, color: muted, lineHeight: 1.7 }}>{review.text}</p>
+              <div style={{ marginTop: 12, fontSize: 12, color: muted }}>👍 {review.helpful} people found this helpful</div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {page === 'quote' && (
+        <div style={{ padding: '64px 80px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48, alignItems: 'flex-start' }}>
+            <div>
+              <h2 style={{ fontSize: 36, fontWeight: 800, marginBottom: 8 }}>Get Listed on MovingReviews</h2>
+              <p style={{ fontSize: 15, color: muted, lineHeight: 1.7, marginBottom: 32 }}>
+                Are you a moving company? Submit your business for review. Our editorial team will evaluate your services using our standard methodology.
+              </p>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                {[
+                  { step: '1', title: 'Submit Application', desc: 'Provide your company details, FMCSA/DOT number, and service areas.' },
+                  { step: '2', title: 'Verification & Review', desc: 'We verify licensing, review customer feedback, and conduct a service evaluation.' },
+                  { step: '3', title: 'Get Ranked', desc: 'Your company receives a score and placement based on our methodology.' },
+                ].map(s => (
+                  <div key={s.step} style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
+                    <div style={{ width: 32, height: 32, borderRadius: 999, background: accent, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 700, flexShrink: 0 }}>{s.step}</div>
+                    <div>
+                      <div style={{ fontSize: 15, fontWeight: 700 }}>{s.title}</div>
+                      <p style={{ fontSize: 13, color: muted, marginTop: 2 }}>{s.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div style={{ marginTop: 32, padding: 20, borderRadius: 12, border: `1px solid ${border}`, background: cardBg }}>
+                <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 8 }}>📊 Current Stats</div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, fontSize: 13 }}>
+                  <div><div style={{ fontWeight: 700 }}>2.4M+</div><div style={{ color: muted }}>Monthly visitors</div></div>
+                  <div><div style={{ fontWeight: 700 }}>85,000+</div><div style={{ color: muted }}>Quotes generated</div></div>
+                  <div><div style={{ fontWeight: 700 }}>4.8★</div><div style={{ color: muted }}>Trust rating</div></div>
+                </div>
+              </div>
+            </div>
+
+            <div style={{ padding: 32, borderRadius: 16, border: `1px solid ${border}`, background: cardBg }}>
+              <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 24 }}>Company Submission Form</div>
+              {['Company Name', 'FMCSA / DOT Number', 'Contact Email', 'Phone Number', 'Headquarters City & State', 'Service Areas (states)', 'Years in Business', 'Website URL'].map(f => (
+                <div key={f} style={{ marginBottom: 14 }}>
+                  <label style={{ fontSize: 12, fontWeight: 600, display: 'block', marginBottom: 4, color: muted }}>{f}</label>
+                  <div style={{ background: bg, border: `1px solid ${border}`, borderRadius: 8, padding: '11px 14px', fontSize: 14 }}>{f}...</div>
+                </div>
+              ))}
+              <div style={{ background: accent, color: '#fff', padding: 14, borderRadius: 8, textAlign: 'center', fontWeight: 700, fontSize: 15, marginTop: 8 }}>Submit for Review</div>
+              <p style={{ fontSize: 11, color: muted, textAlign: 'center', marginTop: 10 }}>Free submission · Review takes 5-7 business days</p>
+            </div>
+          </div>
         </div>
       )}
 
