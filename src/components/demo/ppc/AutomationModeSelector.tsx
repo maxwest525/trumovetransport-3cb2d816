@@ -1,6 +1,7 @@
-import { useState } from "react";
-import { Zap, Eye, AlertTriangle } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Zap, Eye, AlertTriangle, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,6 +23,35 @@ interface AutomationModeSelectorProps {
 export function AutomationModeSelector({ onChange, defaultMode = 'review' }: AutomationModeSelectorProps) {
   const [mode, setMode] = useState<AutomationMode>(defaultMode);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  // Load persisted preference on mount
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user || cancelled) { setLoading(false); return; }
+      const { data } = await supabase
+        .from('profiles')
+        .select('automation_mode')
+        .eq('id', user.id)
+        .single();
+      if (!cancelled && data?.automation_mode) {
+        const saved = data.automation_mode as AutomationMode;
+        setMode(saved);
+        onChange?.(saved);
+      }
+      if (!cancelled) setLoading(false);
+    })();
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const persist = async (m: AutomationMode) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    await supabase.from('profiles').update({ automation_mode: m } as any).eq('id', user.id);
+  };
 
   const handleClick = (m: AutomationMode) => {
     if (m === 'autopilot' && mode !== 'autopilot') {
@@ -29,14 +59,24 @@ export function AutomationModeSelector({ onChange, defaultMode = 'review' }: Aut
     } else {
       setMode(m);
       onChange?.(m);
+      persist(m);
     }
   };
 
   const confirmAutopilot = () => {
     setMode('autopilot');
     onChange?.('autopilot');
+    persist('autopilot');
     setShowConfirm(false);
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center gap-1.5 p-1 rounded-xl border border-border bg-muted/30 px-4 py-2">
+        <Loader2 className="w-3.5 h-3.5 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
 
   return (
     <>
