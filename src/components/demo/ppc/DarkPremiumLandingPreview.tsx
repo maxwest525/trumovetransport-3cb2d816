@@ -1,8 +1,7 @@
 import { BuildSelections } from "./AnalyticsBuilderPanel";
-import { Button } from "@/components/ui/button";
 import {
   Star, Shield, Truck, Clock, Phone, MapPin,
-  CheckCircle2, ArrowRight, Quote, Zap, BarChart3, Users,
+  CheckCircle2, ArrowRight, Quote, Zap, BarChart3,
 } from "lucide-react";
 
 interface DarkPremiumLandingPreviewProps {
@@ -41,7 +40,7 @@ export function DarkPremiumLandingPreview({ selections, onBack }: DarkPremiumLan
         {/* ── Nav ───────────────────────────────────────────────── */}
         <nav className="flex items-center justify-between px-8 py-5 border-b border-slate-800/60">
           <div className="flex items-center gap-2">
-            <Truck className="w-6 h-6 text-cyan-400" />
+            <Truck className="w-6 h-6 text-emerald-400" />
             <span className="text-lg font-bold tracking-tight">TruMove</span>
           </div>
           <div className="hidden md:flex items-center gap-8 text-sm text-slate-400">
@@ -51,25 +50,23 @@ export function DarkPremiumLandingPreview({ selections, onBack }: DarkPremiumLan
             <span className="hover:text-white transition-colors cursor-default">Get Quote</span>
           </div>
           <div className="flex items-center gap-3">
-            <Phone className="w-4 h-4 text-cyan-400" />
+            <Phone className="w-4 h-4 text-emerald-400" />
             <span className="text-sm font-medium">(800) 555-MOVE</span>
           </div>
         </nav>
 
         {/* ── Hero ──────────────────────────────────────────────── */}
         <section className="relative px-8 py-20 overflow-hidden">
-          {/* Glow effect */}
-          <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none" />
-          <div className="absolute bottom-0 left-1/4 w-72 h-72 bg-teal-500/8 rounded-full blur-[100px] pointer-events-none" />
+          <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/5 rounded-full blur-[120px] pointer-events-none" />
 
           <div className="relative max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
             <div className="space-y-6">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-medium">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-medium">
                 <Zap className="w-3 h-3" /> AI-Powered Estimates in 60 Seconds
               </div>
               <h1 className="text-4xl md:text-5xl font-extrabold leading-tight tracking-tight">
                 {primaryKeyword.charAt(0).toUpperCase() + primaryKeyword.slice(1)}{" "}
-                <span className="bg-gradient-to-r from-cyan-400 to-teal-400 bg-clip-text text-transparent">
+                <span className="text-emerald-400">
                   in {primaryLocation}
                 </span>
               </h1>
@@ -77,13 +74,13 @@ export function DarkPremiumLandingPreview({ selections, onBack }: DarkPremiumLan
                 Trusted by {audience.toLowerCase()} across {allLocations.join(", ")}. Get instant quotes, real-time tracking, and guaranteed damage protection.
               </p>
 
-              {/* CTA Input */}
+              {/* CTA */}
               <div className="flex items-center gap-2 max-w-md">
                 <div className="flex-1 flex items-center gap-2 bg-slate-800/80 border border-slate-700 rounded-lg px-4 py-3">
                   <MapPin className="w-4 h-4 text-slate-500" />
                   <span className="text-sm text-slate-500">Enter your ZIP code</span>
                 </div>
-                <button className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-teal-500 text-white font-semibold rounded-lg text-sm whitespace-nowrap hover:shadow-[0_0_24px_rgba(6,182,212,0.3)] transition-shadow">
+                <button className="px-6 py-3 bg-white text-slate-950 font-semibold rounded-lg text-sm whitespace-nowrap hover:bg-slate-100 transition-colors">
                   Get Free Quote <ArrowRight className="w-4 h-4 inline ml-1" />
                 </button>
               </div>
@@ -106,16 +103,16 @@ export function DarkPremiumLandingPreview({ selections, onBack }: DarkPremiumLan
               </div>
             </div>
 
-            {/* Hero Visual */}
+            {/* Hero Card */}
             <div className="relative hidden md:block">
-              <div className="rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700/50 p-8 space-y-4 shadow-2xl">
+              <div className="rounded-2xl bg-slate-900 border border-slate-800 p-8 space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium text-slate-300">Your Moving Estimate</span>
-                  <span className="px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-400 text-xs font-medium">AI Generated</span>
+                  <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 text-xs font-medium border border-emerald-500/20">AI Generated</span>
                 </div>
                 <div className="text-3xl font-extrabold text-white">$2,450 - $3,200</div>
                 <div className="text-xs text-slate-500">Based on 2BR apartment • {primaryLocation} → Houston</div>
-                <div className="grid grid-cols-2 gap-3 pt-3 border-t border-slate-700/50">
+                <div className="grid grid-cols-2 gap-3 pt-3 border-t border-slate-800">
                   {[
                     { label: "Distance", value: "1,420 mi" },
                     { label: "Est. Weight", value: "4,200 lbs" },
@@ -145,7 +142,7 @@ export function DarkPremiumLandingPreview({ selections, onBack }: DarkPremiumLan
           </div>
         </section>
 
-        {/* ── Services / Features Grid ─────────────────────────── */}
+        {/* ── Features Grid ─────────────────────────────────────── */}
         <section className="px-8 py-16">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-12">
@@ -159,9 +156,9 @@ export function DarkPremiumLandingPreview({ selections, onBack }: DarkPremiumLan
                 { icon: Clock, title: "Flexible Scheduling", desc: "Choose your exact pickup and delivery windows. Weekend and evening availability." },
                 { icon: BarChart3, title: "AI Cost Optimizer", desc: "Our algorithm finds the best rates by analyzing 10,000+ data points in real time." },
               ].map((feature) => (
-                <div key={feature.title} className="group p-6 rounded-xl bg-slate-900/60 border border-slate-800/60 hover:border-cyan-500/30 transition-all hover:shadow-[0_0_30px_rgba(6,182,212,0.06)]">
-                  <div className="w-10 h-10 rounded-lg bg-cyan-500/10 flex items-center justify-center mb-4 group-hover:bg-cyan-500/20 transition-colors">
-                    <feature.icon className="w-5 h-5 text-cyan-400" />
+                <div key={feature.title} className="group p-6 rounded-xl bg-slate-900/60 border border-slate-800/60 hover:border-emerald-500/20 transition-all">
+                  <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center mb-4">
+                    <feature.icon className="w-5 h-5 text-emerald-400" />
                   </div>
                   <h3 className="font-semibold text-white mb-2">{feature.title}</h3>
                   <p className="text-sm text-slate-400 leading-relaxed">{feature.desc}</p>
@@ -181,14 +178,14 @@ export function DarkPremiumLandingPreview({ selections, onBack }: DarkPremiumLan
               { value: "$0", label: "Hidden Fees" },
             ].map((stat) => (
               <div key={stat.label}>
-                <div className="text-3xl font-extrabold bg-gradient-to-r from-cyan-400 to-teal-400 bg-clip-text text-transparent">{stat.value}</div>
+                <div className="text-3xl font-extrabold text-emerald-400">{stat.value}</div>
                 <div className="text-sm text-slate-500 mt-1">{stat.label}</div>
               </div>
             ))}
           </div>
         </section>
 
-        {/* ── Reviews / Testimonials ───────────────────────────── */}
+        {/* ── Testimonials ───────────────────────────────────── */}
         <section className="px-8 py-16">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-12">
@@ -202,7 +199,7 @@ export function DarkPremiumLandingPreview({ selections, onBack }: DarkPremiumLan
                 { name: "Linda R.", location: allLocations[2] || "Florida", quote: "Got quotes from 5 companies — TruMove was the most transparent and affordable. Zero hidden fees.", rating: 5 },
               ].map((review) => (
                 <div key={review.name} className="p-6 rounded-xl bg-slate-900/60 border border-slate-800/60 space-y-4">
-                  <Quote className="w-8 h-8 text-cyan-500/30" />
+                  <Quote className="w-8 h-8 text-emerald-500/20" />
                   <p className="text-slate-300 text-sm leading-relaxed italic">"{review.quote}"</p>
                   <div className="flex items-center justify-between pt-3 border-t border-slate-800/50">
                     <div>
@@ -219,8 +216,8 @@ export function DarkPremiumLandingPreview({ selections, onBack }: DarkPremiumLan
           </div>
         </section>
 
-        {/* ── Quote Form Section ───────────────────────────────── */}
-        <section className="px-8 py-16 bg-gradient-to-b from-slate-950 to-slate-900">
+        {/* ── Quote Form ───────────────────────────────────────── */}
+        <section className="px-8 py-16 bg-slate-900/60">
           <div className="max-w-2xl mx-auto text-center space-y-6">
             <h2 className="text-3xl font-bold">Ready to Move?</h2>
             <p className="text-slate-400">Get your free, no-obligation quote in under 60 seconds.</p>
@@ -237,13 +234,13 @@ export function DarkPremiumLandingPreview({ selections, onBack }: DarkPremiumLan
                 <label className="text-xs text-slate-400 mb-1 block">Move Date</label>
                 <div className="w-full h-10 rounded-lg bg-slate-900/80 border border-slate-700/60" />
               </div>
-              <button className="w-full py-3 bg-gradient-to-r from-cyan-500 to-teal-500 text-white font-semibold rounded-lg text-sm hover:shadow-[0_0_24px_rgba(6,182,212,0.3)] transition-shadow">
+              <button className="w-full py-3 bg-white text-slate-950 font-semibold rounded-lg text-sm hover:bg-slate-100 transition-colors">
                 Get My Free Quote <ArrowRight className="w-4 h-4 inline ml-1" />
               </button>
               <div className="flex items-center justify-center gap-4 text-xs text-slate-500">
-                <span className="flex items-center gap-1"><CheckCircle2 className="w-3 h-3 text-cyan-500" /> No obligation</span>
-                <span className="flex items-center gap-1"><Shield className="w-3 h-3 text-cyan-500" /> Data encrypted</span>
-                <span className="flex items-center gap-1"><Clock className="w-3 h-3 text-cyan-500" /> Response in 60s</span>
+                <span className="flex items-center gap-1"><CheckCircle2 className="w-3 h-3 text-emerald-400" /> No obligation</span>
+                <span className="flex items-center gap-1"><Shield className="w-3 h-3 text-emerald-400" /> Data encrypted</span>
+                <span className="flex items-center gap-1"><Clock className="w-3 h-3 text-emerald-400" /> Response in 60s</span>
               </div>
             </div>
           </div>
@@ -253,7 +250,7 @@ export function DarkPremiumLandingPreview({ selections, onBack }: DarkPremiumLan
         <footer className="border-t border-slate-800/60 px-8 py-8">
           <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
-              <Truck className="w-5 h-5 text-cyan-400" />
+              <Truck className="w-5 h-5 text-emerald-400" />
               <span className="font-bold text-sm">TruMove</span>
             </div>
             <div className="flex gap-6 text-xs text-slate-500">
