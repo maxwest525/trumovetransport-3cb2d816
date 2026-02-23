@@ -1,14 +1,8 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import { Link } from "react-router-dom";
-import { Home, Sun, Moon, Bell, Search } from "lucide-react";
+import { Home, Sun, Moon, Bell } from "lucide-react";
 import { useTheme } from "next-themes";
-import AgentSidebar, { type SidebarAction } from "@/components/agent/AgentSidebar";
-import { CombinedWorkspaceModal } from "@/components/agent/CombinedWorkspaceModal";
-import { OperationsCenterModal } from "@/components/agent/OperationsCenterModal";
-import { CoachingSummaryModal } from "@/components/coaching/CoachingSummaryModal";
-import { InternalMessagingModal } from "@/components/messaging/InternalMessagingModal";
-import { CreateCustomerModal } from "@/components/agent/CreateCustomerModal";
-import { CollectPaymentModal } from "@/components/agent/CollectPaymentModal";
+import AgentSidebar from "@/components/agent/AgentSidebar";
 import { setPortalContext } from "@/hooks/usePortalContext";
 
 interface AgentShellProps {
@@ -18,44 +12,15 @@ interface AgentShellProps {
 
 export default function AgentShell({ children, breadcrumb = "" }: AgentShellProps) {
   const { theme, setTheme } = useTheme();
-  const [workspaceOpen, setWorkspaceOpen] = useState(false);
-  const [operationsOpen, setOperationsOpen] = useState(false);
-  const [coachingOpen, setCoachingOpen] = useState(false);
-  const [messagingOpen, setMessagingOpen] = useState(false);
-  const [newCustomerOpen, setNewCustomerOpen] = useState(false);
-  const [paymentsOpen, setPaymentsOpen] = useState(false);
-  const [paymentPrefill, setPaymentPrefill] = useState<{ name: string; email: string; phone: string } | null>(null);
 
   useEffect(() => {
     setPortalContext("agent");
     window.scrollTo(0, 0);
   }, []);
 
-  const handleAction = (action: SidebarAction) => {
-    if (action === "workspace") setWorkspaceOpen(true);
-    else if (action === "operations") setOperationsOpen(true);
-    else if (action === "coaching") setCoachingOpen(true);
-    else if (action === "messaging") setMessagingOpen(true);
-    else if (action === "new_customer") setNewCustomerOpen(true);
-    else if (action === "payments") {
-      setPaymentPrefill(null);
-      setPaymentsOpen(true);
-    }
-  };
-
-  const handleSendESignFromCustomer = (customer: { id: string; name: string; email: string; phone: string }) => {
-    // Open workspace modal which has e-sign tab
-    setWorkspaceOpen(true);
-  };
-
-  const handleCollectPaymentFromCustomer = (customer: { id: string; name: string; email: string; phone: string }) => {
-    setPaymentPrefill({ name: customer.name, email: customer.email, phone: customer.phone });
-    setPaymentsOpen(true);
-  };
-
   return (
     <div className="flex min-h-screen bg-background text-foreground">
-      <AgentSidebar onAction={handleAction} />
+      <AgentSidebar />
       <div className="flex-1 flex flex-col min-h-screen">
         <header className="h-12 border-b border-border bg-card flex items-center justify-between px-4 shrink-0">
           <div className="flex items-center gap-3">
@@ -79,22 +44,6 @@ export default function AgentShell({ children, breadcrumb = "" }: AgentShellProp
           {children}
         </main>
       </div>
-
-      <CombinedWorkspaceModal open={workspaceOpen} onOpenChange={setWorkspaceOpen} />
-      <OperationsCenterModal open={operationsOpen} onOpenChange={setOperationsOpen} />
-      <CoachingSummaryModal open={coachingOpen} onOpenChange={setCoachingOpen} />
-      <InternalMessagingModal open={messagingOpen} onOpenChange={setMessagingOpen} />
-      <CreateCustomerModal
-        open={newCustomerOpen}
-        onOpenChange={setNewCustomerOpen}
-        onSendESign={handleSendESignFromCustomer}
-        onCollectPayment={handleCollectPaymentFromCustomer}
-      />
-      <CollectPaymentModal
-        open={paymentsOpen}
-        onOpenChange={setPaymentsOpen}
-        prefillCustomer={paymentPrefill}
-      />
     </div>
   );
 }

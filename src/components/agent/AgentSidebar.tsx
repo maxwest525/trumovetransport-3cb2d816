@@ -7,44 +7,35 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export type SidebarAction = "workspace" | "operations" | "coaching" | "messaging" | "new_customer" | "payments";
-
 interface NavItem {
   label: string;
   icon: React.ElementType;
-  href?: string;
-  action?: SidebarAction;
+  href: string;
   badge?: number;
   advanced?: boolean;
 }
 
 const NAV_ITEMS: NavItem[] = [
   // Primary tools
-  { label: "New Customer", icon: UserPlus, action: "new_customer" },
+  { label: "New Customer", icon: UserPlus, href: "/agent/new-customer" },
   { label: "CRM Pipeline", icon: Users, href: "/agent/pipeline" },
-  { label: "Dialer", icon: Phone, action: "workspace" },
+  { label: "Dialer", icon: Phone, href: "/agent/workspace" },
   // Core
   { label: "Dashboard", icon: LayoutDashboard, href: "/agent/dashboard" },
   { label: "My KPIs", icon: Gauge, href: "/kpi" },
-  { label: "Bookings", icon: CalendarCheck, action: "operations" },
-  { label: "Payments", icon: CreditCard, action: "payments" },
-  { label: "Messages", icon: MessageSquare, action: "messaging", badge: 5 },
+  { label: "Bookings", icon: CalendarCheck, href: "/agent/operations" },
+  { label: "Payments", icon: CreditCard, href: "/agent/payments" },
+  { label: "Messages", icon: MessageSquare, href: "/agent/messages", badge: 5 },
   // Advanced tools
-  { label: "Inventory", icon: Package, action: "workspace", advanced: true },
-  { label: "Estimates", icon: FileText, action: "workspace", advanced: true },
-  { label: "Documents", icon: FileSignature, action: "workspace", advanced: true },
-  { label: "Tasks", icon: CheckSquare, action: "coaching", badge: 2, advanced: true },
+  { label: "Inventory", icon: Package, href: "/agent/workspace", advanced: true },
+  { label: "Estimates", icon: FileText, href: "/agent/workspace", advanced: true },
+  { label: "Documents", icon: FileSignature, href: "/agent/workspace", advanced: true },
+  { label: "Tasks", icon: CheckSquare, href: "/agent/coaching", badge: 2, advanced: true },
 ];
 
-interface AgentSidebarProps {
-  onAction?: (action: SidebarAction) => void;
-}
-
-export default function AgentSidebar({ onAction }: AgentSidebarProps) {
+export default function AgentSidebar() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [showAdvanced] = useState(true);
-  const [activeAction, setActiveAction] = useState<SidebarAction | null>(null);
 
   const handleResetPreference = () => {
     localStorage.removeItem("truemove_remembered_role");
@@ -56,48 +47,23 @@ export default function AgentSidebar({ onAction }: AgentSidebarProps) {
 
   const renderItem = (item: NavItem) => {
     const Icon = item.icon;
+    const active = location.pathname === item.href;
     const badge = item.badge ? (
-      <span className="ml-auto min-w-[18px] h-[18px] flex items-center justify-center rounded-full text-[10px] font-semibold bg-foreground text-background leading-none px-1">
+      <span className={cn(
+        "ml-auto min-w-[18px] h-[18px] flex items-center justify-center rounded-full text-[10px] font-semibold leading-none px-1",
+        active ? "bg-background text-foreground" : "bg-foreground text-background"
+      )}>
         {item.badge}
       </span>
     ) : null;
 
-    if (item.href) {
-      const active = location.pathname === item.href;
-      const handleRouteClick = () => setActiveAction(null);
-      return (
-        <Link
-          key={item.label}
-          to={item.href}
-          onClick={handleRouteClick}
-          className={cn(
-            "flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors",
-            active
-              ? "bg-foreground text-background"
-              : "text-muted-foreground hover:bg-muted hover:text-foreground"
-          )}
-        >
-          <Icon className="w-4 h-4" />
-          <span>{item.label}</span>
-          {active ? (
-            item.badge ? <span className="ml-auto min-w-[18px] h-[18px] flex items-center justify-center rounded-full text-[10px] font-semibold bg-background text-foreground leading-none px-1">{item.badge}</span> : null
-          ) : badge}
-        </Link>
-      );
-    }
-
     return (
-      <button
+      <Link
         key={item.label}
-        onClick={() => {
-          if (item.action) {
-            setActiveAction(item.action);
-            onAction?.(item.action);
-          }
-        }}
+        to={item.href}
         className={cn(
-          "w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors",
-          activeAction === item.action && !location.pathname.startsWith("/agent/")
+          "flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors",
+          active
             ? "bg-foreground text-background"
             : "text-muted-foreground hover:bg-muted hover:text-foreground"
         )}
@@ -105,7 +71,7 @@ export default function AgentSidebar({ onAction }: AgentSidebarProps) {
         <Icon className="w-4 h-4" />
         <span>{item.label}</span>
         {badge}
-      </button>
+      </Link>
     );
   };
 
@@ -120,12 +86,8 @@ export default function AgentSidebar({ onAction }: AgentSidebarProps) {
       </div>
 
       <nav className="flex-1 px-2 py-2 space-y-0.5">
-        {/* Essential items */}
         {essentialItems.map(renderItem)}
-
         <div className="h-px bg-border/50 mx-2 my-1" />
-
-        {/* Advanced items */}
         {advancedItems.map(renderItem)}
       </nav>
 

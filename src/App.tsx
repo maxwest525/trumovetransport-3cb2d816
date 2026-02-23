@@ -38,6 +38,12 @@ import ResetPassword from "./pages/ResetPassword";
 import MarketingDashboard from "./pages/MarketingDashboard";
 import AccountingDashboard from "./pages/AccountingDashboard";
 import ManagerCoaching from "./pages/ManagerCoaching";
+import AgentWorkspace from "./pages/AgentWorkspace";
+import AgentOperations from "./pages/AgentOperations";
+import AgentMessaging from "./pages/AgentMessaging";
+import AgentNewCustomer from "./pages/AgentNewCustomer";
+import AgentPayments from "./pages/AgentPayments";
+import AgentCoaching from "./pages/AgentCoaching";
 
 const queryClient = new QueryClient();
 
@@ -81,6 +87,12 @@ const App = () => (
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/marketing/dashboard" element={<MarketingDashboard />} />
             <Route path="/accounting/dashboard" element={<AccountingDashboard />} />
+            <Route path="/agent/workspace" element={<AgentWorkspace />} />
+            <Route path="/agent/operations" element={<AgentOperations />} />
+            <Route path="/agent/messages" element={<AgentMessaging />} />
+            <Route path="/agent/new-customer" element={<AgentNewCustomer />} />
+            <Route path="/agent/payments" element={<AgentPayments />} />
+            <Route path="/agent/coaching" element={<AgentCoaching />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
