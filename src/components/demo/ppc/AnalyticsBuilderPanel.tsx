@@ -108,7 +108,6 @@ export function AnalyticsBuilderPanel({ mode, onBuild, onCancel }: AnalyticsBuil
   const convertingPlatforms = PLATFORM_ROAS.filter(p => p.converting);
   const nonConvertingPlatforms = PLATFORM_ROAS.filter(p => !p.converting);
 
-  // Auto mode: pre-select converting items. Manual mode: start empty.
   const [selectedKeywords, setSelectedKeywords] = useState<string[]>(
     mode === "auto" ? convertingKeywords.map(k => k.keyword) : []
   );
@@ -136,45 +135,197 @@ export function AnalyticsBuilderPanel({ mode, onBuild, onCancel }: AnalyticsBuil
     onBuild({ keywords: selectedKeywords, locations: selectedLocations, demographics: selectedDemographics, platforms: selectedPlatforms, template });
   };
 
-  return (
-    <div className="space-y-4">
-      {/* Header */}
-      <div className="text-center space-y-2">
-        <div className={cn(
-          "inline-flex items-center gap-2 px-3 py-1 rounded-full border",
-          mode === "auto"
-            ? "bg-gradient-to-r from-amber-500/10 to-rose-500/10 border-amber-500/20"
-            : "bg-gradient-to-r from-sky-500/10 to-blue-500/10 border-sky-500/20"
-        )}>
-          {mode === "auto" ? <Rocket className="w-4 h-4 text-amber-500" /> : <Layout className="w-4 h-4 text-sky-500" />}
-          <span className={cn("text-sm font-medium", mode === "auto" ? "text-amber-600 dark:text-amber-400" : "text-sky-600 dark:text-sky-400")}>
-            {mode === "auto" ? "AI Auto-Build" : "Build Manual"}
-          </span>
+  // ── Auto mode: compact summary view ──────────────────────────────────
+  if (mode === "auto") {
+    return (
+      <div className="space-y-4 max-w-2xl mx-auto">
+        {/* Header */}
+        <div className="text-center space-y-1">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border bg-gradient-to-r from-amber-500/10 to-rose-500/10 border-amber-500/20">
+            <Rocket className="w-4 h-4 text-amber-500" />
+            <span className="text-sm font-medium text-amber-600 dark:text-amber-400">AI Auto-Build</span>
+          </div>
+          <h2 className="text-lg font-bold text-foreground">Here's What We'll Build</h2>
+          <p className="text-xs text-muted-foreground">AI analyzed your data and picked the highest-performing configuration.</p>
         </div>
-        <h2 className="text-xl font-bold text-foreground">
-          {mode === "auto" ? "AI Has Selected the Best Options" : "Select Your Optimization Data"}
-        </h2>
-        <p className="text-xs text-muted-foreground max-w-lg mx-auto">
-          {mode === "auto"
-            ? "Based on your analytics, AI pre-selected the highest-performing options below. Review, adjust, then build."
-            : "Choose keywords, locations, audiences, and platforms. We'll build a page optimized for your selections."}
-        </p>
-      </div>
 
-      {/* AI Alerts */}
-      {mode === "auto" && (
+        {/* KPI Strip - compact */}
+        <div className="grid grid-cols-4 gap-2">
+          {[
+            { label: "Spend", value: "$25.8K", color: "text-sky-500" },
+            { label: "Conv.", value: "1,694", color: "text-pink-500" },
+            { label: "CPA", value: "$15.23", color: "text-amber-500" },
+            { label: "ROAS", value: "3.5x", color: "text-cyan-500" },
+          ].map(s => (
+            <div key={s.label} className="p-2 rounded-lg bg-muted/50 border border-border/50 text-center">
+              <p className={cn("text-sm font-bold", s.color)}>{s.value}</p>
+              <p className="text-[10px] text-muted-foreground">{s.label}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Compact selected summary */}
+        <Card className="border-border">
+          <CardContent className="p-4 space-y-3">
+            {/* Keywords */}
+            <div className="space-y-1.5">
+              <div className="flex items-center gap-1.5 text-xs font-semibold text-foreground">
+                <Hash className="w-3.5 h-3.5 text-amber-500" />
+                Keywords
+                <Badge variant="outline" className="text-[9px] h-4 ml-auto">{convertingKeywords.length} selected</Badge>
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {convertingKeywords.map(kw => (
+                  <div key={kw.keyword} className="flex items-center gap-1 px-2 py-1 rounded-md bg-primary/5 border border-primary/20 text-[11px]">
+                    <CheckCircle2 className="w-3 h-3 text-primary shrink-0" />
+                    <span className="text-foreground font-medium">{kw.keyword}</span>
+                    <span className="text-muted-foreground">·</span>
+                    <span className="text-primary">{kw.ctr}% CTR</span>
+                    <span className="text-muted-foreground">·</span>
+                    <span className="text-muted-foreground">${kw.cpa}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Locations */}
+            <div className="space-y-1.5 pt-2 border-t border-border">
+              <div className="flex items-center gap-1.5 text-xs font-semibold text-foreground">
+                <MapPin className="w-3.5 h-3.5 text-rose-500" />
+                Locations
+                <Badge variant="outline" className="text-[9px] h-4 ml-auto">{convertingGeo.length} selected</Badge>
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {convertingGeo.map(loc => (
+                  <div key={loc.city} className="flex items-center gap-1 px-2 py-1 rounded-md bg-primary/5 border border-primary/20 text-[11px]">
+                    <CheckCircle2 className="w-3 h-3 text-primary shrink-0" />
+                    <span className="text-foreground font-medium">{loc.city}</span>
+                    <span className="text-muted-foreground">·</span>
+                    <span className="text-primary">{loc.rate}%</span>
+                    <span className="text-muted-foreground">·</span>
+                    <span className="text-muted-foreground">${(loc.revenue / 1000).toFixed(0)}K</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Audiences */}
+            <div className="space-y-1.5 pt-2 border-t border-border">
+              <div className="flex items-center gap-1.5 text-xs font-semibold text-foreground">
+                <Users className="w-3.5 h-3.5 text-indigo-500" />
+                Audiences
+                <Badge variant="outline" className="text-[9px] h-4 ml-auto">{convertingDemo.length} selected</Badge>
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {convertingDemo.map(d => (
+                  <div key={d.segment} className="flex items-center gap-1 px-2 py-1 rounded-md bg-primary/5 border border-primary/20 text-[11px]">
+                    <CheckCircle2 className="w-3 h-3 text-primary shrink-0" />
+                    <span className="text-foreground font-medium">{d.segment}</span>
+                    <span className="text-muted-foreground">·</span>
+                    <span className="text-primary">${d.aov} AOV</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Platforms */}
+            <div className="space-y-1.5 pt-2 border-t border-border">
+              <div className="flex items-center gap-1.5 text-xs font-semibold text-foreground">
+                <BarChart3 className="w-3.5 h-3.5 text-purple-500" />
+                Platforms
+                <Badge variant="outline" className="text-[9px] h-4 ml-auto">{convertingPlatforms.length} selected</Badge>
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {convertingPlatforms.map(p => (
+                  <div key={p.platform} className="flex items-center gap-1 px-2 py-1 rounded-md bg-primary/5 border border-primary/20 text-[11px]">
+                    <CheckCircle2 className="w-3 h-3 text-primary shrink-0" />
+                    <span className="text-foreground font-medium">{p.platform}</span>
+                    <span className="text-muted-foreground">·</span>
+                    <span className="text-primary">{p.roas}x</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* AI Reasoning */}
         <div className="space-y-1.5">
+          <div className="flex items-center gap-1.5 text-xs font-semibold text-foreground">
+            <Sparkles className="w-3.5 h-3.5 text-violet-500" /> Why These Options
+          </div>
           {ALERTS.map((alert, i) => (
             <div key={i} className={cn(
-              "flex items-center gap-2 px-3 py-2 rounded-lg text-xs border",
+              "flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] border",
               alert.type === "positive" ? "bg-primary/5 border-primary/20 text-primary" : "bg-amber-500/5 border-amber-500/20 text-amber-600 dark:text-amber-400"
             )}>
-              {alert.type === "positive" ? <TrendingUp className="w-3.5 h-3.5 shrink-0" /> : <AlertTriangle className="w-3.5 h-3.5 shrink-0" />}
+              {alert.type === "positive" ? <TrendingUp className="w-3 h-3 shrink-0" /> : <AlertTriangle className="w-3 h-3 shrink-0" />}
               <span>{alert.message}</span>
             </div>
           ))}
         </div>
-      )}
+
+        {/* Non-converting collapsed */}
+        <Collapsible open={showNonConverting} onOpenChange={setShowNonConverting}>
+          <CollapsibleTrigger className="flex items-center gap-2 w-full justify-center py-2 text-[11px] font-medium text-muted-foreground hover:text-foreground transition-colors rounded-lg border border-dashed border-border hover:border-foreground/30">
+            {showNonConverting ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
+            {showNonConverting ? "Hide Non-Converting" : "Show Non-Converting"}
+            <Badge variant="outline" className="text-[9px] h-4 text-muted-foreground">
+              {nonConvertingKeywords.length + nonConvertingGeo.length + nonConvertingDemo.length + nonConvertingPlatforms.length}
+            </Badge>
+            <ChevronDown className={cn("w-3 h-3 transition-transform", showNonConverting && "rotate-180")} />
+          </CollapsibleTrigger>
+          <CollapsibleContent className="mt-2">
+            <div className="p-3 rounded-lg border border-dashed border-amber-500/30 bg-amber-500/5 space-y-1.5">
+              {[...nonConvertingKeywords.map(k => ({ label: k.keyword, stat: `$${k.cpa} CPA`, reason: k.reason })),
+                ...nonConvertingGeo.map(g => ({ label: `${g.city}, ${g.state}`, stat: `${g.rate}%`, reason: g.reason })),
+                ...nonConvertingDemo.map(d => ({ label: d.segment, stat: `$${d.aov} AOV`, reason: d.reason })),
+                ...nonConvertingPlatforms.map(p => ({ label: p.platform, stat: `${p.roas}x ROAS`, reason: p.reason })),
+              ].map((item, i) => (
+                <div key={i} className="flex items-center gap-2 text-[11px] text-muted-foreground">
+                  <AlertTriangle className="w-3 h-3 text-amber-500 shrink-0" />
+                  <span className="font-medium">{item.label}</span>
+                  <span className="text-amber-600 dark:text-amber-400">{item.stat}</span>
+                  <span className="hidden sm:inline text-muted-foreground/70">— {item.reason}</span>
+                </div>
+              ))}
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
+
+        {/* Build button */}
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" size="sm" onClick={onCancel} className="text-muted-foreground">
+            ← Back
+          </Button>
+          <Button
+            onClick={handleBuild}
+            className="flex-1 gap-2 h-11 shadow-lg shadow-primary/20 text-sm"
+            style={{ background: "linear-gradient(135deg, hsl(var(--primary)) 0%, #A855F7 50%, #EC4899 100%)" }}
+          >
+            <Rocket className="w-4 h-4" />
+            Build It Now
+            <ArrowRight className="w-4 h-4" />
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Manual mode: full interactive grid ──────────────────────────────
+  return (
+    <div className="space-y-4">
+      {/* Header */}
+      <div className="text-center space-y-2">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border bg-gradient-to-r from-sky-500/10 to-blue-500/10 border-sky-500/20">
+          <Layout className="w-4 h-4 text-sky-500" />
+          <span className="text-sm font-medium text-sky-600 dark:text-sky-400">Build Manual</span>
+        </div>
+        <h2 className="text-xl font-bold text-foreground">Select Your Optimization Data</h2>
+        <p className="text-xs text-muted-foreground max-w-lg mx-auto">
+          Choose keywords, locations, audiences, and platforms. We'll build a page optimized for your selections.
+        </p>
+      </div>
 
       {/* KPI Strip */}
       <div className="grid grid-cols-4 gap-2">
@@ -217,7 +368,6 @@ export function AnalyticsBuilderPanel({ mode, onBuild, onCancel }: AnalyticsBuil
                   badge={`${kw.ctr}% CTR`}
                   secondBadge={`$${kw.cpa} CPA`}
                   trend={kw.trend}
-                  reason={mode === "auto" ? kw.reason : undefined}
                 />
               ))}
             </CardContent>
@@ -248,7 +398,6 @@ export function AnalyticsBuilderPanel({ mode, onBuild, onCancel }: AnalyticsBuil
                     sublabel={loc.state}
                     badge={`${loc.rate}% conv`}
                     secondBadge={`$${(loc.revenue / 1000).toFixed(0)}K rev`}
-                    reason={mode === "auto" ? loc.reason : undefined}
                   />
                 );
               })}
@@ -278,7 +427,6 @@ export function AnalyticsBuilderPanel({ mode, onBuild, onCancel }: AnalyticsBuil
                   badge={`$${demo.aov} AOV`}
                   secondBadge={demo.device}
                   icon={demo.device.includes("Mobile") ? <Smartphone className="w-3 h-3 text-muted-foreground" /> : <Monitor className="w-3 h-3 text-muted-foreground" />}
-                  reason={mode === "auto" ? demo.reason : undefined}
                 />
               ))}
             </CardContent>
@@ -307,13 +455,12 @@ export function AnalyticsBuilderPanel({ mode, onBuild, onCancel }: AnalyticsBuil
                   badge={`${p.roas}x ROAS`}
                   secondBadge={`$${(p.spend / 1000).toFixed(1)}K`}
                   badgeVariant={p.roas >= 3.5 ? "default" : "secondary"}
-                  reason={mode === "auto" ? p.reason : undefined}
                 />
               ))}
             </CardContent>
           </Card>
 
-          {/* ── SEO + Funnel + A/B Tests ─────────────────────── */}
+          {/* ── SEO + A/B Tests ──────────────────────────────── */}
           <Card className="border-border">
             <CardHeader className="pb-2 pt-3 px-3">
               <CardTitle className="text-xs font-semibold flex items-center gap-1.5">
@@ -322,7 +469,6 @@ export function AnalyticsBuilderPanel({ mode, onBuild, onCancel }: AnalyticsBuil
               </CardTitle>
             </CardHeader>
             <CardContent className="px-3 pb-3 space-y-3">
-              {/* SEO Scores */}
               <div className="space-y-1.5">
                 {SEO_SCORES.map(s => (
                   <div key={s.label} className="space-y-0.5">
@@ -334,7 +480,6 @@ export function AnalyticsBuilderPanel({ mode, onBuild, onCancel }: AnalyticsBuil
                   </div>
                 ))}
               </div>
-              {/* A/B Test Results */}
               <div className="space-y-1.5 pt-2 border-t border-border">
                 <div className="flex items-center gap-1.5 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
                   <FlaskConical className="w-3 h-3" /> A/B Test Wins
@@ -349,7 +494,7 @@ export function AnalyticsBuilderPanel({ mode, onBuild, onCancel }: AnalyticsBuil
             </CardContent>
           </Card>
 
-          {/* ── Conversion Funnel ─────────────────────────────── */}
+          {/* ── Conversion Funnel ────────────────────────────── */}
           <Card className="border-border">
             <CardHeader className="pb-2 pt-3 px-3">
               <CardTitle className="text-xs font-semibold flex items-center gap-1.5">
@@ -376,7 +521,6 @@ export function AnalyticsBuilderPanel({ mode, onBuild, onCancel }: AnalyticsBuil
                   </div>
                 </div>
               ))}
-              {/* AI Recommendations */}
               <div className="pt-2 border-t border-border space-y-1.5">
                 <div className="flex items-center gap-1.5 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
                   <Sparkles className="w-3 h-3 text-violet-500" /> AI Recommendations
@@ -480,7 +624,7 @@ export function AnalyticsBuilderPanel({ mode, onBuild, onCancel }: AnalyticsBuil
         <CardContent className="p-4 flex items-center justify-between relative z-10">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-fuchsia-500 flex items-center justify-center shadow-lg shadow-primary/20">
-              {mode === "auto" ? <Rocket className="w-5 h-5 text-white" /> : <Layout className="w-5 h-5 text-white" />}
+              <Layout className="w-5 h-5 text-white" />
             </div>
             <div>
               <p className="text-sm font-semibold text-foreground">
@@ -505,8 +649,8 @@ export function AnalyticsBuilderPanel({ mode, onBuild, onCancel }: AnalyticsBuil
               className="gap-2 shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all"
               style={{ background: "linear-gradient(135deg, hsl(var(--primary)) 0%, #A855F7 50%, #EC4899 100%)" }}
             >
-              {mode === "auto" ? <Rocket className="w-4 h-4" /> : <Sparkles className="w-4 h-4" />}
-              {mode === "auto" ? "Build It Now" : "Generate Page"}
+              <Sparkles className="w-4 h-4" />
+              Generate Page
               <ArrowRight className="w-4 h-4" />
             </Button>
           </div>
