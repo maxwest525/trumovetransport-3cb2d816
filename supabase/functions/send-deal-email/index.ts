@@ -9,10 +9,10 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { to, subject, body, customerName } = await req.json();
+    const { to, subject, body, customerName, htmlBody } = await req.json();
 
-    if (!to || !subject || !body) {
-      return new Response(JSON.stringify({ error: "Missing required fields: to, subject, body" }), {
+    if (!to || !subject || (!body && !htmlBody)) {
+      return new Response(JSON.stringify({ error: "Missing required fields: to, subject, body or htmlBody" }), {
         status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
@@ -20,7 +20,11 @@ serve(async (req) => {
     const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
     if (!RESEND_API_KEY) throw new Error("RESEND_API_KEY not configured");
 
-    const html = `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+    // If htmlBody is provided, use it directly (rich HTML template).
+    // Otherwise wrap plain text body in a simple layout.
+    const html = htmlBody
+      ? htmlBody
+      : `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
       <p>${body.replace(/\n/g, "<br/>")}</p>
       <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
       <p style="color: #888; font-size: 11px;">Sent via TruMove CRM</p>

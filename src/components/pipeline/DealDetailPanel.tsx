@@ -9,6 +9,7 @@ import { ActivityTimeline } from "./ActivityTimeline";
 import { AddActivityForm } from "./AddActivityForm";
 import { DealAIAssistant } from "./DealAIAssistant";
 import { DealEmailComposer } from "./DealEmailComposer";
+import { DealQuickActions } from "./DealQuickActions";
 import { Phone, Mail, MapPin, Calendar, DollarSign } from "lucide-react";
 import { format, parseISO } from "date-fns";
 
@@ -111,6 +112,11 @@ export function DealDetailPanel({ deal, stages, open, onOpenChange, onStageChang
               )}
             </div>
           )}
+
+          <Separator />
+
+          {/* Quick Actions: Auto Follow-Up & E-Sign */}
+          <DealQuickActions deal={deal} activities={activities} onActivityAdded={fetchActivities} />
 
           <Separator />
 
