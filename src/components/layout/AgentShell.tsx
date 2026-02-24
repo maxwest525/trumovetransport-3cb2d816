@@ -4,6 +4,7 @@ import { Home, Sun, Moon, Bell } from "lucide-react";
 import { useTheme } from "next-themes";
 import AgentSidebar from "@/components/agent/AgentSidebar";
 import { FloatingDialer } from "@/components/agent/FloatingDialer";
+import MiniSoftphone from "@/components/dialer/MiniSoftphone";
 import { setPortalContext } from "@/hooks/usePortalContext";
 
 interface AgentShellProps {
@@ -51,6 +52,7 @@ export default function AgentShell({ children, breadcrumb = "" }: AgentShellProp
         </main>
       </div>
       <FloatingDialer open={dialerOpen} onOpenChange={setDialerOpen} prefillNumber={dialerPrefill} />
+      <MiniSoftphone />
     </div>
   );
 }
