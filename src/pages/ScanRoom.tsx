@@ -495,11 +495,11 @@ export default function ScanRoom() {
               </div>
 
               {/* Center: Demo & Actions */}
-              <div className="flex flex-col items-center justify-center gap-4 py-6 border border-border rounded-2xl bg-background shadow-[0_4px_20px_-4px_hsl(var(--tm-ink)/0.08)] relative overflow-hidden">
+              <div className="flex flex-col items-center justify-center gap-4 border border-border rounded-2xl bg-background shadow-[0_4px_20px_-4px_hsl(var(--tm-ink)/0.08)] relative overflow-hidden">
                 {/* Scanner content - show image when demo step >= 2 */}
                 {demoStep >= 2 ? (
-                  <div className="flex flex-col items-center gap-3 w-full px-4">
-                    <div className="relative w-full max-w-[280px] aspect-[4/3] rounded-xl overflow-hidden border border-border">
+                  <div className="flex flex-col items-center gap-2 w-full">
+                    <div className="relative w-full flex-1 overflow-hidden rounded-t-2xl">
                       <img src={sampleRoomLiving} alt="Scanning room" className="w-full h-full object-cover" />
                       {isScanning && (
                         <div className="absolute inset-0 bg-primary/10 animate-pulse" />
@@ -511,7 +511,7 @@ export default function ScanRoom() {
                         </span>
                       </div>
                     </div>
-                    <p className="text-xs text-muted-foreground text-center">
+                    <p className="text-xs text-muted-foreground text-center px-4">
                       {isScanning 
                         ? `Detected ${detectedItems.length} of ${DEMO_ITEMS.length} items...`
                         : `Found ${detectedItems.length} items`
