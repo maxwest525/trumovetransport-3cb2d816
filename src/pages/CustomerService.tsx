@@ -277,7 +277,8 @@ export default function CustomerService() {
         {/* ─── COMMAND CENTER TRUST BAR ─── */}
         <div className="w-full bg-[hsl(220_20%_12%)] dark:bg-[hsl(220_15%_8%)] border-b border-[hsl(0_0%_100%/0.08)]">
           <div className="mx-auto max-w-7xl px-4 py-2 flex items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2.5 shrink-0">
+              <div className="w-6 h-6 rounded border border-[hsl(0_0%_100%/0.15)] bg-[hsl(0_0%_100%/0.06)]" />
               <span className="text-[11px] font-bold uppercase tracking-wider text-white/90">Contact Center</span>
             </div>
             <div className="flex items-center gap-5 overflow-x-auto">
