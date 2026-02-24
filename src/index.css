@@ -13422,17 +13422,17 @@
   color: hsl(var(--foreground) / 0.7);
 }
 
-/* Hover: invert to foreground bg */
+/* Hover: white bg with dark outline */
 .header-nav-link:hover {
-  color: hsl(var(--background));
-  background: hsl(var(--foreground));
+  color: hsl(var(--foreground));
+  background: hsl(var(--background));
   border-color: hsl(var(--foreground));
   transform: none;
 }
 
 .dark .header-nav-link:hover {
-  color: hsl(var(--background));
-  background: hsl(var(--foreground));
+  color: hsl(var(--foreground));
+  background: hsl(var(--background));
   border-color: hsl(var(--foreground));
   transform: none;
 }
