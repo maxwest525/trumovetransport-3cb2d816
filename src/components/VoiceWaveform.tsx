@@ -25,8 +25,8 @@ export default function VoiceWaveform({ isActive, isSpeaking, className = '' }: 
     };
     resize();
 
-    const barCount = 28;
-    const barWidth = 2;
+    const barCount = 32;
+    const barWidth = 2.5;
     const gap = 1.5;
 
     const draw = () => {
@@ -36,8 +36,7 @@ export default function VoiceWaveform({ isActive, isSpeaking, className = '' }: 
       ctx.clearRect(0, 0, w, h);
 
       if (!isActive) {
-        // Idle: flat thin line
-        ctx.fillStyle = `hsla(142, 71%, 45%, 0.15)`;
+        ctx.fillStyle = `hsla(142, 71%, 45%, 0.12)`;
         const totalW = barCount * (barWidth + gap) - gap;
         const startX = (w - totalW) / 2;
         for (let i = 0; i < barCount; i++) {
@@ -50,39 +49,37 @@ export default function VoiceWaveform({ isActive, isSpeaking, className = '' }: 
         return;
       }
 
-      phaseRef.current += isSpeaking ? 0.08 : 0.02;
+      phaseRef.current += isSpeaking ? 0.1 : 0.02;
       const totalW = barCount * (barWidth + gap) - gap;
       const startX = (w - totalW) / 2;
 
       for (let i = 0; i < barCount; i++) {
         const x = startX + i * (barWidth + gap);
         const norm = i / (barCount - 1);
-        const center = Math.abs(norm - 0.5) * 2; // 0 at center, 1 at edges
+        const center = Math.abs(norm - 0.5) * 2;
 
         let amplitude: number;
         if (isSpeaking) {
-          // Dynamic bars with multiple wave frequencies
-          const wave1 = Math.sin(phaseRef.current * 3 + i * 0.4) * 0.5 + 0.5;
-          const wave2 = Math.sin(phaseRef.current * 5.3 + i * 0.7) * 0.3 + 0.5;
-          const wave3 = Math.sin(phaseRef.current * 1.7 + i * 0.2) * 0.2 + 0.5;
-          amplitude = (wave1 + wave2 + wave3) / 3;
-          amplitude *= (1 - center * 0.6); // Taper at edges
-          amplitude = Math.max(0.08, amplitude);
+          const wave1 = Math.sin(phaseRef.current * 4 + i * 0.5) * 0.6 + 0.5;
+          const wave2 = Math.sin(phaseRef.current * 6.7 + i * 0.9) * 0.4 + 0.5;
+          const wave3 = Math.sin(phaseRef.current * 2.3 + i * 0.3) * 0.3 + 0.5;
+          const wave4 = Math.sin(phaseRef.current * 8.1 + i * 1.2) * 0.2 + 0.5;
+          amplitude = (wave1 + wave2 + wave3 + wave4) / 4;
+          amplitude *= (1 - center * 0.4); // Less taper = wider active area
+          amplitude = Math.max(0.12, amplitude * 1.3); // Boost overall
         } else {
-          // Gentle breathing when listening
-          const wave = Math.sin(phaseRef.current * 2 + i * 0.3) * 0.15 + 0.2;
+          const wave = Math.sin(phaseRef.current * 2 + i * 0.3) * 0.12 + 0.15;
           amplitude = wave * (1 - center * 0.7);
-          amplitude = Math.max(0.05, amplitude);
+          amplitude = Math.max(0.04, amplitude);
         }
 
-        const barH = Math.max(1.5, amplitude * (h * 0.8));
+        const barH = Math.max(2, amplitude * (h * 0.92));
         const y = (h - barH) / 2;
 
-        // Gradient color based on amplitude
-        const alpha = isSpeaking ? 0.4 + amplitude * 0.6 : 0.2 + amplitude * 0.3;
+        const alpha = isSpeaking ? 0.5 + amplitude * 0.5 : 0.15 + amplitude * 0.3;
         ctx.fillStyle = `hsla(142, 71%, 45%, ${alpha})`;
         ctx.beginPath();
-        ctx.roundRect(x, y, barWidth, barH, 1);
+        ctx.roundRect(x, y, barWidth, barH, 1.25);
         ctx.fill();
       }
 
@@ -97,7 +94,7 @@ export default function VoiceWaveform({ isActive, isSpeaking, className = '' }: 
     <canvas
       ref={canvasRef}
       className={`w-full ${className}`}
-      style={{ height: '24px' }}
+      style={{ height: '36px' }}
     />
   );
 }

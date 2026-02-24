@@ -1,6 +1,6 @@
 import { useConversation } from '@elevenlabs/react';
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { PhoneOff, Loader2, X, Mic, Copy, Download, Check, Video, ChevronUp, Phone } from 'lucide-react';
+import { PhoneOff, Loader2, X, Mic, Copy, Download, Check, Video, Phone } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { useNavigate, useLocation } from 'react-router-dom';
 import trudyAvatar from '@/assets/trudy-avatar.png';
@@ -18,8 +18,6 @@ export default function ElevenLabsTrudyWidget() {
   const navigate = useNavigate();
   const location = useLocation();
   const [isConnecting, setIsConnecting] = useState(false);
-  const [showOptions, setShowOptions] = useState(false);
-  const [optionsClosing, setOptionsClosing] = useState(false);
   const [showTranscript, setShowTranscript] = useState(false);
   const [showPostCall, setShowPostCall] = useState(false);
   const [savedTranscript, setSavedTranscript] = useState<TranscriptEntry[]>([]);
@@ -109,15 +107,6 @@ export default function ElevenLabsTrudyWidget() {
 
   const isConnected = conversation.status === 'connected';
 
-  const closeOptions = useCallback(() => {
-    setOptionsClosing(true);
-    setTimeout(() => { setShowOptions(false); setOptionsClosing(false); }, 250);
-  }, []);
-
-  const toggleOptions = useCallback(() => {
-    if (showOptions) closeOptions();
-    else setShowOptions(true);
-  }, [showOptions, closeOptions]);
 
   // --- Shared UI pieces ---
 
@@ -207,69 +196,51 @@ export default function ElevenLabsTrudyWidget() {
         </button>
       )}
 
-      {/* Options popup */}
-      {showOptions && !isConnected && !isConnecting && (
-        <div className={`flex flex-col items-end gap-1.5 ${optionsClosing ? 'animate-out fade-out slide-out-to-bottom-2 duration-200 fill-mode-forwards' : ''}`}>
+      {/* FAB */}
+      <button
+        onClick={isConnected ? stopConversation : startConversation}
+        disabled={isConnecting}
+        className={`flex items-center gap-2 rounded-full shadow-lg transition-all duration-200 hover:scale-105 active:scale-95 ${
+          isConnected
+            ? 'bg-destructive text-destructive-foreground px-5 py-3'
+            : isConnecting
+            ? 'bg-muted text-muted-foreground px-5 py-3'
+            : 'bg-foreground text-background pl-3 pr-5 py-2.5'
+        }`}
+        aria-label={isConnected ? 'End call' : 'Talk to Trudy'}
+      >
+        {isConnecting ? (
+          <><Loader2 className="h-4 w-4 animate-spin" /><span className="text-sm font-medium">Connecting…</span></>
+        ) : isConnected ? (
+          <><PhoneOff className="h-4 w-4" /><span className="text-sm font-medium">End Call</span></>
+        ) : (
+          <><img src={trudyAvatar} alt="" className="h-6 w-6 rounded-full object-cover" /><span className="text-sm font-medium">Talk to Trudy</span></>
+        )}
+      </button>
+
+      {/* Call & Video below the widget */}
+      {!isConnected && !isConnecting && (
+        <div className="flex items-center gap-2">
           <a
             href="tel:+16097277647"
-            onClick={() => closeOptions()}
-            className={`flex items-center gap-2 rounded-full border border-border bg-card shadow-lg px-4 py-2 hover:bg-accent transition-all ${
-              optionsClosing ? '' : 'animate-in fade-in slide-in-from-bottom-2 duration-200'
-            }`}
-            style={optionsClosing ? {} : { animationDelay: '50ms', animationFillMode: 'both' }}
+            className="flex items-center gap-2 rounded-full border border-border bg-card shadow-md px-4 py-2.5 hover:bg-accent transition-all duration-200"
           >
-            <div className="w-6 h-6 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center">
-              <Phone className="h-3 w-3 text-white" />
+            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center">
+              <Phone className="h-3.5 w-3.5 text-white" />
             </div>
-            <span className="text-xs font-medium text-foreground">Call Us</span>
+            <span className="text-xs font-semibold text-foreground">Call Us</span>
           </a>
           <button
-            onClick={() => { closeOptions(); navigate('/book'); }}
-            className={`flex items-center gap-2 rounded-full border border-border bg-card shadow-lg px-4 py-2 hover:bg-accent transition-all ${
-              optionsClosing ? '' : 'animate-in fade-in slide-in-from-bottom-2 duration-200'
-            }`}
-            style={optionsClosing ? {} : { animationDelay: '0ms', animationFillMode: 'both' }}
+            onClick={() => navigate('/book')}
+            className="flex items-center gap-2 rounded-full border border-border bg-card shadow-md px-4 py-2.5 hover:bg-accent transition-all duration-200"
           >
-            <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-400 to-indigo-600 flex items-center justify-center">
-              <Video className="h-3 w-3 text-white" />
+            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-400 to-indigo-600 flex items-center justify-center">
+              <Video className="h-3.5 w-3.5 text-white" />
             </div>
-            <span className="text-xs font-medium text-foreground">Video Consult</span>
+            <span className="text-xs font-semibold text-foreground">Video Consult</span>
           </button>
         </div>
       )}
-
-      {/* FAB */}
-      <div className="flex items-center gap-1.5">
-        {!isConnected && !isConnecting && (
-          <button
-            onClick={toggleOptions}
-            className={`flex items-center justify-center w-9 h-9 rounded-full border border-border bg-card shadow-md hover:bg-accent transition-all duration-200 ${showOptions && !optionsClosing ? 'rotate-180' : ''}`}
-            aria-label="More options"
-          >
-            <ChevronUp className="h-3.5 w-3.5 text-primary" />
-          </button>
-        )}
-        <button
-          onClick={isConnected ? stopConversation : startConversation}
-          disabled={isConnecting}
-          className={`flex items-center gap-2 rounded-full shadow-lg transition-all duration-200 hover:scale-105 active:scale-95 ${
-            isConnected
-              ? 'bg-destructive text-destructive-foreground px-4 py-2.5'
-              : isConnecting
-              ? 'bg-muted text-muted-foreground px-4 py-2.5'
-              : 'bg-foreground text-background pl-2.5 pr-4 py-2'
-          }`}
-          aria-label={isConnected ? 'End call' : 'Talk to Trudy'}
-        >
-          {isConnecting ? (
-            <><Loader2 className="h-4 w-4 animate-spin" /><span className="text-xs font-medium">Connecting…</span></>
-          ) : isConnected ? (
-            <><PhoneOff className="h-4 w-4" /><span className="text-xs font-medium">End Call</span></>
-          ) : (
-            <><img src={trudyAvatar} alt="" className="h-5 w-5 rounded-full object-cover" /><span className="text-xs font-medium">Talk to Trudy</span></>
-          )}
-        </button>
-      </div>
     </div>
   );
 }
