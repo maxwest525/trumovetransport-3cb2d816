@@ -282,12 +282,14 @@ export default function CustomerService() {
     <SiteShell hideTrustStrip>
       <main className="min-h-screen bg-background">
 
+        <div className="sticky top-0 z-40">
         <PageHeaderStrip
           title="Meet Trudy"
           trustItems={TRUDY_TRUST_ITEMS}
           rightLabel="Session ID"
           rightValue={`TM-${new Date().getFullYear()}-51423342`}
         />
+        </div>
 
         {/* ─── HERO ─── */}
         <section className="text-center pt-6 pb-2 px-4">
