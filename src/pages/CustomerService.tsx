@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useConversation } from '@elevenlabs/react';
-import { Phone, PhoneOff, Send, Clock, Shield, Calculator, MapPin, Calendar, HelpCircle, Package, ScanLine, Video, Mic, Loader2, MessageSquare, Zap, Globe, HeadphonesIcon } from 'lucide-react';
+import { Phone, PhoneOff, Send, Clock, Shield, Calculator, MapPin, Calendar, HelpCircle, Package, ScanLine, Video, Mic, Loader2, MessageSquare, Zap, Globe, HeadphonesIcon, CheckCircle2, MonitorPlay, Share2, FileText } from 'lucide-react';
 import SiteShell from '@/components/layout/SiteShell';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Input } from '@/components/ui/input';
@@ -274,11 +274,40 @@ export default function CustomerService() {
     <SiteShell>
       <main className="min-h-screen bg-background">
 
+        {/* ─── COMMAND CENTER TRUST BAR ─── */}
+        <div className="w-full bg-[hsl(220_20%_12%)] dark:bg-[hsl(220_15%_8%)] border-b border-[hsl(0_0%_100%/0.08)]">
+          <div className="mx-auto max-w-7xl px-4 py-2 flex items-center justify-between gap-4">
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-white/90">Contact Center</span>
+            </div>
+            <div className="flex items-center gap-5 overflow-x-auto">
+              {[
+                { icon: MonitorPlay, text: 'Secure Video' },
+                { icon: Shield, text: 'Licensed Broker' },
+                { icon: Share2, text: 'Screen Sharing' },
+                { icon: FileText, text: 'Quote Review' },
+                { icon: CheckCircle2, text: 'No Obligation' },
+              ].map((item, idx, arr) => (
+                <div key={item.text} className="flex items-center gap-3 shrink-0">
+                  <div className="flex items-center gap-1.5">
+                    <item.icon className="w-3 h-3 text-green-400/80" />
+                    <span className="text-[10px] font-semibold uppercase tracking-wider text-white/70">{item.text}</span>
+                  </div>
+                  {idx < arr.length - 1 && <span className="text-white/15 text-[6px]">•</span>}
+                </div>
+              ))}
+            </div>
+            <div className="hidden md:block shrink-0">
+              <span className="text-[10px] text-white/40 font-mono tracking-wide">TM-{new Date().getFullYear()}-{Math.floor(Math.random() * 90000000 + 10000000)}</span>
+            </div>
+          </div>
+        </div>
+
         {/* ─── HERO: Command Center ─── */}
-        <section className="tru-page-hero-section" style={{ paddingBottom: 0 }}>
+        <section className="text-center pt-8 pb-4 px-4">
           <div className="mx-auto max-w-3xl">
             {/* Orb + Avatar */}
-            <div className="relative mx-auto w-fit mb-6">
+            <div className="relative mx-auto w-fit mb-4">
               {/* Dark mode ambient glow behind orb */}
               <div className={`absolute inset-0 rounded-full transition-all duration-700 pointer-events-none dark:block hidden ${
                 isConnected
@@ -299,18 +328,18 @@ export default function CustomerService() {
               </div>
             </div>
 
-            <h1 className="tru-hero-headline-main !text-[clamp(2.5rem,5vw,3.5rem)]">Trudy</h1>
-            <p className="text-muted-foreground text-sm mt-1 mb-5 max-w-md mx-auto leading-relaxed">
-              Your AI move coordinator. Get instant quotes, track shipments, schedule moves, and resolve issues — all by voice.
+            <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-foreground leading-none">Trudy</h1>
+            <p className="text-muted-foreground text-xs mt-1 mb-3 max-w-sm mx-auto leading-relaxed">
+              AI move coordinator — instant quotes, tracking, scheduling & support by voice.
             </p>
 
             {/* Action row */}
-            <div className="flex flex-wrap items-center justify-center gap-3 mb-4">
+            <div className="flex flex-wrap items-center justify-center gap-2.5 mb-3">
               {!isConnected ? (
                 <button
                   onClick={startCall}
                   disabled={isConnecting}
-                  className="tru-modal-primary-btn !w-auto !px-7 !py-2.5 !text-xs"
+                  className="tru-modal-primary-btn !w-auto !px-6 !py-2 !text-[11px]"
                 >
                   {isConnecting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Mic className="h-3.5 w-3.5" />}
                   {isConnecting ? 'Connecting…' : 'Talk to Trudy'}
@@ -318,13 +347,13 @@ export default function CustomerService() {
               ) : (
                 <button
                   onClick={endCall}
-                  className="flex items-center gap-2 rounded-full bg-destructive text-destructive-foreground px-6 py-2.5 text-xs font-semibold transition-all hover:opacity-90 active:scale-95"
+                  className="flex items-center gap-2 rounded-full bg-destructive text-destructive-foreground px-5 py-2 text-[11px] font-semibold transition-all hover:opacity-90 active:scale-95"
                 >
                   <PhoneOff className="h-3.5 w-3.5" />
                   End Call
                 </button>
               )}
-              <a href="tel:+16097277647" className="tru-secondary-action-btn !text-xs !py-2 !px-5">
+              <a href="tel:+16097277647" className="tru-secondary-action-btn !text-[11px] !py-1.5 !px-4">
                 <Phone className="h-3.5 w-3.5" />
                 (609) 727-7647
               </a>
@@ -342,7 +371,7 @@ export default function CustomerService() {
             )}
 
             {/* Stats row */}
-            <div className="flex flex-wrap justify-center gap-8 mt-6 mb-2">
+            <div className="flex flex-wrap justify-center gap-6 mt-4 mb-1">
               {[
                 { value: '24/7', label: 'Availability' },
                 { value: '<3s', label: 'Response' },
@@ -350,44 +379,26 @@ export default function CustomerService() {
                 { value: '4.9★', label: 'Rating' },
               ].map((s) => (
                 <div key={s.label} className="text-center">
-                  <p className="text-base font-black text-foreground tracking-tight">{s.value}</p>
-                  <p className="text-[10px] text-muted-foreground uppercase tracking-widest">{s.label}</p>
+                  <p className="text-sm font-black text-foreground tracking-tight">{s.value}</p>
+                  <p className="text-[9px] text-muted-foreground uppercase tracking-widest">{s.label}</p>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* ─── TRUST STRIP ─── */}
-        <div className="safer-trust-strip mt-6">
-          <div className="safer-trust-strip-inner">
-            {[
-              { icon: Shield, text: 'FMCSA Verified' },
-              { icon: Globe, text: '24/7 Available' },
-              { icon: Zap, text: 'Instant Responses' },
-              { icon: HeadphonesIcon, text: 'Human Escalation' },
-            ].map((item, idx, arr) => (
-              <div key={item.text} className="safer-trust-item">
-                <item.icon className="w-4 h-4" />
-                <span>{item.text}</span>
-                {idx < arr.length - 1 && <span className="safer-trust-dot">•</span>}
-              </div>
-            ))}
-          </div>
-        </div>
-
         {/* ─── CAPABILITIES GRID ─── */}
-        <section className="py-14 px-4">
+        <section className="py-8 px-4">
           <div className="mx-auto max-w-4xl">
-            <div className="text-center mb-8">
-              <h2 className="text-lg font-bold text-foreground tracking-tight">What Trudy Handles</h2>
-              <p className="text-xs text-muted-foreground mt-1">One AI assistant for your entire move</p>
+            <div className="text-center mb-5">
+              <h2 className="text-sm font-bold text-foreground tracking-tight uppercase tracking-wider">What Trudy Handles</h2>
+              <p className="text-[11px] text-muted-foreground mt-0.5">One AI assistant for your entire move</p>
             </div>
-            <div className="tru-hero-value-cards-open grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="tru-hero-value-cards-open grid gap-1.5 sm:grid-cols-2 lg:grid-cols-4">
               {capabilities.map((cap, i) => (
                 <div
                   key={cap.label}
-                  className="tru-value-card-open group relative rounded-xl border border-border bg-card p-4 hover:border-foreground/20 transition-colors cursor-default"
+                  className="tru-value-card-open group relative rounded-lg border border-border bg-card p-3 hover:border-foreground/20 transition-colors cursor-default"
                   style={{ animationDelay: `${0.5 + i * 0.08}s` }}
                 >
                   {cap.tag && (
@@ -405,9 +416,9 @@ export default function CustomerService() {
         </section>
 
         {/* ─── FAQ + CONTACT ─── */}
-        <section className="py-14 px-4 border-t border-border">
+        <section className="py-8 px-4 border-t border-border">
           <div className="mx-auto max-w-4xl">
-            <div className="grid lg:grid-cols-2 gap-10">
+            <div className="grid lg:grid-cols-2 gap-8">
 
               {/* FAQ */}
               <div>
