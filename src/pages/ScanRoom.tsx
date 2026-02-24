@@ -359,7 +359,7 @@ export default function ScanRoom() {
         <section className="tru-scan-header-section">
           <div className="container max-w-4xl mx-auto px-4 text-center">
             <h1 className="tru-scan-main-headline">
-              Start Your <span className="tru-scan-headline-accent">AI Inventory Analysis</span>
+              AI Room <span className="tru-scan-headline-accent">Inventory Scan</span>
             </h1>
             <p className="tru-scan-main-subheadline">
               Simply scan your rooms and our AI will identify, measure, and catalog every item automatically.
