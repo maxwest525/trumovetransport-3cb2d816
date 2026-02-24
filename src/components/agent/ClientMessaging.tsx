@@ -113,6 +113,7 @@ export function ClientMessaging() {
   const [copied, setCopied] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState("");
   const [customerPickerOpen, setCustomerPickerOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const [showNewLeadForm, setShowNewLeadForm] = useState(false);
   const [newLead, setNewLead] = useState({ firstName: "", lastName: "", email: "", phone: "" });
   const [isCreatingLead, setIsCreatingLead] = useState(false);
@@ -209,6 +210,13 @@ export function ClientMessaging() {
 
   const selectedLead = leads.find((l) => l.id === selectedCustomer);
 
+  const lowerQuery = searchQuery.toLowerCase();
+  const filteredEmailTemplates = EMAIL_TEMPLATES.filter(
+    (t) => t.name.toLowerCase().includes(lowerQuery) || t.body.toLowerCase().includes(lowerQuery)
+  );
+  const filteredSmsTemplates = SMS_TEMPLATES.filter(
+    (t) => t.name.toLowerCase().includes(lowerQuery) || t.body.toLowerCase().includes(lowerQuery)
+  );
   return (
     <div className="space-y-5">
       {/* Page Header with Search */}
@@ -219,6 +227,8 @@ export function ClientMessaging() {
           <Input
             placeholder="Search messages, templates…"
             className="pl-9 h-9 bg-background"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
       </div>
@@ -364,7 +374,7 @@ export function ClientMessaging() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
-                {EMAIL_TEMPLATES.map((template) => (
+                {filteredEmailTemplates.map((template) => (
                   <Button
                     key={template.id}
                     variant="outline"
@@ -443,7 +453,7 @@ export function ClientMessaging() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
-                {SMS_TEMPLATES.map((template) => (
+                {filteredSmsTemplates.map((template) => (
                   <Button
                     key={template.id}
                     variant="outline"
