@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useConversation } from '@elevenlabs/react';
-import { Phone, PhoneOff, Send, Clock, Shield, Calculator, MapPin, Calendar, HelpCircle, Package, ScanLine, Video, Mic, Loader2, MessageSquare, Zap, Globe, HeadphonesIcon, CheckCircle2, MonitorPlay, Share2, FileText } from 'lucide-react';
+import { Phone, PhoneOff, Send, Clock, Shield, Calculator, MapPin, Calendar, HelpCircle, Package, ScanLine, Video, Mic, Loader2, MessageSquare, CheckCircle2, MonitorPlay, Share2, FileText } from 'lucide-react';
 import SiteShell from '@/components/layout/SiteShell';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Input } from '@/components/ui/input';
@@ -271,36 +271,30 @@ export default function CustomerService() {
   }, [formData]);
 
   return (
-    <SiteShell>
+    <SiteShell hideTrustStrip>
       <main className="min-h-screen bg-background">
 
-        {/* ─── COMMAND CENTER TRUST BAR ─── */}
-        <div className="w-full bg-[hsl(220_20%_12%)] dark:bg-[hsl(220_15%_8%)] border-b border-[hsl(0_0%_100%/0.08)]">
-          <div className="mx-auto max-w-7xl px-4 py-2 flex items-center justify-between gap-4">
-            <div className="flex items-center gap-2.5 shrink-0">
-              <div className="w-6 h-6 rounded border border-[hsl(0_0%_100%/0.15)] bg-[hsl(0_0%_100%/0.06)]" />
-              <span className="text-[11px] font-bold uppercase tracking-wider text-white/90">Contact Center</span>
+        {/* ─── CONTACT CENTER TRUST STRIP (same style as site-wide strip) ─── */}
+        <div className="safer-trust-strip">
+          <div className="safer-trust-strip-inner">
+            <div className="safer-trust-item font-bold">
+              <div className="w-5 h-5 rounded border border-border bg-muted/40 shrink-0" />
+              <span>Contact Center</span>
             </div>
-            <div className="flex items-center gap-5 overflow-x-auto">
-              {[
-                { icon: MonitorPlay, text: 'Secure Video' },
-                { icon: Shield, text: 'Licensed Broker' },
-                { icon: Share2, text: 'Screen Sharing' },
-                { icon: FileText, text: 'Quote Review' },
-                { icon: CheckCircle2, text: 'No Obligation' },
-              ].map((item, idx, arr) => (
-                <div key={item.text} className="flex items-center gap-3 shrink-0">
-                  <div className="flex items-center gap-1.5">
-                    <item.icon className="w-3 h-3 text-green-400/80" />
-                    <span className="text-[10px] font-semibold uppercase tracking-wider text-white/70">{item.text}</span>
-                  </div>
-                  {idx < arr.length - 1 && <span className="text-white/15 text-[6px]">•</span>}
-                </div>
-              ))}
-            </div>
-            <div className="hidden md:block shrink-0">
-              <span className="text-[10px] text-white/40 font-mono tracking-wide">TM-{new Date().getFullYear()}-{Math.floor(Math.random() * 90000000 + 10000000)}</span>
-            </div>
+            <span className="safer-trust-dot">•</span>
+            {[
+              { icon: MonitorPlay, text: 'Secure Video' },
+              { icon: Shield, text: 'Licensed Broker' },
+              { icon: Share2, text: 'Screen Sharing' },
+              { icon: FileText, text: 'Quote Review' },
+              { icon: CheckCircle2, text: 'No Obligation' },
+            ].map((item, idx, arr) => (
+              <div key={item.text} className="safer-trust-item">
+                <item.icon className="w-4 h-4" />
+                <span>{item.text}</span>
+                {idx < arr.length - 1 && <span className="safer-trust-dot">•</span>}
+              </div>
+            ))}
           </div>
         </div>
 
