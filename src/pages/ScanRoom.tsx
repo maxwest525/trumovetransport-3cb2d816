@@ -449,7 +449,7 @@ export default function ScanRoom() {
               </div>
 
               {/* Center: Demo & Actions */}
-              <div className="flex flex-col items-center justify-center gap-6 py-8 border border-border rounded-2xl bg-background">
+              <div className="flex flex-col items-center justify-center gap-6 py-8 border border-border rounded-2xl bg-background shadow-[0_4px_20px_-4px_hsl(var(--tm-ink)/0.08)]">
                 <div className="flex flex-col items-center gap-3 text-center">
                   <div className="w-16 h-16 rounded-2xl bg-muted/50 border border-border flex items-center justify-center">
                     <Scan className="w-8 h-8 text-muted-foreground" />
