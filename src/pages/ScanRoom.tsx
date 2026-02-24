@@ -348,32 +348,24 @@ export default function ScanRoom() {
           onStartScan={startDemo}
         />
 
-        {/* How It Works - Compact Steps Bar */}
-        <section className="tru-scan-steps-bar tru-scan-steps-bar-compact">
-          <div className="tru-scan-steps-bar-inner tru-scan-steps-spread">
-            <div className="tru-scan-step-bar-item">
-              <span className="tru-scan-step-bar-num">1</span>
-              <div className="tru-scan-step-bar-content">
-                <span className="tru-scan-step-bar-label">Upload Room Photos or Videos</span>
-                <span className="tru-scan-step-bar-desc">Capture each room showing all furniture and items</span>
+        {/* How It Works - Clean Card Steps */}
+        <section className="container max-w-4xl mx-auto px-4 py-10">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground/60 text-center mb-6">How It Works</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {[
+              { num: "1", icon: Upload, title: "Upload Photos or Videos", desc: "Capture each room showing all furniture and items" },
+              { num: "2", icon: Scan, title: "AI Detects & Measures", desc: "Our AI identifies items and calculates weight & volume" },
+              { num: "3", icon: Package, title: "Review & Get Quote", desc: "Verify your inventory and receive an instant estimate" },
+            ].map((step) => (
+              <div key={step.num} className="flex flex-col items-center text-center gap-3 rounded-2xl border border-border bg-card p-6 shadow-[0_4px_20px_-4px_hsl(var(--tm-ink)/0.06)]">
+                <div className="w-10 h-10 rounded-full bg-muted/50 border border-border flex items-center justify-center text-sm font-bold text-foreground">
+                  {step.num}
+                </div>
+                <step.icon className="w-5 h-5 text-muted-foreground" />
+                <h3 className="text-sm font-semibold text-foreground">{step.title}</h3>
+                <p className="text-xs text-muted-foreground/70 leading-relaxed">{step.desc}</p>
               </div>
-            </div>
-            <ChevronRight className="tru-scan-step-bar-arrow" />
-            <div className="tru-scan-step-bar-item">
-              <span className="tru-scan-step-bar-num">2</span>
-              <div className="tru-scan-step-bar-content">
-                <span className="tru-scan-step-bar-label">AI Detects & Measures</span>
-                <span className="tru-scan-step-bar-desc">Our AI identifies items and calculates weight & volume</span>
-              </div>
-            </div>
-            <ChevronRight className="tru-scan-step-bar-arrow" />
-            <div className="tru-scan-step-bar-item">
-              <span className="tru-scan-step-bar-num">3</span>
-              <div className="tru-scan-step-bar-content">
-                <span className="tru-scan-step-bar-label">Review & Get Quote</span>
-                <span className="tru-scan-step-bar-desc">Verify your inventory and receive an instant estimate</span>
-              </div>
-            </div>
+            ))}
           </div>
         </section>
 
