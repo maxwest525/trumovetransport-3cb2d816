@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 // Scroll to top on mount
 const useScrollToTop = () => {
@@ -86,6 +86,31 @@ export default function ScanRoom() {
   ];
   
   const [uploadedPhotos, setUploadedPhotos] = useState<{ id: string; url: string; name: string }[]>([]);
+  const [pendingRoomLabel, setPendingRoomLabel] = useState<string>("");
+  const roomUploadRef = useRef<HTMLInputElement>(null);
+
+  const handleRoomClick = (roomLabel: string) => {
+    setPendingRoomLabel(roomLabel);
+    if (roomUploadRef.current) {
+      roomUploadRef.current.value = "";
+      roomUploadRef.current.click();
+    }
+  };
+
+  const handleRoomUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files) {
+      Array.from(files).forEach(file => {
+        const url = URL.createObjectURL(file);
+        setUploadedPhotos(prev => [...prev, {
+          id: `photo-${Date.now()}-${Math.random()}`,
+          url,
+          name: `${pendingRoomLabel} - ${file.name}`
+        }]);
+      });
+    }
+    setPendingRoomLabel("");
+  };
 
   // Simulate live detection with slower speed for better demo experience
   useEffect(() => {
@@ -491,7 +516,15 @@ export default function ScanRoom() {
                 <div className="tru-scan-library-grid tru-scan-library-grid-compact">
                   {uploadedPhotos.length === 0 ? (
                     <div className="tru-scan-library-empty tru-scan-library-empty-compact flex flex-col items-center gap-3 py-4">
-                      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">Suggested Rooms</p>
+                      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">Tap a room to upload</p>
+                      <input
+                        ref={roomUploadRef}
+                        type="file"
+                        accept="image/*,video/*"
+                        multiple
+                        className="hidden"
+                        onChange={handleRoomUpload}
+                      />
                       <div className="grid grid-cols-2 gap-2 w-full px-2">
                         {[
                           { icon: Sofa, label: "Living Room" },
@@ -501,10 +534,15 @@ export default function ScanRoom() {
                           { icon: Warehouse, label: "Garage" },
                           { icon: Box, label: "Storage" },
                         ].map(({ icon: Icon, label }) => (
-                          <div key={label} className="flex items-center gap-1.5 rounded-lg border border-border bg-muted/30 px-2.5 py-2 text-[11px] text-muted-foreground/70">
+                          <button
+                            key={label}
+                            type="button"
+                            onClick={() => handleRoomClick(label)}
+                            className="flex items-center gap-1.5 rounded-lg border border-border bg-muted/30 px-2.5 py-2 text-[11px] text-muted-foreground/70 hover:bg-muted/60 hover:text-foreground hover:border-foreground/20 transition-colors cursor-pointer text-left"
+                          >
                             <Icon className="w-3.5 h-3.5 flex-shrink-0" />
                             <span>{label}</span>
-                          </div>
+                          </button>
                         ))}
                       </div>
                       <p className="text-[10px] text-muted-foreground/40 flex items-center gap-1"><Video className="w-3 h-3" /> Photos or videos accepted</p>
