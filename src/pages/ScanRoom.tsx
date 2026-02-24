@@ -525,7 +525,7 @@ export default function ScanRoom() {
                         className="hidden"
                         onChange={handleRoomUpload}
                       />
-                      <div className="grid grid-cols-2 gap-2 w-full px-2">
+                      <div className="grid grid-cols-2 gap-2.5 w-full px-1">
                         {[
                           { icon: Sofa, label: "Living Room" },
                           { icon: BedDouble, label: "Bedroom" },
@@ -538,9 +538,9 @@ export default function ScanRoom() {
                             key={label}
                             type="button"
                             onClick={() => handleRoomClick(label)}
-                            className="flex items-center gap-1.5 rounded-lg border border-border bg-muted/30 px-2.5 py-2 text-[11px] text-muted-foreground/70 hover:bg-muted/60 hover:text-foreground hover:border-foreground/20 transition-colors cursor-pointer text-left"
+                            className="flex items-center justify-center gap-2 rounded-lg border border-border bg-muted/30 px-3 py-3 text-xs font-medium text-muted-foreground/70 hover:bg-muted/60 hover:text-foreground hover:border-foreground/20 transition-colors cursor-pointer whitespace-nowrap min-w-0"
                           >
-                            <Icon className="w-3.5 h-3.5 flex-shrink-0" />
+                            <Icon className="w-4 h-4 flex-shrink-0" />
                             <span>{label}</span>
                           </button>
                         ))}
