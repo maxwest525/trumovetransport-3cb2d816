@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useConversation } from '@elevenlabs/react';
-import { Phone, PhoneOff, Send, Clock, Shield, Calculator, MapPin, Calendar, HelpCircle, Package, ScanLine, Video, Mic, Loader2, MessageSquare, CheckCircle2, MonitorPlay, Share2, FileText } from 'lucide-react';
+import { Phone, PhoneOff, Send, Clock, Shield, Calculator, MapPin, Calendar, HelpCircle, Package, ScanLine, Video, Mic, Loader2, MessageSquare, BadgeCheck, Monitor, FileText } from 'lucide-react';
 import SiteShell from '@/components/layout/SiteShell';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Input } from '@/components/ui/input';
@@ -8,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import trudyAvatar from '@/assets/trudy-avatar.png';
+import logo from '@/assets/logo.png';
 
 const TRUDY_AGENT_ID = 'agent_0501khwa2t2pfj0s3echetmjhx4n';
 
@@ -274,36 +274,47 @@ export default function CustomerService() {
     <SiteShell hideTrustStrip>
       <main className="min-h-screen bg-background">
 
-        {/* ─── CONTACT CENTER TRUST STRIP ─── */}
-        <div className="safer-trust-strip !justify-between">
-          <div className="safer-trust-strip-inner !justify-between !w-full !max-w-7xl !mx-auto !px-4">
-            <div className="safer-trust-item !font-extrabold !gap-2">
-              <div className="w-5 h-5 rounded border border-[hsl(0_0%_100%/0.15)] bg-[hsl(0_0%_100%/0.06)] shrink-0" />
-              <span>Contact Center</span>
+        {/* ─── CONTACT CENTER HEADER STRIP (match other pages) ─── */}
+        <header className="video-consult-header">
+          <div className="flex items-center gap-3">
+            <img src={logo} alt="TruMove" className="h-5 brightness-0 invert" />
+            <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-primary-foreground/90">
+              Contact Center
+            </span>
+          </div>
+
+          <div className="video-consult-header-trust">
+            <div className="video-consult-header-trust-item">
+              <Shield className="w-4 h-4" />
+              <span>SECURE VIDEO</span>
             </div>
-            <div className="flex items-center gap-0">
-              {[
-                { icon: MonitorPlay, text: 'Secure Video' },
-                { icon: Shield, text: 'Licensed Broker' },
-                { icon: Share2, text: 'Screen Sharing' },
-                { icon: FileText, text: 'Quote Review' },
-                { icon: CheckCircle2, text: 'No Obligation' },
-              ].map((item, idx, arr) => (
-                <div key={item.text} className="flex items-center">
-                  <div className="safer-trust-item">
-                    <item.icon className="w-4 h-4" />
-                    <span>{item.text}</span>
-                  </div>
-                  {idx < arr.length - 1 && <span className="safer-trust-dot">•</span>}
-                </div>
-              ))}
+            <span className="video-consult-trust-dot">•</span>
+            <div className="video-consult-header-trust-item">
+              <BadgeCheck className="w-4 h-4" />
+              <span>LICENSED BROKER</span>
             </div>
-            <div className="safer-trust-item !text-[10px] !font-mono !opacity-50 shrink-0 hidden md:flex">
-              <span>SESSION ID</span>
-              <span>TM-{new Date().getFullYear()}-51423342</span>
+            <span className="video-consult-trust-dot">•</span>
+            <div className="video-consult-header-trust-item">
+              <Monitor className="w-4 h-4" />
+              <span>SCREEN SHARING</span>
+            </div>
+            <span className="video-consult-trust-dot">•</span>
+            <div className="video-consult-header-trust-item">
+              <FileText className="w-4 h-4" />
+              <span>QUOTE REVIEW</span>
+            </div>
+            <span className="video-consult-trust-dot">•</span>
+            <div className="video-consult-header-trust-item">
+              <Clock className="w-4 h-4" />
+              <span>NO OBLIGATION</span>
             </div>
           </div>
-        </div>
+
+          <div className="text-right hidden md:block">
+            <div className="text-[11px] text-primary-foreground/70 uppercase tracking-wider">Session ID</div>
+            <div className="text-sm font-mono text-primary-foreground">TM-{new Date().getFullYear()}-51423342</div>
+          </div>
+        </header>
 
         {/* ─── HERO ─── */}
         <section className="text-center pt-6 pb-2 px-4">
