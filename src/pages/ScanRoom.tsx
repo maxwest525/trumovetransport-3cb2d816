@@ -481,13 +481,6 @@ export default function ScanRoom() {
                     {isScanning ? "Scanning..." : "Watch Demo"}
                   </button>
 
-                  <label
-                    htmlFor="photo-upload"
-                    className="flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold border border-border text-foreground hover:bg-muted/50 transition-colors cursor-pointer"
-                  >
-                    <Upload className="w-4 h-4" />
-                    Upload Media
-                  </label>
                 </div>
 
                 {/* Stats - only show when items detected */}
