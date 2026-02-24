@@ -375,23 +375,24 @@ export default function ScanRoom() {
           onStartScan={startDemo}
         />
 
-        {/* How It Works - Card Steps */}
-        <section className="container max-w-4xl mx-auto px-4 py-6">
-          <p className="text-[11px] font-semibold text-muted-foreground/50 uppercase tracking-[0.15em] text-center mb-4">How It Works</p>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        {/* How It Works - Compact Inline Steps with scroll animation */}
+        <section className="container max-w-3xl mx-auto px-4 py-5">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-2 sm:gap-0">
             {[
-              { num: "1", icon: Upload, title: "Upload Photos or Videos", desc: "Capture each room showing all furniture and items" },
-              { num: "2", icon: Scan, title: "AI Detects & Measures", desc: "Our AI identifies items and calculates weight & volume" },
-              { num: "3", icon: Box, title: "Review & Get Quote", desc: "Verify your inventory and receive an instant estimate" },
+              { num: "1", title: "Upload Photos or Videos", desc: "Capture each room showing all furniture and items" },
+              { num: "2", title: "AI Detects & Measures", desc: "Our AI identifies items and calculates weight & volume" },
+              { num: "3", title: "Review & Get Quote", desc: "Verify your inventory and receive an instant estimate" },
             ].map((step, i) => (
               <ScrollFadeIn key={step.num} delay={i * 0.15}>
-                <div className="flex flex-col items-center text-center gap-2.5 rounded-xl border border-border bg-card p-5">
-                  <span className="w-7 h-7 rounded-full bg-foreground/10 text-foreground flex items-center justify-center text-xs font-bold">
+                <div className="flex items-center gap-2.5 px-4 py-2.5">
+                  <span className="w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center text-[10px] font-bold flex-shrink-0">
                     {step.num}
                   </span>
-                  <step.icon className="w-5 h-5 text-muted-foreground/60" />
-                  <h3 className="text-sm font-semibold text-foreground leading-tight">{step.title}</h3>
-                  <p className="text-xs text-muted-foreground/60 leading-relaxed">{step.desc}</p>
+                  <div className="flex flex-col">
+                    <span className="text-xs font-semibold text-foreground leading-tight">{step.title}</span>
+                    <span className="text-[10px] text-muted-foreground/60 leading-tight">{step.desc}</span>
+                  </div>
+                  {i < 2 && <span className="hidden sm:block text-muted-foreground/30 ml-3 mr-1">→</span>}
                 </div>
               </ScrollFadeIn>
             ))}
