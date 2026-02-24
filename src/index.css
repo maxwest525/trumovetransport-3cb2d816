@@ -1729,7 +1729,7 @@
    ============================================= */
 .tru-company-card {
   background: hsl(var(--card));
-  border: 2px solid hsl(var(--tm-ink));
+  border: 1.5px solid hsl(var(--tm-ink) / 0.15);
   border-radius: 12px;
   padding: 16px 20px;
   display: flex;
@@ -1800,7 +1800,7 @@
    ============================================= */
 .tru-features-card {
   background: hsl(var(--card));
-  border: 2px solid hsl(var(--tm-ink));
+  border: 1.5px solid hsl(var(--tm-ink) / 0.15);
   border-radius: 12px;
   padding: 16px 20px;
   display: flex;
@@ -6123,7 +6123,7 @@
   height: auto;
   min-height: 480px;
   background: hsl(var(--background));
-  border: 2px solid hsl(var(--tm-ink));
+  border: 1.5px solid hsl(var(--tm-ink) / 0.15);
   border-radius: 24px;
   box-shadow: 
     0 4px 16px hsl(var(--tm-ink) / 0.12),
@@ -6164,7 +6164,7 @@
 
 /* Online Estimate / Build Your Move page card frames */
 .tru-estimate-card-frame {
-  border: 2px solid hsl(var(--tm-ink)) !important;
+  border: 1.5px solid hsl(var(--tm-ink) / 0.15) !important;
   border-radius: 16px;
   box-shadow: 
     0 4px 16px hsl(var(--tm-ink) / 0.12),
@@ -16535,7 +16535,7 @@
   width: 94%;
   background: hsl(var(--background));
   border-radius: 24px;
-  border: 3px solid hsl(var(--tm-ink));
+  border: 1.5px solid hsl(var(--tm-ink) / 0.15);
   box-shadow: 
     0 30px 60px -15px hsl(var(--tm-ink) / 0.4),
     0 15px 30px -10px hsl(var(--tm-ink) / 0.25);
@@ -17424,7 +17424,7 @@
   letter-spacing: 0.02em;
   color: hsl(var(--tm-ink));
   background: hsl(0 0% 100%);
-  border: 2px solid hsl(var(--tm-ink));
+  border: 1.5px solid hsl(var(--tm-ink) / 0.15);
   border-radius: 10px;
   cursor: pointer;
   transition: all 180ms ease;
@@ -21237,7 +21237,7 @@
   height: 56px;
   border-radius: 12px;
   background: hsl(0 0% 100%);
-  border: 2px solid hsl(var(--tm-ink));
+  border: 1.5px solid hsl(var(--tm-ink) / 0.15);
   color: hsl(var(--tm-ink));
   font-weight: 700;
   font-size: 14px;
@@ -21526,7 +21526,7 @@
 
 .tru-move-summary-card {
   background: hsl(var(--card));
-  border: 2px solid hsl(var(--tm-ink));
+  border: 1.5px solid hsl(var(--tm-ink) / 0.15);
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 
@@ -27273,7 +27273,7 @@
 .fmcsa-feature-card {
   padding: 20px 24px;
   background: hsl(var(--card));
-  border: 2px solid hsl(var(--tm-ink));
+  border: 1.5px solid hsl(var(--tm-ink) / 0.15);
   border-radius: 16px;
   transition: all 0.3s ease;
   box-shadow: 
@@ -27305,7 +27305,7 @@
 /* Carrier Snapshot Card - Light Mode */
 .carrier-snapshot-card {
   background: hsl(var(--card));
-  border: 2px solid hsl(var(--tm-ink));
+  border: 1.5px solid hsl(var(--tm-ink) / 0.15);
   color: hsl(var(--foreground));
   border-radius: 16px;
   box-shadow: 
@@ -29062,7 +29062,7 @@
 /* Glass Card Style - Themed */
 .tracking-info-card {
   background: hsl(var(--card));
-  border: 2px solid hsl(var(--tm-ink));
+  border: 1.5px solid hsl(var(--tm-ink) / 0.15);
   border-radius: 16px;
   padding: 14px;
   backdrop-filter: blur(12px);
@@ -33430,7 +33430,7 @@ html.dark .tru-summary-header-large,
   min-height: 400px;
   max-height: 550px;
   background: hsl(var(--card));
-  border: 2px solid hsl(var(--tm-ink));
+  border: 1.5px solid hsl(var(--tm-ink) / 0.15);
   border-radius: 16px;
   overflow: hidden;
   position: relative;
@@ -33675,7 +33675,7 @@ gmp-map-3d-element .gmnoprint {
 .tracking-sidebar .tracking-info-card,
 .tracking-sidebar > div[class*="rounded"],
 .tracking-sidebar > div[class*="border"] {
-  border: 2px solid hsl(var(--tm-ink)) !important;
+  border: 1.5px solid hsl(var(--tm-ink) / 0.15) !important;
   border-radius: 16px;
   box-shadow: 
     0 4px 16px hsl(var(--tm-ink) / 0.12),
@@ -33700,7 +33700,7 @@ gmp-map-3d-element .gmnoprint {
 .carrier-vetting-page .rounded-2xl,
 .carrier-vetting-page [class*="Card"],
 .carrier-vetting-page .border.rounded-lg {
-  border: 2px solid hsl(var(--tm-ink)) !important;
+  border: 1.5px solid hsl(var(--tm-ink) / 0.15) !important;
   box-shadow: 
     0 4px 16px hsl(var(--tm-ink) / 0.12),
     0 8px 32px hsl(var(--tm-ink) / 0.08),
@@ -33723,7 +33723,7 @@ gmp-map-3d-element .gmnoprint {
 /* Video Consult Page - main panels */
 .video-consult-page .rounded-xl,
 .video-consult-page .rounded-2xl {
-  border: 2px solid hsl(var(--tm-ink));
+  border: 1.5px solid hsl(var(--tm-ink) / 0.15);
   box-shadow: 
     0 4px 16px hsl(var(--tm-ink) / 0.12),
     0 8px 32px hsl(var(--tm-ink) / 0.08),
