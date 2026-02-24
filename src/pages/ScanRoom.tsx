@@ -430,7 +430,7 @@ export default function ScanRoom() {
         />
 
         {/* How It Works - Compact Inline Steps with scroll animation */}
-        <section className="container max-w-4xl mx-auto px-4 py-6">
+        <section className="container max-w-4xl mx-auto px-4 py-2">
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-0">
             {[
               { num: "1", title: "Upload Photos or Videos", desc: "Capture each room showing all furniture and items" },
