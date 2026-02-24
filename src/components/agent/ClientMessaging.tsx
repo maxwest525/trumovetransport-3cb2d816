@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import { Mail, MessageSquare, Send, FileText, Copy, Check, UserRound, ChevronsUpDown, Plus, Loader2 } from "lucide-react";
+import { Mail, MessageSquare, Send, FileText, Copy, Check, UserRound, ChevronsUpDown, Plus, Loader2, Search } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { formatPhoneNumber } from "@/lib/phoneFormat";
@@ -211,6 +211,18 @@ export function ClientMessaging() {
 
   return (
     <div className="space-y-5">
+      {/* Page Header with Search */}
+      <div className="flex items-center justify-between gap-4">
+        <h2 className="text-lg font-semibold shrink-0">Customer Chat</h2>
+        <div className="relative max-w-sm w-full">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Input
+            placeholder="Search messages, templates…"
+            className="pl-9 h-9 bg-background"
+          />
+        </div>
+      </div>
+
       {/* Customer Picker */}
       <div className="flex items-center gap-3 p-3 rounded-xl border bg-muted/30">
         <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground shrink-0">
