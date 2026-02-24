@@ -5,8 +5,9 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Mail, MessageSquare, Send, FileText, Copy, Check, UserRound } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Mail, MessageSquare, Send, FileText, Copy, Check, UserRound, ChevronsUpDown } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { formatPhoneNumber } from "@/lib/phoneFormat";
@@ -111,6 +112,7 @@ export function ClientMessaging() {
   const [recipient, setRecipient] = useState("");
   const [copied, setCopied] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState("");
+  const [customerPickerOpen, setCustomerPickerOpen] = useState(false);
 
   const { data: leads = [] } = useQuery({
     queryKey: ["leads-for-messaging"],
@@ -178,27 +180,46 @@ export function ClientMessaging() {
           <UserRound className="w-4 h-4" />
           Send to:
         </div>
-        <Select value={selectedCustomer} onValueChange={handleCustomerSelect}>
-          <SelectTrigger className="w-64 bg-background">
-            <SelectValue placeholder="Choose a customer…" />
-          </SelectTrigger>
-          <SelectContent className="bg-popover z-50">
-            {leads.length === 0 ? (
-              <SelectItem value="_none" disabled>No leads found</SelectItem>
-            ) : (
-              leads.map((lead) => (
-                <SelectItem key={lead.id} value={lead.id}>
-                  <span className="flex items-center gap-2">
-                    <span className="font-medium">{lead.first_name} {lead.last_name}</span>
-                    <span className="text-muted-foreground text-xs">
-                      {activeTab === "email" ? (lead.email || "no email") : (lead.phone || "no phone")}
-                    </span>
-                  </span>
-                </SelectItem>
-              ))
-            )}
-          </SelectContent>
-        </Select>
+        <Popover open={customerPickerOpen} onOpenChange={setCustomerPickerOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              role="combobox"
+              aria-expanded={customerPickerOpen}
+              className="w-72 justify-between bg-background font-normal"
+            >
+              {selectedLead
+                ? `${selectedLead.first_name} ${selectedLead.last_name}`
+                : "Search customers…"}
+              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-72 p-0" align="start">
+            <Command>
+              <CommandInput placeholder="Search by name…" />
+              <CommandList>
+                <CommandEmpty>No customers found.</CommandEmpty>
+                <CommandGroup>
+                  {leads.map((lead) => (
+                    <CommandItem
+                      key={lead.id}
+                      value={`${lead.first_name} ${lead.last_name}`}
+                      onSelect={() => {
+                        handleCustomerSelect(lead.id);
+                        setCustomerPickerOpen(false);
+                      }}
+                    >
+                      <span className="font-medium">{lead.first_name} {lead.last_name}</span>
+                      <span className="ml-auto text-xs text-muted-foreground">
+                        {activeTab === "email" ? (lead.email || "no email") : (lead.phone || "no phone")}
+                      </span>
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              </CommandList>
+            </Command>
+          </PopoverContent>
+        </Popover>
         {selectedLead && (
           <span className="text-xs text-muted-foreground">
             → {activeTab === "email" ? selectedLead.email : selectedLead.phone}
