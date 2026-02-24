@@ -363,7 +363,7 @@ export default function CustomerService() {
                 <Link
                   key={cap.label}
                   to={cap.href}
-                  className="group relative rounded-xl border border-border bg-card p-3 shadow-[0_2px_8px_-2px_hsl(var(--tm-ink)/0.08),0_4px_16px_-4px_hsl(var(--tm-ink)/0.06)] hover:shadow-[0_8px_24px_-4px_hsl(var(--tm-ink)/0.16),0_16px_40px_-8px_hsl(var(--tm-ink)/0.12)] hover:border-foreground/30 hover:-translate-y-1 hover:scale-[1.03] transition-all duration-200 no-underline"
+                  className="group relative rounded-xl border border-[hsl(var(--tm-ink)/0.07)] bg-card p-3 shadow-[0_2px_8px_-2px_hsl(var(--tm-ink)/0.08),0_4px_16px_-4px_hsl(var(--tm-ink)/0.06)] hover:shadow-[0_8px_24px_-4px_hsl(var(--tm-ink)/0.16),0_16px_40px_-8px_hsl(var(--tm-ink)/0.12)] hover:border-foreground/30 hover:-translate-y-1 hover:scale-[1.03] transition-all duration-200 no-underline"
                 >
                   {cap.tag && (
                     <span className="absolute top-2 right-2 text-[9px] font-bold uppercase tracking-wider text-foreground bg-muted px-1.5 py-0.5 rounded group-hover:bg-foreground group-hover:text-background transition-colors duration-200">
@@ -380,7 +380,7 @@ export default function CustomerService() {
         </section>
 
         {/* ─── FAQ + CONTACT ─── */}
-        <section className="py-5 px-4 border-t border-border">
+        <section className="py-5 px-4 border-t border-[hsl(var(--tm-ink)/0.07)]">
           <div className="mx-auto max-w-4xl">
             <div className="grid lg:grid-cols-2 gap-6">
 
@@ -392,7 +392,7 @@ export default function CustomerService() {
                     <AccordionItem
                       key={i}
                       value={`faq-${i}`}
-                      className="rounded-lg border border-border bg-card px-4"
+                      className="rounded-lg border border-[hsl(var(--tm-ink)/0.07)] bg-card px-4"
                     >
                       <AccordionTrigger className="text-left font-medium text-foreground hover:no-underline py-3 text-xs">
                         {item.q}
@@ -414,7 +414,7 @@ export default function CustomerService() {
                 <p className="text-[11px] text-muted-foreground mb-4">Trudy handles 95% of requests. For the rest, we're here.</p>
 
                 {/* Tab toggle */}
-                <div className="flex gap-0.5 rounded-lg border border-border p-0.5 mb-4 w-fit">
+                <div className="flex gap-0.5 rounded-lg border border-[hsl(var(--tm-ink)/0.07)] p-0.5 mb-4 w-fit">
                   <button
                     onClick={() => setActiveTab('voice')}
                     className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[11px] font-medium transition-colors ${
@@ -434,7 +434,7 @@ export default function CustomerService() {
                 </div>
 
                 {activeTab === 'voice' ? (
-                  <div className="rounded-xl border border-border bg-card p-6 text-center space-y-3">
+                  <div className="rounded-xl border border-[hsl(var(--tm-ink)/0.07)] bg-card p-6 text-center space-y-3">
                     <p className="text-xs text-foreground font-semibold">Speak with our team directly</p>
                     <p className="text-[11px] text-muted-foreground">Mon–Sat, 8 AM – 8 PM EST</p>
                     <a
@@ -448,7 +448,7 @@ export default function CustomerService() {
                     </p>
                   </div>
                 ) : (
-                  <form onSubmit={handleSubmit} className="rounded-xl border border-border bg-card p-5 space-y-3">
+                  <form onSubmit={handleSubmit} className="rounded-xl border border-[hsl(var(--tm-ink)/0.07)] bg-card p-5 space-y-3">
                     <div className="grid gap-3 sm:grid-cols-2">
                       <div>
                         <label className="block text-[10px] font-semibold text-foreground mb-1 uppercase tracking-wider">Name *</label>
