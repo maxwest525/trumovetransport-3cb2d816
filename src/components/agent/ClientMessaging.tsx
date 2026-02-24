@@ -7,11 +7,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import { Mail, MessageSquare, Send, FileText, Copy, Check, UserRound, ChevronsUpDown } from "lucide-react";
+import { Mail, MessageSquare, Send, FileText, Copy, Check, UserRound, ChevronsUpDown, Plus, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { formatPhoneNumber } from "@/lib/phoneFormat";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
 const EMAIL_TEMPLATES = [
@@ -113,6 +113,11 @@ export function ClientMessaging() {
   const [copied, setCopied] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState("");
   const [customerPickerOpen, setCustomerPickerOpen] = useState(false);
+  const [showNewLeadForm, setShowNewLeadForm] = useState(false);
+  const [newLead, setNewLead] = useState({ firstName: "", lastName: "", email: "", phone: "" });
+  const [isCreatingLead, setIsCreatingLead] = useState(false);
+
+  const queryClient = useQueryClient();
 
   const { data: leads = [] } = useQuery({
     queryKey: ["leads-for-messaging"],
@@ -125,6 +130,38 @@ export function ClientMessaging() {
       return data;
     },
   });
+
+  const handleCreateLead = async () => {
+    if (!newLead.firstName || !newLead.lastName) {
+      toast.error("First and last name are required");
+      return;
+    }
+    setIsCreatingLead(true);
+    try {
+      const { data, error } = await supabase
+        .from("leads")
+        .insert({
+          first_name: newLead.firstName,
+          last_name: newLead.lastName,
+          email: newLead.email || null,
+          phone: newLead.phone || null,
+          status: "new",
+        })
+        .select("id, first_name, last_name, email, phone")
+        .single();
+      if (error) throw error;
+      await queryClient.invalidateQueries({ queryKey: ["leads-for-messaging"] });
+      handleCustomerSelect(data.id);
+      setShowNewLeadForm(false);
+      setNewLead({ firstName: "", lastName: "", email: "", phone: "" });
+      setCustomerPickerOpen(false);
+      toast.success(`Lead ${data.first_name} ${data.last_name} created`);
+    } catch (err: any) {
+      toast.error("Failed to create lead", { description: err.message });
+    } finally {
+      setIsCreatingLead(false);
+    }
+  };
 
   const handleTemplateSelect = (templateId: string) => {
     setSelectedTemplate(templateId);
@@ -194,7 +231,7 @@ export function ClientMessaging() {
               <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-72 p-0" align="start">
+          <PopoverContent className="w-80 p-0" align="start">
             <Command>
               <CommandInput placeholder="Search by name…" />
               <CommandList>
@@ -207,6 +244,7 @@ export function ClientMessaging() {
                       onSelect={() => {
                         handleCustomerSelect(lead.id);
                         setCustomerPickerOpen(false);
+                        setShowNewLeadForm(false);
                       }}
                     >
                       <span className="font-medium">{lead.first_name} {lead.last_name}</span>
@@ -217,6 +255,70 @@ export function ClientMessaging() {
                   ))}
                 </CommandGroup>
               </CommandList>
+              {/* Create New Lead */}
+              <div className="border-t p-2">
+                {!showNewLeadForm ? (
+                  <button
+                    type="button"
+                    onClick={() => setShowNewLeadForm(true)}
+                    className="w-full flex items-center gap-2 px-2 py-1.5 text-sm rounded-md text-primary hover:bg-muted transition-colors"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Create new lead
+                  </button>
+                ) : (
+                  <div className="space-y-2 p-1">
+                    <div className="grid grid-cols-2 gap-2">
+                      <Input
+                        placeholder="First name *"
+                        value={newLead.firstName}
+                        onChange={(e) => setNewLead(p => ({ ...p, firstName: e.target.value }))}
+                        className="h-8 text-xs"
+                      />
+                      <Input
+                        placeholder="Last name *"
+                        value={newLead.lastName}
+                        onChange={(e) => setNewLead(p => ({ ...p, lastName: e.target.value }))}
+                        className="h-8 text-xs"
+                      />
+                    </div>
+                    <Input
+                      placeholder="Email"
+                      value={newLead.email}
+                      onChange={(e) => setNewLead(p => ({ ...p, email: e.target.value }))}
+                      className="h-8 text-xs"
+                    />
+                    <Input
+                      placeholder="Phone"
+                      value={newLead.phone}
+                      onChange={(e) => setNewLead(p => ({ ...p, phone: e.target.value }))}
+                      className="h-8 text-xs"
+                    />
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="flex-1 h-7 text-xs"
+                        onClick={() => {
+                          setShowNewLeadForm(false);
+                          setNewLead({ firstName: "", lastName: "", email: "", phone: "" });
+                        }}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        size="sm"
+                        className="flex-1 h-7 text-xs gap-1"
+                        onClick={handleCreateLead}
+                        disabled={isCreatingLead || !newLead.firstName || !newLead.lastName}
+                      >
+                        {isCreatingLead ? <Loader2 className="w-3 h-3 animate-spin" /> : <Plus className="w-3 h-3" />}
+                        Create
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </div>
             </Command>
           </PopoverContent>
         </Popover>
