@@ -3,7 +3,7 @@ import { ClientMessaging } from "@/components/agent/ClientMessaging";
 
 export default function AgentMessaging() {
   return (
-    <AgentShell breadcrumb=" / Customer Comms">
+    <AgentShell breadcrumb=" / Customer Chat">
       <div className="p-4">
         <ClientMessaging />
       </div>

@@ -18,7 +18,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Dashboard", icon: LayoutDashboard, href: "/agent/dashboard" },
   { label: "New Lead", icon: UserPlus, href: "/agent/new-customer" },
   { label: "My Customers", icon: Users, href: "/agent/customers" },
-  { label: "Customer Comms", icon: Mail, href: "/agent/messages" },
+  { label: "Customer Chat", icon: Mail, href: "/agent/messages" },
   { label: "Team Chat", icon: MessagesSquare, href: "/agent/team-chat" },
   { label: "Dialer", icon: Phone, href: "/agent/dialer" },
   { label: "Bookings", icon: CalendarCheck, href: "/agent/operations" },
