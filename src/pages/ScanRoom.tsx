@@ -67,6 +67,15 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
+// Furniture detection positions for bounding box overlays (matches sampleRoomLiving image)
+const DEMO_FURNITURE_POSITIONS = [
+  { id: 0, name: "Sofa", confidence: 98, top: "42%", left: "1%", width: "34%", height: "50%" },
+  { id: 1, name: "Coffee Table", confidence: 96, top: "64%", left: "32%", width: "22%", height: "16%" },
+  { id: 2, name: "TV Console", confidence: 97, top: "32%", left: "28%", width: "36%", height: "26%" },
+  { id: 3, name: "Armchair", confidence: 94, top: "42%", left: "70%", width: "24%", height: "42%" },
+  { id: 4, name: "Floor Lamp", confidence: 91, top: "16%", left: "60%", width: "7%", height: "44%" },
+];
+
 // Simulated detected items for the live demo
 const DEMO_ITEMS = [
   // Living Room
@@ -518,9 +527,33 @@ export default function ScanRoom() {
                     <div className="relative w-full flex-1 overflow-hidden rounded-t-2xl">
                       <img src={sampleRoomLiving} alt="Scanning room" className="w-full h-full object-cover" />
                       {isScanning && (
-                        <div className="absolute inset-0 bg-primary/10 animate-pulse" />
+                        <div className="tru-ai-scanner-overlay">
+                          <div className="tru-ai-scanner-line" />
+                        </div>
                       )}
-                      <div className="absolute top-2 left-2 flex items-center gap-1.5 bg-foreground/80 text-background rounded-full px-2.5 py-1">
+                      {/* Detection bounding boxes - appear as items are detected */}
+                      {DEMO_FURNITURE_POSITIONS.slice(0, Math.max(0, demoStep - 2)).map((item) => (
+                        <div
+                          key={item.id}
+                          className="tru-ai-detection-box"
+                          style={{
+                            top: item.top,
+                            left: item.left,
+                            width: item.width,
+                            height: item.height,
+                          }}
+                        >
+                          <span className="tru-ai-detection-corner tru-ai-corner-tl" />
+                          <span className="tru-ai-detection-corner tru-ai-corner-tr" />
+                          <span className="tru-ai-detection-corner tru-ai-corner-bl" />
+                          <span className="tru-ai-detection-corner tru-ai-corner-br" />
+                          <span className="tru-ai-detection-label">
+                            {item.name}
+                            <span className="tru-ai-detection-confidence">{item.confidence}%</span>
+                          </span>
+                        </div>
+                      ))}
+                      <div className="absolute top-2 left-2 flex items-center gap-1.5 bg-foreground/80 text-background rounded-full px-2.5 py-1 z-20">
                         <Scan className="w-3 h-3" />
                         <span className="text-[10px] font-semibold">
                           {isScanning ? "Scanning..." : "Complete"}
