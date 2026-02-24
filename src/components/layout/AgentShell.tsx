@@ -22,12 +22,7 @@ export default function AgentShell({ children, breadcrumb = "" }: AgentShellProp
     window.scrollTo(0, 0);
   }, []);
 
-  // Auto-open dialer on the dialer page
-  useEffect(() => {
-    if (location.pathname === "/agent/dialer") {
-      setDialerOpen(true);
-    }
-  }, [location.pathname]);
+  // No longer auto-open floating dialer on dialer page — softphone is built-in
 
   return (
     <div className="flex min-h-screen bg-background text-foreground">
