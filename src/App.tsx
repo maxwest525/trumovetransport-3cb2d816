@@ -23,7 +23,7 @@ import AdminIntegrations from "./pages/AdminIntegrations";
 import ScanRoom from "./pages/ScanRoom";
 import Classic from "./pages/Classic";
 import LiveTracking from "./pages/LiveTracking";
-import ElevenLabsTrudyWidget from "./components/ElevenLabsTrudyWidget";
+
 import CustomerService from "./pages/CustomerService";
 import AdminSupportTickets from "./pages/AdminSupportTickets";
 import AgentPipeline from "./pages/AgentPipeline";
@@ -106,7 +106,7 @@ const App = () => (
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
-          <ElevenLabsTrudyWidget />
+          
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
