@@ -102,6 +102,11 @@ export default function ScanRoom() {
   const [showIntroModal, setShowIntroModal] = useState(false);
   const [showClearDialog, setShowClearDialog] = useState(false);
   
+  // Demo step state: 0=idle, 1=photo added to library, 2=photo in scanner, 3+=items detecting
+  const [demoStep, setDemoStep] = useState(0);
+  const isDemoActive = demoStep > 0;
+  const DEMO_TOTAL_STEPS = 2 + DEMO_ITEMS.length; // step 1: library, step 2: scanner, rest: items
+  
   // Lead capture state
   const [isUnlocked, setIsUnlocked] = useState(true);
   
@@ -140,27 +145,51 @@ export default function ScanRoom() {
     setPendingRoomLabel("");
   };
 
-  // Simulate live detection with slower speed for better demo experience
-  useEffect(() => {
-    if (isScanning && detectedItems.length < DEMO_ITEMS.length) {
-      const timer = setTimeout(() => {
-        setDetectedItems(prev => [...prev, DEMO_ITEMS[prev.length]]);
-      }, 2500);
-      return () => clearTimeout(timer);
-    } else if (detectedItems.length >= DEMO_ITEMS.length && isScanning) {
-      setIsScanning(false);
+  // Demo step handler
+  const handleNextDemoStep = () => {
+    const nextStep = demoStep + 1;
+    if (nextStep === 1) {
+      // Step 1: Add sample photo to library
+      setUploadedPhotos([{ id: 'demo-photo', url: sampleRoomLiving, name: 'Living Room' }]);
+      setDetectedItems([]);
+      setDemoStep(1);
+    } else if (nextStep === 2) {
+      // Step 2: Photo moves to scanner
+      setScannedPhotoIds(new Set(['demo-photo']));
+      setIsScanning(true);
+      setDemoStep(2);
+    } else if (nextStep <= DEMO_TOTAL_STEPS) {
+      // Steps 3+: Add items one by one
+      const itemIndex = nextStep - 3;
+      setDetectedItems(prev => [...prev, DEMO_ITEMS[itemIndex]]);
+      setDemoStep(nextStep);
+      if (nextStep === DEMO_TOTAL_STEPS) {
+        setIsScanning(false);
+      }
     }
-  }, [isScanning, detectedItems]);
+  };
 
+  const handleStopDemo = () => {
+    setDemoStep(0);
+    setIsScanning(false);
+    // Keep detected items but clean up demo photo
+    setUploadedPhotos(prev => prev.filter(p => p.id !== 'demo-photo'));
+    setScannedPhotoIds(new Set());
+  };
 
   const handleStartScanClick = () => {
-    setShowIntroModal(true);
+    if (uploadedPhotos.length > 0 && !isDemoActive) {
+      // Real scan flow
+      setShowIntroModal(true);
+    } else {
+      // Start step demo
+      handleNextDemoStep();
+    }
   };
 
   const startDemo = () => {
     setDetectedItems([]);
     setIsScanning(true);
-    // Mark all current photos as being scanned
     setScannedPhotoIds(new Set(uploadedPhotos.map(p => p.id)));
   };
 
@@ -451,42 +480,93 @@ export default function ScanRoom() {
               </div>
 
               {/* Center: Demo & Actions */}
-              <div className="flex flex-col items-center justify-center gap-6 py-8 border border-border rounded-2xl bg-background shadow-[0_4px_20px_-4px_hsl(var(--tm-ink)/0.08)]">
-                <div className="flex flex-col items-center gap-3 text-center">
-                  <div className="w-16 h-16 rounded-2xl bg-muted/50 border border-border flex items-center justify-center">
-                    <Scan className="w-8 h-8 text-muted-foreground" />
+              <div className="flex flex-col items-center justify-center gap-4 py-6 border border-border rounded-2xl bg-background shadow-[0_4px_20px_-4px_hsl(var(--tm-ink)/0.08)] relative overflow-hidden">
+                {/* Scanner content - show image when demo step >= 2 */}
+                {demoStep >= 2 ? (
+                  <div className="flex flex-col items-center gap-3 w-full px-4">
+                    <div className="relative w-full max-w-[280px] aspect-[4/3] rounded-xl overflow-hidden border border-border">
+                      <img src={sampleRoomLiving} alt="Scanning room" className="w-full h-full object-cover" />
+                      {isScanning && (
+                        <div className="absolute inset-0 bg-primary/10 animate-pulse" />
+                      )}
+                      <div className="absolute top-2 left-2 flex items-center gap-1.5 bg-foreground/80 text-background rounded-full px-2.5 py-1">
+                        <Scan className="w-3 h-3" />
+                        <span className="text-[10px] font-semibold">
+                          {isScanning ? "Scanning..." : "Complete"}
+                        </span>
+                      </div>
+                    </div>
+                    <p className="text-xs text-muted-foreground text-center">
+                      {isScanning 
+                        ? `Detected ${detectedItems.length} of ${DEMO_ITEMS.length} items...`
+                        : `Found ${detectedItems.length} items`
+                      }
+                    </p>
                   </div>
-                  <h3 className="text-lg font-semibold text-foreground">AI Room Scanner</h3>
-                  <p className="text-sm text-muted-foreground max-w-[240px]">
-                    Upload your room photos or videos and our AI will detect every item automatically.
+                ) : (
+                  <div className="flex flex-col items-center gap-3 text-center">
+                    <div className="w-16 h-16 rounded-2xl bg-muted/50 border border-border flex items-center justify-center">
+                      <Scan className="w-8 h-8 text-muted-foreground" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-foreground">AI Room Scanner</h3>
+                    <p className="text-sm text-muted-foreground max-w-[240px]">
+                      Upload your room photos or videos and our AI will detect every item automatically.
+                    </p>
+                  </div>
+                )}
+
+                {/* Demo step info */}
+                {isDemoActive && (
+                  <p className="text-[10px] font-semibold uppercase tracking-wider text-primary/70">
+                    Step {demoStep} of {DEMO_TOTAL_STEPS}
+                    {demoStep === 1 && " — Photo added to library"}
+                    {demoStep === 2 && " — Scanning started"}
+                    {demoStep > 2 && demoStep < DEMO_TOTAL_STEPS && " — Detecting items"}
+                    {demoStep === DEMO_TOTAL_STEPS && " — Complete!"}
                   </p>
+                )}
+
+                {/* Buttons */}
+                <div className="flex items-center gap-2 w-full max-w-[280px] px-4">
+                  {!isDemoActive ? (
+                    <button
+                      onClick={handleStartScanClick}
+                      className="flex-1 flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold bg-foreground text-background hover:opacity-90 transition-opacity"
+                    >
+                      <Sparkles className="w-4 h-4" />
+                      {uploadedPhotos.length > 0 ? "Start Scanning" : "Watch Demo"}
+                    </button>
+                  ) : (
+                    <>
+                      {demoStep < DEMO_TOTAL_STEPS && (
+                        <button
+                          onClick={handleNextDemoStep}
+                          className="flex-1 flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold bg-foreground text-background hover:opacity-90 transition-opacity"
+                        >
+                          <ChevronRight className="w-4 h-4" />
+                          Next Step
+                        </button>
+                      )}
+                      <button
+                        onClick={handleStopDemo}
+                        className="flex items-center justify-center gap-1.5 rounded-full px-4 py-2.5 text-sm font-semibold border border-destructive/30 text-destructive hover:bg-destructive/10 transition-colors"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                        Stop
+                      </button>
+                    </>
+                  )}
                 </div>
 
-                <div className="flex flex-col gap-3 w-full max-w-[220px]">
-                  <button
-                    onClick={handleStartScanClick}
-                    disabled={isScanning}
-                    className="flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold bg-foreground text-background hover:opacity-90 transition-opacity"
-                  >
-                    <Sparkles className="w-4 h-4" />
-                    {isScanning ? "Scanning..." : "Watch Demo"}
-                  </button>
-
-                </div>
-
-
-                {/* Progress Bar - Only show during scanning */}
-                {isScanning && (
-                  <div className="w-full max-w-[220px]">
+                {/* Progress Bar */}
+                {isDemoActive && (
+                  <div className="w-full max-w-[280px] px-4">
                     <div className="tru-scan-progress-bar">
                       <div 
                         className="tru-scan-progress-fill"
-                        style={{ width: `${(detectedItems.length / DEMO_ITEMS.length) * 100}%` }}
+                        style={{ width: `${(demoStep / DEMO_TOTAL_STEPS) * 100}%` }}
                       />
                     </div>
-                    <span className="text-[11px] text-muted-foreground mt-1 block text-center">
-                      {Math.round((detectedItems.length / DEMO_ITEMS.length) * 100)}% Complete
-                    </span>
                   </div>
                 )}
               </div>
