@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import Header from "@/components/layout/Header";
+import PageHeaderStrip from "@/components/layout/PageHeaderStrip";
 import Footer from "@/components/layout/Footer";
 import { DailyVideoRoom } from "@/components/video-consult/DailyVideoRoom";
 import { 
@@ -1786,55 +1787,18 @@ export default function Book() {
       
       {/* Sticky Header Block */}
       <div className="sticky top-[102px] z-40">
-        <header className="video-consult-header">
-          {/* Left - Logo & Title */}
-          <div className="flex items-center gap-3">
-            <img 
-              src={logoImg} 
-              alt="TruMove" 
-              className="h-6 brightness-0 invert"
-            />
-            <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-white/90">
-              Contact Center
-            </span>
-          </div>
-
-          {/* Center - Trust Items (inline) */}
-          <div className="video-consult-header-trust">
-            <div className="video-consult-header-trust-item">
-              <Shield className="w-4 h-4" />
-              <span>SECURE VIDEO</span>
-            </div>
-            <span className="video-consult-trust-dot">•</span>
-            <div className="video-consult-header-trust-item">
-              <BadgeCheck className="w-4 h-4" />
-              <span>LICENSED BROKER</span>
-            </div>
-            <span className="video-consult-trust-dot">•</span>
-            <div className="video-consult-header-trust-item">
-              <Monitor className="w-4 h-4" />
-              <span>SCREEN SHARING</span>
-            </div>
-            <span className="video-consult-trust-dot">•</span>
-            <div className="video-consult-header-trust-item">
-              <FileText className="w-4 h-4" />
-              <span>QUOTE REVIEW</span>
-            </div>
-            <span className="video-consult-trust-dot">•</span>
-            <div className="video-consult-header-trust-item">
-              <Clock className="w-4 h-4" />
-              <span>NO OBLIGATION</span>
-            </div>
-          </div>
-
-          {/* Right - Shipment ID (matching tracking page) */}
-          <div className="flex items-center gap-4">
-            <div className="text-right">
-              <div className="text-[11px] text-white/80 uppercase tracking-wider">Shipment ID</div>
-              <div className="text-sm font-mono text-white">TM-2026-{String(Date.now()).slice(-8)}</div>
-            </div>
-          </div>
-        </header>
+        <PageHeaderStrip
+          title="Contact Center"
+          trustItems={[
+            { icon: Shield, text: 'SECURE VIDEO' },
+            { icon: BadgeCheck, text: 'LICENSED BROKER' },
+            { icon: Monitor, text: 'SCREEN SHARING' },
+            { icon: FileText, text: 'QUOTE REVIEW' },
+            { icon: Clock, text: 'NO OBLIGATION' },
+          ]}
+          rightLabel="Shipment ID"
+          rightValue={`TM-2026-${String(Date.now()).slice(-8)}`}
+        />
       </div>
 
       {/* Main Content */}

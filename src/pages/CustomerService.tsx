@@ -1,14 +1,22 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useConversation } from '@elevenlabs/react';
-import { Phone, PhoneOff, Send, Clock, Shield, Calculator, MapPin, Calendar, HelpCircle, Package, ScanLine, Video, Mic, Loader2, MessageSquare, BadgeCheck, Monitor, FileText } from 'lucide-react';
+import { Phone, PhoneOff, Send, Clock, Shield, Calculator, MapPin, Calendar, HelpCircle, Package, ScanLine, Video, Mic, Loader2, MessageSquare, FileText, Brain, Sparkles } from 'lucide-react';
 import SiteShell from '@/components/layout/SiteShell';
+import PageHeaderStrip from '@/components/layout/PageHeaderStrip';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import logo from '@/assets/logo.png';
+
+const TRUDY_TRUST_ITEMS = [
+  { icon: Brain, text: 'AI VOICE AGENT' },
+  { icon: Sparkles, text: 'INSTANT QUOTES' },
+  { icon: MapPin, text: 'LIVE TRACKING' },
+  { icon: Calendar, text: 'SCHEDULING' },
+  { icon: Shield, text: 'CARRIER VETTING' },
+];
 
 const TRUDY_AGENT_ID = 'agent_0501khwa2t2pfj0s3echetmjhx4n';
 
@@ -274,47 +282,12 @@ export default function CustomerService() {
     <SiteShell hideTrustStrip>
       <main className="min-h-screen bg-background">
 
-        {/* ─── CONTACT CENTER HEADER STRIP (match other pages) ─── */}
-        <header className="video-consult-header">
-          <div className="flex items-center gap-3">
-            <img src={logo} alt="TruMove" className="h-5 brightness-0 invert" />
-            <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-primary-foreground/90">
-              Contact Center
-            </span>
-          </div>
-
-          <div className="video-consult-header-trust">
-            <div className="video-consult-header-trust-item">
-              <Shield className="w-4 h-4" />
-              <span>SECURE VIDEO</span>
-            </div>
-            <span className="video-consult-trust-dot">•</span>
-            <div className="video-consult-header-trust-item">
-              <BadgeCheck className="w-4 h-4" />
-              <span>LICENSED BROKER</span>
-            </div>
-            <span className="video-consult-trust-dot">•</span>
-            <div className="video-consult-header-trust-item">
-              <Monitor className="w-4 h-4" />
-              <span>SCREEN SHARING</span>
-            </div>
-            <span className="video-consult-trust-dot">•</span>
-            <div className="video-consult-header-trust-item">
-              <FileText className="w-4 h-4" />
-              <span>QUOTE REVIEW</span>
-            </div>
-            <span className="video-consult-trust-dot">•</span>
-            <div className="video-consult-header-trust-item">
-              <Clock className="w-4 h-4" />
-              <span>NO OBLIGATION</span>
-            </div>
-          </div>
-
-          <div className="text-right hidden md:block">
-            <div className="text-[11px] text-primary-foreground/70 uppercase tracking-wider">Session ID</div>
-            <div className="text-sm font-mono text-primary-foreground">TM-{new Date().getFullYear()}-51423342</div>
-          </div>
-        </header>
+        <PageHeaderStrip
+          title="Meet Trudy"
+          trustItems={TRUDY_TRUST_ITEMS}
+          rightLabel="Session ID"
+          rightValue={`TM-${new Date().getFullYear()}-51423342`}
+        />
 
         {/* ─── HERO ─── */}
         <section className="text-center pt-6 pb-2 px-4">
