@@ -207,66 +207,62 @@ export default function ElevenLabsTrudyWidget() {
         </button>
       )}
 
-      {/* FAB row - arrow on left, Talk to Trudy on right */}
+      {/* FAB row */}
       <div className="flex items-center gap-1.5">
         {!isConnected && !isConnecting && (
           <button
             onClick={toggleOptions}
-            className={`flex items-center justify-center w-10 h-10 rounded-full border border-border bg-card shadow-md hover:bg-accent transition-all duration-200 ${showOptions && !optionsClosing ? 'rotate-180' : ''}`}
+            className={`flex items-center justify-center w-9 h-9 rounded-lg border border-border/60 bg-card/80 backdrop-blur-sm shadow-sm hover:bg-accent transition-all duration-200 ${showOptions && !optionsClosing ? 'rotate-180' : ''}`}
             aria-label="More options"
           >
-            <ChevronUp className="h-4 w-4 text-primary rotate-180" />
+            <ChevronUp className="h-3.5 w-3.5 text-muted-foreground rotate-180" />
           </button>
         )}
         <button
           onClick={isConnected ? stopConversation : startConversation}
           disabled={isConnecting}
-          className={`flex items-center gap-2.5 rounded-full shadow-lg transition-all duration-200 hover:scale-105 active:scale-95 ${
+          className={`flex items-center gap-2 rounded-lg shadow-sm transition-all duration-150 active:scale-[0.97] ${
             isConnected
-              ? 'bg-destructive text-destructive-foreground px-6 py-3.5'
+              ? 'bg-destructive text-destructive-foreground px-4 py-2.5'
               : isConnecting
-              ? 'bg-muted text-muted-foreground px-6 py-3.5'
-              : 'bg-foreground text-background pl-3.5 pr-6 py-3'
+              ? 'bg-muted text-muted-foreground px-4 py-2.5'
+              : 'bg-foreground text-background px-4 py-2.5 hover:bg-foreground/90'
           }`}
           aria-label={isConnected ? 'End call' : 'Talk to Trudy'}
         >
           {isConnecting ? (
-            <><Loader2 className="h-5 w-5 animate-spin" /><span className="text-sm font-semibold">Connecting…</span></>
+            <><Loader2 className="h-4 w-4 animate-spin" /><span className="text-xs font-medium tracking-tight">Connecting…</span></>
           ) : isConnected ? (
-            <><PhoneOff className="h-5 w-5" /><span className="text-sm font-semibold">End Call</span></>
+            <><PhoneOff className="h-4 w-4" /><span className="text-xs font-medium tracking-tight">End Call</span></>
           ) : (
-            <><img src={trudyAvatar} alt="" className="h-8 w-8 rounded-full object-cover" /><span className="text-sm font-semibold">Talk to Trudy</span></>
+            <><Mic className="h-4 w-4" /><span className="text-xs font-medium tracking-tight">Talk to Trudy</span></>
           )}
         </button>
       </div>
 
       {/* Dropdown below */}
       {showOptions && !isConnected && !isConnecting && (
-        <div className={`flex flex-col items-end gap-1.5 ${optionsClosing ? 'animate-out fade-out slide-out-to-bottom-2 duration-200 fill-mode-forwards' : ''}`}>
+        <div className={`flex flex-col items-end gap-1 ${optionsClosing ? 'animate-out fade-out slide-out-to-bottom-2 duration-200 fill-mode-forwards' : ''}`}>
           <a
             href="tel:+16097277647"
             onClick={() => closeOptions()}
-            className={`flex items-center gap-2 rounded-full border border-border bg-card shadow-lg px-4 py-2.5 hover:bg-accent transition-all ${
+            className={`flex items-center gap-2 rounded-lg border border-border/60 bg-card/80 backdrop-blur-sm shadow-sm px-3.5 py-2 hover:bg-accent transition-all ${
               optionsClosing ? '' : 'animate-in fade-in slide-in-from-top-2 duration-200'
             }`}
             style={optionsClosing ? {} : { animationDelay: '0ms', animationFillMode: 'both' }}
           >
-            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center">
-              <Phone className="h-3.5 w-3.5 text-white" />
-            </div>
-            <span className="text-xs font-semibold text-foreground">Call Us</span>
+            <Phone className="h-3.5 w-3.5 text-muted-foreground" />
+            <span className="text-[11px] font-medium text-foreground tracking-tight">(609) 727-7647</span>
           </a>
           <button
             onClick={() => { closeOptions(); navigate('/book'); }}
-            className={`flex items-center gap-2 rounded-full border border-border bg-card shadow-lg px-4 py-2.5 hover:bg-accent transition-all ${
+            className={`flex items-center gap-2 rounded-lg border border-border/60 bg-card/80 backdrop-blur-sm shadow-sm px-3.5 py-2 hover:bg-accent transition-all ${
               optionsClosing ? '' : 'animate-in fade-in slide-in-from-top-2 duration-200'
             }`}
             style={optionsClosing ? {} : { animationDelay: '50ms', animationFillMode: 'both' }}
           >
-            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-400 to-indigo-600 flex items-center justify-center">
-              <Video className="h-3.5 w-3.5 text-white" />
-            </div>
-            <span className="text-xs font-semibold text-foreground">Video Consult</span>
+            <Video className="h-3.5 w-3.5 text-muted-foreground" />
+            <span className="text-[11px] font-medium text-foreground tracking-tight">Video Consult</span>
           </button>
         </div>
       )}
