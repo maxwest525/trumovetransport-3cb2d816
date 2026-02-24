@@ -22411,7 +22411,7 @@
    SCAN ROOM - CENTERED HEADER SECTION
    ============================================= */
 .tru-scan-header-section {
-  padding: 48px 24px 32px;
+  padding: 24px 24px 12px;
 }
 
 .tru-scan-main-headline {
@@ -22830,8 +22830,8 @@
    SCAN ROOM - SPLIT DEMO LAYOUT
    ============================================= */
 .tru-scan-split-demo {
-  padding: 32px 24px 48px;
-  margin-top: 8px;
+  padding: 12px 24px 32px;
+  margin-top: 0;
 }
 
 .tru-scan-split-grid {
