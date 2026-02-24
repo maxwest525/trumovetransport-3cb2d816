@@ -1276,6 +1276,22 @@ export default function Index() {
             </span>
           </div>
 
+          {/* Center — Trust Items */}
+          <div className="video-consult-header-trust">
+            {[
+              { icon: Sparkles, text: "AI-Powered Moving" },
+              { icon: Shield, text: "FMCSA Verified" },
+              { icon: DollarSign, text: "Real-Time Pricing" },
+            ].map((item, idx) => (
+              <span key={item.text} className="contents">
+                <div className="video-consult-header-trust-item">
+                  <item.icon className="w-4 h-4" />
+                  <span>{item.text}</span>
+                </div>
+                {idx < 2 && <span className="video-consult-trust-dot">•</span>}
+              </span>
+            ))}
+          </div>
 
           {/* Right - Session ID */}
           <div className="flex items-center gap-4">
