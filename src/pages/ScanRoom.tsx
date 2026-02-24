@@ -488,9 +488,9 @@ export default function ScanRoom() {
                   </label>
                 </div>
                 <div className="tru-scan-upload-tips">
-                  <p>📸 Capture entire rooms</p>
-                  <p>💡 Good lighting helps</p>
-                  <p>📐 Multiple angles work best</p>
+                  <p>Capture entire rooms</p>
+                  <p>Good lighting helps</p>
+                  <p>Multiple angles work best</p>
                 </div>
               </div>
 
