@@ -16,7 +16,7 @@ import {
   Smartphone, Box, Clock, Shield, Zap, ChevronRight,
   Ruler, Package, Printer, Download, Square, Trash2, ArrowRightLeft,
   Phone, Video, Minus, Plus, X, Upload, ImageIcon, FolderOpen, Lock, User, Mail,
-  Sofa, BedDouble, UtensilsCrossed, Bath, Warehouse
+  Sofa, BedDouble, UtensilsCrossed, Bath, Warehouse, Check
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -86,6 +86,7 @@ export default function ScanRoom() {
   ];
   
   const [uploadedPhotos, setUploadedPhotos] = useState<{ id: string; url: string; name: string }[]>([]);
+  const [scannedPhotoIds, setScannedPhotoIds] = useState<Set<string>>(new Set());
   const [pendingRoomLabel, setPendingRoomLabel] = useState<string>("");
   const roomUploadRef = useRef<HTMLInputElement>(null);
 
@@ -132,6 +133,8 @@ export default function ScanRoom() {
   const startDemo = () => {
     setDetectedItems([]);
     setIsScanning(true);
+    // Mark all current photos as being scanned
+    setScannedPhotoIds(new Set(uploadedPhotos.map(p => p.id)));
   };
 
   const totalWeight = detectedItems.reduce((sum, item) => sum + item.weight, 0);
@@ -534,17 +537,27 @@ export default function ScanRoom() {
                       <p className="text-[10px] text-muted-foreground/40 flex items-center gap-1"><Video className="w-3 h-3" /> Photos or videos accepted</p>
                     </div>
                   ) : (
-                    uploadedPhotos.map(photo => (
-                      <div key={photo.id} className="tru-scan-library-item tru-scan-library-item-compact">
-                        <img src={photo.url} alt={photo.name} />
-                        <button
-                          onClick={() => setUploadedPhotos(prev => prev.filter(p => p.id !== photo.id))}
-                          className="tru-scan-library-remove tru-scan-library-remove-compact"
-                        >
-                          <X className="w-2.5 h-2.5" />
-                        </button>
-                      </div>
-                    ))
+                    uploadedPhotos.map(photo => {
+                      const isScanned = scannedPhotoIds.has(photo.id);
+                      return (
+                        <div key={photo.id} className={`tru-scan-library-item tru-scan-library-item-compact relative ${isScanned ? 'opacity-50 grayscale' : ''}`}>
+                          <img src={photo.url} alt={photo.name} />
+                          {isScanned && (
+                            <div className="absolute inset-0 flex items-center justify-center bg-foreground/20 rounded-[inherit]">
+                              <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center">
+                                <Check className="w-3 h-3 text-primary-foreground" />
+                              </div>
+                            </div>
+                          )}
+                          <button
+                            onClick={() => setUploadedPhotos(prev => prev.filter(p => p.id !== photo.id))}
+                            className="tru-scan-library-remove tru-scan-library-remove-compact"
+                          >
+                            <X className="w-2.5 h-2.5" />
+                          </button>
+                        </div>
+                      );
+                    })
                   )}
                 </div>
                 <button
