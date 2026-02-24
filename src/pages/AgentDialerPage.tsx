@@ -5,9 +5,11 @@ import ContactWorkspace from "@/components/dialer/ContactWorkspace";
 import SoftphonePanel from "@/components/dialer/SoftphonePanel";
 import PowerDialerMode from "@/components/dialer/PowerDialerMode";
 import CallLogView from "@/components/dialer/CallLogView";
+import RecordingsLibrary from "@/components/dialer/RecordingsLibrary";
+import ScheduledCallbacks from "@/components/dialer/ScheduledCallbacks";
 import { DialerProvider } from "@/components/dialer/dialerProvider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Phone, Zap, List } from "lucide-react";
+import { Phone, Zap, List, Disc, CalendarClock } from "lucide-react";
 import type { AgentCallStatus, CallState } from "@/components/dialer/types";
 
 export default function AgentDialerPage() {
@@ -43,14 +45,20 @@ export default function AgentDialerPage() {
             <div className="border-b border-border bg-card px-4 pt-2">
               <Tabs value={activeTab} onValueChange={setActiveTab}>
                 <TabsList className="h-9 bg-transparent gap-1 p-0">
-                  <TabsTrigger value="workspace" className="text-xs gap-1.5 data-[state=active]:bg-muted rounded-b-none h-9 px-4">
+                  <TabsTrigger value="workspace" className="text-xs gap-1.5 data-[state=active]:bg-muted rounded-b-none h-9 px-3">
                     <Phone className="w-3.5 h-3.5" /> Workspace
                   </TabsTrigger>
-                  <TabsTrigger value="power" className="text-xs gap-1.5 data-[state=active]:bg-muted rounded-b-none h-9 px-4">
+                  <TabsTrigger value="power" className="text-xs gap-1.5 data-[state=active]:bg-muted rounded-b-none h-9 px-3">
                     <Zap className="w-3.5 h-3.5" /> Power Dialer
                   </TabsTrigger>
-                  <TabsTrigger value="log" className="text-xs gap-1.5 data-[state=active]:bg-muted rounded-b-none h-9 px-4">
+                  <TabsTrigger value="log" className="text-xs gap-1.5 data-[state=active]:bg-muted rounded-b-none h-9 px-3">
                     <List className="w-3.5 h-3.5" /> Call Log
+                  </TabsTrigger>
+                  <TabsTrigger value="recordings" className="text-xs gap-1.5 data-[state=active]:bg-muted rounded-b-none h-9 px-3">
+                    <Disc className="w-3.5 h-3.5" /> Recordings
+                  </TabsTrigger>
+                  <TabsTrigger value="callbacks" className="text-xs gap-1.5 data-[state=active]:bg-muted rounded-b-none h-9 px-3">
+                    <CalendarClock className="w-3.5 h-3.5" /> Callbacks
                   </TabsTrigger>
                 </TabsList>
               </Tabs>
@@ -58,6 +66,8 @@ export default function AgentDialerPage() {
             {activeTab === "workspace" && <ContactWorkspace onDial={handleDial} />}
             {activeTab === "power" && <PowerDialerMode callState={callState} />}
             {activeTab === "log" && <CallLogView />}
+            {activeTab === "recordings" && <RecordingsLibrary />}
+            {activeTab === "callbacks" && <ScheduledCallbacks />}
           </div>
 
           {/* Right: Softphone */}
