@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,8 +11,9 @@ import { AddActivityForm } from "./AddActivityForm";
 import { DealAIAssistant } from "./DealAIAssistant";
 import { DealEmailComposer } from "./DealEmailComposer";
 import { DealQuickActions } from "./DealQuickActions";
-import { Phone, Mail, MapPin, Calendar, DollarSign } from "lucide-react";
+import { Phone, PhoneCall, Mail, MapPin, Calendar, DollarSign } from "lucide-react";
 import { format, parseISO } from "date-fns";
+import { DialerProvider } from "@/components/dialer/dialerProvider";
 
 interface DealDetailPanelProps {
   deal: Deal | null;
@@ -80,6 +82,15 @@ export function DealDetailPanel({ deal, stages, open, onOpenChange, onStageChang
                 <div className="flex items-center gap-2 text-sm">
                   <Phone className="h-3.5 w-3.5 text-muted-foreground" />
                   <span>{lead.phone}</span>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6 rounded-full text-muted-foreground hover:text-primary ml-1"
+                    onClick={() => DialerProvider.startCall(lead.phone!, undefined, `${lead.first_name} ${lead.last_name}`)}
+                    title={`Call ${lead.phone}`}
+                  >
+                    <PhoneCall className="w-3.5 h-3.5" />
+                  </Button>
                 </div>
               )}
               {lead.email && (

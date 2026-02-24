@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-
+import { DialerProvider } from "@/components/dialer/dialerProvider";
 interface Customer {
   id: string;
   first_name: string;
@@ -55,7 +55,7 @@ export default function AgentCustomers() {
 
   return (
     <AgentShell breadcrumb=" / My Customers">
-      {({ openDialer }) => (
+      {() => (
       <div className="p-6 max-w-4xl mx-auto space-y-4">
         <div className="flex items-center justify-between">
           <div>
@@ -117,7 +117,7 @@ export default function AgentCustomers() {
                     className="shrink-0 h-8 w-8 rounded-full text-muted-foreground hover:text-primary"
                     onClick={(e) => {
                       e.stopPropagation();
-                      openDialer(c.phone!);
+                      DialerProvider.startCall(c.phone!, undefined, `${c.first_name} ${c.last_name}`);
                     }}
                     title={`Call ${c.phone}`}
                   >

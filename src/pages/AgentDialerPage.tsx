@@ -8,6 +8,7 @@ import CallLogView from "@/components/dialer/CallLogView";
 import RecordingsLibrary from "@/components/dialer/RecordingsLibrary";
 import ScheduledCallbacks from "@/components/dialer/ScheduledCallbacks";
 import { DialerProvider } from "@/components/dialer/dialerProvider";
+import { useDialerShortcuts } from "@/hooks/useDialerShortcuts";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Phone, Zap, List, Disc, CalendarClock } from "lucide-react";
 import type { AgentCallStatus, CallState } from "@/components/dialer/types";
@@ -19,6 +20,13 @@ export default function AgentDialerPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [callState, setCallState] = useState<CallState>("idle");
   const [activeTab, setActiveTab] = useState("workspace");
+  const [showDialpad, setShowDialpad] = useState(true);
+
+  // Keyboard shortcuts: Space=mute, H=hold, D=dialpad, N=next
+  useDialerShortcuts({
+    onToggleDialpad: () => setShowDialpad((p) => !p),
+    onNextContact: activeTab === "power" ? () => {} : undefined,
+  });
 
   const handleDial = (phone: string, name?: string) => {
     DialerProvider.startCall(phone, undefined, name);
