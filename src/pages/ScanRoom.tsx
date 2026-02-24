@@ -348,22 +348,27 @@ export default function ScanRoom() {
           onStartScan={startDemo}
         />
 
-        {/* How It Works - Clean Card Steps */}
-        <section className="container max-w-4xl mx-auto px-4 py-10">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground/60 text-center mb-6">How It Works</p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        {/* How It Works - Compact Inline Steps */}
+        <section className="container max-w-3xl mx-auto px-4 py-5">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-2 sm:gap-0">
             {[
-              { num: "1", icon: Upload, title: "Upload Photos or Videos", desc: "Capture each room showing all furniture and items" },
-              { num: "2", icon: Scan, title: "AI Detects & Measures", desc: "Our AI identifies items and calculates weight & volume" },
-              { num: "3", icon: Package, title: "Review & Get Quote", desc: "Verify your inventory and receive an instant estimate" },
-            ].map((step) => (
-              <div key={step.num} className="flex flex-col items-center text-center gap-3 rounded-2xl border border-border bg-card p-6 shadow-[0_4px_20px_-4px_hsl(var(--tm-ink)/0.06)]">
-                <div className="w-10 h-10 rounded-full bg-muted/50 border border-border flex items-center justify-center text-sm font-bold text-foreground">
+              { num: "1", title: "Upload", desc: "Photos or videos" },
+              { num: "2", title: "AI Scans", desc: "Detects every item" },
+              { num: "3", title: "Get Quote", desc: "Instant estimate" },
+            ].map((step, i) => (
+              <div
+                key={step.num}
+                className="flex items-center gap-2.5 px-4 py-2.5 animate-fade-in opacity-0"
+                style={{ animationDelay: `${i * 0.15}s`, animationFillMode: 'forwards' }}
+              >
+                <span className="w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center text-[10px] font-bold flex-shrink-0">
                   {step.num}
+                </span>
+                <div className="flex flex-col">
+                  <span className="text-xs font-semibold text-foreground leading-tight">{step.title}</span>
+                  <span className="text-[10px] text-muted-foreground/60 leading-tight">{step.desc}</span>
                 </div>
-                <step.icon className="w-5 h-5 text-muted-foreground" />
-                <h3 className="text-sm font-semibold text-foreground">{step.title}</h3>
-                <p className="text-xs text-muted-foreground/70 leading-relaxed">{step.desc}</p>
+                {i < 2 && <span className="hidden sm:block text-muted-foreground/30 ml-3 mr-1">→</span>}
               </div>
             ))}
           </div>
