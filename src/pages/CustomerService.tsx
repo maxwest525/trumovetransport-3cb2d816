@@ -43,6 +43,7 @@ function VoiceOrb({ isConnected, isSpeaking }: { isConnected: boolean; isSpeakin
   const animRef = useRef<number>(0);
   const particlesRef = useRef<Particle[]>([]);
   const intensityRef = useRef(0);
+  const isDarkRef = useRef(false);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -53,6 +54,12 @@ function VoiceOrb({ isConnected, isSpeaking }: { isConnected: boolean; isSpeakin
     canvas.width = size * dpr;
     canvas.height = size * dpr;
     ctx.scale(dpr, dpr);
+
+    // Detect dark mode
+    const checkDark = () => { isDarkRef.current = document.documentElement.classList.contains('dark'); };
+    checkDark();
+    const observer = new MutationObserver(checkDark);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
 
     const spawnParticle = (cx: number, cy: number, orbR: number, intensity: number) => {
       const angle = Math.random() * Math.PI * 2;
@@ -80,19 +87,40 @@ function VoiceOrb({ isConnected, isSpeaking }: { isConnected: boolean; isSpeakin
       intensityRef.current += (targetIntensity - intensityRef.current) * 0.08;
       const intensity = intensityRef.current;
 
-      // Color shift: idle=neutral, connected=cool, speaking=warm shift
+      const dark = isDarkRef.current;
+
+      // Color shift: dark mode uses brighter, more saturated tones
       const hueBase = isConnected ? (isSpeaking ? 20 + Math.sin(t * 3) * 20 : 200) : 0;
-      const sat = isConnected ? 8 + intensity * 30 : 0;
-      const lum = isConnected ? 25 + intensity * 15 : 55;
+      const sat = isConnected ? (dark ? 20 + intensity * 45 : 8 + intensity * 30) : 0;
+      const lum = dark
+        ? (isConnected ? 55 + intensity * 20 : 50)
+        : (isConnected ? 25 + intensity * 15 : 55);
+
+      // Dark mode outer glow
+      if (dark && isConnected) {
+        const glowR = 90 + intensity * 20;
+        const glowGrad = ctx.createRadialGradient(cx, cy, 30, cx, cy, glowR);
+        const glowHue = isSpeaking ? hueBase : 200;
+        const glowAlpha = 0.06 + intensity * 0.1;
+        glowGrad.addColorStop(0, `hsl(${glowHue} ${sat + 15}% ${lum + 10}% / ${glowAlpha})`);
+        glowGrad.addColorStop(0.6, `hsl(${glowHue} ${sat}% ${lum}% / ${glowAlpha * 0.3})`);
+        glowGrad.addColorStop(1, `hsl(${glowHue} ${sat}% ${lum}% / 0)`);
+        ctx.beginPath();
+        ctx.arc(cx, cy, glowR, 0, Math.PI * 2);
+        ctx.fillStyle = glowGrad;
+        ctx.fill();
+      }
 
       // Concentric rings with color
       for (let i = 4; i >= 0; i--) {
         const r = 52 + i * 16 + (isConnected ? Math.sin(t * 1.5 + i * 0.8) * (2 + intensity * 4) : 0);
         ctx.beginPath();
         ctx.arc(cx, cy, r, 0, Math.PI * 2);
-        const ringAlpha = isConnected ? 0.04 + intensity * 0.04 : 0.025;
+        const ringAlpha = dark
+          ? (isConnected ? 0.08 + intensity * 0.08 : 0.04)
+          : (isConnected ? 0.04 + intensity * 0.04 : 0.025);
         ctx.strokeStyle = `hsl(${hueBase} ${sat}% ${lum}% / ${ringAlpha})`;
-        ctx.lineWidth = 1;
+        ctx.lineWidth = dark ? 1.5 : 1;
         ctx.stroke();
       }
 
@@ -178,6 +206,7 @@ function VoiceOrb({ isConnected, isSpeaking }: { isConnected: boolean; isSpeakin
     return () => {
       cancelAnimationFrame(animRef.current);
       particlesRef.current = [];
+      observer.disconnect();
     };
   }, [isConnected, isSpeaking]);
 
@@ -250,10 +279,20 @@ export default function CustomerService() {
           <div className="mx-auto max-w-3xl">
             {/* Orb + Avatar */}
             <div className="relative mx-auto w-fit mb-6">
+              {/* Dark mode ambient glow behind orb */}
+              <div className={`absolute inset-0 rounded-full transition-all duration-700 pointer-events-none dark:block hidden ${
+                isConnected
+                  ? conversation.isSpeaking
+                    ? 'bg-[hsl(25_50%_50%/0.08)] shadow-[0_0_80px_30px_hsl(25_50%_50%/0.12)]'
+                    : 'bg-[hsl(200_40%_50%/0.06)] shadow-[0_0_60px_20px_hsl(200_40%_50%/0.08)]'
+                  : 'bg-transparent'
+              }`} />
               <VoiceOrb isConnected={isConnected} isSpeaking={conversation.isSpeaking} />
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className={`h-16 w-16 rounded-full border overflow-hidden transition-all duration-500 ${
-                  isConnected ? 'border-foreground/30 shadow-[0_0_24px_hsl(var(--tm-ink)/0.15)]' : 'border-border shadow-sm'
+                  isConnected
+                    ? 'border-foreground/30 shadow-[0_0_24px_hsl(var(--tm-ink)/0.15)] dark:shadow-[0_0_30px_hsl(var(--tm-ink)/0.3)]'
+                    : 'border-border shadow-sm'
                 }`}>
                   <img src={trudyAvatar} alt="Trudy AI Assistant" className="h-full w-full object-cover" />
                 </div>
