@@ -274,62 +274,47 @@ export default function CustomerService() {
     <SiteShell hideTrustStrip>
       <main className="min-h-screen bg-background">
 
-        {/* ─── CONTACT CENTER TRUST STRIP (same style as site-wide strip) ─── */}
-        <div className="safer-trust-strip">
-          <div className="safer-trust-strip-inner">
-            <div className="safer-trust-item font-bold">
-              <div className="w-5 h-5 rounded border border-border bg-muted/40 shrink-0" />
+        {/* ─── CONTACT CENTER TRUST STRIP ─── */}
+        <div className="safer-trust-strip !justify-between">
+          <div className="safer-trust-strip-inner !justify-between !w-full !max-w-7xl !mx-auto !px-4">
+            <div className="safer-trust-item !font-extrabold !gap-2">
+              <div className="w-5 h-5 rounded border border-[hsl(0_0%_100%/0.15)] bg-[hsl(0_0%_100%/0.06)] shrink-0" />
               <span>Contact Center</span>
             </div>
-            <span className="safer-trust-dot">•</span>
-            {[
-              { icon: MonitorPlay, text: 'Secure Video' },
-              { icon: Shield, text: 'Licensed Broker' },
-              { icon: Share2, text: 'Screen Sharing' },
-              { icon: FileText, text: 'Quote Review' },
-              { icon: CheckCircle2, text: 'No Obligation' },
-            ].map((item, idx, arr) => (
-              <div key={item.text} className="safer-trust-item">
-                <item.icon className="w-4 h-4" />
-                <span>{item.text}</span>
-                {idx < arr.length - 1 && <span className="safer-trust-dot">•</span>}
-              </div>
-            ))}
+            <div className="flex items-center gap-0">
+              {[
+                { icon: MonitorPlay, text: 'Secure Video' },
+                { icon: Shield, text: 'Licensed Broker' },
+                { icon: Share2, text: 'Screen Sharing' },
+                { icon: FileText, text: 'Quote Review' },
+                { icon: CheckCircle2, text: 'No Obligation' },
+              ].map((item, idx, arr) => (
+                <div key={item.text} className="flex items-center">
+                  <div className="safer-trust-item">
+                    <item.icon className="w-4 h-4" />
+                    <span>{item.text}</span>
+                  </div>
+                  {idx < arr.length - 1 && <span className="safer-trust-dot">•</span>}
+                </div>
+              ))}
+            </div>
+            <div className="safer-trust-item !text-[10px] !font-mono !opacity-50 shrink-0 hidden md:flex">
+              <span>SESSION ID</span>
+              <span>TM-{new Date().getFullYear()}-51423342</span>
+            </div>
           </div>
         </div>
 
-        {/* ─── HERO: Command Center ─── */}
-        <section className="text-center pt-8 pb-4 px-4">
+        {/* ─── HERO ─── */}
+        <section className="text-center pt-6 pb-2 px-4">
           <div className="mx-auto max-w-3xl">
-            {/* Orb + Avatar */}
-            <div className="relative mx-auto w-fit mb-4">
-              {/* Dark mode ambient glow behind orb */}
-              <div className={`absolute inset-0 rounded-full transition-all duration-700 pointer-events-none dark:block hidden ${
-                isConnected
-                  ? conversation.isSpeaking
-                    ? 'bg-[hsl(25_50%_50%/0.08)] shadow-[0_0_80px_30px_hsl(25_50%_50%/0.12)]'
-                    : 'bg-[hsl(200_40%_50%/0.06)] shadow-[0_0_60px_20px_hsl(200_40%_50%/0.08)]'
-                  : 'bg-transparent'
-              }`} />
-              <VoiceOrb isConnected={isConnected} isSpeaking={conversation.isSpeaking} />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className={`h-16 w-16 rounded-full border overflow-hidden transition-all duration-500 ${
-                  isConnected
-                    ? 'border-foreground/30 shadow-[0_0_24px_hsl(var(--tm-ink)/0.15)] dark:shadow-[0_0_30px_hsl(var(--tm-ink)/0.3)]'
-                    : 'border-border shadow-sm'
-                }`}>
-                  <img src={trudyAvatar} alt="Trudy AI Assistant" className="h-full w-full object-cover" />
-                </div>
-              </div>
-            </div>
-
-            <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-foreground leading-none">Trudy</h1>
+            <h1 className="text-3xl font-black tracking-tight text-foreground leading-none">Trudy</h1>
             <p className="text-muted-foreground text-xs mt-1 mb-3 max-w-sm mx-auto leading-relaxed">
               AI move coordinator — instant quotes, tracking, scheduling & support by voice.
             </p>
 
             {/* Action row */}
-            <div className="flex flex-wrap items-center justify-center gap-2.5 mb-3">
+            <div className="flex flex-wrap items-center justify-center gap-2.5 mb-2">
               {!isConnected ? (
                 <button
                   onClick={startCall}
@@ -356,7 +341,7 @@ export default function CustomerService() {
 
             {/* Live status */}
             {isConnected && (
-              <div className="flex items-center justify-center gap-2.5 text-xs text-foreground animate-in fade-in slide-in-from-bottom-2 mb-2">
+              <div className="flex items-center justify-center gap-2.5 text-xs text-foreground animate-in fade-in slide-in-from-bottom-2 mb-1">
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-foreground/60 opacity-75" />
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-foreground" />
@@ -366,7 +351,7 @@ export default function CustomerService() {
             )}
 
             {/* Stats row */}
-            <div className="flex flex-wrap justify-center gap-6 mt-4 mb-1">
+            <div className="flex flex-wrap justify-center gap-6 mt-3">
               {[
                 { value: '24/7', label: 'Availability' },
                 { value: '<3s', label: 'Response' },
@@ -383,25 +368,24 @@ export default function CustomerService() {
         </section>
 
         {/* ─── CAPABILITIES GRID ─── */}
-        <section className="py-8 px-4">
+        <section className="py-5 px-4">
           <div className="mx-auto max-w-4xl">
-            <div className="text-center mb-5">
-              <h2 className="text-sm font-bold text-foreground tracking-tight uppercase tracking-wider">What Trudy Handles</h2>
+            <div className="text-center mb-3">
+              <h2 className="text-sm font-bold text-foreground uppercase tracking-wider">What Trudy Handles</h2>
               <p className="text-[11px] text-muted-foreground mt-0.5">One AI assistant for your entire move</p>
             </div>
-            <div className="tru-hero-value-cards-open grid gap-2 sm:grid-cols-2 lg:grid-cols-4 items-start">
-              {capabilities.map((cap, i) => (
+            <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+              {capabilities.map((cap) => (
                 <div
                   key={cap.label}
-                  className="tru-value-card-open group relative rounded-xl border border-border bg-card p-3.5 shadow-[0_2px_8px_-2px_hsl(var(--tm-ink)/0.08),0_4px_16px_-4px_hsl(var(--tm-ink)/0.06)] hover:shadow-[0_4px_12px_-2px_hsl(var(--tm-ink)/0.12),0_8px_24px_-4px_hsl(var(--tm-ink)/0.08)] hover:border-foreground/20 transition-all cursor-default"
-                  style={{ animationDelay: `${0.5 + i * 0.08}s` }}
+                  className="group relative rounded-xl border border-border bg-card p-3 shadow-[0_2px_8px_-2px_hsl(var(--tm-ink)/0.08),0_4px_16px_-4px_hsl(var(--tm-ink)/0.06)] hover:shadow-[0_4px_12px_-2px_hsl(var(--tm-ink)/0.12),0_8px_24px_-4px_hsl(var(--tm-ink)/0.08)] hover:border-foreground/20 transition-all cursor-default"
                 >
                   {cap.tag && (
-                    <span className="absolute top-2.5 right-2.5 text-[9px] font-bold uppercase tracking-wider text-foreground bg-muted px-1.5 py-0.5 rounded">
+                    <span className="absolute top-2 right-2 text-[9px] font-bold uppercase tracking-wider text-foreground bg-muted px-1.5 py-0.5 rounded">
                       {cap.tag}
                     </span>
                   )}
-                  <cap.icon className="w-4 h-4 text-muted-foreground mb-2 group-hover:text-foreground transition-colors" />
+                  <cap.icon className="w-4 h-4 text-muted-foreground mb-1.5 group-hover:text-foreground transition-colors" />
                   <h3 className="text-xs font-semibold text-foreground">{cap.label}</h3>
                   <p className="text-[11px] text-muted-foreground mt-0.5 leading-relaxed">{cap.desc}</p>
                 </div>
@@ -411,9 +395,9 @@ export default function CustomerService() {
         </section>
 
         {/* ─── FAQ + CONTACT ─── */}
-        <section className="py-8 px-4 border-t border-border">
+        <section className="py-5 px-4 border-t border-border">
           <div className="mx-auto max-w-4xl">
-            <div className="grid lg:grid-cols-2 gap-8">
+            <div className="grid lg:grid-cols-2 gap-6">
 
               {/* FAQ */}
               <div>
