@@ -339,8 +339,8 @@ export default function ScanRoom() {
             <div className="tru-scan-step-bar-item">
               <span className="tru-scan-step-bar-num">1</span>
               <div className="tru-scan-step-bar-content">
-                <span className="tru-scan-step-bar-label">Upload Room Photos</span>
-                <span className="tru-scan-step-bar-desc">Take photos of each room showing all furniture and items</span>
+                <span className="tru-scan-step-bar-label">Upload Room Photos or Videos</span>
+                <span className="tru-scan-step-bar-desc">Capture each room showing all furniture and items</span>
               </div>
             </div>
             <ChevronRight className="tru-scan-step-bar-arrow" />
@@ -371,7 +371,7 @@ export default function ScanRoom() {
                 Room <span className="tru-scan-headline-accent">Inventory Scan</span>
               </h2>
               <p className="tru-scan-analysis-subtitle">
-                Upload photos of your rooms and let our AI identify every item automatically
+                Upload photos or videos of your rooms and let our AI identify every item automatically
               </p>
             </div>
 
@@ -381,13 +381,13 @@ export default function ScanRoom() {
               <div className="tru-scan-upload-panel">
                 <div className="tru-scan-upload-header">
                   <Upload className="w-4 h-4" />
-                  <span>Upload Photos</span>
+                  <span>Upload Photos or Videos</span>
                 </div>
                 <div className="tru-scan-upload-zone">
                   <input
                     type="file"
                     id="photo-upload"
-                    accept="image/*"
+                    accept="image/*,video/*"
                     multiple
                     className="hidden"
                     onChange={(e) => {
@@ -409,10 +409,10 @@ export default function ScanRoom() {
                       <ImageIcon className="w-8 h-8" />
                     </div>
                     <p className="tru-scan-upload-text">
-                      Drag & drop photos here
+                      Drag & drop photos or videos here
                     </p>
                     <span className="tru-scan-upload-hint">or click to browse</span>
-                    <span className="tru-scan-upload-formats">JPG, PNG, HEIC</span>
+                    <span className="tru-scan-upload-formats">JPG, PNG, HEIC, MP4, MOV</span>
                   </label>
                 </div>
                 <div className="tru-scan-upload-tips">
@@ -430,7 +430,7 @@ export default function ScanRoom() {
                   </div>
                   <h3 className="text-lg font-semibold text-foreground">AI Room Scanner</h3>
                   <p className="text-sm text-muted-foreground max-w-[240px]">
-                    Upload your room photos and our AI will detect every item automatically.
+                    Upload your room photos or videos and our AI will detect every item automatically.
                   </p>
                 </div>
 
@@ -449,7 +449,7 @@ export default function ScanRoom() {
                     className="flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold border border-border text-foreground hover:bg-muted/50 transition-colors cursor-pointer"
                   >
                     <Upload className="w-4 h-4" />
-                    Upload Photos
+                    Upload Media
                   </label>
                 </div>
 
@@ -489,9 +489,17 @@ export default function ScanRoom() {
                 </div>
                 <div className="tru-scan-library-grid tru-scan-library-grid-compact">
                   {uploadedPhotos.length === 0 ? (
-                    <div className="tru-scan-library-empty tru-scan-library-empty-compact">
-                      <ImageIcon className="w-5 h-5" />
-                      <p>No photos</p>
+                    <div className="tru-scan-library-empty tru-scan-library-empty-compact flex flex-col gap-2">
+                      <ImageIcon className="w-6 h-6 text-muted-foreground/50" />
+                      <p className="text-sm font-medium text-muted-foreground">No media yet</p>
+                      <div className="flex flex-col gap-0.5 text-[11px] text-muted-foreground/60">
+                        <span>🛋️ Living Room</span>
+                        <span>🛏️ Bedrooms</span>
+                        <span>🍳 Kitchen</span>
+                        <span>🚿 Bathrooms</span>
+                        <span>🏠 Garage / Storage</span>
+                      </div>
+                      <p className="text-[10px] text-muted-foreground/40 mt-1">Photos or videos accepted</p>
                     </div>
                   ) : (
                     uploadedPhotos.map(photo => (
