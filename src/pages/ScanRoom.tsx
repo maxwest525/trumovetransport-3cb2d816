@@ -430,7 +430,7 @@ export default function ScanRoom() {
 
         {/* Room Inventory Analysis Section */}
         <section className="tru-scan-split-demo">
-          <div className="container max-w-6xl mx-auto px-4">
+          <div className="container max-w-7xl mx-auto px-4">
 
             {/* Three Column Layout: Upload | Scanner | Photo Library */}
             <div className="tru-scan-analysis-grid">
