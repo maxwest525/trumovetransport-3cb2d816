@@ -1,6 +1,6 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useConversation } from '@elevenlabs/react';
-import { Phone, PhoneOff, Mail, Send, Clock, Shield, Calculator, MapPin, Calendar, HelpCircle, Package, ScanLine, Video, Sparkles, Mic, Loader2 } from 'lucide-react';
+import { Phone, PhoneOff, Mail, Send, Clock, Shield, Calculator, MapPin, Calendar, HelpCircle, Package, ScanLine, Video, Mic, Loader2, MessageSquare, ArrowRight, Zap, Globe, HeadphonesIcon } from 'lucide-react';
 import SiteShell from '@/components/layout/SiteShell';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Input } from '@/components/ui/input';
@@ -8,55 +8,137 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import AIChatContainer from '@/components/chat/AIChatContainer';
 import trudyAvatar from '@/assets/trudy-avatar.png';
 
 const TRUDY_AGENT_ID = 'agent_0501khwa2t2pfj0s3echetmjhx4n';
 
 const capabilities = [
-  { icon: Calculator, label: 'Instant Quotes', desc: 'Get a ballpark estimate in seconds' },
-  { icon: MapPin, label: 'Shipment Tracking', desc: 'Real-time GPS location & ETA' },
-  { icon: Calendar, label: 'Scheduling', desc: 'Book or reschedule your move' },
-  { icon: Shield, label: 'Carrier Vetting', desc: 'FMCSA safety verification' },
-  { icon: ScanLine, label: 'AI Room Scan', desc: 'Photo-based inventory builder' },
-  { icon: Package, label: 'Packing Help', desc: 'Tips, checklists & services' },
+  { icon: Calculator, label: 'Instant Quotes', desc: 'AI-powered estimates in seconds', tag: 'Most used' },
+  { icon: MapPin, label: 'Live Tracking', desc: 'Real-time GPS location & ETA' },
+  { icon: Calendar, label: 'Scheduling', desc: 'Book or reschedule moves' },
+  { icon: Shield, label: 'Carrier Vetting', desc: 'FMCSA safety verified' },
+  { icon: ScanLine, label: 'Room Scanner', desc: 'Photo-based inventory' },
+  { icon: Package, label: 'Packing Help', desc: 'Tips & checklists' },
   { icon: Video, label: 'Video Consult', desc: 'Live virtual walk-through' },
-  { icon: HelpCircle, label: 'Anything Else', desc: 'Insurance, storage, claims…' },
+  { icon: HelpCircle, label: 'General Support', desc: 'Insurance, claims, storage' },
+];
+
+const stats = [
+  { value: '24/7', label: 'Availability' },
+  { value: '<3s', label: 'Response Time' },
+  { value: '95%', label: 'Resolved Instantly' },
+  { value: '4.9★', label: 'Satisfaction' },
 ];
 
 const faqItems = [
-  { q: 'How does the AI Move Estimator work?', a: 'Our AI scans photos of your rooms to auto-detect furniture and belongings, then calculates cubic feet and weight to give you an instant quote. You can also add items manually from our catalog of 200+ items.' },
-  { q: 'Are your carriers vetted and insured?', a: 'Absolutely. Every carrier goes through our FMCSA-verified vetting process. We check safety ratings, complaint history, insurance coverage, and operating authority before recommending any mover.' },
+  { q: 'How does the AI Move Estimator work?', a: 'Our AI scans photos of your rooms to auto-detect furniture and belongings, then calculates cubic feet and weight to give you an instant quote.' },
+  { q: 'Are your carriers vetted and insured?', a: 'Every carrier goes through our FMCSA-verified vetting process. We check safety ratings, complaint history, insurance coverage, and operating authority.' },
   { q: 'Can I track my shipment in real time?', a: 'Yes! Our live tracking dashboard shows your truck\'s GPS location, real-time ETA, weather along the route, and weigh station alerts.' },
-  { q: 'What if I need to reschedule my move?', a: 'No problem. You can reschedule through Trudy or by calling our team. We recommend at least 48 hours notice.' },
-  { q: 'Do you offer packing services?', a: 'Yes, we offer full-service packing, partial packing, and DIY options with professional-grade materials.' },
-  { q: 'How do I file a claim for damaged items?', a: 'Contact our support team within 9 months of delivery. All moves include basic liability coverage, with full-value protection available as an upgrade.' },
+  { q: 'What if I need to reschedule?', a: 'Reschedule through Trudy or call our team. We recommend at least 48 hours notice.' },
+  { q: 'How do I file a claim?', a: 'Contact our support team within 9 months of delivery. All moves include basic liability coverage, with full-value protection available as an upgrade.' },
 ];
 
-const trudyPageContext = {
-  key: 'meet-trudy',
-  firstMessage: "Hey! I'm Trudy — your AI move coordinator. I handle quotes, scheduling, tracking, carrier vetting, packing advice, and pretty much anything else you need. Think of me as your entire support team, available 24/7. What can I help you with?",
-  quickActions: [
-    { id: 'quote', label: 'Get a Quote', icon: Calculator, action: 'message' as const, message: 'I need a moving quote' },
-    { id: 'track', label: 'Track Shipment', icon: MapPin, action: 'navigate' as const, target: '/track' },
-    { id: 'schedule', label: 'Schedule a Move', icon: Calendar, action: 'message' as const, message: 'I want to schedule a move' },
-    { id: 'scan', label: 'Scan My Room', icon: ScanLine, action: 'navigate' as const, target: '/scan-room' },
-  ],
-  agentContext: "User is on the Meet Trudy page — they came here specifically to interact with you. Be confident, helpful, and proactive. You can handle quotes, scheduling, tracking, vetting, packing tips, and general questions. Only escalate to a human when genuinely necessary.",
-};
+/* ─── Voice Orb ─── */
+function VoiceOrb({ isConnected, isSpeaking }: { isConnected: boolean; isSpeaking: boolean }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const animRef = useRef<number>(0);
 
-/* ─── Inline Voice Call Section ─── */
-function TrudyVoiceHero() {
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d')!;
+    const size = 200;
+    canvas.width = size;
+    canvas.height = size;
+
+    const draw = () => {
+      ctx.clearRect(0, 0, size, size);
+      const cx = size / 2, cy = size / 2;
+      const t = Date.now() / 1000;
+
+      // Outer glow rings
+      if (isConnected) {
+        for (let i = 3; i >= 1; i--) {
+          const r = 60 + i * 12 + Math.sin(t * 2 + i) * 4;
+          ctx.beginPath();
+          ctx.arc(cx, cy, r, 0, Math.PI * 2);
+          ctx.strokeStyle = `hsla(142, 71%, 45%, ${0.08 - i * 0.02})`;
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
+      }
+
+      // Main circle
+      const baseR = 55;
+      const pulse = isSpeaking ? Math.sin(t * 6) * 6 + Math.sin(t * 10) * 3 : isConnected ? Math.sin(t * 2) * 2 : 0;
+      const r = baseR + pulse;
+
+      const grad = ctx.createRadialGradient(cx - 10, cy - 10, 0, cx, cy, r);
+      if (isConnected) {
+        grad.addColorStop(0, 'hsla(142, 71%, 55%, 0.15)');
+        grad.addColorStop(1, 'hsla(142, 71%, 45%, 0.05)');
+      } else {
+        grad.addColorStop(0, 'hsla(0, 0%, 50%, 0.1)');
+        grad.addColorStop(1, 'hsla(0, 0%, 40%, 0.05)');
+      }
+
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI * 2);
+      ctx.fillStyle = grad;
+      ctx.fill();
+      ctx.strokeStyle = isConnected ? 'hsla(142, 71%, 45%, 0.3)' : 'hsla(0, 0%, 50%, 0.15)';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      // Inner waveform bars when speaking
+      if (isConnected) {
+        const bars = 12;
+        for (let i = 0; i < bars; i++) {
+          const angle = (i / bars) * Math.PI * 2;
+          const h = isSpeaking
+            ? 8 + Math.sin(t * 8 + i * 0.7) * 12 + Math.sin(t * 12 + i * 1.3) * 6
+            : 3 + Math.sin(t * 2 + i * 0.5) * 2;
+          const innerR = 28;
+          const x1 = cx + Math.cos(angle) * innerR;
+          const y1 = cy + Math.sin(angle) * innerR;
+          const x2 = cx + Math.cos(angle) * (innerR + h);
+          const y2 = cy + Math.sin(angle) * (innerR + h);
+          ctx.beginPath();
+          ctx.moveTo(x1, y1);
+          ctx.lineTo(x2, y2);
+          ctx.strokeStyle = `hsla(142, 71%, 45%, ${isSpeaking ? 0.6 : 0.2})`;
+          ctx.lineWidth = 2;
+          ctx.lineCap = 'round';
+          ctx.stroke();
+        }
+      }
+
+      animRef.current = requestAnimationFrame(draw);
+    };
+
+    draw();
+    return () => cancelAnimationFrame(animRef.current);
+  }, [isConnected, isSpeaking]);
+
+  return <canvas ref={canvasRef} className="w-[200px] h-[200px]" />;
+}
+
+/* ─── Main Page ─── */
+export default function CustomerService() {
+  const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
+  const [activeTab, setActiveTab] = useState<'voice' | 'form'>('voice');
 
   const conversation = useConversation({
-    onConnect: () => console.log('Meet Trudy: connected'),
-    onDisconnect: () => console.log('Meet Trudy: disconnected'),
-    onError: (error) => {
-      console.error('Meet Trudy voice error:', error);
-      toast({ variant: 'destructive', title: 'Connection Error', description: 'Could not connect voice. Try again.' });
+    onConnect: () => console.log('Trudy: connected'),
+    onDisconnect: () => console.log('Trudy: disconnected'),
+    onError: () => {
+      toast({ variant: 'destructive', title: 'Connection Error', description: 'Could not connect. Try again.' });
     },
   });
+
+  const isConnected = conversation.status === 'connected';
 
   const startCall = useCallback(async () => {
     if (isConnecting) return;
@@ -77,142 +159,22 @@ function TrudyVoiceHero() {
     await conversation.endSession();
   }, [conversation]);
 
-  const isConnected = conversation.status === 'connected';
-
-  return (
-    <div className="relative">
-      {/* Avatar + Voice orb */}
-      <div className="flex flex-col items-center">
-        <div className="relative mb-6">
-          {/* Outer glow rings */}
-          {isConnected && (
-            <>
-              <span className="absolute -inset-4 rounded-full border border-foreground/10 animate-pulse" />
-              <span className="absolute -inset-8 rounded-full border border-foreground/5 animate-pulse" style={{ animationDelay: '0.5s' }} />
-            </>
-          )}
-
-          {/* Avatar */}
-          <div className={`relative h-28 w-28 rounded-full border-2 transition-all duration-500 ${
-            isConnected ? 'border-foreground/30 shadow-[0_0_40px_hsl(var(--foreground)/0.15)]' : 'border-border shadow-lg'
-          }`}>
-            <img
-              src={trudyAvatar}
-              alt="Trudy – AI Assistant"
-              className="h-full w-full rounded-full object-cover"
-            />
-            <span className={`absolute bottom-1 right-1 h-4 w-4 rounded-full border-2 border-background transition-colors ${
-              isConnected ? 'bg-foreground' : 'bg-muted-foreground'
-            }`} />
-          </div>
-        </div>
-
-        <h1 className="text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl">
-          Meet Trudy
-        </h1>
-        <p className="mt-3 text-lg text-muted-foreground max-w-lg mx-auto">
-          Your AI move coordinator — available 24/7, faster than a phone call.
-        </p>
-
-        {/* Voice activity bar when connected */}
-        {isConnected && (
-          <div className="mt-6 flex items-center gap-3 rounded-full border border-border bg-card/80 backdrop-blur-sm px-6 py-3 shadow-lg animate-in fade-in slide-in-from-bottom-2">
-            <div className="flex items-center gap-0.5">
-              {[...Array(7)].map((_, i) => (
-                <span
-                  key={i}
-                  className="w-1 rounded-full bg-foreground/50 transition-all duration-150"
-                  style={{
-                    height: conversation.isSpeaking
-                      ? `${8 + Math.sin(Date.now() / 180 + i * 0.9) * 14}px`
-                      : '4px',
-                  }}
-                />
-              ))}
-            </div>
-            <span className="text-sm font-medium text-foreground">
-              {conversation.isSpeaking ? 'Trudy is speaking…' : 'Listening to you…'}
-            </span>
-            <div className="flex items-center gap-0.5">
-              {[...Array(7)].map((_, i) => (
-                <span
-                  key={i}
-                  className="w-1 rounded-full bg-foreground/50 transition-all duration-150"
-                  style={{
-                    height: !conversation.isSpeaking
-                      ? `${8 + Math.sin(Date.now() / 180 + i * 0.9) * 14}px`
-                      : '4px',
-                  }}
-                />
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Call-to-action */}
-        <div className="mt-6 flex items-center gap-3">
-          {!isConnected ? (
-            <button
-              onClick={startCall}
-              disabled={isConnecting}
-              className="group flex items-center gap-3 rounded-full bg-foreground text-background px-7 py-3.5 text-sm font-semibold shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl active:scale-95 disabled:opacity-50"
-            >
-              {isConnecting ? (
-                <Loader2 className="h-5 w-5 animate-spin" />
-              ) : (
-                <Mic className="h-5 w-5" />
-              )}
-              {isConnecting ? 'Connecting…' : 'Start Voice Call'}
-            </button>
-          ) : (
-            <button
-              onClick={endCall}
-              className="flex items-center gap-3 rounded-full bg-destructive text-destructive-foreground px-7 py-3.5 text-sm font-semibold shadow-xl transition-all duration-300 hover:scale-105 active:scale-95"
-            >
-              <PhoneOff className="h-5 w-5" />
-              End Call
-            </button>
-          )}
-        </div>
-
-        {!isConnected && (
-          <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-foreground/5 border border-border px-4 py-1.5 text-sm text-muted-foreground">
-            <Sparkles className="w-3.5 h-3.5 text-foreground" />
-            <span>Powered by conversational AI · Handles 95% of requests instantly</span>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-/* ─── Main Page ─── */
-export default function CustomerService() {
-  const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
-    const name = formData.name.trim();
-    const email = formData.email.trim();
-    const message = formData.message.trim();
-    const subject = formData.subject.trim() || null;
-
-    if (!name || !email || !message) {
+    const { name, email, message, subject } = formData;
+    if (!name.trim() || !email.trim() || !message.trim()) {
       toast({ title: 'Please fill in all required fields', variant: 'destructive' });
       return;
     }
-
     setIsSubmitting(true);
     try {
-      const { error } = await supabase.from('support_tickets').insert({ name, email, subject, message });
+      const { error } = await supabase.from('support_tickets').insert({ name: name.trim(), email: email.trim(), subject: subject.trim() || null, message: message.trim() });
       if (error) throw error;
       supabase.functions.invoke('notify-support-ticket', { body: { name, email, subject, message } }).catch(console.error);
-      toast({ title: 'Message sent!', description: 'We\'ll get back to you within 24 hours.' });
+      toast({ title: 'Message sent!', description: 'We\'ll respond within 24 hours.' });
       setFormData({ name: '', email: '', subject: '', message: '' });
-    } catch (err) {
-      console.error('Support ticket error:', err);
-      toast({ title: 'Something went wrong', description: 'Please try again or call us directly.', variant: 'destructive' });
+    } catch {
+      toast({ title: 'Something went wrong', variant: 'destructive' });
     } finally {
       setIsSubmitting(false);
     }
@@ -221,128 +183,250 @@ export default function CustomerService() {
   return (
     <SiteShell>
       <main className="min-h-screen bg-background">
-        {/* Hero — Voice-first */}
-        <section className="relative pt-28 pb-14">
-          <div className="mx-auto max-w-4xl px-4 text-center">
-            <TrudyVoiceHero />
-          </div>
-        </section>
 
-        {/* Or chat with text */}
-        <section className="pb-14 px-4">
-          <div className="mx-auto max-w-4xl">
-            <p className="text-center text-xs uppercase tracking-widest text-muted-foreground mb-4">Or type your question</p>
-            <div className="rounded-2xl border border-border bg-card shadow-xl overflow-hidden" style={{ height: '480px' }}>
-              <AIChatContainer pageContext={trudyPageContext} />
+        {/* ─── HERO: Trudy Command Center ─── */}
+        <section className="relative overflow-hidden">
+          {/* Subtle grid background */}
+          <div className="absolute inset-0 opacity-[0.03]" style={{
+            backgroundImage: 'linear-gradient(hsl(var(--foreground)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--foreground)) 1px, transparent 1px)',
+            backgroundSize: '40px 40px',
+          }} />
+
+          <div className="relative mx-auto max-w-6xl px-4 pt-16 pb-12">
+            <div className="grid lg:grid-cols-2 gap-12 items-center">
+
+              {/* Left: Info */}
+              <div>
+                <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 border border-primary/20 px-3 py-1 mb-6">
+                  <Zap className="w-3 h-3 text-primary" />
+                  <span className="text-[11px] font-semibold tracking-wide uppercase text-primary">AI-Powered Support</span>
+                </div>
+
+                <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-foreground leading-[1.1]">
+                  Trudy
+                  <span className="block text-muted-foreground font-medium text-lg sm:text-xl mt-2">
+                    Your AI move coordinator
+                  </span>
+                </h1>
+
+                <p className="mt-5 text-sm text-muted-foreground max-w-md leading-relaxed">
+                  Get instant quotes, track shipments, schedule moves, and resolve issues — all through a single voice conversation. No hold times, no transfers.
+                </p>
+
+                {/* Stats strip */}
+                <div className="mt-8 flex flex-wrap gap-6">
+                  {stats.map((s) => (
+                    <div key={s.label}>
+                      <p className="text-xl font-black text-foreground">{s.value}</p>
+                      <p className="text-[11px] text-muted-foreground tracking-wide uppercase">{s.label}</p>
+                    </div>
+                  ))}
+                </div>
+
+                {/* CTA buttons */}
+                <div className="mt-8 flex flex-wrap gap-3">
+                  {!isConnected ? (
+                    <button
+                      onClick={startCall}
+                      disabled={isConnecting}
+                      className="flex items-center gap-2.5 rounded-full bg-foreground text-background px-6 py-3 text-sm font-semibold shadow-lg transition-all hover:scale-[1.03] hover:shadow-xl active:scale-95 disabled:opacity-50"
+                    >
+                      {isConnecting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Mic className="h-4 w-4" />}
+                      {isConnecting ? 'Connecting…' : 'Talk to Trudy'}
+                    </button>
+                  ) : (
+                    <button
+                      onClick={endCall}
+                      className="flex items-center gap-2.5 rounded-full bg-destructive text-destructive-foreground px-6 py-3 text-sm font-semibold shadow-lg transition-all hover:scale-[1.03] active:scale-95"
+                    >
+                      <PhoneOff className="h-4 w-4" />
+                      End Call
+                    </button>
+                  )}
+                  <a
+                    href="tel:+16097277647"
+                    className="flex items-center gap-2 rounded-full border border-border bg-card px-5 py-3 text-sm font-medium text-foreground hover:bg-accent transition-colors"
+                  >
+                    <Phone className="h-4 w-4" />
+                    (609) 727-7647
+                  </a>
+                </div>
+
+                {isConnected && (
+                  <div className="mt-4 flex items-center gap-3 text-sm text-foreground animate-in fade-in slide-in-from-bottom-2">
+                    <span className="relative flex h-2.5 w-2.5">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
+                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary" />
+                    </span>
+                    {conversation.isSpeaking ? 'Trudy is speaking…' : 'Listening…'}
+                  </div>
+                )}
+              </div>
+
+              {/* Right: Voice Orb */}
+              <div className="flex items-center justify-center">
+                <div className="relative">
+                  <VoiceOrb isConnected={isConnected} isSpeaking={conversation.isSpeaking} />
+                  {/* Avatar centered in orb */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className={`h-20 w-20 rounded-full border-2 overflow-hidden transition-all duration-500 ${
+                      isConnected ? 'border-primary/40 shadow-[0_0_30px_hsl(var(--primary)/0.2)]' : 'border-border shadow-lg'
+                    }`}>
+                      <img src={trudyAvatar} alt="Trudy" className="h-full w-full object-cover" />
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </section>
 
-        {/* Capability strip */}
-        <section className="py-14 px-4">
+        {/* ─── TRUST STRIP ─── */}
+        <section className="border-y border-border bg-muted/30">
+          <div className="mx-auto max-w-6xl px-4 py-3 flex flex-wrap items-center justify-center gap-x-8 gap-y-2">
+            {[
+              { icon: Shield, text: 'FMCSA Verified' },
+              { icon: Globe, text: 'Available 24/7' },
+              { icon: Zap, text: 'Instant Responses' },
+              { icon: HeadphonesIcon, text: 'Human Escalation' },
+            ].map((item) => (
+              <div key={item.text} className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                <item.icon className="w-3.5 h-3.5 text-primary" />
+                <span className="font-medium">{item.text}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ─── CAPABILITIES GRID ─── */}
+        <section className="py-16 px-4">
           <div className="mx-auto max-w-5xl">
-            <h2 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground text-center mb-8">
-              What Trudy handles for you
-            </h2>
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="text-center mb-10">
+              <h2 className="text-2xl font-bold text-foreground">What Trudy Handles</h2>
+              <p className="mt-1.5 text-sm text-muted-foreground">One AI assistant for your entire move</p>
+            </div>
+            <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
               {capabilities.map((cap) => (
                 <div
                   key={cap.label}
-                  className="flex items-start gap-3 rounded-xl border border-border bg-card p-4 hover:bg-accent/50 transition-colors"
+                  className="group relative rounded-xl border border-border bg-card p-4 hover:border-primary/30 hover:bg-primary/[0.02] transition-all duration-200 cursor-default"
                 >
-                  <div className="flex-shrink-0 rounded-lg bg-foreground/5 p-2">
-                    <cap.icon className="w-5 h-5 text-foreground" />
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-semibold text-foreground">{cap.label}</h3>
-                    <p className="text-xs text-muted-foreground mt-0.5">{cap.desc}</p>
-                  </div>
+                  {cap.tag && (
+                    <span className="absolute top-2.5 right-2.5 text-[9px] font-bold uppercase tracking-wider text-primary bg-primary/10 px-1.5 py-0.5 rounded">
+                      {cap.tag}
+                    </span>
+                  )}
+                  <cap.icon className="w-5 h-5 text-foreground/70 mb-3 group-hover:text-primary transition-colors" />
+                  <h3 className="text-sm font-semibold text-foreground">{cap.label}</h3>
+                  <p className="text-xs text-muted-foreground mt-0.5">{cap.desc}</p>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* FAQ */}
-        <section className="py-14 px-4 bg-muted/20">
-          <div className="mx-auto max-w-3xl">
-            <h2 className="text-2xl font-bold text-center text-foreground mb-8">Frequently Asked Questions</h2>
-            <Accordion type="single" collapsible className="space-y-2">
-              {faqItems.map((item, i) => (
-                <AccordionItem
-                  key={i}
-                  value={`faq-${i}`}
-                  className="rounded-xl border border-border bg-card px-6 shadow-sm"
-                >
-                  <AccordionTrigger className="text-left font-medium text-foreground hover:no-underline py-4 text-sm">
-                    {item.q}
-                  </AccordionTrigger>
-                  <AccordionContent className="text-muted-foreground pb-4 text-sm leading-relaxed">
-                    {item.a}
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
-          </div>
-        </section>
+        {/* ─── CONTACT / FAQ SPLIT ─── */}
+        <section className="py-16 px-4 bg-muted/20">
+          <div className="mx-auto max-w-5xl">
+            <div className="grid lg:grid-cols-2 gap-12">
 
-        {/* Support ticket form */}
-        <section className="py-14 px-4">
-          <div className="mx-auto max-w-2xl">
-            <h2 className="text-2xl font-bold text-center text-foreground mb-1">Need a Human?</h2>
-            <p className="text-center text-muted-foreground mb-8 text-sm">
-              Trudy handles most requests, but you can always reach our team.
-            </p>
-            <form onSubmit={handleSubmit} className="rounded-2xl border border-border bg-card p-8 shadow-lg space-y-4">
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div>
-                  <label htmlFor="cs-name" className="block text-xs font-medium text-foreground mb-1">Name *</label>
-                  <Input id="cs-name" placeholder="Your name" value={formData.name} onChange={(e) => setFormData(p => ({ ...p, name: e.target.value }))} maxLength={100} required />
-                </div>
-                <div>
-                  <label htmlFor="cs-email" className="block text-xs font-medium text-foreground mb-1">Email *</label>
-                  <Input id="cs-email" type="email" placeholder="you@example.com" value={formData.email} onChange={(e) => setFormData(p => ({ ...p, email: e.target.value }))} maxLength={255} required />
-                </div>
-              </div>
+              {/* Left: FAQ */}
               <div>
-                <label htmlFor="cs-subject" className="block text-xs font-medium text-foreground mb-1">Subject</label>
-                <Input id="cs-subject" placeholder="What's this about?" value={formData.subject} onChange={(e) => setFormData(p => ({ ...p, subject: e.target.value }))} maxLength={200} />
+                <h2 className="text-lg font-bold text-foreground mb-4">Common Questions</h2>
+                <Accordion type="single" collapsible className="space-y-1.5">
+                  {faqItems.map((item, i) => (
+                    <AccordionItem
+                      key={i}
+                      value={`faq-${i}`}
+                      className="rounded-lg border border-border bg-card px-4 shadow-sm"
+                    >
+                      <AccordionTrigger className="text-left font-medium text-foreground hover:no-underline py-3 text-sm">
+                        {item.q}
+                      </AccordionTrigger>
+                      <AccordionContent className="text-muted-foreground pb-3 text-xs leading-relaxed">
+                        {item.a}
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
               </div>
+
+              {/* Right: Contact Form */}
               <div>
-                <label htmlFor="cs-message" className="block text-xs font-medium text-foreground mb-1">Message *</label>
-                <Textarea id="cs-message" placeholder="How can we help?" rows={4} value={formData.message} onChange={(e) => setFormData(p => ({ ...p, message: e.target.value }))} maxLength={2000} required />
-              </div>
-              <Button type="submit" variant="outline" className="w-full" disabled={isSubmitting}>
-                {isSubmitting ? (
-                  <span className="flex items-center gap-2"><Clock className="w-4 h-4 animate-spin" /> Sending…</span>
+                <div className="flex items-center gap-2 mb-4">
+                  <h2 className="text-lg font-bold text-foreground">Contact a Human</h2>
+                  <span className="text-[10px] text-muted-foreground bg-muted px-2 py-0.5 rounded-full font-medium">Optional</span>
+                </div>
+                <p className="text-xs text-muted-foreground mb-4">Trudy handles 95% of requests. For the rest, we're here.</p>
+
+                {/* Tab toggle */}
+                <div className="flex gap-1 rounded-lg bg-muted/60 p-0.5 mb-4 w-fit">
+                  <button
+                    onClick={() => setActiveTab('voice')}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                      activeTab === 'voice' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'
+                    }`}
+                  >
+                    <Phone className="w-3 h-3" /> Call
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('form')}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                      activeTab === 'form' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'
+                    }`}
+                  >
+                    <MessageSquare className="w-3 h-3" /> Form
+                  </button>
+                </div>
+
+                {activeTab === 'voice' ? (
+                  <div className="rounded-xl border border-border bg-card p-6 text-center space-y-4">
+                    <p className="text-sm text-foreground font-medium">Speak with our team directly</p>
+                    <p className="text-xs text-muted-foreground">Mon–Sat, 8 AM – 8 PM EST</p>
+                    <a
+                      href="tel:+16097277647"
+                      className="inline-flex items-center gap-2 rounded-full bg-foreground text-background px-6 py-3 text-sm font-semibold shadow-lg hover:scale-[1.03] active:scale-95 transition-all"
+                    >
+                      <Phone className="h-4 w-4" /> (609) 727-7647
+                    </a>
+                    <p className="text-[11px] text-muted-foreground">
+                      or email <a href="mailto:support@trumove.com" className="underline hover:text-foreground">support@trumove.com</a>
+                    </p>
+                  </div>
                 ) : (
-                  <span className="flex items-center gap-2"><Send className="w-4 h-4" /> Send Message</span>
+                  <form onSubmit={handleSubmit} className="rounded-xl border border-border bg-card p-5 space-y-3">
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <div>
+                        <label className="block text-[11px] font-medium text-foreground mb-1">Name *</label>
+                        <Input placeholder="Your name" value={formData.name} onChange={(e) => setFormData(p => ({ ...p, name: e.target.value }))} maxLength={100} required />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] font-medium text-foreground mb-1">Email *</label>
+                        <Input type="email" placeholder="you@example.com" value={formData.email} onChange={(e) => setFormData(p => ({ ...p, email: e.target.value }))} maxLength={255} required />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-medium text-foreground mb-1">Subject</label>
+                      <Input placeholder="What's this about?" value={formData.subject} onChange={(e) => setFormData(p => ({ ...p, subject: e.target.value }))} maxLength={200} />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-medium text-foreground mb-1">Message *</label>
+                      <Textarea placeholder="How can we help?" rows={3} value={formData.message} onChange={(e) => setFormData(p => ({ ...p, message: e.target.value }))} maxLength={2000} required />
+                    </div>
+                    <Button type="submit" variant="outline" className="w-full" disabled={isSubmitting}>
+                      {isSubmitting ? (
+                        <span className="flex items-center gap-2"><Clock className="w-4 h-4 animate-spin" /> Sending…</span>
+                      ) : (
+                        <span className="flex items-center gap-2"><Send className="w-4 h-4" /> Send Message</span>
+                      )}
+                    </Button>
+                  </form>
                 )}
-              </Button>
-            </form>
-          </div>
-        </section>
-
-        {/* Fallback contact */}
-        <section className="py-14 px-4 bg-muted/30">
-          <div className="mx-auto max-w-3xl text-center">
-            <p className="text-muted-foreground mb-6 text-sm">Our team is available Monday–Saturday, 8 AM – 8 PM EST.</p>
-            <div className="flex flex-wrap justify-center gap-3">
-              <a
-                href="tel:+16097277647"
-                className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-5 py-2.5 text-sm font-medium text-foreground shadow-sm hover:bg-accent transition-colors"
-              >
-                <Phone className="w-4 h-4" /> (609) 727-7647
-              </a>
-              <a
-                href="mailto:support@trumove.com"
-                className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-5 py-2.5 text-sm font-medium text-foreground shadow-sm hover:bg-accent transition-colors"
-              >
-                <Mail className="w-4 h-4" /> Email Support
-              </a>
+              </div>
             </div>
           </div>
         </section>
+
       </main>
     </SiteShell>
   );
