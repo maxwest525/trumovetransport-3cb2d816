@@ -402,15 +402,6 @@ export default function ScanRoom() {
         {/* Room Inventory Analysis Section */}
         <section className="tru-scan-split-demo">
           <div className="container max-w-6xl mx-auto px-4">
-            {/* Section Header */}
-            <div className="tru-scan-analysis-header">
-              <h2 className="tru-scan-analysis-title">
-                Room <span className="tru-scan-headline-accent">Inventory Scan</span>
-              </h2>
-              <p className="tru-scan-analysis-subtitle">
-                Upload photos or videos of your rooms and let our AI identify every item automatically
-              </p>
-            </div>
 
             {/* Three Column Layout: Upload | Scanner | Photo Library */}
             <div className="tru-scan-analysis-grid">
