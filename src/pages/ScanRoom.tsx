@@ -483,16 +483,6 @@ export default function ScanRoom() {
 
                 </div>
 
-                {/* Stats - only show when items detected */}
-                {detectedItems.length > 0 && (
-                  <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                    <span className="flex items-center gap-1"><Package className="w-3.5 h-3.5" /> {detectedItems.length} items</span>
-                    <span>•</span>
-                    <span>{totalWeight.toLocaleString()} lbs</span>
-                    <span>•</span>
-                    <span>{totalCuFt} cu ft</span>
-                  </div>
-                )}
 
                 {/* Progress Bar - Only show during scanning */}
                 {isScanning && (
@@ -586,32 +576,32 @@ export default function ScanRoom() {
               </div>
             </div>
 
-            {/* Floating Inventory Bar */}
-            {detectedItems.length > 0 && (
-              <div className="tru-scan-floating-bar">
-                <div className="tru-scan-floating-bar-item">
-                  <Package className="w-4 h-4 text-primary" />
-                  <span className="tru-scan-floating-bar-value">{detectedItems.length}</span>
-                  <span className="tru-scan-floating-bar-label">items</span>
-                </div>
-                <div className="tru-scan-floating-bar-divider" />
-                <div className="tru-scan-floating-bar-item">
-                  <Ruler className="w-4 h-4 text-muted-foreground" />
-                  <span className="tru-scan-floating-bar-value">{totalWeight.toLocaleString()}</span>
-                  <span className="tru-scan-floating-bar-label">lbs</span>
-                </div>
-                <div className="tru-scan-floating-bar-divider" />
-                <div className="tru-scan-floating-bar-item">
-                  <Box className="w-4 h-4 text-muted-foreground" />
-                  <span className="tru-scan-floating-bar-value">{totalCuFt}</span>
-                  <span className="tru-scan-floating-bar-label">cu ft</span>
-                </div>
+            {/* Inventory Stats Bar - Always visible */}
+            <div className="tru-scan-floating-bar">
+              <div className="tru-scan-floating-bar-item">
+                <Package className="w-4 h-4 text-primary" />
+                <span className="tru-scan-floating-bar-value">{detectedItems.length}</span>
+                <span className="tru-scan-floating-bar-label">items</span>
+              </div>
+              <div className="tru-scan-floating-bar-divider" />
+              <div className="tru-scan-floating-bar-item">
+                <Ruler className="w-4 h-4 text-muted-foreground" />
+                <span className="tru-scan-floating-bar-value">{totalWeight.toLocaleString()}</span>
+                <span className="tru-scan-floating-bar-label">lbs</span>
+              </div>
+              <div className="tru-scan-floating-bar-divider" />
+              <div className="tru-scan-floating-bar-item">
+                <Box className="w-4 h-4 text-muted-foreground" />
+                <span className="tru-scan-floating-bar-value">{totalCuFt}</span>
+                <span className="tru-scan-floating-bar-label">cu ft</span>
+              </div>
+              {detectedItems.length > 0 && (
                 <Link to="/online-estimate" className="tru-scan-floating-bar-btn">
                   <ArrowRight className="w-4 h-4" />
                   View All
                 </Link>
-              </div>
-            )}
+              )}
+            </div>
 
 
             {/* Inventory Table Below Video */}
