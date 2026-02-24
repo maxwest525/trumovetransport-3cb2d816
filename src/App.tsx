@@ -38,6 +38,7 @@ import ResetPassword from "./pages/ResetPassword";
 import MarketingDashboard from "./pages/MarketingDashboard";
 import AccountingDashboard from "./pages/AccountingDashboard";
 import ManagerCoaching from "./pages/ManagerCoaching";
+import ManagerDialerMonitor from "./pages/ManagerDialerMonitor";
 
 import AgentOperations from "./pages/AgentOperations";
 import AgentNewCustomer from "./pages/AgentNewCustomer";
@@ -85,6 +86,7 @@ const App = () => (
             <Route path="/agent-login-old" element={<AgentLoginOld />} />
             <Route path="/manager/dashboard" element={<ManagerDashboard />} />
             <Route path="/manager/coaching" element={<ManagerCoaching />} />
+            <Route path="/manager/dialer" element={<ManagerDialerMonitor />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/users" element={<AdminUsersPage />} />
             <Route path="/kpi" element={<KpiDashboard />} />
