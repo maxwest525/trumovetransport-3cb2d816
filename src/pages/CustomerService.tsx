@@ -361,16 +361,16 @@ export default function CustomerService() {
               {capabilities.map((cap) => (
                 <div
                   key={cap.label}
-                  className="group relative rounded-xl border border-border bg-card p-3 shadow-[0_2px_8px_-2px_hsl(var(--tm-ink)/0.08),0_4px_16px_-4px_hsl(var(--tm-ink)/0.06)] hover:shadow-[0_4px_12px_-2px_hsl(var(--tm-ink)/0.12),0_8px_24px_-4px_hsl(var(--tm-ink)/0.08)] hover:border-foreground/20 transition-all cursor-default"
+                  className="group relative rounded-xl border border-border bg-card p-3 shadow-[0_2px_8px_-2px_hsl(var(--tm-ink)/0.08),0_4px_16px_-4px_hsl(var(--tm-ink)/0.06)] hover:shadow-[0_8px_24px_-4px_hsl(var(--tm-ink)/0.16),0_16px_40px_-8px_hsl(var(--tm-ink)/0.12)] hover:border-foreground/30 hover:-translate-y-1 hover:scale-[1.03] transition-all duration-200 cursor-default"
                 >
                   {cap.tag && (
-                    <span className="absolute top-2 right-2 text-[9px] font-bold uppercase tracking-wider text-foreground bg-muted px-1.5 py-0.5 rounded">
+                    <span className="absolute top-2 right-2 text-[9px] font-bold uppercase tracking-wider text-foreground bg-muted px-1.5 py-0.5 rounded group-hover:bg-foreground group-hover:text-background transition-colors duration-200">
                       {cap.tag}
                     </span>
                   )}
-                  <cap.icon className="w-4 h-4 text-muted-foreground mb-1.5 group-hover:text-foreground transition-colors" />
+                  <cap.icon className="w-4 h-4 text-muted-foreground mb-1.5 group-hover:text-foreground group-hover:scale-110 transition-all duration-200" />
                   <h3 className="text-xs font-semibold text-foreground">{cap.label}</h3>
-                  <p className="text-[11px] text-muted-foreground mt-0.5 leading-relaxed">{cap.desc}</p>
+                  <p className="text-[11px] text-muted-foreground mt-0.5 leading-relaxed group-hover:text-foreground/70 transition-colors duration-200">{cap.desc}</p>
                 </div>
               ))}
             </div>
