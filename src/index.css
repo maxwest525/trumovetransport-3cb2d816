@@ -43,7 +43,7 @@
    Apply to any card, box, or panel for consistent styling
    ============================================= */
 .tru-card-frame {
-  border: 2px solid hsl(var(--tm-ink)) !important;
+  border: 1.5px solid hsl(var(--tm-ink) / 0.15) !important;
   border-radius: 16px;
   box-shadow: 
     0 4px 16px hsl(var(--tm-ink) / 0.12),
@@ -52,6 +52,7 @@
 }
 
 .tru-card-frame:hover {
+  border-color: hsl(var(--tm-ink) / 0.25) !important;
   box-shadow: 
     0 4px 16px hsl(var(--tm-ink) / 0.15),
     0 12px 40px hsl(var(--tm-ink) / 0.12) !important;
@@ -583,7 +584,7 @@
 }
 
 .tru-hero-cta-btn:hover {
-  border-color: hsl(var(--tm-ink));
+  border-color: hsl(var(--tm-ink) / 0.5);
   background: hsl(var(--tm-ink) / 0.05);
   transform: translateY(-1px);
 }
