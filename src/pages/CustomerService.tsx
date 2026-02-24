@@ -31,82 +31,157 @@ const faqItems = [
   { q: 'How do I file a claim?', a: 'Contact our support team within 9 months of delivery. All moves include basic liability coverage, with full-value protection available as an upgrade.' },
 ];
 
+/* ─── Particle type ─── */
+interface Particle {
+  x: number; y: number; vx: number; vy: number;
+  life: number; maxLife: number; size: number; hue: number;
+}
+
 /* ─── Voice Orb ─── */
 function VoiceOrb({ isConnected, isSpeaking }: { isConnected: boolean; isSpeaking: boolean }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animRef = useRef<number>(0);
+  const particlesRef = useRef<Particle[]>([]);
+  const intensityRef = useRef(0);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d')!;
     const dpr = window.devicePixelRatio || 1;
-    const size = 220;
+    const size = 240;
     canvas.width = size * dpr;
     canvas.height = size * dpr;
     ctx.scale(dpr, dpr);
+
+    const spawnParticle = (cx: number, cy: number, orbR: number, intensity: number) => {
+      const angle = Math.random() * Math.PI * 2;
+      const dist = orbR + 2 + Math.random() * 6;
+      const speed = 0.15 + intensity * 0.4;
+      particlesRef.current.push({
+        x: cx + Math.cos(angle) * dist,
+        y: cy + Math.sin(angle) * dist,
+        vx: Math.cos(angle) * speed + (Math.random() - 0.5) * 0.3,
+        vy: Math.sin(angle) * speed - Math.random() * 0.3,
+        life: 1,
+        maxLife: 40 + Math.random() * 40,
+        size: 1 + Math.random() * 2 * (0.5 + intensity),
+        hue: 0 + Math.random() * 30 * intensity,
+      });
+    };
 
     const draw = () => {
       ctx.clearRect(0, 0, size, size);
       const cx = size / 2, cy = size / 2;
       const t = Date.now() / 1000;
 
-      // Concentric rings
+      // Smooth intensity interpolation
+      const targetIntensity = isSpeaking ? 0.6 + Math.sin(t * 5) * 0.2 + Math.sin(t * 8.3) * 0.15 : isConnected ? 0.15 : 0;
+      intensityRef.current += (targetIntensity - intensityRef.current) * 0.08;
+      const intensity = intensityRef.current;
+
+      // Color shift: idle=neutral, connected=cool, speaking=warm shift
+      const hueBase = isConnected ? (isSpeaking ? 20 + Math.sin(t * 3) * 20 : 200) : 0;
+      const sat = isConnected ? 8 + intensity * 30 : 0;
+      const lum = isConnected ? 25 + intensity * 15 : 55;
+
+      // Concentric rings with color
       for (let i = 4; i >= 0; i--) {
-        const r = 50 + i * 16 + (isConnected ? Math.sin(t * 1.5 + i * 0.8) * 3 : 0);
+        const r = 52 + i * 16 + (isConnected ? Math.sin(t * 1.5 + i * 0.8) * (2 + intensity * 4) : 0);
         ctx.beginPath();
         ctx.arc(cx, cy, r, 0, Math.PI * 2);
-        const alpha = isConnected ? 0.06 + (isSpeaking ? Math.sin(t * 4 + i) * 0.03 : 0) : 0.03;
-        ctx.strokeStyle = `hsl(0 0% ${isConnected ? '20%' : '60%'} / ${alpha})`;
+        const ringAlpha = isConnected ? 0.04 + intensity * 0.04 : 0.025;
+        ctx.strokeStyle = `hsl(${hueBase} ${sat}% ${lum}% / ${ringAlpha})`;
         ctx.lineWidth = 1;
         ctx.stroke();
       }
 
       // Main circle
-      const baseR = 44;
-      const pulse = isSpeaking ? Math.sin(t * 6) * 5 + Math.sin(t * 9) * 3 : isConnected ? Math.sin(t * 2) * 1.5 : 0;
+      const baseR = 46;
+      const pulse = isSpeaking
+        ? Math.sin(t * 6) * (3 + intensity * 5) + Math.sin(t * 9.5) * (2 + intensity * 3)
+        : isConnected ? Math.sin(t * 2) * 1.5 : 0;
       const r = baseR + pulse;
 
-      // Fill
+      // Gradient fill with hue shift
+      const grad = ctx.createRadialGradient(cx - 8, cy - 8, 0, cx, cy, r);
+      grad.addColorStop(0, `hsl(${hueBase} ${sat + 5}% ${lum + 10}% / ${0.04 + intensity * 0.06})`);
+      grad.addColorStop(1, `hsl(${hueBase + 15} ${sat}% ${lum}% / ${0.02 + intensity * 0.03})`);
+
       ctx.beginPath();
       ctx.arc(cx, cy, r, 0, Math.PI * 2);
-      ctx.fillStyle = isConnected ? 'hsl(0 0% 8% / 0.06)' : 'hsl(0 0% 50% / 0.04)';
+      ctx.fillStyle = grad;
       ctx.fill();
-      ctx.strokeStyle = isConnected ? 'hsl(0 0% 15% / 0.25)' : 'hsl(0 0% 60% / 0.15)';
+      ctx.strokeStyle = `hsl(${hueBase} ${sat}% ${lum}% / ${0.15 + intensity * 0.2})`;
       ctx.lineWidth = 1.5;
       ctx.stroke();
 
-      // Inner waveform bars
+      // Inner waveform bars with color
       if (isConnected) {
-        const bars = 16;
+        const bars = 20;
         for (let i = 0; i < bars; i++) {
           const angle = (i / bars) * Math.PI * 2 - Math.PI / 2;
-          const h = isSpeaking
-            ? 6 + Math.sin(t * 7 + i * 0.6) * 10 + Math.sin(t * 11 + i * 1.2) * 5
+          const barIntensity = isSpeaking
+            ? 5 + Math.sin(t * 7 + i * 0.5) * (8 + intensity * 8) + Math.sin(t * 12 + i * 1.1) * (3 + intensity * 5)
             : 2 + Math.sin(t * 1.5 + i * 0.4) * 1.5;
           const innerR = 22;
           const x1 = cx + Math.cos(angle) * innerR;
           const y1 = cy + Math.sin(angle) * innerR;
-          const x2 = cx + Math.cos(angle) * (innerR + h);
-          const y2 = cy + Math.sin(angle) * (innerR + h);
+          const x2 = cx + Math.cos(angle) * (innerR + barIntensity);
+          const y2 = cy + Math.sin(angle) * (innerR + barIntensity);
+
+          const barHue = hueBase + i * 3;
+          const barAlpha = isSpeaking ? 0.3 + intensity * 0.4 : 0.12;
+
           ctx.beginPath();
           ctx.moveTo(x1, y1);
           ctx.lineTo(x2, y2);
-          ctx.strokeStyle = `hsl(0 0% 15% / ${isSpeaking ? 0.5 : 0.15})`;
+          ctx.strokeStyle = `hsl(${barHue} ${sat + 10}% ${lum}% / ${barAlpha})`;
           ctx.lineWidth = 1.5;
           ctx.lineCap = 'round';
           ctx.stroke();
         }
       }
 
+      // Spawn particles
+      if (isConnected) {
+        const spawnRate = isSpeaking ? 2 + Math.floor(intensity * 3) : 1;
+        if (Math.random() < (isSpeaking ? 0.6 : 0.15)) {
+          for (let i = 0; i < spawnRate; i++) spawnParticle(cx, cy, r, intensity);
+        }
+      }
+
+      // Update & draw particles
+      const alive: Particle[] = [];
+      for (const p of particlesRef.current) {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy -= 0.005; // slight float up
+        p.life += 1;
+        const progress = p.life / p.maxLife;
+        if (progress >= 1) continue;
+
+        const alpha = progress < 0.2 ? progress / 0.2 : 1 - (progress - 0.2) / 0.8;
+        const pHue = hueBase + p.hue;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size * (1 - progress * 0.5), 0, Math.PI * 2);
+        ctx.fillStyle = `hsl(${pHue} ${sat + 10}% ${lum + 20}% / ${alpha * 0.35})`;
+        ctx.fill();
+        alive.push(p);
+      }
+      particlesRef.current = alive;
+
       animRef.current = requestAnimationFrame(draw);
     };
 
     draw();
-    return () => cancelAnimationFrame(animRef.current);
+    return () => {
+      cancelAnimationFrame(animRef.current);
+      particlesRef.current = [];
+    };
   }, [isConnected, isSpeaking]);
 
-  return <canvas ref={canvasRef} className="w-[220px] h-[220px]" style={{ imageRendering: 'auto' }} />;
+  return <canvas ref={canvasRef} className="w-[240px] h-[240px]" style={{ imageRendering: 'auto' }} />;
 }
 
 /* ─── Main Page ─── */
