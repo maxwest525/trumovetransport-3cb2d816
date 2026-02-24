@@ -1093,6 +1093,12 @@
   transition: all 0.2s ease;
 }
 
+.tru-scan-library-analyze-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 .tru-scan-library-analyze-btn:hover {
   background: hsl(var(--tm-ink));
   color: hsl(var(--background));
