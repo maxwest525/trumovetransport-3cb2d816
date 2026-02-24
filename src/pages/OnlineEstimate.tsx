@@ -100,6 +100,30 @@ export default function OnlineEstimate() {
       }
     }
   }, [extendedDetails]);
+
+  // Auto-import scanned inventory from AI Scan and bypass the wizard form
+  useEffect(() => {
+    const scannedData = localStorage.getItem('tm_scanned_inventory');
+    if (scannedData) {
+      try {
+        const scannedItems = JSON.parse(scannedData) as Array<{
+          id: string; name: string; room: string; quantity: number;
+          weightEach: number; cubicFeet: number; specialHandling: boolean; imageUrl?: string;
+        }>;
+        if (scannedItems.length > 0) {
+          setItems(scannedItems);
+          setWizardComplete(true); // Skip the wizard — go straight to inventory builder
+          localStorage.removeItem('tm_scanned_inventory'); // Consume so it doesn't re-import
+          toast({
+            title: "Scanned inventory loaded",
+            description: `${scannedItems.length} items imported from AI Scan.`,
+          });
+        }
+      } catch (e) {
+        console.error("Failed to parse scanned inventory:", e);
+      }
+    }
+  }, []);
   
   // Derived move details for pricing
   const moveDetails = useMemo<MoveDetails>(() => {
