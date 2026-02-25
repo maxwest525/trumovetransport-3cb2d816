@@ -173,11 +173,8 @@ export default function Header({ whiteLogo = false }: HeaderProps) {
                 <Link
                   to={item.href}
                   className={`header-nav-link ${location.pathname === item.href || item.subItems?.some(s => location.pathname === s.href) ? "is-active" : ""}`}
-                  onClick={(e) => {
-                    if (item.subItems) {
-                      e.preventDefault();
-                      setActiveMenu(activeMenu === item.href ? null : item.href);
-                    }
+                  onClick={() => {
+                    setActiveMenu(null);
                   }}
                 >
                   {item.label}
