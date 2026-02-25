@@ -74,12 +74,6 @@ const NAV: NavItem[] = [
         label: "Book a Call",
         description: "Schedule a free consultation",
         icon: Phone,
-      },
-      {
-        href: "/customer-service",
-        label: "Meet Trudy",
-        description: "AI-powered assistant",
-        icon: Video,
       }
     ]
   },
