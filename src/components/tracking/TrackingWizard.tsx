@@ -156,10 +156,10 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
           </div>
 
           {/* View Route */}
-          <Button onClick={handleSubmit} disabled={!canSubmit} size="sm" className="tru-qb-continue w-full h-9 text-sm justify-center">
-            <Play className="w-3.5 h-3.5" />
-            View Route
-          </Button>
+          <button type="button" className="tru-qb-continue mx-auto" disabled={!canSubmit} onClick={handleSubmit}>
+            <Play className="w-4 h-4" />
+            <span>View Route</span>
+          </button>
           {onDemo && (
             <div className="text-center">
               <Button variant="ghost" size="sm" className="gap-1 text-xs text-muted-foreground h-7" onClick={onDemo}>
