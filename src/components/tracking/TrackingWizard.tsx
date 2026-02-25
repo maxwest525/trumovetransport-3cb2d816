@@ -177,7 +177,12 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
     <div className="w-full max-w-md mx-auto">
       <div className="tru-floating-form-card tru-floating-form-compact p-4 sm:p-6">
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
-          <h2 className="text-2xl font-black uppercase tracking-wide text-foreground text-center">Where Are We Moving?</h2>
+          <div className="space-y-3">
+            <h2 className="text-2xl font-black uppercase tracking-[0.15em] text-foreground text-center">
+              Where Are We Moving?
+            </h2>
+            <div className="h-px bg-border" />
+          </div>
           {/* Origin Address */}
           <div className="space-y-1.5">
             <Label className="flex items-center gap-2 text-base font-black uppercase tracking-wide text-foreground">
