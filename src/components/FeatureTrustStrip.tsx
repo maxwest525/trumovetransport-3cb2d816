@@ -9,8 +9,8 @@ export default function FeatureTrustStrip() {
     <div className="feature-trust-strip">
       <div className="feature-trust-strip-inner">
         {FEATURE_ITEMS.map((item, idx) => (
-          <div key={item.text} className="feature-trust-item">
-            <item.icon className="w-4 h-4" />
+          <div key={item.text} className="feature-trust-item text-lg font-extrabold tracking-wider">
+            <item.icon className="w-6 h-6" />
             <span>{item.text}</span>
             {idx < FEATURE_ITEMS.length - 1 && (
               <span className="feature-trust-dot">•</span>
