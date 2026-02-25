@@ -1827,31 +1827,6 @@ export default function Index() {
           {/* SHIPMENT TRACKER - Mirrored Layout */}
           <ShipmentTrackerSection navigate={navigate} />
 
-          {/* BOTTOM TRUST STRIP - Above Footer */}
-          <div className="feature-trust-strip" style={{ marginTop: '2rem', marginBottom: 0 }}>
-            <div className="feature-trust-strip-inner">
-              <div className="feature-trust-item">
-                <Sparkles className="w-4 h-4" />
-                <span>AI-Powered Estimates</span>
-              </div>
-              <div className="feature-trust-item">
-                <ShieldCheck className="w-4 h-4" />
-                <span>FMCSA Verified Carriers</span>
-              </div>
-              <div className="feature-trust-item">
-                <Truck className="w-4 h-4" />
-                <span>Live GPS Tracking</span>
-              </div>
-              <div className="feature-trust-item">
-                <Video className="w-4 h-4" />
-                <span>Video Consultations</span>
-              </div>
-              <div className="feature-trust-item">
-                <Shield className="w-4 h-4" />
-                <span>Zero Hidden Fees</span>
-              </div>
-            </div>
-          </div>
 
         </div>
       </div>
