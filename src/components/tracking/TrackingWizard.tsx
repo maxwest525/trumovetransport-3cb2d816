@@ -174,49 +174,49 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
   const canSubmit = originAddress.trim().length > 3 && destAddress.trim().length > 3;
 
   return (
-    <div className="w-full max-w-2xl mx-auto">
-      <div className="tru-floating-form-card tru-floating-form-compact p-6 sm:p-8">
-        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
-          <div className="text-center mb-2">
-            <h2 className="text-xl font-black tracking-tight text-foreground">Track Your Shipment</h2>
-            <p className="text-sm text-muted-foreground mt-1">Enter your route details to begin live tracking.</p>
+    <div className="w-full max-w-md mx-auto">
+      <div className="tru-floating-form-card tru-floating-form-compact p-4 sm:p-6">
+        <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-300">
+          <div className="text-center">
+            <h2 className="text-lg font-black tracking-tight text-foreground">Track Your Shipment</h2>
+            <p className="text-xs text-muted-foreground mt-0.5">Enter your route details to begin live tracking.</p>
           </div>
 
           {/* Origin Address */}
-          <div className="space-y-2">
-            <Label className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-muted-foreground">
-              <Navigation className="w-3.5 h-3.5 text-primary" />
-              Origin Address
+          <div className="space-y-1.5">
+            <Label className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+              <Navigation className="w-3 h-3 text-primary" />
+              Origin
             </Label>
-            <div className="flex gap-2">
+            <div className="flex gap-1.5">
               <LocationAutocomplete
                 value={originAddress}
                 onValueChange={setOriginAddress}
                 onLocationSelect={(displayAddr, zip, fullAddress) => setOriginAddress(fullAddress || displayAddr)}
                 placeholder="Enter pickup address..."
                 mode="address"
-                className="w-full h-10 flex-1"
+                className="w-full h-9 flex-1 text-sm"
               />
               <Button
                 type="button"
                 variant="outline"
                 size="icon"
-                className="h-10 w-10 flex-shrink-0"
+                className="h-9 w-9 flex-shrink-0"
                 onClick={handleLocateMe}
                 disabled={isLocating}
                 title="Use my current location"
               >
-                {isLocating ? <Loader2 className="w-4 h-4 animate-spin" /> : <LocateFixed className="w-4 h-4" />}
+                {isLocating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <LocateFixed className="w-3.5 h-3.5" />}
               </Button>
             </div>
             <AddressPreview address={originAddress} variant="origin" coordinates={originCoords} />
           </div>
 
           {/* Destination Address */}
-          <div className="space-y-2">
-            <Label className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-muted-foreground">
-              <MapPin className="w-3.5 h-3.5 text-destructive" />
-              Destination Address
+          <div className="space-y-1.5">
+            <Label className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+              <MapPin className="w-3 h-3 text-destructive" />
+              Destination
             </Label>
             <LocationAutocomplete
               value={destAddress}
@@ -224,48 +224,39 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
               onLocationSelect={(displayAddr, zip, fullAddress) => setDestAddress(fullAddress || displayAddr)}
               placeholder="Enter delivery address..."
               mode="address"
-              className="w-full h-10"
+              className="w-full h-9 text-sm"
             />
             <AddressPreview address={destAddress} variant="destination" coordinates={destCoords} />
           </div>
 
-          <div className="border-t border-border/50" />
-
-          {/* Booking Lookup - smaller, at bottom */}
-          <div className="space-y-1.5">
-            <Label className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
-              {isLookingUp ? <Loader2 className="w-3 h-3 animate-spin text-primary" /> : <Search className="w-3 h-3" />}
-              Have a booking number? (Optional)
-            </Label>
-            <div className="flex gap-2">
-              <Input
-                value={bookingNumber}
-                onChange={(e) => setBookingNumber(e.target.value)}
-                placeholder="e.g. 12345"
-                className="max-w-[200px] h-8 text-xs"
-                onKeyDown={(e) => e.key === 'Enter' && handleBookingLookup()}
-              />
-              <Button onClick={handleBookingLookup} disabled={!bookingNumber.trim() || isLookingUp} variant="outline" size="sm" className="h-8 px-3 gap-1 text-xs">
-                {isLookingUp ? <Loader2 className="w-3 h-3 animate-spin" /> : <Search className="w-3 h-3" />}
-                Lookup
-              </Button>
-            </div>
-          </div>
-
-          {/* Actions */}
-          <div className="flex items-center justify-between pt-4 border-t border-border/50">
-            {onDemo && (
-              <Button variant="ghost" size="sm" className="gap-1.5 text-muted-foreground" onClick={onDemo}>
-                <Sparkles className="w-3.5 h-3.5" />
-                Launch Demo
-              </Button>
-            )}
-            <Button onClick={handleSubmit} disabled={!canSubmit} size="sm" className="gap-2 bg-foreground text-background hover:bg-foreground/90 font-bold px-6 ml-auto">
-              <Play className="w-4 h-4" />
+          {/* Booking Lookup - compact */}
+          <div className="flex items-center gap-2 pt-2 border-t border-border/30">
+            <Search className="w-3 h-3 text-muted-foreground flex-shrink-0" />
+            <Input
+              value={bookingNumber}
+              onChange={(e) => setBookingNumber(e.target.value)}
+              placeholder="Booking # (optional)"
+              className="max-w-[140px] h-7 text-[11px]"
+              onKeyDown={(e) => e.key === 'Enter' && handleBookingLookup()}
+            />
+            <Button onClick={handleBookingLookup} disabled={!bookingNumber.trim() || isLookingUp} variant="ghost" size="sm" className="h-7 px-2 gap-1 text-[11px] text-muted-foreground">
+              {isLookingUp ? <Loader2 className="w-3 h-3 animate-spin" /> : "Lookup"}
+            </Button>
+            <div className="flex-1" />
+            <Button onClick={handleSubmit} disabled={!canSubmit} size="sm" className="gap-1.5 bg-foreground text-background hover:bg-foreground/90 font-bold px-5 h-8">
+              <Play className="w-3.5 h-3.5" />
               View Route
-              <ArrowRight className="w-4 h-4" />
             </Button>
           </div>
+
+          {onDemo && (
+            <div className="text-center">
+              <Button variant="ghost" size="sm" className="gap-1 text-xs text-muted-foreground h-7" onClick={onDemo}>
+                <Sparkles className="w-3 h-3" />
+                Launch Demo
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </div>
