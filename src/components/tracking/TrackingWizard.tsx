@@ -183,26 +183,24 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
               <Navigation className="w-3 h-3 text-primary" />
               Origin
             </Label>
-            <div className="flex gap-1.5">
+            <div className="relative">
               <LocationAutocomplete
                 value={originAddress}
                 onValueChange={setOriginAddress}
                 onLocationSelect={(displayAddr, zip, fullAddress) => setOriginAddress(fullAddress || displayAddr)}
                 placeholder="Enter pickup address..."
                 mode="address"
-                className="w-full h-9 flex-1 text-sm"
+                className="w-full h-9 text-sm pr-9"
               />
-              <Button
+              <button
                 type="button"
-                variant="outline"
-                size="icon"
-                className="h-9 w-9 flex-shrink-0"
                 onClick={handleLocateMe}
                 disabled={isLocating}
                 title="Use my current location"
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50"
               >
                 {isLocating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <LocateFixed className="w-3.5 h-3.5" />}
-              </Button>
+              </button>
             </div>
             <AddressPreview address={originAddress} variant="origin" coordinates={originCoords} />
           </div>
@@ -213,17 +211,14 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
               <MapPin className="w-3 h-3 text-destructive" />
               Destination
             </Label>
-            <div className="flex gap-1.5">
-              <LocationAutocomplete
-                value={destAddress}
-                onValueChange={setDestAddress}
-                onLocationSelect={(displayAddr, zip, fullAddress) => setDestAddress(fullAddress || displayAddr)}
-                placeholder="Enter delivery address..."
-                mode="address"
-                className="w-full h-9 flex-1 text-sm"
-              />
-              <div className="h-9 w-9 flex-shrink-0" />
-            </div>
+            <LocationAutocomplete
+              value={destAddress}
+              onValueChange={setDestAddress}
+              onLocationSelect={(displayAddr, zip, fullAddress) => setDestAddress(fullAddress || displayAddr)}
+              placeholder="Enter delivery address..."
+              mode="address"
+              className="w-full h-9 text-sm"
+            />
             <AddressPreview address={destAddress} variant="destination" coordinates={destCoords} />
           </div>
 
