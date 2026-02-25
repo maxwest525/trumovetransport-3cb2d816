@@ -32775,11 +32775,9 @@ html.dark .tru-summary-header-large,
    ======================================== */
 .feature-trust-strip {
   background: linear-gradient(to bottom, hsl(220 15% 6%), hsl(220 15% 4%));
-  border-top: 1px solid hsl(0 0% 100% / 0.08);
   border-bottom: 1px solid hsl(0 0% 100% / 0.08);
-  padding: 4px 24px;
+  padding: 8px 24px;
   overflow-x: auto;
-  margin: 2rem 0;
 }
 
 .feature-trust-strip-inner {
@@ -32821,6 +32819,10 @@ html.dark .tru-summary-header-large,
 .feature-trust-dot {
   color: hsl(0 0% 100% / 0.4);
   margin: 0 8px;
+  font-size: 8px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
 }
 
 /* ========================================
