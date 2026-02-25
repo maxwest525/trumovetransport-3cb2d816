@@ -7903,9 +7903,9 @@
 /* Header Trust Strip - SAFER Web Services - Premium Styling */
 .tru-header-trust-strip {
   width: 100%;
-  background: linear-gradient(180deg, hsl(var(--tm-ink)) 0%, hsl(var(--tm-ink) / 0.95) 100%);
-  border-bottom: 1px solid hsl(var(--primary) / 0.3);
-  padding: 6px 16px;
+  background: linear-gradient(to bottom, hsl(220 15% 6%), hsl(220 15% 4%));
+  border-bottom: 1px solid hsl(0 0% 100% / 0.08);
+  padding: 8px 24px;
   margin-top: 12px;
 }
 
@@ -7913,32 +7913,33 @@
   max-width: 1480px;
   margin: 0 auto;
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
-  justify-content: center;
-  gap: 8px 24px;
+  justify-content: space-between;
+  white-space: nowrap;
+  width: 100%;
 }
 
 .tru-header-trust-item {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 5px;
-  color: hsl(var(--primary));
-  font-size: 10px;
-  font-weight: 600;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
+  color: hsl(0 0% 100%);
 }
 
 .tru-header-trust-item svg {
-  color: hsl(var(--primary) / 0.8);
-  width: 14px;
-  height: 14px;
+  color: hsl(142 71% 45%);
+  width: 16px;
+  height: 16px;
 }
 
 .tru-header-trust-item span {
-  font-size: 10px;
-  font-weight: 600;
+  font-size: 12px;
+  font-weight: 700;
 }
 
 .tru-header-trust-link {
@@ -18901,36 +18902,39 @@
    TRUST STRIP - Section Divider
    ============================================= */
 .tru-trust-strip {
-  background: linear-gradient(180deg, hsl(220 30% 92%) 0%, hsl(220 25% 88%) 100%);
-  padding: 10px 24px;
-  border-top: 1px solid hsl(var(--tm-ink) / 0.08);
-  border-bottom: 1px solid hsl(var(--tm-ink) / 0.08);
+  background: linear-gradient(to bottom, hsl(220 15% 6%), hsl(220 15% 4%));
+  padding: 8px 24px;
+  border-top: 1px solid hsl(0 0% 100% / 0.08);
+  border-bottom: 1px solid hsl(0 0% 100% / 0.08);
   margin-top: 40px;
+  overflow-x: auto;
 }
 
 .tru-trust-strip-inner {
-  max-width: 1200px;
+  max-width: 1480px;
+  width: 100%;
   margin: 0 auto;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  gap: 48px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  white-space: nowrap;
 }
 
 .tru-trust-strip-item {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
-  font-size: 13px;
+  gap: 6px;
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: hsl(var(--tm-ink) / 0.75);
+  color: hsl(0 0% 100%);
+  white-space: nowrap;
 }
 
 .tru-trust-strip-item svg {
-  color: hsl(var(--primary));
+  color: hsl(142 71% 45%);
 }
 
 @media (max-width: 768px) {
@@ -22549,38 +22553,42 @@
    SCAN ROOM - SLIM TRUST STRIP (TOP)
    ============================================= */
 .tru-scan-trust-strip-slim {
-  padding: 10px 24px;
-  background: hsl(var(--tm-ink));
+  padding: 8px 24px;
+  background: linear-gradient(to bottom, hsl(220 15% 6%), hsl(220 15% 4%));
 }
 
 .tru-scan-trust-row-slim {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  gap: 24px;
-  flex-wrap: wrap;
+  max-width: 1480px;
+  width: 100%;
+  margin: 0 auto;
+  flex-wrap: nowrap;
+  white-space: nowrap;
 }
 
 /* Spread items across full width */
 .tru-scan-trust-spread {
   justify-content: space-between;
-  max-width: 900px;
+  max-width: 1480px;
   margin: 0 auto;
 }
 
 .tru-scan-trust-item-slim {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 11px;
-  font-weight: 600;
-  color: hsl(0 0% 100% / 0.75);
+  font-size: 12px;
+  font-weight: 700;
+  color: hsl(0 0% 100%);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
 }
 
 .tru-scan-trust-item-slim svg {
-  color: hsl(var(--primary));
+  color: hsl(142 71% 45%);
 }
 
 /* Bottom trust strip - above Build Manually button */
@@ -22588,39 +22596,43 @@
   margin-top: 2rem;
   margin-bottom: 0;
   border-radius: 12px;
-  max-width: 900px;
+  max-width: 1480px;
   margin-left: auto;
   margin-right: auto;
 }
 
 /* Legacy trust strip (kept for compatibility) */
 .tru-scan-trust-strip {
-  padding: 20px 24px;
-  background: hsl(var(--tm-ink));
+  padding: 8px 24px;
+  background: linear-gradient(to bottom, hsl(220 15% 6%), hsl(220 15% 4%));
   margin-bottom: 32px;
 }
 
 .tru-scan-trust-row {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  gap: 32px;
-  flex-wrap: wrap;
+  max-width: 1480px;
+  width: 100%;
+  margin: 0 auto;
+  flex-wrap: nowrap;
+  white-space: nowrap;
 }
 
 .tru-scan-trust-item {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   font-size: 12px;
-  font-weight: 600;
-  color: hsl(0 0% 100% / 0.8);
+  font-weight: 700;
+  color: hsl(0 0% 100%);
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
 }
 
 .tru-scan-trust-item svg {
-  color: hsl(var(--primary));
+  color: hsl(142 71% 45%);
 }
 
 /* =============================================
@@ -31871,18 +31883,18 @@
   color: hsl(var(--primary));
 }
 
-/* Trust strip dark mode */
+/* Trust strip dark mode - same as light since strip is always dark */
 .dark .tru-trust-strip {
-  background: hsl(220 15% 8%);
-  border-color: hsl(0 0% 100% / 0.06);
+  background: linear-gradient(to bottom, hsl(220 15% 6%), hsl(220 15% 4%));
+  border-color: hsl(0 0% 100% / 0.08);
 }
 
 .dark .tru-trust-strip-item {
-  color: hsl(0 0% 100% / 0.7);
+  color: hsl(0 0% 100%);
 }
 
 .dark .tru-trust-strip-item svg {
-  color: hsl(var(--primary) / 0.8);
+  color: hsl(142 71% 45%);
 }
 
 /* AI Steps section dark mode */
@@ -32756,17 +32768,17 @@ html.dark .tru-summary-header-large,
   border-bottom: 1px solid hsl(0 0% 100% / 0.08);
   padding: 8px 24px;
   overflow-x: auto;
-  margin-top: 24px; /* Push down below header nav */
+  margin-top: 24px;
 }
 
 .safer-trust-strip-inner {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 28px;
+  justify-content: space-between;
   flex-wrap: nowrap;
   white-space: nowrap;
-  min-width: max-content;
+  max-width: 1480px;
+  width: 100%;
   margin: 0 auto;
 }
 
@@ -32779,10 +32791,9 @@ html.dark .tru-summary-header-large,
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: hsl(0 0% 100% / 0.85);
+  color: hsl(0 0% 100%);
   white-space: nowrap;
   flex-shrink: 0;
-  flex-wrap: nowrap;
 }
 
 .safer-trust-item span {
@@ -32793,13 +32804,12 @@ html.dark .tru-summary-header-large,
 .safer-trust-item svg {
   width: 16px;
   height: 16px;
-  color: hsl(142 70% 50%);
+  color: hsl(142 71% 45%);
 }
 
-/* "Official FMCSA Source" gets special emphasis */
 .safer-trust-item:last-child {
-  font-weight: 800;
-  color: hsl(142 70% 55%);
+  font-weight: 700;
+  color: hsl(0 0% 100%);
 }
 
 .safer-trust-dot {
@@ -32814,7 +32824,7 @@ html.dark .tru-summary-header-large,
   background: linear-gradient(to bottom, hsl(220 15% 6%), hsl(220 15% 4%));
   border-top: 1px solid hsl(0 0% 100% / 0.08);
   border-bottom: 1px solid hsl(0 0% 100% / 0.08);
-  padding: 12px 24px;
+  padding: 8px 24px;
   overflow-x: auto;
   margin: 2rem 0;
 }
@@ -32822,11 +32832,11 @@ html.dark .tru-summary-header-large,
 .feature-trust-strip-inner {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 28px;
+  justify-content: space-between;
   flex-wrap: nowrap;
   white-space: nowrap;
-  min-width: max-content;
+  max-width: 1480px;
+  width: 100%;
   margin: 0 auto;
 }
 
@@ -32839,10 +32849,9 @@ html.dark .tru-summary-header-large,
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: hsl(0 0% 100% / 0.85);
+  color: hsl(0 0% 100%);
   white-space: nowrap;
   flex-shrink: 0;
-  flex-wrap: nowrap;
 }
 
 .feature-trust-item span {
@@ -32853,7 +32862,7 @@ html.dark .tru-summary-header-large,
 .feature-trust-item svg {
   width: 16px;
   height: 16px;
-  color: hsl(142 70% 50%);
+  color: hsl(142 71% 45%);
 }
 
 .feature-trust-dot {
@@ -32890,22 +32899,19 @@ html.dark .tru-summary-header-large,
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: hsl(0 0% 100% / 0.85);
+  color: hsl(0 0% 100%);
 }
 
 .trust-strip-item svg {
   width: 16px;
   height: 16px;
+  color: hsl(142 71% 45%);
 }
 
-/* Gold accent icons */
-.trust-strip-item.accent-gold svg {
-  color: hsl(45 90% 55%);
-}
-
-/* Green accent icons */
+/* Override accent colors - all green now */
+.trust-strip-item.accent-gold svg,
 .trust-strip-item.accent-green svg {
-  color: hsl(142 70% 55%);
+  color: hsl(142 71% 45%);
 }
 
 .trust-strip-dot,
@@ -32946,12 +32952,12 @@ html.dark .tru-summary-header-large,
   display: inline-flex;
   flex-direction: row;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: hsl(0 0% 100% / 0.85);
+  letter-spacing: 0.05em;
+  color: hsl(0 0% 100%);
   white-space: nowrap;
   flex-shrink: 0;
 }
@@ -32963,7 +32969,7 @@ html.dark .tru-summary-header-large,
 .stats-strip-item svg {
   width: 16px;
   height: 16px;
-  color: hsl(142 70% 50%);
+  color: hsl(142 71% 45%);
   flex-shrink: 0;
 }
 
@@ -33263,14 +33269,14 @@ html.dark .tru-summary-header-large,
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: hsl(0 0% 100% / 0.85);
+  color: hsl(0 0% 100%);
   white-space: nowrap;
 }
 
 .video-consult-header-trust-item svg {
   width: 14px;
   height: 14px;
-  color: hsl(var(--primary));
+  color: hsl(142 71% 45%);
 }
 
 /* Responsive - hide trust items on smaller screens */
