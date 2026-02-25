@@ -183,6 +183,21 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
           </div>
         </div>
         <div className="p-4 sm:p-6 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
+          {/* Booking # - centered */}
+          <div className="flex items-center justify-center gap-2">
+            <Search className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
+            <Input
+              value={bookingNumber}
+              onChange={(e) => setBookingNumber(e.target.value)}
+              placeholder="Booking # (optional)"
+              className="max-w-[180px] h-8 text-xs text-center"
+              onKeyDown={(e) => e.key === 'Enter' && handleBookingLookup()}
+            />
+            <Button onClick={handleBookingLookup} disabled={!bookingNumber.trim() || isLookingUp} variant="ghost" size="sm" className="h-8 w-8 p-0 text-muted-foreground">
+              {isLookingUp ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ArrowRight className="w-3.5 h-3.5" />}
+            </Button>
+          </div>
+
           {/* Origin Address */}
           <div className="space-y-1.5">
             <Label className="flex items-center gap-2 text-base font-black uppercase tracking-wide text-foreground">
@@ -233,21 +248,6 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
             <Play className="w-3.5 h-3.5" />
             View Route
           </Button>
-
-          {/* Booking Lookup - compact */}
-          <div className="flex items-center gap-2 pt-2 border-t border-border/30">
-            <Search className="w-3 h-3 text-muted-foreground flex-shrink-0" />
-            <Input
-              value={bookingNumber}
-              onChange={(e) => setBookingNumber(e.target.value)}
-              placeholder="Booking # (optional)"
-              className="max-w-[160px] h-7 text-[11px]"
-              onKeyDown={(e) => e.key === 'Enter' && handleBookingLookup()}
-            />
-            <Button onClick={handleBookingLookup} disabled={!bookingNumber.trim() || isLookingUp} variant="ghost" size="sm" className="h-7 px-2 gap-1 text-[11px] text-muted-foreground">
-              {isLookingUp ? <Loader2 className="w-3 h-3 animate-spin" /> : <ArrowRight className="w-3 h-3" />}
-            </Button>
-          </div>
           {onDemo && (
             <div className="text-center">
               <Button variant="ghost" size="sm" className="gap-1 text-xs text-muted-foreground h-7" onClick={onDemo}>
