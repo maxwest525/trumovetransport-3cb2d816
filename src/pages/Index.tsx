@@ -686,9 +686,8 @@ function ShipmentTrackerSection({ navigate }: { navigate: (path: string) => void
           </div>
           
           {/* Content - RIGHT */}
-          <div className="tru-tracker-content-right">
+          <div className="tru-tracker-content-right" style={{ justifyContent: 'center' }}>
             <div className="tru-ai-headline-block">
-              <h3 className="tru-ai-section-title">Real-Time Tracking</h3>
               <h2 className="tru-ai-main-headline">
                 Track. Monitor.<br />
                 <span className="tru-ai-headline-accent">Arrive.</span>
@@ -696,20 +695,6 @@ function ShipmentTrackerSection({ navigate }: { navigate: (path: string) => void
               <p className="tru-ai-subheadline">
                 Know exactly where your belongings are. GPS tracking, live ETAs, and instant updates—from pickup to delivery.
               </p>
-            </div>
-            
-            {/* Step pills */}
-            <div className="tru-ai-step-pills">
-              {[
-                { num: "01", label: "Enter booking" },
-                { num: "02", label: "Live GPS view" },
-                { num: "03", label: "Arrive on time" }
-              ].map((step) => (
-                <div key={step.num} className="tru-ai-step-pill">
-                  <span className="tru-ai-step-num">{step.num}</span>
-                  <span className="tru-ai-step-label">{step.label}</span>
-                </div>
-              ))}
             </div>
             
             {/* CTA Button */}
