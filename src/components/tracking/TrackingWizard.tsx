@@ -252,7 +252,7 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
             <div className="text-center">
               <Button variant="ghost" size="sm" className="gap-1 text-xs text-muted-foreground h-7" onClick={onDemo}>
                 <Sparkles className="w-3 h-3" />
-                Launch Demo
+                See How It Works
               </Button>
             </div>
           )}
