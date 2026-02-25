@@ -1829,11 +1829,11 @@ export default function Index() {
                     { num: "01", label: "Scan rooms" },
                     { num: "02", label: "AI catalogs" },
                     { num: "03", label: "Get quote" }].
-                    map((step, idx) =>
-                    <div key={step.num} className="tru-ai-step-pill" style={{ animationDelay: `${150 + idx * 80}ms` }}>
-                        <span className="tru-ai-step-num">{step.num}</span>
-                        <span className="tru-ai-step-label">{step.label}</span>
-                      </div>
+                    map((step, idx) => {}
+
+
+
+
                     )}
                   </div>
                   
