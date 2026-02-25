@@ -1,7 +1,6 @@
 import { ReactNode } from "react";
 import Header from "./Header";
 import Footer from "./Footer";
-import SaferTrustStrip from "@/components/SaferTrustStrip";
 
 interface SiteShellProps {
   children: ReactNode;
@@ -27,7 +26,7 @@ export default function SiteShell({ children, centered = false, hideTrustStrip =
         <div className="sticky top-0 z-[90]">
           <div className="bg-background pt-2 px-6 pb-3 md:pb-[25px] relative z-10 shadow-[0_4px_12px_-4px_hsl(var(--tm-ink)/0.08)]">
             <Header />
-            {!hideTrustStrip && !backendMode && <SaferTrustStrip />}
+            
           </div>
           {stickySubHeader}
           {!backendMode && !stickySubHeader && (
