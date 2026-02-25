@@ -271,15 +271,6 @@ export default function Header({ whiteLogo = false }: HeaderProps) {
           </button>
         </div>
 
-        {/* Company Portal Button - Absolute Far Right (outside header-inner) */}
-        <Link 
-          to="/agent-login" 
-          className="header-btn header-btn-agent"
-          aria-label="Company Portal"
-        >
-          <User className="w-4 h-4" />
-          <span>Portal</span>
-        </Link>
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
@@ -305,14 +296,6 @@ export default function Header({ whiteLogo = false }: HeaderProps) {
                 <Video className="w-4 h-4" />
                 <span>Book Video Consult</span>
               </Link>
-              {/* Company Portal Button (Mobile) */}
-              <a 
-                href="/agent-login" 
-                className="header-mobile-btn"
-              >
-                <User className="w-4 h-4" />
-                <span>Portal</span>
-              </a>
               {/* Theme Toggle (Mobile) */}
               <div className="flex justify-center pt-4 border-t border-border/40 mt-4">
                 <ThemeToggle />
