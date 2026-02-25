@@ -177,11 +177,6 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
     <div className="w-full max-w-md mx-auto">
       <div className="tru-floating-form-card tru-floating-form-compact p-4 sm:p-6">
         <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-300">
-          <div className="text-center">
-            <h2 className="text-lg font-black tracking-tight text-foreground">Track Your Shipment</h2>
-            <p className="text-xs text-muted-foreground mt-0.5">Enter your route details to begin live tracking.</p>
-          </div>
-
           {/* Origin Address */}
           <div className="space-y-1.5">
             <Label className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
