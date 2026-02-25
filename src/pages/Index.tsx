@@ -1276,9 +1276,17 @@ export default function Index() {
             </span>
           </div>
 
-          {/* Center — spacer */}
-          <div className="flex-1" />
-
+          {/* Center — Trust Items */}
+          <div className="video-consult-header-trust">
+            {[
+              { icon: Sparkles, text: "AI-Powered Moving" },
+            ].map((item) => (
+              <div key={item.text} className="video-consult-header-trust-item">
+                <item.icon className="w-4 h-4" />
+                <span>{item.text}</span>
+              </div>
+            ))}
+          </div>
 
           {/* Right - Session ID */}
           <div className="flex items-center gap-4">
