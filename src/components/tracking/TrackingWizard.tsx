@@ -156,30 +156,6 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
             <p className="text-sm text-muted-foreground mt-1">Enter your route details to begin live tracking.</p>
           </div>
 
-          {/* Booking Number */}
-          <div className="space-y-2">
-            <Label className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
-              {isLookingUp ? <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" /> : <Search className="w-3.5 h-3.5" />}
-              Booking / Shipping Number (Optional)
-            </Label>
-            <div className="flex gap-2">
-              <Input
-                value={bookingNumber}
-                onChange={(e) => setBookingNumber(e.target.value)}
-                placeholder="e.g. 12345 or TM-20260225-0001"
-                className="flex-1"
-                onKeyDown={(e) => e.key === 'Enter' && handleBookingLookup()}
-              />
-              <Button onClick={handleBookingLookup} disabled={!bookingNumber.trim() || isLookingUp} size="sm" className="h-10 px-4 gap-1.5">
-                {isLookingUp ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
-                Lookup
-              </Button>
-            </div>
-            <p className="text-[11px] text-muted-foreground">Try "12345" for a demo route</p>
-          </div>
-
-          <div className="border-t border-border/50" />
-
           {/* Origin Address */}
           <div className="space-y-2">
             <Label className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-muted-foreground">
@@ -212,6 +188,29 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
               className="w-full h-10"
             />
             <AddressPreview address={destAddress} variant="destination" coordinates={destCoords} />
+          </div>
+
+          <div className="border-t border-border/50" />
+
+          {/* Booking Lookup - smaller, at bottom */}
+          <div className="space-y-1.5">
+            <Label className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+              {isLookingUp ? <Loader2 className="w-3 h-3 animate-spin text-primary" /> : <Search className="w-3 h-3" />}
+              Have a booking number? (Optional)
+            </Label>
+            <div className="flex gap-2">
+              <Input
+                value={bookingNumber}
+                onChange={(e) => setBookingNumber(e.target.value)}
+                placeholder="e.g. 12345"
+                className="flex-1 h-8 text-xs"
+                onKeyDown={(e) => e.key === 'Enter' && handleBookingLookup()}
+              />
+              <Button onClick={handleBookingLookup} disabled={!bookingNumber.trim() || isLookingUp} variant="outline" size="sm" className="h-8 px-3 gap-1 text-xs">
+                {isLookingUp ? <Loader2 className="w-3 h-3 animate-spin" /> : <Search className="w-3 h-3" />}
+                Lookup
+              </Button>
+            </div>
           </div>
 
           {/* Actions */}
