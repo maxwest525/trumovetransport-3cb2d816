@@ -252,13 +252,11 @@ export default function Header({ whiteLogo = false }: HeaderProps) {
                 )}
               </div>
             ))}
+            {/* Theme Toggle - inline with nav */}
+            <div className="header-nav-item">
+              <ThemeToggle />
+            </div>
           </nav>
-
-          {/* Action Cluster */}
-          <div className="header-actions">
-            {/* Theme Toggle */}
-            <ThemeToggle />
-          </div>
 
           {/* Mobile Menu Toggle */}
           <button 
