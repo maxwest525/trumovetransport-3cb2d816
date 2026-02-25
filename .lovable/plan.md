@@ -1,35 +1,26 @@
 
 
-## Fix Horizontal Centering of Dots in Feature Trust Strip
+## Align Feature Trust Strip with Hero Trust Strip Style
 
-### Problem
-The dot separators (`•`) sit right next to each item's text instead of being horizontally centered in the gap between two items. This is because the dots are rendered **inside** each `.feature-trust-item` div, making them part of that item rather than independent elements between items.
-
-### Solution
-Move the dots outside of the item containers so they become their own flex children in the strip layout. This way, `space-between` (or the natural flex flow) will position items and dots evenly, with dots sitting centered between neighboring items.
+### What Changes
+The feature trust strip (between AI Analysis and Shipment Tracker) will be updated to match the hero trust strip exactly: no dot separators, `space-between` layout, same height and spacing.
 
 ### Changes
 
-**`src/components/FeatureTrustStrip.tsx`** -- Restructure the JSX so the dot is a sibling of the item, not a child:
+**`src/components/FeatureTrustStrip.tsx`**
+- Remove the dot separator markup entirely (no more `feature-trust-dot` spans)
+- Remove `React.Fragment` wrapper (no longer needed)
+- Remove `React` import
+- Keep 5 items (drop "Nationwide Coverage" since it overlaps with "Live GPS Tracking") to fit cleanly in `space-between`:
+  1. AI Room Scanner
+  2. Live GPS Tracking
+  3. Video Consultations
+  4. Carrier Vetting
+  5. Verified Estimates
 
-```text
-Before (dot inside item):
-  <div class="feature-trust-item">
-    <icon /> <span>Text</span> <span class="dot">•</span>
-  </div>
+**`src/index.css`**
+- `.feature-trust-strip-inner`: Change `justify-content: center` and `gap: 12px` to `justify-content: space-between` with no gap -- matching `.trust-strip-inner` exactly
+- Delete the `.feature-trust-dot` CSS block entirely (lines ~32820-32826) since dots are removed
 
-After (dot between items):
-  <div class="feature-trust-item">
-    <icon /> <span>Text</span>
-  </div>
-  <span class="feature-trust-dot">•</span>
-```
+Everything else (background, padding, border, font size/weight, icon color, max-width) already matches the hero trust strip -- no changes needed there.
 
-**`src/index.css`** -- Remove `margin: 0 8px` from `.feature-trust-dot` since the flex layout will handle spacing naturally. The dot will be a direct child of `.feature-trust-strip-inner` and will be spaced evenly by the flex gap or the available space.
-
-- Optionally switch `.feature-trust-strip-inner` from `justify-content: space-between` to `justify-content: center` with a `gap` value (e.g., `gap: 12px`) for more predictable even spacing of items and dots alike. This matches how evenly-spaced strips with separators typically work.
-
-### Summary
-- One component file change (move dot outside item div)
-- One CSS tweak (remove dot margin, adjust inner layout to use gap)
-- No new files or dependencies
