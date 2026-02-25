@@ -1282,7 +1282,7 @@ export default function Index() {
             { icon: Sparkles, text: "AI-Powered Moving" }].
             map((item) =>
             <div key={item.text} className="video-consult-header-trust-item">
-                <item.icon className="w-4 h-4" />
+                
                 
               </div>
             )}
