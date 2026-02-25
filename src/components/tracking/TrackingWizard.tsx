@@ -179,8 +179,8 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
         <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-300">
           {/* Origin Address */}
           <div className="space-y-1.5">
-            <Label className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-muted-foreground">
-              <Navigation className="w-4 h-4 text-primary" />
+            <Label className="flex items-center gap-2 text-base font-black uppercase tracking-wide text-foreground">
+              <Navigation className="w-5 h-5 text-primary" />
               Origin
             </Label>
             <div className="relative">
@@ -207,8 +207,8 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
 
           {/* Destination Address */}
           <div className="space-y-1.5">
-            <Label className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-muted-foreground">
-              <MapPin className="w-4 h-4 text-destructive" />
+            <Label className="flex items-center gap-2 text-base font-black uppercase tracking-wide text-foreground">
+              <MapPin className="w-5 h-5 text-destructive" />
               Destination
             </Label>
             <LocationAutocomplete
