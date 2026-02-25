@@ -32783,8 +32783,7 @@ html.dark .tru-summary-header-large,
 .feature-trust-strip-inner {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 12px;
+  justify-content: space-between;
   flex-wrap: nowrap;
   white-space: nowrap;
   max-width: 1480px;
@@ -32817,13 +32816,6 @@ html.dark .tru-summary-header-large,
   color: hsl(142 71% 45%);
 }
 
-.feature-trust-dot {
-  color: hsl(0 0% 100% / 0.4);
-  font-size: 8px;
-  line-height: 1;
-  display: inline-flex;
-  align-items: center;
-}
 
 /* ========================================
    BLACK TRUST STRIP - Compliance bar
