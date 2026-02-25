@@ -36,7 +36,7 @@ const useScrollToTop = () => {
 import { useNavigate, Link } from "react-router-dom";
 import SiteShell from "@/components/layout/SiteShell";
 import ScanIntroModal from "@/components/estimate/ScanIntroModal";
-import EstimatorNavToggle from "@/components/estimate/EstimatorNavToggle";
+
 import logoImg from "@/assets/logo.png";
 import { 
   Scan, Sparkles, ArrowRight, 
@@ -399,7 +399,23 @@ export default function ScanRoom() {
                 AI Move Estimator
               </span>
             </div>
-            <EstimatorNavToggle />
+            {/* Center - Trust Indicators */}
+            <div className="tracking-header-trust">
+              <span className="tracking-header-trust-item">
+                <Scan className="w-3.5 h-3.5 text-primary" />
+                AI DETECTION
+              </span>
+              <span className="tracking-header-trust-dot">•</span>
+              <span className="tracking-header-trust-item">
+                <Camera className="w-3.5 h-3.5 text-primary" />
+                ROOM SCANNER
+              </span>
+              <span className="tracking-header-trust-dot">•</span>
+              <span className="tracking-header-trust-item">
+                <Shield className="w-3.5 h-3.5 text-primary" />
+                INSTANT RESULTS
+              </span>
+            </div>
             <div className="flex items-center gap-4">
               <div className="text-right">
                 <div className="text-[11px] text-white/80 uppercase tracking-wider">AI Scanner</div>
