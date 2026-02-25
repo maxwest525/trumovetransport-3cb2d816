@@ -234,20 +234,6 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
             View Route
           </Button>
 
-          {/* Booking Lookup - compact */}
-          <div className="flex items-center gap-2 pt-2 border-t border-border/30">
-            <Search className="w-3 h-3 text-muted-foreground flex-shrink-0" />
-            <Input
-              value={bookingNumber}
-              onChange={(e) => setBookingNumber(e.target.value)}
-              placeholder="Booking # (optional)"
-              className="max-w-[160px] h-7 text-[11px]"
-              onKeyDown={(e) => e.key === 'Enter' && handleBookingLookup()}
-            />
-            <Button onClick={handleBookingLookup} disabled={!bookingNumber.trim() || isLookingUp} variant="ghost" size="sm" className="h-7 px-2 gap-1 text-[11px] text-muted-foreground">
-              {isLookingUp ? <Loader2 className="w-3 h-3 animate-spin" /> : "Lookup"}
-            </Button>
-          </div>
 
           {onDemo && (
             <div className="text-center">
