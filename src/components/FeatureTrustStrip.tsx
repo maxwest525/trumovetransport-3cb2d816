@@ -1,3 +1,4 @@
+import React from "react";
 import { Home, MapPin, Video, Shield, Truck, BadgeCheck } from "lucide-react";
 
 const FEATURE_ITEMS = [
@@ -14,13 +15,15 @@ export default function FeatureTrustStrip() {
     <div className="feature-trust-strip">
       <div className="feature-trust-strip-inner">
         {FEATURE_ITEMS.map((item, idx) => (
-          <div key={item.text} className="feature-trust-item">
-            <item.icon className="w-4 h-4" />
-            <span>{item.text}</span>
+          <React.Fragment key={item.text}>
+            <div className="feature-trust-item">
+              <item.icon className="w-4 h-4" />
+              <span>{item.text}</span>
+            </div>
             {idx < FEATURE_ITEMS.length - 1 && (
               <span className="feature-trust-dot">•</span>
             )}
-          </div>
+          </React.Fragment>
         ))}
       </div>
     </div>

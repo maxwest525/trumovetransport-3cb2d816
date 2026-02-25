@@ -32783,7 +32783,8 @@ html.dark .tru-summary-header-large,
 .feature-trust-strip-inner {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+  gap: 12px;
   flex-wrap: nowrap;
   white-space: nowrap;
   max-width: 1480px;
@@ -32818,7 +32819,6 @@ html.dark .tru-summary-header-large,
 
 .feature-trust-dot {
   color: hsl(0 0% 100% / 0.4);
-  margin: 0 8px;
   font-size: 8px;
   line-height: 1;
   display: inline-flex;
