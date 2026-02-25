@@ -2,10 +2,6 @@ import { Sparkles, MapPin, Video, Shield, Truck, Brain, Clock, DollarSign } from
 
 const FEATURE_TRUST_ITEMS = [
   { icon: Sparkles, text: "AI-Powered Moving" },
-  { icon: Shield, text: "FMCSA Verified" },
-  { icon: DollarSign, text: "Real-Time Pricing" },
-  { icon: Clock, text: "24/7 Support" },
-  { icon: Brain, text: "Zero Hidden Fees" },
 ];
 
 export default function SaferTrustStrip() {
