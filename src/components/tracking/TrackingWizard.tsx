@@ -234,7 +234,7 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
               value={bookingNumber}
               onChange={(e) => setBookingNumber(e.target.value)}
               placeholder="Booking # (optional)"
-              className="max-w-[140px] h-7 text-[11px]"
+              className="flex-1 h-7 text-[11px]"
               onKeyDown={(e) => e.key === 'Enter' && handleBookingLookup()}
             />
             <Button onClick={handleBookingLookup} disabled={!bookingNumber.trim() || isLookingUp} variant="ghost" size="sm" className="h-7 px-2 gap-1 text-[11px] text-muted-foreground">
