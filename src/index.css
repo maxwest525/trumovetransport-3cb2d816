@@ -13665,9 +13665,8 @@
 .mega-menu-content {
   background: hsl(var(--card));
   border-radius: 14px;
-  padding: 14px;
-  min-width: 290px;
-  max-width: 310px;
+  padding: 16px;
+  width: 320px;
   box-shadow: 
     0 4px 12px hsl(var(--tm-ink) / 0.08),
     0 12px 32px hsl(var(--tm-ink) / 0.12);
@@ -13741,24 +13740,29 @@
 }
 
 /* =============================================
-   IMAGE-BASED PREVIEW CARD - Polished
+   MEGA-MENU PREVIEW IMAGE - Clean
    ============================================= */
-.mega-preview-card {
-  margin-bottom: 12px;
-  border-radius: 10px;
+.mega-preview-img-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
   overflow: hidden;
+  border-radius: 8px;
   background: hsl(var(--muted));
+  margin-bottom: 12px;
   opacity: 0;
   animation: mega-preview-enter 400ms cubic-bezier(0.16, 1, 0.3, 1) 50ms forwards;
 }
 
-.mega-preview-image {
-  position: relative;
+.mega-preview-img-wrap img {
   width: 100%;
-  aspect-ratio: 16 / 10;
-  overflow: hidden;
-  transform-style: preserve-3d;
-  will-change: transform;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.3s ease, transform 0.4s ease;
+}
+
+.mega-preview-img-wrap:hover img {
+  transform: scale(1.03);
 }
 
 /* Skeleton loader for images */
@@ -13781,104 +13785,93 @@
   100% { background-position: -200% 0; }
 }
 
-.mega-preview-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: opacity 0.3s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+/* =============================================
+   MEGA-MENU LINK ITEMS - Clean list
+   ============================================= */
+.mega-menu-links {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 12px;
+  opacity: 0;
+  animation: mega-content-stagger 300ms cubic-bezier(0.16, 1, 0.3, 1) 120ms forwards;
 }
 
-.mega-preview-card:hover .mega-preview-image img {
-  transform: scale(1.03);
-}
-
-.mega-preview-overlay {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-}
-
-.mega-preview-badge {
-  display: inline-flex;
+.mega-menu-link-item {
+  display: flex;
   align-items: center;
-  padding: 4px 10px;
-  font-size: 9px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: hsl(0 0% 100%);
-  background: hsl(var(--tm-ink) / 0.75);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-radius: 6px;
-  opacity: 0;
-  animation: mega-badge-pop 300ms cubic-bezier(0.34, 1.56, 0.64, 1) 80ms forwards;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background 0.15s ease;
 }
 
-.mega-preview-live {
-  display: inline-flex;
+.mega-menu-link-item:hover {
+  background: hsl(var(--muted));
+}
+
+.mega-menu-link-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: hsl(var(--muted));
+  display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 4px 10px;
-  font-size: 9px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: hsl(0 0% 100%);
-  background: hsl(142 70% 35% / 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-radius: 6px;
-  opacity: 0;
-  animation: mega-badge-pop 300ms cubic-bezier(0.34, 1.56, 0.64, 1) 80ms forwards;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
 }
 
-.mega-live-dot {
-  width: 6px;
-  height: 6px;
-  background: hsl(0 0% 100%);
-  border-radius: 50%;
-  animation: mega-live-pulse 1.5s ease-in-out infinite;
+.mega-menu-link-item:hover .mega-menu-link-icon {
+  background: hsl(var(--foreground));
+  color: hsl(var(--background));
 }
 
-@keyframes mega-live-pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(0.8); }
+.mega-menu-link-icon svg {
+  color: hsl(var(--foreground));
+  transition: color 0.15s ease;
 }
 
-.mega-preview-caption {
-  padding: 10px 12px;
-  background: linear-gradient(to bottom, hsl(var(--card) / 0.95), hsl(var(--card)));
-  opacity: 0;
-  animation: mega-caption-slide 350ms cubic-bezier(0.16, 1, 0.3, 1) 120ms forwards;
+.mega-menu-link-item:hover .mega-menu-link-icon svg {
+  color: hsl(var(--background));
 }
 
-.mega-preview-highlight {
+.mega-menu-link-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+  min-width: 0;
+}
+
+.mega-menu-link-label {
   font-size: 13px;
   font-weight: 600;
   color: hsl(var(--foreground));
-  line-height: 1.35;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
-/* Subtle accent dot for highlight - black with green glow on hover */
-.mega-preview-highlight::before {
-  content: '';
-  display: inline-block;
-  width: 4px;
-  height: 4px;
-  background: hsl(var(--tm-ink));
-  border-radius: 50%;
-  margin-right: 8px;
-  vertical-align: middle;
-  transition: box-shadow 0.2s ease;
+.mega-menu-link-desc {
+  font-size: 12px;
+  color: hsl(var(--muted-foreground));
+  line-height: 1.3;
 }
 
-.mega-preview-card:hover .mega-preview-highlight::before {
-  box-shadow: 0 0 8px hsl(var(--tm-ink) / 0.3), 0 0 12px hsl(var(--tm-ink) / 0.15);
+.mega-menu-link-arrow {
+  color: hsl(var(--muted-foreground) / 0.4);
+  flex-shrink: 0;
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: all 0.15s ease;
 }
 
-.dark .mega-preview-highlight::before {
-  background: hsl(0 0% 100%);
+.mega-menu-link-item:hover .mega-menu-link-arrow {
+  opacity: 1;
+  transform: translateX(0);
+  color: hsl(var(--foreground));
 }
 
 /* =============================================
@@ -13929,56 +13922,8 @@
 }
 
 /* =============================================
-   COMPACT METHOD PILLS - Polished
+   MEGA-MENU METHOD BADGE
    ============================================= */
-.mega-menu-methods-compact {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 10px;
-  opacity: 0;
-  animation: mega-content-stagger 300ms cubic-bezier(0.16, 1, 0.3, 1) 200ms forwards;
-}
-
-.mega-method-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 12px;
-  background: hsl(var(--muted));
-  border: 1px solid transparent;
-  border-radius: 8px;
-  font-size: 12px;
-  font-weight: 600;
-  color: hsl(var(--foreground));
-  text-decoration: none;
-  transition: all 0.2s ease;
-  flex: 1;
-}
-
-.mega-method-pill:hover {
-  background: hsl(var(--tm-ink) / 0.08);
-  border-color: hsl(var(--tm-ink) / 0.2);
-}
-
-.mega-method-pill svg {
-  color: hsl(var(--tm-ink));
-  flex-shrink: 0;
-  transition: color 0.2s ease, filter 0.2s ease;
-}
-
-.dark .mega-method-pill svg {
-  color: hsl(0 0% 100%);
-}
-
-.mega-method-pill:hover svg {
-  color: hsl(var(--tm-ink));
-  filter: drop-shadow(0 0 4px hsl(var(--tm-ink) / 0.3));
-}
-
-.dark .mega-method-pill:hover svg {
-  color: hsl(0 0% 100%);
-}
-
 .mega-method-badge {
   font-size: 9px;
   font-weight: 700;
@@ -13988,7 +13933,7 @@
   background: hsl(var(--tm-ink));
   color: hsl(0 0% 100%);
   border-radius: 4px;
-  margin-left: auto;
+  margin-left: 2px;
 }
 
 /* =============================================
@@ -14025,20 +13970,28 @@
 }
 
 /* Dark mode adjustments */
-.dark .mega-preview-card {
+.dark .mega-menu-link-icon {
   background: hsl(220 15% 14%);
 }
 
-.dark .mega-preview-caption {
-  background: linear-gradient(to bottom, hsl(220 15% 10% / 0.95), hsl(220 15% 10%));
+.dark .mega-menu-link-item:hover {
+  background: hsl(0 0% 100% / 0.05);
 }
 
-.dark .mega-method-pill {
-  background: hsl(220 15% 14%);
+.dark .mega-menu-link-item:hover .mega-menu-link-icon {
+  background: hsl(0 0% 100%);
 }
 
-.dark .mega-method-pill:hover {
-  background: hsl(0 0% 100% / 0.1);
+.dark .mega-menu-link-item:hover .mega-menu-link-icon svg {
+  color: hsl(220 15% 8%);
+}
+
+.dark .mega-menu-link-arrow {
+  color: hsl(0 0% 100% / 0.3);
+}
+
+.dark .mega-menu-link-item:hover .mega-menu-link-arrow {
+  color: hsl(0 0% 100%);
 }
 
 /* =============================================
