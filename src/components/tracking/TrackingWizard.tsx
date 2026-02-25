@@ -213,14 +213,17 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
               <MapPin className="w-3 h-3 text-destructive" />
               Destination
             </Label>
-            <LocationAutocomplete
-              value={destAddress}
-              onValueChange={setDestAddress}
-              onLocationSelect={(displayAddr, zip, fullAddress) => setDestAddress(fullAddress || displayAddr)}
-              placeholder="Enter delivery address..."
-              mode="address"
-              className="w-full h-9 text-sm"
-            />
+            <div className="flex gap-1.5">
+              <LocationAutocomplete
+                value={destAddress}
+                onValueChange={setDestAddress}
+                onLocationSelect={(displayAddr, zip, fullAddress) => setDestAddress(fullAddress || displayAddr)}
+                placeholder="Enter delivery address..."
+                mode="address"
+                className="w-full h-9 flex-1 text-sm"
+              />
+              <div className="h-9 w-9 flex-shrink-0" />
+            </div>
             <AddressPreview address={destAddress} variant="destination" coordinates={destCoords} />
           </div>
 
