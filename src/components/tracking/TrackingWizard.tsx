@@ -227,6 +227,12 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
             <AddressPreview address={destAddress} variant="destination" coordinates={destCoords} />
           </div>
 
+          {/* View Route */}
+          <Button onClick={handleSubmit} disabled={!canSubmit} size="sm" className="w-full gap-1.5 bg-foreground text-background hover:bg-foreground/90 font-bold h-9">
+            <Play className="w-3.5 h-3.5" />
+            View Route
+          </Button>
+
           {/* Booking Lookup - compact */}
           <div className="flex items-center gap-2 pt-2 border-t border-border/30">
             <Search className="w-3 h-3 text-muted-foreground flex-shrink-0" />
@@ -234,16 +240,11 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
               value={bookingNumber}
               onChange={(e) => setBookingNumber(e.target.value)}
               placeholder="Booking # (optional)"
-              className="flex-1 h-7 text-[11px]"
+              className="max-w-[160px] h-7 text-[11px]"
               onKeyDown={(e) => e.key === 'Enter' && handleBookingLookup()}
             />
             <Button onClick={handleBookingLookup} disabled={!bookingNumber.trim() || isLookingUp} variant="ghost" size="sm" className="h-7 px-2 gap-1 text-[11px] text-muted-foreground">
               {isLookingUp ? <Loader2 className="w-3 h-3 animate-spin" /> : "Lookup"}
-            </Button>
-            <div className="flex-1" />
-            <Button onClick={handleSubmit} disabled={!canSubmit} size="sm" className="gap-1.5 bg-foreground text-background hover:bg-foreground/90 font-bold px-5 h-8">
-              <Play className="w-3.5 h-3.5" />
-              View Route
             </Button>
           </div>
 
