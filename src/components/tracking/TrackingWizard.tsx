@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Search, Navigation, MapPin, Loader2, Play, Sparkles, Eye, Globe, ArrowRight } from "lucide-react";
+import { Search, Navigation, MapPin, Loader2, Play, Sparkles, Eye, Globe, ArrowRight, LocateFixed } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -95,6 +95,32 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
   const [destAddress, setDestAddress] = useState("");
   const [originCoords, setOriginCoords] = useState<[number, number] | null>(null);
   const [destCoords, setDestCoords] = useState<[number, number] | null>(null);
+  const [isLocating, setIsLocating] = useState(false);
+
+  const handleLocateMe = useCallback(() => {
+    if (!navigator.geolocation) return;
+    setIsLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        try {
+          const { longitude, latitude } = pos.coords;
+          const res = await fetch(
+            `https://api.mapbox.com/geocoding/v5/mapbox.places/${longitude},${latitude}.json?access_token=${MAPBOX_TOKEN}&types=address&limit=1`
+          );
+          const data = await res.json();
+          if (data.features?.length > 0) {
+            setOriginAddress(data.features[0].place_name);
+          }
+        } catch (e) {
+          console.error("Reverse geocode failed", e);
+        } finally {
+          setIsLocating(false);
+        }
+      },
+      () => setIsLocating(false),
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  }, []);
 
   useEffect(() => {
     const timer = setTimeout(async () => {
@@ -162,14 +188,27 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
               <Navigation className="w-3.5 h-3.5 text-primary" />
               Origin Address
             </Label>
-            <LocationAutocomplete
-              value={originAddress}
-              onValueChange={setOriginAddress}
-              onLocationSelect={(displayAddr, zip, fullAddress) => setOriginAddress(fullAddress || displayAddr)}
-              placeholder="Enter pickup address..."
-              mode="address"
-              className="w-full h-10"
-            />
+            <div className="flex gap-2">
+              <LocationAutocomplete
+                value={originAddress}
+                onValueChange={setOriginAddress}
+                onLocationSelect={(displayAddr, zip, fullAddress) => setOriginAddress(fullAddress || displayAddr)}
+                placeholder="Enter pickup address..."
+                mode="address"
+                className="w-full h-10 flex-1"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                className="h-10 w-10 flex-shrink-0"
+                onClick={handleLocateMe}
+                disabled={isLocating}
+                title="Use my current location"
+              >
+                {isLocating ? <Loader2 className="w-4 h-4 animate-spin" /> : <LocateFixed className="w-4 h-4" />}
+              </Button>
+            </div>
             <AddressPreview address={originAddress} variant="origin" coordinates={originCoords} />
           </div>
 
