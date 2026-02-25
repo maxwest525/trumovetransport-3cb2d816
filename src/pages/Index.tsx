@@ -1283,7 +1283,7 @@ export default function Index() {
             map((item) =>
             <div key={item.text} className="video-consult-header-trust-item">
                 <item.icon className="w-4 h-4" />
-                <span>{item.text}</span>
+                
               </div>
             )}
           </div>
