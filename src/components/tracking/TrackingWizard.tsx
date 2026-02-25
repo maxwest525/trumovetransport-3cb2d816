@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Search, Navigation, MapPin, Loader2, Play, Sparkles, Eye, Globe, ArrowRight, LocateFixed } from "lucide-react";
+import { Search, Navigation, MapPin, Loader2, Play, Sparkles, Eye, Globe, ArrowRight, Navigation2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -179,8 +179,8 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
         <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-300">
           {/* Origin Address */}
           <div className="space-y-1.5">
-            <Label className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
-              <Navigation className="w-3 h-3 text-primary" />
+            <Label className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+              <Navigation className="w-4 h-4 text-primary" />
               Origin
             </Label>
             <div className="relative">
@@ -199,7 +199,7 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
                 title="Use my current location"
                 className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50"
               >
-                {isLocating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <LocateFixed className="w-3.5 h-3.5" />}
+                {isLocating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Navigation2 className="w-3.5 h-3.5" />}
               </button>
             </div>
             <AddressPreview address={originAddress} variant="origin" coordinates={originCoords} />
@@ -207,8 +207,8 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
 
           {/* Destination Address */}
           <div className="space-y-1.5">
-            <Label className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
-              <MapPin className="w-3 h-3 text-destructive" />
+            <Label className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+              <MapPin className="w-4 h-4 text-destructive" />
               Destination
             </Label>
             <LocationAutocomplete
