@@ -1791,10 +1791,9 @@ export default function Index() {
               {/* Header row: info on left, previews on right */}
               <div className="tru-ai-header-row" ref={scanPreviewRef}>
                 {/* LEFT: Description content */}
-                <div className="tru-ai-content-left">
+                <div className="tru-ai-content-left" style={{ justifyContent: 'center' }}>
                   {/* Premium headline block */}
                   <div className="tru-ai-headline-block animate-fade-scale-in opacity-0" style={{ animationDelay: '0ms' }}>
-                    <h3 className="tru-ai-section-title text-lg tracking-widest">AI Analysis Estimator</h3>
                     <h2 className="tru-ai-main-headline">
                       Scan. Catalog.<br />
                       <span className="tru-ai-headline-accent">Estimate.</span>
@@ -1802,20 +1801,6 @@ export default function Index() {
                     <p className="tru-ai-subheadline">
                       Point your camera at any room. Our AI identifies every item and calculates your move in seconds—not hours.
                     </p>
-                  </div>
-                  
-                  {/* Compact step indicators */}
-                  <div className="tru-ai-step-pills animate-fade-scale-in opacity-0" style={{ animationDelay: '100ms' }}>
-                    {[
-                      { num: "01", label: "Scan rooms" },
-                      { num: "02", label: "AI catalogs" },
-                      { num: "03", label: "Get quote" }
-                    ].map((step, idx) => (
-                      <div key={step.num} className="tru-ai-step-pill" style={{ animationDelay: `${150 + idx * 80}ms` }}>
-                        <span className="tru-ai-step-num">{step.num}</span>
-                        <span className="tru-ai-step-label">{step.label}</span>
-                      </div>
-                    ))}
                   </div>
                   
                   {/* CTA Button */}
