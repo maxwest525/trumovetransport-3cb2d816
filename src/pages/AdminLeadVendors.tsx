@@ -48,6 +48,7 @@ const STATUS_STYLE: Record<string, string> = {
 export default function LeadsVendors() {
   const [vendors, setVendors] = useState<LeadVendor[]>([]);
   const [leadCounts, setLeadCounts] = useState<Record<string, number>>({});
+  const [vendorRevenue, setVendorRevenue] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -56,16 +57,28 @@ export default function LeadsVendors() {
 
   const fetchData = async () => {
     setLoading(true);
-    const [vendorsRes, leadsRes] = await Promise.all([
+    const [vendorsRes, leadsRes, dealsRes] = await Promise.all([
       supabase.from("lead_vendors").select("*").order("created_at", { ascending: false }),
       supabase.from("leads").select("id, vendor_id"),
+      supabase.from("deals").select("lead_id, actual_revenue, deal_value"),
     ]);
     setVendors((vendorsRes.data as LeadVendor[]) || []);
+    const leads = (leadsRes.data as any[]) || [];
     const counts: Record<string, number> = {};
-    ((leadsRes.data as any[]) || []).forEach((l) => {
-      if (l.vendor_id) counts[l.vendor_id] = (counts[l.vendor_id] || 0) + 1;
+    const leadVendorMap: Record<string, string> = {};
+    leads.forEach((l) => {
+      if (l.vendor_id) {
+        counts[l.vendor_id] = (counts[l.vendor_id] || 0) + 1;
+        leadVendorMap[l.id] = l.vendor_id;
+      }
     });
     setLeadCounts(counts);
+    const rev: Record<string, number> = {};
+    ((dealsRes.data as any[]) || []).forEach((d) => {
+      const vid = leadVendorMap[d.lead_id];
+      if (vid) rev[vid] = (rev[vid] || 0) + (d.actual_revenue || d.deal_value || 0);
+    });
+    setVendorRevenue(rev);
     setLoading(false);
   };
 
@@ -176,10 +189,19 @@ export default function LeadsVendors() {
                   {v.contact_phone && <span className="flex items-center gap-1 text-xs text-muted-foreground"><Phone className="h-3 w-3" /> {v.contact_phone}</span>}
                   {v.website && <a href={v.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs text-primary hover:underline"><Globe className="h-3 w-3" /> Website <ExternalLink className="h-2.5 w-2.5" /></a>}
                 </div>
-                <div className="grid grid-cols-3 gap-2 pt-2 border-t border-border">
+                <div className="grid grid-cols-4 gap-2 pt-2 border-t border-border">
                   <div><p className="text-[11px] text-muted-foreground">Cost/Lead</p><p className="text-sm font-semibold text-foreground">${v.cost_per_lead?.toFixed(2) || "0.00"}</p></div>
-                  <div><p className="text-[11px] text-muted-foreground">Monthly Budget</p><p className="text-sm font-semibold text-foreground">${v.monthly_budget?.toLocaleString() || "0"}</p></div>
-                  <div><p className="text-[11px] text-muted-foreground">Leads Sourced</p><p className="text-sm font-semibold text-foreground">{leadCounts[v.id] || 0}</p></div>
+                  <div><p className="text-[11px] text-muted-foreground">Budget</p><p className="text-sm font-semibold text-foreground">${v.monthly_budget?.toLocaleString() || "0"}</p></div>
+                  <div><p className="text-[11px] text-muted-foreground">Leads</p><p className="text-sm font-semibold text-foreground">{leadCounts[v.id] || 0}</p></div>
+                  {(() => {
+                    const revenue = vendorRevenue[v.id] || 0;
+                    const spend = v.monthly_budget || 0;
+                    const roi = spend > 0 ? ((revenue - spend) / spend * 100) : 0;
+                    const roiColor = roi > 0 ? "text-emerald-600 dark:text-emerald-400" : roi < 0 ? "text-destructive" : "text-muted-foreground";
+                    return (
+                      <div><p className="text-[11px] text-muted-foreground">ROI</p><p className={`text-sm font-semibold ${roiColor}`}>{spend > 0 ? `${roi.toFixed(0)}%` : "—"}</p><p className="text-[10px] text-muted-foreground">${revenue.toLocaleString()} rev</p></div>
+                    );
+                  })()}
                 </div>
                 {(v.contract_start || v.contract_end) && (
                   <p className="text-[11px] text-muted-foreground">
