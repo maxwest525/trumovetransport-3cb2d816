@@ -2,7 +2,7 @@ import { useState, useEffect, type ReactNode } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Home, Sun, Moon, Bell, LayoutDashboard, Users, Link2, Package,
-  Globe, Zap, ScrollText, RotateCcw, Gauge, Sparkles, DollarSign, Building2,
+  Globe, Zap, ScrollText, RotateCcw, Gauge, Sparkles, DollarSign,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useTheme } from "next-themes";
@@ -11,7 +11,6 @@ import { setPortalContext } from "@/hooks/usePortalContext";
 
 const NAV_ITEMS = [
   { label: "Dashboard", icon: LayoutDashboard, href: "/admin/dashboard" },
-  { label: "Lead Vendors", icon: Building2, href: "/admin/lead-vendors" },
   { label: "My KPIs", icon: Gauge, href: "/kpi" },
   { label: "Users & Roles", icon: Users, href: "/admin/users" },
   { label: "Integrations", icon: Link2, href: "/admin/integrations" },

@@ -55,7 +55,7 @@ const ROLES = [
     title: "Lead Vendors",
     description: "Manage 3rd-party lead sources, budgets, vendor performance, and ROI.",
     icon: Building2,
-    href: "/admin/lead-vendors",
+    href: "/leads/dashboard",
   },
 ];
 

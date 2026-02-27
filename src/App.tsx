@@ -35,6 +35,8 @@ import ManagerDashboard from "./pages/ManagerDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminUsersPage from "./pages/AdminUsersPage";
 import AdminLeadVendors from "./pages/AdminLeadVendors";
+import LeadsDashboard from "./pages/LeadsDashboard";
+import LeadsPerformance from "./pages/LeadsPerformance";
 import KpiDashboard from "./pages/KpiDashboard";
 import ResetPassword from "./pages/ResetPassword";
 import MarketingDashboard from "./pages/MarketingDashboard";
@@ -94,6 +96,9 @@ const App = () => (
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/users" element={<AdminUsersPage />} />
             <Route path="/admin/lead-vendors" element={<AdminLeadVendors />} />
+            <Route path="/leads/dashboard" element={<LeadsDashboard />} />
+            <Route path="/leads/vendors" element={<AdminLeadVendors />} />
+            <Route path="/leads/performance" element={<LeadsPerformance />} />
             <Route path="/kpi" element={<KpiDashboard />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/marketing/dashboard" element={<MarketingDashboard />} />
