@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Home, Sun, Moon, Bell } from "lucide-react";
 import { useTheme } from "next-themes";
 import AgentSidebar from "@/components/agent/AgentSidebar";
+import DemoDataToggle from "@/components/leads/DemoDataToggle";
 import { FloatingDialer } from "@/components/agent/FloatingDialer";
 import MiniSoftphone from "@/components/dialer/MiniSoftphone";
 import { setPortalContext } from "@/hooks/usePortalContext";
@@ -34,6 +35,7 @@ export default function AgentShell({ children, breadcrumb = "" }: AgentShellProp
             <span className="text-sm text-muted-foreground">Agent Workspace{breadcrumb}</span>
           </div>
           <div className="flex items-center gap-2">
+            <DemoDataToggle />
             <Link to="/" className="p-1.5 rounded-lg hover:bg-muted transition-colors">
               <Home className="w-4 h-4 text-muted-foreground" />
             </Link>

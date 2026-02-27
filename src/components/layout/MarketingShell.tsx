@@ -9,6 +9,7 @@ import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 import { setPortalContext } from "@/hooks/usePortalContext";
 import { useIsMobile } from "@/hooks/use-mobile";
+import DemoDataToggle from "@/components/leads/DemoDataToggle";
 
 const NAV_ITEMS = [
   { label: "Dashboard", icon: LayoutDashboard, href: "/marketing/dashboard" },
@@ -153,6 +154,7 @@ export default function MarketingShell({ children, breadcrumb = "" }: MarketingS
             <span className="text-xs text-muted-foreground truncate hidden sm:inline">/ Marketing{breadcrumb}</span>
           </div>
           <div className="flex items-center gap-2">
+            <DemoDataToggle />
             <button onClick={() => setTheme(theme === "dark" ? "light" : "dark")} className="p-1.5 rounded-lg hover:bg-muted transition-colors">
               {theme === "dark" ? <Sun className="w-4 h-4 text-muted-foreground" /> : <Moon className="w-4 h-4 text-muted-foreground" />}
             </button>

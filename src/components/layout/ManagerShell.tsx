@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 import { setPortalContext } from "@/hooks/usePortalContext";
+import DemoDataToggle from "@/components/leads/DemoDataToggle";
 
 const NAV_ITEMS = [
   { label: "Dashboard", icon: LayoutDashboard, href: "/manager/dashboard" },
@@ -149,6 +150,7 @@ export default function ManagerShell({ children, breadcrumb = "" }: ManagerShell
             <span className="text-xs text-muted-foreground">/ Management{breadcrumb}</span>
           </div>
           <div className="flex items-center gap-2">
+            <DemoDataToggle />
             <button onClick={() => setTheme(theme === "dark" ? "light" : "dark")} className="p-1.5 rounded-lg hover:bg-muted transition-colors">
               {theme === "dark" ? <Sun className="w-4 h-4 text-muted-foreground" /> : <Moon className="w-4 h-4 text-muted-foreground" />}
             </button>
