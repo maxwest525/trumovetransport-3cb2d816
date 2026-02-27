@@ -1,78 +1,58 @@
 
 
-# Upgrade Landing Page Builder with Firecrawl Brand Extraction
+# Fix: Brand Extraction Not Visually Changing Non-Hero Sections
 
-## The Problem
-The current landing page templates (both in `AILandingPageGenerator.tsx` and `WebsitePreviewBuilder.tsx`) use hardcoded inline styles with generic colors, layouts, and typography. They look functional but "samey" -- standard dark/light themes with predictable gradient heroes, badge-heavy designs, and cookie-cutter layouts.
+## Problem
 
-## The Solution
-Build a **Brand Extraction Pipeline** that uses Firecrawl to scrape stunning reference websites, extract their visual DNA (colors, fonts, spacing, component styles), and inject those styles into the landing page generator -- so users can create pages that look like they were designed by a top agency.
+When you apply a Style Extractor preset (like DashClicks or Relume), only the **hero section** changes colors. The sections below (Trust Badges, 3-Step Process, Testimonials, FAQ, Footer, etc.) remain white/slate because they use hardcoded Tailwind classes (`bg-white`, `bg-slate-50`, `text-slate-900`) that the CSS override approach cannot reliably target.
 
----
+The current fix attempts to inject a `<style>` block that overrides Tailwind classes like `.brand-themed-template .bg-white { background: ... !important }`. This is fragile because:
+- Tailwind class selectors don't always match inside scoped containers
+- Many elements use inline `style` which always wins over CSS classes
+- Some classes (e.g., `bg-white/95`) have special characters that break CSS selectors
 
-## What We'll Build
+## Solution
 
-### 1. Firecrawl Edge Functions (Backend)
-Create the 4 Firecrawl edge functions (`firecrawl-scrape`, `firecrawl-search`, `firecrawl-map`, `firecrawl-crawl`) following the standard pattern. These are the plumbing that lets us call Firecrawl from the frontend.
+Replace the CSS class override approach with **inline style injection** directly into each template section. Each render function (`renderQuoteFunnelPage`, `renderComparisonPage`, etc.) will receive the brand colors and apply them as inline `style` props on section containers and text elements -- the same way the hero already does.
 
-### 2. Firecrawl API Client (Frontend)
-Create `src/lib/api/firecrawl.ts` with typed methods for scrape, search, map, and crawl -- calling the edge functions above.
+## Changes
 
-### 3. Brand Extractor Component
-Create a new **"Style Extractor"** panel in the landing page builder flow that:
-- Lets users paste 1-3 reference website URLs
-- Scrapes each URL using Firecrawl with `formats: ['branding', 'screenshot', 'html']`
-- Displays extracted brand identity: color palette, fonts, typography scale, spacing, button styles, component patterns
-- Shows a side-by-side screenshot preview of the source site
-- Lets users pick and mix elements (e.g., "use colors from Site A, typography from Site B")
+### 1. Create a `sectionStyles` helper object (AILandingPageGenerator.tsx)
 
-### 4. Theme Engine Upgrade
-Upgrade the existing theme system in `AILandingPageGenerator.tsx` to accept extracted brand data:
-- Currently uses a simple `theme` object with `primary`, `secondary`, `primaryDark`, etc.
-- Extend it to support full branding: font families, font sizes, spacing units, border radii, button styles, gradients, and shadows extracted from reference sites
-- Apply these extracted styles to all 6 template types (quote-funnel, comparison, calculator, testimonial, local-seo, long-form)
+Build a reusable style object from the theme that each section can spread:
 
-### 5. Premium Template Refresh
-Upgrade the 6 AI landing page templates with more dynamic, modern design patterns:
-- Replace generic gradient heroes with glassmorphism, mesh gradients, and asymmetric layouts
-- Add micro-interactions (hover effects, scroll reveals) via CSS
-- Improve typography hierarchy with variable weight and size scales
-- Add modern UI patterns: bento grids, floating cards, grain textures, and animated borders
-- Make each template genuinely distinct in personality, not just color-swapped versions of the same layout
-
-### 6. "Steal This Style" Quick-Pick
-Add a curated list of ~5 pre-analyzed premium website styles (already extracted) so users can one-click apply a high-end look without waiting for a scrape. Think: "Stripe-style", "Linear-style", "Vercel-style", "Apple-style", "Notion-style".
-
----
-
-## Technical Details
-
-### Files to Create
-- `supabase/functions/firecrawl-scrape/index.ts` -- Scrape endpoint
-- `supabase/functions/firecrawl-search/index.ts` -- Search endpoint  
-- `supabase/functions/firecrawl-map/index.ts` -- Map endpoint
-- `supabase/functions/firecrawl-crawl/index.ts` -- Crawl endpoint
-- `src/lib/api/firecrawl.ts` -- Frontend API client
-- `src/components/demo/ppc/BrandExtractor.tsx` -- Brand extraction UI panel
-
-### Files to Modify
-- `src/components/demo/ppc/AILandingPageGenerator.tsx` -- Integrate brand extractor, upgrade theme engine, refresh all 6 template renders with modern design patterns
-- `src/components/demo/ppc/WebsitePreviewBuilder.tsx` -- Allow extracted themes to be applied to the 6 "Build Manual" templates as well
-
-### Data Flow
 ```text
-User pastes URL --> Firecrawl scrape (branding format) --> Extract colors/fonts/spacing
-     |                                                            |
-     v                                                            v
-Screenshot preview                                    Merge into theme object
-                                                              |
-                                                              v
-                                                   Apply to template render
-                                                   (inline styles updated)
+sectionStyles = {
+  light:    { background: brandBg, color: brandText },
+  alt:      { background: darken(brandBg, 4%), color: brandText },
+  dark:     { background: '#0F172A', color: '#fff' },
+  textMain: { color: brandText },
+  textSub:  { color: brandTextSecondary },
+}
 ```
 
-### Key Dependencies
-- Firecrawl connector (already connected)
-- `react-markdown` (already installed) for rendering scraped content if needed
-- No new packages needed
+### 2. Apply inline styles to all 6 template render functions
+
+For each of the 6 templates (Quote Funnel, Comparison, Calculator, Testimonial, Local SEO, Long Form), replace hardcoded Tailwind background/text classes on section wrappers with inline styles:
+
+- `<div className="bg-white">` becomes `<div className="bg-white" style={sectionStyles.light}>`
+- `<div className="bg-slate-50">` becomes `<div className="bg-slate-50" style={sectionStyles.alt}>`
+- `<h2 className="text-slate-900">` becomes `<h2 className="text-slate-900" style={sectionStyles.textMain}>`
+- `<p className="text-slate-600">` becomes `<p className="text-slate-600" style={sectionStyles.textSub}>`
+
+The Tailwind classes stay as fallbacks for when no brand is applied (sectionStyles would be empty `{}`).
+
+### 3. Remove the fragile CSS override block
+
+Delete the `<style>` block inside `renderSelectedTemplate()` that tries to override `.bg-white`, `.text-slate-900` etc. via CSS selectors. The inline styles will handle everything.
+
+### 4. Scope of changes
+
+- **File**: `src/components/demo/ppc/AILandingPageGenerator.tsx`
+- **Sections affected per template**: ~8-12 section containers and ~15-20 text elements per template
+- **No changes needed to**: `BrandExtractor.tsx`, `ScaledPreview.tsx`, or `WebsitePreviewBuilder.tsx` (Build Manual already works correctly with `themeOverride` passed as props)
+
+### Why this works
+
+This mirrors the pattern already proven in the Build Manual templates (`WebsitePreviewBuilder.tsx`), where `themeOverride` colors are applied via inline styles and work correctly with every preset.
 
