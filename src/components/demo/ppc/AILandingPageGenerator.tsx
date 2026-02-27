@@ -971,6 +971,16 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
     border: {} as React.CSSProperties,
   };
 
+  // Brand colors object to pass to shared components
+  const brandColors = hasBrandTheme ? {
+    primary: theme.primary,
+    primaryDark: theme.primaryDark,
+    accent: theme.accent,
+    background: (theme as any).brandBackground,
+    textPrimary: (theme as any).brandText,
+    textSecondary: (theme as any).brandTextSecondary,
+  } : undefined;
+
   const handleApplyBranding = (branding: ExtractedBranding) => {
     setCustomBranding(branding);
     setSelectedTheme("custom");
@@ -1612,7 +1622,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
       </div>
 
       {/* Comparison Table */}
-      <ComparisonTableSection />
+      <ComparisonTableSection brandColors={brandColors} />
 
        {/* Calculator Preview */}
        <div className="py-16 px-8 bg-slate-50" style={sectionStyles.alt}>
@@ -1640,16 +1650,16 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
       </div>
 
       {/* Triple Guarantee */}
-      <TripleGuaranteeSection />
+      <TripleGuaranteeSection brandColors={brandColors} />
 
       {/* FAQ Section */}
-      <FAQSection />
+      <FAQSection brandColors={brandColors} />
 
       {/* Final CTA */}
-      <FinalCTASection theme={theme} />
+      <FinalCTASection theme={theme} brandColors={brandColors} />
 
       {/* Footer */}
-      <TruMoveFooter />
+      <TruMoveFooter brandColors={brandColors} />
 
       {/* Chat CTA Banner (non-fixed for preview compatibility) */}
       <div className="py-4 px-8 bg-slate-900 flex items-center justify-center gap-3" style={sectionStyles.dark}>
@@ -1744,7 +1754,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
       </div>
 
       {/* Trust Badge Strip */}
-      <TrustBadgeStrip theme="light" />
+      <TrustBadgeStrip theme="light" brandColors={brandColors} />
 
       {/* Animated Comparison Table Section */}
        <div className="py-16 px-8 bg-white dark:bg-slate-900" style={sectionStyles.light}>
@@ -1876,13 +1886,13 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
       </div>
 
       {/* Video Testimonials from Comparison Shoppers */}
-      <VideoTestimonialGrid />
+      <VideoTestimonialGrid brandColors={brandColors} />
 
       {/* 3-Step Process */}
-      <ThreeStepProcess theme="light" />
+      <ThreeStepProcess theme="light" brandColors={brandColors} />
 
       {/* Triple Guarantee */}
-      <TripleGuaranteeSection />
+      <TripleGuaranteeSection brandColors={brandColors} />
 
       {/* FAQ Section */}
        <div className="py-16 px-8 bg-slate-50 dark:bg-slate-800" style={sectionStyles.alt}>
@@ -1906,10 +1916,10 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
       </div>
 
       {/* Final CTA */}
-      <FinalCTASection theme={theme} />
+      <FinalCTASection theme={theme} brandColors={brandColors} />
 
       {/* Footer */}
-      <TruMoveFooter />
+      <TruMoveFooter brandColors={brandColors} />
     </div>
   );
 
@@ -2022,7 +2032,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
       </div>
 
       {/* Trust Badge Strip */}
-      <TrustBadgeStrip theme="light" />
+      <TrustBadgeStrip theme="light" brandColors={brandColors} />
 
       {/* Similar Moves Social Proof */}
        <div className="py-16 px-8 bg-slate-50 dark:bg-slate-800" style={sectionStyles.alt}>
@@ -2066,7 +2076,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
       </div>
 
       {/* What Happens Next */}
-      <ThreeStepProcess theme="light" />
+      <ThreeStepProcess theme="light" brandColors={brandColors} />
 
       {/* Savings Breakdown Visualization */}
        <div className="py-16 px-8 bg-white dark:bg-slate-900" style={sectionStyles.light}>
@@ -2108,7 +2118,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
       </div>
 
       {/* Triple Guarantee */}
-      <TripleGuaranteeSection />
+      <TripleGuaranteeSection brandColors={brandColors} />
 
       {/* FAQ */}
        <div className="py-16 px-8 bg-slate-50 dark:bg-slate-800" style={sectionStyles.alt}>
@@ -2131,10 +2141,10 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
       </div>
 
       {/* Final CTA */}
-      <FinalCTASection theme={theme} />
+      <FinalCTASection theme={theme} brandColors={brandColors} />
 
       {/* Footer */}
-      <TruMoveFooter />
+      <TruMoveFooter brandColors={brandColors} />
     </div>
   );
 
@@ -2394,13 +2404,13 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
       </div>
 
       {/* Triple Guarantee */}
-      <TripleGuaranteeSection />
+      <TripleGuaranteeSection brandColors={brandColors} />
 
       {/* Final CTA */}
-      <FinalCTASection theme={theme} />
+      <FinalCTASection theme={theme} brandColors={brandColors} />
 
       {/* Footer */}
-      <TruMoveFooter />
+      <TruMoveFooter brandColors={brandColors} />
     </div>
   );
 
@@ -2647,13 +2657,13 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
         </div>
 
         {/* Triple Guarantee */}
-        <TripleGuaranteeSection />
+        <TripleGuaranteeSection brandColors={brandColors} />
 
         {/* Final CTA */}
-        <FinalCTASection theme={theme} />
+        <FinalCTASection theme={theme} brandColors={brandColors} />
 
         {/* Footer */}
-        <TruMoveFooter />
+        <TruMoveFooter brandColors={brandColors} />
       </div>
     );
   };
@@ -2886,10 +2896,10 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
       </div>
 
       {/* Triple Guarantee */}
-      <TripleGuaranteeSection />
+      <TripleGuaranteeSection brandColors={brandColors} />
 
       {/* Final CTA */}
-      <FinalCTASection theme={theme} />
+      <FinalCTASection theme={theme} brandColors={brandColors} />
 
       {/* Sticky Bottom CTA Bar (Mobile-First) */}
       <div className="px-4 py-3 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700 shadow-lg md:hidden" style={{ ...sectionStyles.light, ...sectionStyles.border }}>
@@ -2899,7 +2909,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
       </div>
 
       {/* Footer */}
-      <TruMoveFooter />
+      <TruMoveFooter brandColors={brandColors} />
     </div>
   );
 
