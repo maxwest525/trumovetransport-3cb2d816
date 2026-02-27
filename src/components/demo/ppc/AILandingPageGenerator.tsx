@@ -961,9 +961,10 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
     light: { background: (theme as any).brandBackground, color: (theme as any).brandText, fontFamily: brandFont } as React.CSSProperties,
     alt: { background: darkenHex((theme as any).brandBackground, 0.04), color: (theme as any).brandText, fontFamily: brandFont } as React.CSSProperties,
     dark: { background: '#0F172A', color: '#fff', fontFamily: brandFont } as React.CSSProperties,
-    textMain: { color: (theme as any).brandText, fontFamily: brandHeadingFont } as React.CSSProperties,
-    textSub: { color: (theme as any).brandTextSecondary, fontFamily: brandFont } as React.CSSProperties,
+    textMain: { color: (theme as any).brandText, fontFamily: brandHeadingFont, ...(customBranding?.typography?.fontSizes?.h2 ? { fontSize: customBranding.typography.fontSizes.h2 } : {}) } as React.CSSProperties,
+    textSub: { color: (theme as any).brandTextSecondary, fontFamily: brandFont, ...(customBranding?.typography?.fontSizes?.body ? { fontSize: customBranding.typography.fontSizes.body } : {}) } as React.CSSProperties,
     border: { borderColor: `${(theme as any).brandText}15` } as React.CSSProperties,
+    h1: { fontFamily: brandHeadingFont, ...(customBranding?.typography?.fontSizes?.h1 ? { fontSize: customBranding.typography.fontSizes.h1 } : {}), ...(customBranding?.typography?.fontWeights?.bold ? { fontWeight: customBranding.typography.fontWeights.bold } : {}) } as React.CSSProperties,
   } : {
     light: {} as React.CSSProperties,
     alt: {} as React.CSSProperties,
@@ -971,6 +972,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
     textMain: {} as React.CSSProperties,
     textSub: {} as React.CSSProperties,
     border: {} as React.CSSProperties,
+    h1: {} as React.CSSProperties,
   };
 
   // Brand colors object to pass to shared components
@@ -1750,7 +1752,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
             <Badge className="mb-4 bg-white/10 text-white border border-white/20 backdrop-blur-sm">
               <Award className="w-3 h-3 mr-1" /> #1 Rated Moving Company
             </Badge>
-            <h1 className="text-5xl md:text-6xl font-black text-white mb-6 leading-[0.95] tracking-tight">
+            <h1 className="text-5xl md:text-6xl font-black text-white mb-6 leading-[0.95] tracking-tight" style={sectionStyles.h1}>
               We Win on<br/><span className="text-transparent bg-clip-text" style={{ backgroundImage: `linear-gradient(90deg, ${theme.primary}, ${theme.accentLight})` }}>Every Metric</span>
             </h1>
             <p className="text-lg text-white/70 mb-8 max-w-md">
@@ -2007,7 +2009,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
               <Badge className="mb-4 bg-white/10 text-white border border-white/20 backdrop-blur-sm">
                 <Calculator className="w-3 h-3 mr-1" /> AI-Powered Pricing
               </Badge>
-              <h1 className="text-4xl md:text-6xl font-black text-white mb-4 leading-[0.95] tracking-tight">
+              <h1 className="text-4xl md:text-6xl font-black text-white mb-4 leading-[0.95] tracking-tight" style={sectionStyles.h1}>
                 Know Your<br/><span className="text-transparent bg-clip-text" style={{ backgroundImage: `linear-gradient(90deg, ${theme.primary}, ${theme.accentLight})` }}>Moving Cost</span><br/>in Seconds
               </h1>
               <p className="text-lg text-white/70 mb-6 max-w-md">
@@ -2206,7 +2208,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
             <Badge className="mb-4 bg-amber-500/20 text-amber-300 border border-amber-500/30 backdrop-blur-sm">
               <Star className="w-3 h-3 mr-1 fill-amber-300" /> Verified by 50,000+ Customers
             </Badge>
-            <h1 className="text-5xl md:text-6xl font-black text-white mb-4 leading-[0.95] tracking-tight">
+            <h1 className="text-5xl md:text-6xl font-black text-white mb-4 leading-[0.95] tracking-tight" style={sectionStyles.h1}>
               Real Families.<br/>
               <span className="text-transparent bg-clip-text" style={{ backgroundImage: `linear-gradient(90deg, #FBBF24, ${theme.primary})` }}>
                 Real Stories.
@@ -2513,7 +2515,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
               <Badge className="mb-4 bg-white/10 text-white border border-white/20 backdrop-blur-sm">
                 <MapPin className="w-3 h-3 mr-1" /> Serving All of {location}
               </Badge>
-              <h1 className="text-4xl md:text-6xl font-black text-white mb-4 leading-[0.95] tracking-tight">
+              <h1 className="text-4xl md:text-6xl font-black text-white mb-4 leading-[0.95] tracking-tight" style={sectionStyles.h1}>
                 {location}'s Most<br/><span className="text-transparent bg-clip-text" style={{ backgroundImage: `linear-gradient(90deg, ${theme.primary}, #06B6D4)` }}>Trusted Movers</span>
               </h1>
               <p className="text-lg text-white/70 mb-6 max-w-md">
@@ -2733,7 +2735,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
                 <Badge className="mb-3 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
                   The Complete Guide • Updated Feb 2025 • 15 min read
                 </Badge>
-                <h1 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-4 leading-[1.05] tracking-tight">
+                <h1 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-4 leading-[1.05] tracking-tight" style={sectionStyles.h1}>
                   Everything You Need to Know Before Hiring a Moving Company in 2025
                 </h1>
               </div>
@@ -3115,7 +3117,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
  
         {/* Full Screen Preview Dialog */}
         {isPopoutOpen && (
-          <div className="fixed inset-0 z-50 bg-background flex flex-col">
+          <div className={`fixed inset-0 z-50 bg-background flex flex-col ${hasBrandTheme ? 'brand-override-active' : ''}`}>
             {/* Header bar */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-card shrink-0 flex-wrap gap-2">
               <div className="flex items-center gap-2 flex-wrap">
