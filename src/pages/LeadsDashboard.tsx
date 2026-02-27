@@ -21,9 +21,11 @@ export default function LeadsDashboard() {
   const [vendors, setVendors] = useState<any[]>([]);
   const [leads, setLeads] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
-    const fetch = async () => {
+    const fetchAll = async () => {
+      setLoading(true);
       const [v, l] = await Promise.all([
         supabase.from("lead_vendors").select("*").order("created_at", { ascending: false }),
         supabase.from("leads").select("id, vendor_id, source, created_at"),
@@ -32,8 +34,8 @@ export default function LeadsDashboard() {
       setLeads(l.data || []);
       setLoading(false);
     };
-    fetch();
-  }, []);
+    fetchAll();
+  }, [refreshKey]);
 
   const leadCounts = useMemo(() => {
     const c: Record<string, number> = {};
@@ -76,10 +78,10 @@ export default function LeadsDashboard() {
     return Object.entries(counts).map(([s, c]) => ({ name: SOURCE_LABELS[s] || s, value: c })).sort((a, b) => b.value - a.value);
   }, [leads]);
 
-  if (loading) return <LeadVendorShell><p className="text-sm text-muted-foreground text-center py-12">Loading...</p></LeadVendorShell>;
+  if (loading) return <LeadVendorShell onRefresh={() => setRefreshKey((k) => k + 1)}><p className="text-sm text-muted-foreground text-center py-12">Loading...</p></LeadVendorShell>;
 
   return (
-    <LeadVendorShell>
+    <LeadVendorShell onRefresh={() => setRefreshKey((k) => k + 1)}>
       <div className="space-y-5">
         <div>
           <h1 className="text-xl font-bold text-foreground">Lead Vendors Overview</h1>

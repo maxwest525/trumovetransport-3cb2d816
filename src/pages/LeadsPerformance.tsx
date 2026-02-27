@@ -20,9 +20,11 @@ export default function LeadsPerformance() {
   const [vendors, setVendors] = useState<any[]>([]);
   const [leads, setLeads] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
-    const fetch = async () => {
+    const fetchAll = async () => {
+      setLoading(true);
       const [v, l] = await Promise.all([
         supabase.from("lead_vendors").select("*"),
         supabase.from("leads").select("id, vendor_id, source, created_at, estimated_value"),
@@ -31,8 +33,8 @@ export default function LeadsPerformance() {
       setLeads(l.data || []);
       setLoading(false);
     };
-    fetch();
-  }, []);
+    fetchAll();
+  }, [refreshKey]);
 
   const leadCounts = useMemo(() => {
     const c: Record<string, number> = {};
@@ -88,10 +90,12 @@ export default function LeadsPerformance() {
       .sort((a, b) => a.costPerLead - b.costPerLead);
   }, [vendors, leadCounts]);
 
-  if (loading) return <LeadVendorShell breadcrumb=" / Performance"><p className="text-sm text-muted-foreground text-center py-12">Loading...</p></LeadVendorShell>;
+  const handleRefresh = () => setRefreshKey((k) => k + 1);
+
+  if (loading) return <LeadVendorShell breadcrumb=" / Performance" onRefresh={handleRefresh}><p className="text-sm text-muted-foreground text-center py-12">Loading...</p></LeadVendorShell>;
 
   return (
-    <LeadVendorShell breadcrumb=" / Performance">
+    <LeadVendorShell breadcrumb=" / Performance" onRefresh={handleRefresh}>
       <div className="space-y-5">
         <div>
           <h1 className="text-xl font-bold text-foreground">Performance Analytics</h1>

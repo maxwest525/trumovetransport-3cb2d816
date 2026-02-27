@@ -133,7 +133,7 @@ export default function LeadsVendors() {
   };
 
   return (
-    <LeadVendorShell breadcrumb=" / Vendors">
+    <LeadVendorShell breadcrumb=" / Vendors" onRefresh={fetchData}>
       <div className="space-y-5">
         <div className="flex items-center justify-between">
           <div>
