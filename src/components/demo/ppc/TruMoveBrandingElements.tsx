@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { useState, useEffect } from "react";
 
-// Shared brand colors interface
+// Shared brand colors + style interface
 export interface BrandColors {
   primary: string;
   primaryDark: string;
@@ -17,6 +17,43 @@ export interface BrandColors {
   background?: string;
   textPrimary?: string;
   textSecondary?: string;
+  typography?: {
+    fontFamilies?: { primary?: string; heading?: string; code?: string };
+    fontSizes?: { h1?: string; h2?: string; h3?: string; body?: string };
+    fontWeights?: { regular?: number; medium?: number; bold?: number };
+  };
+  spacing?: {
+    baseUnit?: number;
+    borderRadius?: string;
+  };
+  components?: {
+    buttonPrimary?: { background?: string; textColor?: string; borderRadius?: string };
+    buttonSecondary?: { background?: string; textColor?: string; borderRadius?: string };
+  };
+}
+
+// Helper: build common inline styles from brandColors
+function brandStyles(b?: BrandColors) {
+  if (!b) return {};
+  const radius = b.spacing?.borderRadius;
+  return {
+    fontFamily: b.typography?.fontFamilies?.primary,
+    headingFont: b.typography?.fontFamilies?.heading || b.typography?.fontFamilies?.primary,
+    h1Size: b.typography?.fontSizes?.h1,
+    h2Size: b.typography?.fontSizes?.h2,
+    h3Size: b.typography?.fontSizes?.h3,
+    bodySize: b.typography?.fontSizes?.body,
+    fontWeightRegular: b.typography?.fontWeights?.regular,
+    fontWeightMedium: b.typography?.fontWeights?.medium,
+    fontWeightBold: b.typography?.fontWeights?.bold,
+    borderRadius: radius,
+    btnRadius: b.components?.buttonPrimary?.borderRadius || radius,
+    btnBg: b.components?.buttonPrimary?.background || b.primary,
+    btnColor: b.components?.buttonPrimary?.textColor || '#FFFFFF',
+    btnSecBg: b.components?.buttonSecondary?.background,
+    btnSecColor: b.components?.buttonSecondary?.textColor,
+    btnSecRadius: b.components?.buttonSecondary?.borderRadius || radius,
+  };
 }
 
 // TruMove Logo Component
@@ -61,14 +98,17 @@ export const TrustBadgeStrip = ({ theme = 'light', brandColors }: { theme?: 'lig
     { icon: Star, text: "4.9/5 Rating" },
   ];
   
-  const sectionStyle = brandColors?.background
-    ? { background: brandColors.background, borderColor: `${brandColors.textPrimary || '#000'}15` }
-    : undefined;
+  const s = brandStyles(brandColors);
+  const sectionStyle: React.CSSProperties = {
+    ...(brandColors?.background ? { background: brandColors.background, borderColor: `${brandColors.textPrimary || '#000'}15` } : {}),
+    ...(s.fontFamily ? { fontFamily: s.fontFamily } : {}),
+    ...(s.bodySize ? { fontSize: s.bodySize } : {}),
+  };
   
   return (
     <div
       className={`flex justify-center items-center gap-6 py-4 border-y ${theme === 'dark' ? 'border-white/10 bg-slate-900' : 'border-slate-200 bg-slate-50'}`}
-      style={sectionStyle}
+      style={Object.keys(sectionStyle).length > 0 ? sectionStyle : undefined}
     >
       {badges.map((badge, i) => (
         <div key={i} className="flex items-center gap-2">
@@ -78,7 +118,7 @@ export const TrustBadgeStrip = ({ theme = 'light', brandColors }: { theme?: 'lig
           />
           <span
             className={`text-sm font-medium ${theme === 'dark' ? 'text-white' : 'text-slate-700'}`}
-            style={brandColors?.textSecondary ? { color: brandColors.textSecondary } : undefined}
+            style={brandColors?.textSecondary ? { color: brandColors.textSecondary, fontFamily: s.fontFamily } : undefined}
           >
             {badge.text}
           </span>
@@ -178,24 +218,31 @@ export const ThreeStepProcess = ({ theme = 'light', brandColors }: { theme?: 'li
     { number: 3, icon: "🚚", title: "Move Stress-Free", description: "Track your move in real-time with TruTrack technology" },
   ];
   
-  const sectionBg = brandColors?.background ? { background: brandColors.background } : undefined;
-  const textMain = brandColors?.textPrimary ? { color: brandColors.textPrimary } : undefined;
-  const textSub = brandColors?.textSecondary ? { color: brandColors.textSecondary } : undefined;
+  const s = brandStyles(brandColors);
+  const sectionBg: React.CSSProperties = {
+    ...(brandColors?.background ? { background: brandColors.background } : {}),
+    ...(s.fontFamily ? { fontFamily: s.fontFamily } : {}),
+  };
+  const textMain: React.CSSProperties | undefined = brandColors?.textPrimary ? { color: brandColors.textPrimary, fontFamily: s.headingFont } : undefined;
+  const textSub: React.CSSProperties | undefined = brandColors?.textSecondary ? { color: brandColors.textSecondary, fontFamily: s.fontFamily } : undefined;
   const accentColor = brandColors?.primary;
 
   return (
-    <div className={`py-16 px-8 ${theme === 'dark' ? 'bg-slate-900' : 'bg-white'}`} style={sectionBg}>
+    <div className={`py-16 px-8 ${theme === 'dark' ? 'bg-slate-900' : 'bg-white'}`} style={Object.keys(sectionBg).length > 0 ? sectionBg : undefined}>
       <div className="text-center mb-12">
         <Badge
           className="mb-4 bg-blue-500/10 text-blue-600 border border-blue-500/30"
-          style={accentColor ? { background: `${accentColor}15`, color: accentColor, borderColor: `${accentColor}30` } : undefined}
+          style={accentColor ? { background: `${accentColor}15`, color: accentColor, borderColor: `${accentColor}30`, borderRadius: s.borderRadius, fontFamily: s.fontFamily } : undefined}
         >
           How TruMove Works
         </Badge>
-        <h2 className={`text-3xl font-bold mb-3 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`} style={textMain}>
+        <h2
+          className={`text-3xl font-bold mb-3 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}
+          style={{ ...textMain, ...(s.h2Size ? { fontSize: s.h2Size } : {}), ...(s.fontWeightBold ? { fontWeight: s.fontWeightBold } : {}) }}
+        >
           3 Simple Steps to Your Perfect Move
         </h2>
-        <p className={`text-lg ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`} style={textSub}>
+        <p className={`text-lg ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`} style={{ ...textSub, ...(s.bodySize ? { fontSize: s.bodySize } : {}) }}>
           Powered by TruMove AI technology
         </p>
       </div>
@@ -218,7 +265,12 @@ export const ThreeStepProcess = ({ theme = 'light', brandColors }: { theme?: 'li
               <div className="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-slate-900 text-white text-sm font-bold flex items-center justify-center z-20">
                 {step.number}
               </div>
-              <h3 className={`text-xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`} style={textMain}>{step.title}</h3>
+              <h3
+                className={`text-xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}
+                style={{ ...textMain, ...(s.h3Size ? { fontSize: s.h3Size } : {}), ...(s.fontWeightBold ? { fontWeight: s.fontWeightBold } : {}) }}
+              >
+                {step.title}
+              </h3>
               <p className={`text-sm ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`} style={textSub}>{step.description}</p>
             </div>
           ))}
@@ -240,10 +292,12 @@ export const TripleGuaranteeSection = ({ brandColors }: { brandColors?: BrandCol
     { icon: Clock, title: "On-Time Delivery", description: "We deliver when we say, or your next move is free." },
   ];
   
+  const s = brandStyles(brandColors);
   const accentColor = brandColors?.primary;
+  const cardRadius = s.borderRadius || '1rem';
 
   return (
-    <div className="py-16 px-8 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+    <div className="py-16 px-8 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900" style={s.fontFamily ? { fontFamily: s.fontFamily } : undefined}>
       <div className="text-center mb-12">
         <div
           className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/40"
@@ -251,8 +305,10 @@ export const TripleGuaranteeSection = ({ brandColors }: { brandColors?: BrandCol
         >
           <Shield className="w-10 h-10 text-white" />
         </div>
-        <h2 className="text-3xl font-bold text-white mb-3">The TruMove Triple Guarantee</h2>
-        <p className="text-lg text-slate-400">Your move is protected by our iron-clad promise</p>
+        <h2 className="text-3xl font-bold text-white mb-3" style={{ ...(s.headingFont ? { fontFamily: s.headingFont } : {}), ...(s.h2Size ? { fontSize: s.h2Size } : {}), ...(s.fontWeightBold ? { fontWeight: s.fontWeightBold } : {}) }}>
+          The TruMove Triple Guarantee
+        </h2>
+        <p className="text-lg text-slate-400" style={s.bodySize ? { fontSize: s.bodySize } : undefined}>Your move is protected by our iron-clad promise</p>
       </div>
       
       <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
@@ -260,19 +316,19 @@ export const TripleGuaranteeSection = ({ brandColors }: { brandColors?: BrandCol
            <div
              key={i}
              className="text-center p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-blue-500/50 transition-colors"
-             style={accentColor ? { borderColor: `${accentColor}20` } : undefined}
+             style={{ borderRadius: cardRadius, ...(accentColor ? { borderColor: `${accentColor}20` } : {}) }}
            >
              <g.icon className="w-12 h-12 mx-auto mb-4 text-blue-400" style={accentColor ? { color: accentColor } : undefined} />
-            <h3 className="text-xl font-bold text-white mb-2">{g.title}</h3>
-            <p className="text-slate-400">{g.description}</p>
+            <h3 className="text-xl font-bold text-white mb-2" style={{ ...(s.headingFont ? { fontFamily: s.headingFont } : {}), ...(s.h3Size ? { fontSize: s.h3Size } : {}) }}>{g.title}</h3>
+            <p className="text-slate-400" style={s.bodySize ? { fontSize: s.bodySize } : undefined}>{g.description}</p>
           </div>
         ))}
       </div>
       
       <div className="flex justify-center gap-4 mt-12">
-        <Badge className="bg-white/10 text-white border border-white/20">FMCSA #MC-123456</Badge>
-        <Badge className="bg-white/10 text-white border border-white/20">BBB A+ Rated</Badge>
-        <Badge className="bg-white/10 text-white border border-white/20">SSL Secured</Badge>
+        <Badge className="bg-white/10 text-white border border-white/20" style={s.borderRadius ? { borderRadius: s.borderRadius } : undefined}>FMCSA #MC-123456</Badge>
+        <Badge className="bg-white/10 text-white border border-white/20" style={s.borderRadius ? { borderRadius: s.borderRadius } : undefined}>BBB A+ Rated</Badge>
+        <Badge className="bg-white/10 text-white border border-white/20" style={s.borderRadius ? { borderRadius: s.borderRadius } : undefined}>SSL Secured</Badge>
       </div>
     </div>
   );
@@ -287,27 +343,29 @@ export const VideoTestimonialGrid = ({ brandColors }: { brandColors?: BrandColor
     { name: "David K.", location: "Miami, FL", stars: 5, thumbnail: "👨‍🔧" },
   ];
   
-  const sectionBg = brandColors?.background ? { background: brandColors.background } : undefined;
-  const textMain = brandColors?.textPrimary ? { color: brandColors.textPrimary } : undefined;
-  const textSub = brandColors?.textSecondary ? { color: brandColors.textSecondary } : undefined;
+  const s = brandStyles(brandColors);
+  const sectionBg = brandColors?.background ? { background: brandColors.background, fontFamily: s.fontFamily } : (s.fontFamily ? { fontFamily: s.fontFamily } : undefined);
+  const textMain: React.CSSProperties | undefined = brandColors?.textPrimary ? { color: brandColors.textPrimary, fontFamily: s.headingFont } : undefined;
+  const textSub: React.CSSProperties | undefined = brandColors?.textSecondary ? { color: brandColors.textSecondary, fontFamily: s.fontFamily } : undefined;
   const accentColor = brandColors?.primary;
+  const cardRadius = s.borderRadius || '1rem';
 
   return (
     <div className="py-16 px-8 bg-slate-50" style={sectionBg}>
       <div className="text-center mb-12">
         <Badge
           className="mb-4 bg-purple-500/10 text-purple-600 border border-purple-500/30"
-          style={accentColor ? { background: `${accentColor}15`, color: accentColor, borderColor: `${accentColor}30` } : undefined}
+          style={accentColor ? { background: `${accentColor}15`, color: accentColor, borderColor: `${accentColor}30`, borderRadius: s.borderRadius } : undefined}
         >
           Real Stories
         </Badge>
-        <h2 className="text-3xl font-bold text-slate-900 mb-3" style={textMain}>Watch Real TruMove Stories</h2>
-        <p className="text-lg text-slate-600" style={textSub}>See why families across America trust TruMove</p>
+        <h2 className="text-3xl font-bold text-slate-900 mb-3" style={{ ...textMain, ...(s.h2Size ? { fontSize: s.h2Size } : {}), ...(s.fontWeightBold ? { fontWeight: s.fontWeightBold } : {}) }}>Watch Real TruMove Stories</h2>
+        <p className="text-lg text-slate-600" style={{ ...textSub, ...(s.bodySize ? { fontSize: s.bodySize } : {}) }}>See why families across America trust TruMove</p>
       </div>
       
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
         {testimonials.map((t, i) => (
-          <div key={i} className="group relative overflow-hidden rounded-2xl bg-white shadow-lg hover:shadow-xl transition-shadow">
+          <div key={i} className="group relative overflow-hidden rounded-2xl bg-white shadow-lg hover:shadow-xl transition-shadow" style={{ borderRadius: cardRadius }}>
             <div className="aspect-video bg-gradient-to-br from-slate-200 to-slate-300 flex items-center justify-center text-6xl relative">
               {t.thumbnail}
               <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
@@ -345,29 +403,31 @@ export const ComparisonTableSection = ({ brandColors }: { brandColors?: BrandCol
     { name: "Flexible Scheduling", trumove: true, traditional: true, diy: true },
   ];
 
-  const sectionBg = brandColors?.background ? { background: brandColors.background } : undefined;
-  const textMain = brandColors?.textPrimary ? { color: brandColors.textPrimary } : undefined;
-  const textSub = brandColors?.textSecondary ? { color: brandColors.textSecondary } : undefined;
+  const s = brandStyles(brandColors);
+  const sectionBg = brandColors?.background ? { background: brandColors.background, fontFamily: s.fontFamily } : (s.fontFamily ? { fontFamily: s.fontFamily } : undefined);
+  const textMain: React.CSSProperties | undefined = brandColors?.textPrimary ? { color: brandColors.textPrimary, fontFamily: s.headingFont } : undefined;
+  const textSub: React.CSSProperties | undefined = brandColors?.textSecondary ? { color: brandColors.textSecondary } : undefined;
   const accentColor = brandColors?.primary || '#2563EB';
+  const tableRadius = s.borderRadius || '1rem';
 
   return (
     <div className="py-16 px-8 bg-white" style={sectionBg}>
       <div className="text-center mb-12">
         <Badge
           className="mb-4 bg-blue-500/10 text-blue-600 border border-blue-500/30"
-          style={brandColors?.primary ? { background: `${accentColor}15`, color: accentColor, borderColor: `${accentColor}30` } : undefined}
+          style={brandColors?.primary ? { background: `${accentColor}15`, color: accentColor, borderColor: `${accentColor}30`, borderRadius: s.borderRadius } : undefined}
         >
           Compare Options
         </Badge>
-        <h2 className="text-3xl font-bold text-slate-900 mb-3" style={textMain}>Why Choose TruMove?</h2>
-        <p className="text-lg text-slate-600" style={textSub}>See how we stack up against the competition</p>
+        <h2 className="text-3xl font-bold text-slate-900 mb-3" style={{ ...textMain, ...(s.h2Size ? { fontSize: s.h2Size } : {}), ...(s.fontWeightBold ? { fontWeight: s.fontWeightBold } : {}) }}>Why Choose TruMove?</h2>
+        <p className="text-lg text-slate-600" style={{ ...textSub, ...(s.bodySize ? { fontSize: s.bodySize } : {}) }}>See how we stack up against the competition</p>
       </div>
       
-      <div className="max-w-4xl mx-auto overflow-hidden rounded-2xl border border-slate-200 shadow-lg">
+      <div className="max-w-4xl mx-auto overflow-hidden border border-slate-200 shadow-lg" style={{ borderRadius: tableRadius }}>
         <table className="w-full">
           <thead>
             <tr className="bg-slate-900 text-white">
-              <th className="text-left p-4">Feature</th>
+              <th className="text-left p-4" style={s.fontFamily ? { fontFamily: s.fontFamily } : undefined}>Feature</th>
               <th className="p-4 text-center" style={{ background: accentColor }}>
                 <div className="flex flex-col items-center">
                   <TruMoveLogo className="h-6 brightness-0 invert mb-1" />
@@ -381,12 +441,12 @@ export const ComparisonTableSection = ({ brandColors }: { brandColors?: BrandCol
           <tbody>
             {features.map((f, i) => (
               <tr key={i} className={i % 2 === 0 ? 'bg-slate-50' : 'bg-white'}>
-                <td className="p-4 font-medium text-slate-900" style={textMain}>
+                <td className="p-4 font-medium text-slate-900" style={{ ...textMain, ...(s.fontFamily ? { fontFamily: s.fontFamily } : {}), ...(s.bodySize ? { fontSize: s.bodySize } : {}) }}>
                   {f.name}
                   {f.exclusive && (
                     <Badge
                       className="ml-2 text-[10px] bg-blue-500/10 text-blue-600 border-0"
-                      style={brandColors?.primary ? { background: `${accentColor}15`, color: accentColor } : undefined}
+                      style={brandColors?.primary ? { background: `${accentColor}15`, color: accentColor, borderRadius: s.borderRadius } : undefined}
                     >
                       TruMove Exclusive
                     </Badge>
@@ -423,30 +483,32 @@ export const FAQSection = ({ brandColors }: { brandColors?: BrandColors } = {}) 
     { q: "How far in advance should I book?", a: "We recommend booking 4-6 weeks in advance for the best availability and rates. However, TruMove can often accommodate last-minute moves with as little as 48 hours notice." },
   ];
 
-  const sectionBg = brandColors?.background ? { background: brandColors.background } : undefined;
-  const textMain = brandColors?.textPrimary ? { color: brandColors.textPrimary } : undefined;
-  const textSub = brandColors?.textSecondary ? { color: brandColors.textSecondary } : undefined;
+  const s = brandStyles(brandColors);
+  const sectionBg = brandColors?.background ? { background: brandColors.background, fontFamily: s.fontFamily } : (s.fontFamily ? { fontFamily: s.fontFamily } : undefined);
+  const textMain: React.CSSProperties | undefined = brandColors?.textPrimary ? { color: brandColors.textPrimary, fontFamily: s.headingFont } : undefined;
+  const textSub: React.CSSProperties | undefined = brandColors?.textSecondary ? { color: brandColors.textSecondary, fontFamily: s.fontFamily } : undefined;
+  const cardRadius = s.borderRadius || '0.75rem';
 
   return (
     <div className="py-16 px-8 bg-slate-50" style={sectionBg}>
       <div className="text-center mb-12">
-        <Badge className="mb-4 bg-amber-500/10 text-amber-600 border border-amber-500/30">Questions?</Badge>
-        <h2 className="text-3xl font-bold text-slate-900 mb-3" style={textMain}>Frequently Asked Questions</h2>
-        <p className="text-lg text-slate-600" style={textSub}>Everything you need to know about TruMove</p>
+        <Badge className="mb-4 bg-amber-500/10 text-amber-600 border border-amber-500/30" style={s.borderRadius ? { borderRadius: s.borderRadius } : undefined}>Questions?</Badge>
+        <h2 className="text-3xl font-bold text-slate-900 mb-3" style={{ ...textMain, ...(s.h2Size ? { fontSize: s.h2Size } : {}), ...(s.fontWeightBold ? { fontWeight: s.fontWeightBold } : {}) }}>Frequently Asked Questions</h2>
+        <p className="text-lg text-slate-600" style={{ ...textSub, ...(s.bodySize ? { fontSize: s.bodySize } : {}) }}>Everything you need to know about TruMove</p>
       </div>
       
       <div className="max-w-3xl mx-auto space-y-3">
         {faqs.map((faq, i) => (
-          <div key={i} className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+          <div key={i} className="bg-white rounded-xl border border-slate-200 overflow-hidden" style={{ borderRadius: cardRadius }}>
             <button
               onClick={() => setOpenIndex(openIndex === i ? null : i)}
               className="w-full flex items-center justify-between p-5 text-left hover:bg-slate-50 transition-colors"
             >
-              <span className="font-semibold text-slate-900" style={textMain}>{faq.q}</span>
+              <span className="font-semibold text-slate-900" style={{ ...textMain, ...(s.fontWeightMedium ? { fontWeight: s.fontWeightMedium } : {}) }}>{faq.q}</span>
               <ChevronDown className={`w-5 h-5 text-slate-400 transition-transform ${openIndex === i ? 'rotate-180' : ''}`} />
             </button>
             {openIndex === i && (
-              <div className="px-5 pb-5 text-slate-600 border-t border-slate-100 pt-4" style={textSub}>
+              <div className="px-5 pb-5 text-slate-600 border-t border-slate-100 pt-4" style={{ ...textSub, ...(s.bodySize ? { fontSize: s.bodySize } : {}) }}>
                 {faq.a}
               </div>
             )}
@@ -458,34 +520,44 @@ export const FAQSection = ({ brandColors }: { brandColors?: BrandColors } = {}) 
 };
 
 // Final CTA Section
-export const FinalCTASection = ({ theme, brandColors }: { theme: { primary: string; primaryDark: string }; brandColors?: BrandColors }) => (
-  <div 
-    className="py-20 px-8 text-center"
-    style={{ background: `linear-gradient(135deg, ${theme.primary} 0%, ${theme.primaryDark} 100%)` }}
-  >
-    <h2 className="text-4xl font-bold text-white mb-4">Ready for a Stress-Free Move?</h2>
-    <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-      Join 50,000+ families who saved an average of $847 with TruMove AI.
-    </p>
-    
-    <div className="max-w-md mx-auto bg-white rounded-2xl p-6 shadow-2xl">
-      <div className="space-y-3 mb-4">
-        <Input placeholder="Moving from (ZIP code)" className="text-center" />
-        <Input placeholder="Moving to (ZIP code)" className="text-center" />
-        <Input placeholder="Phone number" className="text-center" />
-      </div>
-      <Button className="w-full py-6 text-lg font-bold bg-slate-900 hover:bg-slate-800">
-        Get My Free TruMove Quote <ArrowRight className="w-5 h-5 ml-2" />
-      </Button>
-      <p className="text-xs text-slate-500 mt-3">🔒 No credit card required • Instant results</p>
-    </div>
-    
-    <div className="mt-8">
-      <CountdownTimer />
-    </div>
-  </div>
-);
+export const FinalCTASection = ({ theme, brandColors }: { theme: { primary: string; primaryDark: string }; brandColors?: BrandColors }) => {
+  const s = brandStyles(brandColors);
+  const cardRadius = s.borderRadius || '1rem';
+  const btnRadius = s.btnRadius || '0.75rem';
 
+  return (
+    <div 
+      className="py-20 px-8 text-center"
+      style={{ background: `linear-gradient(135deg, ${theme.primary} 0%, ${theme.primaryDark} 100%)`, ...(s.fontFamily ? { fontFamily: s.fontFamily } : {}) }}
+    >
+      <h2 className="text-4xl font-bold text-white mb-4" style={{ ...(s.headingFont ? { fontFamily: s.headingFont } : {}), ...(s.h2Size ? { fontSize: s.h2Size } : {}), ...(s.fontWeightBold ? { fontWeight: s.fontWeightBold } : {}) }}>
+        Ready for a Stress-Free Move?
+      </h2>
+      <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto" style={s.bodySize ? { fontSize: s.bodySize } : undefined}>
+        Join 50,000+ families who saved an average of $847 with TruMove AI.
+      </p>
+      
+      <div className="max-w-md mx-auto bg-white p-6 shadow-2xl" style={{ borderRadius: cardRadius }}>
+        <div className="space-y-3 mb-4">
+          <Input placeholder="Moving from (ZIP code)" className="text-center" style={{ borderRadius: btnRadius, fontFamily: s.fontFamily }} />
+          <Input placeholder="Moving to (ZIP code)" className="text-center" style={{ borderRadius: btnRadius, fontFamily: s.fontFamily }} />
+          <Input placeholder="Phone number" className="text-center" style={{ borderRadius: btnRadius, fontFamily: s.fontFamily }} />
+        </div>
+        <Button
+          className="w-full py-6 text-lg font-bold bg-slate-900 hover:bg-slate-800"
+          style={{ borderRadius: btnRadius, background: s.btnBg, color: s.btnColor, fontFamily: s.fontFamily, fontWeight: s.fontWeightBold }}
+        >
+          Get My Free TruMove Quote <ArrowRight className="w-5 h-5 ml-2" />
+        </Button>
+        <p className="text-xs text-slate-500 mt-3" style={s.fontFamily ? { fontFamily: s.fontFamily } : undefined}>🔒 No credit card required • Instant results</p>
+      </div>
+      
+      <div className="mt-8">
+        <CountdownTimer />
+      </div>
+    </div>
+  );
+};
 // Comprehensive Footer
 export const TruMoveFooter = ({ brandColors }: { brandColors?: BrandColors } = {}) => {
   const accentColor = brandColors?.primary;

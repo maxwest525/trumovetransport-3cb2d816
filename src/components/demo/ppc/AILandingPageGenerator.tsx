@@ -903,14 +903,10 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
     if (customBranding?.colors) {
       const primary = customBranding.colors.primary || "#3B82F6";
       const accent = customBranding.colors.accent || primary;
-      // Derive a darker variant of the primary for button gradients
       const primaryDark = darkenHex(primary, 0.25);
-      // Derive a lighter/brighter accent for gradient text highlights
       const accentLight = lightenHex(accent, 0.3);
-      // Hero background should always be dark regardless of the brand's background color
       const isLightScheme = customBranding.colorScheme === "light" || isLightColor(customBranding.colors.background || "#FFFFFF");
       const secondary = isLightScheme ? "#0F172A" : (customBranding.colors.background || "#0F172A");
-      // Store the brand background for non-hero sections
       const brandBackground = customBranding.colors.background || "#FFFFFF";
       const brandText = customBranding.colors.textPrimary || "#0F172A";
       const brandTextSecondary = customBranding.colors.textSecondary || "#64748B";
@@ -925,6 +921,10 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
         brandBackground,
         brandText,
         brandTextSecondary,
+        // Full style data
+        typography: customBranding.typography,
+        spacing: customBranding.spacing,
+        components: customBranding.components,
       };
     }
     return COLOR_THEMES.find(t => t.id === selectedTheme) || COLOR_THEMES[0];
@@ -955,12 +955,14 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
 
   // Section style helpers for non-hero areas — inline styles override hardcoded Tailwind classes
   const hasBrandTheme = !!(theme as any).brandBackground;
+  const brandFont = customBranding?.typography?.fontFamilies?.primary;
+  const brandHeadingFont = customBranding?.typography?.fontFamilies?.heading || brandFont;
   const sectionStyles = hasBrandTheme ? {
-    light: { background: (theme as any).brandBackground, color: (theme as any).brandText } as React.CSSProperties,
-    alt: { background: darkenHex((theme as any).brandBackground, 0.04), color: (theme as any).brandText } as React.CSSProperties,
-    dark: { background: '#0F172A', color: '#fff' } as React.CSSProperties,
-    textMain: { color: (theme as any).brandText } as React.CSSProperties,
-    textSub: { color: (theme as any).brandTextSecondary } as React.CSSProperties,
+    light: { background: (theme as any).brandBackground, color: (theme as any).brandText, fontFamily: brandFont } as React.CSSProperties,
+    alt: { background: darkenHex((theme as any).brandBackground, 0.04), color: (theme as any).brandText, fontFamily: brandFont } as React.CSSProperties,
+    dark: { background: '#0F172A', color: '#fff', fontFamily: brandFont } as React.CSSProperties,
+    textMain: { color: (theme as any).brandText, fontFamily: brandHeadingFont } as React.CSSProperties,
+    textSub: { color: (theme as any).brandTextSecondary, fontFamily: brandFont } as React.CSSProperties,
     border: { borderColor: `${(theme as any).brandText}15` } as React.CSSProperties,
   } : {
     light: {} as React.CSSProperties,
@@ -979,7 +981,26 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
     background: (theme as any).brandBackground,
     textPrimary: (theme as any).brandText,
     textSecondary: (theme as any).brandTextSecondary,
+    typography: (theme as any).typography,
+    spacing: (theme as any).spacing,
+    components: (theme as any).components,
   } : undefined;
+
+  // Derived brand style helpers for inline template sections
+  const bs = {
+    fontFamily: customBranding?.typography?.fontFamilies?.primary,
+    headingFont: customBranding?.typography?.fontFamilies?.heading || customBranding?.typography?.fontFamilies?.primary,
+    h1Size: customBranding?.typography?.fontSizes?.h1,
+    h2Size: customBranding?.typography?.fontSizes?.h2,
+    h3Size: customBranding?.typography?.fontSizes?.h3,
+    bodySize: customBranding?.typography?.fontSizes?.body,
+    fontWeightBold: customBranding?.typography?.fontWeights?.bold,
+    fontWeightMedium: customBranding?.typography?.fontWeights?.medium,
+    borderRadius: customBranding?.spacing?.borderRadius,
+    btnRadius: customBranding?.components?.buttonPrimary?.borderRadius || customBranding?.spacing?.borderRadius,
+    btnBg: customBranding?.components?.buttonPrimary?.background || theme.primary,
+    btnColor: customBranding?.components?.buttonPrimary?.textColor || '#FFFFFF',
+  };
 
   const handleApplyBranding = (branding: ExtractedBranding) => {
     setCustomBranding(branding);
@@ -1428,16 +1449,16 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
              AI-Powered Moving Technology
            </Badge>
            
-           <h1 className="text-5xl md:text-7xl font-black text-white mb-4 leading-[0.95] max-w-4xl mx-auto tracking-tight">
-             <EditableText sectionId="main-headline" as="span" className="block" />
-             <span className="text-transparent bg-clip-text" style={{ backgroundImage: `linear-gradient(90deg, ${theme.primary}, ${theme.accentLight}, ${theme.primary})` }}>
-               <EditableText sectionId="sub-headline" as="span" />
-             </span>
-           </h1>
-           
-           <div className="text-xl text-slate-300 mb-10 max-w-2xl mx-auto">
-             <EditableText sectionId="hero-body" as="p" />
-           </div>
+            <h1 className="text-5xl md:text-7xl font-black text-white mb-4 leading-[0.95] max-w-4xl mx-auto tracking-tight" style={{ fontFamily: bs.headingFont, ...(bs.h1Size ? { fontSize: bs.h1Size } : {}), ...(bs.fontWeightBold ? { fontWeight: bs.fontWeightBold } : {}) }}>
+              <EditableText sectionId="main-headline" as="span" className="block" />
+              <span className="text-transparent bg-clip-text" style={{ backgroundImage: `linear-gradient(90deg, ${theme.primary}, ${theme.accentLight}, ${theme.primary})` }}>
+                <EditableText sectionId="sub-headline" as="span" />
+              </span>
+            </h1>
+            
+            <div className="text-xl text-slate-300 mb-10 max-w-2xl mx-auto" style={{ fontFamily: bs.fontFamily, ...(bs.bodySize ? { fontSize: bs.bodySize } : {}) }}>
+              <EditableText sectionId="hero-body" as="p" />
+            </div>
 
            {/* Feature checkmarks */}
            <div className="flex items-center justify-center gap-6 mb-10 text-sm">
@@ -1455,33 +1476,42 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
            </div>
 
            {/* Glassmorphism Quote Form */}
-           <div 
-             className="max-w-lg mx-auto rounded-3xl p-8 border shadow-2xl relative overflow-hidden"
-             style={{ 
-               background: 'rgba(255,255,255,0.06)', 
-               backdropFilter: 'blur(24px)',
-               WebkitBackdropFilter: 'blur(24px)',
-               borderColor: `rgba(255,255,255,0.12)`,
-               boxShadow: `0 0 80px ${theme.primary}25, 0 32px 64px rgba(0,0,0,0.4)`
-             }}
-           >
-             {/* Animated border glow */}
-             <div className="absolute -inset-[1px] rounded-3xl opacity-40" style={{
-               background: `linear-gradient(135deg, ${theme.primary}60, transparent 40%, transparent 60%, ${theme.accentLight}60)`,
-             }} />
-             <div className="relative">
-               <h3 className="text-white font-bold text-xl mb-4">Get Your Free TruMove Quote</h3>
-               <div className="space-y-3 mb-4">
-                 <Input placeholder="Moving from (ZIP code)" className="bg-white/95 border-0 text-slate-900 py-5 rounded-xl" />
-                 <Input placeholder="Moving to (ZIP code)" className="bg-white/95 border-0 text-slate-900 py-5 rounded-xl" />
-                 <Input placeholder="Phone number" className="bg-white/95 border-0 text-slate-900 py-5 rounded-xl" />
-               </div>
-               <Button 
-                 className="w-full py-7 text-lg font-bold gap-2 shadow-lg rounded-xl" 
-                 style={{ background: `linear-gradient(135deg, ${theme.primary} 0%, ${theme.primaryDark} 100%)`, boxShadow: `0 8px 32px ${theme.primary}50` }}
-               >
-                 <EditableText sectionId="cta-primary" as="span" /> <ArrowRight className="w-5 h-5" />
-               </Button>
+            <div 
+              className="max-w-lg mx-auto p-8 border shadow-2xl relative overflow-hidden"
+              style={{ 
+                background: 'rgba(255,255,255,0.06)', 
+                backdropFilter: 'blur(24px)',
+                WebkitBackdropFilter: 'blur(24px)',
+                borderColor: `rgba(255,255,255,0.12)`,
+                boxShadow: `0 0 80px ${theme.primary}25, 0 32px 64px rgba(0,0,0,0.4)`,
+                borderRadius: bs.borderRadius || '1.5rem',
+              }}
+            >
+              {/* Animated border glow */}
+              <div className="absolute -inset-[1px] opacity-40" style={{
+                background: `linear-gradient(135deg, ${theme.primary}60, transparent 40%, transparent 60%, ${theme.accentLight}60)`,
+                borderRadius: bs.borderRadius || '1.5rem',
+              }} />
+              <div className="relative">
+                <h3 className="text-white font-bold text-xl mb-4" style={{ fontFamily: bs.headingFont, ...(bs.h3Size ? { fontSize: bs.h3Size } : {}) }}>Get Your Free TruMove Quote</h3>
+                <div className="space-y-3 mb-4">
+                  <Input placeholder="Moving from (ZIP code)" className="bg-white/95 border-0 text-slate-900 py-5" style={{ borderRadius: bs.btnRadius || '0.75rem', fontFamily: bs.fontFamily }} />
+                  <Input placeholder="Moving to (ZIP code)" className="bg-white/95 border-0 text-slate-900 py-5" style={{ borderRadius: bs.btnRadius || '0.75rem', fontFamily: bs.fontFamily }} />
+                  <Input placeholder="Phone number" className="bg-white/95 border-0 text-slate-900 py-5" style={{ borderRadius: bs.btnRadius || '0.75rem', fontFamily: bs.fontFamily }} />
+                </div>
+                <Button 
+                  className="w-full py-7 text-lg font-bold gap-2 shadow-lg" 
+                  style={{ 
+                    background: `linear-gradient(135deg, ${bs.btnBg} 0%, ${theme.primaryDark} 100%)`,
+                    boxShadow: `0 8px 32px ${theme.primary}50`,
+                    borderRadius: bs.btnRadius || '0.75rem',
+                    color: bs.btnColor,
+                    fontFamily: bs.fontFamily,
+                    fontWeight: bs.fontWeightBold,
+                  }}
+                >
+                  <EditableText sectionId="cta-primary" as="span" /> <ArrowRight className="w-5 h-5" />
+                </Button>
                <div className="flex items-center justify-center gap-4 mt-4 text-xs text-slate-400">
                  <span className="flex items-center gap-1"><Lock className="w-3 h-3" /> Secure</span>
                  <span>•</span>
