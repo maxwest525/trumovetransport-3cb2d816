@@ -44,6 +44,8 @@ import {
 } from "./TruMoveBrandingElements";
 import { TemplatePreviewCard } from "./TemplatePreviewCard";
 import { PostGenerationEditor } from "./PostGenerationEditor";
+import { BrandExtractor } from "./BrandExtractor";
+import { ExtractedBranding } from "@/lib/api/firecrawl";
 
 // Heatmap positions per template
 const TEMPLATE_HEATMAP_POSITIONS: Record<string, {
@@ -493,6 +495,8 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
   const [isPublishing, setIsPublishing] = useState(false);
   const [isPublished, setIsPublished] = useState(false);
   const [showPostGenEditor, setShowPostGenEditor] = useState(false);
+  const [showBrandExtractor, setShowBrandExtractor] = useState(false);
+  const [customBranding, setCustomBranding] = useState<ExtractedBranding | null>(null);
 
     // Update heatmap positions when template changes
     useEffect(() => {
@@ -896,10 +900,26 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
 
   // Get current theme colors
   const getThemeColors = () => {
+    if (customBranding?.colors) {
+      return {
+        id: "custom",
+        name: "Custom",
+        primary: customBranding.colors.primary || "#3B82F6",
+        primaryDark: customBranding.colors.secondary || "#1D4ED8",
+        secondary: customBranding.colors.background || "#0F172A",
+        accent: customBranding.colors.accent || "#7C3AED",
+        accentLight: customBranding.colors.textSecondary || "#A855F7",
+      };
+    }
     return COLOR_THEMES.find(t => t.id === selectedTheme) || COLOR_THEMES[0];
   };
 
   const theme = getThemeColors();
+
+  const handleApplyBranding = (branding: ExtractedBranding) => {
+    setCustomBranding(branding);
+    setSelectedTheme("custom");
+  };
 
   // Generate template-specific HTML content
   const generateHtmlContent = () => {
@@ -2724,6 +2744,16 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
                 </SelectContent>
               </Select>
 
+              <Button 
+                variant={showBrandExtractor ? "default" : "outline"} 
+                size="sm" 
+                onClick={() => setShowBrandExtractor(!showBrandExtractor)}
+                className="gap-1.5"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                {showBrandExtractor ? 'Close Styler' : 'Style Extractor'}
+              </Button>
+
               <Button variant="outline" size="sm" onClick={() => setShowLandingPage(false)}>
                 <RefreshCw className="w-3 h-3 mr-1" />
                 Regenerate
@@ -2752,6 +2782,16 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
                </Button>
             </div>
           </div>
+
+          {/* Brand Extractor Panel */}
+          {showBrandExtractor && (
+            <div className="rounded-xl border border-border overflow-hidden bg-card p-4">
+              <BrandExtractor 
+                onApplyTheme={handleApplyBranding}
+                currentThemeId={customBranding ? "custom" : selectedTheme}
+              />
+            </div>
+          )}
  
           {/* Editor Panel + Preview */}
           {showPostGenEditor && (
