@@ -953,23 +953,23 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
 
   const theme = getThemeColors();
 
-  // CSS variable overrides for brand-themed sections
-  const brandCssVars: React.CSSProperties = (theme as any).brandBackground ? {
-    '--brand-bg': (theme as any).brandBackground,
-    '--brand-bg-alt': darkenHex((theme as any).brandBackground, 0.04),
-    '--brand-text': (theme as any).brandText,
-    '--brand-text-secondary': (theme as any).brandTextSecondary,
-  } as React.CSSProperties : {};
-
-  // Section style helpers for non-hero areas
-  const sectionBg = (theme as any).brandBackground 
-    ? { background: (theme as any).brandBackground, color: (theme as any).brandText } 
-    : {};
-  const sectionBgAlt = (theme as any).brandBackground 
-    ? { background: darkenHex((theme as any).brandBackground, 0.04), color: (theme as any).brandText } 
-    : {};
-  const textMain = (theme as any).brandText || undefined;
-  const textSub = (theme as any).brandTextSecondary || undefined;
+  // Section style helpers for non-hero areas — inline styles override hardcoded Tailwind classes
+  const hasBrandTheme = !!(theme as any).brandBackground;
+  const sectionStyles = hasBrandTheme ? {
+    light: { background: (theme as any).brandBackground, color: (theme as any).brandText } as React.CSSProperties,
+    alt: { background: darkenHex((theme as any).brandBackground, 0.04), color: (theme as any).brandText } as React.CSSProperties,
+    dark: { background: '#0F172A', color: '#fff' } as React.CSSProperties,
+    textMain: { color: (theme as any).brandText } as React.CSSProperties,
+    textSub: { color: (theme as any).brandTextSecondary } as React.CSSProperties,
+    border: { borderColor: `${(theme as any).brandText}15` } as React.CSSProperties,
+  } : {
+    light: {} as React.CSSProperties,
+    alt: {} as React.CSSProperties,
+    dark: {} as React.CSSProperties,
+    textMain: {} as React.CSSProperties,
+    textSub: {} as React.CSSProperties,
+    border: {} as React.CSSProperties,
+  };
 
   const handleApplyBranding = (branding: ExtractedBranding) => {
     setCustomBranding(branding);
@@ -1513,29 +1513,29 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
         </div>
       </div>
 
-      {/* Trust Badge Strip */}
-      <div className="flex justify-center items-center gap-8 py-5 border-b border-slate-200 bg-slate-50">
-        {[
-          { icon: Shield, text: "FMCSA Licensed" },
-          { icon: Award, text: "BBB A+ Rated" },
-          { icon: Users, text: "50,000+ Moves" },
-          { icon: Star, text: "4.9/5 Rating" },
-        ].map((badge, i) => (
-          <div key={i} className="flex items-center gap-2">
-            <badge.icon className="w-4 h-4" style={{ color: theme.primary }} />
-            <span className="text-sm font-medium text-slate-700">{badge.text}</span>
-          </div>
-        ))}
-      </div>
+       {/* Trust Badge Strip */}
+       <div className="flex justify-center items-center gap-8 py-5 border-b border-slate-200 bg-slate-50" style={{ ...sectionStyles.alt, ...sectionStyles.border }}>
+         {[
+           { icon: Shield, text: "FMCSA Licensed" },
+           { icon: Award, text: "BBB A+ Rated" },
+           { icon: Users, text: "50,000+ Moves" },
+           { icon: Star, text: "4.9/5 Rating" },
+         ].map((badge, i) => (
+           <div key={i} className="flex items-center gap-2">
+             <badge.icon className="w-4 h-4" style={{ color: theme.primary }} />
+             <span className="text-sm font-medium text-slate-700" style={sectionStyles.textSub}>{badge.text}</span>
+           </div>
+         ))}
+       </div>
 
-      {/* 3-Step Process */}
-      <div className="py-16 px-8 bg-white">
-        <div className="text-center mb-12">
-          <Badge className="mb-4" style={{ background: `${theme.primary}15`, color: theme.primary, borderColor: `${theme.primary}30` }}>
-            How TruMove Works
-          </Badge>
-          <h2 className="text-3xl font-bold text-slate-900 mb-3">3 Simple Steps to Your Perfect Move</h2>
-          <p className="text-lg text-slate-600">Powered by TruMove AI technology</p>
+       {/* 3-Step Process */}
+       <div className="py-16 px-8 bg-white" style={sectionStyles.light}>
+         <div className="text-center mb-12">
+           <Badge className="mb-4" style={{ background: `${theme.primary}15`, color: theme.primary, borderColor: `${theme.primary}30` }}>
+             How TruMove Works
+           </Badge>
+           <h2 className="text-3xl font-bold text-slate-900 mb-3" style={sectionStyles.textMain}>3 Simple Steps to Your Perfect Move</h2>
+           <p className="text-lg text-slate-600" style={sectionStyles.textSub}>Powered by TruMove AI technology</p>
         </div>
         
         <div className="relative max-w-4xl mx-auto">
@@ -1558,8 +1558,8 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
                 <div className="absolute -top-2 right-1/3 w-8 h-8 rounded-full bg-slate-900 text-white text-sm font-bold flex items-center justify-center z-20">
                   {step.number}
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 mb-2">{step.title}</h3>
-                <p className="text-sm text-slate-600">{step.description}</p>
+                 <h3 className="text-xl font-bold text-slate-900 mb-2" style={sectionStyles.textMain}>{step.title}</h3>
+                 <p className="text-sm text-slate-600" style={sectionStyles.textSub}>{step.description}</p>
               </div>
             ))}
           </div>
@@ -1570,12 +1570,12 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
         </div>
       </div>
 
-      {/* Video Testimonials */}
-      <div className="py-16 px-8 bg-slate-50">
-        <div className="text-center mb-12">
-          <Badge className="mb-4 bg-purple-500/10 text-purple-600 border border-purple-500/30">Real Stories</Badge>
-          <h2 className="text-3xl font-bold text-slate-900 mb-3">Watch Real TruMove Stories</h2>
-          <p className="text-lg text-slate-600">See why families across America trust TruMove</p>
+       {/* Video Testimonials */}
+       <div className="py-16 px-8 bg-slate-50" style={sectionStyles.alt}>
+         <div className="text-center mb-12">
+           <Badge className="mb-4 bg-purple-500/10 text-purple-600 border border-purple-500/30">Real Stories</Badge>
+           <h2 className="text-3xl font-bold text-slate-900 mb-3" style={sectionStyles.textMain}>Watch Real TruMove Stories</h2>
+           <p className="text-lg text-slate-600" style={sectionStyles.textSub}>See why families across America trust TruMove</p>
         </div>
         
         <div className="grid md:grid-cols-4 gap-6 max-w-5xl mx-auto">
@@ -1600,8 +1600,8 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
                     <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
                   ))}
                 </div>
-                <p className="font-bold text-slate-900 text-sm">{t.name}</p>
-                <p className="text-xs text-slate-500">{t.location}</p>
+                 <p className="font-bold text-slate-900 text-sm" style={sectionStyles.textMain}>{t.name}</p>
+                 <p className="text-xs text-slate-500" style={sectionStyles.textSub}>{t.location}</p>
                 <Badge className="mt-2 text-[10px]" style={{ background: `${theme.primary}15`, color: theme.primary }}>
                   Saved {t.saved}
                 </Badge>
@@ -1614,14 +1614,14 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
       {/* Comparison Table */}
       <ComparisonTableSection />
 
-      {/* Calculator Preview */}
-      <div className="py-16 px-8 bg-slate-50">
-        <div className="max-w-4xl mx-auto text-center">
-          <Badge className="mb-4" style={{ background: `${theme.accent}15`, color: theme.accent }}>
-            <Calculator className="w-3 h-3 mr-1" /> Cost Estimator
-          </Badge>
-          <h2 className="text-3xl font-bold text-slate-900 mb-3">See Your TruMove Price Instantly</h2>
-          <p className="text-lg text-slate-600 mb-8">Our AI calculates your exact cost based on distance, inventory, and timing</p>
+       {/* Calculator Preview */}
+       <div className="py-16 px-8 bg-slate-50" style={sectionStyles.alt}>
+         <div className="max-w-4xl mx-auto text-center">
+           <Badge className="mb-4" style={{ background: `${theme.accent}15`, color: theme.accent }}>
+             <Calculator className="w-3 h-3 mr-1" /> Cost Estimator
+           </Badge>
+           <h2 className="text-3xl font-bold text-slate-900 mb-3" style={sectionStyles.textMain}>See Your TruMove Price Instantly</h2>
+           <p className="text-lg text-slate-600 mb-8" style={sectionStyles.textSub}>Our AI calculates your exact cost based on distance, inventory, and timing</p>
           
           <div className="grid md:grid-cols-3 gap-6">
             {[
@@ -1629,11 +1629,11 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
               { label: "Quote Time", value: "47 sec", icon: Timer },
               { label: "Happy Customers", value: "50K+", icon: Heart },
             ].map((stat, i) => (
-              <div key={i} className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm">
-                <stat.icon className="w-8 h-8 mx-auto mb-3" style={{ color: theme.primary }} />
-                <div className="text-3xl font-black text-slate-900">{stat.value}</div>
-                <div className="text-sm text-slate-500">{stat.label}</div>
-              </div>
+               <div key={i} className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm" style={{ ...sectionStyles.light, ...sectionStyles.border }}>
+                 <stat.icon className="w-8 h-8 mx-auto mb-3" style={{ color: theme.primary }} />
+                 <div className="text-3xl font-black text-slate-900" style={sectionStyles.textMain}>{stat.value}</div>
+                 <div className="text-sm text-slate-500" style={sectionStyles.textSub}>{stat.label}</div>
+               </div>
             ))}
           </div>
         </div>
@@ -1652,7 +1652,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
       <TruMoveFooter />
 
       {/* Chat CTA Banner (non-fixed for preview compatibility) */}
-      <div className="py-4 px-8 bg-slate-900 flex items-center justify-center gap-3">
+      <div className="py-4 px-8 bg-slate-900 flex items-center justify-center gap-3" style={sectionStyles.dark}>
         <div 
           className="flex items-center gap-2 px-6 py-3 rounded-full text-white shadow-lg cursor-pointer"
           style={{ background: `linear-gradient(135deg, ${theme.primary}, ${theme.primaryDark})` }}
@@ -1747,17 +1747,17 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
       <TrustBadgeStrip theme="light" />
 
       {/* Animated Comparison Table Section */}
-      <div className="py-16 px-8 bg-white dark:bg-slate-900">
-        <div className="text-center mb-10">
-          <Badge className="mb-4" style={{ background: `${theme.primary}20`, color: theme.primary }}>
-            <CheckCircle2 className="w-3 h-3 mr-1" /> Side-by-Side Comparison
-          </Badge>
-          <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-3">
-            The {businessName} Advantage
-          </h2>
-          <p className="text-lg text-slate-600 dark:text-slate-400">
-            See exactly how we stack up against traditional moving companies
-          </p>
+       <div className="py-16 px-8 bg-white dark:bg-slate-900" style={sectionStyles.light}>
+         <div className="text-center mb-10">
+           <Badge className="mb-4" style={{ background: `${theme.primary}20`, color: theme.primary }}>
+             <CheckCircle2 className="w-3 h-3 mr-1" /> Side-by-Side Comparison
+           </Badge>
+           <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-3" style={sectionStyles.textMain}>
+             The {businessName} Advantage
+           </h2>
+           <p className="text-lg text-slate-600 dark:text-slate-400" style={sectionStyles.textSub}>
+             See exactly how we stack up against traditional moving companies
+           </p>
         </div>
 
         <div className="max-w-4xl mx-auto rounded-2xl border-2 border-slate-200 dark:border-slate-700 overflow-hidden shadow-xl">
@@ -1812,17 +1812,17 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
       </div>
 
       {/* Competitor Pricing Breakdown */}
-      <div className="py-16 px-8 bg-slate-50 dark:bg-slate-800">
-        <div className="text-center mb-10">
-          <Badge className="mb-4 bg-amber-500/10 text-amber-600 border border-amber-500/30">
-            <DollarSign className="w-3 h-3 mr-1" /> Price Comparison
-          </Badge>
-          <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-3">
-            Average Savings: $847
-          </h2>
-          <p className="text-lg text-slate-600 dark:text-slate-400">
-            Real pricing data from verified customer moves
-          </p>
+       <div className="py-16 px-8 bg-slate-50 dark:bg-slate-800" style={sectionStyles.alt}>
+         <div className="text-center mb-10">
+           <Badge className="mb-4 bg-amber-500/10 text-amber-600 border border-amber-500/30">
+             <DollarSign className="w-3 h-3 mr-1" /> Price Comparison
+           </Badge>
+           <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-3" style={sectionStyles.textMain}>
+             Average Savings: $847
+           </h2>
+           <p className="text-lg text-slate-600 dark:text-slate-400" style={sectionStyles.textSub}>
+             Real pricing data from verified customer moves
+           </p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
@@ -1885,11 +1885,11 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
       <TripleGuaranteeSection />
 
       {/* FAQ Section */}
-      <div className="py-16 px-8 bg-slate-50 dark:bg-slate-800">
-        <div className="text-center mb-12">
-          <Badge className="mb-4 bg-amber-500/10 text-amber-600 border border-amber-500/30">Questions?</Badge>
-          <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-3">Frequently Asked Questions</h2>
-          <p className="text-lg text-slate-600 dark:text-slate-400">Everything you need to know about comparing movers</p>
+       <div className="py-16 px-8 bg-slate-50 dark:bg-slate-800" style={sectionStyles.alt}>
+         <div className="text-center mb-12">
+           <Badge className="mb-4 bg-amber-500/10 text-amber-600 border border-amber-500/30">Questions?</Badge>
+           <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-3" style={sectionStyles.textMain}>Frequently Asked Questions</h2>
+           <p className="text-lg text-slate-600 dark:text-slate-400" style={sectionStyles.textSub}>Everything you need to know about comparing movers</p>
         </div>
         <div className="max-w-3xl mx-auto space-y-3">
           {[
@@ -1897,10 +1897,10 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
             { q: "Why are your prices lower?", a: "Our AI technology eliminates costly in-home estimates and optimizes truck routes. We pass these savings directly to you." },
             { q: "What if I find a lower price elsewhere?", a: "We'll match it! Plus, we guarantee our quoted price won't change on moving day." },
           ].map((faq, i) => (
-            <div key={i} className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 p-5">
-              <p className="font-semibold text-slate-900 dark:text-white mb-2">{faq.q}</p>
-              <p className="text-slate-600 dark:text-slate-400 text-sm">{faq.a}</p>
-            </div>
+             <div key={i} className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 p-5" style={{ ...sectionStyles.light, ...sectionStyles.border }}>
+               <p className="font-semibold text-slate-900 dark:text-white mb-2" style={sectionStyles.textMain}>{faq.q}</p>
+               <p className="text-slate-600 dark:text-slate-400 text-sm" style={sectionStyles.textSub}>{faq.a}</p>
+             </div>
           ))}
         </div>
       </div>
@@ -2025,17 +2025,17 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
       <TrustBadgeStrip theme="light" />
 
       {/* Similar Moves Social Proof */}
-      <div className="py-16 px-8 bg-slate-50 dark:bg-slate-800">
-        <div className="text-center mb-10">
-          <Badge className="mb-4 bg-green-500/10 text-green-600 border border-green-500/30">
-            <Users className="w-3 h-3 mr-1" /> Recent Moves
-          </Badge>
-          <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-3">
-            Similar Moves Near You
-          </h2>
-          <p className="text-lg text-slate-600 dark:text-slate-400">
-            See what others paid for moves like yours
-          </p>
+       <div className="py-16 px-8 bg-slate-50 dark:bg-slate-800" style={sectionStyles.alt}>
+         <div className="text-center mb-10">
+           <Badge className="mb-4 bg-green-500/10 text-green-600 border border-green-500/30">
+             <Users className="w-3 h-3 mr-1" /> Recent Moves
+           </Badge>
+           <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-3" style={sectionStyles.textMain}>
+             Similar Moves Near You
+           </h2>
+           <p className="text-lg text-slate-600 dark:text-slate-400" style={sectionStyles.textSub}>
+             See what others paid for moves like yours
+           </p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
@@ -2044,7 +2044,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
             { from: "New York, NY", to: "Miami, FL", size: "2 Bedroom", cost: "$2,890", saved: "$654" },
             { from: "Chicago, IL", to: "Denver, CO", size: "4 Bedroom", cost: "$4,120", saved: "$1,104" },
           ].map((move, i) => (
-            <div key={i} className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-sm">
+            <div key={i} className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-sm" style={{ ...sectionStyles.light, ...sectionStyles.border }}>
               <div className="flex items-center gap-2 mb-3">
                 <MapPin className="w-4 h-4" style={{ color: theme.primary }} />
                 <span className="text-sm text-slate-600">{move.from}</span>
@@ -2069,18 +2069,18 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
       <ThreeStepProcess theme="light" />
 
       {/* Savings Breakdown Visualization */}
-      <div className="py-16 px-8 bg-white dark:bg-slate-900">
-        <div className="text-center mb-10">
-          <Badge className="mb-4 bg-purple-500/10 text-purple-600 border border-purple-500/30">
-            <DollarSign className="w-3 h-3 mr-1" /> Cost Breakdown
-          </Badge>
-          <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-3">
-            Where Your Money Goes
-          </h2>
-          <p className="text-lg text-slate-600 dark:text-slate-400">
-            Transparent pricing with no hidden fees
-          </p>
-        </div>
+       <div className="py-16 px-8 bg-white dark:bg-slate-900" style={sectionStyles.light}>
+         <div className="text-center mb-10">
+           <Badge className="mb-4 bg-purple-500/10 text-purple-600 border border-purple-500/30">
+             <DollarSign className="w-3 h-3 mr-1" /> Cost Breakdown
+           </Badge>
+           <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-3" style={sectionStyles.textMain}>
+             Where Your Money Goes
+           </h2>
+           <p className="text-lg text-slate-600 dark:text-slate-400" style={sectionStyles.textSub}>
+             Transparent pricing with no hidden fees
+           </p>
+         </div>
 
         <div className="max-w-2xl mx-auto">
           <div className="space-y-4">
@@ -2111,21 +2111,21 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
       <TripleGuaranteeSection />
 
       {/* FAQ */}
-      <div className="py-16 px-8 bg-slate-50 dark:bg-slate-800">
-        <div className="text-center mb-12">
-          <Badge className="mb-4 bg-amber-500/10 text-amber-600 border border-amber-500/30">Questions?</Badge>
-          <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-3">Calculator FAQ</h2>
-        </div>
+       <div className="py-16 px-8 bg-slate-50 dark:bg-slate-800" style={sectionStyles.alt}>
+         <div className="text-center mb-12">
+           <Badge className="mb-4 bg-amber-500/10 text-amber-600 border border-amber-500/30">Questions?</Badge>
+           <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-3" style={sectionStyles.textMain}>Calculator FAQ</h2>
+         </div>
         <div className="max-w-3xl mx-auto space-y-3">
           {[
             { q: "How accurate is this calculator?", a: "Our AI has analyzed over 100,000 moves to provide estimates within 5-10% of final costs. Get an in-home estimate for exact pricing." },
             { q: "Is my information secure?", a: "Absolutely. We use 256-bit encryption and never share your data with third parties." },
             { q: "Will I get spam calls?", a: "Never. We only contact you if you request a detailed quote." },
           ].map((faq, i) => (
-            <div key={i} className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 p-5">
-              <p className="font-semibold text-slate-900 dark:text-white mb-2">{faq.q}</p>
-              <p className="text-slate-600 dark:text-slate-400 text-sm">{faq.a}</p>
-            </div>
+             <div key={i} className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 p-5" style={{ ...sectionStyles.light, ...sectionStyles.border }}>
+               <p className="font-semibold text-slate-900 dark:text-white mb-2" style={sectionStyles.textMain}>{faq.q}</p>
+               <p className="text-slate-600 dark:text-slate-400 text-sm" style={sectionStyles.textSub}>{faq.a}</p>
+             </div>
           ))}
         </div>
       </div>
@@ -2228,7 +2228,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
       </div>
 
       {/* Trust Metrics Strip */}
-      <div className="py-6 px-8 bg-slate-50 dark:bg-slate-800 border-y border-slate-200 dark:border-slate-700">
+      <div className="py-6 px-8 bg-slate-50 dark:bg-slate-800 border-y border-slate-200 dark:border-slate-700" style={{ ...sectionStyles.alt, ...sectionStyles.border }}>
         <div className="flex justify-center items-center gap-10">
           {[
             { value: "50,000+", label: "Happy Customers" },
@@ -2245,17 +2245,17 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
       </div>
 
       {/* Video Testimonial Carousel */}
-      <div className="py-16 px-8">
-        <div className="text-center mb-10">
-          <Badge className="mb-4 bg-red-500/10 text-red-600 border border-red-500/30">
-            <Play className="w-3 h-3 mr-1" /> Video Stories
-          </Badge>
-          <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-3">
-            Watch Their Stories
-          </h2>
-          <p className="text-lg text-slate-600 dark:text-slate-400">
-            Real customers share their TruMove experience
-          </p>
+       <div className="py-16 px-8" style={sectionStyles.light}>
+         <div className="text-center mb-10">
+           <Badge className="mb-4 bg-red-500/10 text-red-600 border border-red-500/30">
+             <Play className="w-3 h-3 mr-1" /> Video Stories
+           </Badge>
+           <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-3" style={sectionStyles.textMain}>
+             Watch Their Stories
+           </h2>
+           <p className="text-lg text-slate-600 dark:text-slate-400" style={sectionStyles.textSub}>
+             Real customers share their TruMove experience
+           </p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
@@ -2289,15 +2289,15 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
       </div>
 
       {/* Written Testimonials Masonry Grid */}
-      <div className="py-16 px-8 bg-slate-50 dark:bg-slate-800">
-        <div className="text-center mb-10">
-          <Badge className="mb-4 bg-green-500/10 text-green-600 border border-green-500/30">
-            <Quote className="w-3 h-3 mr-1" /> Written Reviews
-          </Badge>
-          <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-3">
-            What Our Customers Say
-          </h2>
-        </div>
+       <div className="py-16 px-8 bg-slate-50 dark:bg-slate-800" style={sectionStyles.alt}>
+         <div className="text-center mb-10">
+           <Badge className="mb-4 bg-green-500/10 text-green-600 border border-green-500/30">
+             <Quote className="w-3 h-3 mr-1" /> Written Reviews
+           </Badge>
+           <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-3" style={sectionStyles.textMain}>
+             What Our Customers Say
+           </h2>
+         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
           {[
@@ -2308,7 +2308,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
             { name: "Jennifer L.", location: "Phoenix, AZ", quote: "Saved us so much stress! The quote we got was exactly what we paid. No surprise fees.", stars: 5 },
             { name: "Robert T.", location: "Portland, OR", quote: "Third time using TruMove and they never disappoint. Highly recommend to anyone planning a move.", stars: 5 },
           ].map((t, i) => (
-            <div key={i} className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-sm">
+             <div key={i} className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-sm" style={{ ...sectionStyles.light, ...sectionStyles.border }}>
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg" style={{ background: `linear-gradient(135deg, ${theme.primary}, ${theme.accent})` }}>
                   {t.name[0]}
@@ -2332,15 +2332,15 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
       </div>
 
       {/* Before & After Story Highlights */}
-      <div className="py-16 px-8 bg-white dark:bg-slate-900">
-        <div className="text-center mb-10">
-          <Badge className="mb-4" style={{ background: `${theme.primary}20`, color: theme.primary }}>
-            <ThumbsUp className="w-3 h-3 mr-1" /> Success Stories
-          </Badge>
-          <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-3">
-            Moving Nightmares We Solved
-          </h2>
-        </div>
+       <div className="py-16 px-8 bg-white dark:bg-slate-900" style={sectionStyles.light}>
+         <div className="text-center mb-10">
+           <Badge className="mb-4" style={{ background: `${theme.primary}20`, color: theme.primary }}>
+             <ThumbsUp className="w-3 h-3 mr-1" /> Success Stories
+           </Badge>
+           <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-3" style={sectionStyles.textMain}>
+             Moving Nightmares We Solved
+           </h2>
+         </div>
 
         <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {[
@@ -2521,46 +2521,47 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
         </div>
 
         {/* Local Trust Signals */}
-        <div className="py-8 px-8 bg-slate-50 dark:bg-slate-800 border-y border-slate-200 dark:border-slate-700">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
-            {[
-              { icon: Building, label: "Local Office", value: location === "California" ? "Downtown LA" : location === "Texas" ? "Houston Office" : "Miami HQ" },
-              { icon: Users, label: "Local Moves", value: "12,847" },
-              { icon: Clock, label: "Avg Response", value: "< 2 hours" },
-              { icon: Star, label: "Local Rating", value: "4.9/5" },
-            ].map((item, i) => (
-              <div key={i} className="text-center">
-                <item.icon className="w-8 h-8 mx-auto mb-2" style={{ color: theme.primary }} />
-                <div className="text-2xl font-bold text-slate-900 dark:text-white">{item.value}</div>
-                <div className="text-xs text-slate-500">{item.label}</div>
-              </div>
-            ))}
+         <div className="py-8 px-8 bg-slate-50 dark:bg-slate-800 border-y border-slate-200 dark:border-slate-700" style={{ ...sectionStyles.alt, ...sectionStyles.border }}>
+           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
+             {[
+               { icon: Building, label: "Local Office", value: location === "California" ? "Downtown LA" : location === "Texas" ? "Houston Office" : "Miami HQ" },
+               { icon: Users, label: "Local Moves", value: "12,847" },
+               { icon: Clock, label: "Avg Response", value: "< 2 hours" },
+               { icon: Star, label: "Local Rating", value: "4.9/5" },
+             ].map((item, i) => (
+               <div key={i} className="text-center">
+                 <item.icon className="w-8 h-8 mx-auto mb-2" style={{ color: theme.primary }} />
+                 <div className="text-2xl font-bold text-slate-900 dark:text-white" style={sectionStyles.textMain}>{item.value}</div>
+                 <div className="text-xs text-slate-500" style={sectionStyles.textSub}>{item.label}</div>
+               </div>
+             ))}
           </div>
         </div>
 
         {/* Service Area Map */}
-        <div className="py-16 px-8 bg-white dark:bg-slate-900">
-          <div className="text-center mb-10">
-            <Badge className="mb-4" style={{ background: `${theme.primary}20`, color: theme.primary }}>
-              <MapPin className="w-3 h-3 mr-1" /> Service Areas
-            </Badge>
-            <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-3">
-              We Serve All of {location}
-            </h2>
-            <p className="text-lg text-slate-600 dark:text-slate-400">
-              Local experts in every major city and neighborhood
-            </p>
-          </div>
+         <div className="py-16 px-8 bg-white dark:bg-slate-900" style={sectionStyles.light}>
+           <div className="text-center mb-10">
+             <Badge className="mb-4" style={{ background: `${theme.primary}20`, color: theme.primary }}>
+               <MapPin className="w-3 h-3 mr-1" /> Service Areas
+             </Badge>
+             <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-3" style={sectionStyles.textMain}>
+               We Serve All of {location}
+             </h2>
+             <p className="text-lg text-slate-600 dark:text-slate-400" style={sectionStyles.textSub}>
+               Local experts in every major city and neighborhood
+             </p>
+           </div>
 
           <div className="max-w-4xl mx-auto">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {cities.map((city, i) => (
-                <div 
-                  key={city} 
-                  className="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-center hover:border-blue-400 transition-colors cursor-pointer"
-                >
-                  <MapPin className="w-5 h-5 mx-auto mb-2" style={{ color: theme.primary }} />
-                  <p className="font-medium text-slate-900 dark:text-white">{city}</p>
+                 <div 
+                   key={city} 
+                   className="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-center hover:border-blue-400 transition-colors cursor-pointer"
+                   style={{ ...sectionStyles.alt, ...sectionStyles.border }}
+                 >
+                   <MapPin className="w-5 h-5 mx-auto mb-2" style={{ color: theme.primary }} />
+                   <p className="font-medium text-slate-900 dark:text-white" style={sectionStyles.textMain}>{city}</p>
                   <p className="text-xs text-slate-500">+{Math.floor(Math.random() * 500 + 500)} moves</p>
                 </div>
               ))}
@@ -2572,15 +2573,15 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
         </div>
 
         {/* Local Testimonials */}
-        <div className="py-16 px-8 bg-slate-50 dark:bg-slate-800">
-          <div className="text-center mb-10">
-            <Badge className="mb-4 bg-amber-500/10 text-amber-600 border border-amber-500/30">
-              <Star className="w-3 h-3 mr-1" /> Local Reviews
-            </Badge>
-            <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-3">
-              What {location} Families Say
-            </h2>
-          </div>
+         <div className="py-16 px-8 bg-slate-50 dark:bg-slate-800" style={sectionStyles.alt}>
+           <div className="text-center mb-10">
+             <Badge className="mb-4 bg-amber-500/10 text-amber-600 border border-amber-500/30">
+               <Star className="w-3 h-3 mr-1" /> Local Reviews
+             </Badge>
+             <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-3" style={sectionStyles.textMain}>
+               What {location} Families Say
+             </h2>
+           </div>
 
           <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
             {[
@@ -2588,7 +2589,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
               { name: "James R.", city: cities[1], quote: `Moved our office in ${cities[1]} with zero downtime. Incredible service!` },
               { name: "Lisa T.", city: cities[2], quote: `Third time using them for moves in ${location}. Always exceed expectations.` },
             ].map((t, i) => (
-              <div key={i} className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-sm">
+              <div key={i} className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-sm" style={{ ...sectionStyles.light, ...sectionStyles.border }}>
                 <div className="flex items-center gap-1 mb-3">
                   {[1,2,3,4,5].map(j => <Star key={j} className="w-4 h-4" style={{ fill: "#FBBF24", color: "#FBBF24" }} />)}
                 </div>
@@ -2608,7 +2609,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
         </div>
 
         {/* Local Partnership Badges */}
-        <div className="py-10 px-8 bg-white dark:bg-slate-900 border-y border-slate-200 dark:border-slate-700">
+        <div className="py-10 px-8 bg-white dark:bg-slate-900 border-y border-slate-200 dark:border-slate-700" style={{ ...sectionStyles.light, ...sectionStyles.border }}>
           <div className="flex justify-center items-center gap-8 flex-wrap">
             <Badge className="py-2 px-4 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
               {location} Chamber of Commerce
@@ -2626,21 +2627,21 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
         </div>
 
         {/* Local FAQ */}
-        <div className="py-16 px-8 bg-slate-50 dark:bg-slate-800">
-          <div className="text-center mb-12">
-            <Badge className="mb-4 bg-amber-500/10 text-amber-600 border border-amber-500/30">Questions?</Badge>
-            <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-3">{location} Moving FAQ</h2>
-          </div>
+         <div className="py-16 px-8 bg-slate-50 dark:bg-slate-800" style={sectionStyles.alt}>
+           <div className="text-center mb-12">
+             <Badge className="mb-4 bg-amber-500/10 text-amber-600 border border-amber-500/30">Questions?</Badge>
+             <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-3" style={sectionStyles.textMain}>{location} Moving FAQ</h2>
+           </div>
           <div className="max-w-3xl mx-auto space-y-3">
             {[
               { q: `How much does a local move in ${location} cost?`, a: `Local moves in ${location} typically range from $500-$2,500 depending on home size and distance. Get an exact quote in minutes!` },
               { q: `Do you service all of ${location}?`, a: `Yes! We have local crews throughout ${location}, including ${cities.slice(0, 4).join(", ")}, and many more cities.` },
               { q: `How far in advance should I book?`, a: `We recommend 2-4 weeks for local moves, though we can often accommodate same-week requests.` },
             ].map((faq, i) => (
-              <div key={i} className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 p-5">
-                <p className="font-semibold text-slate-900 dark:text-white mb-2">{faq.q}</p>
-                <p className="text-slate-600 dark:text-slate-400 text-sm">{faq.a}</p>
-              </div>
+               <div key={i} className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 p-5" style={{ ...sectionStyles.light, ...sectionStyles.border }}>
+                 <p className="font-semibold text-slate-900 dark:text-white mb-2" style={sectionStyles.textMain}>{faq.q}</p>
+                 <p className="text-slate-600 dark:text-slate-400 text-sm" style={sectionStyles.textSub}>{faq.a}</p>
+               </div>
             ))}
           </div>
         </div>
@@ -2736,9 +2737,9 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
       </div>
 
       {/* Expandable TOC */}
-      <div className="px-8 py-8 bg-slate-50 dark:bg-slate-800 border-y border-slate-200 dark:border-slate-700">
-        <div className="max-w-3xl mx-auto">
-          <h3 className="font-bold text-lg text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+       <div className="px-8 py-8 bg-slate-50 dark:bg-slate-800 border-y border-slate-200 dark:border-slate-700" style={{ ...sectionStyles.alt, ...sectionStyles.border }}>
+         <div className="max-w-3xl mx-auto">
+           <h3 className="font-bold text-lg text-slate-900 dark:text-white mb-4 flex items-center gap-2" style={sectionStyles.textMain}>
             <FileText className="w-5 h-5" style={{ color: theme.primary }} />
             What You'll Learn
           </h3>
@@ -2751,12 +2752,12 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
               { num: 5, title: "Packing Tips & Tricks", time: "3 min" },
               { num: 6, title: "Your Moving Day Checklist", time: "2 min" },
             ].map((item) => (
-              <div key={item.num} className="flex items-center gap-3 p-3 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 hover:border-blue-400 transition-colors cursor-pointer">
+              <div key={item.num} className="flex items-center gap-3 p-3 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 hover:border-blue-400 transition-colors cursor-pointer" style={{ ...sectionStyles.light, ...sectionStyles.border }}>
                 <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold" style={{ background: theme.primary }}>
                   {item.num}
                 </div>
                 <div className="flex-1">
-                  <p className="font-medium text-slate-900 dark:text-white text-sm">{item.title}</p>
+                  <p className="font-medium text-slate-900 dark:text-white text-sm" style={sectionStyles.textMain}>{item.title}</p>
                 </div>
                 <span className="text-xs text-slate-400">{item.time}</span>
               </div>
@@ -2766,12 +2767,12 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
       </div>
 
       {/* Content Sections */}
-      <div className="px-8 py-16 max-w-3xl mx-auto space-y-16">
+      <div className="px-8 py-16 max-w-3xl mx-auto space-y-16" style={sectionStyles.light}>
         {/* Section 1 */}
         <section>
           <Badge className="mb-4" style={{ background: `${theme.primary}20`, color: theme.primary }}>Section 1</Badge>
-          <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-6">Understanding Moving Costs</h2>
-          <p className="text-lg text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">
+          <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-6" style={sectionStyles.textMain}>Understanding Moving Costs</h2>
+           <p className="text-lg text-slate-600 dark:text-slate-400 mb-6 leading-relaxed" style={sectionStyles.textSub}>
             The average cost of a long-distance move ranges from <strong>$2,000 to $5,000</strong>, depending on distance, 
             weight, and time of year. Understanding these factors is crucial for budgeting effectively.
           </p>
@@ -2784,7 +2785,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
             <p className="text-sm text-slate-500 mt-2">— TruMove Moving Experts</p>
           </div>
 
-          <p className="text-lg text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">
+           <p className="text-lg text-slate-600 dark:text-slate-400 mb-6 leading-relaxed" style={sectionStyles.textSub}>
             Key factors that affect your moving cost include:
           </p>
           
@@ -2823,8 +2824,8 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
         {/* Section 2 */}
         <section>
           <Badge className="mb-4 bg-red-100 dark:bg-red-950/30 text-red-600 border border-red-200 dark:border-red-800">Section 2</Badge>
-          <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-6">Red Flags to Watch For</h2>
-          <p className="text-lg text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">
+          <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-6" style={sectionStyles.textMain}>Red Flags to Watch For</h2>
+          <p className="text-lg text-slate-600 dark:text-slate-400 mb-6 leading-relaxed" style={sectionStyles.textSub}>
             Moving scams cost Americans over $100 million annually. Here's how to protect yourself:
           </p>
           
@@ -2862,9 +2863,9 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
         </div>
 
         {/* TL;DR Summary Section */}
-        <div className="p-6 rounded-2xl bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700">
-          <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-            ⚡ TL;DR Summary
+         <div className="p-6 rounded-2xl bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700" style={{ ...sectionStyles.alt, ...sectionStyles.border }}>
+           <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2" style={sectionStyles.textMain}>
+             ⚡ TL;DR Summary
           </h3>
           <ul className="space-y-2">
             {[
@@ -2891,7 +2892,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
       <FinalCTASection theme={theme} />
 
       {/* Sticky Bottom CTA Bar (Mobile-First) */}
-      <div className="px-4 py-3 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700 shadow-lg md:hidden">
+      <div className="px-4 py-3 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700 shadow-lg md:hidden" style={{ ...sectionStyles.light, ...sectionStyles.border }}>
         <Button className="w-full py-4 font-bold gap-2 text-white" style={{ background: theme.primary }}>
           Get My Free Quote <ArrowRight className="w-4 h-4" />
         </Button>
@@ -2915,52 +2916,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
       }
     })();
 
-    // Wrap with brand color overrides so section backgrounds/text adapt
-    const hasBrand = !!(theme as any).brandBackground;
-    if (!hasBrand) return templateContent;
-
-    const bg = (theme as any).brandBackground;
-    const bgAlt = darkenHex(bg, 0.04);
-    const txt = (theme as any).brandText;
-    const txtSub = (theme as any).brandTextSecondary;
-    
-    return (
-      <div
-        className="brand-themed-template"
-        style={{
-          '--tpl-bg': bg,
-          '--tpl-bg-alt': bgAlt,
-          '--tpl-text': txt,
-          '--tpl-text-sub': txtSub,
-          '--tpl-primary': theme.primary,
-          '--tpl-accent': theme.accent,
-        } as React.CSSProperties}
-      >
-        <style>{`
-          .brand-themed-template .bg-white { background: ${bg} !important; }
-          .brand-themed-template .bg-slate-50 { background: ${bgAlt} !important; }
-          .brand-themed-template .bg-white\\/95 { background: ${bg}F2 !important; }
-          .brand-themed-template .text-slate-900 { color: ${txt} !important; }
-          .brand-themed-template .text-slate-800 { color: ${txt} !important; }
-          .brand-themed-template .text-slate-700 { color: ${txtSub} !important; }
-          .brand-themed-template .text-slate-600 { color: ${txtSub} !important; }
-          .brand-themed-template .text-slate-500 { color: ${txtSub} !important; }
-          .brand-themed-template .border-slate-200 { border-color: ${txt}15 !important; }
-          .brand-themed-template .border-slate-100 { border-color: ${txt}10 !important; }
-          .brand-themed-template .bg-purple-500\\/10 { background: ${theme.primary}18 !important; }
-          .brand-themed-template .bg-purple-500\\/20 { background: ${theme.primary}30 !important; }
-          .brand-themed-template .text-purple-600 { color: ${theme.primary} !important; }
-          .brand-themed-template .text-purple-300 { color: ${theme.accentLight} !important; }
-          .brand-themed-template .text-purple-400 { color: ${theme.accent} !important; }
-          .brand-themed-template .border-purple-500\\/30 { border-color: ${theme.primary}50 !important; }
-          .brand-themed-template .text-blue-600 { color: ${theme.primary} !important; }
-          .brand-themed-template .text-green-400 { color: ${theme.primary} !important; }
-          .brand-themed-template .bg-green-500\\/20 { background: ${theme.primary}30 !important; }
-          .brand-themed-template .border-green-500\\/30 { border-color: ${theme.primary}50 !important; }
-        `}</style>
-        {templateContent}
-      </div>
-    );
+    return templateContent;
   };
 
    if (showLandingPage) {
