@@ -31962,11 +31962,18 @@
   max-width: 1480px;
   margin: 0 auto;
   padding: 24px 22px;
+  padding-bottom: 80px;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
   flex-wrap: wrap;
+}
+
+@media (min-width: 768px) {
+  .footer-inner {
+    padding-bottom: 24px;
+  }
 }
 
 .footer-brand {

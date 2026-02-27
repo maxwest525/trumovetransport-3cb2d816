@@ -171,7 +171,7 @@ export default function ElevenLabsTrudyWidget() {
   if (isPortal) return null;
 
   return (
-    <div className="fixed bottom-20 right-5 z-[9999] flex flex-col items-end gap-2">
+    <div className="fixed bottom-5 right-5 z-[9999] flex flex-col items-end gap-2 md:bottom-20">
       {/* Post-call */}
       {showPostCall && !isConnected && savedTranscript.length > 0 && (
         <div className={`${panelClasses} animate-in fade-in slide-in-from-bottom-2 duration-200`}>
