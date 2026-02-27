@@ -901,20 +901,75 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
   // Get current theme colors
   const getThemeColors = () => {
     if (customBranding?.colors) {
+      const primary = customBranding.colors.primary || "#3B82F6";
+      const accent = customBranding.colors.accent || primary;
+      // Derive a darker variant of the primary for button gradients
+      const primaryDark = darkenHex(primary, 0.25);
+      // Derive a lighter/brighter accent for gradient text highlights
+      const accentLight = lightenHex(accent, 0.3);
+      // Hero background should always be dark regardless of the brand's background color
+      const isLightScheme = customBranding.colorScheme === "light" || isLightColor(customBranding.colors.background || "#FFFFFF");
+      const secondary = isLightScheme ? "#0F172A" : (customBranding.colors.background || "#0F172A");
+      // Store the brand background for non-hero sections
+      const brandBackground = customBranding.colors.background || "#FFFFFF";
+      const brandText = customBranding.colors.textPrimary || "#0F172A";
+      const brandTextSecondary = customBranding.colors.textSecondary || "#64748B";
       return {
         id: "custom",
         name: "Custom",
-        primary: customBranding.colors.primary || "#3B82F6",
-        primaryDark: customBranding.colors.secondary || "#1D4ED8",
-        secondary: customBranding.colors.background || "#0F172A",
-        accent: customBranding.colors.accent || "#7C3AED",
-        accentLight: customBranding.colors.textSecondary || "#A855F7",
+        primary,
+        primaryDark,
+        secondary,
+        accent,
+        accentLight,
+        brandBackground,
+        brandText,
+        brandTextSecondary,
       };
     }
     return COLOR_THEMES.find(t => t.id === selectedTheme) || COLOR_THEMES[0];
   };
 
+  // Color utility helpers
+  function hexToRgb(hex: string): [number, number, number] {
+    const h = hex.replace('#', '');
+    return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)];
+  }
+  function rgbToHex(r: number, g: number, b: number): string {
+    return '#' + [r,g,b].map(c => Math.max(0,Math.min(255,Math.round(c))).toString(16).padStart(2,'0')).join('');
+  }
+  function darkenHex(hex: string, amount: number): string {
+    const [r,g,b] = hexToRgb(hex);
+    return rgbToHex(r*(1-amount), g*(1-amount), b*(1-amount));
+  }
+  function lightenHex(hex: string, amount: number): string {
+    const [r,g,b] = hexToRgb(hex);
+    return rgbToHex(r+(255-r)*amount, g+(255-g)*amount, b+(255-b)*amount);
+  }
+  function isLightColor(hex: string): boolean {
+    const [r,g,b] = hexToRgb(hex);
+    return (r*299 + g*587 + b*114) / 1000 > 160;
+  }
+
   const theme = getThemeColors();
+
+  // CSS variable overrides for brand-themed sections
+  const brandCssVars: React.CSSProperties = (theme as any).brandBackground ? {
+    '--brand-bg': (theme as any).brandBackground,
+    '--brand-bg-alt': darkenHex((theme as any).brandBackground, 0.04),
+    '--brand-text': (theme as any).brandText,
+    '--brand-text-secondary': (theme as any).brandTextSecondary,
+  } as React.CSSProperties : {};
+
+  // Section style helpers for non-hero areas
+  const sectionBg = (theme as any).brandBackground 
+    ? { background: (theme as any).brandBackground, color: (theme as any).brandText } 
+    : {};
+  const sectionBgAlt = (theme as any).brandBackground 
+    ? { background: darkenHex((theme as any).brandBackground, 0.04), color: (theme as any).brandText } 
+    : {};
+  const textMain = (theme as any).brandText || undefined;
+  const textSub = (theme as any).brandTextSecondary || undefined;
 
   const handleApplyBranding = (branding: ExtractedBranding) => {
     setCustomBranding(branding);
@@ -2848,15 +2903,64 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData, 
   );
 
   const renderSelectedTemplate = () => {
-    switch (selectedTemplate) {
-      case "quote-funnel": return renderQuoteFunnelPage();
-      case "comparison": return renderComparisonPage();
-      case "calculator": return renderCalculatorPage();
-      case "testimonial": return renderTestimonialPage();
-      case "local-seo": return renderLocalSeoPage();
-      case "long-form": return renderLongFormPage();
-      default: return renderQuoteFunnelPage();
-    }
+    const templateContent = (() => {
+      switch (selectedTemplate) {
+        case "quote-funnel": return renderQuoteFunnelPage();
+        case "comparison": return renderComparisonPage();
+        case "calculator": return renderCalculatorPage();
+        case "testimonial": return renderTestimonialPage();
+        case "local-seo": return renderLocalSeoPage();
+        case "long-form": return renderLongFormPage();
+        default: return renderQuoteFunnelPage();
+      }
+    })();
+
+    // Wrap with brand color overrides so section backgrounds/text adapt
+    const hasBrand = !!(theme as any).brandBackground;
+    if (!hasBrand) return templateContent;
+
+    const bg = (theme as any).brandBackground;
+    const bgAlt = darkenHex(bg, 0.04);
+    const txt = (theme as any).brandText;
+    const txtSub = (theme as any).brandTextSecondary;
+    
+    return (
+      <div
+        className="brand-themed-template"
+        style={{
+          '--tpl-bg': bg,
+          '--tpl-bg-alt': bgAlt,
+          '--tpl-text': txt,
+          '--tpl-text-sub': txtSub,
+          '--tpl-primary': theme.primary,
+          '--tpl-accent': theme.accent,
+        } as React.CSSProperties}
+      >
+        <style>{`
+          .brand-themed-template .bg-white { background: ${bg} !important; }
+          .brand-themed-template .bg-slate-50 { background: ${bgAlt} !important; }
+          .brand-themed-template .bg-white\\/95 { background: ${bg}F2 !important; }
+          .brand-themed-template .text-slate-900 { color: ${txt} !important; }
+          .brand-themed-template .text-slate-800 { color: ${txt} !important; }
+          .brand-themed-template .text-slate-700 { color: ${txtSub} !important; }
+          .brand-themed-template .text-slate-600 { color: ${txtSub} !important; }
+          .brand-themed-template .text-slate-500 { color: ${txtSub} !important; }
+          .brand-themed-template .border-slate-200 { border-color: ${txt}15 !important; }
+          .brand-themed-template .border-slate-100 { border-color: ${txt}10 !important; }
+          .brand-themed-template .bg-purple-500\\/10 { background: ${theme.primary}18 !important; }
+          .brand-themed-template .bg-purple-500\\/20 { background: ${theme.primary}30 !important; }
+          .brand-themed-template .text-purple-600 { color: ${theme.primary} !important; }
+          .brand-themed-template .text-purple-300 { color: ${theme.accentLight} !important; }
+          .brand-themed-template .text-purple-400 { color: ${theme.accent} !important; }
+          .brand-themed-template .border-purple-500\\/30 { border-color: ${theme.primary}50 !important; }
+          .brand-themed-template .text-blue-600 { color: ${theme.primary} !important; }
+          .brand-themed-template .text-green-400 { color: ${theme.primary} !important; }
+          .brand-themed-template .bg-green-500\\/20 { background: ${theme.primary}30 !important; }
+          .brand-themed-template .border-green-500\\/30 { border-color: ${theme.primary}50 !important; }
+        `}</style>
+        {templateContent}
+      </div>
+    );
   };
 
    if (showLandingPage) {
