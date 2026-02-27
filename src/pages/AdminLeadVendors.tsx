@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend,
+  PieChart, Pie, Cell,
 } from "recharts";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
@@ -55,7 +56,7 @@ const EMPTY_FORM = {
 export default function AdminLeadVendors() {
   const [vendors, setVendors] = useState<LeadVendor[]>([]);
   const [leadCounts, setLeadCounts] = useState<Record<string, number>>({});
-  const [leadsRaw, setLeadsRaw] = useState<{ vendor_id: string | null; created_at: string }[]>([]);
+  const [leadsRaw, setLeadsRaw] = useState<{ vendor_id: string | null; created_at: string; source: string }[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -126,6 +127,21 @@ export default function AdminLeadVendors() {
   const chartVendorNames = useMemo(() => {
     return vendors.filter((v) => leadCounts[v.id] > 0).map((v) => v.name);
   }, [vendors, leadCounts]);
+
+  const SOURCE_LABELS: Record<string, string> = {
+    website: "Website", referral: "Referral", ppc: "PPC",
+    walk_in: "Walk-in", phone: "Phone", other: "Other",
+  };
+
+  const sourceChartData = useMemo(() => {
+    const counts: Record<string, number> = {};
+    leadsRaw.forEach((l) => {
+      counts[l.source] = (counts[l.source] || 0) + 1;
+    });
+    return Object.entries(counts)
+      .map(([source, count]) => ({ name: SOURCE_LABELS[source] || source, value: count }))
+      .sort((a, b) => b.value - a.value);
+  }, [leadsRaw]);
 
   const filtered = vendors.filter((v) => {
     const q = search.toLowerCase();
@@ -235,24 +251,58 @@ export default function AdminLeadVendors() {
           })}
         </div>
 
-        {/* Vendor Performance Chart */}
-        {chartData.length > 0 && chartVendorNames.length > 0 && (
-          <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
-            <h2 className="text-sm font-semibold text-foreground mb-3">Leads Sourced by Vendor (Last 12 Weeks)</h2>
-            <ResponsiveContainer width="100%" height={220}>
-              <BarChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
-                <XAxis dataKey="week" tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} allowDecimals={false} />
-                <Tooltip contentStyle={{ borderRadius: 8, border: "1px solid hsl(var(--border))", background: "hsl(var(--card))", fontSize: 12 }} />
-                <Legend wrapperStyle={{ fontSize: 11 }} />
-                {chartVendorNames.map((name, i) => (
-                  <Bar key={name} dataKey={name} fill={CHART_COLORS[i % CHART_COLORS.length]} radius={[3, 3, 0, 0]} stackId="vendors" />
-                ))}
-              </BarChart>
-            </ResponsiveContainer>
+        {/* Charts Row */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          {/* Vendor Performance Bar Chart */}
+          <div className="lg:col-span-2 rounded-xl border border-border bg-card p-4 shadow-sm">
+            <h2 className="text-sm font-semibold text-foreground mb-3">Leads by Vendor (Last 12 Weeks)</h2>
+            {chartData.length > 0 && chartVendorNames.length > 0 ? (
+              <ResponsiveContainer width="100%" height={220}>
+                <BarChart data={chartData}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
+                  <XAxis dataKey="week" tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} allowDecimals={false} />
+                  <Tooltip contentStyle={{ borderRadius: 8, border: "1px solid hsl(var(--border))", background: "hsl(var(--card))", fontSize: 12 }} />
+                  <Legend wrapperStyle={{ fontSize: 11 }} />
+                  {chartVendorNames.map((name, i) => (
+                    <Bar key={name} dataKey={name} fill={CHART_COLORS[i % CHART_COLORS.length]} radius={[3, 3, 0, 0]} stackId="vendors" />
+                  ))}
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <p className="text-xs text-muted-foreground text-center py-16">No vendor-linked leads yet</p>
+            )}
           </div>
-        )}
+
+          {/* Source Breakdown Pie Chart */}
+          <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
+            <h2 className="text-sm font-semibold text-foreground mb-3">Lead Source Breakdown</h2>
+            {sourceChartData.length > 0 ? (
+              <>
+                <ResponsiveContainer width="100%" height={160}>
+                  <PieChart>
+                    <Pie data={sourceChartData} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={38} outerRadius={60} paddingAngle={3}>
+                      {sourceChartData.map((_, i) => (
+                        <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip contentStyle={{ borderRadius: 8, border: "1px solid hsl(var(--border))", background: "hsl(var(--card))", fontSize: 12 }} />
+                  </PieChart>
+                </ResponsiveContainer>
+                <div className="flex flex-wrap gap-x-3 gap-y-1 mt-2 justify-center">
+                  {sourceChartData.map((d, i) => (
+                    <span key={i} className="flex items-center gap-1 text-[11px] text-muted-foreground">
+                      <span className="w-2 h-2 rounded-full" style={{ background: CHART_COLORS[i % CHART_COLORS.length] }} />
+                      {d.name} ({d.value})
+                    </span>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <p className="text-xs text-muted-foreground text-center py-16">No leads yet</p>
+            )}
+          </div>
+        </div>
         {/* Search */}
         <div className="relative max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />

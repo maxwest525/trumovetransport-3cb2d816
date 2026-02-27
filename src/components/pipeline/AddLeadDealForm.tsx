@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,19 +13,34 @@ interface AddLeadDealFormProps {
   onAdded: () => void;
 }
 
+interface VendorOption {
+  id: string;
+  name: string;
+}
+
 export function AddLeadDealForm({ open, onOpenChange, onAdded }: AddLeadDealFormProps) {
   const [loading, setLoading] = useState(false);
+  const [vendors, setVendors] = useState<VendorOption[]>([]);
   const [form, setForm] = useState({
     first_name: "",
     last_name: "",
     email: "",
     phone: "",
     source: "website",
+    vendor_id: "",
     origin_address: "",
     destination_address: "",
     move_date: "",
     deal_value: "",
   });
+
+  useEffect(() => {
+    if (open) {
+      supabase.from("lead_vendors").select("id, name").eq("status", "active").order("name").then(({ data }) => {
+        setVendors((data as VendorOption[]) || []);
+      });
+    }
+  }, [open]);
 
   const update = (field: string, value: string) => setForm((p) => ({ ...p, [field]: value }));
 
@@ -44,6 +59,7 @@ export function AddLeadDealForm({ open, onOpenChange, onAdded }: AddLeadDealForm
       email: form.email || null,
       phone: form.phone || null,
       source: form.source,
+      vendor_id: form.vendor_id || null,
       assigned_agent_id: user?.id,
       origin_address: form.origin_address || null,
       destination_address: form.destination_address || null,
@@ -69,7 +85,7 @@ export function AddLeadDealForm({ open, onOpenChange, onAdded }: AddLeadDealForm
       toast({ title: "Error creating deal", description: dealErr.message, variant: "destructive" });
     } else {
       toast({ title: "Lead & deal created" });
-      setForm({ first_name: "", last_name: "", email: "", phone: "", source: "website", origin_address: "", destination_address: "", move_date: "", deal_value: "" });
+      setForm({ first_name: "", last_name: "", email: "", phone: "", source: "website", vendor_id: "", origin_address: "", destination_address: "", move_date: "", deal_value: "" });
       onOpenChange(false);
       onAdded();
     }
@@ -105,8 +121,20 @@ export function AddLeadDealForm({ open, onOpenChange, onAdded }: AddLeadDealForm
                 </SelectContent>
               </Select>
             </div>
-            <div><Label className="text-xs">Deal Value ($)</Label><Input type="number" value={form.deal_value} onChange={(e) => update("deal_value", e.target.value)} className="h-8" /></div>
+            <div>
+              <Label className="text-xs">Lead Vendor</Label>
+              <Select value={form.vendor_id} onValueChange={(v) => update("vendor_id", v)}>
+                <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="None" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">None</SelectItem>
+                  {vendors.map((v) => (
+                    <SelectItem key={v.id} value={v.id}>{v.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
+          <div><Label className="text-xs">Deal Value ($)</Label><Input type="number" value={form.deal_value} onChange={(e) => update("deal_value", e.target.value)} className="h-8" /></div>
           <div><Label className="text-xs">Origin Address</Label><Input value={form.origin_address} onChange={(e) => update("origin_address", e.target.value)} className="h-8" /></div>
           <div><Label className="text-xs">Destination Address</Label><Input value={form.destination_address} onChange={(e) => update("destination_address", e.target.value)} className="h-8" /></div>
           <div><Label className="text-xs">Move Date</Label><Input type="date" value={form.move_date} onChange={(e) => update("move_date", e.target.value)} className="h-8" /></div>
