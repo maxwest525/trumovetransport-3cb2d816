@@ -263,6 +263,9 @@ export function getPageContext(pathname: string): PageContext {
   if (pathname.startsWith('/scan-room')) {
     return pageContexts['scan-room'];
   }
+  if (pathname.startsWith('/customer-service')) {
+    return pageContexts.general;
+  }
   if (pathname.startsWith('/about') || pathname.startsWith('/faq') || pathname.startsWith('/terms') || pathname.startsWith('/privacy')) {
     return pageContexts.info;
   }

@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { useConversation } from '@elevenlabs/react';
 import { Phone, PhoneOff, Send, Clock, Shield, Calculator, MapPin, Calendar, HelpCircle, Package, ScanLine, Video, Mic, Loader2, MessageSquare, FileText, Brain, Sparkles, MessageCircle } from 'lucide-react';
 import TrudyChatBox from '@/components/TrudyChatBox';
+import AIChatContainer from '@/components/chat/AIChatContainer';
+import { getPageContext } from '@/components/chat/pageContextConfig';
 import SiteShell from '@/components/layout/SiteShell';
 import PageHeaderStrip from '@/components/layout/PageHeaderStrip';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -229,6 +231,7 @@ export default function CustomerService() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
   const [activeTab, setActiveTab] = useState<'voice' | 'form'>('voice');
+  const [chatMode, setChatMode] = useState<'demo' | 'live'>('demo');
 
   const conversation = useConversation({
     onConnect: () => console.log('Trudy: connected'),
@@ -355,8 +358,25 @@ export default function CustomerService() {
               </div>
 
               {/* Right: Chat box */}
-              <div className="flex justify-center lg:justify-end">
-                <TrudyChatBox />
+              <div className="flex justify-center lg:justify-end w-full max-w-lg">
+                {chatMode === 'demo' ? (
+                  <TrudyChatBox onSwitchToLive={() => setChatMode('live')} />
+                ) : (
+                  <div className="w-full">
+                    <div className="rounded-2xl border border-foreground/[0.08] bg-card/80 backdrop-blur-sm shadow-[0_8px_32px_-8px_hsl(var(--foreground)/0.1),0_16px_48px_-12px_hsl(var(--foreground)/0.06)] overflow-hidden">
+                      <AIChatContainer
+                        agentId={TRUDY_AGENT_ID}
+                        pageContext={getPageContext('customer-service')}
+                      />
+                    </div>
+                    <button
+                      onClick={() => setChatMode('demo')}
+                      className="mt-2 mx-auto block text-[10px] text-muted-foreground/60 hover:text-foreground transition-colors"
+                    >
+                      ← Back to demo chat
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>
