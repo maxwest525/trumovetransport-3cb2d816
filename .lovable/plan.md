@@ -1,58 +1,86 @@
 
 
-# Fix: Brand Extraction Not Visually Changing Non-Hero Sections
+# Fix: Shared Components Not Responding to Brand Theme
 
 ## Problem
 
-When you apply a Style Extractor preset (like DashClicks or Relume), only the **hero section** changes colors. The sections below (Trust Badges, 3-Step Process, Testimonials, FAQ, Footer, etc.) remain white/slate because they use hardcoded Tailwind classes (`bg-white`, `bg-slate-50`, `text-slate-900`) that the CSS override approach cannot reliably target.
+The inline `sectionStyles` approach was applied to sections rendered **directly** inside each template function, but large chunks of the page come from **shared components** imported from `TruMoveBrandingElements.tsx`:
 
-The current fix attempts to inject a `<style>` block that overrides Tailwind classes like `.brand-themed-template .bg-white { background: ... !important }`. This is fragile because:
-- Tailwind class selectors don't always match inside scoped containers
-- Many elements use inline `style` which always wins over CSS classes
-- Some classes (e.g., `bg-white/95`) have special characters that break CSS selectors
+- `TrustBadgeStrip` -- hardcoded `bg-slate-50`, `text-blue-600`, `text-slate-700`
+- `ThreeStepProcess` -- hardcoded `bg-white`, `text-slate-900`, `text-slate-600`, `bg-blue-500`
+- `TripleGuaranteeSection` -- hardcoded `bg-slate-900`, `text-blue-400`
+- `VideoTestimonialGrid` -- hardcoded `bg-slate-50`, `text-slate-900`, `text-slate-600`
+- `ComparisonTableSection` -- hardcoded `bg-white`, `bg-blue-600`, `text-blue-600`, `bg-blue-50`
+- `FAQSection` -- hardcoded `bg-slate-50`, `text-slate-900`, `text-slate-600`
+- `FinalCTASection` -- only receives `theme.primary` and `theme.primaryDark` (partial)
+- `TruMoveFooter` -- hardcoded `bg-slate-900`
+
+These components accept no branding props, so they remain completely unchanged when a preset is applied. This is why "nothing changes" -- the hero adapts, the few inline sections adapt, but the bulk of the visible page is these shared components.
 
 ## Solution
 
-Replace the CSS class override approach with **inline style injection** directly into each template section. Each render function (`renderQuoteFunnelPage`, `renderComparisonPage`, etc.) will receive the brand colors and apply them as inline `style` props on section containers and text elements -- the same way the hero already does.
+Add a `brandColors` prop to each shared component in `TruMoveBrandingElements.tsx`, and pass `theme` + `sectionStyles` from `AILandingPageGenerator.tsx` at every call site.
 
 ## Changes
 
-### 1. Create a `sectionStyles` helper object (AILandingPageGenerator.tsx)
-
-Build a reusable style object from the theme that each section can spread:
+### 1. Define a shared `BrandColors` interface (TruMoveBrandingElements.tsx)
 
 ```text
-sectionStyles = {
-  light:    { background: brandBg, color: brandText },
-  alt:      { background: darken(brandBg, 4%), color: brandText },
-  dark:     { background: '#0F172A', color: '#fff' },
-  textMain: { color: brandText },
-  textSub:  { color: brandTextSecondary },
+interface BrandColors {
+  primary: string;
+  primaryDark: string;
+  accent: string;
+  background?: string;       // brand bg for light sections
+  textPrimary?: string;      // main text color
+  textSecondary?: string;    // muted text color
 }
 ```
 
-### 2. Apply inline styles to all 6 template render functions
+### 2. Update each shared component to accept and use `brandColors`
 
-For each of the 6 templates (Quote Funnel, Comparison, Calculator, Testimonial, Local SEO, Long Form), replace hardcoded Tailwind background/text classes on section wrappers with inline styles:
+For each component, add an optional `brandColors?: BrandColors` prop. When present, use its values as inline `style` overrides on the relevant elements:
 
-- `<div className="bg-white">` becomes `<div className="bg-white" style={sectionStyles.light}>`
-- `<div className="bg-slate-50">` becomes `<div className="bg-slate-50" style={sectionStyles.alt}>`
-- `<h2 className="text-slate-900">` becomes `<h2 className="text-slate-900" style={sectionStyles.textMain}>`
-- `<p className="text-slate-600">` becomes `<p className="text-slate-600" style={sectionStyles.textSub}>`
+- **TrustBadgeStrip**: Section bg, icon color, text color
+- **ThreeStepProcess**: Section bg, heading/body text, step circle gradient, connecting line
+- **TripleGuaranteeSection**: Icon color uses `brandColors.primary`, card border hover uses `brandColors.primary`
+- **VideoTestimonialGrid**: Section bg, heading/body text, play button accent
+- **ComparisonTableSection**: Section bg, heading/body text, TruMove column header bg, checkmark color, exclusive badge color
+- **FAQSection**: Section bg, heading/body text, card bg and border
+- **FinalCTASection**: Already partially themed -- add `brandColors` for text colors
+- **TruMoveFooter**: Keep dark (footer stays dark is intentional), but use `brandColors.primary` for link accents
 
-The Tailwind classes stay as fallbacks for when no brand is applied (sectionStyles would be empty `{}`).
+### 3. Pass theme colors at every call site in AILandingPageGenerator.tsx
 
-### 3. Remove the fragile CSS override block
+At each usage of these components across all 6 templates, pass the brand colors:
 
-Delete the `<style>` block inside `renderSelectedTemplate()` that tries to override `.bg-white`, `.text-slate-900` etc. via CSS selectors. The inline styles will handle everything.
+```text
+// Build the prop once
+const brandColors = hasBrandTheme ? {
+  primary: theme.primary,
+  primaryDark: theme.primaryDark,
+  accent: theme.accent,
+  background: (theme as any).brandBackground,
+  textPrimary: (theme as any).brandText,
+  textSecondary: (theme as any).brandTextSecondary,
+} : undefined;
 
-### 4. Scope of changes
+// Then at each call site:
+<TrustBadgeStrip theme="light" brandColors={brandColors} />
+<ThreeStepProcess theme="light" brandColors={brandColors} />
+<TripleGuaranteeSection brandColors={brandColors} />
+<VideoTestimonialGrid brandColors={brandColors} />
+<ComparisonTableSection brandColors={brandColors} />
+<FAQSection brandColors={brandColors} />
+<FinalCTASection theme={theme} brandColors={brandColors} />
+<TruMoveFooter brandColors={brandColors} />
+```
 
-- **File**: `src/components/demo/ppc/AILandingPageGenerator.tsx`
-- **Sections affected per template**: ~8-12 section containers and ~15-20 text elements per template
-- **No changes needed to**: `BrandExtractor.tsx`, `ScaledPreview.tsx`, or `WebsitePreviewBuilder.tsx` (Build Manual already works correctly with `themeOverride` passed as props)
+### 4. Files changed
 
-### Why this works
+- **`src/components/demo/ppc/TruMoveBrandingElements.tsx`**: Add `BrandColors` interface, update 8 component signatures and their JSX to use inline styles when `brandColors` is present
+- **`src/components/demo/ppc/AILandingPageGenerator.tsx`**: Build `brandColors` object once, pass it at ~30 call sites across 6 templates
 
-This mirrors the pattern already proven in the Build Manual templates (`WebsitePreviewBuilder.tsx`), where `themeOverride` colors are applied via inline styles and work correctly with every preset.
+### 5. Inner element text colors
+
+Within each shared component, also apply brand text colors to inner elements that currently use hardcoded Tailwind classes like `text-slate-900`, `text-slate-600`, `text-slate-500`. This ensures headings, descriptions, badge text, table cells, and FAQ answers all reflect the brand palette.
 
