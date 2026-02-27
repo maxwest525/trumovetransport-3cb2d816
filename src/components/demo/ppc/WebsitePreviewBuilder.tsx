@@ -1,10 +1,13 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Sun, Moon, ArrowLeft, Star, CheckCircle2, Phone, MapPin, Shield, Clock, Users, Truck, Quote, Play, ChevronRight, Zap, Award, ArrowRight, Lock, BarChart3, Globe, Headphones, Check, X } from "lucide-react";
+import { Sun, Moon, ArrowLeft, Star, CheckCircle2, Phone, MapPin, Shield, Clock, Users, Truck, Quote, Play, ChevronRight, Zap, Award, ArrowRight, Lock, BarChart3, Globe, Headphones, Check, X, Palette } from "lucide-react";
 import ScaledPreview from "@/components/ui/ScaledPreview";
 import { BuildSelections } from "./AnalyticsBuilderPanel";
 import { cn } from "@/lib/utils";
 import { AutomationModeSelector } from "./AutomationModeSelector";
+import { BrandExtractor } from "./BrandExtractor";
+import { ExtractedBranding } from "@/lib/api/firecrawl";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 interface WebsitePreviewBuilderProps {
   selections: BuildSelections;
@@ -1088,6 +1091,21 @@ export function WebsitePreviewBuilder({ selections, onBack }: WebsitePreviewBuil
   const [darkMode, setDarkMode] = useState(false);
   const [isWebsite, setIsWebsite] = useState(selections.outputType === 'website');
   const [activePage, setActivePage] = useState<PageTab>('home');
+  const [customBranding, setCustomBranding] = useState<ExtractedBranding | null>(null);
+
+  const getThemedColors = (): { accent: string; fg: string; bg: string; muted: string; border: string; cardBg: string } | null => {
+    if (!customBranding?.colors) return null;
+    const c = customBranding.colors;
+    const isDark = darkMode || customBranding.colorScheme === 'dark';
+    return {
+      accent: c.primary || c.accent || '#635BFF',
+      fg: isDark ? (c.textPrimary && c.textPrimary !== '#000000' ? c.textPrimary : '#ffffff') : (c.textPrimary || '#0a0a0a'),
+      bg: isDark ? (c.background && c.background !== '#FFFFFF' ? c.background : '#0a0a0a') : (c.background || '#ffffff'),
+      muted: c.textSecondary || (isDark ? '#888' : '#666'),
+      border: isDark ? '#222' : '#e5e5e5',
+      cardBg: isDark ? '#111' : '#f8f8f8',
+    };
+  };
 
   const content = getContent(selections);
 
@@ -1121,6 +1139,19 @@ export function WebsitePreviewBuilder({ selections, onBack }: WebsitePreviewBuil
             {darkMode ? <Moon className="w-3.5 h-3.5" /> : <Sun className="w-3.5 h-3.5" />}
             {darkMode ? 'Dark' : 'Light'}
           </button>
+
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant={customBranding ? "default" : "outline"} size="sm" className="gap-1.5 text-xs">
+                <Palette className="w-3.5 h-3.5" />
+                {customBranding ? 'Styled' : 'Style Extractor'}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-[520px] max-h-[70vh] overflow-y-auto" align="end">
+              <BrandExtractor onApplyTheme={setCustomBranding} />
+            </PopoverContent>
+          </Popover>
+
           <AutomationModeSelector />
         </div>
       </div>
