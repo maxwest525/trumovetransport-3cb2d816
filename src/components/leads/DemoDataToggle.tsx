@@ -123,6 +123,14 @@ export default function DemoDataToggle({ onToggle }: { onToggle?: () => void }) 
         }));
         const { error: aErr } = await supabase.from("activities").insert(activityInserts);
         if (aErr) console.warn("Activities insert:", aErr.message);
+
+        // 7. Vendor-agent assignments (skill-based routing demo)
+        const assignInserts = VENDOR_IDS.map(vid => ({
+          vendor_id: vid, agent_id: userId, is_active: true,
+          max_cpa: vid === VENDOR_IDS[2] ? 15 : null, // LocalReach has a $15 cap
+        }));
+        const { error: asErr } = await supabase.from("vendor_agent_assignments").upsert(assignInserts as any, { onConflict: "vendor_id,agent_id" });
+        if (asErr) console.warn("Assignments insert:", asErr.message);
       }
 
       setActive(true);
@@ -152,6 +160,9 @@ export default function DemoDataToggle({ onToggle }: { onToggle?: () => void }) 
 
       // Delete demo leads
       await supabase.from("leads").delete().like("email", "demo-%@example.com");
+
+      // Delete vendor-agent assignments for demo vendors
+      await supabase.from("vendor_agent_assignments").delete().in("vendor_id", VENDOR_IDS);
 
       // Delete demo vendors
       await supabase.from("lead_vendors").delete().in("id", VENDOR_IDS);

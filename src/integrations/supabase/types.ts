@@ -826,6 +826,51 @@ export type Database = {
         }
         Relationships: []
       }
+      vendor_agent_assignments: {
+        Row: {
+          agent_id: string
+          created_at: string
+          id: string
+          is_active: boolean
+          max_cpa: number | null
+          updated_at: string
+          vendor_id: string
+        }
+        Insert: {
+          agent_id: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          max_cpa?: number | null
+          updated_at?: string
+          vendor_id: string
+        }
+        Update: {
+          agent_id?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          max_cpa?: number | null
+          updated_at?: string
+          vendor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendor_agent_assignments_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vendor_agent_assignments_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "lead_vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
