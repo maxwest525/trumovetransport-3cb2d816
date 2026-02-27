@@ -49,7 +49,8 @@ import AgentPayment from "./pages/AgentPayment";
 import AgentCustomers from "./pages/AgentCustomers";
 import AgentMessaging from "./pages/AgentMessaging";
 import AgentTeamChat from "./pages/AgentTeamChat";
-
+import CustomerPortal from "./pages/CustomerPortal";
+import CustomerPortalDashboard from "./pages/CustomerPortalDashboard";
 
 const queryClient = new QueryClient();
 
@@ -104,6 +105,9 @@ const App = () => (
             <Route path="/agent/customers" element={<AgentCustomers />} />
             <Route path="/agent/messages" element={<AgentMessaging />} />
             <Route path="/agent/team-chat" element={<AgentTeamChat />} />
+            
+            <Route path="/portal" element={<CustomerPortal />} />
+            <Route path="/portal/dashboard" element={<CustomerPortalDashboard />} />
             
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

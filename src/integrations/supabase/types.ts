@@ -289,6 +289,86 @@ export type Database = {
         }
         Relationships: []
       }
+      customer_messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          portal_access_id: string
+          sender_id: string | null
+          sender_type: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          portal_access_id: string
+          sender_id?: string | null
+          sender_type: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          portal_access_id?: string
+          sender_id?: string | null
+          sender_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_messages_portal_access_id_fkey"
+            columns: ["portal_access_id"]
+            isOneToOne: false
+            referencedRelation: "customer_portal_access"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      customer_portal_access: {
+        Row: {
+          created_at: string
+          customer_email: string
+          deal_id: string | null
+          id: string
+          invited_by: string | null
+          lead_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          customer_email: string
+          deal_id?: string | null
+          id?: string
+          invited_by?: string | null
+          lead_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          customer_email?: string
+          deal_id?: string | null
+          id?: string
+          invited_by?: string | null
+          lead_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_portal_access_deal_id_fkey"
+            columns: ["deal_id"]
+            isOneToOne: false
+            referencedRelation: "deals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_portal_access_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       deal_history: {
         Row: {
           changed_at: string
