@@ -41,6 +41,7 @@ import AccountingDashboard from "./pages/AccountingDashboard";
 import ManagerCoaching from "./pages/ManagerCoaching";
 import ManagerDialerMonitor from "./pages/ManagerDialerMonitor";
 
+import AgentLeads from "./pages/AgentLeads";
 import AgentOperations from "./pages/AgentOperations";
 import AgentNewCustomer from "./pages/AgentNewCustomer";
 import AgentDialerPage from "./pages/AgentDialerPage";
@@ -97,6 +98,7 @@ const App = () => (
             <Route path="/marketing/dashboard" element={<MarketingDashboard />} />
             <Route path="/accounting/dashboard" element={<AccountingDashboard />} />
             
+            <Route path="/agent/leads" element={<AgentLeads />} />
             <Route path="/agent/operations" element={<AgentOperations />} />
             <Route path="/agent/new-customer" element={<AgentNewCustomer />} />
             <Route path="/agent/dialer" element={<AgentDialerPage />} />
