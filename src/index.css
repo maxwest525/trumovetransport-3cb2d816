@@ -1905,6 +1905,18 @@
   }
 }
 
+/* Trudy Chatbot Typing Indicator */
+@keyframes trudy-bounce {
+  0%, 60%, 100% {
+    transform: translateY(0);
+    opacity: 0.3;
+  }
+  30% {
+    transform: translateY(-4px);
+    opacity: 0.8;
+  }
+}
+
 .tru-hero-arrow-indicator {
   display: none;
   align-items: center;
