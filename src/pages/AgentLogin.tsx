@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import SiteShell from "@/components/layout/SiteShell";
 import PortalAuthForm from "@/components/auth/PortalAuthForm";
-import { Users, BarChart3, Shield, Crown, ArrowRight, LogOut, Sparkles, DollarSign } from "lucide-react";
+import { Users, BarChart3, Shield, Crown, ArrowRight, LogOut, Sparkles, DollarSign, Building2 } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import type { Session } from "@supabase/supabase-js";
 
@@ -49,6 +49,13 @@ const ROLES = [
     description: "Invoices, payroll, expenses, revenue reports, and financial tools.",
     icon: DollarSign,
     href: "/accounting/dashboard",
+  },
+  {
+    id: "leads",
+    title: "Lead Vendors",
+    description: "Manage 3rd-party lead sources, budgets, vendor performance, and ROI.",
+    icon: Building2,
+    href: "/admin/lead-vendors",
   },
 ];
 
