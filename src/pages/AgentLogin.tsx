@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import SiteShell from "@/components/layout/SiteShell";
 import PortalAuthForm from "@/components/auth/PortalAuthForm";
-import { Users, BarChart3, Shield, Crown, ArrowRight, LogOut, Sparkles, DollarSign, Building2 } from "lucide-react";
+import { Users, BarChart3, Shield, Crown, ArrowRight, LogOut, Sparkles, DollarSign, Building2, ClipboardCheck } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import type { Session } from "@supabase/supabase-js";
 
@@ -56,6 +56,13 @@ const ROLES = [
     description: "Manage 3rd-party lead sources, budgets, vendor performance, and ROI.",
     icon: Building2,
     href: "/leads/dashboard",
+  },
+  {
+    id: "compliance",
+    title: "Compliance",
+    description: "FMCSA filings, licensing, insurance audits, and regulatory tracking.",
+    icon: ClipboardCheck,
+    href: "/compliance/dashboard",
   },
 ];
 

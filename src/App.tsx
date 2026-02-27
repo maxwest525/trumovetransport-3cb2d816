@@ -43,7 +43,7 @@ import MarketingDashboard from "./pages/MarketingDashboard";
 import AccountingDashboard from "./pages/AccountingDashboard";
 import ManagerCoaching from "./pages/ManagerCoaching";
 import ManagerDialerMonitor from "./pages/ManagerDialerMonitor";
-
+import ComplianceDashboard from "./pages/ComplianceDashboard";
 import AgentOperations from "./pages/AgentOperations";
 import AgentNewCustomer from "./pages/AgentNewCustomer";
 import AgentDialerPage from "./pages/AgentDialerPage";
@@ -103,6 +103,7 @@ const App = () => (
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/marketing/dashboard" element={<MarketingDashboard />} />
             <Route path="/accounting/dashboard" element={<AccountingDashboard />} />
+            <Route path="/compliance/dashboard" element={<ComplianceDashboard />} />
             
             <Route path="/agent/operations" element={<AgentOperations />} />
             <Route path="/agent/new-customer" element={<AgentNewCustomer />} />
