@@ -34953,3 +34953,49 @@ gmp-map-3d-element .gmnoprint {
     max-height: 360px !important;
   }
 }
+
+/* ===== Brand Override Scope =====
+   When a brand preset is applied in the style extractor fullscreen view,
+   this class neutralizes the global !important font-size, line-height,
+   border-radius, and font-family rules so that inline brand styles cascade correctly.
+*/
+.brand-override-active h1,
+.brand-override-active h2,
+.brand-override-active h3,
+.brand-override-active h4 {
+  font-size: unset !important;
+  line-height: unset !important;
+  letter-spacing: unset !important;
+  font-family: inherit !important;
+}
+
+.brand-override-active .rounded-2xl,
+.brand-override-active .rounded-xl,
+.brand-override-active .rounded-lg,
+.brand-override-active .rounded-full,
+.brand-override-active .rounded-md {
+  border-radius: inherit !important;
+}
+
+.brand-override-active button,
+.brand-override-active .btn,
+.brand-override-active [class*="rounded-"] {
+  border-radius: inherit !important;
+}
+
+.brand-override-active .tru-hero-headline-compact,
+.brand-override-active .tru-hero-subheadline-compact,
+.brand-override-active .tru-hero-headline-main {
+  font-size: unset !important;
+}
+
+@media (max-width: 768px) {
+  .brand-override-active h1 {
+    font-size: unset !important;
+    line-height: unset !important;
+  }
+  .brand-override-active h2 {
+    font-size: unset !important;
+    line-height: unset !important;
+  }
+}
