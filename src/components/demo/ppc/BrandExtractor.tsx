@@ -104,6 +104,140 @@ const PRESET_STYLES: { id: string; name: string; desc: string; branding: Extract
       },
     },
   },
+  // ── Extracted from user reference sites ──
+  {
+    id: "designers-system",
+    name: "Designers System",
+    desc: "Blue CTA, pill buttons, Roboto + Inter",
+    branding: {
+      colorScheme: "light",
+      colors: { primary: "#408CF7", secondary: "#252C32", accent: "#408CF7", background: "#FFFFFF", textPrimary: "#252C32", textSecondary: "#666666" },
+      typography: {
+        fontFamilies: { primary: "'Roboto', sans-serif", heading: "'Inter', sans-serif" },
+        fontSizes: { h1: "56px", h2: "36px", h3: "24px", body: "16px" },
+        fontWeights: { regular: 400, medium: 500, bold: 700 },
+      },
+      spacing: { baseUnit: 8, borderRadius: "50px" },
+      components: {
+        buttonPrimary: { background: "#408CF7", textColor: "#FFFFFF", borderRadius: "50px" },
+        buttonSecondary: { background: "#FFFFFF", textColor: "#252C32", borderRadius: "50px" },
+      },
+    },
+  },
+  {
+    id: "holo",
+    name: "Holo AI",
+    desc: "Minimal, Satoshi font, soft blue",
+    branding: {
+      colorScheme: "light",
+      colors: { primary: "#2266FF", secondary: "#1D1D1F", accent: "#2266FF", background: "#FBFBFB", textPrimary: "#1D1D1F", textSecondary: "#888888" },
+      typography: {
+        fontFamilies: { primary: "'Satoshi', sans-serif", heading: "'Satoshi', sans-serif" },
+        fontSizes: { h1: "68px", h2: "40px", h3: "24px", body: "18px" },
+        fontWeights: { regular: 400, medium: 500, bold: 700 },
+      },
+      spacing: { baseUnit: 10, borderRadius: "30px" },
+      components: {
+        buttonPrimary: { background: "#2266FF", textColor: "#FFFFFF", borderRadius: "30px" },
+        buttonSecondary: { background: "transparent", textColor: "#1D1D1F", borderRadius: "30px" },
+      },
+    },
+  },
+  {
+    id: "relume",
+    name: "Relume",
+    desc: "Warm beige, vivid purple CTA",
+    branding: {
+      colorScheme: "light",
+      colors: { primary: "#6248FF", secondary: "#161616", accent: "#6248FF", background: "#F1F0EE", textPrimary: "#161616", textSecondary: "#666666" },
+      typography: {
+        fontFamilies: { primary: "'Relative', sans-serif", heading: "'Relative', sans-serif" },
+        fontSizes: { h1: "64px", h2: "40px", h3: "24px", body: "16px" },
+        fontWeights: { regular: 400, medium: 500, bold: 700 },
+      },
+      spacing: { baseUnit: 8, borderRadius: "10px" },
+      components: {
+        buttonPrimary: { background: "#6248FF", textColor: "#FFFFFF", borderRadius: "10px" },
+        buttonSecondary: { background: "#FFFFFF", textColor: "#161616", borderRadius: "6px" },
+      },
+    },
+  },
+  {
+    id: "blocks",
+    name: "Blocks",
+    desc: "Fresh lime-blue, sharp SaaS look",
+    branding: {
+      colorScheme: "light",
+      colors: { primary: "#3863FF", secondary: "#1D2839", accent: "#CDF075", background: "#FFFFFF", textPrimary: "#1D2839", textSecondary: "#64748B" },
+      typography: {
+        fontFamilies: { primary: "'Inter', sans-serif", heading: "'Inter', sans-serif" },
+        fontSizes: { h1: "56px", h2: "36px", h3: "24px", body: "16px" },
+        fontWeights: { regular: 400, medium: 500, bold: 700 },
+      },
+      spacing: { baseUnit: 8, borderRadius: "4px" },
+      components: {
+        buttonPrimary: { background: "#3863FF", textColor: "#FFFFFF", borderRadius: "4px" },
+        buttonSecondary: { background: "transparent", textColor: "#1D2839", borderRadius: "8px" },
+      },
+    },
+  },
+  {
+    id: "dashclicks",
+    name: "DashClicks",
+    desc: "Neon purple glow, bold SaaS",
+    branding: {
+      colorScheme: "light",
+      colors: { primary: "#930AFF", secondary: "#272C5E", accent: "#930AFF", background: "#FFFFFF", textPrimary: "#272C5E", textSecondary: "#808080" },
+      typography: {
+        fontFamilies: { primary: "'GT Walsheim Pro', sans-serif", heading: "'Montserrat', sans-serif" },
+        fontSizes: { h1: "56px", h2: "36px", h3: "24px", body: "16px" },
+        fontWeights: { regular: 400, medium: 500, bold: 700 },
+      },
+      spacing: { baseUnit: 8, borderRadius: "14px" },
+      components: {
+        buttonPrimary: { background: "#930AFF", textColor: "#FFFFFF", borderRadius: "14px" },
+        buttonSecondary: { background: "#FFFFFF", textColor: "#272C5E", borderRadius: "14px" },
+      },
+    },
+  },
+  {
+    id: "figma",
+    name: "Figma",
+    desc: "Indigo CTA, custom Figma Sans",
+    branding: {
+      colorScheme: "light",
+      colors: { primary: "#4D49FC", secondary: "#000000", accent: "#4D49FC", background: "#FFFFFF", textPrimary: "#000000", textSecondary: "#697485" },
+      typography: {
+        fontFamilies: { primary: "'Figma Sans', system-ui, sans-serif", heading: "'SF Pro Display', -apple-system, sans-serif" },
+        fontSizes: { h1: "72px", h2: "48px", h3: "28px", body: "16px" },
+        fontWeights: { regular: 400, medium: 500, bold: 700 },
+      },
+      spacing: { baseUnit: 8, borderRadius: "8px" },
+      components: {
+        buttonPrimary: { background: "#4D49FC", textColor: "#FFFFFF", borderRadius: "8px" },
+        buttonSecondary: { background: "#FFFFFF", textColor: "#000000", borderRadius: "8px" },
+      },
+    },
+  },
+  {
+    id: "landingpagelabs",
+    name: "Landing Page Labs",
+    desc: "Dark navy CTA, TWK Lausanne font",
+    branding: {
+      colorScheme: "light",
+      colors: { primary: "#242538", secondary: "#F7F7F8", accent: "#242538", background: "#F7F7F8", textPrimary: "#242538", textSecondary: "#666666" },
+      typography: {
+        fontFamilies: { primary: "'TWK Lausanne', sans-serif", heading: "'TWK Lausanne', sans-serif" },
+        fontSizes: { h1: "56px", h2: "36px", h3: "24px", body: "16px" },
+        fontWeights: { regular: 300, medium: 400, bold: 600 },
+      },
+      spacing: { baseUnit: 8, borderRadius: "12px" },
+      components: {
+        buttonPrimary: { background: "#242538", textColor: "#FFFFFF", borderRadius: "12px" },
+        buttonSecondary: { background: "transparent", textColor: "#242538", borderRadius: "20px" },
+      },
+    },
+  },
 ];
 
 interface ExtractedSite {
@@ -204,7 +338,7 @@ export function BrandExtractor({ onApplyTheme, currentThemeId }: BrandExtractorP
           <Sparkles size={16} className="text-primary" />
           <span className="text-sm font-semibold">Steal This Style</span>
         </div>
-        <div className="grid grid-cols-5 gap-2">
+        <div className="grid grid-cols-4 gap-2 max-h-[320px] overflow-y-auto pr-1">
           {PRESET_STYLES.map(p => (
             <button
               key={p.id}
