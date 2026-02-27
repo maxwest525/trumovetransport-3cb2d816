@@ -3,8 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import SiteShell from "@/components/layout/SiteShell";
 import PortalAuthForm from "@/components/auth/PortalAuthForm";
-import { Users, BarChart3, Shield, Crown, ArrowRight, LogOut, Sparkles, DollarSign, Building2, ClipboardCheck } from "lucide-react";
+import { Users, BarChart3, Shield, Crown, ArrowRight, LogOut, Sparkles, DollarSign, Building2, ClipboardCheck, Globe } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Link } from "react-router-dom";
 import type { Session } from "@supabase/supabase-js";
 
 const ROLES = [
@@ -138,6 +139,15 @@ export default function AgentLogin() {
   return (
     <SiteShell centered backendMode hideHeader>
       <div className="flex flex-col items-center justify-center min-h-[60vh] px-4 py-16">
+        {/* Return to website */}
+        <Link
+          to="/"
+          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 mb-8 rounded-full border border-border bg-card text-xs font-medium text-muted-foreground hover:text-foreground hover:border-foreground/30 hover:shadow-sm transition-all"
+        >
+          <Globe className="w-3.5 h-3.5" />
+          Return to Website
+        </Link>
+
         <h1 className="text-2xl font-bold tracking-tight text-foreground mb-1">Choose your workspace</h1>
         <p className="text-sm text-muted-foreground mb-10">
           Signed in as <span className="text-foreground font-medium">{session.user.email}</span>
@@ -146,23 +156,25 @@ export default function AgentLogin() {
           </button>
         </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 w-full max-w-4xl">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full max-w-4xl">
           {ROLES.map((role) => {
             const Icon = role.icon;
             return (
               <button
                 key={role.id}
                 onClick={() => handleClick(role.id, role.href)}
-                className="group flex flex-col gap-4 rounded-xl border border-border bg-card p-6 hover:border-foreground/20 hover:shadow-md transition-all text-left"
+                className="group flex flex-col gap-4 rounded-xl border border-foreground/10 bg-card p-5 shadow-[0_2px_8px_-2px_hsl(var(--foreground)/0.08)] hover:border-foreground/25 hover:shadow-[0_8px_24px_-6px_hsl(var(--foreground)/0.15)] transition-all duration-200 text-left"
               >
-                <Icon className="w-6 h-6 text-foreground" />
-                <div>
-                  <h3 className="font-semibold text-foreground">{role.title}</h3>
-                  <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{role.description}</p>
+                <div className="w-10 h-10 rounded-lg bg-foreground/[0.06] flex items-center justify-center">
+                  <Icon className="w-5 h-5 text-foreground" />
                 </div>
-                <div className="mt-auto pt-2">
-                  <span className="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium rounded-lg bg-foreground text-background group-hover:gap-3 transition-all whitespace-nowrap">
-                    {role.title} <ArrowRight className="w-3.5 h-3.5" />
+                <div>
+                  <h3 className="font-semibold text-foreground text-sm">{role.title}</h3>
+                  <p className="text-[11px] text-muted-foreground mt-1 leading-relaxed">{role.description}</p>
+                </div>
+                <div className="mt-auto pt-1">
+                  <span className="inline-flex items-center gap-2 px-3.5 py-1.5 text-[11px] font-semibold rounded-lg bg-foreground text-background group-hover:gap-3 transition-all whitespace-nowrap shadow-sm">
+                    {role.title} <ArrowRight className="w-3 h-3" />
                   </span>
                 </div>
               </button>
@@ -174,7 +186,7 @@ export default function AgentLogin() {
           <Checkbox
             checked={remember}
             onCheckedChange={(v) => setRemember(v === true)}
-            className="border-muted-foreground/40"
+            className="border-foreground/20"
           />
           <span className="text-xs text-muted-foreground">Remember my choice on this device</span>
         </label>
