@@ -477,6 +477,60 @@ export type Database = {
           },
         ]
       }
+      lead_vendors: {
+        Row: {
+          contact_email: string | null
+          contact_name: string | null
+          contact_phone: string | null
+          contract_end: string | null
+          contract_start: string | null
+          cost_per_lead: number | null
+          created_at: string
+          id: string
+          monthly_budget: number | null
+          name: string
+          notes: string | null
+          status: string
+          updated_at: string
+          vendor_type: string
+          website: string | null
+        }
+        Insert: {
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          contract_end?: string | null
+          contract_start?: string | null
+          cost_per_lead?: number | null
+          created_at?: string
+          id?: string
+          monthly_budget?: number | null
+          name: string
+          notes?: string | null
+          status?: string
+          updated_at?: string
+          vendor_type?: string
+          website?: string | null
+        }
+        Update: {
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          contract_end?: string | null
+          contract_start?: string | null
+          cost_per_lead?: number | null
+          created_at?: string
+          id?: string
+          monthly_budget?: number | null
+          name?: string
+          notes?: string | null
+          status?: string
+          updated_at?: string
+          vendor_type?: string
+          website?: string | null
+        }
+        Relationships: []
+      }
       leads: {
         Row: {
           assigned_agent_id: string | null
@@ -496,6 +550,7 @@ export type Database = {
           status: Database["public"]["Enums"]["lead_status"]
           tags: string[] | null
           updated_at: string
+          vendor_id: string | null
         }
         Insert: {
           assigned_agent_id?: string | null
@@ -515,6 +570,7 @@ export type Database = {
           status?: Database["public"]["Enums"]["lead_status"]
           tags?: string[] | null
           updated_at?: string
+          vendor_id?: string | null
         }
         Update: {
           assigned_agent_id?: string | null
@@ -534,6 +590,7 @@ export type Database = {
           status?: Database["public"]["Enums"]["lead_status"]
           tags?: string[] | null
           updated_at?: string
+          vendor_id?: string | null
         }
         Relationships: [
           {
@@ -541,6 +598,13 @@ export type Database = {
             columns: ["assigned_agent_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leads_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "lead_vendors"
             referencedColumns: ["id"]
           },
         ]

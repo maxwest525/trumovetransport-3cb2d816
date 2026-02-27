@@ -34,6 +34,7 @@ import AgentLoginOld from "./pages/AgentLoginOld";
 import ManagerDashboard from "./pages/ManagerDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminUsersPage from "./pages/AdminUsersPage";
+import AdminLeadVendors from "./pages/AdminLeadVendors";
 import KpiDashboard from "./pages/KpiDashboard";
 import ResetPassword from "./pages/ResetPassword";
 import MarketingDashboard from "./pages/MarketingDashboard";
@@ -41,7 +42,6 @@ import AccountingDashboard from "./pages/AccountingDashboard";
 import ManagerCoaching from "./pages/ManagerCoaching";
 import ManagerDialerMonitor from "./pages/ManagerDialerMonitor";
 
-import AgentLeads from "./pages/AgentLeads";
 import AgentOperations from "./pages/AgentOperations";
 import AgentNewCustomer from "./pages/AgentNewCustomer";
 import AgentDialerPage from "./pages/AgentDialerPage";
@@ -93,12 +93,12 @@ const App = () => (
             <Route path="/manager/dialer" element={<ManagerDialerMonitor />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/users" element={<AdminUsersPage />} />
+            <Route path="/admin/lead-vendors" element={<AdminLeadVendors />} />
             <Route path="/kpi" element={<KpiDashboard />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/marketing/dashboard" element={<MarketingDashboard />} />
             <Route path="/accounting/dashboard" element={<AccountingDashboard />} />
             
-            <Route path="/agent/leads" element={<AgentLeads />} />
             <Route path="/agent/operations" element={<AgentOperations />} />
             <Route path="/agent/new-customer" element={<AgentNewCustomer />} />
             <Route path="/agent/dialer" element={<AgentDialerPage />} />
