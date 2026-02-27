@@ -108,7 +108,7 @@ export default function AgentLeads() {
             { label: "Contacted", value: stats.contacted, color: "text-amber-600 dark:text-amber-400" },
             { label: "Qualified", value: stats.qualified, color: "text-emerald-600 dark:text-emerald-400" },
           ].map((s) => (
-            <div key={s.label} className="rounded-xl border border-border bg-card p-3.5">
+            <div key={s.label} className="rounded-xl border border-border bg-card p-3.5 shadow-sm">
               <p className="text-xs text-muted-foreground">{s.label}</p>
               <p className={`text-2xl font-bold mt-1 ${s.color}`}>{s.value}</p>
             </div>
