@@ -4,11 +4,21 @@ import AgentShell from "@/components/layout/AgentShell";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { UserPlus, Loader2 } from "lucide-react";
+import { UserPlus, Loader2, ArrowRight, Sparkles, MapPin, Calendar, Phone, Mail, User } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+
+const DEMO_DATA = {
+  firstName: "Marcus", lastName: "Rivera",
+  email: "marcus.rivera@gmail.com", phone: "(305) 555-8421",
+  source: "website", originAddress: "1842 Ocean Drive, Miami, FL 33139",
+  destinationAddress: "456 Peachtree St NE, Atlanta, GA 30308",
+  moveDate: "2026-04-15", estimatedValue: "4200",
+  notes: "3BR/2BA apartment, 2nd floor with elevator. Has a piano that needs special handling.",
+};
 
 export default function AgentNewCustomer() {
   const navigate = useNavigate();
@@ -21,6 +31,11 @@ export default function AgentNewCustomer() {
   });
 
   const updateField = (field: string, value: string) => setForm(prev => ({ ...prev, [field]: value }));
+
+  const fillDemo = () => {
+    setForm(DEMO_DATA);
+    toast.success("Demo data loaded");
+  };
 
   const handleCreate = async () => {
     if (!form.firstName || !form.lastName) {
@@ -49,7 +64,6 @@ export default function AgentNewCustomer() {
       if (dealError) throw dealError;
 
       toast.success(`Customer ${form.firstName} ${form.lastName} created`);
-      // Navigate to E-Sign page with customer data
       navigate(`/agent/esign?leadId=${lead.id}&name=${encodeURIComponent(form.firstName + " " + form.lastName)}&email=${encodeURIComponent(form.email)}&phone=${encodeURIComponent(form.phone)}`);
     } catch (err: any) {
       console.error("Error creating customer:", err);
@@ -59,46 +73,110 @@ export default function AgentNewCustomer() {
     }
   };
 
+  const isValid = form.firstName && form.lastName;
+
   return (
     <AgentShell breadcrumb=" / New Lead">
-      <div className="p-6 max-w-4xl mx-auto">
-        <h1 className="text-xl font-semibold mb-4 flex items-center gap-2">
-          <UserPlus className="w-5 h-5" />
-          Create New Lead
-        </h1>
+      <div className="p-6 max-w-3xl mx-auto space-y-5">
+        {/* Workflow breadcrumb */}
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <span className="text-primary font-semibold">New Customer</span>
+          <ArrowRight className="w-3 h-3" />
+          <span>E-Sign</span>
+          <ArrowRight className="w-3 h-3" />
+          <span>Payment</span>
+          <ArrowRight className="w-3 h-3" />
+          <span>My Customers</span>
+        </div>
 
-        <div className="space-y-4">
-          <div className="grid grid-cols-4 gap-3">
-            <div className="space-y-1.5"><Label className="text-xs">First Name *</Label><Input value={form.firstName} onChange={e => updateField("firstName", e.target.value)} placeholder="John" /></div>
-            <div className="space-y-1.5"><Label className="text-xs">Last Name *</Label><Input value={form.lastName} onChange={e => updateField("lastName", e.target.value)} placeholder="Smith" /></div>
-            <div className="space-y-1.5"><Label className="text-xs">Email</Label><Input type="email" value={form.email} onChange={e => updateField("email", e.target.value)} placeholder="john@email.com" /></div>
-            <div className="space-y-1.5"><Label className="text-xs">Phone</Label><Input value={form.phone} onChange={e => updateField("phone", e.target.value)} placeholder="(555) 123-4567" /></div>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-xl font-bold flex items-center gap-2">
+              <UserPlus className="w-5 h-5" />
+              Create New Lead
+            </h1>
+            <p className="text-sm text-muted-foreground mt-0.5">Enter customer details to start the onboarding flow</p>
           </div>
-          <div className="grid grid-cols-6 gap-3">
-            <div className="space-y-1.5">
-              <Label className="text-xs">Lead Source</Label>
-              <Select value={form.source} onValueChange={v => updateField("source", v)}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="phone">Phone</SelectItem>
-                  <SelectItem value="website">Website</SelectItem>
-                  <SelectItem value="referral">Referral</SelectItem>
-                  <SelectItem value="ppc">PPC</SelectItem>
-                  <SelectItem value="walk_in">Walk-in</SelectItem>
-                  <SelectItem value="other">Other</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="col-span-2 space-y-1.5"><Label className="text-xs">Origin Address</Label><Input value={form.originAddress} onChange={e => updateField("originAddress", e.target.value)} placeholder="123 Main St, City, ST" /></div>
-            <div className="col-span-2 space-y-1.5"><Label className="text-xs">Destination Address</Label><Input value={form.destinationAddress} onChange={e => updateField("destinationAddress", e.target.value)} placeholder="456 Oak Ave, City, ST" /></div>
-            <div className="space-y-1.5"><Label className="text-xs">Move Date</Label><Input type="date" value={form.moveDate} onChange={e => updateField("moveDate", e.target.value)} /></div>
-          </div>
-          <div className="space-y-1.5"><Label className="text-xs">Notes</Label><Textarea value={form.notes} onChange={e => updateField("notes", e.target.value)} placeholder="Any additional notes..." rows={2} /></div>
-          <Button className="w-full gap-2" onClick={handleCreate} disabled={isSaving}>
-            {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <UserPlus className="w-4 h-4" />}
-            {isSaving ? "Creating..." : "Save & Continue to E-Sign"}
+          <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={fillDemo}>
+            <Sparkles className="w-3.5 h-3.5" />
+            Fill Demo
           </Button>
         </div>
+
+        <Card className="border border-border shadow-sm">
+          <CardContent className="p-6 space-y-5">
+            {/* Contact Info */}
+            <div>
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-3 flex items-center gap-1.5">
+                <User className="w-3 h-3" /> Contact Information
+              </p>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1.5">
+                  <Label className="text-xs">First Name <span className="text-destructive">*</span></Label>
+                  <Input value={form.firstName} onChange={e => updateField("firstName", e.target.value)} placeholder="John" />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Last Name <span className="text-destructive">*</span></Label>
+                  <Input value={form.lastName} onChange={e => updateField("lastName", e.target.value)} placeholder="Smith" />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs flex items-center gap-1"><Mail className="w-3 h-3" /> Email</Label>
+                  <Input type="email" value={form.email} onChange={e => updateField("email", e.target.value)} placeholder="john@email.com" />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs flex items-center gap-1"><Phone className="w-3 h-3" /> Phone</Label>
+                  <Input value={form.phone} onChange={e => updateField("phone", e.target.value)} placeholder="(555) 123-4567" />
+                </div>
+              </div>
+            </div>
+
+            {/* Move Details */}
+            <div>
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-3 flex items-center gap-1.5">
+                <MapPin className="w-3 h-3" /> Move Details
+              </p>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Origin Address</Label>
+                  <Input value={form.originAddress} onChange={e => updateField("originAddress", e.target.value)} placeholder="123 Main St, City, ST" />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Destination Address</Label>
+                  <Input value={form.destinationAddress} onChange={e => updateField("destinationAddress", e.target.value)} placeholder="456 Oak Ave, City, ST" />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs flex items-center gap-1"><Calendar className="w-3 h-3" /> Move Date</Label>
+                  <Input type="date" value={form.moveDate} onChange={e => updateField("moveDate", e.target.value)} />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Lead Source</Label>
+                  <Select value={form.source} onValueChange={v => updateField("source", v)}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="phone">Phone</SelectItem>
+                      <SelectItem value="website">Website</SelectItem>
+                      <SelectItem value="referral">Referral</SelectItem>
+                      <SelectItem value="ppc">PPC</SelectItem>
+                      <SelectItem value="walk_in">Walk-in</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
+
+            {/* Notes */}
+            <div className="space-y-1.5">
+              <Label className="text-xs">Notes</Label>
+              <Textarea value={form.notes} onChange={e => updateField("notes", e.target.value)} placeholder="Special items, access notes, etc..." rows={2} />
+            </div>
+
+            <Button className="w-full gap-2 h-11" onClick={handleCreate} disabled={isSaving || !isValid}>
+              {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <ArrowRight className="w-4 h-4" />}
+              {isSaving ? "Creating..." : "Save & Continue to E-Sign"}
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     </AgentShell>
   );

@@ -58,7 +58,38 @@ export default function AgentESign() {
   const prefillPhone = searchParams.get("phone") || "";
   const leadId = searchParams.get("leadId") || "";
 
-  const [documents, setDocuments] = useState<DocumentRecord[]>([]);
+  // Demo documents so track/completed tabs aren't empty
+  const DEMO_DOCUMENTS: DocumentRecord[] = [
+    {
+      id: "demo-1", type: "estimate", refNumber: "EST-2026-0042",
+      customerName: prefillName || "Sarah Chen", customerEmail: prefillEmail || "sarah.chen@gmail.com",
+      customerPhone: prefillPhone || "(415) 555-7890", status: "opened",
+      sentAt: new Date(Date.now() - 3600000), openedAt: new Date(Date.now() - 1800000),
+      deliveryMethod: "email",
+    },
+    {
+      id: "demo-2", type: "ccach", refNumber: "CC-2026-0039",
+      customerName: "James Morrison", customerEmail: "j.morrison@outlook.com",
+      customerPhone: "(212) 555-3344", status: "sent",
+      sentAt: new Date(Date.now() - 7200000), deliveryMethod: "email",
+    },
+    {
+      id: "demo-3", type: "bol", refNumber: "BOL-2026-0018",
+      customerName: "Ana Rodriguez", customerEmail: "ana.r@yahoo.com",
+      customerPhone: "(305) 555-9012", status: "completed",
+      sentAt: new Date(Date.now() - 86400000), openedAt: new Date(Date.now() - 82800000),
+      completedAt: new Date(Date.now() - 72000000), deliveryMethod: "sms",
+    },
+    {
+      id: "demo-4", type: "estimate", refNumber: "EST-2026-0035",
+      customerName: "David Park", customerEmail: "dpark@gmail.com",
+      customerPhone: "(650) 555-1122", status: "completed",
+      sentAt: new Date(Date.now() - 172800000), openedAt: new Date(Date.now() - 169200000),
+      completedAt: new Date(Date.now() - 162000000), deliveryMethod: "email",
+    },
+  ];
+
+  const [documents, setDocuments] = useState<DocumentRecord[]>(DEMO_DOCUMENTS);
   const [showClientSearch, setShowClientSearch] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const [isScreensharing, setIsScreensharing] = useState(false);
@@ -289,7 +320,7 @@ export default function AgentESign() {
           {/* TRACK TAB */}
           <TabsContent value="track" className="space-y-4">
             {pendingDocs.length === 0 ? (
-              <Card><CardContent className="p-8 text-center"><CheckCircle2 className="w-12 h-12 mx-auto text-muted-foreground/30 mb-3" /><p className="text-muted-foreground">No pending documents. Send one to get started.</p></CardContent></Card>
+              <Card><CardContent className="p-8 text-center space-y-3"><CheckCircle2 className="w-12 h-12 mx-auto text-muted-foreground/30" /><p className="text-muted-foreground">No pending documents right now</p><p className="text-xs text-muted-foreground">Send a document from the Send tab to track it here</p></CardContent></Card>
             ) : (
               <div className="space-y-3">
                 {pendingDocs.map(doc => {
@@ -356,7 +387,7 @@ export default function AgentESign() {
           {/* COMPLETED TAB */}
           <TabsContent value="completed" className="space-y-4">
             {completedDocs.length === 0 ? (
-              <Card><CardContent className="p-8 text-center"><FileText className="w-12 h-12 mx-auto text-muted-foreground/30 mb-3" /><p className="text-muted-foreground">No completed documents yet</p></CardContent></Card>
+              <Card><CardContent className="p-8 text-center space-y-3"><FileText className="w-12 h-12 mx-auto text-muted-foreground/30" /><p className="text-muted-foreground">No completed documents yet</p><p className="text-xs text-muted-foreground">Documents will appear here once customers finish signing</p></CardContent></Card>
             ) : (
               <div className="space-y-3">
                 {completedDocs.map(doc => (
