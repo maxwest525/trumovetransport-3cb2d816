@@ -3,6 +3,7 @@ import {
   LayoutDashboard, UserPlus, CalendarCheck, Home, RotateCcw, Users, MessageSquare, Phone, Mail, MessagesSquare,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import logoImg from "@/assets/logo.png";
 
 interface NavItem {
   label: string;
@@ -36,11 +37,9 @@ export default function AgentSidebar({ onDialerToggle }: AgentSidebarProps) {
   return (
     <aside className="w-52 shrink-0 border-r border-border bg-card flex flex-col min-h-screen">
       <div className="px-4 py-4 flex items-center gap-2">
-        <div className="w-7 h-7 rounded-lg bg-foreground flex items-center justify-center">
-          <span className="text-background text-xs font-bold">G</span>
-        </div>
+        <img src={logoImg} alt="TruMove" className="h-6" />
         <span className="text-sm font-bold text-foreground tracking-tight">TRUMOVE</span>
-        <span className="text-[10px] text-muted-foreground ml-1">Agent</span>
+        <span className="text-[10px] text-muted-foreground ml-1">CRM</span>
       </div>
 
       <nav className="flex-1 px-2 py-2 space-y-0.5">
