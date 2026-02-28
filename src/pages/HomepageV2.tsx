@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import logoImg from "@/assets/logo.png";
+import heroDeviceMockup from "@/assets/hero-device-mockup.png";
 import { calculateDistance } from "@/lib/distanceCalculator";
 import { calculateEstimate, formatCurrency } from "@/lib/priceCalculator";
 import { formatPhoneNumber, isValidPhoneNumber, getDigitsOnly } from "@/lib/phoneFormat";
@@ -320,6 +321,20 @@ export default function HomepageV2() {
               Get Estimate
             </button>
           </Link>
+        </div>
+
+        {/* Device Mockup */}
+        <div className="relative max-w-4xl mx-auto px-6 mt-16">
+          <div className="relative">
+            {/* Glow behind image */}
+            <div className="absolute inset-0 -inset-x-8 -inset-y-4 rounded-3xl blur-[60px] opacity-30" style={{ background: `radial-gradient(ellipse at center, hsl(20, 90%, 50%, 0.4), hsl(175, 70%, 40%, 0.3), transparent 70%)` }} />
+            <img
+              src={heroDeviceMockup}
+              alt="TruMove app showing real-time truck tracking on map"
+              className="relative w-full rounded-2xl"
+              style={{ filter: "drop-shadow(0 20px 60px hsl(200, 30%, 4%, 0.8))" }}
+            />
+          </div>
         </div>
       </section>
 
