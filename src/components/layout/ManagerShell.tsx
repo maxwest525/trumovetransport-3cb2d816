@@ -15,8 +15,6 @@ import DemoDataToggle from "@/components/leads/DemoDataToggle";
 const NAV_ITEMS = [
   { label: "Dashboard", icon: LayoutDashboard, href: "/manager/dashboard" },
   { label: "My KPIs", icon: Gauge, href: "/kpi" },
-  { label: "Team Pipeline", icon: Users, href: "/manager/dashboard" },
-  { label: "Bookings Oversight", icon: CalendarCheck, href: "/manager/dashboard" },
 ];
 
 const ADVANCED_ITEMS: { label: string; icon: typeof Target; badge?: number; href?: string }[] = [
