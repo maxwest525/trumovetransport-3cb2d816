@@ -53,6 +53,7 @@ import AgentMessaging from "./pages/AgentMessaging";
 import AgentTeamChat from "./pages/AgentTeamChat";
 import CustomerPortal from "./pages/CustomerPortal";
 import CustomerPortalDashboard from "./pages/CustomerPortalDashboard";
+import HomepageV2 from "./pages/HomepageV2";
 
 const queryClient = new QueryClient();
 
@@ -114,6 +115,7 @@ const App = () => (
             
             <Route path="/portal" element={<CustomerPortal />} />
             <Route path="/portal/dashboard" element={<CustomerPortalDashboard />} />
+            <Route path="/homepage-2" element={<HomepageV2 />} />
             
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
