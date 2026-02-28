@@ -26,9 +26,20 @@ Deno.serve(async (req) => {
       );
     }
 
-    let formattedUrl = url.trim();
+    // Sanitize: trim whitespace, strip trailing commas/punctuation, ensure scheme
+    let formattedUrl = url.trim().replace(/[,;]+$/g, '');
     if (!formattedUrl.startsWith('http://') && !formattedUrl.startsWith('https://')) {
       formattedUrl = `https://${formattedUrl}`;
+    }
+
+    // Validate URL structure
+    try {
+      new URL(formattedUrl);
+    } catch {
+      return new Response(
+        JSON.stringify({ success: false, error: `Invalid URL: "${formattedUrl}". Please enter a valid website address.` }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     console.log('Scraping URL:', formattedUrl);
