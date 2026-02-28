@@ -4,7 +4,7 @@ import {
   Layout, TrendingUp, Target,
   DollarSign, BarChart3,
   ChevronRight, MessageSquare, Sparkles, Rocket, Wand2,
-  Zap, Activity
+  Zap, Activity, FlaskConical
 } from "lucide-react";
 import { RecentCreations } from "./RecentCreations";
 import { cn } from "@/lib/utils";
@@ -77,15 +77,6 @@ export function MarketingHubDashboard({
       action: () => handleCreateLandingPage(),
     },
     {
-      id: 'dashboard',
-      title: 'Marketing Analytics',
-      subtitle: 'Stats, performance metrics, and insights',
-      icon: BarChart3,
-      gradient: 'from-blue-500 via-indigo-500 to-violet-500',
-      glowColor: 'hsl(230 80% 55% / 0.15)',
-      action: () => onNavigate('performance'),
-    },
-    {
       id: 'auto',
       title: 'Just Build It For Me',
       subtitle: 'Most optimized pages based on your data',
@@ -93,6 +84,15 @@ export function MarketingHubDashboard({
       gradient: 'from-amber-400 via-orange-500 to-rose-500',
       glowColor: 'hsl(25 90% 55% / 0.15)',
       action: () => onNavigate('auto-build'),
+    },
+    {
+      id: 'abtest',
+      title: 'A/B Testing',
+      subtitle: 'Run experiments and optimize conversions',
+      icon: FlaskConical,
+      gradient: 'from-emerald-400 via-teal-500 to-cyan-500',
+      glowColor: 'hsl(170 80% 45% / 0.15)',
+      action: () => onNavigate('abtest'),
     },
   ];
 
@@ -179,6 +179,20 @@ export function MarketingHubDashboard({
             </div>
           ))}
         </div>
+
+        {/* Analytics inline row */}
+        <button
+          onClick={() => onNavigate('performance')}
+          className="w-full flex items-center justify-between p-3 rounded-xl border border-border/50 bg-card hover:border-border hover:bg-muted/30 transition-all group"
+        >
+          <div className="flex items-center gap-2.5">
+            <BarChart3 className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+            <span className="text-xs font-medium text-muted-foreground group-hover:text-foreground transition-colors">
+              Review & adjust your marketing analytics strategy
+            </span>
+          </div>
+          <ChevronRight className="w-3.5 h-3.5 text-muted-foreground group-hover:translate-x-0.5 transition-all" />
+        </button>
 
         {/* Recent Creations */}
         {recentPages.length > 0 && (
