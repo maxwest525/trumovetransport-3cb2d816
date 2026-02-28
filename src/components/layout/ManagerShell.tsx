@@ -110,21 +110,6 @@ export default function ManagerShell({ children, breadcrumb = "" }: ManagerShell
         </nav>
 
         <div className="px-2 pb-4 space-y-0.5">
-          <Link
-            to="/marketing/dashboard"
-            className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
-          >
-            <Sparkles className="w-4 h-4" />
-            <span>Marketing Suite</span>
-          </Link>
-          <Link
-            to="/accounting/dashboard"
-            className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
-          >
-            <DollarSign className="w-4 h-4" />
-            <span>Accounting</span>
-          </Link>
-          <div className="h-px bg-border/50 mx-2 my-1" />
           <button onClick={handleResetPreference} className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">
             <RotateCcw className="w-4 h-4" /><span>Reset Preference</span>
           </button>
