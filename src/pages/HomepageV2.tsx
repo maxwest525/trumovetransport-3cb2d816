@@ -5,7 +5,7 @@ import {
   ArrowRight, Shield, Truck, Scan, Route, Sparkles, Star,
   CheckCircle, Phone, Zap, Globe, BarChart3, Lock, Play,
   MapPin, CalendarIcon, ChevronDown, Video, ShieldCheck, CreditCard,
-  Headphones, ArrowDown
+  Headphones, Search, Palette, Package, Navigation, Users, Settings, Link2, Rocket
 } from "lucide-react";
 import sampleRoomLiving from "@/assets/sample-room-living.jpg";
 import HeroParticlesTeal from "@/components/HeroParticlesTeal";
@@ -78,57 +78,76 @@ function ScannerDemoCard() {
   const totalWeight = DEMO_ITEMS.slice(0, count).reduce((s, x) => s + x.weight, 0);
 
   return (
-    <div className="md:col-span-2 group relative rounded-2xl border border-white/[0.06] bg-gradient-to-br from-white/[0.04] to-white/[0.01] p-8 overflow-hidden hover:border-[hsl(175,70%,40%)/0.3] transition-all duration-500">
-      <div className="absolute top-0 right-0 w-[50%] h-[60%] bg-[hsl(175,70%,30%)] opacity-[0.05] blur-[80px] group-hover:opacity-[0.1] transition-opacity" />
-      <div className="relative flex items-start justify-between gap-4 mb-4">
-        <div>
-          <div className="w-10 h-10 rounded-xl bg-[hsl(175,70%,40%)/0.1] border border-[hsl(175,70%,40%)/0.2] flex items-center justify-center mb-4">
-            <Scan className="w-5 h-5 text-[hsl(175,70%,50%)]" />
+    <div className="relative rounded-2xl overflow-hidden" style={{ background: "linear-gradient(135deg, hsl(200, 35%, 12%) 0%, hsl(195, 30%, 8%) 100%)" }}>
+      {/* Glowing border effect */}
+      <div className="absolute inset-0 rounded-2xl" style={{ 
+        background: "linear-gradient(135deg, hsl(175, 70%, 40%, 0.3), hsl(20, 90%, 55%, 0.2), hsl(175, 70%, 40%, 0.1))",
+        padding: "1px",
+        mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+        maskComposite: "xor",
+        WebkitMaskComposite: "xor",
+        pointerEvents: "none",
+      }} />
+      
+      <div className="p-6 md:p-8">
+        <div className="flex items-start justify-between gap-4 mb-5">
+          <div>
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-4" style={{ background: "hsl(175, 70%, 40%, 0.12)", border: "1px solid hsl(175, 70%, 40%, 0.2)" }}>
+              <Scan className="w-5 h-5" style={{ color: "hsl(175, 70%, 55%)" }} />
+            </div>
+            <h3 className="text-xl font-bold mb-1.5" style={{ color: "hsl(195, 30%, 95%)" }}>AI Room Scanner</h3>
+            <p className="text-sm leading-relaxed max-w-sm" style={{ color: "hsl(200, 20%, 50%)" }}>
+              Point your camera at any room — AI identifies furniture, calculates weight and volume in seconds.
+            </p>
           </div>
-          <h3 className="text-xl font-semibold mb-1">AI Room Scanner</h3>
-          <p className="text-white/40 text-sm max-w-sm">Point your camera at any room — AI identifies furniture, calculates weight and volume in seconds.</p>
-        </div>
-        <button
-          onClick={startDemo}
-          disabled={running}
-          className="shrink-0 flex items-center gap-2 px-4 py-2 rounded-lg bg-[hsl(175,70%,40%)/0.15] border border-[hsl(175,70%,40%)/0.3] text-[hsl(175,70%,55%)] text-xs font-medium hover:bg-[hsl(175,70%,40%)/0.25] transition-colors disabled:opacity-50"
-        >
-          {running ? <><Sparkles className="w-3.5 h-3.5 animate-spin" /> Scanning...</> : <><Play className="w-3.5 h-3.5" /> Run Demo</>}
-        </button>
-      </div>
-      <div className="relative rounded-xl border border-white/[0.06] bg-[hsl(200,15%,6%)] overflow-hidden">
-        <img src={sampleRoomLiving} alt="Room scan" className="w-full h-56 object-cover" />
-        {running && (
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            <div className="absolute left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-[hsl(175,70%,50%)] to-transparent opacity-60 animate-[scanLine_2s_ease-in-out_infinite]" />
-          </div>
-        )}
-        {DEMO_ITEMS.slice(0, count).map((item) => (
-          <div
-            key={item.name}
-            className="absolute border border-[hsl(175,70%,50%)/0.6] rounded-sm animate-[fadeIn_0.3s_ease-out]"
-            style={{ top: item.top, left: item.left, width: item.w, height: item.h }}
+          <button
+            onClick={startDemo}
+            disabled={running}
+            className="shrink-0 flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-medium transition-all disabled:opacity-50"
+            style={{
+              background: "hsl(175, 70%, 40%, 0.15)",
+              border: "1px solid hsl(175, 70%, 40%, 0.3)",
+              color: "hsl(175, 70%, 60%)",
+            }}
           >
-            <span className="absolute -top-5 left-0 text-[10px] px-1.5 py-0.5 rounded bg-[hsl(175,70%,40%)/0.9] text-white font-medium whitespace-nowrap">
-              {item.name} · {item.conf}%
-            </span>
-            <span className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-[hsl(175,70%,50%)]" />
-            <span className="absolute top-0 right-0 w-2 h-2 border-t-2 border-r-2 border-[hsl(175,70%,50%)]" />
-            <span className="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-[hsl(175,70%,50%)]" />
-            <span className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-[hsl(175,70%,50%)]" />
-          </div>
-        ))}
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3 text-xs text-white/60">
-            <span className="text-[hsl(175,70%,55%)] font-semibold">{count} items</span>
-            <span>·</span>
-            <span>{totalWeight} lbs</span>
-          </div>
-          {count > 0 && (
-            <Link to="/scan-room" className="text-[10px] text-[hsl(175,70%,55%)] hover:underline">
-              Try Full Scanner →
-            </Link>
+            {running ? <><Sparkles className="w-3.5 h-3.5 animate-spin" /> Scanning...</> : <><Play className="w-3.5 h-3.5" /> Run Demo</>}
+          </button>
+        </div>
+
+        <div className="relative rounded-xl overflow-hidden" style={{ border: "1px solid hsl(200, 30%, 18%)" }}>
+          <img src={sampleRoomLiving} alt="Room scan" className="w-full h-56 object-cover" />
+          {running && (
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              <div className="absolute left-0 right-0 h-0.5 animate-[scanLine_2s_ease-in-out_infinite]" style={{ background: "linear-gradient(to right, transparent, hsl(175, 70%, 50%), transparent)", opacity: 0.6 }} />
+            </div>
           )}
+          {DEMO_ITEMS.slice(0, count).map((item) => (
+            <div
+              key={item.name}
+              className="absolute rounded-sm animate-[fadeIn_0.3s_ease-out]"
+              style={{ top: item.top, left: item.left, width: item.w, height: item.h, border: "1px solid hsl(175, 70%, 50%, 0.6)" }}
+            >
+              <span className="absolute -top-5 left-0 text-[10px] px-1.5 py-0.5 rounded font-medium whitespace-nowrap" style={{ background: "hsl(175, 70%, 40%, 0.9)", color: "white" }}>
+                {item.name} · {item.conf}%
+              </span>
+              <span className="absolute top-0 left-0 w-2 h-2" style={{ borderTop: "2px solid hsl(175, 70%, 50%)", borderLeft: "2px solid hsl(175, 70%, 50%)" }} />
+              <span className="absolute top-0 right-0 w-2 h-2" style={{ borderTop: "2px solid hsl(175, 70%, 50%)", borderRight: "2px solid hsl(175, 70%, 50%)" }} />
+              <span className="absolute bottom-0 left-0 w-2 h-2" style={{ borderBottom: "2px solid hsl(175, 70%, 50%)", borderLeft: "2px solid hsl(175, 70%, 50%)" }} />
+              <span className="absolute bottom-0 right-0 w-2 h-2" style={{ borderBottom: "2px solid hsl(175, 70%, 50%)", borderRight: "2px solid hsl(175, 70%, 50%)" }} />
+            </div>
+          ))}
+          <div className="absolute bottom-0 left-0 right-0 px-4 py-3 flex items-center justify-between" style={{ background: "linear-gradient(to top, hsla(200, 30%, 5%, 0.85), transparent)" }}>
+            <div className="flex items-center gap-3 text-xs" style={{ color: "hsl(200, 20%, 50%)" }}>
+              <span className="font-semibold" style={{ color: "hsl(175, 70%, 55%)" }}>{count} items</span>
+              <span>·</span>
+              <span>{totalWeight} lbs</span>
+            </div>
+            {count > 0 && (
+              <Link to="/scan-room" className="text-[10px] hover:underline" style={{ color: "hsl(175, 70%, 55%)" }}>
+                Try Full Scanner →
+              </Link>
+            )}
+          </div>
         </div>
       </div>
     </div>
@@ -199,7 +218,6 @@ export default function HomepageV2() {
     return "7-10 days";
   }, [distance]);
 
-  // Handle quote submission
   const handleGetEstimate = () => {
     localStorage.setItem("tm_lead", JSON.stringify({
       fromZip, toZip, fromCity, toCity,
@@ -209,7 +227,6 @@ export default function HomepageV2() {
     navigate("/online-estimate");
   };
 
-  // Contact form
   const handleContactSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     localStorage.setItem("tm_lead_contact", JSON.stringify({
@@ -220,137 +237,187 @@ export default function HomepageV2() {
 
   const formReady = fromZip.length === 5 && toZip.length === 5 && fromCity && toCity;
 
-  // Shared styles
-  const inputClass = "w-full h-11 bg-white/[0.06] border border-white/[0.1] rounded-lg px-3 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[hsl(175,70%,40%)/0.5] focus:ring-1 focus:ring-[hsl(175,70%,40%)/0.2] transition-colors";
+  // Colors
+  const navy = "hsl(200, 30%, 8%)";
+  const navyLight = "hsl(200, 25%, 12%)";
+  const navyCard = "hsl(200, 28%, 11%)";
+  const teal = "hsl(175, 70%, 42%)";
+  const tealBright = "hsl(175, 70%, 55%)";
+  const tealGlow = "hsl(175, 70%, 40%, 0.15)";
+  const textPrimary = "hsl(195, 30%, 95%)";
+  const textSecondary = "hsl(200, 20%, 50%)";
+  const textMuted = "hsl(200, 15%, 35%)";
+  const borderSubtle = "hsl(200, 25%, 16%)";
+  const orange = "hsl(20, 90%, 55%)";
+
+  const inputClass = `w-full h-11 rounded-lg px-3 text-sm transition-all focus:outline-none`;
 
   return (
-    <div className="min-h-screen bg-[hsl(200,15%,8%)] text-white font-sans overflow-x-hidden">
-      {/* NAV */}
-      <nav className="sticky top-0 z-50 backdrop-blur-xl bg-[hsl(200,15%,8%)/0.85] border-b border-white/5">
+    <div className="min-h-screen font-sans overflow-x-hidden" style={{ background: navy, color: textPrimary }}>
+
+      {/* ─── NAV ─── */}
+      <nav className="sticky top-0 z-50 backdrop-blur-xl" style={{ background: "hsl(200, 30%, 8%, 0.9)", borderBottom: `1px solid ${borderSubtle}` }}>
         <div className="max-w-7xl mx-auto flex items-center justify-between px-6 h-16">
           <Link to="/homepage-2" className="flex items-center gap-2.5">
             <img src={logoImg} alt="TruMove" className="h-7 w-7" />
             <span className="text-lg font-bold tracking-tight">TruMove</span>
           </Link>
-          <div className="hidden md:flex items-center gap-8 text-sm text-white/60">
+          <div className="hidden md:flex items-center gap-8 text-sm" style={{ color: textSecondary }}>
             <Link to="/online-estimate" className="hover:text-white transition-colors">Estimate</Link>
             <Link to="/scan-room" className="hover:text-white transition-colors">AI Scanner</Link>
             <Link to="/vetting" className="hover:text-white transition-colors">Carrier Vetting</Link>
             <Link to="/track" className="hover:text-white transition-colors">Track Shipment</Link>
-            <Link to="/faq" className="hover:text-white transition-colors">FAQ</Link>
           </div>
           <div className="flex items-center gap-3">
             <Link to="/agent-login">
-              <Button variant="ghost" size="sm" className="text-white/60 hover:text-white hover:bg-white/5">
-                Sign In
+              <Button variant="ghost" size="sm" className="hover:bg-white/5" style={{ color: textSecondary }}>
+                Log in
               </Button>
             </Link>
             <Link to="/book">
-              <Button size="sm" className="bg-[hsl(175,70%,40%)] hover:bg-[hsl(175,70%,35%)] text-white border-0 rounded-lg px-5">
-                Book a Call
+              <Button size="sm" className="border-0 rounded-lg px-5 font-semibold" style={{ background: teal, color: "white" }}>
+                Buy Now
               </Button>
             </Link>
           </div>
         </div>
       </nav>
 
-      {/* HERO WITH QUOTE FORM */}
-      <section className="relative pt-16 pb-24 md:pt-20 md:pb-32 overflow-hidden">
-        {/* Mesh gradients */}
+      {/* ─── HERO ─── */}
+      <section className="relative pt-20 pb-12 md:pt-28 md:pb-16 overflow-hidden">
+        {/* Background glows */}
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[80%] rounded-full bg-[hsl(175,80%,30%)] opacity-[0.07] blur-[120px]" />
-          <div className="absolute bottom-[-30%] right-[-10%] w-[50%] h-[70%] rounded-full bg-[hsl(200,80%,35%)] opacity-[0.06] blur-[100px]" />
-          <div className="absolute top-[30%] right-[20%] w-[30%] h-[40%] rounded-full bg-[hsl(160,60%,25%)] opacity-[0.05] blur-[80px]" />
+          <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[80%] rounded-full opacity-[0.08] blur-[120px]" style={{ background: "hsl(175, 80%, 35%)" }} />
+          <div className="absolute bottom-[-30%] right-[-10%] w-[50%] h-[70%] rounded-full opacity-[0.06] blur-[100px]" style={{ background: "hsl(200, 80%, 40%)" }} />
         </div>
         <HeroParticlesTeal className="z-0" />
 
-        <div className="relative max-w-7xl mx-auto px-6">
-          <div className="grid md:grid-cols-2 gap-12 md:gap-16 items-start">
-            {/* Left: Headline + trust */}
-            <div className="pt-4">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[hsl(175,70%,40%)/0.3] bg-[hsl(175,70%,40%)/0.08] mb-6">
-                <Sparkles className="w-3.5 h-3.5 text-[hsl(175,70%,50%)]" />
-                <span className="text-xs font-medium text-[hsl(175,70%,60%)]">AI-Powered Moving Platform</span>
-              </div>
-              <h1 className="text-4xl md:text-6xl font-extrabold leading-[1.05] tracking-tight mb-5">
-                Move smarter,{" "}
-                <span className="bg-gradient-to-r from-[hsl(175,80%,50%)] to-[hsl(200,80%,55%)] bg-clip-text text-transparent">
-                  not harder.
-                </span>
-              </h1>
-              <p className="text-base md:text-lg text-white/50 max-w-md mb-8 leading-relaxed">
-                AI scans your home, matches FMCSA-vetted carriers, and gives you instant pricing — all before a single box is packed.
-              </p>
-              <div className="flex flex-wrap items-center gap-5 text-xs text-white/40">
-                <span className="flex items-center gap-1.5"><Shield className="w-3.5 h-3.5 text-[hsl(175,70%,50%)]" /> FMCSA Verified</span>
-                <span className="flex items-center gap-1.5"><Lock className="w-3.5 h-3.5 text-[hsl(175,70%,50%)]" /> 256-bit Encryption</span>
-                <span className="flex items-center gap-1.5"><Star className="w-3.5 h-3.5 text-[hsl(175,70%,50%)]" /> 4.9/5 Rating</span>
-              </div>
+        <div className="relative max-w-4xl mx-auto px-6 text-center">
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-8" style={{ border: `1px solid hsl(175, 70%, 40%, 0.3)`, background: tealGlow }}>
+            <div className="w-5 h-5 rounded-full flex items-center justify-center" style={{ background: teal }}>
+              <Sparkles className="w-3 h-3 text-white" />
             </div>
+            <span className="text-xs font-medium" style={{ color: tealBright }}>Introducing the latest version of TruMove AI</span>
+          </div>
 
-            {/* Right: Quote Form Card */}
-            <div className="rounded-2xl border border-white/[0.08] bg-gradient-to-b from-white/[0.06] to-white/[0.02] p-6 md:p-8 backdrop-blur-sm">
-              <h2 className="text-lg font-semibold mb-1">Get Your Estimate</h2>
-              <p className="text-xs text-white/40 mb-6">Instant AI-powered pricing. No obligations.</p>
+          {/* Headline */}
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold leading-[1.05] tracking-tight mb-6">
+            AI-Powered Moving,{" "}
+            <br className="hidden md:block" />
+            <span style={{ background: `linear-gradient(135deg, ${tealBright}, hsl(200, 80%, 60%))`, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+              scaled like a pro
+            </span>
+          </h1>
 
-              <div className="space-y-4">
+          <p className="text-base md:text-lg max-w-2xl mx-auto mb-10 leading-relaxed" style={{ color: textSecondary }}>
+            Explore an intelligent moving platform that empowers you to get accurate quotes, vetted carriers, and real-time tracking — all in one place.
+          </p>
+
+          {/* CTA */}
+          <Link to="/online-estimate">
+            <button className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl text-base font-semibold text-white transition-all hover:brightness-110" style={{ background: teal, boxShadow: `0 0 40px hsl(175, 70%, 40%, 0.35), 0 4px 20px hsl(175, 70%, 40%, 0.2)` }}>
+              Get Estimate
+            </button>
+          </Link>
+        </div>
+      </section>
+
+      {/* ─── HERO PRODUCT SHOWCASE — Quote Form as "Device" ─── */}
+      <section className="relative pb-20 md:pb-28">
+        <div className="max-w-3xl mx-auto px-6">
+          <div className="relative rounded-3xl overflow-hidden" style={{
+            background: `linear-gradient(180deg, ${navyCard} 0%, hsl(200, 30%, 6%) 100%)`,
+            border: `1px solid hsl(200, 25%, 18%)`,
+            boxShadow: `0 0 80px hsl(175, 70%, 35%, 0.12), 0 0 160px hsl(20, 80%, 50%, 0.06), 0 30px 60px hsl(200, 30%, 4%, 0.6)`,
+          }}>
+            {/* Orange/teal glow on edges */}
+            <div className="absolute -top-1 -left-1 -right-1 h-1 rounded-t-3xl" style={{ background: `linear-gradient(90deg, ${orange}, ${teal}, ${orange})`, opacity: 0.6 }} />
+            <div className="absolute -bottom-1 -left-1 -right-1 h-1 rounded-b-3xl" style={{ background: `linear-gradient(90deg, ${teal}, ${orange}, ${teal})`, opacity: 0.3 }} />
+
+            <div className="p-8 md:p-10">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-3 h-3 rounded-full" style={{ background: "hsl(0, 70%, 55%)" }} />
+                <div className="w-3 h-3 rounded-full" style={{ background: "hsl(45, 90%, 55%)" }} />
+                <div className="w-3 h-3 rounded-full" style={{ background: "hsl(145, 70%, 45%)" }} />
+                <span className="ml-3 text-xs font-mono" style={{ color: textMuted }}>trumove.app/estimate</span>
+              </div>
+
+              <h2 className="text-xl md:text-2xl font-bold mb-2">Get Your Instant Estimate</h2>
+              <p className="text-sm mb-8" style={{ color: textSecondary }}>AI-powered pricing. No obligations. Takes 60 seconds.</p>
+
+              <div className="space-y-5">
                 {/* From / To */}
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="text-[11px] text-white/50 uppercase tracking-wider mb-1.5 block">From ZIP</label>
+                    <label className="text-[11px] uppercase tracking-wider mb-2 block font-medium" style={{ color: textMuted }}>From ZIP</label>
                     <div className="relative">
-                      <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/30" />
+                      <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: textMuted }} />
                       <input
                         type="text"
                         inputMode="numeric"
                         value={fromZip}
                         onChange={(e) => handleFromZip(e.target.value)}
                         placeholder="e.g. 10001"
-                        className={`${inputClass} pl-8`}
+                        className={inputClass}
+                        style={{
+                          background: "hsl(200, 30%, 10%)",
+                          border: `1px solid ${borderSubtle}`,
+                          color: textPrimary,
+                          paddingLeft: "2.25rem",
+                        }}
                       />
                     </div>
-                    {fromCity && <span className="text-[10px] text-[hsl(175,70%,55%)] mt-1 block">{fromCity}</span>}
+                    {fromCity && <span className="text-[10px] mt-1.5 block font-medium" style={{ color: tealBright }}>{fromCity}</span>}
                   </div>
                   <div>
-                    <label className="text-[11px] text-white/50 uppercase tracking-wider mb-1.5 block">To ZIP</label>
+                    <label className="text-[11px] uppercase tracking-wider mb-2 block font-medium" style={{ color: textMuted }}>To ZIP</label>
                     <div className="relative">
-                      <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/30" />
+                      <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: textMuted }} />
                       <input
                         type="text"
                         inputMode="numeric"
                         value={toZip}
                         onChange={(e) => handleToZip(e.target.value)}
                         placeholder="e.g. 90001"
-                        className={`${inputClass} pl-8`}
+                        className={inputClass}
+                        style={{
+                          background: "hsl(200, 30%, 10%)",
+                          border: `1px solid ${borderSubtle}`,
+                          color: textPrimary,
+                          paddingLeft: "2.25rem",
+                        }}
                       />
                     </div>
-                    {toCity && <span className="text-[10px] text-[hsl(175,70%,55%)] mt-1 block">{toCity}</span>}
+                    {toCity && <span className="text-[10px] mt-1.5 block font-medium" style={{ color: tealBright }}>{toCity}</span>}
                   </div>
                 </div>
 
                 {/* Distance badge */}
                 {distance > 0 && (
-                  <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-[hsl(175,70%,40%)/0.08] border border-[hsl(175,70%,40%)/0.15]">
-                    <Route className="w-4 h-4 text-[hsl(175,70%,55%)]" />
-                    <span className="text-sm font-medium text-[hsl(175,70%,55%)]">{distance.toLocaleString()} miles</span>
-                    {estimatedDuration && <span className="text-xs text-white/40 ml-auto">{estimatedDuration}</span>}
+                  <div className="flex items-center gap-3 px-4 py-2.5 rounded-lg" style={{ background: tealGlow, border: `1px solid hsl(175, 70%, 40%, 0.2)` }}>
+                    <Route className="w-4 h-4" style={{ color: tealBright }} />
+                    <span className="text-sm font-semibold" style={{ color: tealBright }}>{distance.toLocaleString()} miles</span>
+                    {estimatedDuration && <span className="text-xs ml-auto" style={{ color: textSecondary }}>{estimatedDuration}</span>}
                   </div>
                 )}
 
                 {/* Date + Size */}
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="text-[11px] text-white/50 uppercase tracking-wider mb-1.5 block">Move Date</label>
+                    <label className="text-[11px] uppercase tracking-wider mb-2 block font-medium" style={{ color: textMuted }}>Move Date</label>
                     <Popover open={dateOpen} onOpenChange={setDateOpen}>
                       <PopoverTrigger asChild>
-                        <button className={`${inputClass} flex items-center justify-between text-left`}>
-                          <span className={moveDate ? "text-white" : "text-white/30"}>
-                            {moveDate ? format(moveDate, "MMM d, yyyy") : "Select date"}
-                          </span>
-                          <CalendarIcon className="w-3.5 h-3.5 text-white/30" />
+                        <button className={`${inputClass} flex items-center justify-between text-left`} style={{
+                          background: "hsl(200, 30%, 10%)",
+                          border: `1px solid ${borderSubtle}`,
+                          color: moveDate ? textPrimary : textMuted,
+                        }}>
+                          <span>{moveDate ? format(moveDate, "MMM d, yyyy") : "Select date"}</span>
+                          <CalendarIcon className="w-4 h-4" style={{ color: textMuted }} />
                         </button>
                       </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0 bg-[hsl(200,15%,12%)] border-white/10" align="start">
+                      <PopoverContent className="w-auto p-0" style={{ background: navyLight, border: `1px solid ${borderSubtle}` }} align="start">
                         <Calendar
                           mode="single"
                           selected={moveDate || undefined}
@@ -362,22 +429,25 @@ export default function HomepageV2() {
                     </Popover>
                   </div>
                   <div>
-                    <label className="text-[11px] text-white/50 uppercase tracking-wider mb-1.5 block">Home Size</label>
+                    <label className="text-[11px] uppercase tracking-wider mb-2 block font-medium" style={{ color: textMuted }}>Home Size</label>
                     <Popover open={sizeOpen} onOpenChange={setSizeOpen}>
                       <PopoverTrigger asChild>
-                        <button className={`${inputClass} flex items-center justify-between text-left`}>
-                          <span className={size ? "text-white" : "text-white/30"}>
-                            {size || "Select size"}
-                          </span>
-                          <ChevronDown className="w-3.5 h-3.5 text-white/30" />
+                        <button className={`${inputClass} flex items-center justify-between text-left`} style={{
+                          background: "hsl(200, 30%, 10%)",
+                          border: `1px solid ${borderSubtle}`,
+                          color: size ? textPrimary : textMuted,
+                        }}>
+                          <span>{size || "Select size"}</span>
+                          <ChevronDown className="w-4 h-4" style={{ color: textMuted }} />
                         </button>
                       </PopoverTrigger>
-                      <PopoverContent className="w-48 p-1 bg-[hsl(200,15%,12%)] border-white/10" align="start">
+                      <PopoverContent className="w-48 p-1" style={{ background: navyLight, border: `1px solid ${borderSubtle}` }} align="start">
                         {MOVE_SIZES.map((s) => (
                           <button
                             key={s.value}
                             onClick={() => { setSize(s.value); setSizeOpen(false); }}
-                            className="w-full text-left px-3 py-2 text-sm text-white/80 hover:bg-white/[0.06] rounded-md transition-colors"
+                            className="w-full text-left px-3 py-2 text-sm rounded-md transition-colors hover:bg-white/[0.06]"
+                            style={{ color: "hsl(200, 20%, 75%)" }}
                           >
                             {s.label}
                           </button>
@@ -389,252 +459,209 @@ export default function HomepageV2() {
 
                 {/* Estimate result */}
                 {estimate && (
-                  <div className="rounded-lg bg-[hsl(175,70%,40%)/0.1] border border-[hsl(175,70%,40%)/0.2] p-4 text-center">
-                    <span className="text-xs text-white/50 block mb-1">Estimated Range</span>
-                    <span className="text-2xl font-bold text-[hsl(175,70%,55%)]">
+                  <div className="rounded-xl p-5 text-center" style={{ background: tealGlow, border: `1px solid hsl(175, 70%, 40%, 0.25)` }}>
+                    <span className="text-xs block mb-1" style={{ color: textSecondary }}>Estimated Range</span>
+                    <span className="text-3xl font-bold" style={{ color: tealBright }}>
                       {formatCurrency(estimate.min)} – {formatCurrency(estimate.max)}
                     </span>
                   </div>
                 )}
 
                 {/* CTA */}
-                <Button
+                <button
                   onClick={handleGetEstimate}
                   disabled={!formReady}
-                  className="w-full h-12 bg-[hsl(175,70%,40%)] hover:bg-[hsl(175,70%,35%)] text-white border-0 rounded-xl text-base font-semibold shadow-[0_0_30px_hsl(175,70%,40%,0.3)] disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="w-full h-12 rounded-xl text-base font-semibold text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center gap-2 hover:brightness-110"
+                  style={{
+                    background: teal,
+                    boxShadow: formReady ? `0 0 30px hsl(175, 70%, 40%, 0.3)` : "none",
+                  }}
                 >
-                  {estimate ? "View Full Estimate" : "Get Your Estimate"} <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
+                  {estimate ? "View Full Estimate" : "Get Your Estimate"} <ArrowRight className="w-4 h-4" />
+                </button>
 
-                <p className="text-[10px] text-white/25 text-center">No credit card required · Free estimate · Takes 60 seconds</p>
+                <p className="text-[10px] text-center" style={{ color: textMuted }}>No credit card required · Free estimate · Takes 60 seconds</p>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* BENTO FEATURE GRID */}
-      <section id="features" className="relative py-24">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Everything you need to move</h2>
-            <p className="text-white/40 max-w-lg mx-auto">Precision at speed, without the grind.</p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-4">
-            <ScannerDemoCard />
-
-            {/* Carrier Vetting card */}
-            <div
-              onClick={() => navigate("/vetting")}
-              className="group relative rounded-2xl border border-white/[0.06] bg-gradient-to-br from-white/[0.04] to-white/[0.01] p-8 overflow-hidden hover:border-[hsl(175,70%,40%)/0.3] transition-all duration-500 cursor-pointer"
-            >
-              <div className="absolute bottom-0 left-0 w-[60%] h-[50%] bg-[hsl(200,80%,35%)] opacity-[0.05] blur-[60px] group-hover:opacity-[0.1] transition-opacity" />
-              <div className="relative">
-                <div className="w-10 h-10 rounded-xl bg-[hsl(200,70%,40%)/0.1] border border-[hsl(200,70%,40%)/0.2] flex items-center justify-center mb-5">
-                  <Shield className="w-5 h-5 text-[hsl(200,70%,55%)]" />
-                </div>
-                <h3 className="text-xl font-semibold mb-2">Carrier Vetting</h3>
-                <p className="text-white/40 text-sm leading-relaxed">
-                  Every carrier is verified through FMCSA's SAFER database. Licenses, insurance, complaints, and safety ratings checked.
-                </p>
-                <div className="mt-6 space-y-3">
-                  {[
-                    { label: "Carriers Vetted", value: "12,400+" },
-                    { label: "Claims Ratio", value: "< 0.3%" },
-                    { label: "Avg Rating", value: "4.9/5" },
-                  ].map((stat) => (
-                    <div key={stat.label} className="flex items-center justify-between border-b border-white/[0.04] pb-2.5">
-                      <span className="text-xs text-white/30">{stat.label}</span>
-                      <span className="text-sm font-semibold text-[hsl(175,70%,55%)]">{stat.value}</span>
-                    </div>
-                  ))}
-                </div>
-                <span className="text-xs text-[hsl(175,70%,55%)] mt-4 inline-flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  Check a carrier <ArrowRight className="w-3 h-3" />
-                </span>
-              </div>
-            </div>
-
-            {/* Bottom row - 3 feature cards linking to pages */}
-            <div
-              onClick={() => navigate("/track")}
-              className="group relative rounded-2xl border border-white/[0.06] bg-gradient-to-br from-white/[0.04] to-white/[0.01] p-6 overflow-hidden hover:border-[hsl(175,70%,40%)/0.3] transition-all duration-500 cursor-pointer"
-            >
-              <div className="w-9 h-9 rounded-lg bg-[hsl(175,70%,40%)/0.1] border border-[hsl(175,70%,40%)/0.2] flex items-center justify-center mb-4">
-                <Route className="w-4 h-4 text-[hsl(175,70%,55%)]" />
-              </div>
-              <h3 className="text-base font-semibold mb-1.5">Real-Time Tracking</h3>
-              <p className="text-white/40 text-sm leading-relaxed">GPS tracking with live ETA updates, weather alerts, and driver communication.</p>
-              <span className="text-xs text-[hsl(175,70%,55%)] mt-3 inline-flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                Track now <ArrowRight className="w-3 h-3" />
-              </span>
-            </div>
-
-            <div
-              onClick={() => navigate("/online-estimate")}
-              className="group relative rounded-2xl border border-white/[0.06] bg-gradient-to-br from-white/[0.04] to-white/[0.01] p-6 overflow-hidden hover:border-[hsl(175,70%,40%)/0.3] transition-all duration-500 cursor-pointer"
-            >
-              <div className="w-9 h-9 rounded-lg bg-[hsl(200,70%,40%)/0.1] border border-[hsl(200,70%,40%)/0.2] flex items-center justify-center mb-4">
-                <BarChart3 className="w-4 h-4 text-[hsl(200,70%,55%)]" />
-              </div>
-              <h3 className="text-base font-semibold mb-1.5">Instant Pricing</h3>
-              <p className="text-white/40 text-sm leading-relaxed">AI-calculated estimates based on distance, weight, season, and market rates.</p>
-              <span className="text-xs text-[hsl(200,70%,55%)] mt-3 inline-flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                Get estimate <ArrowRight className="w-3 h-3" />
-              </span>
-            </div>
-
-            <div
-              onClick={() => navigate("/book")}
-              className="group relative rounded-2xl border border-white/[0.06] bg-gradient-to-br from-white/[0.04] to-white/[0.01] p-6 overflow-hidden hover:border-[hsl(175,70%,40%)/0.3] transition-all duration-500 cursor-pointer"
-            >
-              <div className="w-9 h-9 rounded-lg bg-[hsl(160,70%,40%)/0.1] border border-[hsl(160,70%,40%)/0.2] flex items-center justify-center mb-4">
-                <Video className="w-4 h-4 text-[hsl(160,70%,55%)]" />
-              </div>
-              <h3 className="text-base font-semibold mb-1.5">Video Consultation</h3>
-              <p className="text-white/40 text-sm leading-relaxed">Live walk-through with a moving specialist for an accurate, personalized quote.</p>
-              <span className="text-xs text-[hsl(160,70%,55%)] mt-3 inline-flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                Book a call <ArrowRight className="w-3 h-3" />
-              </span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* WHY TRUMOVE - Feature Details */}
-      <section className="py-24 border-t border-white/[0.04]">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Why TruMove</h2>
-            <p className="text-white/40 max-w-lg mx-auto">Built different. Verified always.</p>
-          </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* ─── 4-ICON FEATURE STRIP ─── */}
+      <section className="py-16" style={{ borderTop: `1px solid ${borderSubtle}` }}>
+        <div className="max-w-5xl mx-auto px-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             {[
-              { icon: Scan, title: "Computer Vision Inventory", desc: "Our neural network detects furniture, estimates cubic footage, and calculates weight — eliminating guesswork." },
-              { icon: Video, title: "Live Video Walk-Through", desc: "A specialist joins you via video to walk your home room-by-room. They catch details photos miss." },
-              { icon: ShieldCheck, title: "FMCSA Safety Intelligence", desc: "Real-time data from SAFER Web Services — checking authority, crash history, and compliance ratings." },
-              { icon: Shield, title: "License Verification Engine", desc: "Every carrier validated for active MC and USDOT numbers. Revoked or lapsed licenses get flagged instantly." },
-              { icon: CreditCard, title: "Coverage Validation", desc: "We confirm cargo, liability, and bodily injury coverage meets or exceeds federal minimums." },
-              { icon: Zap, title: "Zero Black Box", desc: "Real-time status updates, no hidden fees, no corporate runaround. You see exactly what we see." },
-            ].map((f) => (
-              <div key={f.title} className="rounded-xl border border-white/[0.05] bg-white/[0.02] p-6 hover:border-white/[0.12] transition-colors">
-                <f.icon className="w-5 h-5 text-[hsl(175,70%,55%)] mb-4" />
-                <h3 className="text-sm font-semibold mb-2">{f.title}</h3>
-                <p className="text-white/40 text-xs leading-relaxed">{f.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* HOW IT WORKS */}
-      <section id="how" className="relative py-24 border-t border-white/[0.04]">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-[20%] left-[30%] w-[40%] h-[60%] rounded-full bg-[hsl(175,60%,25%)] opacity-[0.04] blur-[100px]" />
-        </div>
-        <div className="relative max-w-7xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">How it works</h2>
-            <p className="text-white/40 max-w-lg mx-auto">Three steps. Zero chaos.</p>
-          </div>
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              { step: "01", title: "Scan Your Space", desc: "Open the AI scanner and point your camera at each room. We detect and catalog everything automatically.", icon: Scan, link: "/scan-room" },
-              { step: "02", title: "Get Matched", desc: "Our algorithm matches your move profile with FMCSA-vetted carriers optimized for your route and timeline.", icon: Shield, link: "/vetting" },
-              { step: "03", title: "Move with Confidence", desc: "Track your shipment in real-time, communicate with your driver, and enjoy a stress-free move.", icon: Truck, link: "/track" },
+              { icon: Search, label: "Scan and catalog", desc: "AI identifies thousands of furniture items in seconds." },
+              { icon: Palette, label: "Design your move", desc: "Customized plans for every room, route, and timeline." },
+              { icon: Package, label: "Deliver and protect", desc: "Full-coverage insurance with FMCSA-vetted carriers." },
+              { icon: Navigation, label: "In-Transit tracking", desc: "Real-time GPS updates from pickup to delivery." },
             ].map((item) => (
-              <div
-                key={item.step}
-                onClick={() => navigate(item.link)}
-                className="relative group cursor-pointer"
-              >
-                <div className="rounded-2xl border border-white/[0.06] bg-gradient-to-b from-white/[0.03] to-transparent p-8 h-full hover:border-[hsl(175,70%,40%)/0.2] transition-all">
-                  <span className="text-5xl font-black text-white/[0.04] absolute top-4 right-6">{item.step}</span>
-                  <div className="w-12 h-12 rounded-xl bg-[hsl(175,70%,40%)/0.1] border border-[hsl(175,70%,40%)/0.15] flex items-center justify-center mb-6">
-                    <item.icon className="w-5 h-5 text-[hsl(175,70%,50%)]" />
-                  </div>
-                  <h3 className="text-lg font-semibold mb-3">{item.title}</h3>
-                  <p className="text-white/40 text-sm leading-relaxed">{item.desc}</p>
-                  <span className="text-xs text-[hsl(175,70%,55%)] mt-4 inline-flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                    Get started <ArrowRight className="w-3 h-3" />
-                  </span>
+              <div key={item.label} className="flex flex-col items-center">
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: tealGlow, border: `1px solid hsl(175, 70%, 40%, 0.2)` }}>
+                  <item.icon className="w-5 h-5" style={{ color: tealBright }} />
                 </div>
+                <h3 className="text-sm font-semibold mb-1" style={{ color: textPrimary }}>{item.label}</h3>
+                <p className="text-xs leading-relaxed" style={{ color: textSecondary }}>{item.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* TESTIMONIALS */}
-      <section className="py-24 border-t border-white/[0.04]">
+      {/* ─── SPLIT SECTION: "Precision at speed" + Scanner Demo ─── */}
+      <section className="py-20 md:py-28" style={{ borderTop: `1px solid ${borderSubtle}` }}>
         <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Trusted by thousands</h2>
-            <p className="text-white/40">Real moves, real reviews.</p>
+          {/* Eyebrow */}
+          <div className="flex items-center gap-2 mb-4">
+            <span className="text-xs font-medium" style={{ color: teal }}>Faster, Smarter, Automated</span>
           </div>
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 gap-12 md:gap-16 items-center">
+            {/* Left: Text */}
+            <div>
+              <h2 className="text-3xl md:text-5xl font-bold leading-tight mb-6" style={{ color: textPrimary }}>
+                Precision at speed,<br />without the grind
+              </h2>
+              <p className="text-sm leading-relaxed mb-8" style={{ color: textSecondary }}>
+                Break free from the outdated way of moving. Our AI scans rooms, vets carriers, and delivers instant pricing — so you can focus on what matters.
+              </p>
+              <ul className="space-y-3">
+                {[
+                  "Computer-vision room scanning & cataloging",
+                  "FMCSA-verified carriers with real compliance data",
+                  "Real-time GPS tracking from pickup to delivery",
+                  "Instant pricing based on weight, distance, & season",
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-2.5 text-sm" style={{ color: "hsl(200, 20%, 60%)" }}>
+                    <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: teal }} />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Right: Scanner Demo */}
+            <ScannerDemoCard />
+          </div>
+        </div>
+      </section>
+
+      {/* ─── HOW IT WORKS — 6 Cards ─── */}
+      <section className="py-20 md:py-28" style={{ borderTop: `1px solid ${borderSubtle}` }}>
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="mb-4">
+            <span className="text-xs font-medium" style={{ color: teal }}>Rapid Results</span>
+          </div>
+          <h2 className="text-3xl md:text-4xl font-bold mb-3" style={{ color: textPrimary }}>How it works</h2>
+          <p className="text-sm mb-14 max-w-xl" style={{ color: textSecondary }}>
+            With our AI-powered platform, you can manage your entire move in one seamless experience.
+          </p>
+
+          <div className="grid md:grid-cols-3 gap-5">
             {[
-              { name: "Sarah K.", location: "NYC → LA", quote: "The AI scanner was mind-blowing. It cataloged my entire apartment in under 5 minutes.", rating: 5 },
-              { name: "James T.", location: "Chicago → Miami", quote: "Best moving experience I've ever had. The real-time tracking gave me total peace of mind.", rating: 5 },
-              { name: "Lisa M.", location: "Austin → Seattle", quote: "Saved $1,200 compared to other quotes. The carrier they matched me with was fantastic.", rating: 5 },
-            ].map((t) => (
-              <div key={t.name} className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6">
-                <div className="flex gap-0.5 mb-4">
-                  {Array.from({ length: t.rating }).map((_, i) => (
-                    <Star key={i} className="w-4 h-4 fill-[hsl(45,90%,55%)] text-[hsl(45,90%,55%)]" />
-                  ))}
-                </div>
-                <p className="text-white/60 text-sm leading-relaxed mb-5">"{t.quote}"</p>
-                <div>
-                  <span className="text-sm font-medium">{t.name}</span>
-                  <span className="text-xs text-white/30 ml-2">{t.location}</span>
-                </div>
+              { icon: BarChart3, title: "Measure your inventory", desc: "AI scans rooms for weight, volume, and item count — eliminating manual guesswork entirely." },
+              { icon: Shield, title: "Vet your carriers", desc: "Every carrier verified through FMCSA databases. Licenses, insurance, safety ratings all checked." },
+              { icon: Users, title: "Team coordination", desc: "Real-time communication between you, your coordinator, and your driver throughout the move." },
+              { icon: Globe, title: "Track your shipment", desc: "GPS tracking with live ETA updates, weather alerts, and instant driver communication." },
+              { icon: Link2, title: "Connect all services", desc: "Integrate packing, storage, and vehicle transport into a single coordinated move plan." },
+              { icon: Rocket, title: "Fast, easy setup", desc: "Get your estimate in 60 seconds. Book in under 5 minutes. No paperwork required." },
+            ].map((item) => (
+              <div key={item.title} className="rounded-xl p-6 transition-all hover:border-white/10 group" style={{ background: navyCard, border: `1px solid ${borderSubtle}` }}>
+                <item.icon className="w-5 h-5 mb-4" style={{ color: tealBright }} />
+                <h3 className="text-sm font-semibold mb-2" style={{ color: textPrimary }}>{item.title}</h3>
+                <p className="text-xs leading-relaxed" style={{ color: textSecondary }}>{item.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA + CONTACT FORM */}
-      <section id="contact" className="relative py-24 border-t border-white/[0.04]">
+      {/* ─── TESTIMONIALS ─── */}
+      <section className="py-20 md:py-28" style={{ borderTop: `1px solid ${borderSubtle}` }}>
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-3">
+            <span className="text-xs font-medium" style={{ color: teal }}>See what customers say</span>
+          </div>
+          <p className="text-center text-sm max-w-2xl mx-auto mb-14" style={{ color: textSecondary }}>
+            A friendly approach with great customer support from beginning to end. They're really responsive and the data-driven approach sets them apart.
+          </p>
+
+          <div className="grid md:grid-cols-3 gap-5">
+            {[
+              { name: "Sarah Morrison", role: "Homeowner", color: teal, quote: "Exceptional partner. TruMove consistently delivers outstanding results, our preferred choice." },
+              { name: "Marilyn Ekström-Bortman", role: "Homeowner", color: "hsl(200, 70%, 55%)", quote: "Reliable, responsive. TruMove always exceeds our expectations, a dependable partner." },
+              { name: "Jordyn Phillips", role: "Homeowner", color: "hsl(45, 85%, 55%)", quote: "Reliable, results-driven. TruMove consistently delivers top-notch service, exceeding expectations." },
+              { name: "Corey Stanton", role: "Business", color: "hsl(20, 85%, 55%)", quote: "Trustworthy, effective. TruMove continually exceeds expectations, earning our highest recommendation." },
+              { name: "Franco Rosser", role: "Homeowner", color: "hsl(280, 60%, 55%)", quote: "Outstanding results, every time. TruMove is our preference for quality and excellence." },
+              { name: "Roger Lipshultz", role: "Business", color: "hsl(340, 70%, 55%)", quote: "Trustworthy partner. TruMove consistently provides outstanding results and service." },
+            ].map((t) => (
+              <div key={t.name} className="rounded-xl p-5" style={{ background: navyCard, border: `1px solid ${borderSubtle}` }}>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-white" style={{ background: t.color }}>
+                    {t.name.split(" ").map(n => n[0]).join("")}
+                  </div>
+                  <div>
+                    <span className="text-sm font-semibold block" style={{ color: textPrimary }}>{t.name}</span>
+                    <span className="text-[11px]" style={{ color: t.color }}>{t.role}</span>
+                  </div>
+                </div>
+                <p className="text-xs leading-relaxed" style={{ color: textSecondary }}>{t.quote}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="text-center mt-10">
+            <p className="text-sm mb-2" style={{ color: textSecondary }}>
+              Exceeding expectations, reliable service. TruMove has proven to be the go-to choice for stress-free moving.
+            </p>
+            <p className="text-xs mb-6" style={{ color: textMuted }}>
+              Invaluable support, lasting impact. 🏆
+            </p>
+            <Link to="/online-estimate">
+              <button className="px-6 py-2.5 rounded-lg text-sm font-semibold text-white transition-all hover:brightness-110" style={{ background: teal }}>
+                Get Estimate
+              </button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── CTA SECTION ─── */}
+      <section className="relative py-20 md:py-28" style={{ borderTop: `1px solid ${borderSubtle}` }}>
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-[20%] w-[60%] h-full bg-[hsl(175,70%,30%)] opacity-[0.04] blur-[120px]" />
+          <div className="absolute top-0 left-[20%] w-[60%] h-full rounded-full opacity-[0.04] blur-[120px]" style={{ background: "hsl(175, 70%, 35%)" }} />
         </div>
         <div className="relative max-w-5xl mx-auto px-6">
           <div className="grid md:grid-cols-2 gap-12 items-center">
-            {/* Left: CTA text */}
             <div>
-              <h2 className="text-4xl md:text-5xl font-bold mb-6">Ready to move<br />the right way?</h2>
-              <p className="text-white/40 text-lg mb-8">
-                Get your AI-powered estimate in under 60 seconds. Or talk to a specialist.
+              <span className="text-xs font-medium mb-3 block" style={{ color: teal }}>Don't delay</span>
+              <h2 className="text-3xl md:text-5xl font-bold leading-tight mb-6" style={{ color: textPrimary }}>
+                Ready to join the<br />movement with AI?
+              </h2>
+              <p className="text-sm mb-8 max-w-md" style={{ color: textSecondary }}>
+                From AI room scanning to FMCSA-vetted carriers, we've refined every detail to make each move seamlessly stress-free.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link to="/online-estimate">
-                  <Button className="h-12 px-8 bg-[hsl(175,70%,40%)] hover:bg-[hsl(175,70%,35%)] text-white border-0 rounded-xl text-base font-semibold shadow-[0_0_30px_hsl(175,70%,40%,0.25)]">
-                    Get Estimate <ArrowRight className="w-4 h-4 ml-2" />
-                  </Button>
-                </Link>
-                <Link to="/customer-service">
-                  <Button variant="outline" className="h-12 px-8 border-white/10 bg-white/5 hover:bg-white/10 text-white rounded-xl text-base">
-                    <Headphones className="w-4 h-4 mr-2" /> Contact Us
-                  </Button>
+                  <button className="px-8 py-3 rounded-xl text-sm font-semibold text-white transition-all hover:brightness-110" style={{ background: teal, boxShadow: `0 0 30px hsl(175, 70%, 40%, 0.25)` }}>
+                    Get Estimate
+                  </button>
                 </Link>
               </div>
             </div>
 
-            {/* Right: Quick contact form */}
-            <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-6 md:p-8">
+            {/* Contact form */}
+            <div className="rounded-2xl p-6 md:p-8" style={{ background: navyCard, border: `1px solid ${borderSubtle}` }}>
               {contactSubmitted ? (
                 <div className="text-center py-8">
-                  <CheckCircle className="w-10 h-10 text-[hsl(175,70%,50%)] mx-auto mb-4" />
+                  <CheckCircle className="w-10 h-10 mx-auto mb-4" style={{ color: tealBright }} />
                   <h3 className="text-lg font-semibold mb-2">We'll be in touch!</h3>
-                  <p className="text-sm text-white/40">A TruMove specialist will reach out within 24 hours.</p>
+                  <p className="text-sm" style={{ color: textSecondary }}>A TruMove specialist will reach out within 24 hours.</p>
                 </div>
               ) : (
                 <form onSubmit={handleContactSubmit} className="space-y-4">
                   <h3 className="text-base font-semibold mb-1">Request a Callback</h3>
-                  <p className="text-xs text-white/40 mb-4">We'll call you back within the hour.</p>
+                  <p className="text-xs mb-4" style={{ color: textSecondary }}>We'll call you back within the hour.</p>
                   <input
                     type="text"
                     value={contactName}
@@ -642,6 +669,7 @@ export default function HomepageV2() {
                     placeholder="Full name"
                     required
                     className={inputClass}
+                    style={{ background: "hsl(200, 30%, 10%)", border: `1px solid ${borderSubtle}`, color: textPrimary }}
                   />
                   <input
                     type="email"
@@ -650,6 +678,7 @@ export default function HomepageV2() {
                     placeholder="Email address"
                     required
                     className={inputClass}
+                    style={{ background: "hsl(200, 30%, 10%)", border: `1px solid ${borderSubtle}`, color: textPrimary }}
                   />
                   <input
                     type="tel"
@@ -658,14 +687,16 @@ export default function HomepageV2() {
                     placeholder="(555) 123-4567"
                     required
                     className={inputClass}
+                    style={{ background: "hsl(200, 30%, 10%)", border: `1px solid ${borderSubtle}`, color: textPrimary }}
                   />
-                  <Button
+                  <button
                     type="submit"
                     disabled={!contactName || !contactEmail.includes("@") || !isValidPhoneNumber(contactPhone)}
-                    className="w-full h-11 bg-[hsl(175,70%,40%)] hover:bg-[hsl(175,70%,35%)] text-white border-0 rounded-xl font-semibold disabled:opacity-40"
+                    className="w-full h-11 rounded-xl font-semibold text-white transition-all disabled:opacity-40 flex items-center justify-center gap-2"
+                    style={{ background: teal }}
                   >
-                    <Phone className="w-4 h-4 mr-2" /> Request Callback
-                  </Button>
+                    <Phone className="w-4 h-4" /> Request Callback
+                  </button>
                 </form>
               )}
             </div>
@@ -673,53 +704,64 @@ export default function HomepageV2() {
         </div>
       </section>
 
-      {/* FOOTER */}
-      <footer className="border-t border-white/[0.06] py-12">
+      {/* ─── FOOTER ─── */}
+      <footer className="py-12" style={{ borderTop: `1px solid ${borderSubtle}`, background: "hsl(200, 30%, 6%)" }}>
         <div className="max-w-7xl mx-auto px-6">
-          <div className="grid md:grid-cols-4 gap-8 mb-8">
+          <div className="grid md:grid-cols-4 gap-8 mb-10">
             <div>
               <div className="flex items-center gap-2.5 mb-4">
-                <img src={logoImg} alt="TruMove" className="h-6 w-6" />
-                <span className="text-sm font-semibold">TruMove</span>
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: teal }}>
+                  <img src={logoImg} alt="TruMove" className="h-5 w-5" />
+                </div>
+                <span className="text-sm font-bold">TruMove</span>
               </div>
-              <p className="text-xs text-white/30 leading-relaxed">AI-powered moving platform. FMCSA-vetted carriers, instant estimates, real-time tracking.</p>
-            </div>
-            <div>
-              <h4 className="text-xs font-semibold uppercase tracking-wider text-white/50 mb-3">Services</h4>
-              <div className="space-y-2">
-                <Link to="/online-estimate" className="block text-xs text-white/30 hover:text-white/60 transition-colors">Online Estimate</Link>
-                <Link to="/scan-room" className="block text-xs text-white/30 hover:text-white/60 transition-colors">AI Room Scanner</Link>
-                <Link to="/vetting" className="block text-xs text-white/30 hover:text-white/60 transition-colors">Carrier Vetting</Link>
-                <Link to="/track" className="block text-xs text-white/30 hover:text-white/60 transition-colors">Live Tracking</Link>
-              </div>
-            </div>
-            <div>
-              <h4 className="text-xs font-semibold uppercase tracking-wider text-white/50 mb-3">Company</h4>
-              <div className="space-y-2">
-                <Link to="/about" className="block text-xs text-white/30 hover:text-white/60 transition-colors">About</Link>
-                <Link to="/faq" className="block text-xs text-white/30 hover:text-white/60 transition-colors">FAQ</Link>
-                <Link to="/customer-service" className="block text-xs text-white/30 hover:text-white/60 transition-colors">Customer Service</Link>
-                <Link to="/book" className="block text-xs text-white/30 hover:text-white/60 transition-colors">Book a Call</Link>
+              <p className="text-xs leading-relaxed mb-4" style={{ color: textSecondary }}>
+                TruMove is an AI-powered moving platform that delivers FMCSA-vetted carriers and real-time tracking for stress-free moves.
+              </p>
+              <div className="flex items-center gap-3">
+                {["f", "in", "𝕏"].map((s) => (
+                  <div key={s} className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold" style={{ background: "hsl(200, 25%, 14%)", color: textSecondary, border: `1px solid ${borderSubtle}` }}>
+                    {s}
+                  </div>
+                ))}
               </div>
             </div>
             <div>
-              <h4 className="text-xs font-semibold uppercase tracking-wider text-white/50 mb-3">Legal</h4>
-              <div className="space-y-2">
-                <Link to="/privacy" className="block text-xs text-white/30 hover:text-white/60 transition-colors">Privacy Policy</Link>
-                <Link to="/terms" className="block text-xs text-white/30 hover:text-white/60 transition-colors">Terms of Service</Link>
-                <Link to="/portal" className="block text-xs text-white/30 hover:text-white/60 transition-colors">Customer Portal</Link>
-                <Link to="/" className="block text-xs text-white/30 hover:text-white/60 transition-colors">Classic Site</Link>
+              <h4 className="text-xs font-semibold uppercase tracking-wider mb-4" style={{ color: textPrimary }}>Company</h4>
+              <div className="space-y-2.5">
+                <Link to="/about" className="block text-xs transition-colors hover:text-white" style={{ color: textSecondary }}>About</Link>
+                <Link to="/faq" className="block text-xs transition-colors hover:text-white" style={{ color: textSecondary }}>FAQ</Link>
+                <Link to="/customer-service" className="block text-xs transition-colors hover:text-white" style={{ color: textSecondary }}>Customer Service</Link>
+                <Link to="/book" className="block text-xs transition-colors hover:text-white" style={{ color: textSecondary }}>Book a Call</Link>
+              </div>
+            </div>
+            <div>
+              <h4 className="text-xs font-semibold uppercase tracking-wider mb-4" style={{ color: textPrimary }}>Services</h4>
+              <div className="space-y-2.5">
+                <Link to="/online-estimate" className="block text-xs transition-colors hover:text-white" style={{ color: textSecondary }}>Online Estimate</Link>
+                <Link to="/scan-room" className="block text-xs transition-colors hover:text-white" style={{ color: textSecondary }}>AI Room Scanner</Link>
+                <Link to="/vetting" className="block text-xs transition-colors hover:text-white" style={{ color: textSecondary }}>Carrier Vetting</Link>
+                <Link to="/track" className="block text-xs transition-colors hover:text-white" style={{ color: textSecondary }}>Live Tracking</Link>
+              </div>
+            </div>
+            <div>
+              <h4 className="text-xs font-semibold uppercase tracking-wider mb-4" style={{ color: textPrimary }}>Legal</h4>
+              <div className="space-y-2.5">
+                <Link to="/privacy" className="block text-xs transition-colors hover:text-white" style={{ color: textSecondary }}>Privacy Policy</Link>
+                <Link to="/terms" className="block text-xs transition-colors hover:text-white" style={{ color: textSecondary }}>Terms of Service</Link>
+                <Link to="/portal" className="block text-xs transition-colors hover:text-white" style={{ color: textSecondary }}>Customer Portal</Link>
+                <Link to="/" className="block text-xs transition-colors hover:text-white" style={{ color: textSecondary }}>Classic Site</Link>
               </div>
             </div>
           </div>
-          <div className="border-t border-white/[0.04] pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
-            <span className="text-xs text-white/25">© 2026 TruMove. All rights reserved.</span>
-            <div className="flex items-center gap-4 text-xs text-white/25">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-6" style={{ borderTop: `1px solid ${borderSubtle}` }}>
+            <span className="text-xs" style={{ color: textMuted }}>© 2026 TruMove. All rights reserved.</span>
+            <div className="flex items-center gap-4 text-xs" style={{ color: textMuted }}>
               <span>FMCSA Licensed</span>
               <span>·</span>
               <span>USDOT Compliant</span>
               <span>·</span>
-              <span>Insured & Bonded</span>
+              <span>Privacy Policy</span>
             </div>
           </div>
         </div>
