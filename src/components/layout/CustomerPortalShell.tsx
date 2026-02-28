@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { LogOut, Package, FileText, MessageCircle, Upload, Home } from "lucide-react";
+import logoImg from "@/assets/logo.png";
 
 interface CustomerPortalShellProps {
   children: ReactNode;
@@ -30,9 +31,7 @@ export default function CustomerPortalShell({ children, activeTab, onTabChange, 
       {/* Top bar */}
       <header className="border-b border-border bg-card px-4 py-3 flex items-center justify-between sticky top-0 z-30">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-            <Home className="w-4 h-4 text-primary-foreground" />
-          </div>
+          <img src={logoImg} alt="TruMove" className="h-6" />
           <div>
             <h1 className="text-sm font-semibold text-foreground leading-tight">TruMove Portal</h1>
             {customerName && <p className="text-xs text-muted-foreground">{customerName}</p>}

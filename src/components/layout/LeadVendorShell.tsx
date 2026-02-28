@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { setPortalContext } from "@/hooks/usePortalContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import DemoDataToggle from "@/components/leads/DemoDataToggle";
+import logoImg from "@/assets/logo.png";
 
 const NAV_ITEMS = [
   { label: "Overview", icon: LayoutDashboard, href: "/leads/dashboard" },
@@ -44,9 +45,7 @@ export default function LeadVendorShell({ children, breadcrumb = "", onRefresh }
   const sidebarContent = (
     <>
       <div className="px-4 py-4 flex items-center gap-2">
-        <div className="w-7 h-7 rounded-lg bg-foreground flex items-center justify-center">
-          <span className="text-background text-xs font-bold">G</span>
-        </div>
+        <img src={logoImg} alt="TruMove" className="h-6" />
         <span className="text-sm font-bold text-foreground tracking-tight">TRUMOVE</span>
         <span className="text-[10px] text-muted-foreground ml-1">Leads</span>
         {isMobile && (

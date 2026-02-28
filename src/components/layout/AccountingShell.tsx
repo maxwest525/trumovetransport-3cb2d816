@@ -10,6 +10,7 @@ import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 import { setPortalContext } from "@/hooks/usePortalContext";
 import DemoDataToggle from "@/components/leads/DemoDataToggle";
+import logoImg from "@/assets/logo.png";
 
 const NAV_ITEMS = [
   { label: "Dashboard", icon: LayoutDashboard, href: "/accounting/dashboard" },
@@ -49,9 +50,7 @@ export default function AccountingShell({ children, breadcrumb = "" }: Accountin
     <div className="flex min-h-screen bg-background text-foreground">
       <aside className="w-52 shrink-0 border-r border-border bg-card flex flex-col min-h-screen">
         <div className="px-4 py-4 flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-foreground flex items-center justify-center">
-            <span className="text-background text-xs font-bold">G</span>
-          </div>
+          <img src={logoImg} alt="TruMove" className="h-6" />
           <span className="text-sm font-bold text-foreground tracking-tight">TRUMOVE</span>
           <span className="text-[10px] text-muted-foreground ml-1">Accounting</span>
         </div>
