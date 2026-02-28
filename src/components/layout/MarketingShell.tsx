@@ -15,7 +15,6 @@ import logoImg from "@/assets/logo.png";
 const NAV_ITEMS = [
   { label: "Dashboard", icon: LayoutDashboard, href: "/marketing/dashboard" },
   { label: "My KPIs", icon: Gauge, href: "/kpi" },
-  { label: "AI Marketing Suite", icon: Sparkles, href: "/marketing/dashboard" },
   { label: "Analytics Setup", icon: LineChart },
 ];
 
