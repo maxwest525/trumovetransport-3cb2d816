@@ -27,9 +27,9 @@ export default function AgentShell({ children, breadcrumb = "" }: AgentShellProp
   // No longer auto-open floating dialer on dialer page — softphone is built-in
 
   return (
-    <div className="flex min-h-screen bg-background text-foreground">
+    <div className="flex h-screen bg-background text-foreground overflow-hidden">
       <AgentSidebar onDialerToggle={() => setDialerOpen(true)} />
-      <div className="flex-1 flex flex-col min-h-screen">
+      <div className="flex-1 flex flex-col h-screen overflow-hidden">
         <header className="h-12 border-b border-border bg-card flex items-center justify-between px-4 shrink-0">
           <div className="flex items-center gap-3">
             <span className="text-sm text-muted-foreground">Agent Workspace{breadcrumb}</span>

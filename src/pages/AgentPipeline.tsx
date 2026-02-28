@@ -13,7 +13,7 @@ export default function AgentPipeline() {
 
   return (
     <AgentShell breadcrumb=" / Pipeline">
-      <div className="px-4 py-4 max-w-[1600px] mx-auto flex flex-col h-[calc(100vh-48px)] overflow-hidden">
+      <div className="px-4 py-4 max-w-[1600px] mx-auto flex flex-col h-full overflow-hidden">
         <div className="flex items-center justify-between mb-3 shrink-0">
           <h1 className="text-xl font-bold text-foreground">Pipeline</h1>
           <Button onClick={() => setAddOpen(true)} size="sm" className="gap-1.5">
