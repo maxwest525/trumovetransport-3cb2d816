@@ -1,40 +1,40 @@
 
 
-# Add "Talk to Real Trudy" Toggle to the Mock Chatbot
+# Fix ElevenLabs Edge Function Errors
 
-## Overview
-Keep the mock `TrudyChatBox` as the default demo experience. Add a prominent "Talk to Real Trudy" button in the chat header that, when clicked, switches to the real ElevenLabs-powered `AIChatContainer` within the same glassmorphism container.
+## Problem
+Two issues are causing the "Talk to Real Trudy" live mode to fail:
 
-## Changes
+1. **Permission Error (401)**: The ElevenLabs API key lacks the `convai_write` permission. You need to regenerate or update your API key in the ElevenLabs dashboard with conversational AI permissions enabled.
 
-### 1. Modify `src/components/TrudyChatBox.tsx`
-- Add a new prop: `onSwitchToLive?: () => void`
-- Add a "Talk to Real Trudy" button in the header (next to the "AI-Powered" badge) that calls `onSwitchToLive` when clicked
-- Style it as a small pill button with a `Sparkles` icon and a subtle pulsing dot to indicate live availability
+2. **Response Mismatch**: The edge function calls the `/v1/convai/conversation/token` endpoint and returns `{ token }`, but `AIChatContainer` expects `{ signed_url }` and starts a WebSocket session with `signedUrl`. Since the chat uses `textOnly: true` mode, the signed-url endpoint is the correct one to use.
 
-### 2. Modify `src/pages/CustomerService.tsx`
-- Add a `chatMode` state: `'demo' | 'live'` (default `'demo'`)
-- Wrap both `TrudyChatBox` and `AIChatContainer` in the same glassmorphism container div
-- When `chatMode === 'demo'`: render `TrudyChatBox` with `onSwitchToLive` toggling to `'live'`
-- When `chatMode === 'live'`: render `AIChatContainer` inside the same styled wrapper, passing the existing `TRUDY_AGENT_ID` and a customer-service page context
-- Add a small "Back to Demo" link in live mode header so users can return to the mock
+## Steps
+
+### Step 1: Update the ElevenLabs API Key (User Action Required)
+Go to your ElevenLabs account settings, generate a new API key that includes the `convai_write` permission (or enable it on the existing key), then update the secret in the project.
+
+### Step 2: Fix the Edge Function Endpoint
+Modify `supabase/functions/elevenlabs-conversation-token/index.ts` to:
+- Call `/v1/convai/conversation/get-signed-url` instead of `/v1/convai/conversation/token`
+- Return `{ signed_url }` in the response to match what `AIChatContainer` expects
 
 ### Technical Details
 
-**TrudyChatBox header addition:**
+The edge function change is minimal -- swap the API endpoint URL and the response field name:
+
 ```text
-[Sparkles icon] Trudy          [Talk to Real Trudy ->] [AI-Powered]
+// Before:
+GET /v1/convai/conversation/token?agent_id=...
+return { token: data.token }
+
+// After:
+GET /v1/convai/conversation/get-signed-url?agent_id=...
+return { signed_url: data.signed_url }
 ```
 
-The "Talk to Real Trudy" button uses a green pulsing dot + text to signal live AI, styled as:
-- `text-[10px] font-semibold` with a subtle border and hover effect
-- Only rendered when `onSwitchToLive` prop is provided
-
-**CustomerService.tsx state logic:**
+This aligns the edge function with the client-side code that already does:
 ```text
-chatMode = 'demo'  -->  Show TrudyChatBox (mock)
-chatMode = 'live'  -->  Show AIChatContainer (ElevenLabs WebSocket)
+await conversation.startSession({ signedUrl: data.signed_url })
 ```
-
-The `AIChatContainer` will only mount (and connect to ElevenLabs) when the user explicitly clicks "Talk to Real Trudy", saving API costs until needed.
 
