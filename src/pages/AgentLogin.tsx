@@ -5,7 +5,7 @@ import SiteShell from "@/components/layout/SiteShell";
 import PortalAuthForm from "@/components/auth/PortalAuthForm";
 import {
   Users, BarChart3, Shield, Crown, ArrowRight, LogOut, Sparkles,
-  DollarSign, Building2, ClipboardCheck, Globe,
+  DollarSign, Building2, ClipboardCheck,
 } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import logoImg from "@/assets/logo.png";
@@ -157,32 +157,25 @@ export default function AgentLogin() {
   return (
     <SiteShell centered backendMode hideHeader>
       <div className="flex flex-col items-center justify-center min-h-[80vh] px-4 py-16 relative">
-        {/* Decorative glow */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-gradient-to-b from-primary/8 via-primary/3 to-transparent rounded-full blur-3xl pointer-events-none" />
 
-        {/* Return to website */}
+        {/* Top bar: back link */}
         <Link
           to="/"
-          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 mb-10 rounded-full border border-border bg-card text-xs font-medium text-muted-foreground hover:text-foreground hover:border-foreground/30 hover:shadow-sm transition-all z-10"
+          className="absolute top-6 left-6 inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors z-10"
         >
-          <Globe className="w-3.5 h-3.5" />
-          Return to Website
+          <ArrowRight className="w-3.5 h-3.5 rotate-180" />
+          Back to website
         </Link>
 
         {/* Logo + Header */}
-        <div className="flex flex-col items-center gap-4 mb-12 z-10">
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/5 rounded-2xl blur-xl scale-150" />
-            <div className="relative w-16 h-16 rounded-2xl bg-foreground flex items-center justify-center shadow-[0_8px_32px_-8px_hsl(var(--foreground)/0.4)]">
-              <img src={logoImg} alt="TruMove" className="h-9 brightness-0 invert" />
-            </div>
-          </div>
+        <div className="flex flex-col items-center gap-3 mb-12 z-10">
+          <img src={logoImg} alt="TruMove" className="h-8 dark:invert" />
           <div className="text-center">
-            <h1 className="text-3xl font-extrabold tracking-tight text-foreground">
-              TruMove <span className="text-muted-foreground font-medium text-lg ml-1">Workspace</span>
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">
+              Workspace
             </h1>
-            <p className="text-sm text-muted-foreground mt-2">
-              Signed in as <span className="text-foreground font-medium">{session.user.email}</span>
+            <p className="text-sm text-muted-foreground mt-1.5">
+              {session.user.email}
               <button
                 onClick={handleSignOut}
                 className="ml-2 inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive transition-colors"
