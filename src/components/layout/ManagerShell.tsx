@@ -76,7 +76,7 @@ export default function ManagerShell({ children, breadcrumb = "" }: ManagerShell
             );
           })}
 
-          <div className="h-px bg-border/50 mx-2 my-1" />
+          
 
           {ADVANCED_ITEMS.map((item) => {
             const Icon = item.icon;
