@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import SiteShell from "@/components/layout/SiteShell";
 import PortalAuthForm from "@/components/auth/PortalAuthForm";
-import { Users, BarChart3, Shield, Crown, ArrowRight, LogOut, Sparkles, DollarSign, Building2, ClipboardCheck, Globe } from "lucide-react";
+import {
+  Users, BarChart3, Shield, Crown, ArrowRight, LogOut, Sparkles,
+  DollarSign, Building2, ClipboardCheck, Globe,
+} from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Link } from "react-router-dom";
+import logoImg from "@/assets/logo.png";
 import type { Session } from "@supabase/supabase-js";
 
 const ROLES = [
@@ -15,20 +18,29 @@ const ROLES = [
     description: "Full access to everything — team, data, billing, and all settings.",
     icon: Crown,
     href: "/admin/dashboard",
+    accent: "from-amber-500/20 to-orange-500/10",
+    iconAccent: "text-amber-500",
+    ring: "group-hover:ring-amber-500/30",
   },
   {
     id: "agent",
     title: "Agent",
-    description: "Manage leads, deals, and customer relationships from your personal dashboard.",
+    description: "Manage leads, deals, and customer relationships from your dashboard.",
     icon: Users,
     href: "/agent/pipeline",
+    accent: "from-blue-500/20 to-cyan-500/10",
+    iconAccent: "text-blue-500",
+    ring: "group-hover:ring-blue-500/30",
   },
   {
     id: "manager",
     title: "Manager",
-    description: "Monitor team performance, approve changes, and review campaign health.",
+    description: "Monitor team performance, approve changes, and review campaigns.",
     icon: BarChart3,
     href: "/manager/dashboard",
+    accent: "from-emerald-500/20 to-green-500/10",
+    iconAccent: "text-emerald-500",
+    ring: "group-hover:ring-emerald-500/30",
   },
   {
     id: "admin",
@@ -36,13 +48,19 @@ const ROLES = [
     description: "Configure users, integrations, branding, and system settings.",
     icon: Shield,
     href: "/admin/dashboard",
+    accent: "from-violet-500/20 to-purple-500/10",
+    iconAccent: "text-violet-500",
+    ring: "group-hover:ring-violet-500/30",
   },
   {
     id: "marketing",
     title: "Marketing",
-    description: "AI-powered campaigns, landing pages, analytics, and A/B testing.",
+    description: "AI campaigns, landing pages, analytics, and A/B testing.",
     icon: Sparkles,
     href: "/marketing/dashboard",
+    accent: "from-pink-500/20 to-rose-500/10",
+    iconAccent: "text-pink-500",
+    ring: "group-hover:ring-pink-500/30",
   },
   {
     id: "accounting",
@@ -50,13 +68,19 @@ const ROLES = [
     description: "Invoices, payroll, expenses, revenue reports, and financial tools.",
     icon: DollarSign,
     href: "/accounting/dashboard",
+    accent: "from-teal-500/20 to-cyan-500/10",
+    iconAccent: "text-teal-500",
+    ring: "group-hover:ring-teal-500/30",
   },
   {
     id: "leads",
     title: "Lead Vendors",
-    description: "Manage 3rd-party lead sources, budgets, vendor performance, and ROI.",
+    description: "Manage lead sources, budgets, vendor performance, and ROI.",
     icon: Building2,
     href: "/leads/dashboard",
+    accent: "from-orange-500/20 to-yellow-500/10",
+    iconAccent: "text-orange-500",
+    ring: "group-hover:ring-orange-500/30",
   },
   {
     id: "compliance",
@@ -64,6 +88,9 @@ const ROLES = [
     description: "FMCSA filings, licensing, insurance audits, and regulatory tracking.",
     icon: ClipboardCheck,
     href: "/compliance/dashboard",
+    accent: "from-sky-500/20 to-indigo-500/10",
+    iconAccent: "text-sky-500",
+    ring: "group-hover:ring-sky-500/30",
   },
 ];
 
@@ -76,17 +103,14 @@ export default function AgentLogin() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Set up listener BEFORE getSession
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       setLoading(false);
     });
-
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setLoading(false);
     });
-
     return () => subscription.unsubscribe();
   }, []);
 
@@ -95,17 +119,13 @@ export default function AgentLogin() {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       const role = ROLES.find((r) => r.id === saved);
-      if (role) {
-        navigate(role.href, { replace: true });
-      }
+      if (role) navigate(role.href, { replace: true });
     }
     window.scrollTo(0, 0);
   }, [session, navigate]);
 
   const handleClick = (roleId: string, href: string) => {
-    if (remember) {
-      localStorage.setItem(STORAGE_KEY, roleId);
-    }
+    if (remember) localStorage.setItem(STORAGE_KEY, roleId);
     navigate(href);
   };
 
@@ -124,7 +144,6 @@ export default function AgentLogin() {
     );
   }
 
-  // Not authenticated — show login/signup form
   if (!session) {
     return (
       <SiteShell centered backendMode hideHeader>
@@ -135,46 +154,72 @@ export default function AgentLogin() {
     );
   }
 
-  // Authenticated — show role picker
   return (
     <SiteShell centered backendMode hideHeader>
-      <div className="flex flex-col items-center justify-center min-h-[60vh] px-4 py-16">
+      <div className="flex flex-col items-center justify-center min-h-[80vh] px-4 py-16 relative">
+        {/* Decorative glow */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-gradient-to-b from-primary/8 via-primary/3 to-transparent rounded-full blur-3xl pointer-events-none" />
+
         {/* Return to website */}
         <Link
           to="/"
-          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 mb-8 rounded-full border border-border bg-card text-xs font-medium text-muted-foreground hover:text-foreground hover:border-foreground/30 hover:shadow-sm transition-all"
+          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 mb-10 rounded-full border border-border bg-card text-xs font-medium text-muted-foreground hover:text-foreground hover:border-foreground/30 hover:shadow-sm transition-all z-10"
         >
           <Globe className="w-3.5 h-3.5" />
           Return to Website
         </Link>
 
-        <h1 className="text-2xl font-bold tracking-tight text-foreground mb-1">Choose your workspace</h1>
-        <p className="text-sm text-muted-foreground mb-10">
-          Signed in as <span className="text-foreground font-medium">{session.user.email}</span>
-          <button onClick={handleSignOut} className="ml-2 inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
-            <LogOut className="w-3 h-3" /> Sign out
-          </button>
-        </p>
+        {/* Logo + Header */}
+        <div className="flex flex-col items-center gap-4 mb-12 z-10">
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/5 rounded-2xl blur-xl scale-150" />
+            <div className="relative w-16 h-16 rounded-2xl bg-foreground flex items-center justify-center shadow-[0_8px_32px_-8px_hsl(var(--foreground)/0.4)]">
+              <img src={logoImg} alt="TruMove" className="h-9 brightness-0 invert" />
+            </div>
+          </div>
+          <div className="text-center">
+            <h1 className="text-3xl font-extrabold tracking-tight text-foreground">
+              TruMove <span className="text-muted-foreground font-medium text-lg ml-1">Workspace</span>
+            </h1>
+            <p className="text-sm text-muted-foreground mt-2">
+              Signed in as <span className="text-foreground font-medium">{session.user.email}</span>
+              <button
+                onClick={handleSignOut}
+                className="ml-2 inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive transition-colors"
+              >
+                <LogOut className="w-3 h-3" /> Sign out
+              </button>
+            </p>
+          </div>
+        </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full max-w-4xl">
+        {/* Role cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 w-full max-w-[960px] z-10">
           {ROLES.map((role) => {
             const Icon = role.icon;
             return (
               <button
                 key={role.id}
                 onClick={() => handleClick(role.id, role.href)}
-                className="group flex flex-col gap-4 rounded-xl border border-foreground/15 bg-card p-5 shadow-[0_2px_12px_-3px_hsl(var(--foreground)/0.12),0_1px_3px_hsl(var(--foreground)/0.06)] hover:border-foreground/30 hover:shadow-[0_8px_28px_-6px_hsl(var(--foreground)/0.2),0_4px_12px_-4px_hsl(var(--foreground)/0.1)] transition-all duration-200 text-left"
+                className={`group relative flex flex-col gap-3 rounded-xl border border-border/60 bg-card p-5 ring-2 ring-transparent ${role.ring} hover:border-border hover:shadow-[0_12px_40px_-12px_hsl(var(--foreground)/0.15)] transition-all duration-300 text-left overflow-hidden`}
               >
-                <div className="w-10 h-10 rounded-lg border border-foreground/10 bg-foreground/[0.04] flex items-center justify-center">
-                  <Icon className="w-5 h-5 text-foreground" />
+                {/* Gradient background on hover */}
+                <div className={`absolute inset-0 bg-gradient-to-br ${role.accent} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
+
+                <div className="relative flex items-center gap-3">
+                  <div className={`w-10 h-10 rounded-xl bg-foreground/[0.06] border border-foreground/10 flex items-center justify-center group-hover:border-foreground/20 transition-colors`}>
+                    <Icon className={`w-5 h-5 ${role.iconAccent}`} />
+                  </div>
+                  <h3 className="font-bold text-foreground text-sm">{role.title}</h3>
                 </div>
-                <div>
-                  <h3 className="font-semibold text-foreground text-sm">{role.title}</h3>
-                  <p className="text-[11px] text-muted-foreground mt-1 leading-relaxed">{role.description}</p>
-                </div>
-                <div className="mt-auto pt-1">
-                  <span className="inline-flex items-center gap-2 px-3.5 py-1.5 text-[11px] font-semibold rounded-lg bg-foreground text-background group-hover:gap-3 transition-all whitespace-nowrap shadow-[0_2px_6px_-1px_hsl(var(--foreground)/0.15)]">
-                    {role.title} <ArrowRight className="w-3 h-3" />
+
+                <p className="relative text-[11px] text-muted-foreground leading-relaxed flex-1">
+                  {role.description}
+                </p>
+
+                <div className="relative mt-auto pt-1">
+                  <span className="inline-flex items-center gap-2 text-[11px] font-semibold text-foreground/60 group-hover:text-foreground transition-colors">
+                    Open workspace <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
                   </span>
                 </div>
               </button>
@@ -182,7 +227,8 @@ export default function AgentLogin() {
           })}
         </div>
 
-        <label className="flex items-center gap-2 mt-8 cursor-pointer select-none">
+        {/* Remember checkbox */}
+        <label className="flex items-center gap-2.5 mt-10 cursor-pointer select-none z-10">
           <Checkbox
             checked={remember}
             onCheckedChange={(v) => setRemember(v === true)}
