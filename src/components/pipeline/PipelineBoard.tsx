@@ -28,13 +28,13 @@ function StageColumn({ stage, deals, onDealClick }: { stage: PipelineStage; deal
   return (
     <div
       ref={setNodeRef}
-      className={`flex flex-col min-w-[240px] max-w-[260px] rounded-lg border transition-colors ${isOver ? "ring-2 ring-primary/40 bg-primary/5" : "bg-muted/20"}`}
+      className={`flex flex-col min-w-[240px] max-w-[260px] rounded-lg border transition-colors h-full ${isOver ? "ring-2 ring-primary/40 bg-primary/5" : "bg-muted/20"}`}
     >
       <div className="flex items-center justify-between px-3 py-2">
         <span className="text-xs font-semibold text-foreground">{stage.name}</span>
         <span className="text-[10px] text-muted-foreground font-medium">{deals.length}</span>
       </div>
-      <ScrollArea className="flex-1 px-2 pb-2 max-h-[calc(100vh-220px)]">
+      <ScrollArea className="flex-1 px-2 pb-2">
         <SortableContext items={deals.map((d) => d.id)} strategy={verticalListSortingStrategy}>
           <div className="space-y-1.5">
             {deals.map((deal) => (
@@ -180,7 +180,7 @@ export function PipelineBoard({ onAddLead }: { onAddLead?: () => void }) {
   return (
     <>
       <DndContext sensors={sensors} collisionDetection={closestCorners} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-        <div className="flex gap-3 overflow-x-auto pb-4 px-1">
+        <div className="flex gap-3 overflow-x-auto pb-2 px-1 h-full">
           {stages
             .filter((s) => !["closed_won", "closed_lost"].includes(s.stage_key))
             .map((stage) => (
