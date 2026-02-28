@@ -6,9 +6,9 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "sonner";
 import {
-  Sparkles, Target, BarChart3,
+  Sparkles, BarChart3,
   Layout, RefreshCw, FlaskConical,
-  Radio, Play, Pause, Mail, ArrowLeft, Home,
+  Radio, Mail, ArrowLeft,
 } from "lucide-react";
 import { ABTest, ConversionEvent, FunnelStage, Stats } from "@/components/demo/ppc/types";
 import { AnalyticsPrefillData } from "@/components/demo/ppc/UnifiedAnalyticsDashboard";
@@ -210,7 +210,6 @@ export default function MarketingDashboard() {
           <div className="flex gap-1 overflow-x-auto pb-1">
             {[
               { id: "analytics", label: "All Analytics", icon: BarChart3 },
-              { id: "ads", label: "Google Ads", icon: Target },
               { id: "landing", label: "Landing Pages", icon: Layout },
               { id: "abtest", label: "A/B Tests", icon: FlaskConical },
             ].map((tab) => (
@@ -316,37 +315,7 @@ export default function MarketingDashboard() {
               <UnifiedAnalyticsDashboard onCreateLandingPage={(prefillData) => { setLandingPagePrefill(prefillData); setActiveTab("landing"); }} liveMode={liveMode} />
             )}
 
-            {activeTab === "ads" && (
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-semibold text-foreground">Active Campaigns</h3>
-                  <Button size="sm" className="gap-2"><Sparkles className="w-4 h-4" />Generate New Ad</Button>
-                </div>
-                <div className="space-y-3">
-                  {ads.map((ad) => (
-                    <div key={ad.id} className={`p-4 rounded-xl border border-border bg-card ${liveMode ? "transition-all duration-500" : ""}`}>
-                      <div className="flex items-start justify-between mb-3">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <h4 className="font-semibold text-foreground">{ad.headline}</h4>
-                            <Badge variant={ad.status === "active" ? "default" : "secondary"} className="text-[10px]">{ad.status}</Badge>
-                          </div>
-                          <p className="text-sm text-muted-foreground">{ad.description}</p>
-                        </div>
-                        <Button variant="ghost" size="sm">{ad.status === "active" ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}</Button>
-                      </div>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 pt-3 border-t border-border">
-                        <div><div className="text-lg font-bold text-foreground">{ad.clicks.toLocaleString()}</div><div className="text-[10px] text-muted-foreground uppercase">Clicks</div></div>
-                        <div><div className="text-lg font-bold text-foreground">{ad.impressions.toLocaleString()}</div><div className="text-[10px] text-muted-foreground uppercase">Impressions</div></div>
-                        <div><div className="text-lg font-bold text-primary">{((ad.clicks / ad.impressions) * 100).toFixed(2)}%</div><div className="text-[10px] text-muted-foreground uppercase">CTR</div></div>
-                        <div><div className="text-lg font-bold text-foreground">${ad.spend.toFixed(2)}</div><div className="text-[10px] text-muted-foreground uppercase">Spend</div></div>
-                        <div><div className="text-lg font-bold text-foreground">{ad.conversions}</div><div className="text-[10px] text-muted-foreground uppercase">Conversions</div></div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+
 
             {activeTab === "landing" && (
               <AILandingPageGenerator isGenerating={isGenerating} onGenerate={handleGenerateContent} prefillData={landingPagePrefill} autoOpenFullScreen={autoOpenFullScreen} />
