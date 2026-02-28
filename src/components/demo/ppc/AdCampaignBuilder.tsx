@@ -171,8 +171,8 @@ export function AdCampaignBuilder({ selections, onBack, onMatchLanding }: AdCamp
       <Card className="border-border">
         <CardContent className="p-4 space-y-3">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-foreground">Select Platforms</h3>
-            <Badge variant="outline" className="text-[10px]">{selectedPlatforms.length} selected</Badge>
+            <h3 className="text-sm font-semibold text-foreground">Select Ad Platforms</h3>
+            <Badge variant="outline" className="text-[10px]">{selectedPlatforms.length} of {PLATFORMS.length} selected</Badge>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
             {PLATFORMS.map(p => (

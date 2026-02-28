@@ -51,9 +51,9 @@ export function GeneratorPickerCard({ selections, onOpenWebsiteBuilder, onOpenAd
                 <Target className="w-6 h-6 text-purple-500" />
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-foreground">Ad Campaign Builder</h3>
+                <h3 className="font-semibold text-foreground">Ads Builder</h3>
                 <p className="text-xs text-muted-foreground mt-1">
-                  Generate copy for Meta, Google, TikTok, LinkedIn & more · Match landing page style
+                  Generate ads for Meta, Google, TikTok, LinkedIn, Pinterest & more · Match landing page style
                 </p>
               </div>
               <Button size="sm" className="gap-1.5 shrink-0 group-hover:gap-2.5 transition-all">

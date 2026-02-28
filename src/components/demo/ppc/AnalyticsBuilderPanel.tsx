@@ -651,7 +651,7 @@ export function AnalyticsBuilderPanel({ mode, onBuild, onCancel }: AnalyticsBuil
             {([
               { type: 'landing' as OutputType, label: 'Landing Page', desc: 'Conversion-focused single page', icon: Layout },
               { type: 'website' as OutputType, label: 'Website', desc: 'Multi-page site with nav', icon: Globe },
-              { type: 'ad' as OutputType, label: 'Ad Campaign', desc: 'Headlines + descriptions', icon: Target },
+              { type: 'ad' as OutputType, label: 'Ads', desc: 'Facebook, Google, TikTok & more', icon: Target },
             ]).map(opt => (
               <button
                 key={opt.type}
@@ -704,7 +704,7 @@ export function AnalyticsBuilderPanel({ mode, onBuild, onCancel }: AnalyticsBuil
               style={{ background: "linear-gradient(135deg, hsl(var(--primary)) 0%, #A855F7 50%, #EC4899 100%)" }}
             >
               <Sparkles className="w-4 h-4" />
-              Generate {selectedOutputType === 'landing' ? 'Landing Page' : selectedOutputType === 'website' ? 'Website' : 'Ad Campaign'}
+              Generate {selectedOutputType === 'landing' ? 'Landing Page' : selectedOutputType === 'website' ? 'Website' : 'Ads'}
               <ArrowRight className="w-4 h-4" />
             </Button>
           </div>

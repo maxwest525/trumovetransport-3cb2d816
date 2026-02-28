@@ -191,7 +191,7 @@ export default function MarketingDashboard() {
               </Button>
             )}
             <h1 className="text-xl font-bold text-foreground">
-              {viewMode === 'hub' ? 'AI Marketing Suite' : viewMode === 'trudy-chat' ? 'Ask Trudy' : viewMode === 'quickcreate' ? 'Quick Create' : viewMode === 'manual-build' ? 'Build & Brand' : viewMode === 'auto-build' ? 'AI Auto-Build' : viewMode === 'generator-picker' ? 'Choose Generator' : viewMode === 'website-builder' ? 'Website Preview Builder' : viewMode === 'ad-builder' ? 'Ad Campaign Builder' : 'Marketing Tools'}
+              {viewMode === 'hub' ? 'AI Marketing Suite' : viewMode === 'trudy-chat' ? 'Ask Trudy' : viewMode === 'quickcreate' ? 'Quick Create' : viewMode === 'manual-build' ? 'Build & Brand' : viewMode === 'auto-build' ? 'AI Auto-Build' : viewMode === 'generator-picker' ? 'Choose Generator' : viewMode === 'website-builder' ? 'Website Preview Builder' : viewMode === 'ad-builder' ? 'Ads Builder' : 'Marketing Tools'}
             </h1>
           </div>
           <button
