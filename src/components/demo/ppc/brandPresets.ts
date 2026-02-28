@@ -229,4 +229,80 @@ export const PRESET_STYLES: { id: string; name: string; desc: string; branding: 
       },
     },
   },
+  {
+    id: "tesla",
+    name: "Tesla",
+    desc: "Sleek dark, red accents",
+    branding: {
+      colorScheme: "dark",
+      colors: { primary: "#E82127", secondary: "#171A20", accent: "#F23B3B", background: "#0B0C10", textPrimary: "#F4F4F4", textSecondary: "#8E8E8E" },
+      typography: {
+        fontFamilies: { primary: "'Gotham', 'Helvetica Neue', sans-serif", heading: "'Gotham', 'Helvetica Neue', sans-serif" },
+        fontSizes: { h1: "56px", h2: "40px", h3: "24px", body: "16px" },
+        fontWeights: { regular: 400, medium: 500, bold: 600 },
+      },
+      spacing: { baseUnit: 8, borderRadius: "4px" },
+      components: {
+        buttonPrimary: { background: "#E82127", textColor: "#FFFFFF", borderRadius: "4px" },
+        buttonSecondary: { background: "transparent", textColor: "#F4F4F4", borderRadius: "4px" },
+      },
+    },
+  },
+  {
+    id: "nike",
+    name: "Nike",
+    desc: "High-contrast black & white, bold type",
+    branding: {
+      colorScheme: "light",
+      colors: { primary: "#111111", secondary: "#FFFFFF", accent: "#FA5400", background: "#FFFFFF", textPrimary: "#111111", textSecondary: "#707072" },
+      typography: {
+        fontFamilies: { primary: "'Helvetica Neue', Arial, sans-serif", heading: "'Helvetica Neue', Arial, sans-serif" },
+        fontSizes: { h1: "80px", h2: "48px", h3: "28px", body: "16px" },
+        fontWeights: { regular: 400, medium: 500, bold: 800 },
+      },
+      spacing: { baseUnit: 8, borderRadius: "0px" },
+      components: {
+        buttonPrimary: { background: "#111111", textColor: "#FFFFFF", borderRadius: "30px" },
+        buttonSecondary: { background: "transparent", textColor: "#111111", borderRadius: "30px" },
+      },
+    },
+  },
+  {
+    id: "amazon",
+    name: "Amazon",
+    desc: "White, dark navy + orange CTA",
+    branding: {
+      colorScheme: "light",
+      colors: { primary: "#FF9900", secondary: "#131921", accent: "#FEBD69", background: "#FFFFFF", textPrimary: "#0F1111", textSecondary: "#565959" },
+      typography: {
+        fontFamilies: { primary: "'Amazon Ember', Arial, sans-serif", heading: "'Amazon Ember', Arial, sans-serif" },
+        fontSizes: { h1: "56px", h2: "36px", h3: "22px", body: "15px" },
+        fontWeights: { regular: 400, medium: 500, bold: 700 },
+      },
+      spacing: { baseUnit: 8, borderRadius: "8px" },
+      components: {
+        buttonPrimary: { background: "#FFD814", textColor: "#0F1111", borderRadius: "20px" },
+        buttonSecondary: { background: "#FFFFFF", textColor: "#0F1111", borderRadius: "20px" },
+      },
+    },
+  },
+  {
+    id: "netflix",
+    name: "Netflix",
+    desc: "Cinematic dark, bold red",
+    branding: {
+      colorScheme: "dark",
+      colors: { primary: "#E50914", secondary: "#141414", accent: "#B81D24", background: "#141414", textPrimary: "#FFFFFF", textSecondary: "#808080" },
+      typography: {
+        fontFamilies: { primary: "'Netflix Sans', 'Helvetica Neue', sans-serif", heading: "'Netflix Sans', 'Helvetica Neue', sans-serif" },
+        fontSizes: { h1: "72px", h2: "48px", h3: "28px", body: "16px" },
+        fontWeights: { regular: 400, medium: 500, bold: 700 },
+      },
+      spacing: { baseUnit: 8, borderRadius: "4px" },
+      components: {
+        buttonPrimary: { background: "#E50914", textColor: "#FFFFFF", borderRadius: "4px" },
+        buttonSecondary: { background: "rgba(109,109,110,0.7)", textColor: "#FFFFFF", borderRadius: "4px" },
+      },
+    },
+  },
 ];
