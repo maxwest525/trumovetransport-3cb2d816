@@ -1,9 +1,9 @@
 import { useState, useEffect, type ReactNode } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
-  Home, Sun, Moon, Bell, LayoutDashboard, Users, CalendarCheck,
-  Target, Headphones, AlertTriangle, CheckCircle, BarChart3,
-  RotateCcw, Gauge, Globe, Sparkles, DollarSign,
+  Home, Sun, Moon, Bell, LayoutDashboard,
+  Target, AlertTriangle, CheckCircle, BarChart3,
+  RotateCcw, Gauge, Globe,
 } from "lucide-react";
 import logoImg from "@/assets/logo.png";
 import { toast } from "sonner";
