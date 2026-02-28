@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ChevronRight, Home, LogOut, User, Settings, Bell, Sun, Moon, Monitor, Globe } from "lucide-react";
+import logoImg from "@/assets/logo.png";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -60,6 +61,8 @@ export default function AgentTopBar({ crumbs, onLogout }: AgentTopBarProps) {
             <Globe className="w-3.5 h-3.5" />
             <span>Website</span>
           </Link>
+          <div className="w-px h-4 bg-border shrink-0" />
+          <img src={logoImg} alt="TruMove" className="h-5 shrink-0" />
           <div className="w-px h-4 bg-border shrink-0" />
           <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-muted-foreground min-w-0">
             <Link to="/agent-login" className="flex items-center gap-1 hover:text-foreground transition-colors shrink-0">
