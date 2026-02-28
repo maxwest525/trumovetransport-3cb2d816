@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Shield, Truck, Scan, Route, Sparkles, Star, CheckCircle, Phone, Zap, Globe, BarChart3, Lock, Play } from "lucide-react";
 import sampleRoomLiving from "@/assets/sample-room-living.jpg";
+import HeroParticlesTeal from "@/components/HeroParticlesTeal";
 import { Button } from "@/components/ui/button";
 import logoImg from "@/assets/logo.png";
 
@@ -141,6 +142,8 @@ export default function HomepageV2() {
           <div className="absolute bottom-[-30%] right-[-10%] w-[50%] h-[70%] rounded-full bg-[hsl(200,80%,35%)] opacity-[0.06] blur-[100px]" />
           <div className="absolute top-[30%] right-[20%] w-[30%] h-[40%] rounded-full bg-[hsl(160,60%,25%)] opacity-[0.05] blur-[80px]" />
         </div>
+        {/* Particle network */}
+        <HeroParticlesTeal className="z-0" />
 
         <div className="relative max-w-7xl mx-auto px-6">
           <div className="max-w-3xl">
