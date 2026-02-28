@@ -101,12 +101,17 @@ export default {
           },
         },
         marquee: {
-          "0%": {
-            transform: "translateX(0%)",
-          },
-          "100%": {
-            transform: "translateX(-50%)",
-          },
+          "0%": { transform: "translateX(0%)" },
+          "100%": { transform: "translateX(-50%)" },
+        },
+        scanLine: {
+          "0%": { top: "0%" },
+          "50%": { top: "100%" },
+          "100%": { top: "0%" },
+        },
+        fadeIn: {
+          "0%": { opacity: "0", transform: "scale(0.95)" },
+          "100%": { opacity: "1", transform: "scale(1)" },
         },
       },
       animation: {

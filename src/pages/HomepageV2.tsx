@@ -1,8 +1,105 @@
-import { useEffect } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Shield, Truck, Scan, Route, Sparkles, Star, CheckCircle, Phone, Zap, Globe, BarChart3, Lock } from "lucide-react";
+import { ArrowRight, Shield, Truck, Scan, Route, Sparkles, Star, CheckCircle, Phone, Zap, Globe, BarChart3, Lock, Play } from "lucide-react";
+import sampleRoomLiving from "@/assets/sample-room-living.jpg";
 import { Button } from "@/components/ui/button";
 import logoImg from "@/assets/logo.png";
+
+const DEMO_ITEMS = [
+  { name: "3-Seat Sofa", weight: 350, cuft: 45, conf: 98, top: "42%", left: "1%", w: "34%", h: "50%" },
+  { name: "Coffee Table", weight: 45, cuft: 8, conf: 96, top: "64%", left: "32%", w: "22%", h: "16%" },
+  { name: "TV Console", weight: 80, cuft: 12, conf: 97, top: "32%", left: "28%", w: "36%", h: "26%" },
+  { name: "Armchair", weight: 85, cuft: 18, conf: 94, top: "42%", left: "70%", w: "24%", h: "42%" },
+  { name: "Floor Lamp", weight: 15, cuft: 4, conf: 91, top: "16%", left: "60%", w: "7%", h: "44%" },
+];
+
+function ScannerDemoCard() {
+  const [running, setRunning] = useState(false);
+  const [count, setCount] = useState(0);
+
+  const startDemo = useCallback(() => {
+    if (running) return;
+    setRunning(true);
+    setCount(0);
+    let i = 0;
+    const iv = setInterval(() => {
+      i++;
+      setCount(i);
+      if (i >= DEMO_ITEMS.length) {
+        clearInterval(iv);
+        setTimeout(() => { setRunning(false); setCount(0); }, 3000);
+      }
+    }, 800);
+  }, [running]);
+
+  const totalWeight = DEMO_ITEMS.slice(0, count).reduce((s, x) => s + x.weight, 0);
+
+  return (
+    <div className="md:col-span-2 group relative rounded-2xl border border-white/[0.06] bg-gradient-to-br from-white/[0.04] to-white/[0.01] p-8 overflow-hidden hover:border-[hsl(175,70%,40%)/0.3] transition-all duration-500">
+      <div className="absolute top-0 right-0 w-[50%] h-[60%] bg-[hsl(175,70%,30%)] opacity-[0.05] blur-[80px] group-hover:opacity-[0.1] transition-opacity" />
+      <div className="relative flex items-start justify-between gap-4 mb-4">
+        <div>
+          <div className="w-10 h-10 rounded-xl bg-[hsl(175,70%,40%)/0.1] border border-[hsl(175,70%,40%)/0.2] flex items-center justify-center mb-4">
+            <Scan className="w-5 h-5 text-[hsl(175,70%,50%)]" />
+          </div>
+          <h3 className="text-xl font-semibold mb-1">AI Room Scanner</h3>
+          <p className="text-white/40 text-sm max-w-sm">Point your camera at any room — AI identifies furniture, calculates weight and volume in seconds.</p>
+        </div>
+        <button
+          onClick={startDemo}
+          disabled={running}
+          className="shrink-0 flex items-center gap-2 px-4 py-2 rounded-lg bg-[hsl(175,70%,40%)/0.15] border border-[hsl(175,70%,40%)/0.3] text-[hsl(175,70%,55%)] text-xs font-medium hover:bg-[hsl(175,70%,40%)/0.25] transition-colors disabled:opacity-50"
+        >
+          {running ? <><Sparkles className="w-3.5 h-3.5 animate-spin" /> Scanning...</> : <><Play className="w-3.5 h-3.5" /> Run Demo</>}
+        </button>
+      </div>
+
+      {/* Interactive preview */}
+      <div className="relative rounded-xl border border-white/[0.06] bg-[hsl(200,15%,6%)] overflow-hidden">
+        <img src={sampleRoomLiving} alt="Room scan" className="w-full h-56 object-cover" />
+
+        {/* Scan line */}
+        {running && (
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <div className="absolute left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-[hsl(175,70%,50%)] to-transparent opacity-60 animate-[scanLine_2s_ease-in-out_infinite]" />
+          </div>
+        )}
+
+        {/* Detection boxes */}
+        {DEMO_ITEMS.slice(0, count).map((item, i) => (
+          <div
+            key={item.name}
+            className="absolute border border-[hsl(175,70%,50%)/0.6] rounded-sm animate-[fadeIn_0.3s_ease-out]"
+            style={{ top: item.top, left: item.left, width: item.w, height: item.h }}
+          >
+            <span className="absolute -top-5 left-0 text-[10px] px-1.5 py-0.5 rounded bg-[hsl(175,70%,40%)/0.9] text-white font-medium whitespace-nowrap">
+              {item.name} · {item.conf}%
+            </span>
+            {/* Corners */}
+            <span className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-[hsl(175,70%,50%)]" />
+            <span className="absolute top-0 right-0 w-2 h-2 border-t-2 border-r-2 border-[hsl(175,70%,50%)]" />
+            <span className="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-[hsl(175,70%,50%)]" />
+            <span className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-[hsl(175,70%,50%)]" />
+          </div>
+        ))}
+
+        {/* Live inventory strip at bottom */}
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent px-4 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-3 text-xs text-white/60">
+            <span className="text-[hsl(175,70%,55%)] font-semibold">{count} items</span>
+            <span>·</span>
+            <span>{totalWeight} lbs</span>
+          </div>
+          {count > 0 && (
+            <Link to="/scan-room" className="text-[10px] text-[hsl(175,70%,55%)] hover:underline">
+              Try Full Scanner →
+            </Link>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function HomepageV2() {
   useEffect(() => { window.scrollTo(0, 0); }, []);
@@ -93,27 +190,7 @@ export default function HomepageV2() {
 
           <div className="grid md:grid-cols-3 gap-4">
             {/* Large card */}
-            <div className="md:col-span-2 group relative rounded-2xl border border-white/[0.06] bg-gradient-to-br from-white/[0.04] to-white/[0.01] p-8 overflow-hidden hover:border-[hsl(175,70%,40%)/0.3] transition-all duration-500">
-              <div className="absolute top-0 right-0 w-[50%] h-[60%] bg-[hsl(175,70%,30%)] opacity-[0.05] blur-[80px] group-hover:opacity-[0.1] transition-opacity" />
-              <div className="relative">
-                <div className="w-10 h-10 rounded-xl bg-[hsl(175,70%,40%)/0.1] border border-[hsl(175,70%,40%)/0.2] flex items-center justify-center mb-5">
-                  <Scan className="w-5 h-5 text-[hsl(175,70%,50%)]" />
-                </div>
-                <h3 className="text-xl font-semibold mb-2">AI Room Scanner</h3>
-                <p className="text-white/40 text-sm leading-relaxed max-w-md">
-                  Point your camera at any room. Our AI identifies every piece of furniture, calculates cubic footage, and estimates weight — in seconds.
-                </p>
-              </div>
-              {/* Mock preview */}
-              <div className="mt-6 rounded-xl border border-white/[0.06] bg-[hsl(200,15%,6%)] p-4 h-48 flex items-center justify-center">
-                <div className="flex flex-col items-center gap-3 text-white/20">
-                  <div className="w-16 h-16 rounded-xl border border-dashed border-[hsl(175,70%,40%)/0.3] flex items-center justify-center">
-                    <Scan className="w-7 h-7 text-[hsl(175,70%,40%)/0.4]" />
-                  </div>
-                  <span className="text-xs">Live detection preview</span>
-                </div>
-              </div>
-            </div>
+            <ScannerDemoCard />
 
             {/* Tall right card */}
             <div className="group relative rounded-2xl border border-white/[0.06] bg-gradient-to-br from-white/[0.04] to-white/[0.01] p-8 overflow-hidden hover:border-[hsl(175,70%,40%)/0.3] transition-all duration-500">
