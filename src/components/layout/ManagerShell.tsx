@@ -21,8 +21,6 @@ const NAV_ITEMS = [
 
 const ADVANCED_ITEMS: { label: string; icon: typeof Target; badge?: number; href?: string }[] = [
   { label: "Estimates Oversight", icon: Target },
-  { label: "Coaching & Monitoring", icon: Headphones, href: "/manager/coaching" },
-  { label: "Dialer Monitor", icon: BarChart3, href: "/manager/dialer" },
   { label: "Alerts", icon: AlertTriangle, badge: 3 },
   { label: "Approvals", icon: CheckCircle, badge: 2 },
   { label: "Reports", icon: BarChart3 },
