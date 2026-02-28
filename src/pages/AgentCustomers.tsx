@@ -68,7 +68,7 @@ export default function AgentCustomers() {
   const CustomerRow = ({ c }: { c: Customer }) => (
     <Card
       className="border border-border hover:border-foreground/20 transition-all cursor-pointer group"
-      onClick={() => navigate(`/agent/esign?leadId=${c.id}&name=${encodeURIComponent(c.first_name + " " + c.last_name)}&email=${encodeURIComponent(c.email || "")}&phone=${encodeURIComponent(c.phone || "")}`)}
+      onClick={() => navigate(`/agent/customers/${c.id}`)}
     >
       <CardContent className="p-4">
         <div className="flex items-center gap-4">
@@ -143,7 +143,7 @@ export default function AgentCustomers() {
                 </DropdownMenuItem>
               )}
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate(`/agent/customers/${c.id}`)}>
                 <Eye className="w-3.5 h-3.5 mr-2" /> View Details
               </DropdownMenuItem>
             </DropdownMenuContent>

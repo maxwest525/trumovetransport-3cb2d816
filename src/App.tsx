@@ -50,6 +50,7 @@ import AgentDialerPage from "./pages/AgentDialerPage";
 import AgentESign from "./pages/AgentESign";
 import AgentPayment from "./pages/AgentPayment";
 import AgentCustomers from "./pages/AgentCustomers";
+import AgentCustomerDetail from "./pages/AgentCustomerDetail";
 import AgentMessaging from "./pages/AgentMessaging";
 import AgentTeamChat from "./pages/AgentTeamChat";
 import CustomerPortal from "./pages/CustomerPortal";
@@ -111,6 +112,7 @@ const App = () => (
             <Route path="/agent/esign" element={<AgentESign />} />
             <Route path="/agent/payment" element={<AgentPayment />} />
             <Route path="/agent/customers" element={<AgentCustomers />} />
+            <Route path="/agent/customers/:id" element={<AgentCustomerDetail />} />
             <Route path="/agent/messages" element={<AgentMessaging />} />
             <Route path="/agent/team-chat" element={<AgentTeamChat />} />
             
