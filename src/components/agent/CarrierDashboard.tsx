@@ -3,13 +3,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Truck, Calendar, MapPin, Phone, Mail, Clock, AlertCircle, CheckCircle2, Package, Sparkles, ChevronRight } from "lucide-react";
+import { Truck, Calendar, MapPin, Phone, Mail, Clock, AlertCircle, CheckCircle2, Package, Sparkles, ChevronRight, FileText, Send, Eye } from "lucide-react";
 import { toast } from "sonner";
+import { BOLSendTrack } from "@/components/agent/BOLSendTrack";
 
 interface Job {
   id: string;
   customer: string;
   phone: string;
+  email?: string;
   from: string;
   to: string;
   date: string;
@@ -102,6 +104,7 @@ const DEMO_JOBS: Job[] = [
 export function CarrierDashboard({ onCallCarrier }: { onCallCarrier?: (number?: string) => void }) {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [activeTab, setActiveTab] = useState("today");
+  const [bolJobId, setBolJobId] = useState<string | null>(null);
 
   const loadDemo = () => {
     setJobs(DEMO_JOBS);
@@ -284,8 +287,28 @@ export function CarrierDashboard({ onCallCarrier }: { onCallCarrier?: (number?: 
                           <Mail className="w-4 h-4" />
                           Email
                         </Button>
+                        <Button
+                          size="sm"
+                          variant={bolJobId === job.id ? "default" : "outline"}
+                          className="gap-1"
+                          onClick={() => setBolJobId(bolJobId === job.id ? null : job.id)}
+                        >
+                          <FileText className="w-4 h-4" />
+                          BOL
+                        </Button>
                       </div>
                     </div>
+
+                    {bolJobId === job.id && (
+                      <div className="mt-4 pt-4 border-t border-border">
+                        <BOLSendTrack
+                          prefillName={job.customer}
+                          prefillEmail={job.email || ""}
+                          prefillPhone={job.phone}
+                          jobId={job.id}
+                        />
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               ))}
