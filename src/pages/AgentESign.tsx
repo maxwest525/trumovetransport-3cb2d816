@@ -9,9 +9,9 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  FileText, Send, Mail, MessageSquare, Monitor, CheckCircle2,
-  Clock, Eye, Loader2, Users, AlertCircle,
-  RefreshCw, ExternalLink, Sparkles, CreditCard, ArrowRight
+  FileText, Send, Mail, MessageSquare, CheckCircle2,
+  Clock, Eye, Loader2, Users,
+  ExternalLink, Sparkles, CreditCard, ArrowRight
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -92,8 +92,6 @@ export default function AgentESign() {
   const [documents, setDocuments] = useState<DocumentRecord[]>(DEMO_DOCUMENTS);
   const [showClientSearch, setShowClientSearch] = useState(false);
   const [isSending, setIsSending] = useState(false);
-  const [isScreensharing, setIsScreensharing] = useState(false);
-  const [selectedDoc, setSelectedDoc] = useState<DocumentRecord | null>(null);
 
   const [newDoc, setNewDoc] = useState({
     type: "estimate" as DocumentType,
@@ -176,16 +174,9 @@ export default function AgentESign() {
     }));
   };
 
-  const startScreenshare = (doc: DocumentRecord) => {
-    setIsScreensharing(true);
-    setSelectedDoc(doc);
-    toast.success("Screen share session started", { description: `Assisting ${doc.customerName}` });
-  };
-
-  const endScreenshare = () => {
-    setIsScreensharing(false);
-    setSelectedDoc(null);
-    toast.info("Screen share session ended");
+  const viewDocument = (doc: DocumentRecord) => {
+    const signingUrl = `${window.location.origin}/esign/${doc.refNumber}`;
+    window.open(signingUrl, "_blank");
   };
 
   const formatTime = (date?: Date) => {
@@ -235,28 +226,6 @@ export default function AgentESign() {
           </div>
         </div>
 
-        {/* Screenshare Banner */}
-        {isScreensharing && selectedDoc && (
-          <Card className="border-primary bg-primary/5">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-                    <Monitor className="w-5 h-5 text-primary" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-sm">Screen Share Active</p>
-                    <p className="text-xs text-muted-foreground">Assisting {selectedDoc.customerName}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Badge className="bg-destructive text-destructive-foreground animate-pulse">LIVE</Badge>
-                  <Button size="sm" variant="destructive" onClick={endScreenshare}>End Session</Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
 
         <Tabs defaultValue="send" className="space-y-4">
           <TabsList className="grid w-full grid-cols-3">
@@ -342,14 +311,9 @@ export default function AgentESign() {
                             </Badge>
                           </div>
                           <div className="flex flex-col gap-2">
-                            <Button size="sm" variant="outline" className="gap-1.5 text-xs h-8" onClick={() => handleResend(doc)}>
-                              <RefreshCw className="w-3 h-3" />Resend
+                            <Button size="sm" variant="outline" className="gap-1.5 text-xs h-8 border-primary text-primary hover:bg-primary hover:text-primary-foreground" onClick={() => viewDocument(doc)}>
+                              <Eye className="w-3 h-3" />View
                             </Button>
-                            {(doc.status === "opened" || doc.status === "signing") && (
-                              <Button size="sm" variant="outline" className="gap-1.5 text-xs h-8 border-primary text-primary hover:bg-primary hover:text-primary-foreground" onClick={() => startScreenshare(doc)} disabled={isScreensharing}>
-                                <Monitor className="w-3 h-3" />Assist
-                              </Button>
-                            )}
                             <Button size="sm" variant="ghost" className="gap-1.5 text-xs h-8" onClick={() => simulateProgress(doc.id)}>
                               <Sparkles className="w-3 h-3" />Simulate
                             </Button>
@@ -410,7 +374,7 @@ export default function AgentESign() {
                           <Button size="sm" className="gap-1.5 text-xs h-8" onClick={() => goToPayment(doc)}>
                             <CreditCard className="w-3 h-3" />Collect Payment
                           </Button>
-                          <Button size="sm" variant="outline" className="gap-1.5 text-xs h-8"><Eye className="w-3 h-3" />View</Button>
+                          <Button size="sm" variant="outline" className="gap-1.5 text-xs h-8" onClick={() => viewDocument(doc)}><Eye className="w-3 h-3" />View</Button>
                           <Button size="sm" variant="outline" className="gap-1.5 text-xs h-8"><ExternalLink className="w-3 h-3" />Download</Button>
                         </div>
                       </div>

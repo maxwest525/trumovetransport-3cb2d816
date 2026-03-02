@@ -37,7 +37,7 @@ export default function AgentNewCustomer() {
     toast.success("Demo data loaded");
   };
 
-  const handleCreate = async () => {
+  const handleCreate = async (destination: "esign" | "customers") => {
     if (!form.firstName || !form.lastName) {
       toast.error("First and last name are required");
       return;
@@ -64,7 +64,12 @@ export default function AgentNewCustomer() {
       if (dealError) throw dealError;
 
       toast.success(`Customer ${form.firstName} ${form.lastName} created`);
-      navigate(`/agent/esign?leadId=${lead.id}&name=${encodeURIComponent(form.firstName + " " + form.lastName)}&email=${encodeURIComponent(form.email)}&phone=${encodeURIComponent(form.phone)}`);
+
+      if (destination === "esign") {
+        navigate(`/agent/esign?leadId=${lead.id}&name=${encodeURIComponent(form.firstName + " " + form.lastName)}&email=${encodeURIComponent(form.email)}&phone=${encodeURIComponent(form.phone)}`);
+      } else {
+        navigate("/agent/customers");
+      }
     } catch (err: any) {
       console.error("Error creating customer:", err);
       toast.error("Failed to create customer", { description: err.message });
@@ -171,10 +176,16 @@ export default function AgentNewCustomer() {
               <Textarea value={form.notes} onChange={e => updateField("notes", e.target.value)} placeholder="Special items, access notes, etc..." rows={2} />
             </div>
 
-            <Button className="w-full gap-2 h-11" onClick={handleCreate} disabled={isSaving || !isValid}>
-              {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <ArrowRight className="w-4 h-4" />}
-              {isSaving ? "Creating..." : "Save & Continue to E-Sign"}
-            </Button>
+            <div className="flex gap-3">
+              <Button variant="outline" className="flex-1 gap-2 h-11" onClick={() => handleCreate("customers")} disabled={isSaving || !isValid}>
+                {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <UserPlus className="w-4 h-4" />}
+                {isSaving ? "Saving..." : "Save Lead"}
+              </Button>
+              <Button className="flex-1 gap-2 h-11" onClick={() => handleCreate("esign")} disabled={isSaving || !isValid}>
+                {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <ArrowRight className="w-4 h-4" />}
+                {isSaving ? "Creating..." : "Save & Continue to E-Sign"}
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>
