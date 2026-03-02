@@ -17,7 +17,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { ClientSearchModal, type ClientData } from "@/components/agent/ClientSearchModal";
 
-type DocumentType = "estimate" | "ccach" | "bol";
+type DocumentType = "estimate" | "ccach";
 type DeliveryMethod = "email" | "sms";
 type SigningStatus = "not_sent" | "sent" | "delivered" | "opened" | "signing" | "completed";
 
@@ -38,7 +38,6 @@ interface DocumentRecord {
 const DOCUMENT_LABELS: Record<DocumentType, string> = {
   estimate: "Estimate Authorization",
   ccach: "CC/ACH Authorization",
-  bol: "Bill of Lading",
 };
 
 const STATUS_CONFIG: Record<SigningStatus, { label: string; color: string; icon: typeof Clock }> = {
@@ -72,13 +71,6 @@ export default function AgentESign() {
       customerName: "James Morrison", customerEmail: "j.morrison@outlook.com",
       customerPhone: "(212) 555-3344", status: "sent",
       sentAt: new Date(Date.now() - 7200000), deliveryMethod: "email",
-    },
-    {
-      id: "demo-3", type: "bol", refNumber: "BOL-2026-0018",
-      customerName: "Ana Rodriguez", customerEmail: "ana.r@yahoo.com",
-      customerPhone: "(305) 555-9012", status: "completed",
-      sentAt: new Date(Date.now() - 86400000), openedAt: new Date(Date.now() - 82800000),
-      completedAt: new Date(Date.now() - 72000000), deliveryMethod: "sms",
     },
     {
       id: "demo-4", type: "estimate", refNumber: "EST-2026-0035",
@@ -116,7 +108,7 @@ export default function AgentESign() {
     if (newDoc.deliveryMethod === "sms" && !newDoc.customerPhone) { toast.error("Please enter customer phone"); return; }
 
     setIsSending(true);
-    const refPrefix = newDoc.type === "estimate" ? "EST" : newDoc.type === "ccach" ? "CC" : "BOL";
+    const refPrefix = newDoc.type === "estimate" ? "EST" : "CC";
     const refNumber = `${refPrefix}-2026-${String(Math.floor(Math.random() * 9999)).padStart(4, "0")}`;
     const signingUrl = `${window.location.origin}/esign/${refNumber}`;
 
@@ -241,8 +233,8 @@ export default function AgentESign() {
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <Label>Document Type</Label>
-                  <div className="grid grid-cols-3 gap-2">
-                    {(["estimate", "ccach", "bol"] as DocumentType[]).map(type => (
+                  <div className="grid grid-cols-2 gap-2">
+                    {(["estimate", "ccach"] as DocumentType[]).map(type => (
                       <Button key={type} variant={newDoc.type === type ? "default" : "outline"} size="sm" className="gap-1.5 text-xs" onClick={() => setNewDoc(prev => ({ ...prev, type }))}>
                         <FileText className="w-3.5 h-3.5" />
                         {DOCUMENT_LABELS[type]}

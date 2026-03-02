@@ -1,7 +1,7 @@
-import { FileText, CreditCard, Receipt, Check, CircleCheck } from "lucide-react";
+import { FileText, CreditCard, Check, CircleCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export type DocumentType = "estimate" | "ccach" | "bol";
+export type DocumentType = "estimate" | "ccach";
 
 interface DocumentTabsProps {
   activeDocument: DocumentType;
@@ -12,7 +12,6 @@ interface DocumentTabsProps {
 const documents: { type: DocumentType; label: string; icon: typeof FileText }[] = [
   { type: "estimate", label: "Estimate Authorization", icon: FileText },
   { type: "ccach", label: "CC/ACH Authorization", icon: CreditCard },
-  { type: "bol", label: "Bill of Lading", icon: Receipt },
 ];
 
 export function DocumentTabs({ activeDocument, onDocumentChange, completedDocuments }: DocumentTabsProps) {

@@ -4,7 +4,6 @@ import { useToast } from "@/hooks/use-toast";
 import { ESignSidebar } from "@/components/esign/ESignSidebar";
 import { EstimateAuthDocument } from "@/components/esign/EstimateAuthDocument";
 import { CCACHDocumentWrapper } from "@/components/esign/CCACHDocumentWrapper";
-import { BOLDocumentWrapper } from "@/components/esign/BOLDocumentWrapper";
 import type { DocumentType } from "@/components/esign/DocumentTabs";
 import { toast as sonnerToast } from "sonner";
 
@@ -30,7 +29,6 @@ export default function Auth() {
   const [completedDocuments, setCompletedDocuments] = useState<Record<DocumentType, boolean>>({
     estimate: false,
     ccach: false,
-    bol: false,
   });
 
   // Auto-generate initials from name
@@ -79,24 +77,13 @@ export default function Auth() {
     setCompletedDocuments((prev) => ({ ...prev, ccach: true }));
     toast({
       title: "CC/ACH Authorization Submitted",
-      description: "Your payment authorization has been received.",
-    });
-  };
-
-  const handleBOLSubmit = () => {
-    setCompletedDocuments((prev) => ({ ...prev, bol: true }));
-    toast({
-      title: "Bill of Lading Submitted",
-      description: "All documents have been signed and submitted.",
+      description: "Your payment authorization has been received. All documents are complete.",
     });
   };
 
   const handleContinueToNext = () => {
     if (activeDocument === "estimate") {
       setActiveDocument("ccach");
-      window.scrollTo(0, 0);
-    } else if (activeDocument === "ccach") {
-      setActiveDocument("bol");
       window.scrollTo(0, 0);
     }
   };
@@ -182,16 +169,6 @@ export default function Auth() {
                 onTypedNameChange={setTypedName}
                 isSubmitted={completedDocuments.ccach}
                 onSubmit={handleCCACHSubmit}
-                onContinueToNext={handleContinueToNext}
-              />
-            )}
-
-            {activeDocument === "bol" && (
-              <BOLDocumentWrapper
-                typedName={typedName}
-                onTypedNameChange={setTypedName}
-                isSubmitted={completedDocuments.bol}
-                onSubmit={handleBOLSubmit}
               />
             )}
           </div>

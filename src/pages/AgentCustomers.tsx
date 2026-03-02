@@ -3,7 +3,7 @@ import AgentShell from "@/components/layout/AgentShell";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Users, Mail, Phone, PhoneCall, MapPin, Calendar, ChevronRight, Search,
-  MessageSquare, FileText, CreditCard, Eye, MoreHorizontal
+  MessageSquare, FileText, CreditCard, Eye, MoreHorizontal, CheckCircle2, Clock, AlertCircle
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -28,6 +28,17 @@ interface Customer {
   status: string;
   created_at: string;
 }
+
+// Mock signing status - in production this would come from the DB
+const getSigningStatus = (customerId: string): { estimate: boolean; ccach: boolean; bol: boolean } => {
+  // Deterministic mock based on id character
+  const char = customerId.charCodeAt(0);
+  return {
+    estimate: char % 3 === 0,
+    ccach: char % 5 === 0,
+    bol: char % 7 === 0,
+  };
+};
 
 export default function AgentCustomers() {
   const navigate = useNavigate();
@@ -65,7 +76,11 @@ export default function AgentCustomers() {
   const activeCustomers = filtered.filter(c => c.status !== "lost");
   const lostCustomers = filtered.filter(c => c.status === "lost");
 
-  const CustomerRow = ({ c }: { c: Customer }) => (
+  const CustomerRow = ({ c }: { c: Customer }) => {
+    const signing = getSigningStatus(c.id);
+    const allSigned = signing.estimate && signing.ccach && signing.bol;
+    const noneSigned = !signing.estimate && !signing.ccach && !signing.bol;
+    return (
     <Card
       className="border border-border hover:border-foreground/20 transition-all cursor-pointer group"
       onClick={() => navigate(`/agent/customers/${c.id}`)}
@@ -93,6 +108,33 @@ export default function AgentCustomers() {
                 {c.origin_address || "—"} → {c.destination_address || "—"}
               </p>
             )}
+            {/* Signing Status */}
+            <div className="flex items-center gap-1.5 mt-1.5">
+              {allSigned ? (
+                <Badge className="bg-primary/10 text-primary text-[10px] gap-1">
+                  <CheckCircle2 className="w-3 h-3" />All Signed
+                </Badge>
+              ) : noneSigned ? (
+                <Badge className="bg-muted text-muted-foreground text-[10px] gap-1">
+                  <Clock className="w-3 h-3" />No Docs Signed
+                </Badge>
+              ) : (
+                <>
+                  <Badge className={`text-[10px] gap-0.5 ${signing.estimate ? "bg-primary/10 text-primary" : "bg-amber-500/10 text-amber-600"}`}>
+                    {signing.estimate ? <CheckCircle2 className="w-2.5 h-2.5" /> : <AlertCircle className="w-2.5 h-2.5" />}
+                    Est
+                  </Badge>
+                  <Badge className={`text-[10px] gap-0.5 ${signing.ccach ? "bg-primary/10 text-primary" : "bg-amber-500/10 text-amber-600"}`}>
+                    {signing.ccach ? <CheckCircle2 className="w-2.5 h-2.5" /> : <AlertCircle className="w-2.5 h-2.5" />}
+                    CC/ACH
+                  </Badge>
+                  <Badge className={`text-[10px] gap-0.5 ${signing.bol ? "bg-primary/10 text-primary" : "bg-amber-500/10 text-amber-600"}`}>
+                    {signing.bol ? <CheckCircle2 className="w-2.5 h-2.5" /> : <AlertCircle className="w-2.5 h-2.5" />}
+                    BOL
+                  </Badge>
+                </>
+              )}
+            </div>
           </div>
 
           {/* Quick actions */}
@@ -153,7 +195,8 @@ export default function AgentCustomers() {
         </div>
       </CardContent>
     </Card>
-  );
+    );
+  };
 
   return (
     <AgentShell breadcrumb=" / My Customers">
