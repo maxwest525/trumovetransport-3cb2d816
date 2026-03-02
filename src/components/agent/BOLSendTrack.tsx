@@ -144,7 +144,7 @@ export function BOLSendTrack({ prefillName = "", prefillEmail = "", prefillPhone
   };
 
   const viewDocument = (doc: BOLRecord) => {
-    window.open(`${window.location.origin}/esign/${doc.refNumber}`, "_blank");
+    toast.info(`Viewing BOL ${doc.refNumber}`, { description: "BOL document preview coming soon" });
   };
 
   const formatTime = (date?: Date) => {
