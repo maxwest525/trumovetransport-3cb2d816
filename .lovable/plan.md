@@ -1,40 +1,35 @@
 
 
-# Fix ElevenLabs Edge Function Errors
+# New Lead Save Options + E-Sign "View" Button
 
-## Problem
-Two issues are causing the "Talk to Real Trudy" live mode to fail:
+## Changes
 
-1. **Permission Error (401)**: The ElevenLabs API key lacks the `convai_write` permission. You need to regenerate or update your API key in the ElevenLabs dashboard with conversational AI permissions enabled.
+### 1. AgentNewCustomer.tsx -- Add "Save" option alongside "Continue to E-Sign"
+Currently there's only one button: "Save & Continue to E-Sign". We'll split this into two actions:
+- **"Save Lead"** (outline button) -- saves the lead to the database and navigates back to customers/pipeline
+- **"Save & Continue to E-Sign"** (primary button) -- keeps the current behavior
 
-2. **Response Mismatch**: The edge function calls the `/v1/convai/conversation/token` endpoint and returns `{ token }`, but `AIChatContainer` expects `{ signed_url }` and starts a WebSocket session with `signedUrl`. Since the chat uses `textOnly: true` mode, the signed-url endpoint is the correct one to use.
+Both buttons will share the same `handleCreate` logic but with a different post-save destination.
 
-## Steps
-
-### Step 1: Update the ElevenLabs API Key (User Action Required)
-Go to your ElevenLabs account settings, generate a new API key that includes the `convai_write` permission (or enable it on the existing key), then update the secret in the project.
-
-### Step 2: Fix the Edge Function Endpoint
-Modify `supabase/functions/elevenlabs-conversation-token/index.ts` to:
-- Call `/v1/convai/conversation/get-signed-url` instead of `/v1/convai/conversation/token`
-- Return `{ signed_url }` in the response to match what `AIChatContainer` expects
+### 2. AgentESign.tsx -- Replace "Assist" (screen share) with "View" button
+The current "Assist" button triggers a fake screen share session which isn't practical. We'll:
+- Replace the screen share functionality with a **"View" button** that opens the e-sign document in a new tab (navigates to `/esign/[refNumber]` i.e. the Auth page where the customer signs)
+- This lets the agent see exactly what the customer sees so they can guide them by phone
+- The "View" button will appear on all tracked documents (not just "opened" ones) so the agent can preview at any stage
+- Remove the screen share banner and related state since it's no longer needed
 
 ### Technical Details
 
-The edge function change is minimal -- swap the API endpoint URL and the response field name:
+**AgentNewCustomer.tsx:**
+- Refactor `handleCreate` to accept a `destination` parameter (`"esign"` or `"customers"`)
+- Add a second outline-style "Save Lead" button next to the existing primary button
+- "Save Lead" saves then navigates to `/agent/customers`
+- "Save & Continue to E-Sign" keeps navigating to `/agent/esign?leadId=...`
 
-```text
-// Before:
-GET /v1/convai/conversation/token?agent_id=...
-return { token: data.token }
-
-// After:
-GET /v1/convai/conversation/get-signed-url?agent_id=...
-return { signed_url: data.signed_url }
-```
-
-This aligns the edge function with the client-side code that already does:
-```text
-await conversation.startSession({ signedUrl: data.signed_url })
-```
+**AgentESign.tsx:**
+- Remove `isScreensharing`, `selectedDoc`, `startScreenshare`, `endScreenshare` state and functions
+- Remove the screen share banner card (lines 239-259)
+- Replace the "Assist" button in the Track tab with a "View" button that opens the signing URL in a new tab (`window.open`)
+- Add a "View" button to all tracked documents (not gated behind "opened" status)
+- Keep the existing "View" button in the Completed tab as-is
 
