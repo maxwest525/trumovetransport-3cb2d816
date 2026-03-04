@@ -3,13 +3,31 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
 };
 
+interface InsurancePolicy {
+  type: string;
+  insurerName: string;
+  policyNumber: string;
+  coverageAmount: string;
+  effectiveDate: string;
+  cancellationDate: string;
+  status: string;
+}
+
+interface AuthorityHistoryEntry {
+  type: string;
+  mcNumber: string;
+  status: string;
+  grantDate: string;
+  revokeDate?: string;
+}
+
 interface ScrapedCarrierData {
   mileage?: string;
   mileageYear?: string;
   dunsNumber?: string;
   entityType?: string;
-  mailingAddress?: string;
   stateCarrierId?: string;
+  operatingAuthorityText?: string;
   inspectionDetails?: {
     vehicleInspections: number;
     vehicleOos: number;
@@ -19,6 +37,14 @@ interface ScrapedCarrierData {
     hazmatOos: number;
     totalInspections: number;
     iepInspections: number;
+  };
+  oosRatesWithAverages?: {
+    vehicleOosPercent: number;
+    vehicleNationalAvg: number;
+    driverOosPercent: number;
+    driverNationalAvg: number;
+    hazmatOosPercent: number;
+    hazmatNationalAvg: number;
   };
   canadianInspections?: {
     vehicleInspections: number;
@@ -44,6 +70,10 @@ interface ScrapedCarrierData {
     householdGoods: { authorized: boolean; mcNumber: string };
     broker: { authorized: boolean; mcNumber: string };
   };
+  insurancePolicies?: InsurancePolicy[];
+  boc3Status?: string;
+  boc3FilingDate?: string;
+  authorityHistory?: AuthorityHistoryEntry[];
   enforcementCases?: string;
   summaryOfActivities?: {
     mostRecentInvestigation: string;
@@ -53,19 +83,135 @@ interface ScrapedCarrierData {
     inspectionsWithViolations: number;
     totalCrashes: number;
   };
-  operatingAuthorityText?: string;
+  violationSummary?: {
+    totalViolations: number;
+    topViolations: { code: string; description: string; count: number; oosCount: number; basic: string }[];
+  };
+  basicMeasures?: {
+    unsafeDriving?: { measure: number; inspectionsWithViolations?: number };
+    hosCompliance?: { measure: number; inspectionsWithViolations?: number; relevantInspections?: number };
+    vehicleMaintenance?: { measure: number; inspectionsWithViolations?: number; relevantInspections?: number };
+    controlledSubstances?: { measure: number; inspectionsWithViolations?: number };
+    driverFitness?: { measure: number; inspectionsWithViolations?: number; relevantInspections?: number };
+    crashIndicator?: { measure: number };
+    hazmatCompliance?: { measure: number };
+  };
 }
+
+// JSON extraction schema for SMS Overview page
+const smsJsonSchema = {
+  type: "object",
+  properties: {
+    carrierName: { type: "string" },
+    dotNumber: { type: "string" },
+    address: { type: "string" },
+    numberOfVehicles: { type: "number" },
+    numberOfDrivers: { type: "number" },
+    numberOfInspections: { type: "number" },
+    safetyRating: { type: "string" },
+    oosRates: {
+      type: "object",
+      properties: {
+        vehicleOosPercent: { type: "number" },
+        vehicleNationalAvg: { type: "number" },
+        driverOosPercent: { type: "number" },
+        driverNationalAvg: { type: "number" },
+        hazmatOosPercent: { type: "number" },
+        hazmatNationalAvg: { type: "number" },
+      }
+    },
+    licensingInsurance: {
+      type: "object",
+      properties: {
+        property: { type: "object", properties: { authorized: { type: "boolean" }, mcNumber: { type: "string" } } },
+        passenger: { type: "object", properties: { authorized: { type: "boolean" }, mcNumber: { type: "string" } } },
+        householdGoods: { type: "object", properties: { authorized: { type: "boolean" }, mcNumber: { type: "string" } } },
+        broker: { type: "object", properties: { authorized: { type: "boolean" }, mcNumber: { type: "string" } } },
+      }
+    },
+    basicMeasures: {
+      type: "object",
+      properties: {
+        unsafeDriving: { type: "object", properties: { measure: { type: "number" }, inspectionsWithViolations: { type: "number" } } },
+        hosCompliance: { type: "object", properties: { measure: { type: "number" }, inspectionsWithViolations: { type: "number" }, relevantInspections: { type: "number" } } },
+        vehicleMaintenance: { type: "object", properties: { measure: { type: "number" }, inspectionsWithViolations: { type: "number" }, relevantInspections: { type: "number" } } },
+        controlledSubstances: { type: "object", properties: { measure: { type: "number" }, inspectionsWithViolations: { type: "number" } } },
+        driverFitness: { type: "object", properties: { measure: { type: "number" }, inspectionsWithViolations: { type: "number" }, relevantInspections: { type: "number" } } },
+        crashIndicator: { type: "object", properties: { measure: { type: "number" } } },
+        hazmatCompliance: { type: "object", properties: { measure: { type: "number" } } },
+      }
+    },
+    totalViolations: { type: "number" },
+    topViolations: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          code: { type: "string" },
+          description: { type: "string" },
+          count: { type: "number" },
+          oosCount: { type: "number" },
+          basic: { type: "string" },
+        }
+      }
+    },
+    enforcementCases: { type: "string" },
+    summaryTotalInspections: { type: "number" },
+    summaryInspectionsWithoutViolations: { type: "number" },
+    summaryInspectionsWithViolations: { type: "number" },
+    summaryTotalCrashes: { type: "number" },
+  }
+};
+
+// JSON extraction schema for Li-Public page
+const liPublicJsonSchema = {
+  type: "object",
+  properties: {
+    carrierName: { type: "string" },
+    dotNumber: { type: "string" },
+    boc3Status: { type: "string" },
+    boc3FilingDate: { type: "string" },
+    insurancePolicies: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          type: { type: "string", description: "Type of insurance e.g. BIPD, Cargo, Bond" },
+          insurerName: { type: "string" },
+          policyNumber: { type: "string" },
+          coverageAmount: { type: "string" },
+          effectiveDate: { type: "string" },
+          cancellationDate: { type: "string" },
+          status: { type: "string", description: "Active, Cancelled, Expired etc." },
+        }
+      }
+    },
+    authorityHistory: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          type: { type: "string", description: "Common, Contract, Broker" },
+          mcNumber: { type: "string" },
+          status: { type: "string" },
+          grantDate: { type: "string" },
+          revokeDate: { type: "string" },
+        }
+      }
+    },
+  }
+};
 
 function parseNumber(str: string): number {
   if (!str) return 0;
   return parseInt(str.replace(/[^0-9]/g, '')) || 0;
 }
 
-function parseSaferMarkdown(markdown: string): ScrapedCarrierData {
-  const result: ScrapedCarrierData = {};
+function parseSaferMarkdown(markdown: string): Partial<ScrapedCarrierData> {
+  const result: Partial<ScrapedCarrierData> = {};
 
   // MCS-150 Mileage (Year)
-  const mileageMatch = markdown.match(/MCS-150 Mileage \\(Year\\)[:\s|]*\*?\*?([0-9,]+)\s*\((\d{4})\)/i);
+  const mileageMatch = markdown.match(/MCS-150 Mileage\s*\(?Year\)?[:\s|]*\*?\*?([0-9,]+)\s*\((\d{4})\)/i);
   if (mileageMatch) {
     result.mileage = mileageMatch[1].replace(/,/g, '');
     result.mileageYear = mileageMatch[2];
@@ -95,114 +241,6 @@ function parseSaferMarkdown(markdown: string): ScrapedCarrierData {
     result.operatingAuthorityText = authMatch[1].trim();
   }
 
-  // US Inspection details table
-  const inspMatch = markdown.match(/Inspections\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*\n\s*\|\s*Out of Service\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)/i);
-  if (inspMatch) {
-    result.inspectionDetails = {
-      vehicleInspections: parseInt(inspMatch[1]) || 0,
-      driverInspections: parseInt(inspMatch[2]) || 0,
-      hazmatInspections: parseInt(inspMatch[3]) || 0,
-      iepInspections: parseInt(inspMatch[4]) || 0,
-      vehicleOos: parseInt(inspMatch[5]) || 0,
-      driverOos: parseInt(inspMatch[6]) || 0,
-      hazmatOos: parseInt(inspMatch[7]) || 0,
-      totalInspections: 0,
-    };
-    // Total inspections from the line above
-    const totalMatch = markdown.match(/Total Inspections:\s*([0-9,]+)/i);
-    if (totalMatch) {
-      result.inspectionDetails.totalInspections = parseNumber(totalMatch[1]);
-    }
-  }
-
-  // Crashes table
-  // Already have from QC API but this confirms
-
-  // Canadian inspection data
-  const caSection = markdown.match(/Canadian Inspection results[\s\S]*?Inspection Type\s*\|\s*Vehicle\s*\|\s*Driver\s*\|\s*\n[\s\S]*?Inspections\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*\n\s*\|\s*Out of Service\s*\|\s*(\d+)\s*\|\s*(\d+)/i);
-  if (caSection) {
-    result.canadianInspections = {
-      vehicleInspections: parseInt(caSection[1]) || 0,
-      driverInspections: parseInt(caSection[2]) || 0,
-      vehicleOos: parseInt(caSection[3]) || 0,
-      driverOos: parseInt(caSection[4]) || 0,
-    };
-  }
-
-  // Canadian crashes
-  const caCrashSection = markdown.match(/Crashes results for[\s\S]*?Fatal\s*\|\s*Injury\s*\|\s*Tow\s*\|\s*Total[\s\S]*?Crashes\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)/i);
-  if (caCrashSection) {
-    result.canadianCrashes = {
-      fatal: parseInt(caCrashSection[1]) || 0,
-      injury: parseInt(caCrashSection[2]) || 0,
-      towAway: parseInt(caCrashSection[3]) || 0,
-      total: parseInt(caCrashSection[4]) || 0,
-    };
-  }
-
-  // Safety Rating section
-  const ratingDateMatch = markdown.match(/Rating Date:\s*\|\s*([0-9/]+)/i);
-  const reviewDateMatch = markdown.match(/Review Date:\s*\|\s*([0-9/]+)/i);
-  const ratingMatch = markdown.match(/Rating:\s*\|\s*(\w+)/i);
-  const reviewTypeMatch = markdown.match(/Type:\s*\|\s*([^|]+)/i);
-  if (ratingDateMatch || ratingMatch) {
-    result.safetyReview = {
-      ratingDate: ratingDateMatch?.[1] || '',
-      reviewDate: reviewDateMatch?.[1] || '',
-      rating: ratingMatch?.[1] || '',
-      reviewType: reviewTypeMatch?.[1]?.trim() || '',
-    };
-  }
-
-  return result;
-}
-
-function parseSmsMarkdown(markdown: string): Partial<ScrapedCarrierData> {
-  const result: Partial<ScrapedCarrierData> = {};
-
-  // Licensing and Insurance table
-  const liSection = markdown.match(/Licensing and Insurance[\s\S]*?\| Type \| Yes\/No \| MC#\/MX# \|[\s\S]*?\| Broker \|[^\n]*/i);
-  if (liSection) {
-    const section = liSection[0];
-    const parseRow = (type: string) => {
-      const match = section.match(new RegExp(`${type}\\\\s*\\\\|\\\\s*(Yes|No)\\\\s*\\\\|\\\\s*([^|\\\\n]*)`, 'i'));
-      return {
-        authorized: match?.[1]?.toLowerCase() === 'yes',
-        mcNumber: match?.[2]?.trim() || '',
-      };
-    };
-    result.licensingInsurance = {
-      property: parseRow('Property'),
-      passenger: parseRow('Passenger'),
-      householdGoods: parseRow('Household Goods'),
-      broker: parseRow('Broker'),
-    };
-  }
-
-  // Enforcement Cases
-  const enfMatch = markdown.match(/Enforcement Cases[\s\S]*?\n\n([^\n]+)/i);
-  if (enfMatch) {
-    result.enforcementCases = enfMatch[1].trim();
-  }
-
-  // Summary of Activities
-  const investMatch = markdown.match(/Most Recent Investigation:\s*\n\s*([0-9/]+)\s*\(([^)]+)\)/i);
-  const totalInspMatch = markdown.match(/Total Inspections:\s*\n\s*([0-9,]+)/i);
-  const withoutViolMatch = markdown.match(/without Violations.*?:\\s*\n\s*([0-9,]+)/i);
-  const withViolMatch = markdown.match(/with Violations.*?:\\s*\n\s*([0-9,]+)/i);
-  const totalCrashMatch = markdown.match(/Total Crashes[\s\S]*?:\s*(\d+)/i);
-
-  if (investMatch || totalInspMatch) {
-    result.summaryOfActivities = {
-      mostRecentInvestigation: investMatch?.[1] || '',
-      mostRecentInvestigationType: investMatch?.[2] || '',
-      totalInspections: parseNumber(totalInspMatch?.[1] || '0'),
-      inspectionsWithoutViolations: parseNumber(withoutViolMatch?.[1] || '0'),
-      inspectionsWithViolations: parseNumber(withViolMatch?.[1] || '0'),
-      totalCrashes: parseNumber(totalCrashMatch?.[1] || '0'),
-    };
-  }
-
   return result;
 }
 
@@ -229,10 +267,10 @@ Deno.serve(async (req) => {
       );
     }
 
-    console.log(`Scraping SAFER & SMS for DOT# ${dotNumber}`);
+    console.log(`Scraping SAFER, SMS & Li-Public for DOT# ${dotNumber}`);
 
-    // Scrape both SAFER snapshot and SMS Overview in parallel
-    const [saferResponse, smsResponse] = await Promise.all([
+    // Scrape SAFER snapshot (markdown), SMS Overview (JSON extraction), and Li-Public (JSON extraction) in parallel
+    const [saferResponse, smsResponse, liPublicResponse] = await Promise.all([
       fetch('https://api.firecrawl.dev/v1/scrape', {
         method: 'POST',
         headers: {
@@ -254,21 +292,38 @@ Deno.serve(async (req) => {
         },
         body: JSON.stringify({
           url: `https://ai.fmcsa.dot.gov/SMS/Carrier/${dotNumber}/Overview.aspx`,
-          formats: ['markdown'],
+          formats: [{ type: 'json', schema: smsJsonSchema, prompt: 'Extract all carrier safety data, OOS rates with national averages, BASIC measures with violation counts, licensing/insurance authority types, violation summary with top violations, enforcement cases, and activity summary from this FMCSA SMS Overview page.' }],
           onlyMainContent: false,
           waitFor: 3000,
         }),
       }),
+      fetch('https://api.firecrawl.dev/v1/scrape', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          url: `https://li-public.fmcsa.dot.gov/LIVIEW/pkg_carrquery.prc_getdetail?pv_aession_id=&pn_dotno=${dotNumber}`,
+          formats: [{ type: 'json', schema: liPublicJsonSchema, prompt: 'Extract all insurance policy details including insurer names, policy numbers, coverage amounts, effective/cancellation dates, BOC-3 process agent filing status and date, and authority grant/revoke history from this FMCSA Licensing & Insurance page.' }],
+          onlyMainContent: false,
+          waitFor: 3000,
+        }),
+      }).catch(err => {
+        console.error('Li-Public scrape request failed:', err);
+        return null;
+      }),
     ]);
 
-    let saferData: ScrapedCarrierData = {};
-    let smsData: Partial<ScrapedCarrierData> = {};
+    let mergedData: ScrapedCarrierData = {};
 
+    // Parse SAFER markdown
     if (saferResponse.ok) {
       const saferJson = await saferResponse.json();
       const saferMarkdown = saferJson?.data?.markdown || saferJson?.markdown || '';
       if (saferMarkdown) {
-        saferData = parseSaferMarkdown(saferMarkdown);
+        const saferData = parseSaferMarkdown(saferMarkdown);
+        mergedData = { ...mergedData, ...saferData };
         console.log('SAFER parsed successfully');
       }
     } else {
@@ -276,33 +331,115 @@ Deno.serve(async (req) => {
       console.error('SAFER scrape failed:', saferResponse.status, errText.substring(0, 200));
     }
 
+    // Parse SMS JSON extraction
     if (smsResponse.ok) {
       const smsJson = await smsResponse.json();
-      const smsMarkdown = smsJson?.data?.markdown || smsJson?.markdown || '';
-      if (smsMarkdown) {
-        smsData = parseSmsMarkdown(smsMarkdown);
-        console.log('SMS parsed successfully');
+      const smsData = smsJson?.data?.json || smsJson?.json || smsJson?.data?.extract || null;
+      console.log('SMS raw response keys:', Object.keys(smsJson?.data || smsJson || {}));
+      
+      if (smsData) {
+        console.log('SMS JSON extracted successfully, keys:', Object.keys(smsData));
+        
+        // OOS rates with national averages
+        if (smsData.oosRates) {
+          mergedData.oosRatesWithAverages = {
+            vehicleOosPercent: smsData.oosRates.vehicleOosPercent || 0,
+            vehicleNationalAvg: smsData.oosRates.vehicleNationalAvg || 0,
+            driverOosPercent: smsData.oosRates.driverOosPercent || 0,
+            driverNationalAvg: smsData.oosRates.driverNationalAvg || 0,
+            hazmatOosPercent: smsData.oosRates.hazmatOosPercent || 0,
+            hazmatNationalAvg: smsData.oosRates.hazmatNationalAvg || 0,
+          };
+        }
+
+        // Licensing & Insurance
+        if (smsData.licensingInsurance) {
+          mergedData.licensingInsurance = smsData.licensingInsurance;
+        }
+
+        // BASIC measures
+        if (smsData.basicMeasures) {
+          mergedData.basicMeasures = smsData.basicMeasures;
+        }
+
+        // Violation summary
+        if (smsData.totalViolations || smsData.topViolations) {
+          mergedData.violationSummary = {
+            totalViolations: smsData.totalViolations || 0,
+            topViolations: (smsData.topViolations || []).slice(0, 10),
+          };
+        }
+
+        // Enforcement cases
+        if (smsData.enforcementCases) {
+          mergedData.enforcementCases = smsData.enforcementCases;
+        }
+
+        // Summary of activities
+        if (smsData.summaryTotalInspections !== undefined) {
+          mergedData.summaryOfActivities = {
+            mostRecentInvestigation: '',
+            mostRecentInvestigationType: '',
+            totalInspections: smsData.summaryTotalInspections || 0,
+            inspectionsWithoutViolations: smsData.summaryInspectionsWithoutViolations || 0,
+            inspectionsWithViolations: smsData.summaryInspectionsWithViolations || 0,
+            totalCrashes: smsData.summaryTotalCrashes || 0,
+          };
+        }
+
+        // Inspection details from SMS
+        if (smsData.numberOfInspections) {
+          mergedData.inspectionDetails = {
+            totalInspections: smsData.numberOfInspections || 0,
+            vehicleInspections: smsData.basicMeasures?.vehicleMaintenance?.relevantInspections || 0,
+            vehicleOos: 0,
+            driverInspections: smsData.numberOfInspections || 0,
+            driverOos: 0,
+            hazmatInspections: 0,
+            hazmatOos: 0,
+            iepInspections: 0,
+          };
+        }
+      } else {
+        // Fallback: try markdown parsing
+        const smsMarkdown = smsJson?.data?.markdown || smsJson?.markdown || '';
+        if (smsMarkdown) {
+          console.log('SMS: Falling back to markdown parsing');
+          // Basic markdown fallback for enforcement
+          const enfMatch = smsMarkdown.match(/Enforcement Cases[\s\S]*?\n\n([^\n]+)/i);
+          if (enfMatch) mergedData.enforcementCases = enfMatch[1].trim();
+        }
       }
     } else {
       const errText = await smsResponse.text();
       console.error('SMS scrape failed:', smsResponse.status, errText.substring(0, 200));
     }
 
-    // Merge data, SMS takes priority for fields it has
-    const mergedData: ScrapedCarrierData = {
-      ...saferData,
-      ...smsData,
-      // Keep saferData fields that smsData doesn't have
-      mileage: saferData.mileage,
-      mileageYear: saferData.mileageYear,
-      dunsNumber: saferData.dunsNumber,
-      entityType: saferData.entityType,
-      stateCarrierId: saferData.stateCarrierId,
-      inspectionDetails: saferData.inspectionDetails,
-      canadianInspections: saferData.canadianInspections,
-      canadianCrashes: saferData.canadianCrashes,
-      operatingAuthorityText: saferData.operatingAuthorityText,
-    };
+    // Parse Li-Public JSON extraction
+    if (liPublicResponse && liPublicResponse.ok) {
+      const liJson = await liPublicResponse.json();
+      const liData = liJson?.data?.json || liJson?.json || liJson?.data?.extract || null;
+      
+      if (liData) {
+        console.log('Li-Public JSON extracted successfully, keys:', Object.keys(liData));
+        
+        if (liData.boc3Status) {
+          mergedData.boc3Status = liData.boc3Status;
+        }
+        if (liData.boc3FilingDate) {
+          mergedData.boc3FilingDate = liData.boc3FilingDate;
+        }
+        if (liData.insurancePolicies && liData.insurancePolicies.length > 0) {
+          mergedData.insurancePolicies = liData.insurancePolicies;
+        }
+        if (liData.authorityHistory && liData.authorityHistory.length > 0) {
+          mergedData.authorityHistory = liData.authorityHistory;
+        }
+      }
+    } else if (liPublicResponse) {
+      const errText = await liPublicResponse.text();
+      console.error('Li-Public scrape failed:', liPublicResponse?.status, errText.substring(0, 200));
+    }
 
     return new Response(
       JSON.stringify({ success: true, data: mergedData }),
