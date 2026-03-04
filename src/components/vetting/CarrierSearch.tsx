@@ -328,31 +328,39 @@ export function CarrierSearch({ onSelect, className, isLoading: externalLoading 
               {error}
             </div>
           ) : (
-            <div className="max-h-[400px] overflow-y-auto">
-              {results.map((result) => (
-                <button
-                  key={result.dotNumber}
-                  type="button"
-                  className="w-full px-4 py-3 text-left hover:bg-muted/50 transition-colors border-b border-border/50 last:border-0"
-                  onClick={() => handleSelect(result)}
-                >
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-sm truncate">{result.legalName}</p>
-                      {result.dbaName && result.dbaName !== result.legalName && (
-                        <p className="text-xs text-muted-foreground truncate">DBA: {result.dbaName}</p>
-                      )}
-                      <p className="text-xs text-muted-foreground mt-0.5">
-                        {result.city}, {result.state}
-                      </p>
+            <>
+              <div className="px-4 py-2 border-b border-border bg-muted/30 flex items-center justify-between">
+                <span className="text-xs font-medium text-muted-foreground">
+                  {results.length} result{results.length !== 1 ? 's' : ''} found
+                </span>
+                <span className="text-xs text-muted-foreground">Click to add</span>
+              </div>
+              <div className="max-h-[60vh] overflow-y-auto">
+                {results.map((result) => (
+                  <button
+                    key={result.dotNumber}
+                    type="button"
+                    className="w-full px-4 py-3 text-left hover:bg-muted/50 transition-colors border-b border-border/50 last:border-0"
+                    onClick={() => handleSelect(result)}
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-sm truncate">{result.legalName}</p>
+                        {result.dbaName && result.dbaName !== result.legalName && (
+                          <p className="text-xs text-muted-foreground truncate">DBA: {result.dbaName}</p>
+                        )}
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          {result.city}, {result.state}
+                        </p>
+                      </div>
+                      <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded shrink-0">
+                        DOT# {result.dotNumber}
+                      </span>
                     </div>
-                    <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded">
-                      DOT# {result.dotNumber}
-                    </span>
-                  </div>
-                </button>
-              ))}
-            </div>
+                  </button>
+                ))}
+              </div>
+            </>
           )}
         </div>
       )}
