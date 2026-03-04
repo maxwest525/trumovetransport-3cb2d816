@@ -1,16 +1,32 @@
 
 
-## Plan: Secure the FMCSA API Key
+## Plan: Fix FMCSA Data Mapping Issues
 
-**Problem**: The FMCSA API key is hardcoded in client-side code (`CarrierSearch.tsx`). You just updated the secret `FMCSA_WEB_KEY`, but it's not being used — the old key is still baked into the frontend.
+I compared the raw FMCSA API response for DOT 4285236 with what your edge function returns, and found several fields being lost or misread.
 
-**Solution**: Create a small edge function that returns the API key, fetch it once when the search component mounts, then use it for direct browser-to-FMCSA calls. This keeps the key out of source code while still making FMCSA requests from the browser (avoiding server IP blocking).
+### Issues Found
 
-### Steps
+1. **OOS rates returning 0** — The `/oos` endpoint returns empty data, but OOS rates are actually on the main carrier object (`driverOosRate`, `vehicleOosRate`, `vehicleInsp`, `driverInsp`, etc.). The edge function ignores these.
 
-1. **Create `get-fmcsa-key` edge function** — A minimal function that reads `FMCSA_WEB_KEY` from secrets and returns it. Only authenticated users can access it.
+2. **Authority status shows "UNKNOWN"** — The raw API returns `commonAuthorityStatus: "I"` (single letter code: A=Active, I=Inactive, N=None). The edge function checks for full words like "ACTIVE" from the `/authority` endpoint, but when that endpoint returns nothing, it falls back to "UNKNOWN" instead of reading the code from the main carrier object.
 
-2. **Update `CarrierSearch.tsx`** — Remove the hardcoded key. On mount, call the edge function to get the key, store it in a ref, and use it for all FMCSA requests.
+3. **MC number missing** — The carrier has MC-1666506 (visible on SAFER), but neither `carrier.mcNumber` nor the `/docket-numbers` endpoint is returning it. Need to also check `carrier.mcNumber` as a raw number without prefix.
 
-This way, whenever you update the secret, the app automatically uses the new key — no code changes needed.
+4. **Phone number missing** — SAFER shows (813) 492-4283 but the API returns empty `telephone`. This may be a limitation of the QC API for some carriers.
+
+5. **Insurance data on wrong object** — The main carrier response has `bipdInsuranceOnFile: "0"` directly on it, but the edge function only reads from the `/authority` endpoint. Should merge both sources.
+
+6. **OOS national averages outdated** — The carrier object has current `vehicleOosRateNationalAverage: "20.72"` and `driverOosRateNationalAverage: "5.51"` but the edge function hardcodes fallback values instead of reading from the carrier.
+
+### Changes
+
+**File: `supabase/functions/carrier-lookup/index.ts`**
+
+- Read OOS data from the main carrier object as primary source, fall back to `/oos` endpoint
+- Map single-letter authority codes (`A`, `I`, `N`) from the carrier object when the `/authority` endpoint returns empty
+- Read `bipdInsuranceOnFile`, `cargoInsuranceOnFile`, `bondInsuranceOnFile` from the carrier object as fallback
+- Use `vehicleOosRateNationalAverage` and `driverOosRateNationalAverage` from carrier object
+- Include inspection counts (`vehicleInsp`, `driverInsp`, `vehicleOosInsp`, `driverOosInsp`, `hazmatInsp`) from carrier object
+
+This is all in the edge function — no UI changes needed since the card already handles these fields correctly.
 
