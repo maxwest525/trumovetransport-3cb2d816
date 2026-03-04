@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Phone, MapPin, Truck, Shield, AlertTriangle, CheckCircle2, XCircle, Calendar, FileWarning, X, ChevronDown, ChevronUp, ExternalLink, Star, Ban, MessageSquareWarning, Package, Briefcase, Hash } from 'lucide-react';
+import { Phone, MapPin, Truck, Shield, AlertTriangle, CheckCircle2, XCircle, Calendar, FileWarning, X, ChevronDown, ChevronUp, ExternalLink, Star, Ban, MessageSquareWarning, Package, Briefcase, Hash, Loader2, Gauge, Scale, ClipboardCheck, Activity } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -59,6 +59,52 @@ interface ExtendedCarrierData extends BaseCarrierData {
   cargoTypes?: string[];
   operationTypes?: string[];
   docketNumbers?: { prefix: string; number: string }[];
+  scraped?: {
+    mileage?: string;
+    mileageYear?: string;
+    dunsNumber?: string;
+    entityType?: string;
+    stateCarrierId?: string;
+    operatingAuthorityText?: string;
+    inspectionDetails?: {
+      vehicleInspections: number;
+      vehicleOos: number;
+      driverInspections: number;
+      driverOos: number;
+      hazmatInspections: number;
+      hazmatOos: number;
+      totalInspections: number;
+      iepInspections: number;
+    };
+    canadianInspections?: {
+      vehicleInspections: number;
+      vehicleOos: number;
+      driverInspections: number;
+      driverOos: number;
+    };
+    canadianCrashes?: {
+      fatal: number;
+      injury: number;
+      towAway: number;
+      total: number;
+    };
+    licensingInsurance?: {
+      property: { authorized: boolean; mcNumber: string };
+      passenger: { authorized: boolean; mcNumber: string };
+      householdGoods: { authorized: boolean; mcNumber: string };
+      broker: { authorized: boolean; mcNumber: string };
+    };
+    enforcementCases?: string;
+    summaryOfActivities?: {
+      mostRecentInvestigation: string;
+      mostRecentInvestigationType: string;
+      totalInspections: number;
+      inspectionsWithoutViolations: number;
+      inspectionsWithViolations: number;
+      totalCrashes: number;
+    };
+    isLoading?: boolean;
+  };
 }
 
 interface CarrierSnapshotCardProps {
@@ -744,6 +790,177 @@ function CarrierSnapshotCardInner({ data, onRemove, className }: CarrierSnapshot
                   </div>
                 </div>
               </>
+            )}
+
+            {/* Enhanced SAFER/SMS Data */}
+            {data.scraped && !data.scraped.isLoading && (
+              <>
+                {/* Licensing & Insurance from SMS */}
+                {data.scraped.licensingInsurance && (
+                  <>
+                    <Separator className="bg-border/60" />
+                    <div className="space-y-2 p-3 rounded-lg bg-muted/20 border border-border/50">
+                      <div className="flex items-center gap-2 text-xs font-semibold text-slate-900 dark:text-foreground">
+                        <Scale className="w-3.5 h-3.5" />
+                        <span>Authority Types</span>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        {(['property', 'passenger', 'householdGoods', 'broker'] as const).map(type => {
+                          const info = data.scraped!.licensingInsurance![type];
+                          const label = type === 'householdGoods' ? 'Household Goods' : type.charAt(0).toUpperCase() + type.slice(1);
+                          return (
+                            <div key={type} className="flex items-center justify-between text-sm">
+                              <span className="text-muted-foreground">{label}</span>
+                              <span className={cn('font-medium text-xs', info.authorized ? 'text-green-600' : 'text-muted-foreground')}>
+                                {info.authorized ? '✓ Yes' : '—'}
+                                {info.mcNumber && <span className="ml-1 text-muted-foreground font-mono">({info.mcNumber})</span>}
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {/* Inspection Breakdown */}
+                {data.scraped.inspectionDetails && (
+                  <>
+                    <Separator className="bg-border/60" />
+                    <div className="space-y-2 p-3 rounded-lg bg-muted/20 border border-border/50">
+                      <div className="flex items-center gap-2 text-xs font-semibold text-slate-900 dark:text-foreground">
+                        <ClipboardCheck className="w-3.5 h-3.5" />
+                        <span>Roadside Inspections (24 months)</span>
+                      </div>
+                      <div className="space-y-1">
+                        <div className="grid grid-cols-3 gap-2 text-[10px] font-medium text-muted-foreground uppercase tracking-wider pb-1 border-b border-border/30">
+                          <span>Type</span>
+                          <span className="text-center">Inspections</span>
+                          <span className="text-center">OOS</span>
+                        </div>
+                        {[
+                          { label: 'Vehicle', insp: data.scraped.inspectionDetails.vehicleInspections, oos: data.scraped.inspectionDetails.vehicleOos },
+                          { label: 'Driver', insp: data.scraped.inspectionDetails.driverInspections, oos: data.scraped.inspectionDetails.driverOos },
+                          { label: 'Hazmat', insp: data.scraped.inspectionDetails.hazmatInspections, oos: data.scraped.inspectionDetails.hazmatOos },
+                        ].map(row => (
+                          <div key={row.label} className="grid grid-cols-3 gap-2 text-sm">
+                            <span className="text-muted-foreground">{row.label}</span>
+                            <span className="text-center font-mono text-foreground">{row.insp}</span>
+                            <span className={cn('text-center font-mono', row.oos > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-foreground')}>
+                              {row.oos}
+                            </span>
+                          </div>
+                        ))}
+                        <div className="grid grid-cols-3 gap-2 text-sm pt-1 border-t border-border/30 font-medium">
+                          <span className="text-foreground">Total</span>
+                          <span className="text-center font-mono text-foreground">{data.scraped.inspectionDetails.totalInspections}</span>
+                          <span className="text-center font-mono text-foreground">—</span>
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {/* Summary of Activities from SMS */}
+                {data.scraped.summaryOfActivities && (
+                  <>
+                    <Separator className="bg-border/60" />
+                    <div className="space-y-2 p-3 rounded-lg bg-muted/20 border border-border/50">
+                      <div className="flex items-center gap-2 text-xs font-semibold text-slate-900 dark:text-foreground">
+                        <Activity className="w-3.5 h-3.5" />
+                        <span>Activity Summary</span>
+                      </div>
+                      <div className="space-y-1">
+                        {data.scraped.summaryOfActivities.mostRecentInvestigation && (
+                          <div className="flex justify-between text-sm">
+                            <span className="text-muted-foreground">Last Investigation</span>
+                            <span className="font-medium text-foreground">
+                              {data.scraped.summaryOfActivities.mostRecentInvestigation}
+                              {data.scraped.summaryOfActivities.mostRecentInvestigationType && (
+                                <span className="text-muted-foreground text-xs ml-1">({data.scraped.summaryOfActivities.mostRecentInvestigationType})</span>
+                              )}
+                            </span>
+                          </div>
+                        )}
+                        <div className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">With Violations</span>
+                          <span className={cn('font-mono font-medium', data.scraped.summaryOfActivities.inspectionsWithViolations > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-foreground')}>
+                            {data.scraped.summaryOfActivities.inspectionsWithViolations}
+                          </span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">Without Violations</span>
+                          <span className="font-mono font-medium text-foreground">{data.scraped.summaryOfActivities.inspectionsWithoutViolations}</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">Total Crashes</span>
+                          <span className={cn('font-mono font-medium', data.scraped.summaryOfActivities.totalCrashes > 0 ? 'text-red-600 dark:text-red-400' : 'text-foreground')}>
+                            {data.scraped.summaryOfActivities.totalCrashes}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {/* Enforcement Cases */}
+                {data.scraped.enforcementCases && (
+                  <>
+                    <Separator className="bg-border/60" />
+                    <div className="space-y-1 p-3 rounded-lg bg-muted/20 border border-border/50">
+                      <div className="flex items-center gap-2 text-xs font-semibold text-slate-900 dark:text-foreground">
+                        <Shield className="w-3.5 h-3.5" />
+                        <span>Enforcement Cases (6 years)</span>
+                      </div>
+                      <p className={cn('text-sm', data.scraped.enforcementCases.toLowerCase().includes('no penalties') ? 'text-green-600' : 'text-amber-600')}>
+                        {data.scraped.enforcementCases}
+                      </p>
+                    </div>
+                  </>
+                )}
+
+                {/* Additional company info */}
+                {(data.scraped.mileage || data.scraped.dunsNumber || data.scraped.entityType) && (
+                  <>
+                    <Separator className="bg-border/60" />
+                    <div className="space-y-1 p-3 rounded-lg bg-muted/20 border border-border/50">
+                      <div className="flex items-center gap-2 text-xs font-semibold text-slate-900 dark:text-foreground mb-1">
+                        <Gauge className="w-3.5 h-3.5" />
+                        <span>Additional Details</span>
+                      </div>
+                      {data.scraped.entityType && (
+                        <div className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">Entity Type</span>
+                          <span className="font-medium text-foreground">{data.scraped.entityType}</span>
+                        </div>
+                      )}
+                      {data.scraped.mileage && (
+                        <div className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">Annual Mileage</span>
+                          <span className="font-mono font-medium text-foreground">
+                            {parseInt(data.scraped.mileage).toLocaleString()} mi
+                            {data.scraped.mileageYear && <span className="text-muted-foreground text-xs ml-1">({data.scraped.mileageYear})</span>}
+                          </span>
+                        </div>
+                      )}
+                      {data.scraped.dunsNumber && (
+                        <div className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">DUNS Number</span>
+                          <span className="font-mono text-foreground">{data.scraped.dunsNumber}</span>
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
+              </>
+            )}
+
+            {/* Scraped data loading indicator */}
+            {data.scraped?.isLoading && (
+              <div className="flex items-center gap-2 p-3 rounded-lg bg-muted/20 border border-border/50 text-sm text-muted-foreground">
+                <Loader2 className="w-4 h-4 animate-spin text-primary" />
+                <span>Loading enhanced SAFER & SMS data...</span>
+              </div>
             )}
 
             {/* Location & Contact */}

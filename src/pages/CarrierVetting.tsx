@@ -97,6 +97,53 @@ interface CarrierData {
   cargoTypes: string[];
   operationTypes: string[];
   docketNumbers: { prefix: string; number: string }[];
+  // Scraped data from SAFER & SMS
+  scraped?: {
+    mileage?: string;
+    mileageYear?: string;
+    dunsNumber?: string;
+    entityType?: string;
+    stateCarrierId?: string;
+    operatingAuthorityText?: string;
+    inspectionDetails?: {
+      vehicleInspections: number;
+      vehicleOos: number;
+      driverInspections: number;
+      driverOos: number;
+      hazmatInspections: number;
+      hazmatOos: number;
+      totalInspections: number;
+      iepInspections: number;
+    };
+    canadianInspections?: {
+      vehicleInspections: number;
+      vehicleOos: number;
+      driverInspections: number;
+      driverOos: number;
+    };
+    canadianCrashes?: {
+      fatal: number;
+      injury: number;
+      towAway: number;
+      total: number;
+    };
+    licensingInsurance?: {
+      property: { authorized: boolean; mcNumber: string };
+      passenger: { authorized: boolean; mcNumber: string };
+      householdGoods: { authorized: boolean; mcNumber: string };
+      broker: { authorized: boolean; mcNumber: string };
+    };
+    enforcementCases?: string;
+    summaryOfActivities?: {
+      mostRecentInvestigation: string;
+      mostRecentInvestigationType: string;
+      totalInspections: number;
+      inspectionsWithoutViolations: number;
+      inspectionsWithViolations: number;
+      totalCrashes: number;
+    };
+    isLoading?: boolean;
+  };
 }
 
 const FEATURES = [
@@ -164,6 +211,41 @@ export default function CarrierVetting() {
   const [searchParams] = useSearchParams();
   const { toast } = useToast();
 
+  // Fetch scraped SAFER/SMS data in background
+  const fetchScrapedData = useCallback(async (dotNumber: string) => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/carrier-safer-scrape`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ dotNumber }),
+        }
+      );
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success && result.data) {
+          setCarriers(prev => prev.map(c => 
+            c.carrier.dotNumber === dotNumber 
+              ? { ...c, scraped: { ...result.data, isLoading: false } }
+              : c
+          ));
+        }
+      }
+    } catch (err) {
+      console.error('Scrape failed for DOT#', dotNumber, err);
+      // Non-critical - just remove loading state
+      setCarriers(prev => prev.map(c => 
+        c.carrier.dotNumber === dotNumber && c.scraped?.isLoading
+          ? { ...c, scraped: { ...c.scraped, isLoading: false } }
+          : c
+      ));
+    }
+  }, []);
+
   // Fetch carrier details function - defined first so it can be used in useEffect
   const fetchCarrierDetails = useCallback(async (dotNumber: string): Promise<CarrierData | null> => {
     try {
@@ -193,6 +275,8 @@ export default function CarrierVetting() {
         throw new Error('FMCSA_API_UNAVAILABLE');
       }
       
+      // Mark scraped as loading, then fire background scrape
+      data.scraped = { isLoading: true };
       return data;
     } catch (error) {
       console.error('Error fetching carrier:', error);
@@ -333,6 +417,8 @@ export default function CarrierVetting() {
       const data = await fetchCarrierDetails(dotNumber);
       if (data) {
         setCarriers(prev => [...prev, data]);
+        // Fire background scrape for enhanced data
+        fetchScrapedData(dotNumber);
         toast({
           title: 'Carrier added',
           description: `${data.carrier.legalName} has been added to comparison.`,
