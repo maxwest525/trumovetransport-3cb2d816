@@ -56,6 +56,7 @@ import CustomerPortal from "./pages/CustomerPortal";
 import CustomerPortalDashboard from "./pages/CustomerPortalDashboard";
 import HomepageV2 from "./pages/HomepageV2";
 import AgentInventory from "./pages/AgentInventory";
+import AdminESignAudit from "./pages/AdminESignAudit";
 
 const queryClient = new QueryClient();
 
@@ -88,6 +89,7 @@ const App = () => (
             <Route path="/track" element={<LiveTracking />} />
             <Route path="/customer-service" element={<CustomerService />} />
             <Route path="/admin/support-tickets" element={<AdminSupportTickets />} />
+            <Route path="/admin/esign-audit" element={<AdminESignAudit />} />
             <Route path="/agent/pipeline" element={<AgentPipeline />} />
             <Route path="/agent/profile" element={<ProfileSettings />} />
             <Route path="/demo" element={<Demo />} />
