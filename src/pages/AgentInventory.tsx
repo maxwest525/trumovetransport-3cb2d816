@@ -153,7 +153,7 @@ export default function AgentInventory() {
       }
 
       toast.success("Inventory saved");
-      navigate(`/agent/customers/${leadId}`);
+      navigate(`/agent/payment?leadId=${leadId}`);
     } catch (err: any) {
       console.error("Error saving inventory:", err);
       toast.error("Failed to save inventory", { description: err.message });
@@ -163,7 +163,7 @@ export default function AgentInventory() {
   };
 
   const handleSkip = () => {
-    navigate(`/agent/customers/${leadId}`);
+    navigate(`/agent/payment?leadId=${leadId}`);
   };
 
   return (
