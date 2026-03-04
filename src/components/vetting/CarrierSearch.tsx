@@ -328,7 +328,7 @@ export function CarrierSearch({ onSelect, className, isLoading: externalLoading 
               {error}
             </div>
           ) : (
-            <div className="max-h-80 overflow-y-auto">
+            <div className="max-h-[400px] overflow-y-auto">
               {results.map((result) => (
                 <button
                   key={result.dotNumber}
