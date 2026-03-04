@@ -17,9 +17,12 @@ import serviceSenior from '@/assets/service-senior.jpg';
 import serviceStorage from '@/assets/service-storage.jpg';
 
 const Classic = () => {
-  // Scroll to top on mount
+  // Scroll to top on mount — clear any hash so the browser doesn't auto-scroll
   useEffect(() => {
-    window.scrollTo(0, 0);
+    if (window.location.hash) {
+      history.replaceState(null, '', window.location.pathname);
+    }
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
   }, []);
   const [formData, setFormData] = useState({
     name: '',
