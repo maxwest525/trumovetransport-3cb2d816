@@ -34,6 +34,10 @@ interface CarrierData {
     dbaName: string;
     dotNumber: string;
     mcNumber: string;
+    allowToOperate: string;
+    outOfService: string;
+    outOfServiceDate: string;
+    complaintCount: number;
     address: {
       street: string;
       city: string;
@@ -58,12 +62,12 @@ interface CarrierData {
     reviewType: string;
   };
   basics: {
-    unsafeDriving: { measure: number; percentile: number } | null;
-    hoursOfService: { measure: number; percentile: number } | null;
-    vehicleMaintenance: { measure: number; percentile: number } | null;
-    controlledSubstances: { measure: number; percentile: number } | null;
-    driverFitness: { measure: number; percentile: number } | null;
-    crashIndicator: { measure: number; percentile: number } | null;
+    unsafeDriving: { measure: number; percentile: number; rdDeficient?: string; rdsvDeficient?: string; svDeficient?: string; snapShotDate?: string; totalInspectionWithViolation?: number; totalViolation?: number } | null;
+    hoursOfService: { measure: number; percentile: number; rdDeficient?: string; rdsvDeficient?: string; svDeficient?: string; snapShotDate?: string; totalInspectionWithViolation?: number; totalViolation?: number } | null;
+    vehicleMaintenance: { measure: number; percentile: number; rdDeficient?: string; rdsvDeficient?: string; svDeficient?: string; snapShotDate?: string; totalInspectionWithViolation?: number; totalViolation?: number } | null;
+    controlledSubstances: { measure: number; percentile: number; rdDeficient?: string; rdsvDeficient?: string; svDeficient?: string; snapShotDate?: string; totalInspectionWithViolation?: number; totalViolation?: number } | null;
+    driverFitness: { measure: number; percentile: number; rdDeficient?: string; rdsvDeficient?: string; svDeficient?: string; snapShotDate?: string; totalInspectionWithViolation?: number; totalViolation?: number } | null;
+    crashIndicator: { measure: number; percentile: number; rdDeficient?: string; rdsvDeficient?: string; svDeficient?: string; snapShotDate?: string; totalInspectionWithViolation?: number; totalViolation?: number } | null;
   };
   oos: {
     vehicleOosRate: number;
@@ -77,6 +81,12 @@ interface CarrierData {
     powerUnits: number;
     drivers: number;
     mcs150Date: string;
+    busVehicle: number;
+    limoVehicle: number;
+    miniBusVehicle: number;
+    motorCoachVehicle: number;
+    vanVehicle: number;
+    passengerVehicle: number;
   };
   crashes: {
     fatal: number;
@@ -84,6 +94,9 @@ interface CarrierData {
     towAway: number;
     total: number;
   };
+  cargoTypes: string[];
+  operationTypes: string[];
+  docketNumbers: { prefix: string; number: string }[];
 }
 
 const FEATURES = [

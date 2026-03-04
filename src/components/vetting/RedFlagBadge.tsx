@@ -16,7 +16,6 @@ export function RedFlagBadge({ message, severity, className }: RedFlagBadgeProps
     info: Info
   };
 
-  // Bright, bold icon colors
   const iconColorMap = {
     critical: 'text-red-500 drop-shadow-[0_0_3px_rgba(239,68,68,0.5)]',
     warning: 'text-amber-500 drop-shadow-[0_0_3px_rgba(245,158,11,0.5)]',
@@ -38,6 +37,12 @@ export function RedFlagBadge({ message, severity, className }: RedFlagBadgeProps
 
 // Helper function to generate red flags from carrier data
 export interface CarrierData {
+  carrier: {
+    allowToOperate?: string;
+    outOfService?: string;
+    outOfServiceDate?: string;
+    complaintCount?: number;
+  };
   authority: {
     commonStatus: string;
     bipdInsurance: string;
@@ -47,12 +52,12 @@ export interface CarrierData {
     rating: string;
   };
   basics: {
-    unsafeDriving: { percentile: number } | null;
-    hoursOfService: { percentile: number } | null;
-    vehicleMaintenance: { percentile: number } | null;
-    controlledSubstances: { percentile: number } | null;
-    driverFitness: { percentile: number } | null;
-    crashIndicator: { percentile: number } | null;
+    unsafeDriving: { percentile: number; rdDeficient?: string; rdsvDeficient?: string; svDeficient?: string } | null;
+    hoursOfService: { percentile: number; rdDeficient?: string; rdsvDeficient?: string; svDeficient?: string } | null;
+    vehicleMaintenance: { percentile: number; rdDeficient?: string; rdsvDeficient?: string; svDeficient?: string } | null;
+    controlledSubstances: { percentile: number; rdDeficient?: string; rdsvDeficient?: string; svDeficient?: string } | null;
+    driverFitness: { percentile: number; rdDeficient?: string; rdsvDeficient?: string; svDeficient?: string } | null;
+    crashIndicator: { percentile: number; rdDeficient?: string; rdsvDeficient?: string; svDeficient?: string } | null;
   };
   oos: {
     vehicleOosRate: number;
@@ -76,6 +81,17 @@ export interface RedFlag {
 
 export function generateRedFlags(data: CarrierData): RedFlag[] {
   const flags: RedFlag[] = [];
+
+  // Not allowed to operate
+  if (data.carrier.allowToOperate === 'N') {
+    flags.push({ message: 'NOT allowed to operate', severity: 'critical' });
+  }
+
+  // Out of service
+  if (data.carrier.outOfService === 'Y') {
+    const dateStr = data.carrier.outOfServiceDate ? ` (since ${data.carrier.outOfServiceDate})` : '';
+    flags.push({ message: `Out of Service order${dateStr}`, severity: 'critical' });
+  }
 
   // Authority status checks
   if (data.authority.commonStatus === 'INACTIVE' || data.authority.commonStatus === 'NOT AUTHORIZED') {
@@ -104,7 +120,14 @@ export function generateRedFlags(data: CarrierData): RedFlag[] {
     flags.push({ message: 'Conditional Safety Rating', severity: 'warning' });
   }
 
-  // BASIC scores (above 65 = concerning)
+  // Complaint count
+  if (data.carrier.complaintCount && data.carrier.complaintCount >= 20) {
+    flags.push({ message: `${data.carrier.complaintCount} FMCSA complaints`, severity: 'warning' });
+  } else if (data.carrier.complaintCount && data.carrier.complaintCount >= 50) {
+    flags.push({ message: `${data.carrier.complaintCount} FMCSA complaints`, severity: 'critical' });
+  }
+
+  // BASIC scores with FMCSA deficiency flags
   const basicChecks = [
     { name: 'Unsafe Driving', data: data.basics.unsafeDriving },
     { name: 'HOS Compliance', data: data.basics.hoursOfService },
@@ -115,9 +138,18 @@ export function generateRedFlags(data: CarrierData): RedFlag[] {
   ];
 
   basicChecks.forEach(({ name, data: basicData }) => {
-    if (basicData && basicData.percentile >= 75) {
+    if (!basicData) return;
+    
+    // Check FMCSA intervention thresholds
+    if (basicData.rdsvDeficient === 'Y') {
+      flags.push({ message: `${name}: FMCSA intervention threshold exceeded`, severity: 'critical' });
+    } else if (basicData.svDeficient === 'Y') {
+      flags.push({ message: `${name}: Serious violation in last 12 months`, severity: 'critical' });
+    } else if (basicData.rdDeficient === 'Y') {
+      flags.push({ message: `${name}: On-road performance threshold violated`, severity: 'warning' });
+    } else if (basicData.percentile >= 75) {
       flags.push({ message: `High ${name} score (${basicData.percentile}%)`, severity: 'critical' });
-    } else if (basicData && basicData.percentile >= 65) {
+    } else if (basicData.percentile >= 65) {
       flags.push({ message: `Elevated ${name} (${basicData.percentile}%)`, severity: 'warning' });
     }
   });

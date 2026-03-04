@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Phone, MapPin, Truck, Shield, AlertTriangle, CheckCircle2, XCircle, Calendar, FileWarning, X, ChevronDown, ChevronUp, ExternalLink, Star } from 'lucide-react';
+import { Phone, MapPin, Truck, Shield, AlertTriangle, CheckCircle2, XCircle, Calendar, FileWarning, X, ChevronDown, ChevronUp, ExternalLink, Star, Ban, MessageSquareWarning, Package, Briefcase, Hash } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -19,16 +19,23 @@ const BASIC_DESCRIPTIONS: Record<string, string> = {
   'Controlled Substances': 'Tracks drug and alcohol violations. Any positive result is a serious red flag.'
 };
 
-// Extended type with full crashes data
+// Extended type with full data
 interface ExtendedCarrierData extends BaseCarrierData {
   carrier: {
     legalName: string;
     dbaName: string;
     dotNumber: string;
     mcNumber: string;
+    allowToOperate?: string;
+    outOfService?: string;
+    outOfServiceDate?: string;
+    complaintCount?: number;
     address: {
       city: string;
       state: string;
+      street?: string;
+      zip?: string;
+      country?: string;
     };
     phone: string;
   };
@@ -36,6 +43,12 @@ interface ExtendedCarrierData extends BaseCarrierData {
     powerUnits: number;
     drivers: number;
     mcs150Date: string;
+    busVehicle?: number;
+    limoVehicle?: number;
+    miniBusVehicle?: number;
+    motorCoachVehicle?: number;
+    vanVehicle?: number;
+    passengerVehicle?: number;
   };
   crashes: {
     fatal: number;
@@ -43,6 +56,9 @@ interface ExtendedCarrierData extends BaseCarrierData {
     towAway: number;
     total: number;
   };
+  cargoTypes?: string[];
+  operationTypes?: string[];
+  docketNumbers?: { prefix: string; number: string }[];
 }
 
 interface CarrierSnapshotCardProps {
@@ -422,6 +438,34 @@ function CarrierSnapshotCardInner({ data, onRemove, className }: CarrierSnapshot
           </div>
         </div>
 
+        {/* OOS & Operational Status Badges */}
+        <div className="flex flex-wrap items-center gap-2">
+          {data.carrier.outOfService === 'Y' && (
+            <Badge variant="destructive" className="gap-1 text-xs">
+              <Ban className="w-3 h-3" />
+              Out of Service{data.carrier.outOfServiceDate ? ` — ${data.carrier.outOfServiceDate}` : ''}
+            </Badge>
+          )}
+          {data.carrier.allowToOperate === 'N' && (
+            <Badge variant="destructive" className="gap-1 text-xs">
+              <XCircle className="w-3 h-3" />
+              Not Allowed to Operate
+            </Badge>
+          )}
+          {data.carrier.allowToOperate === 'Y' && data.carrier.outOfService !== 'Y' && (
+            <Badge variant="outline" className="gap-1 text-xs text-green-600 border-green-500/30">
+              <CheckCircle2 className="w-3 h-3" />
+              Allowed to Operate
+            </Badge>
+          )}
+          {(data.carrier.complaintCount ?? 0) > 0 && (
+            <Badge variant="outline" className={cn('gap-1 text-xs', (data.carrier.complaintCount ?? 0) >= 20 ? 'text-amber-600 border-amber-500/30' : 'text-muted-foreground')}>
+              <MessageSquareWarning className="w-3 h-3" />
+              {data.carrier.complaintCount} complaint{(data.carrier.complaintCount ?? 0) !== 1 ? 's' : ''}
+            </Badge>
+          )}
+        </div>
+
         {/* Technical Quick Stats - Compact icons instead of pills */}
         <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
           <span className="flex items-center gap-1 font-mono">
@@ -577,6 +621,43 @@ function CarrierSnapshotCardInner({ data, onRemove, className }: CarrierSnapshot
                     <span className="text-muted-foreground">Drivers</span>
                     <span className="font-medium font-mono text-foreground">{data.fleet.drivers}</span>
                   </div>
+                  {/* Vehicle type breakdown */}
+                  {(data.fleet.vanVehicle ?? 0) > 0 && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Vans</span>
+                      <span className="font-medium font-mono text-foreground">{data.fleet.vanVehicle}</span>
+                    </div>
+                  )}
+                  {(data.fleet.busVehicle ?? 0) > 0 && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Buses</span>
+                      <span className="font-medium font-mono text-foreground">{data.fleet.busVehicle}</span>
+                    </div>
+                  )}
+                  {(data.fleet.motorCoachVehicle ?? 0) > 0 && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Motorcoaches</span>
+                      <span className="font-medium font-mono text-foreground">{data.fleet.motorCoachVehicle}</span>
+                    </div>
+                  )}
+                  {(data.fleet.limoVehicle ?? 0) > 0 && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Limousines</span>
+                      <span className="font-medium font-mono text-foreground">{data.fleet.limoVehicle}</span>
+                    </div>
+                  )}
+                  {(data.fleet.miniBusVehicle ?? 0) > 0 && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Mini-Buses</span>
+                      <span className="font-medium font-mono text-foreground">{data.fleet.miniBusVehicle}</span>
+                    </div>
+                  )}
+                  {(data.fleet.passengerVehicle ?? 0) > 0 && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Passenger Vehicles</span>
+                      <span className="font-medium font-mono text-foreground">{data.fleet.passengerVehicle}</span>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -605,6 +686,65 @@ function CarrierSnapshotCardInner({ data, onRemove, className }: CarrierSnapshot
                 </div>
               </div>
             </div>
+
+            {/* Cargo Types & Operation Classification */}
+            {((data.cargoTypes && data.cargoTypes.length > 0) || (data.operationTypes && data.operationTypes.length > 0)) && (
+              <>
+                <Separator className="bg-border/60" />
+                <div className="grid grid-cols-2 gap-4">
+                  {data.cargoTypes && data.cargoTypes.length > 0 && (
+                    <div className="space-y-2 p-3 rounded-lg bg-muted/20 border border-border/50">
+                      <div className="flex items-center gap-2 text-xs font-semibold text-slate-900 dark:text-foreground">
+                        <Package className="w-3.5 h-3.5" />
+                        <span>Cargo Carried</span>
+                      </div>
+                      <div className="flex flex-wrap gap-1">
+                        {data.cargoTypes.map((cargo, i) => (
+                          <Badge key={i} variant="secondary" className="text-[10px] font-normal">
+                            {cargo}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {data.operationTypes && data.operationTypes.length > 0 && (
+                    <div className="space-y-2 p-3 rounded-lg bg-muted/20 border border-border/50">
+                      <div className="flex items-center gap-2 text-xs font-semibold text-slate-900 dark:text-foreground">
+                        <Briefcase className="w-3.5 h-3.5" />
+                        <span>Operation Type</span>
+                      </div>
+                      <div className="flex flex-wrap gap-1">
+                        {data.operationTypes.map((op, i) => (
+                          <Badge key={i} variant="secondary" className="text-[10px] font-normal">
+                            {op}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
+
+            {/* Docket Numbers */}
+            {data.docketNumbers && data.docketNumbers.length > 0 && (
+              <>
+                <Separator className="bg-border/60" />
+                <div className="space-y-2 p-3 rounded-lg bg-muted/20 border border-border/50">
+                  <div className="flex items-center gap-2 text-xs font-semibold text-slate-900 dark:text-foreground">
+                    <Hash className="w-3.5 h-3.5" />
+                    <span>Docket Numbers</span>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {data.docketNumbers.map((d, i) => (
+                      <Badge key={i} variant="outline" className="text-xs font-mono">
+                        {d.prefix}-{d.number}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
 
             {/* Location & Contact */}
             <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm text-muted-foreground p-3 rounded-lg bg-muted/20 border border-border/50">
