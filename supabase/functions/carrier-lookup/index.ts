@@ -100,9 +100,12 @@ async function getCarrierDetails(dotNumber: string, webKey: string): Promise<any
   const operationClassification = operationData?.content?.operationClassification || [];
   const docketNumbers = docketData?.content?.docketNumbers || [];
 
-  // Parse BASIC scores with all new fields
+  // Parse BASIC scores - search across multiple possible name fields
   const getBasicScore = (basicName: string) => {
-    const basic = basics.find((b: any) => b.basicName?.toLowerCase().includes(basicName.toLowerCase()));
+    const basic = basics.find((b: any) => {
+      const name = (b.basicsDesc || b.basicDesc || b.basicShortDesc || b.basicName || '').toLowerCase();
+      return name.includes(basicName.toLowerCase());
+    });
     if (!basic) return null;
     return {
       measure: basic.basicsValue || 0,
@@ -116,7 +119,7 @@ async function getCarrierDetails(dotNumber: string, webKey: string): Promise<any
     };
   };
 
-  // Extract MC number
+  // Extract MC number - check carrier object first, then docket numbers
   let mcNumber = '';
   if (carrier.mcNumber) {
     mcNumber = `MC-${carrier.mcNumber}`;
@@ -125,17 +128,46 @@ async function getCarrierDetails(dotNumber: string, webKey: string): Promise<any
     if (mc) mcNumber = `MC-${mc.docketNumber}`;
   }
 
-  // Parse cargo types
   const cargoTypes = cargoCarried.map((c: any) => c.cargoCarriedDesc || c.cargoClassDesc || '').filter(Boolean);
-
-  // Parse operation classifications
   const operationTypes = operationClassification.map((o: any) => o.operationClassDesc || '').filter(Boolean);
-
-  // Parse all docket numbers
   const dockets = docketNumbers.map((d: any) => ({
     prefix: d.docketNumberPrefix || '',
     number: d.docketNumber?.toString() || '',
   }));
+
+  // Map single-letter authority codes to readable statuses
+  const mapAuthorityCode = (code: string | undefined): string => {
+    if (!code) return 'NONE';
+    const upper = code.toUpperCase().trim();
+    if (upper === 'A' || upper === 'ACTIVE') return 'ACTIVE';
+    if (upper === 'I' || upper === 'INACTIVE') return 'INACTIVE';
+    if (upper === 'N' || upper === 'NONE') return 'NONE';
+    return upper;
+  };
+
+  // Authority: prefer /authority endpoint, fall back to carrier object codes
+  const commonStatus = authority.commonAuthorityStatus
+    ? mapAuthorityCode(authority.commonAuthorityStatus)
+    : mapAuthorityCode(carrier.commonAuthorityStatus);
+  const contractStatus = authority.contractAuthorityStatus
+    ? mapAuthorityCode(authority.contractAuthorityStatus)
+    : mapAuthorityCode(carrier.contractAuthorityStatus);
+  const brokerStatus = authority.brokerAuthorityStatus
+    ? mapAuthorityCode(authority.brokerAuthorityStatus)
+    : mapAuthorityCode(carrier.brokerAuthorityStatus);
+
+  // Insurance: merge /authority endpoint with carrier object fallback
+  const bipdInsurance = authority.bipdInsuranceOnFile || carrier.bipdInsuranceOnFile || '$0';
+  const cargoInsurance = authority.cargoInsuranceOnFile || carrier.cargoInsuranceOnFile || '$0';
+  const bondInsurance = authority.bondInsuranceOnFile || carrier.bondInsuranceOnFile || '$0';
+
+  // OOS: prefer carrier object (more reliable), fall back to /oos endpoint
+  const vehicleOosRate = parseFloat(carrier.vehicleOosRate) || parseFloat(oos.vehicleOosRate) || 0;
+  const driverOosRate = parseFloat(carrier.driverOosRate) || parseFloat(oos.driverOosRate) || 0;
+  const vehicleOosRateNationalAvg = parseFloat(carrier.vehicleOosRateNationalAverage) || parseFloat(oos.vehicleOosRateNationalAvg) || 20.72;
+  const driverOosRateNationalAvg = parseFloat(carrier.driverOosRateNationalAverage) || parseFloat(oos.driverOosRateNationalAvg) || 5.51;
+  const vehicleInspections = carrier.vehicleInsp || oos.vehicleInsp || 0;
+  const driverInspections = carrier.driverInsp || oos.driverInsp || 0;
 
   return {
     carrier: {
@@ -157,12 +189,12 @@ async function getCarrierDetails(dotNumber: string, webKey: string): Promise<any
       phone: carrier.telephone || '',
     },
     authority: {
-      commonStatus: authority.commonAuthorityStatus || 'UNKNOWN',
-      contractStatus: authority.contractAuthorityStatus || 'NONE',
-      brokerStatus: authority.brokerAuthorityStatus || 'NONE',
-      bipdInsurance: authority.bipdInsuranceOnFile || '$0',
-      cargoInsurance: authority.cargoInsuranceOnFile || '$0',
-      bondInsurance: authority.bondInsuranceOnFile || '$0',
+      commonStatus,
+      contractStatus,
+      brokerStatus,
+      bipdInsurance,
+      cargoInsurance,
+      bondInsurance,
     },
     safety: {
       rating: carrier.safetyRating || 'NOT RATED',
@@ -179,12 +211,16 @@ async function getCarrierDetails(dotNumber: string, webKey: string): Promise<any
       crashIndicator: getBasicScore('crash'),
     },
     oos: {
-      vehicleOosRate: parseFloat(oos.vehicleOosRate) || 0,
-      vehicleOosRateNationalAvg: parseFloat(oos.vehicleOosRateNationalAvg) || 20.72,
-      driverOosRate: parseFloat(oos.driverOosRate) || 0,
-      driverOosRateNationalAvg: parseFloat(oos.driverOosRateNationalAvg) || 5.51,
-      vehicleInspections: oos.vehicleInsp || 0,
-      driverInspections: oos.driverInsp || 0,
+      vehicleOosRate,
+      vehicleOosRateNationalAvg,
+      driverOosRate,
+      driverOosRateNationalAvg,
+      vehicleInspections,
+      driverInspections,
+      vehicleOosInsp: carrier.vehicleOosInsp || 0,
+      driverOosInsp: carrier.driverOosInsp || 0,
+      hazmatInsp: carrier.hazmatInsp || 0,
+      hazmatOosInsp: carrier.hazmatOosInsp || 0,
     },
     fleet: {
       powerUnits: carrier.totalPowerUnits || 0,
