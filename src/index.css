@@ -27106,8 +27106,12 @@
   background: hsl(var(--card));
   border: 1px solid hsl(var(--border));
   border-radius: 12px;
-  overflow: hidden;
+  overflow: visible;
   box-shadow: 0 8px 24px hsl(var(--foreground) / 0.08);
+}
+
+.fmcsa-terminal-header {
+  border-radius: 12px 12px 0 0;
 }
 
 .dark .fmcsa-terminal {
