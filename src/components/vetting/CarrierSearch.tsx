@@ -42,41 +42,79 @@ export function CarrierSearch({ onSelect, className, isLoading: externalLoading 
     setError(null);
 
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/carrier-lookup?type=${type}&q=${encodeURIComponent(searchQuery)}`,
-        {
-          headers: {
-            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
+      // Call FMCSA API directly from browser to avoid cloud IP blocking
+      const FMCSA_BASE = 'https://mobile.fmcsa.dot.gov/qc/services';
+      const webKey = '63c81aaf7b19fdb3a68ef5ee94f7d6737124b9f6';
+      
+      let apiUrl = '';
+      if (type === 'name') {
+        const encodedName = encodeURIComponent(searchQuery.trim());
+        apiUrl = `${FMCSA_BASE}/carriers/name/${encodedName}?webKey=${webKey}`;
+      } else if (type === 'dot') {
+        apiUrl = `${FMCSA_BASE}/carriers/${searchQuery.trim()}?webKey=${webKey}`;
+      } else if (type === 'mc') {
+        const mcNumber = searchQuery.trim().replace(/[^0-9]/g, '');
+        apiUrl = `${FMCSA_BASE}/carriers/docket-number/${mcNumber}?webKey=${webKey}`;
+      }
 
-      const data = await response.json();
+      const response = await fetch(apiUrl, {
+        headers: { 'Accept': 'application/json' },
+      });
 
       if (!response.ok) {
-        setError(data.error || 'Search failed');
+        const responseText = await response.text();
+        console.error('FMCSA error:', response.status, responseText.substring(0, 200));
+        setError('FMCSA search failed. Please try again.');
         setResults([]);
         setShowResults(true);
         return;
       }
 
+      const data = await response.json();
+
       if (type === 'name') {
-        const resultList = data.results || [];
-        setResults(resultList);
+        const carriers = data?.content || [];
+        const resultList = (Array.isArray(carriers) ? carriers : []).map((c: any) => ({
+          dotNumber: c.dotNumber?.toString() || '',
+          legalName: c.legalName || '',
+          dbaName: c.dbaName || '',
+          city: c.phyCity || '',
+          state: c.phyState || '',
+          phone: c.telephone || '',
+        })).filter((c: SearchResult) => c.dotNumber);
+        setResults(resultList.slice(0, 20));
         if (resultList.length === 0) {
           setError('No carriers found matching that name');
         }
-      } else {
-        // DOT or MC search returns results array
-        const resultList = data.results || [];
-        if (resultList.length > 0) {
-          setResults(resultList);
-        } else if (data.dotNumber) {
-          setResults([data]);
+      } else if (type === 'dot') {
+        const carrier = data?.content?.carrier;
+        if (carrier) {
+          setResults([{
+            dotNumber: carrier.dotNumber?.toString() || searchQuery,
+            legalName: carrier.legalName || '',
+            dbaName: carrier.dbaName || '',
+            city: carrier.phyCity || '',
+            state: carrier.phyState || '',
+            phone: carrier.telephone || '',
+          }]);
         } else {
           setResults([]);
-          setError(type === 'mc' ? 'No carrier found with that MC number' : 'No carrier found with that DOT number');
+          setError('No carrier found with that DOT number');
+        }
+      } else if (type === 'mc') {
+        const content = data?.content;
+        const carriers = Array.isArray(content) ? content : content?.carrier ? [content.carrier] : [];
+        const resultList = carriers.map((c: any) => ({
+          dotNumber: c.dotNumber?.toString() || '',
+          legalName: c.legalName || '',
+          dbaName: c.dbaName || '',
+          city: c.phyCity || '',
+          state: c.phyState || '',
+          phone: c.telephone || '',
+        })).filter((c: SearchResult) => c.dotNumber);
+        setResults(resultList.slice(0, 20));
+        if (resultList.length === 0) {
+          setError('No carrier found with that MC number');
         }
       }
       setShowResults(true);

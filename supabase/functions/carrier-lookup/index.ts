@@ -116,6 +116,8 @@ async function fetchFMCSA(endpoint: string, webKey: string): Promise<any> {
     const response = await fetch(url, {
       headers: {
         'Accept': 'application/json',
+        'User-Agent': 'Mozilla/5.0 (compatible; CarrierVettingApp/1.0)',
+        'Referer': 'https://mobile.fmcsa.dot.gov/qc/services/',
       }
     });
     
