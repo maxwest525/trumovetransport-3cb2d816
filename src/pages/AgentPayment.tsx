@@ -142,6 +142,9 @@ export default function AgentPayment() {
                 <span className="text-[10px] text-muted-foreground">Email invoice</span>
               </Button>
             </div>
+            <Button variant="ghost" className="w-full text-muted-foreground text-xs" onClick={goToCustomers}>
+              Skip — collect payment later
+            </Button>
           </div>
         ) : mode === "charge" ? (
           <div className="space-y-4 rounded-xl border border-border bg-card p-6">
