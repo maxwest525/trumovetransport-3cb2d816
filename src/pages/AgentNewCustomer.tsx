@@ -37,7 +37,7 @@ export default function AgentNewCustomer() {
     toast.success("Demo data loaded");
   };
 
-  const handleCreate = async (destination: "esign" | "customers") => {
+  const handleCreate = async () => {
     if (!form.firstName || !form.lastName) {
       toast.error("First and last name are required");
       return;
@@ -64,12 +64,7 @@ export default function AgentNewCustomer() {
       if (dealError) throw dealError;
 
       toast.success(`Customer ${form.firstName} ${form.lastName} created`);
-
-      if (destination === "esign") {
-        navigate(`/agent/esign?leadId=${lead.id}&name=${encodeURIComponent(form.firstName + " " + form.lastName)}&email=${encodeURIComponent(form.email)}&phone=${encodeURIComponent(form.phone)}`);
-      } else {
-        navigate("/agent/customers");
-      }
+      navigate(`/agent/customers/${lead.id}`);
     } catch (err: any) {
       console.error("Error creating customer:", err);
       toast.error("Failed to create customer", { description: err.message });
@@ -85,13 +80,11 @@ export default function AgentNewCustomer() {
       <div className="p-6 max-w-3xl mx-auto space-y-5">
         {/* Workflow breadcrumb */}
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
-          <span className="text-primary font-semibold">New Customer</span>
+          <span className="text-primary font-semibold">New Lead</span>
           <ArrowRight className="w-3 h-3" />
-          <span>E-Sign</span>
+          <span>Customer Detail</span>
           <ArrowRight className="w-3 h-3" />
-          <span>Payment</span>
-          <ArrowRight className="w-3 h-3" />
-          <span>My Customers</span>
+          <span>E-Sign / Payment</span>
         </div>
 
         <div className="flex items-center justify-between">
@@ -177,13 +170,12 @@ export default function AgentNewCustomer() {
             </div>
 
             <div className="flex gap-3">
-              <Button variant="outline" className="flex-1 gap-2 h-11" onClick={() => handleCreate("customers")} disabled={isSaving || !isValid}>
+              <Button variant="outline" className="flex-1 gap-2 h-11" onClick={() => navigate("/agent/customers")} disabled={isSaving}>
+                Cancel
+              </Button>
+              <Button className="flex-1 gap-2 h-11" onClick={handleCreate} disabled={isSaving || !isValid}>
                 {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <UserPlus className="w-4 h-4" />}
                 {isSaving ? "Saving..." : "Save Lead"}
-              </Button>
-              <Button className="flex-1 gap-2 h-11" onClick={() => handleCreate("esign")} disabled={isSaving || !isValid}>
-                {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <ArrowRight className="w-4 h-4" />}
-                {isSaving ? "Creating..." : "Save & Continue to E-Sign"}
               </Button>
             </div>
           </CardContent>
