@@ -97,7 +97,7 @@ interface CarrierData {
   cargoTypes: string[];
   operationTypes: string[];
   docketNumbers: { prefix: string; number: string }[];
-  // Scraped data from SAFER & SMS
+  // Scraped data from SAFER & SMS & Li-Public
   scraped?: {
     mileage?: string;
     mileageYear?: string;
@@ -114,6 +114,14 @@ interface CarrierData {
       hazmatOos: number;
       totalInspections: number;
       iepInspections: number;
+    };
+    oosRatesWithAverages?: {
+      vehicleOosPercent: number;
+      vehicleNationalAvg: number;
+      driverOosPercent: number;
+      driverNationalAvg: number;
+      hazmatOosPercent: number;
+      hazmatNationalAvg: number;
     };
     canadianInspections?: {
       vehicleInspections: number;
@@ -133,6 +141,24 @@ interface CarrierData {
       householdGoods: { authorized: boolean; mcNumber: string };
       broker: { authorized: boolean; mcNumber: string };
     };
+    insurancePolicies?: {
+      type: string;
+      insurerName: string;
+      policyNumber: string;
+      coverageAmount: string;
+      effectiveDate: string;
+      cancellationDate: string;
+      status: string;
+    }[];
+    boc3Status?: string;
+    boc3FilingDate?: string;
+    authorityHistory?: {
+      type: string;
+      mcNumber: string;
+      status: string;
+      grantDate: string;
+      revokeDate?: string;
+    }[];
     enforcementCases?: string;
     summaryOfActivities?: {
       mostRecentInvestigation: string;
@@ -141,6 +167,19 @@ interface CarrierData {
       inspectionsWithoutViolations: number;
       inspectionsWithViolations: number;
       totalCrashes: number;
+    };
+    violationSummary?: {
+      totalViolations: number;
+      topViolations: { code: string; description: string; count: number; oosCount: number; basic: string }[];
+    };
+    basicMeasures?: {
+      unsafeDriving?: { measure: number; inspectionsWithViolations?: number };
+      hosCompliance?: { measure: number; inspectionsWithViolations?: number; relevantInspections?: number };
+      vehicleMaintenance?: { measure: number; inspectionsWithViolations?: number; relevantInspections?: number };
+      controlledSubstances?: { measure: number; inspectionsWithViolations?: number };
+      driverFitness?: { measure: number; inspectionsWithViolations?: number; relevantInspections?: number };
+      crashIndicator?: { measure: number };
+      hazmatCompliance?: { measure: number };
     };
     isLoading?: boolean;
   };

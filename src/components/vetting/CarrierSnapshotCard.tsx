@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Phone, MapPin, Truck, Shield, AlertTriangle, CheckCircle2, XCircle, Calendar, FileWarning, X, ChevronDown, ChevronUp, ExternalLink, Star, Ban, MessageSquareWarning, Package, Briefcase, Hash, Loader2, Gauge, Scale, ClipboardCheck, Activity } from 'lucide-react';
+import { Phone, MapPin, Truck, Shield, AlertTriangle, CheckCircle2, XCircle, Calendar, FileWarning, X, ChevronDown, ChevronUp, ExternalLink, Star, Ban, MessageSquareWarning, Package, Briefcase, Hash, Loader2, Gauge, Scale, ClipboardCheck, Activity, FileText, History, ShieldCheck } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -76,6 +76,14 @@ interface ExtendedCarrierData extends BaseCarrierData {
       totalInspections: number;
       iepInspections: number;
     };
+    oosRatesWithAverages?: {
+      vehicleOosPercent: number;
+      vehicleNationalAvg: number;
+      driverOosPercent: number;
+      driverNationalAvg: number;
+      hazmatOosPercent: number;
+      hazmatNationalAvg: number;
+    };
     canadianInspections?: {
       vehicleInspections: number;
       vehicleOos: number;
@@ -94,6 +102,24 @@ interface ExtendedCarrierData extends BaseCarrierData {
       householdGoods: { authorized: boolean; mcNumber: string };
       broker: { authorized: boolean; mcNumber: string };
     };
+    insurancePolicies?: {
+      type: string;
+      insurerName: string;
+      policyNumber: string;
+      coverageAmount: string;
+      effectiveDate: string;
+      cancellationDate: string;
+      status: string;
+    }[];
+    boc3Status?: string;
+    boc3FilingDate?: string;
+    authorityHistory?: {
+      type: string;
+      mcNumber: string;
+      status: string;
+      grantDate: string;
+      revokeDate?: string;
+    }[];
     enforcementCases?: string;
     summaryOfActivities?: {
       mostRecentInvestigation: string;
@@ -102,6 +128,19 @@ interface ExtendedCarrierData extends BaseCarrierData {
       inspectionsWithoutViolations: number;
       inspectionsWithViolations: number;
       totalCrashes: number;
+    };
+    violationSummary?: {
+      totalViolations: number;
+      topViolations: { code: string; description: string; count: number; oosCount: number; basic: string }[];
+    };
+    basicMeasures?: {
+      unsafeDriving?: { measure: number; inspectionsWithViolations?: number };
+      hosCompliance?: { measure: number; inspectionsWithViolations?: number; relevantInspections?: number };
+      vehicleMaintenance?: { measure: number; inspectionsWithViolations?: number; relevantInspections?: number };
+      controlledSubstances?: { measure: number; inspectionsWithViolations?: number };
+      driverFitness?: { measure: number; inspectionsWithViolations?: number; relevantInspections?: number };
+      crashIndicator?: { measure: number };
+      hazmatCompliance?: { measure: number };
     };
     isLoading?: boolean;
   };
@@ -919,6 +958,173 @@ function CarrierSnapshotCardInner({ data, onRemove, className }: CarrierSnapshot
                   </>
                 )}
 
+                {/* OOS Rates with National Averages */}
+                {data.scraped.oosRatesWithAverages && (
+                  <>
+                    <Separator className="bg-border/60" />
+                    <div className="space-y-2 p-3 rounded-lg bg-muted/20 border border-border/50">
+                      <div className="flex items-center gap-2 text-xs font-semibold text-slate-900 dark:text-foreground">
+                        <Gauge className="w-3.5 h-3.5" />
+                        <span>OOS Rates vs National Average</span>
+                      </div>
+                      <div className="space-y-2">
+                        {[
+                          { label: 'Vehicle', rate: data.scraped.oosRatesWithAverages.vehicleOosPercent, avg: data.scraped.oosRatesWithAverages.vehicleNationalAvg },
+                          { label: 'Driver', rate: data.scraped.oosRatesWithAverages.driverOosPercent, avg: data.scraped.oosRatesWithAverages.driverNationalAvg },
+                          { label: 'Hazmat', rate: data.scraped.oosRatesWithAverages.hazmatOosPercent, avg: data.scraped.oosRatesWithAverages.hazmatNationalAvg },
+                        ].map(row => {
+                          const isAboveAvg = row.rate > row.avg;
+                          return (
+                            <div key={row.label} className="space-y-1">
+                              <div className="flex items-center justify-between text-xs">
+                                <span className="text-muted-foreground">{row.label}</span>
+                                <span className={cn('font-mono font-medium', isAboveAvg ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400')}>
+                                  {row.rate.toFixed(1)}% <span className="text-muted-foreground font-normal">vs {row.avg.toFixed(1)}%</span>
+                                </span>
+                              </div>
+                              <div className="h-1.5 bg-muted rounded-full overflow-hidden relative">
+                                <div className="absolute h-full w-px bg-foreground/30" style={{ left: `${Math.min(row.avg, 100)}%` }} />
+                                <div 
+                                  className={cn('h-full rounded-full', isAboveAvg ? 'bg-red-500' : 'bg-green-500')}
+                                  style={{ width: `${Math.min(row.rate, 100)}%` }}
+                                />
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {/* Insurance Policies from Li-Public */}
+                {data.scraped.insurancePolicies && data.scraped.insurancePolicies.length > 0 && (
+                  <>
+                    <Separator className="bg-border/60" />
+                    <div className="space-y-2 p-3 rounded-lg bg-muted/20 border border-border/50">
+                      <div className="flex items-center gap-2 text-xs font-semibold text-slate-900 dark:text-foreground">
+                        <FileText className="w-3.5 h-3.5" />
+                        <span>Insurance Policies (L&I Detail)</span>
+                      </div>
+                      <div className="space-y-2">
+                        {data.scraped.insurancePolicies.map((policy, i) => (
+                          <div key={i} className="p-2 rounded bg-muted/30 border border-border/30 space-y-1">
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs font-medium text-foreground">{policy.type}</span>
+                              <Badge variant={policy.status?.toLowerCase() === 'active' ? 'default' : 'destructive'} className="text-[10px] h-5">
+                                {policy.status || 'Unknown'}
+                              </Badge>
+                            </div>
+                            <div className="text-xs text-muted-foreground">
+                              {policy.insurerName && <div>Insurer: <span className="text-foreground">{policy.insurerName}</span></div>}
+                              {policy.policyNumber && <div>Policy #: <span className="font-mono text-foreground">{policy.policyNumber}</span></div>}
+                              {policy.coverageAmount && <div>Coverage: <span className="font-medium text-foreground">{policy.coverageAmount}</span></div>}
+                              <div className="flex gap-3 mt-0.5">
+                                {policy.effectiveDate && <span>Effective: {policy.effectiveDate}</span>}
+                                {policy.cancellationDate && <span>Cancelled: <span className="text-red-500">{policy.cancellationDate}</span></span>}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {/* BOC-3 Status */}
+                {data.scraped.boc3Status && (
+                  <>
+                    <Separator className="bg-border/60" />
+                    <div className="space-y-1 p-3 rounded-lg bg-muted/20 border border-border/50">
+                      <div className="flex items-center gap-2 text-xs font-semibold text-slate-900 dark:text-foreground">
+                        <ShieldCheck className="w-3.5 h-3.5" />
+                        <span>BOC-3 Process Agent</span>
+                      </div>
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground">Filing Status</span>
+                        <span className={cn('font-medium', 
+                          data.scraped.boc3Status.toLowerCase().includes('on file') ? 'text-green-600' : 'text-red-600'
+                        )}>
+                          {data.scraped.boc3Status}
+                        </span>
+                      </div>
+                      {data.scraped.boc3FilingDate && (
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-muted-foreground">Filing Date</span>
+                          <span className="font-mono text-foreground">{data.scraped.boc3FilingDate}</span>
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
+
+                {/* Authority History */}
+                {data.scraped.authorityHistory && data.scraped.authorityHistory.length > 0 && (
+                  <>
+                    <Separator className="bg-border/60" />
+                    <div className="space-y-2 p-3 rounded-lg bg-muted/20 border border-border/50">
+                      <div className="flex items-center gap-2 text-xs font-semibold text-slate-900 dark:text-foreground">
+                        <History className="w-3.5 h-3.5" />
+                        <span>Authority History</span>
+                      </div>
+                      <div className="space-y-1.5">
+                        {data.scraped.authorityHistory.map((auth, i) => (
+                          <div key={i} className="flex items-center justify-between text-sm">
+                            <div className="flex items-center gap-2">
+                              <span className="text-muted-foreground">{auth.type}</span>
+                              {auth.mcNumber && <span className="font-mono text-xs text-muted-foreground">{auth.mcNumber}</span>}
+                            </div>
+                            <div className="flex items-center gap-2 text-xs">
+                              <Badge variant={auth.status?.toLowerCase() === 'active' ? 'default' : 'outline'} className="text-[10px] h-5">
+                                {auth.status}
+                              </Badge>
+                              {auth.grantDate && <span className="text-muted-foreground">{auth.grantDate}</span>}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {/* Violation Summary */}
+                {data.scraped.violationSummary && data.scraped.violationSummary.totalViolations > 0 && (
+                  <>
+                    <Separator className="bg-border/60" />
+                    <div className="space-y-2 p-3 rounded-lg bg-muted/20 border border-border/50">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2 text-xs font-semibold text-slate-900 dark:text-foreground">
+                          <AlertTriangle className="w-3.5 h-3.5" />
+                          <span>Violation Summary</span>
+                        </div>
+                        <Badge variant="outline" className="text-[10px]">
+                          {data.scraped.violationSummary.totalViolations} total
+                        </Badge>
+                      </div>
+                      {data.scraped.violationSummary.topViolations.length > 0 && (
+                        <div className="space-y-1">
+                          <div className="grid grid-cols-[1fr_40px_40px] gap-1 text-[10px] font-medium text-muted-foreground uppercase tracking-wider pb-1 border-b border-border/30">
+                            <span>Violation</span>
+                            <span className="text-center">#</span>
+                            <span className="text-center">OOS</span>
+                          </div>
+                          {data.scraped.violationSummary.topViolations.slice(0, 8).map((v, i) => (
+                            <div key={i} className="grid grid-cols-[1fr_40px_40px] gap-1 text-xs">
+                              <span className="text-muted-foreground truncate" title={`${v.code} - ${v.description}`}>
+                                {v.code}
+                              </span>
+                              <span className="text-center font-mono text-foreground">{v.count}</span>
+                              <span className={cn('text-center font-mono', v.oosCount > 0 ? 'text-red-600 dark:text-red-400' : 'text-foreground')}>
+                                {v.oosCount}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
+
                 {/* Additional company info */}
                 {(data.scraped.mileage || data.scraped.dunsNumber || data.scraped.entityType) && (
                   <>
@@ -959,7 +1165,7 @@ function CarrierSnapshotCardInner({ data, onRemove, className }: CarrierSnapshot
             {data.scraped?.isLoading && (
               <div className="flex items-center gap-2 p-3 rounded-lg bg-muted/20 border border-border/50 text-sm text-muted-foreground">
                 <Loader2 className="w-4 h-4 animate-spin text-primary" />
-                <span>Loading enhanced SAFER & SMS data...</span>
+                <span>Loading enhanced SAFER, SMS & L&I data...</span>
               </div>
             )}
 
