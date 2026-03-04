@@ -222,8 +222,13 @@ Variant: classic
   ];
 
   return (
-    <div className="min-h-screen bg-white font-sans">
-      {/* Top Utility Bar */}
+    <div className="min-h-screen bg-white font-sans scroll-smooth" style={{ scrollBehavior: 'smooth' }}>
+      {/* Add scroll-margin-top to all sections to offset sticky header */}
+      <style>{`
+        #home, #services, #quote, #about, #testimonials, #faq, #contact {
+          scroll-margin-top: 80px;
+        }
+      `}</style>
       <div className="bg-[#1a365d] text-white py-2 text-sm">
         <div className="container mx-auto px-4 flex items-center justify-between">
           <div className="flex items-center gap-6">
