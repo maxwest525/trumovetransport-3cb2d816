@@ -63,7 +63,7 @@ export default function AgentPayment() {
     toast.success("Invoice sent successfully", { description: `$${Number(form.amount).toLocaleString()} invoice sent to ${form.customerEmail}` });
   };
 
-  const goToCustomers = () => navigate("/agent/customers");
+  const goToCustomers = () => navigate(leadId ? `/agent/customers/${leadId}` : "/agent/customers");
 
   return (
     <AgentShell breadcrumb=" / Payment">
