@@ -477,6 +477,65 @@ export type Database = {
           },
         ]
       }
+      esign_audit_trail: {
+        Row: {
+          agent_id: string | null
+          consent_given: boolean | null
+          consent_text: string | null
+          created_at: string
+          customer_email: string | null
+          customer_name: string
+          document_hash: string | null
+          document_type: string
+          event_data: Json | null
+          event_type: string
+          id: string
+          ref_number: string
+          signer_ip_address: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          consent_given?: boolean | null
+          consent_text?: string | null
+          created_at?: string
+          customer_email?: string | null
+          customer_name: string
+          document_hash?: string | null
+          document_type: string
+          event_data?: Json | null
+          event_type: string
+          id?: string
+          ref_number: string
+          signer_ip_address?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          consent_given?: boolean | null
+          consent_text?: string | null
+          created_at?: string
+          customer_email?: string | null
+          customer_name?: string
+          document_hash?: string | null
+          document_type?: string
+          event_data?: Json | null
+          event_type?: string
+          id?: string
+          ref_number?: string
+          signer_ip_address?: string | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "esign_audit_trail_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lead_vendors: {
         Row: {
           contact_email: string | null

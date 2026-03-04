@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,7 +14,7 @@ import {
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { ClientSearchModal, type ClientData } from "@/components/agent/ClientSearchModal";
-import { ESignViewModal } from "@/components/esign/ESignViewModal";
+
 
 type DeliveryMethod = "email" | "sms";
 type SigningStatus = "not_sent" | "sent" | "delivered" | "opened" | "signing" | "completed";
@@ -49,6 +50,7 @@ interface BOLSendTrackProps {
 }
 
 export function BOLSendTrack({ prefillName = "", prefillEmail = "", prefillPhone = "", jobId }: BOLSendTrackProps) {
+  const navigate = useNavigate();
   const DEMO_BOLS: BOLRecord[] = [
     {
       id: "bol-demo-1", refNumber: "BOL-2026-0018",
@@ -68,7 +70,7 @@ export function BOLSendTrack({ prefillName = "", prefillEmail = "", prefillPhone
   const [documents, setDocuments] = useState<BOLRecord[]>(DEMO_BOLS);
   const [showClientSearch, setShowClientSearch] = useState(false);
   const [isSending, setIsSending] = useState(false);
-  const [viewingDoc, setViewingDoc] = useState<BOLRecord | null>(null);
+  
 
   const [newDoc, setNewDoc] = useState({
     customerName: prefillName,
@@ -146,7 +148,7 @@ export function BOLSendTrack({ prefillName = "", prefillEmail = "", prefillPhone
   };
 
   const viewDocument = (doc: BOLRecord) => {
-    setViewingDoc(doc);
+    navigate(`/agent/esign/view?type=bol&name=${encodeURIComponent(doc.customerName)}&email=${encodeURIComponent(doc.customerEmail)}&ref=${encodeURIComponent(doc.refNumber)}`);
   };
 
   const formatTime = (date?: Date) => {
@@ -165,15 +167,8 @@ export function BOLSendTrack({ prefillName = "", prefillEmail = "", prefillPhone
   return (
     <div className="space-y-4">
       <ClientSearchModal open={showClientSearch} onClose={() => setShowClientSearch(false)} onSelect={handleClientSelect} />
-      {viewingDoc && (
-        <ESignViewModal
-          open={!!viewingDoc}
-          onClose={() => setViewingDoc(null)}
-          documentType="bol"
-          customerName={viewingDoc.customerName}
-          refNumber={viewingDoc.refNumber}
-        />
-      )}
+
+
 
       <Tabs defaultValue="send" className="space-y-4">
         <TabsList className="grid w-full grid-cols-3">

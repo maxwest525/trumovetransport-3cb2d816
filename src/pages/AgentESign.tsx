@@ -16,7 +16,7 @@ import {
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { ClientSearchModal, type ClientData } from "@/components/agent/ClientSearchModal";
-import { ESignViewModal } from "@/components/esign/ESignViewModal";
+
 
 type DocumentType = "estimate" | "ccach";
 type DeliveryMethod = "email" | "sms";
@@ -85,7 +85,7 @@ export default function AgentESign() {
   const [documents, setDocuments] = useState<DocumentRecord[]>(DEMO_DOCUMENTS);
   const [showClientSearch, setShowClientSearch] = useState(false);
   const [isSending, setIsSending] = useState(false);
-  const [viewingDoc, setViewingDoc] = useState<DocumentRecord | null>(null);
+  
 
   const [newDoc, setNewDoc] = useState({
     type: "estimate" as DocumentType,
@@ -169,7 +169,7 @@ export default function AgentESign() {
   };
 
   const viewDocument = (doc: DocumentRecord) => {
-    setViewingDoc(doc);
+    navigate(`/agent/esign/view?type=${doc.type}&name=${encodeURIComponent(doc.customerName)}&email=${encodeURIComponent(doc.customerEmail)}&ref=${encodeURIComponent(doc.refNumber)}`);
   };
 
   const formatTime = (date?: Date) => {
@@ -194,15 +194,8 @@ export default function AgentESign() {
       <div className="p-6 max-w-4xl mx-auto space-y-6">
         <ClientSearchModal open={showClientSearch} onClose={() => setShowClientSearch(false)} onSelect={handleClientSelect} />
 
-        {viewingDoc && (
-          <ESignViewModal
-            open={!!viewingDoc}
-            onClose={() => setViewingDoc(null)}
-            documentType={viewingDoc.type}
-            customerName={viewingDoc.customerName}
-            refNumber={viewingDoc.refNumber}
-          />
-        )}
+
+
 
         {/* Workflow breadcrumb */}
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
