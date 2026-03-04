@@ -3,6 +3,7 @@ import { Search, Building2, Loader2, Hash, Truck } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { supabase } from '@/integrations/supabase/client';
 
 
 interface SearchResult {
@@ -29,8 +30,24 @@ export function CarrierSearch({ onSelect, className, isLoading: externalLoading 
   const [error, setError] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const debounceRef = useRef<NodeJS.Timeout>();
+  const fmcsaKeyRef = useRef<string | null>(null);
   
   const isLoading = isSearching || externalLoading;
+
+  // Fetch FMCSA key from edge function on mount
+  useEffect(() => {
+    async function fetchKey() {
+      try {
+        const { data, error } = await supabase.functions.invoke('get-fmcsa-key');
+        if (!error && data?.key) {
+          fmcsaKeyRef.current = data.key;
+        }
+      } catch (e) {
+        console.error('Failed to fetch FMCSA key:', e);
+      }
+    }
+    fetchKey();
+  }, []);
 
   const search = useCallback(async (searchQuery: string, type: 'name' | 'dot' | 'mc') => {
     if (!searchQuery.trim() || searchQuery.length < 2) {
@@ -44,7 +61,13 @@ export function CarrierSearch({ onSelect, className, isLoading: externalLoading 
     try {
       // Call FMCSA API directly from browser to avoid cloud IP blocking
       const FMCSA_BASE = 'https://mobile.fmcsa.dot.gov/qc/services';
-      const webKey = '63c81aaf7b19fdb3a68ef5ee94f7d6737124b9f6';
+      const webKey = fmcsaKeyRef.current;
+      if (!webKey) {
+        setError('FMCSA API key not available. Please try again.');
+        setResults([]);
+        setShowResults(true);
+        return;
+      }
       
       let apiUrl = '';
       if (type === 'name') {

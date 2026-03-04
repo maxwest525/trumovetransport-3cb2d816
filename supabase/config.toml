@@ -29,3 +29,6 @@ verify_jwt = false
 
 [functions.firecrawl-crawl]
 verify_jwt = false
+
+[functions.get-fmcsa-key]
+verify_jwt = false
