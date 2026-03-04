@@ -128,8 +128,17 @@ async function getCarrierDetails(dotNumber: string, webKey: string): Promise<any
     if (mc) mcNumber = `MC-${mc.docketNumber}`;
   }
 
-  const cargoTypes = cargoCarried.map((c: any) => c.cargoCarriedDesc || c.cargoClassDesc || '').filter(Boolean);
-  const operationTypes = operationClassification.map((o: any) => o.operationClassDesc || '').filter(Boolean);
+  const cargoTypes = cargoCarried.length > 0
+    ? cargoCarried.map((c: any) => c.cargoCarriedDesc || c.cargoClassDesc || '').filter(Boolean)
+    : []; // QC API may not populate this endpoint for all carriers
+  
+  // Operation types: prefer /operation-classification endpoint, fall back to carrier object
+  let operationTypes = operationClassification.map((o: any) => o.operationClassDesc || '').filter(Boolean);
+  if (operationTypes.length === 0 && carrier.carrierOperation) {
+    const op = carrier.carrierOperation;
+    if (op.carrierOperationDesc) operationTypes = [op.carrierOperationDesc];
+  }
+  
   const dockets = docketNumbers.map((d: any) => ({
     prefix: d.docketNumberPrefix || '',
     number: d.docketNumber?.toString() || '',
@@ -164,8 +173,8 @@ async function getCarrierDetails(dotNumber: string, webKey: string): Promise<any
   // OOS: prefer carrier object (more reliable), fall back to /oos endpoint
   const vehicleOosRate = parseFloat(carrier.vehicleOosRate) || parseFloat(oos.vehicleOosRate) || 0;
   const driverOosRate = parseFloat(carrier.driverOosRate) || parseFloat(oos.driverOosRate) || 0;
-  const vehicleOosRateNationalAvg = parseFloat(carrier.vehicleOosRateNationalAverage) || parseFloat(oos.vehicleOosRateNationalAvg) || 20.72;
-  const driverOosRateNationalAvg = parseFloat(carrier.driverOosRateNationalAverage) || parseFloat(oos.driverOosRateNationalAvg) || 5.51;
+  const vehicleOosRateNationalAvg = parseFloat(carrier.vehicleOosRateNationalAverage) || parseFloat(oos.vehicleOosRateNationalAvg) || 22.26;
+  const driverOosRateNationalAvg = parseFloat(carrier.driverOosRateNationalAverage) || parseFloat(oos.driverOosRateNationalAvg) || 6.67;
   const vehicleInspections = carrier.vehicleInsp || oos.vehicleInsp || 0;
   const driverInspections = carrier.driverInsp || oos.driverInsp || 0;
 
@@ -221,6 +230,8 @@ async function getCarrierDetails(dotNumber: string, webKey: string): Promise<any
       driverOosInsp: carrier.driverOosInsp || 0,
       hazmatInsp: carrier.hazmatInsp || 0,
       hazmatOosInsp: carrier.hazmatOosInsp || 0,
+      hazmatOosRate: parseFloat(carrier.hazmatOosRate) || 0,
+      hazmatOosRateNationalAvg: parseFloat(carrier.hazmatOosRateNationalAverage) || 4.44,
     },
     fleet: {
       powerUnits: carrier.totalPowerUnits || 0,
