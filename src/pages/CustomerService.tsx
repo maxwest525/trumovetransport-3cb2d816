@@ -232,7 +232,7 @@ export default function CustomerService() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
   const [activeTab, setActiveTab] = useState<'voice' | 'form'>('voice');
-  const [chatMode, setChatMode] = useState<'demo' | 'live'>('demo');
+  
 
   const conversation = useConversation({
     onConnect: () => console.log('Trudy: connected'),
@@ -380,24 +380,7 @@ export default function CustomerService() {
 
               {/* Right — chat box */}
               <div className="w-full max-w-lg mx-auto lg:max-w-none">
-                {chatMode === 'demo' ? (
-                  <TrudyChatBox onSwitchToLive={() => setChatMode('live')} />
-                ) : (
-                  <div className="w-full">
-                    <div className="rounded-2xl border border-foreground/[0.08] bg-card/80 backdrop-blur-sm shadow-[0_8px_32px_-8px_hsl(var(--foreground)/0.1),0_16px_48px_-12px_hsl(var(--foreground)/0.06)] overflow-hidden">
-                      <AIChatContainer
-                        agentId={TRUDY_AGENT_ID}
-                        pageContext={getPageContext('customer-service')}
-                      />
-                    </div>
-                    <button
-                      onClick={() => setChatMode('demo')}
-                      className="mt-2 mx-auto block text-[10px] text-muted-foreground/60 hover:text-foreground transition-colors"
-                    >
-                      ← Back to demo chat
-                    </button>
-                  </div>
-                )}
+                <TrudyChatBox />
               </div>
             </div>
           </div>
