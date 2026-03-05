@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useConversation } from '@elevenlabs/react';
 import { Phone, PhoneOff, Send, Clock, Shield, Calculator, MapPin, Calendar, HelpCircle, Package, ScanLine, Video, Mic, Loader2, MessageSquare, FileText, Brain, Sparkles, MessageCircle } from 'lucide-react';
@@ -387,21 +388,28 @@ export default function CustomerService() {
               <p className="text-xs text-muted-foreground mt-1">One AI assistant for your entire move</p>
             </div>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-              {capabilities.map((cap) => (
-                <Link
+              {capabilities.map((cap, i) => (
+                <motion.div
                   key={cap.label}
-                  to={cap.href}
-                  className="group relative rounded-xl border border-border bg-card p-5 shadow-[0_2px_8px_-2px_hsl(var(--tm-ink)/0.08),0_4px_16px_-4px_hsl(var(--tm-ink)/0.06)] hover:shadow-[0_8px_24px_-4px_hsl(var(--tm-ink)/0.16),0_16px_40px_-8px_hsl(var(--tm-ink)/0.12)] hover:border-foreground/30 hover:-translate-y-1 hover:scale-[1.03] transition-all duration-200 no-underline"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-50px" }}
+                  transition={{ duration: 0.4, delay: i * 0.08, ease: "easeOut" }}
                 >
-                  {cap.tag && (
-                    <span className="absolute top-2.5 right-2.5 text-[10px] font-bold uppercase tracking-wider text-foreground bg-muted px-2 py-0.5 rounded group-hover:bg-foreground group-hover:text-background transition-colors duration-200">
-                      {cap.tag}
-                    </span>
-                  )}
-                  <cap.icon className="w-5 h-5 text-muted-foreground mb-2 group-hover:text-foreground group-hover:scale-110 transition-all duration-200" />
-                  <h3 className="text-sm font-semibold text-foreground">{cap.label}</h3>
-                  <p className="text-xs text-muted-foreground mt-1 leading-relaxed group-hover:text-foreground/70 transition-colors duration-200">{cap.desc}</p>
-                </Link>
+                  <Link
+                    to={cap.href}
+                    className="group relative block rounded-xl border border-border bg-card p-5 shadow-[0_2px_8px_-2px_hsl(var(--tm-ink)/0.08),0_4px_16px_-4px_hsl(var(--tm-ink)/0.06)] hover:shadow-[0_8px_24px_-4px_hsl(var(--tm-ink)/0.16),0_16px_40px_-8px_hsl(var(--tm-ink)/0.12)] hover:border-foreground/30 hover:-translate-y-1 hover:scale-[1.03] transition-all duration-200 no-underline h-full"
+                  >
+                    {cap.tag && (
+                      <span className="absolute top-2.5 right-2.5 text-[10px] font-bold uppercase tracking-wider text-foreground bg-muted px-2 py-0.5 rounded group-hover:bg-foreground group-hover:text-background transition-colors duration-200">
+                        {cap.tag}
+                      </span>
+                    )}
+                    <cap.icon className="w-5 h-5 text-muted-foreground mb-2 group-hover:text-foreground group-hover:scale-110 transition-all duration-200" />
+                    <h3 className="text-sm font-semibold text-foreground">{cap.label}</h3>
+                    <p className="text-xs text-muted-foreground mt-1 leading-relaxed group-hover:text-foreground/70 transition-colors duration-200">{cap.desc}</p>
+                  </Link>
+                </motion.div>
               ))}
             </div>
           </div>
