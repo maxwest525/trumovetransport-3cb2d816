@@ -241,6 +241,70 @@ function parseSaferMarkdown(markdown: string): Partial<ScrapedCarrierData> {
     result.operatingAuthorityText = authMatch[1].trim();
   }
 
+  // IEP Inspections - parse from "Total IEP Inspections: X" line
+  const iepTotalMatch = markdown.match(/Total IEP Inspections[:\s]*(\d+)/i);
+  const iepInspCount = iepTotalMatch ? parseInt(iepTotalMatch[1]) : 0;
+
+  // US Inspection table - parse Vehicle/Driver/Hazmat/IEP row
+  // Pattern: | Inspections | 4 | 6 | 0 | 0 |
+  const inspTableMatch = markdown.match(/\|\s*Inspections\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|/);
+  const oosTableMatch = markdown.match(/\|\s*Out of Service\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|/);
+  if (inspTableMatch) {
+    result.inspectionDetails = {
+      vehicleInspections: parseInt(inspTableMatch[1]),
+      driverInspections: parseInt(inspTableMatch[2]),
+      hazmatInspections: parseInt(inspTableMatch[3]),
+      iepInspections: parseInt(inspTableMatch[4]) || iepInspCount,
+      vehicleOos: oosTableMatch ? parseInt(oosTableMatch[1]) : 0,
+      driverOos: oosTableMatch ? parseInt(oosTableMatch[2]) : 0,
+      hazmatOos: oosTableMatch ? parseInt(oosTableMatch[3]) : 0,
+      totalInspections: 0,
+    };
+    // Total from the "Total Inspections: X" line
+    const totalMatch = markdown.match(/Total Inspections[:\s]*(\d+)/i);
+    if (totalMatch) result.inspectionDetails.totalInspections = parseInt(totalMatch[1]);
+  }
+
+  // Canadian Inspections - appears after "Canadian Inspection results" section
+  // Pattern: | Inspections | 0 | 0 | (only 2 columns: Vehicle, Driver)
+  const canadaSection = markdown.split(/Inspections\/Crashes In Canada/i).slice(-1)[0] || '';
+  const caInspMatch = canadaSection.match(/\|\s*Inspections\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|/);
+  const caOosMatch = canadaSection.match(/\|\s*Out of Service\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|/);
+  if (caInspMatch) {
+    result.canadianInspections = {
+      vehicleInspections: parseInt(caInspMatch[1]),
+      driverInspections: parseInt(caInspMatch[2]),
+      vehicleOos: caOosMatch ? parseInt(caOosMatch[1]) : 0,
+      driverOos: caOosMatch ? parseInt(caOosMatch[2]) : 0,
+    };
+  }
+
+  // Canadian Crashes - after Canada section
+  // Pattern: | Crashes | 0 | 0 | 0 | 0 |
+  const caCrashMatch = canadaSection.match(/\|\s*Crashes\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|/);
+  if (caCrashMatch) {
+    result.canadianCrashes = {
+      fatal: parseInt(caCrashMatch[1]),
+      injury: parseInt(caCrashMatch[2]),
+      towAway: parseInt(caCrashMatch[3]),
+      total: parseInt(caCrashMatch[4]),
+    };
+  }
+
+  // Safety Review - parse from Review Information table
+  // | Rating Date: | 11/02/1999 | Review Date: | 10/29/1999 |
+  const ratingDateMatch = markdown.match(/Rating Date[:\s|]*(\d{2}\/\d{2}\/\d{4})/i);
+  const reviewDateMatch = markdown.match(/Review Date[:\s|]*(\d{2}\/\d{2}\/\d{4})/i);
+  const ratingMatch = markdown.match(/\|\s*Rating[:\s|]*\|\s*([^|]+)\s*\|\s*Type[:\s|]*\|\s*([^|]+)\s*\|/i);
+  if (ratingDateMatch || reviewDateMatch || ratingMatch) {
+    result.safetyReview = {
+      ratingDate: ratingDateMatch?.[1] || '',
+      reviewDate: reviewDateMatch?.[1] || '',
+      rating: ratingMatch?.[1]?.trim() || '',
+      reviewType: ratingMatch?.[2]?.trim() || '',
+    };
+  }
+
   return result;
 }
 
@@ -387,8 +451,8 @@ Deno.serve(async (req) => {
           };
         }
 
-        // Inspection details from SMS
-        if (smsData.numberOfInspections) {
+        // Inspection details from SMS (only if SAFER didn't already provide them)
+        if (smsData.numberOfInspections && !mergedData.inspectionDetails) {
           mergedData.inspectionDetails = {
             totalInspections: smsData.numberOfInspections || 0,
             vehicleInspections: smsData.basicMeasures?.vehicleMaintenance?.relevantInspections || 0,

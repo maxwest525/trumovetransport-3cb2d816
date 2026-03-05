@@ -1358,7 +1358,12 @@ function CarrierSnapshotCardInner({ data, onRemove, className }: CarrierSnapshot
             <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm text-muted-foreground p-3 rounded-lg bg-muted/20 border border-border/50">
               <div className="flex items-center gap-1.5">
                 <MapPin className="w-4 h-4" />
-                <span>{data.carrier.address.city}, {data.carrier.address.state}</span>
+                <span>
+                  {data.carrier.address.street && `${data.carrier.address.street}, `}
+                  {data.carrier.address.city}, {data.carrier.address.state}
+                  {data.carrier.address.zip && ` ${data.carrier.address.zip}`}
+                  {data.carrier.address.country && data.carrier.address.country !== 'US' && ` ${data.carrier.address.country}`}
+                </span>
               </div>
               {data.carrier.phone && (
                 <div className="flex items-center gap-1.5">
