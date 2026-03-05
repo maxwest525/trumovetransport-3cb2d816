@@ -295,69 +295,73 @@ export default function CustomerService() {
     }>
       <main className="min-h-screen bg-background">
         {/* ─── HERO ─── */}
-        <section className="pt-6 pb-4 px-4">
-          <div className="mx-auto max-w-3xl text-center space-y-4">
-              <div>
-                <h1 className="text-4xl font-black tracking-tight text-foreground leading-none">Meet Trudy</h1>
-                <p className="text-muted-foreground text-xs mt-1 max-w-sm mx-auto leading-relaxed">
-                  AI move coordinator — instant quotes, tracking, scheduling & support by voice.
-                </p>
-              </div>
-
-              {/* Action row */}
-              <div className="flex flex-wrap items-center justify-center gap-2.5">
-                {!isConnected ? (
-                  <button
-                    onClick={startCall}
-                    disabled={isConnecting}
-                    className="tru-modal-primary-btn !w-auto !px-6 !py-2 !text-[11px]"
-                  >
-                    {isConnecting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Mic className="h-3.5 w-3.5" />}
-                    {isConnecting ? 'Connecting…' : 'Talk to Trudy'}
-                  </button>
-                ) : (
-                  <button
-                    onClick={endCall}
-                    className="flex items-center gap-2 rounded-full bg-destructive text-destructive-foreground px-5 py-2 text-[11px] font-semibold transition-all hover:opacity-90 active:scale-95"
-                  >
-                    <PhoneOff className="h-3.5 w-3.5" />
-                    End Call
-                  </button>
-                )}
-                <a href="tel:+16097277647" className="tru-secondary-action-btn !text-[11px] !py-1.5 !px-4">
-                  <Phone className="h-3.5 w-3.5" />
-                  (609) 727-7647
-                </a>
-              </div>
-
-              {/* Live status */}
-              {isConnected && (
-                <div className="flex items-center justify-center gap-2.5 text-xs text-foreground animate-in fade-in slide-in-from-bottom-2">
-                  <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-foreground/60 opacity-75" />
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-foreground" />
-                  </span>
-                  {conversation.isSpeaking ? 'Trudy is speaking…' : 'Listening…'}
+        <section className="pt-8 pb-6 px-4">
+          <div className="mx-auto max-w-6xl">
+            <div className="grid lg:grid-cols-[1fr_1.2fr] gap-8 lg:gap-12 items-center">
+              {/* Left — text content */}
+              <div className="text-center lg:text-left space-y-5">
+                <div>
+                  <h1 className="text-4xl font-black tracking-tight text-foreground leading-none">Meet Trudy</h1>
+                  <p className="text-muted-foreground text-xs mt-1 max-w-sm mx-auto lg:mx-0 leading-relaxed">
+                    AI move coordinator — instant quotes, tracking, scheduling & support by voice.
+                  </p>
                 </div>
-              )}
 
-              {/* Stats row */}
-              <div className="flex flex-wrap justify-center gap-6">
-                {[
-                  { value: '24/7', label: 'Availability' },
-                  { value: '<3s', label: 'Response' },
-                  { value: '95%', label: 'Resolved' },
-                  { value: '4.9★', label: 'Rating' },
-                ].map((s) => (
-                  <div key={s.label} className="text-center">
-                    <p className="text-sm font-black text-foreground tracking-tight">{s.value}</p>
-                    <p className="text-[9px] text-muted-foreground uppercase tracking-widest">{s.label}</p>
+                {/* Action row */}
+                <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2.5">
+                  {!isConnected ? (
+                    <button
+                      onClick={startCall}
+                      disabled={isConnecting}
+                      className="tru-modal-primary-btn !w-auto !px-6 !py-2 !text-[11px]"
+                    >
+                      {isConnecting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Mic className="h-3.5 w-3.5" />}
+                      {isConnecting ? 'Connecting…' : 'Talk to Trudy'}
+                    </button>
+                  ) : (
+                    <button
+                      onClick={endCall}
+                      className="flex items-center gap-2 rounded-full bg-destructive text-destructive-foreground px-5 py-2 text-[11px] font-semibold transition-all hover:opacity-90 active:scale-95"
+                    >
+                      <PhoneOff className="h-3.5 w-3.5" />
+                      End Call
+                    </button>
+                  )}
+                  <a href="tel:+16097277647" className="tru-secondary-action-btn !text-[11px] !py-1.5 !px-4">
+                    <Phone className="h-3.5 w-3.5" />
+                    (609) 727-7647
+                  </a>
+                </div>
+
+                {/* Live status */}
+                {isConnected && (
+                  <div className="flex items-center justify-center lg:justify-start gap-2.5 text-xs text-foreground animate-in fade-in slide-in-from-bottom-2">
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-foreground/60 opacity-75" />
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-foreground" />
+                    </span>
+                    {conversation.isSpeaking ? 'Trudy is speaking…' : 'Listening…'}
                   </div>
-                ))}
+                )}
+
+                {/* Stats row */}
+                <div className="flex flex-wrap justify-center lg:justify-start gap-6">
+                  {[
+                    { value: '24/7', label: 'Availability' },
+                    { value: '<3s', label: 'Response' },
+                    { value: '95%', label: 'Resolved' },
+                    { value: '4.9★', label: 'Rating' },
+                  ].map((s) => (
+                    <div key={s.label} className="text-center lg:text-left">
+                      <p className="text-sm font-black text-foreground tracking-tight">{s.value}</p>
+                      <p className="text-[9px] text-muted-foreground uppercase tracking-widest">{s.label}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
 
-              {/* Chat box - centered, constrained */}
-              <div className="max-w-lg mx-auto w-full">
+              {/* Right — chat box */}
+              <div className="w-full max-w-lg mx-auto lg:max-w-none">
                 {chatMode === 'demo' ? (
                   <TrudyChatBox onSwitchToLive={() => setChatMode('live')} />
                 ) : (
@@ -377,17 +381,18 @@ export default function CustomerService() {
                   </div>
                 )}
               </div>
+            </div>
           </div>
         </section>
 
         {/* ─── CAPABILITIES GRID ─── */}
-        <section className="pt-10 pb-8 px-4">
-          <div className="mx-auto max-w-5xl">
+        <section className="pt-12 pb-8 px-4">
+          <div className="mx-auto max-w-6xl">
             <div className="text-center mb-6">
               <h2 className="text-base font-bold text-foreground uppercase tracking-wider">What Trudy Handles</h2>
               <p className="text-xs text-muted-foreground mt-1">One AI assistant for your entire move</p>
             </div>
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {capabilities.map((cap, i) => (
                 <motion.div
                   key={cap.label}
@@ -416,9 +421,9 @@ export default function CustomerService() {
         </section>
 
         {/* ─── FAQ + CONTACT ─── */}
-        <section className="py-5 px-4 border-t border-border">
-          <div className="mx-auto max-w-4xl">
-            <div className="grid lg:grid-cols-2 gap-6">
+        <section className="py-10 px-4 border-t border-border">
+          <div className="mx-auto max-w-6xl">
+            <div className="grid lg:grid-cols-2 gap-10">
 
               {/* FAQ */}
               <div>
