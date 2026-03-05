@@ -172,18 +172,6 @@ export default function TrudyChatBox({ onSwitchToLive }: TrudyChatBoxProps) {
               </div>
             </div>
             <div className="flex items-center gap-1.5">
-              {onSwitchToLive && (
-                <button
-                  onClick={onSwitchToLive}
-                  className="inline-flex items-center gap-1.5 text-[10px] font-semibold text-foreground/80 hover:text-foreground bg-muted/60 hover:bg-foreground hover:text-background border border-border/60 hover:border-foreground px-2.5 py-1 rounded-full transition-all duration-200 hover:shadow-[0_2px_8px_-2px_hsl(var(--foreground)/0.2)]"
-                >
-                  <span className="relative flex h-1.5 w-1.5">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
-                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
-                  </span>
-                  Talk to Real Trudy
-                </button>
-              )}
               <span className="text-[9px] text-muted-foreground bg-muted px-2 py-0.5 rounded-full font-medium">
                 Demo
               </span>
