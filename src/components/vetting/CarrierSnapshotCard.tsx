@@ -389,7 +389,7 @@ export function CarrierSnapshotCard({ data, onRemove, className }: CarrierSnapsh
 
 function CarrierSnapshotCardInner({ data, onRemove, className }: CarrierSnapshotCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const redFlags = generateRedFlags(data);
+  const redFlags = generateRedFlags(data, data.scraped);
   const criticalFlags = redFlags.filter(f => f.severity === 'critical');
   const riskGrade = calculateRiskGrade(data);
 

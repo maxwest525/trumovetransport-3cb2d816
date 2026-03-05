@@ -79,7 +79,22 @@ export interface RedFlag {
   severity: RedFlagSeverity;
 }
 
-export function generateRedFlags(data: CarrierData): RedFlag[] {
+export interface ScrapedData {
+  boc3Status?: string;
+  boc3FilingDate?: string;
+  insurancePolicies?: {
+    type: string;
+    status: string;
+    insurerName?: string;
+    policyNumber?: string;
+    coverageAmount?: string;
+    effectiveDate?: string;
+    cancellationDate?: string;
+  }[];
+  isLoading?: boolean;
+}
+
+export function generateRedFlags(data: CarrierData, scraped?: ScrapedData): RedFlag[] {
   const flags: RedFlag[] = [];
 
   // Not allowed to operate
@@ -175,6 +190,35 @@ export function generateRedFlags(data: CarrierData): RedFlag[] {
   // Fatal crashes
   if (data.crashes.fatal > 0) {
     flags.push({ message: `${data.crashes.fatal} fatal crash(es) recorded`, severity: 'critical' });
+  }
+
+  // Scraped Li-Public data checks
+  if (scraped && !scraped.isLoading) {
+    // BOC-3 filing missing
+    if (scraped.boc3Status) {
+      const status = scraped.boc3Status.toLowerCase();
+      if (status.includes('no') || status === 'n' || status === 'none' || !status.includes('yes')) {
+        flags.push({ message: 'No BOC-3 process agent on file', severity: 'critical' });
+      }
+    }
+
+    // Cancelled insurance policies
+    if (scraped.insurancePolicies && scraped.insurancePolicies.length > 0) {
+      const cancelledPolicies = scraped.insurancePolicies.filter(p => {
+        const s = (p.status || '').toLowerCase();
+        return s.includes('cancel') || s.includes('revoke') || s.includes('expired');
+      });
+      const activePolicies = scraped.insurancePolicies.filter(p => {
+        const s = (p.status || '').toLowerCase();
+        return s.includes('active') || s.includes('effective');
+      });
+
+      if (cancelledPolicies.length > 0 && activePolicies.length === 0) {
+        flags.push({ message: 'All insurance policies cancelled/expired', severity: 'critical' });
+      } else if (cancelledPolicies.length > 0) {
+        flags.push({ message: `${cancelledPolicies.length} cancelled insurance polic${cancelledPolicies.length === 1 ? 'y' : 'ies'}`, severity: 'warning' });
+      }
+    }
   }
 
   return flags;
