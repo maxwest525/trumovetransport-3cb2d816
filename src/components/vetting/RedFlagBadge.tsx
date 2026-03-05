@@ -53,6 +53,9 @@ export interface CarrierData {
   };
   safety: {
     rating: string;
+    reviewDate?: string;
+    reviewType?: string;
+    ratingDate?: string;
   };
   basics: {
     unsafeDriving: { percentile: number; rdDeficient?: string; rdsvDeficient?: string; svDeficient?: string; snapShotDate?: string; totalInspectionWithViolation?: number; totalViolation?: number } | null;

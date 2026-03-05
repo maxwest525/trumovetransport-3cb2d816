@@ -791,6 +791,13 @@ function CarrierSnapshotCardInner({ data, onRemove, className }: CarrierSnapshot
                   totalViolation={data.basics.crashIndicator?.totalViolation}
                   snapShotDate={data.basics.crashIndicator?.snapShotDate}
                 />
+                {/* Hazmat Compliance BASIC from scraper */}
+                {data.scraped?.basicMeasures?.hazmatCompliance && (
+                  <BasicScoreBar 
+                    name="Hazmat Compliance" 
+                    percentile={data.scraped.basicMeasures.hazmatCompliance.measure}
+                  />
+                )}
               </div>
             </div>
 
@@ -852,6 +859,7 @@ function CarrierSnapshotCardInner({ data, onRemove, className }: CarrierSnapshot
                       { label: 'Vehicle', insp: data.oos.vehicleInspections ?? 0, oos: data.oos.vehicleOosInsp ?? 0 },
                       { label: 'Driver', insp: data.oos.driverInspections ?? 0, oos: data.oos.driverOosInsp ?? 0 },
                       { label: 'Hazmat', insp: data.oos.hazmatInspections ?? 0, oos: data.oos.hazmatOosInsp ?? 0 },
+                      ...((data.scraped?.inspectionDetails?.iepInspections ?? 0) > 0 ? [{ label: 'IEP', insp: data.scraped!.inspectionDetails!.iepInspections, oos: 0 }] : []),
                     ].map(row => (
                       <div key={row.label} className="grid grid-cols-3 gap-2 text-sm">
                         <span className="text-muted-foreground">{row.label}</span>
@@ -863,7 +871,7 @@ function CarrierSnapshotCardInner({ data, onRemove, className }: CarrierSnapshot
                     ))}
                     <div className="grid grid-cols-3 gap-2 text-sm pt-1 border-t border-border/30 font-medium">
                       <span className="text-foreground">Total</span>
-                      <span className="text-center font-mono text-foreground">{(data.oos.vehicleInspections ?? 0) + (data.oos.driverInspections ?? 0) + (data.oos.hazmatInspections ?? 0)}</span>
+                      <span className="text-center font-mono text-foreground">{(data.oos.vehicleInspections ?? 0) + (data.oos.driverInspections ?? 0) + (data.oos.hazmatInspections ?? 0) + (data.scraped?.inspectionDetails?.iepInspections ?? 0)}</span>
                       <span className="text-center font-mono text-foreground">{(data.oos.vehicleOosInsp ?? 0) + (data.oos.driverOosInsp ?? 0) + (data.oos.hazmatOosInsp ?? 0)}</span>
                     </div>
                   </div>
@@ -1231,8 +1239,65 @@ function CarrierSnapshotCardInner({ data, onRemove, className }: CarrierSnapshot
                   </>
                 )}
 
+                {/* Canadian Inspections */}
+                {data.scraped.canadianInspections && (data.scraped.canadianInspections.vehicleInspections > 0 || data.scraped.canadianInspections.driverInspections > 0) && (
+                  <>
+                    <Separator className="bg-border/60" />
+                    <div className="space-y-2 p-3 rounded-lg bg-muted/20 border border-border/50">
+                      <div className="flex items-center gap-2 text-xs font-semibold text-slate-900 dark:text-foreground">
+                        <ClipboardCheck className="w-3.5 h-3.5" />
+                        <span>Canadian Inspections</span>
+                      </div>
+                      <div className="space-y-1">
+                        <div className="grid grid-cols-3 gap-2 text-[10px] font-medium text-muted-foreground uppercase tracking-wider pb-1 border-b border-border/30">
+                          <span>Type</span>
+                          <span className="text-center">Inspections</span>
+                          <span className="text-center">OOS</span>
+                        </div>
+                        {[
+                          { label: 'Vehicle', insp: data.scraped.canadianInspections.vehicleInspections, oos: data.scraped.canadianInspections.vehicleOos },
+                          { label: 'Driver', insp: data.scraped.canadianInspections.driverInspections, oos: data.scraped.canadianInspections.driverOos },
+                        ].map(row => (
+                          <div key={row.label} className="grid grid-cols-3 gap-2 text-sm">
+                            <span className="text-muted-foreground">{row.label}</span>
+                            <span className="text-center font-mono text-foreground">{row.insp}</span>
+                            <span className={cn('text-center font-mono', row.oos > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-foreground')}>{row.oos}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {/* Canadian Crashes */}
+                {data.scraped.canadianCrashes && data.scraped.canadianCrashes.total > 0 && (
+                  <>
+                    <Separator className="bg-border/60" />
+                    <div className="space-y-2 p-3 rounded-lg bg-muted/20 border border-border/50">
+                      <div className="flex items-center gap-2 text-xs font-semibold text-slate-900 dark:text-foreground">
+                        <AlertTriangle className="w-3.5 h-3.5" />
+                        <span>Canadian Crashes</span>
+                      </div>
+                      <div className="space-y-1">
+                        <div className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">Fatal</span>
+                          <span className={cn('font-medium font-mono', data.scraped.canadianCrashes.fatal > 0 ? 'text-red-700 dark:text-red-400' : 'text-foreground')}>{data.scraped.canadianCrashes.fatal}</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">Injury</span>
+                          <span className={cn('font-medium font-mono', data.scraped.canadianCrashes.injury > 0 ? 'text-amber-700 dark:text-amber-400' : 'text-foreground')}>{data.scraped.canadianCrashes.injury}</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">Tow-Away</span>
+                          <span className="font-medium font-mono text-foreground">{data.scraped.canadianCrashes.towAway}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
+
                 {/* Additional company info */}
-                {(data.scraped.mileage || data.scraped.dunsNumber || data.scraped.entityType) && (
+                {(data.scraped.mileage || data.scraped.dunsNumber || data.scraped.entityType || data.scraped.stateCarrierId || data.scraped.operatingAuthorityText) && (
                   <>
                     <Separator className="bg-border/60" />
                     <div className="space-y-1 p-3 rounded-lg bg-muted/20 border border-border/50">
@@ -1244,6 +1309,12 @@ function CarrierSnapshotCardInner({ data, onRemove, className }: CarrierSnapshot
                         <div className="flex justify-between text-sm">
                           <span className="text-muted-foreground">Entity Type</span>
                           <span className="font-medium text-foreground">{data.scraped.entityType}</span>
+                        </div>
+                      )}
+                      {data.scraped.stateCarrierId && (
+                        <div className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">State Carrier ID</span>
+                          <span className="font-mono text-foreground">{data.scraped.stateCarrierId}</span>
                         </div>
                       )}
                       {data.scraped.mileage && (
@@ -1259,6 +1330,12 @@ function CarrierSnapshotCardInner({ data, onRemove, className }: CarrierSnapshot
                         <div className="flex justify-between text-sm">
                           <span className="text-muted-foreground">DUNS Number</span>
                           <span className="font-mono text-foreground">{data.scraped.dunsNumber}</span>
+                        </div>
+                      )}
+                      {data.scraped.operatingAuthorityText && (
+                        <div className="text-sm mt-1">
+                          <span className="text-muted-foreground block text-xs mb-0.5">Operating Authority</span>
+                          <span className="text-foreground">{data.scraped.operatingAuthorityText}</span>
                         </div>
                       )}
                     </div>
@@ -1290,12 +1367,23 @@ function CarrierSnapshotCardInner({ data, onRemove, className }: CarrierSnapshot
             </div>
 
             {/* Footer Info */}
-            <div className="flex items-center justify-between pt-2 border-t border-border/50 text-xs text-muted-foreground">
-              <div className="flex items-center gap-1">
-                <Calendar className="w-3 h-3" />
-                <span>MCS-150: {formatDate(data.fleet.mcs150Date)}</span>
+            <div className="flex flex-col gap-1 pt-2 border-t border-border/50 text-xs text-muted-foreground">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1">
+                  <Calendar className="w-3 h-3" />
+                  <span>MCS-150: {formatDate(data.fleet.mcs150Date)}</span>
+                </div>
+                <span>Safety Rating: {data.safety.rating || 'Not Rated'}</span>
               </div>
-              <span>Safety Rating: {data.safety.rating || 'Not Rated'}</span>
+              {(data.safety.reviewDate || data.safety.reviewType) && (
+                <div className="flex items-center justify-between">
+                  {data.safety.reviewDate && <span>Review Date: {formatDate(data.safety.reviewDate)}</span>}
+                  {data.safety.reviewType && <span>Review Type: {data.safety.reviewType}</span>}
+                </div>
+              )}
+              {data.safety.ratingDate && (
+                <span>Rating Date: {formatDate(data.safety.ratingDate)}</span>
+              )}
             </div>
 
             {/* External Links */}
