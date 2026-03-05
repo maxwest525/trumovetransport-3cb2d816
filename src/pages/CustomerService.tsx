@@ -295,7 +295,7 @@ export default function CustomerService() {
     }>
       <main className="min-h-screen bg-background">
         {/* ─── HERO ─── */}
-        <section className="relative pt-10 pb-10 px-6 md:px-10 lg:px-16 overflow-hidden">
+        <section className="relative pt-8 pb-6 px-6 md:px-10 lg:px-16 overflow-hidden">
           {/* Background gradient layers */}
           <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.04] via-background to-primary/[0.03]" />
           <div className="absolute top-[-100px] left-1/4 w-[900px] h-[600px] bg-primary/[0.05] rounded-full blur-[140px] pointer-events-none" />
@@ -303,9 +303,9 @@ export default function CustomerService() {
           {/* Subtle dot texture */}
           <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle, hsl(var(--foreground)) 0.5px, transparent 0.5px)', backgroundSize: '24px 24px' }} />
           <div className="relative mx-auto max-w-7xl">
-            <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-start">
+            <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
               {/* Left — text content */}
-              <div className="text-center lg:text-left space-y-6 lg:pt-8">
+              <div className="text-center lg:text-left space-y-6">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary mb-3">AI-Powered Support</p>
                   <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-foreground leading-[1.05]">
