@@ -108,6 +108,16 @@ export interface ScrapedData {
 export function generateRedFlags(data: CarrierData, scraped?: ScrapedData): RedFlag[] {
   const flags: RedFlag[] = [];
 
+  const parseInsurance = (value: string) => {
+    const num = parseInt(value.replace(/[^0-9]/g, ''));
+    return isNaN(num) ? 0 : num;
+  };
+
+  // Determine if this is a broker-only entity (no carrier authority, only broker authority)
+  const isBrokerOnly = data.authority.brokerStatus === 'ACTIVE' &&
+    (data.authority.commonStatus === 'NONE' || data.authority.commonStatus === 'INACTIVE' || !data.authority.commonStatus) &&
+    (data.authority.contractStatus === 'NONE' || data.authority.contractStatus === 'INACTIVE' || !data.authority.contractStatus);
+
   // Not allowed to operate
   if (data.carrier.allowToOperate === 'N') {
     flags.push({ message: 'NOT allowed to operate', severity: 'critical' });
@@ -119,23 +129,29 @@ export function generateRedFlags(data: CarrierData, scraped?: ScrapedData): RedF
     flags.push({ message: `Out of Service order${dateStr}`, severity: 'critical' });
   }
 
-  // Authority status checks
-  if (data.authority.commonStatus === 'INACTIVE' || data.authority.commonStatus === 'NOT AUTHORIZED') {
-    flags.push({ message: 'Authority INACTIVE', severity: 'critical' });
-  }
-  if (data.authority.commonStatus === 'REVOKED') {
-    flags.push({ message: 'Authority REVOKED', severity: 'critical' });
-  }
-
-  // Insurance checks
-  const parseInsurance = (value: string) => {
-    const num = parseInt(value.replace(/[^0-9]/g, ''));
-    return isNaN(num) ? 0 : num;
-  };
-  
-  const bipdAmount = parseInsurance(data.authority.bipdInsurance);
-  if (bipdAmount < 750000) {
-    flags.push({ message: 'Liability below $750K minimum', severity: 'critical' });
+  // Authority status checks — for brokers, check broker authority instead
+  if (isBrokerOnly) {
+    if (data.authority.brokerStatus === 'INACTIVE' || data.authority.brokerStatus === 'REVOKED') {
+      flags.push({ message: `Broker Authority ${data.authority.brokerStatus}`, severity: 'critical' });
+    }
+    // Brokers need $75K surety bond, not $750K BIPD
+    const bondAmount = parseInsurance(data.authority.bondInsurance || '0');
+    if (bondAmount < 75000) {
+      flags.push({ message: 'Bond/Surety below $75K broker minimum', severity: 'critical' });
+    }
+  } else {
+    // Carrier authority checks
+    if (data.authority.commonStatus === 'INACTIVE' || data.authority.commonStatus === 'NOT AUTHORIZED') {
+      flags.push({ message: 'Authority INACTIVE', severity: 'critical' });
+    }
+    if (data.authority.commonStatus === 'REVOKED') {
+      flags.push({ message: 'Authority REVOKED', severity: 'critical' });
+    }
+    // Carriers need $750K BIPD liability
+    const bipdAmount = parseInsurance(data.authority.bipdInsurance);
+    if (bipdAmount < 750000) {
+      flags.push({ message: 'Liability below $750K minimum', severity: 'critical' });
+    }
   }
 
   // Safety rating
