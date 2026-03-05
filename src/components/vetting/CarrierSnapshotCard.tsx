@@ -716,6 +716,13 @@ function CarrierSnapshotCardInner({ data, onRemove, className }: CarrierSnapshot
                   amount={data.authority.cargoInsurance} 
                   required={100000} 
                 />
+                {data.authority.bondInsurance && data.authority.bondInsurance !== 'N/A' && (
+                  <InsuranceBar 
+                    label="Bond / Trust / Surety" 
+                    amount={data.authority.bondInsurance} 
+                    required={75000} 
+                  />
+                )}
               </div>
             </div>
 
