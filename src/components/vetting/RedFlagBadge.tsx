@@ -49,6 +49,7 @@ export interface CarrierData {
     brokerStatus?: string;
     bipdInsurance: string;
     cargoInsurance: string;
+    bondInsurance?: string;
   };
   safety: {
     rating: string;
