@@ -42,7 +42,7 @@ export default function MarketingShell({ children, breadcrumb = "" }: MarketingS
 
   const handleResetPreference = () => {
     localStorage.removeItem("truemove_remembered_role");
-    navigate("/agent-login");
+    navigate("/");
   };
 
   const sidebarContent = (
