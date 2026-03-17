@@ -719,6 +719,7 @@ export default function GrowthCampaignBuilder() {
 
               <button
                 onClick={() => {
+                  const page = LANDING_PAGES.find(p => p.id === selectedPage);
                   navigate("/marketing/campaign-summary", {
                     state: {
                       campaign: {
@@ -728,7 +729,9 @@ export default function GrowthCampaignBuilder() {
                         geoMode: GEO_MODES.find(m => m.id === geoMode)?.label || "Not set",
                         budget,
                         keywords: selectedBuckets.join(", ") || "None",
-                        landingPage: LANDING_PAGES.find(p => p.id === selectedPage)?.name || "Not set",
+                        landingPage: page?.name || "Not set",
+                        captureType: page?.captureType || "form",
+                        isMeta: selectedPlatforms.includes("meta_fb"),
                       },
                     },
                   });
