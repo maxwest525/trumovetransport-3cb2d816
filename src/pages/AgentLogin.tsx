@@ -135,7 +135,7 @@ export default function AgentLogin() {
 
   const handleClick = (link: LinkItem) => {
     if (link.external) {
-      window.open(link.href, "_blank", "noopener");
+      navigate(link.href);
     } else {
       navigate(link.href);
     }
