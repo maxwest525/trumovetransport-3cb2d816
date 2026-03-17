@@ -184,7 +184,7 @@ export default function About() {
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link
-              to="/online-estimate"
+              to="/site/online-estimate"
               className="inline-flex items-center gap-2 h-12 px-6 rounded-xl bg-foreground text-background text-sm font-bold tracking-wide uppercase transition-all hover:-translate-y-0.5 hover:shadow-lg"
             >
               Get an Estimate
