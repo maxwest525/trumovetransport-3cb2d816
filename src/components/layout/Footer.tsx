@@ -30,7 +30,7 @@ export default function Footer() {
           <Link className="footer-link" to="/terms">
             Terms
           </Link>
-          <Link className="footer-link footer-link-muted" to="/agent-login">
+          <Link className="footer-link footer-link-muted" to="/">
             Portal
           </Link>
         </nav>

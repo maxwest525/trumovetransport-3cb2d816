@@ -22,7 +22,7 @@ export default function Demo() {
           </Link>
 
           <Link
-            to="/agent-login"
+            to="/"
             className="group flex flex-col items-center gap-3 rounded-2xl border border-border bg-card p-8 hover:border-primary/40 hover:shadow-lg transition-all"
           >
             <span className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors">New Version</span>

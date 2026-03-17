@@ -35,7 +35,7 @@ export default function ResetPassword() {
       toast({ title: "Error", description: error.message, variant: "destructive" });
     } else {
       toast({ title: "Password updated", description: "You can now sign in with your new password." });
-      navigate("/agent-login");
+      navigate("/");
     }
   };
 
