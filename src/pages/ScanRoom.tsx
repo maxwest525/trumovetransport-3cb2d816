@@ -758,7 +758,7 @@ export default function ScanRoom() {
                 <span className="tru-scan-floating-bar-label">cu ft</span>
               </div>
               {detectedItems.length > 0 && (
-                <Link to="/online-estimate" className="tru-scan-floating-bar-btn">
+                <Link to="/site/online-estimate" className="tru-scan-floating-bar-btn">
                   <ArrowRight className="w-4 h-4" />
                   View All
                 </Link>
