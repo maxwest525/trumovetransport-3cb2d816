@@ -1,21 +1,26 @@
 
 
-## Replace Demo TrudyChatBox with Live ElevenLabs AI
+## Plan: Remove Demo Data Toggle from All Shells
 
-The current `TrudyChatBox` uses hardcoded pattern-matching for responses. We'll replace it with real ElevenLabs Conversational AI using the existing infrastructure (edge function, API keys, and `@elevenlabs/react` SDK) — the same setup the floating Trudy widget already uses.
+The `DemoDataToggle` component (the "Demo" switch in every portal header) will be removed from all 6 shell layouts. The component file itself and its `onRefresh` wiring will also be cleaned up.
 
 ### Changes
 
-**`src/components/TrudyChatBox.tsx`**
-- Remove the `simulateResponse` pattern-matching logic
-- Add the `useConversation` hook from `@elevenlabs/react` in text-only mode
-- On mount, fetch a signed URL from the existing `elevenlabs-conversation-token` edge function and start a session
-- Route `handleSend` through `conversation.sendUserMessage()` instead of pattern matching
-- Handle `onMessage` callbacks to display real AI responses
-- Keep the existing visual design (glassmorphism, avatars, quick prompts, typing indicator) — only the response engine changes
-- Remove the "Demo" badge since it's now live
-- Show a connecting state while the WebSocket session initializes
-- Add error handling with a retry button if connection fails
+**Remove `DemoDataToggle` import and usage from 6 shell files:**
+1. `src/components/layout/AgentShell.tsx` — remove import + `<DemoDataToggle />` render
+2. `src/components/layout/AdminShell.tsx` — same
+3. `src/components/layout/ManagerShell.tsx` — same
+4. `src/components/layout/AccountingShell.tsx` — same
+5. `src/components/layout/MarketingShell.tsx` — same
+6. `src/components/layout/LeadVendorShell.tsx` — remove import, render, and `onRefresh` prop (used only for demo toggle callback)
 
-**No new edge functions or secrets needed** — reuses the existing `elevenlabs-conversation-token` function and `ELEVENLABS_API_KEY` / `ELEVENLABS_AGENT_ID` secrets.
+**Remove `onRefresh` prop wiring in consumer pages** (passed only to feed the demo toggle):
+- `src/pages/LeadsDashboard.tsx` — remove `onRefresh` prop from `<LeadVendorShell>`
+- `src/pages/LeadsPerformance.tsx` — same
+- `src/pages/AdminLeadVendors.tsx` — same
+
+**Delete the component file:**
+- `src/components/leads/DemoDataToggle.tsx`
+
+No database changes needed — the demo data seeding/purging logic simply goes away with the component.
 
