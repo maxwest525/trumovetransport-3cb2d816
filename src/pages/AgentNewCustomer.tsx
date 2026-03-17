@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { UserPlus, Loader2, ArrowRight, Sparkles, MapPin, Calendar, Phone, Mail, User } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import MoveSummaryPanel from "@/components/agent/MoveSummaryPanel";
 import { toast } from "sonner";
 
 const DEMO_DATA = {
@@ -77,7 +78,7 @@ export default function AgentNewCustomer() {
 
   return (
     <AgentShell breadcrumb=" / New Lead">
-      <div className="p-6 max-w-3xl mx-auto space-y-5">
+      <div className="p-6 max-w-5xl mx-auto space-y-5">
         {/* Workflow breadcrumb */}
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           <span className="text-primary font-semibold">New Lead</span>
@@ -101,85 +102,97 @@ export default function AgentNewCustomer() {
           </Button>
         </div>
 
-        <Card className="border border-border shadow-sm">
-          <CardContent className="p-6 space-y-5">
-            {/* Contact Info */}
-            <div>
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-3 flex items-center gap-1.5">
-                <User className="w-3 h-3" /> Contact Information
-              </p>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1.5">
-                  <Label className="text-xs">First Name <span className="text-destructive">*</span></Label>
-                  <Input value={form.firstName} onChange={e => updateField("firstName", e.target.value)} placeholder="John" />
+        <div className="flex gap-6">
+          {/* Form */}
+          <div className="flex-1 min-w-0">
+            <Card className="border border-border shadow-sm">
+              <CardContent className="p-6 space-y-5">
+                {/* Contact Info */}
+                <div>
+                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-3 flex items-center gap-1.5">
+                    <User className="w-3 h-3" /> Contact Information
+                  </p>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1.5">
+                      <Label className="text-xs">First Name <span className="text-destructive">*</span></Label>
+                      <Input value={form.firstName} onChange={e => updateField("firstName", e.target.value)} placeholder="John" />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs">Last Name <span className="text-destructive">*</span></Label>
+                      <Input value={form.lastName} onChange={e => updateField("lastName", e.target.value)} placeholder="Smith" />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs flex items-center gap-1"><Mail className="w-3 h-3" /> Email</Label>
+                      <Input type="email" value={form.email} onChange={e => updateField("email", e.target.value)} placeholder="john@email.com" />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs flex items-center gap-1"><Phone className="w-3 h-3" /> Phone</Label>
+                      <Input value={form.phone} onChange={e => updateField("phone", e.target.value)} placeholder="(555) 123-4567" />
+                    </div>
+                  </div>
                 </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs">Last Name <span className="text-destructive">*</span></Label>
-                  <Input value={form.lastName} onChange={e => updateField("lastName", e.target.value)} placeholder="Smith" />
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs flex items-center gap-1"><Mail className="w-3 h-3" /> Email</Label>
-                  <Input type="email" value={form.email} onChange={e => updateField("email", e.target.value)} placeholder="john@email.com" />
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs flex items-center gap-1"><Phone className="w-3 h-3" /> Phone</Label>
-                  <Input value={form.phone} onChange={e => updateField("phone", e.target.value)} placeholder="(555) 123-4567" />
-                </div>
-              </div>
-            </div>
 
-            {/* Move Details */}
-            <div>
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-3 flex items-center gap-1.5">
-                <MapPin className="w-3 h-3" /> Move Details
-              </p>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1.5">
-                  <Label className="text-xs">Origin Address</Label>
-                  <Input value={form.originAddress} onChange={e => updateField("originAddress", e.target.value)} placeholder="123 Main St, City, ST" />
+                {/* Move Details */}
+                <div>
+                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-3 flex items-center gap-1.5">
+                    <MapPin className="w-3 h-3" /> Move Details
+                  </p>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1.5">
+                      <Label className="text-xs">Origin Address</Label>
+                      <Input value={form.originAddress} onChange={e => updateField("originAddress", e.target.value)} placeholder="123 Main St, City, ST" />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs">Destination Address</Label>
+                      <Input value={form.destinationAddress} onChange={e => updateField("destinationAddress", e.target.value)} placeholder="456 Oak Ave, City, ST" />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs flex items-center gap-1"><Calendar className="w-3 h-3" /> Move Date</Label>
+                      <Input type="date" value={form.moveDate} onChange={e => updateField("moveDate", e.target.value)} />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs">Estimated Value ($)</Label>
+                      <Input type="number" value={form.estimatedValue} onChange={e => updateField("estimatedValue", e.target.value)} placeholder="3,500" />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs">Lead Source</Label>
+                      <Select value={form.source} onValueChange={v => updateField("source", v)}>
+                        <SelectTrigger><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="phone">Phone</SelectItem>
+                          <SelectItem value="website">Website</SelectItem>
+                          <SelectItem value="referral">Referral</SelectItem>
+                          <SelectItem value="ppc">PPC</SelectItem>
+                          <SelectItem value="walk_in">Walk-in</SelectItem>
+                          <SelectItem value="other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
                 </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs">Destination Address</Label>
-                  <Input value={form.destinationAddress} onChange={e => updateField("destinationAddress", e.target.value)} placeholder="456 Oak Ave, City, ST" />
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs flex items-center gap-1"><Calendar className="w-3 h-3" /> Move Date</Label>
-                  <Input type="date" value={form.moveDate} onChange={e => updateField("moveDate", e.target.value)} />
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs">Lead Source</Label>
-                  <Select value={form.source} onValueChange={v => updateField("source", v)}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="phone">Phone</SelectItem>
-                      <SelectItem value="website">Website</SelectItem>
-                      <SelectItem value="referral">Referral</SelectItem>
-                      <SelectItem value="ppc">PPC</SelectItem>
-                      <SelectItem value="walk_in">Walk-in</SelectItem>
-                      <SelectItem value="other">Other</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </div>
 
-            {/* Notes */}
-            <div className="space-y-1.5">
-              <Label className="text-xs">Notes</Label>
-              <Textarea value={form.notes} onChange={e => updateField("notes", e.target.value)} placeholder="Special items, access notes, etc..." rows={2} />
-            </div>
+                {/* Notes */}
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Notes</Label>
+                  <Textarea value={form.notes} onChange={e => updateField("notes", e.target.value)} placeholder="Special items, access notes, etc..." rows={2} />
+                </div>
 
-            <div className="flex gap-3">
-              <Button variant="outline" className="flex-1 gap-2 h-11" onClick={() => navigate("/agent/customers")} disabled={isSaving}>
-                Cancel
-              </Button>
-              <Button className="flex-1 gap-2 h-11" onClick={handleCreate} disabled={isSaving || !isValid}>
-                {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <UserPlus className="w-4 h-4" />}
-                {isSaving ? "Saving..." : "Save Lead"}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+                <div className="flex gap-3">
+                  <Button variant="outline" className="flex-1 gap-2 h-11" onClick={() => navigate("/agent/customers")} disabled={isSaving}>
+                    Cancel
+                  </Button>
+                  <Button className="flex-1 gap-2 h-11" onClick={handleCreate} disabled={isSaving || !isValid}>
+                    {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <UserPlus className="w-4 h-4" />}
+                    {isSaving ? "Saving..." : "Save Lead"}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Sticky summary sidebar */}
+          <MoveSummaryPanel form={form} />
+        </div>
       </div>
     </AgentShell>
   );
