@@ -1,34 +1,21 @@
 
 
-## Problem
+## Replace Demo TrudyChatBox with Live ElevenLabs AI
 
-The `defaultEntries` array in code has all 67 patterns, but the database still has the old 15. On page load, the DB patterns overwrite the code defaults (line 257). So users always see 15, not 67.
+The current `TrudyChatBox` uses hardcoded pattern-matching for responses. We'll replace it with real ElevenLabs Conversational AI using the existing infrastructure (edge function, API keys, and `@elevenlabs/react` SDK) — the same setup the floating Trudy widget already uses.
 
-Two things need to happen:
+### Changes
 
-### 1. Update DB with full 67 patterns (one-time sync)
+**`src/components/TrudyChatBox.tsx`**
+- Remove the `simulateResponse` pattern-matching logic
+- Add the `useConversation` hook from `@elevenlabs/react` in text-only mode
+- On mount, fetch a signed URL from the existing `elevenlabs-conversation-token` edge function and start a session
+- Route `handleSend` through `conversation.sendUserMessage()` instead of pattern matching
+- Handle `onMessage` callbacks to display real AI responses
+- Keep the existing visual design (glassmorphism, avatars, quick prompts, typing indicator) — only the response engine changes
+- Remove the "Demo" badge since it's now live
+- Show a connecting state while the WebSocket session initializes
+- Add error handling with a retry button if connection fails
 
-Add logic so that when DB patterns are loaded and they have fewer entries than `defaultEntries`, automatically merge/replace with the full set. This ensures the DB gets the complete 67 without requiring users to manually click "Reset to defaults."
-
-**In the `loadPatternsFromDb` effect (line 251-262):** After loading DB patterns, compare count. If `dbPatterns.length < defaultEntries.length`, use `defaultEntries` instead (the DB will auto-sync via the persist effect).
-
-### 2. Add severity auto-assignment + import/export
-
-While we're in the file, also implement the two features from earlier:
-
-**Severity auto-assignment** — Add a `defaultSeverity` field to `CATEGORY_META` mapping:
-- `legal`, `compliance`, `pii`, `safety` → `critical`
-- `escalation`, `anger` → `high`  
-- `rebuttal` → `medium`
-
-This gets used when flagging keywords in `PulseAgent.tsx` — the `checkMatch` function currently assigns severity based on match type. Instead, look up the pattern's category and use the category's default severity.
-
-**Import/Export** — Add two buttons to the settings UI:
-- **Export**: Download current `entries` as a JSON file
-- **Import**: File input that reads a JSON file and merges/replaces entries
-
-### Files to Change
-
-- `src/pages/pulse/PulseManager.tsx` — Fix DB-overwrite logic, add severity map to `CATEGORY_META`, add import/export buttons
-- `src/pages/pulse/PulseAgent.tsx` — Use category-based severity lookup instead of match-type-based
+**No new edge functions or secrets needed** — reuses the existing `elevenlabs-conversation-token` function and `ELEVENLABS_API_KEY` / `ELEVENLABS_AGENT_ID` secrets.
 

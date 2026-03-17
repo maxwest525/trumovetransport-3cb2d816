@@ -102,10 +102,11 @@ const PulseAgent: React.FC<{ embedded?: boolean }> = ({ embedded = false }) => {
     lastCheckedRef.current = transcript.length;
     const processEntries = async () => {
       const entries = await getWatchEntries();
+      const CATEGORY_SEVERITY: Record<string, Severity> = { legal: 'critical', compliance: 'critical', pii: 'critical', safety: 'critical', hipaa: 'critical', financial: 'critical', escalation: 'high', anger: 'high', profanity: 'high', rebuttal: 'medium' };
       entries.forEach(async (entry) => {
         const matched = checkMatch(newText, entry);
         if (!matched) return;
-        const sev: Severity = entry.type === 'regex' ? 'critical' : entry.type === 'phrase' ? 'high' : 'medium';
+        const sev: Severity = (entry as any).category ? (CATEGORY_SEVERITY[(entry as any).category] || 'medium') : (entry.type === 'regex' ? 'critical' : entry.type === 'phrase' ? 'high' : 'medium');
         const contextSnippet = newText.slice(0, 200);
         const elapsed = callStartTime ? Math.round((Date.now() - callStartTime.getTime()) / 1000) : 0;
         const timeLabel = `${Math.floor(elapsed / 60)}:${(elapsed % 60).toString().padStart(2, '0')}`;

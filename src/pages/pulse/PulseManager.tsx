@@ -16,17 +16,17 @@ type MatchType = 'keyword' | 'phrase' | 'regex';
 type Severity = 'low' | 'medium' | 'high' | 'critical';
 type Category = 'legal' | 'anger' | 'escalation' | 'compliance' | 'pii' | 'rebuttal' | 'safety' | 'hipaa' | 'financial' | 'profanity';
 
-const CATEGORY_META: Record<Category, { label: string; icon: React.ElementType; color: string; bg: string }> = {
-  legal: { label: 'Legal', icon: Scale, color: 'text-destructive', bg: 'bg-destructive/10 border-destructive/20' },
-  anger: { label: 'Anger', icon: Flame, color: 'text-orange-500', bg: 'bg-orange-500/10 border-orange-500/20' },
-  escalation: { label: 'Escalation', icon: AlertTriangle, color: 'text-compliance-review', bg: 'bg-compliance-review/10 border-compliance-review/20' },
-  compliance: { label: 'Compliance', icon: Shield, color: 'text-primary', bg: 'bg-primary/10 border-primary/20' },
-  pii: { label: 'PII / NIST', icon: Lock, color: 'text-violet-500', bg: 'bg-violet-500/10 border-violet-500/20' },
-  rebuttal: { label: 'Rebuttal', icon: MessageCircleWarning, color: 'text-cyan-600', bg: 'bg-cyan-600/10 border-cyan-600/20' },
-  safety: { label: 'Safety', icon: HandMetal, color: 'text-red-600', bg: 'bg-red-600/10 border-red-600/20' },
-  hipaa: { label: 'HIPAA', icon: Shield, color: 'text-emerald-600', bg: 'bg-emerald-600/10 border-emerald-600/20' },
-  financial: { label: 'Financial', icon: Scale, color: 'text-amber-600', bg: 'bg-amber-600/10 border-amber-600/20' },
-  profanity: { label: 'Profanity', icon: AlertTriangle, color: 'text-red-500', bg: 'bg-red-500/10 border-red-500/20' },
+const CATEGORY_META: Record<Category, { label: string; icon: React.ElementType; color: string; bg: string; defaultSeverity: Severity }> = {
+  legal: { label: 'Legal', icon: Scale, color: 'text-destructive', bg: 'bg-destructive/10 border-destructive/20', defaultSeverity: 'critical' },
+  anger: { label: 'Anger', icon: Flame, color: 'text-orange-500', bg: 'bg-orange-500/10 border-orange-500/20', defaultSeverity: 'high' },
+  escalation: { label: 'Escalation', icon: AlertTriangle, color: 'text-compliance-review', bg: 'bg-compliance-review/10 border-compliance-review/20', defaultSeverity: 'high' },
+  compliance: { label: 'Compliance', icon: Shield, color: 'text-primary', bg: 'bg-primary/10 border-primary/20', defaultSeverity: 'critical' },
+  pii: { label: 'PII / NIST', icon: Lock, color: 'text-violet-500', bg: 'bg-violet-500/10 border-violet-500/20', defaultSeverity: 'critical' },
+  rebuttal: { label: 'Rebuttal', icon: MessageCircleWarning, color: 'text-cyan-600', bg: 'bg-cyan-600/10 border-cyan-600/20', defaultSeverity: 'medium' },
+  safety: { label: 'Safety', icon: HandMetal, color: 'text-red-600', bg: 'bg-red-600/10 border-red-600/20', defaultSeverity: 'critical' },
+  hipaa: { label: 'HIPAA', icon: Shield, color: 'text-emerald-600', bg: 'bg-emerald-600/10 border-emerald-600/20', defaultSeverity: 'critical' },
+  financial: { label: 'Financial', icon: Scale, color: 'text-amber-600', bg: 'bg-amber-600/10 border-amber-600/20', defaultSeverity: 'critical' },
+  profanity: { label: 'Profanity', icon: AlertTriangle, color: 'text-red-500', bg: 'bg-red-500/10 border-red-500/20', defaultSeverity: 'high' },
 };
 
 interface WatchEntry { id: string; pattern: string; type: MatchType; category?: Category; }
@@ -254,7 +254,12 @@ const PulseManager: React.FC<{ embedded?: boolean }> = ({ embedded = false }) =>
         const { data, error } = await supabase.from('pulse_watch_patterns' as any).select('patterns').eq('config_key', 'default').maybeSingle();
         if (!error && data && (data as any).patterns) {
           const dbPatterns = (data as any).patterns as WatchEntry[];
-          if (Array.isArray(dbPatterns) && dbPatterns.length > 0) { setEntries(dbPatterns); localStorage.setItem('pulse-watch-entries', JSON.stringify(dbPatterns)); }
+          if (Array.isArray(dbPatterns) && dbPatterns.length >= defaultEntries.length) {
+            setEntries(dbPatterns); localStorage.setItem('pulse-watch-entries', JSON.stringify(dbPatterns));
+          } else {
+            // DB has fewer patterns than defaults — sync full set
+            setEntries(defaultEntries); localStorage.setItem('pulse-watch-entries', JSON.stringify(defaultEntries));
+          }
         }
       } catch {} finally { setDbPatternsLoaded(true); }
     };
@@ -400,9 +405,35 @@ const PulseManager: React.FC<{ embedded?: boolean }> = ({ embedded = false }) =>
                 );
               })}
             </div>
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 flex-wrap">
               <Button variant="outline" size="sm" className="h-7 text-[10px] gap-1 flex-1" onClick={resetToDefaults}><RotateCcw className="w-3 h-3" /> Reset</Button>
               <Button variant="outline" size="sm" className="h-7 text-[10px] gap-1 flex-1" onClick={restorePrevious} disabled={!previousEntries}><Undo2 className="w-3 h-3" /> Restore</Button>
+              <Button variant="outline" size="sm" className="h-7 text-[10px] gap-1 flex-1" onClick={() => {
+                const blob = new Blob([JSON.stringify(entries, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a'); a.href = url; a.download = 'pulse-watch-patterns.json'; a.click();
+                URL.revokeObjectURL(url);
+                toast.success('Patterns exported');
+              }}><CloudUpload className="w-3 h-3" /> Export</Button>
+              <Button variant="outline" size="sm" className="h-7 text-[10px] gap-1 flex-1" onClick={() => {
+                const input = document.createElement('input'); input.type = 'file'; input.accept = '.json';
+                input.onchange = (e) => {
+                  const file = (e.target as HTMLInputElement).files?.[0];
+                  if (!file) return;
+                  const reader = new FileReader();
+                  reader.onload = (ev) => {
+                    try {
+                      const imported = JSON.parse(ev.target?.result as string) as WatchEntry[];
+                      if (!Array.isArray(imported) || !imported.every(e => e.pattern && e.type)) { toast.error('Invalid pattern file'); return; }
+                      setPreviousEntries(entries);
+                      setEntries(imported);
+                      toast.success(`Imported ${imported.length} patterns`);
+                    } catch { toast.error('Failed to parse file'); }
+                  };
+                  reader.readAsText(file);
+                };
+                input.click();
+              }}><Upload className="w-3 h-3" /> Import</Button>
             </div>
           </div>
 
