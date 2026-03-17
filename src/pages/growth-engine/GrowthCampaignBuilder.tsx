@@ -101,6 +101,7 @@ const LANDING_PAGES = [
 ];
 
 export default function GrowthCampaignBuilder() {
+  const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [selectedGoal, setSelectedGoal] = useState<string | null>(null);
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
