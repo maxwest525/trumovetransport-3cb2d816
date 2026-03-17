@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Home, Sun, Moon, Bell, LayoutDashboard, Users, Link2, Package,
   Zap, ScrollText, RotateCcw, Gauge, Sparkles, DollarSign,
-  FileText, BookOpen, CreditCard,
+  FileText, BookOpen, CreditCard, Settings2,
 } from "lucide-react";
 import logoImg from "@/assets/logo.png";
 import { toast } from "sonner";
@@ -20,6 +20,7 @@ const NAV_ITEMS = [
   { label: "QuickBooks", icon: BookOpen, href: "/admin/quickbooks" },
   { label: "Payroll / Paychex", icon: CreditCard, href: "/admin/payroll" },
   { label: "Developer", icon: Link2, href: "/admin/developer" },
+  { label: "Pulse Settings", icon: Settings2, href: "/admin/pulse" },
 ];
 
 const ADVANCED_ITEMS = [

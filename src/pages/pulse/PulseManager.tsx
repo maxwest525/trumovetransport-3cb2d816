@@ -157,7 +157,7 @@ const ComplianceScripts: React.FC = () => {
   );
 };
 
-const PulseManager: React.FC = () => {
+const PulseManager: React.FC<{ embedded?: boolean }> = ({ embedded = false }) => {
   const [entries, setEntries] = useState<WatchEntry[]>(() => {
     try { const saved = localStorage.getItem('pulse-watch-entries'); if (saved) return JSON.parse(saved); } catch {}
     return defaultEntries;
@@ -295,18 +295,20 @@ const PulseManager: React.FC = () => {
   const [customChannelName, setCustomChannelName] = useState('');
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <header className="sticky top-0 z-40 h-14 flex items-center gap-3 px-6 border-b border-border/60 bg-background/80 backdrop-blur-xl">
-        <Link to="/pulse" className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"><ArrowLeft className="w-3.5 h-3.5" /></Link>
-        <Settings className="w-5 h-5 text-primary" />
-        <span className="font-bold text-lg tracking-tight">Compliance Settings</span>
-        <Badge variant="destructive" className="text-[10px]">BETA</Badge>
-        <div className="flex-1" />
-        <Button variant="ghost" size="sm" className={`h-8 w-8 p-0 ${soundEnabled ? 'text-primary' : 'text-muted-foreground'}`} onClick={() => setSoundEnabled(p => !p)}>
-          {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
-        </Button>
-        <Badge variant="secondary" className="text-[10px]">{entries.length} patterns</Badge>
-      </header>
+    <div className={embedded ? "" : "min-h-screen bg-background text-foreground"}>
+      {!embedded && (
+        <header className="sticky top-0 z-40 h-14 flex items-center gap-3 px-6 border-b border-border/60 bg-background/80 backdrop-blur-xl">
+          <Link to="/pulse" className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"><ArrowLeft className="w-3.5 h-3.5" /></Link>
+          <Settings className="w-5 h-5 text-primary" />
+          <span className="font-bold text-lg tracking-tight">Compliance Settings</span>
+          <Badge variant="destructive" className="text-[10px]">BETA</Badge>
+          <div className="flex-1" />
+          <Button variant="ghost" size="sm" className={`h-8 w-8 p-0 ${soundEnabled ? 'text-primary' : 'text-muted-foreground'}`} onClick={() => setSoundEnabled(p => !p)}>
+            {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+          </Button>
+          <Badge variant="secondary" className="text-[10px]">{entries.length} patterns</Badge>
+        </header>
+      )}
 
       <main className="max-w-6xl mx-auto p-6 space-y-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

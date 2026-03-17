@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { cn } from '@/lib/utils';
 import { AlertTriangle, Clock, User, TrendingUp, TrendingDown, Minus, Search, RefreshCw, Shield, ShieldAlert, ShieldCheck, Filter, Phone, FileText, Mic, Radio, MessageSquare, Send, X, Download, CalendarIcon, ChevronDown, Volume2, VolumeX, Plus } from 'lucide-react';
 import { format, startOfDay, endOfDay, subDays, subHours } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
@@ -38,7 +39,7 @@ const DEFAULT_QUICK_MESSAGES = [
   'Offer the retention deal',
 ];
 
-const PulseDashboard: React.FC = () => {
+const PulseDashboard: React.FC<{ embedded?: boolean }> = ({ embedded = false }) => {
   const [alerts, setAlerts] = useState<DbAlert[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedAgent, setSelectedAgent] = useState<string>('all');
@@ -122,16 +123,18 @@ const PulseDashboard: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col">
-      <header className="sticky top-0 z-40 h-14 flex items-center gap-3 px-6 border-b border-border bg-background/80 backdrop-blur-xl">
-        <Link to="/pulse" className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"><ArrowLeft className="w-3.5 h-3.5" /></Link>
-        <AlertTriangle className="w-5 h-5 text-primary" />
-        <span className="font-bold text-lg tracking-tight">Pulse Dashboard</span>
-        <Badge variant="destructive" className="text-[10px]">BETA</Badge>
-        <div className="flex-1" />
-        <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5" disabled={filteredAlerts.length === 0} onClick={exportCsv}><Download className="w-3.5 h-3.5" />Export CSV</Button>
-        <Button variant="ghost" size="sm" className="text-xs gap-1" onClick={fetchAlerts}><RefreshCw className="w-3 h-3" /></Button>
-      </header>
+    <div className={cn(embedded ? "flex flex-col" : "min-h-screen bg-background text-foreground flex flex-col")}>
+      {!embedded && (
+        <header className="sticky top-0 z-40 h-14 flex items-center gap-3 px-6 border-b border-border bg-background/80 backdrop-blur-xl">
+          <Link to="/pulse" className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"><ArrowLeft className="w-3.5 h-3.5" /></Link>
+          <AlertTriangle className="w-5 h-5 text-primary" />
+          <span className="font-bold text-lg tracking-tight">Pulse Dashboard</span>
+          <Badge variant="destructive" className="text-[10px]">BETA</Badge>
+          <div className="flex-1" />
+          <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5" disabled={filteredAlerts.length === 0} onClick={exportCsv}><Download className="w-3.5 h-3.5" />Export CSV</Button>
+          <Button variant="ghost" size="sm" className="text-xs gap-1" onClick={fetchAlerts}><RefreshCw className="w-3 h-3" /></Button>
+        </header>
+      )}
 
       <main className="max-w-7xl mx-auto p-6 w-full flex-1 flex flex-col gap-5">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" style={{ minHeight: '180px' }}>

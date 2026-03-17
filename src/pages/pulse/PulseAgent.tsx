@@ -38,7 +38,7 @@ function checkMatch(text: string, entry: WatchEntry): string | null {
   return null;
 }
 
-const PulseAgent: React.FC = () => {
+const PulseAgent: React.FC<{ embedded?: boolean }> = ({ embedded = false }) => {
   const { isListening, transcript, interimText, isSupported, start, stop, clear, appendText } = usePulseSpeechRecognition();
   const [liveCallId, setLiveCallId] = useState<string | null>(null);
   const [liveFlags, setLiveFlags] = useState<FlaggedKeyword[]>([]);
@@ -127,22 +127,24 @@ const PulseAgent: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <header className="sticky top-0 z-40 h-14 flex items-center justify-between px-6 border-b border-border bg-secondary/30 backdrop-blur-xl">
-        <div className="flex items-center gap-3">
-          <Link to="/pulse" className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"><ArrowLeft className="w-3.5 h-3.5" /></Link>
-          <User className="w-4 h-4 text-primary" />
-          <span className="font-semibold text-sm">{AGENT_NAME}</span>
-          <span className="text-xs text-muted-foreground">{dbCalls.length} calls</span>
-          <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-destructive/10 border border-destructive/20">
-            <AlertTriangle className="w-3 h-3 text-destructive" />
-            <span className="text-xs font-medium">{liveFlags.length} flags</span>
+    <div className={cn(embedded ? "" : "min-h-screen bg-background text-foreground")}>
+      {!embedded && (
+        <header className="sticky top-0 z-40 h-14 flex items-center justify-between px-6 border-b border-border bg-secondary/30 backdrop-blur-xl">
+          <div className="flex items-center gap-3">
+            <Link to="/pulse" className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"><ArrowLeft className="w-3.5 h-3.5" /></Link>
+            <User className="w-4 h-4 text-primary" />
+            <span className="font-semibold text-sm">{AGENT_NAME}</span>
+            <span className="text-xs text-muted-foreground">{dbCalls.length} calls</span>
+            <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-destructive/10 border border-destructive/20">
+              <AlertTriangle className="w-3 h-3 text-destructive" />
+              <span className="text-xs font-medium">{liveFlags.length} flags</span>
+            </div>
           </div>
-        </div>
-        <Badge variant="destructive" className="text-[10px]">BETA</Badge>
-      </header>
+          <Badge variant="destructive" className="text-[10px]">BETA</Badge>
+        </header>
+      )}
 
-      <main className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-[340px_1fr] min-h-[calc(100vh-3.5rem)]">
+      <main className={cn("max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-[340px_1fr]", embedded ? "" : "min-h-[calc(100vh-3.5rem)]")}>
         <div className="border-r border-border/40 bg-secondary/5">
           <div className="p-3 border-b border-border/30"><h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5"><Phone className="w-3 h-3" /> Recent Calls</h2></div>
           <ScrollArea className="h-[calc(100vh-7rem)]">

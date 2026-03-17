@@ -64,6 +64,9 @@ import PulseAgent from "./pages/pulse/PulseAgent";
 import PulseDashboard from "./pages/pulse/PulseDashboard";
 import PulseCallReview from "./pages/pulse/PulseCallReview";
 import PulseManager from "./pages/pulse/PulseManager";
+import AgentPulse from "./pages/AgentPulse";
+import ManagerPulse from "./pages/ManagerPulse";
+import AdminPulse from "./pages/AdminPulse";
 
 const queryClient = new QueryClient();
 
@@ -144,6 +147,9 @@ const App = () => (
             <Route path="/pulse/dashboard" element={<PulseDashboard />} />
             <Route path="/pulse/call/:callId" element={<PulseCallReview />} />
             <Route path="/pulse/manager" element={<PulseManager />} />
+            <Route path="/agent/pulse" element={<AgentPulse />} />
+            <Route path="/manager/pulse" element={<ManagerPulse />} />
+            <Route path="/admin/pulse" element={<AdminPulse />} />
             
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
