@@ -60,54 +60,78 @@ const migrateNotifSettings = (raw: any): NotificationSettings => {
 };
 
 const defaultEntries: WatchEntry[] = [
-  // Legal
+  // ── Keywords (26) ──
   { id: '1', pattern: 'cancel', type: 'keyword', category: 'legal' },
   { id: '2', pattern: 'refund', type: 'keyword', category: 'legal' },
   { id: '3', pattern: 'lawsuit', type: 'keyword', category: 'legal' },
   { id: '4', pattern: 'attorney', type: 'keyword', category: 'legal' },
-  { id: '90', pattern: 'lawsuit|attorney|legal action|litigat', type: 'regex', category: 'legal' },
-  // Anger
+  { id: '5', pattern: 'lawyer', type: 'keyword', category: 'legal' },
+  { id: '6', pattern: 'sue', type: 'keyword', category: 'legal' },
+  { id: '7', pattern: 'litigation', type: 'keyword', category: 'legal' },
+  { id: '8', pattern: 'subpoena', type: 'keyword', category: 'legal' },
+  { id: '9', pattern: 'regulatory', type: 'keyword', category: 'legal' },
+  { id: '10', pattern: 'complaint', type: 'keyword', category: 'legal' },
+  { id: '11', pattern: 'BBB', type: 'keyword', category: 'legal' },
+  { id: '12', pattern: 'fraud', type: 'keyword', category: 'legal' },
+  { id: '13', pattern: 'scam', type: 'keyword', category: 'legal' },
+  { id: '14', pattern: 'unauthorized', type: 'keyword', category: 'legal' },
   { id: '20', pattern: 'furious', type: 'keyword', category: 'anger' },
   { id: '21', pattern: 'outraged', type: 'keyword', category: 'anger' },
-  // Escalation
+  { id: '22', pattern: 'unacceptable', type: 'keyword', category: 'anger' },
+  { id: '23', pattern: 'ridiculous', type: 'keyword', category: 'anger' },
+  { id: '24', pattern: 'disgusting', type: 'keyword', category: 'anger' },
+  { id: '25', pattern: 'incompetent', type: 'keyword', category: 'anger' },
+  { id: '26', pattern: 'useless', type: 'keyword', category: 'anger' },
+  { id: '27', pattern: 'terrible', type: 'keyword', category: 'anger' },
+  { id: '28', pattern: 'worst', type: 'keyword', category: 'anger' },
+  { id: '29', pattern: 'horrible', type: 'keyword', category: 'anger' },
+  { id: '30', pattern: 'frustrated', type: 'keyword', category: 'anger' },
+  { id: '31', pattern: 'competitor', type: 'keyword', category: 'rebuttal' },
+
+  // ── Phrases (33) ──
   { id: '40', pattern: 'speak to a supervisor', type: 'phrase', category: 'escalation' },
   { id: '41', pattern: 'speak to a manager', type: 'phrase', category: 'escalation' },
-  // Compliance
+  { id: '42', pattern: 'talk to your manager', type: 'phrase', category: 'escalation' },
+  { id: '43', pattern: 'file a complaint', type: 'phrase', category: 'escalation' },
+  { id: '44', pattern: 'close my account', type: 'phrase', category: 'escalation' },
+  { id: '45', pattern: 'cancel my policy', type: 'phrase', category: 'escalation' },
+  { id: '46', pattern: 'cancel my account', type: 'phrase', category: 'escalation' },
+  { id: '47', pattern: 'never calling back', type: 'phrase', category: 'escalation' },
+  { id: '48', pattern: 'report you', type: 'phrase', category: 'escalation' },
+  { id: '49', pattern: 'hear from my lawyer', type: 'phrase', category: 'escalation' },
+  { id: '50', pattern: 'going to the media', type: 'phrase', category: 'escalation' },
+  { id: '51', pattern: 'social media', type: 'phrase', category: 'escalation' },
   { id: '60', pattern: 'I guarantee', type: 'phrase', category: 'compliance' },
   { id: '61', pattern: 'I promise', type: 'phrase', category: 'compliance' },
-  // PII
+  { id: '62', pattern: 'trust me', type: 'phrase', category: 'compliance' },
+  { id: '63', pattern: 'off the record', type: 'phrase', category: 'compliance' },
+  { id: '64', pattern: 'between you and me', type: 'phrase', category: 'compliance' },
+  { id: '65', pattern: 'not supposed to tell you', type: 'phrase', category: 'compliance' },
+  { id: '66', pattern: 'do me a favor', type: 'phrase', category: 'compliance' },
   { id: '70', pattern: 'social security', type: 'phrase', category: 'pii' },
+  { id: '71', pattern: 'credit card number', type: 'phrase', category: 'pii' },
+  { id: '72', pattern: 'bank account number', type: 'phrase', category: 'pii' },
+  { id: '73', pattern: 'date of birth', type: 'phrase', category: 'pii' },
+  { id: '74', pattern: 'mother maiden name', type: 'phrase', category: 'pii' },
+  { id: '75', pattern: 'data breach', type: 'phrase', category: 'pii' },
+  { id: '76', pattern: 'identity theft', type: 'phrase', category: 'pii' },
+  { id: '80', pattern: 'too expensive', type: 'phrase', category: 'rebuttal' },
+  { id: '81', pattern: 'not worth it', type: 'phrase', category: 'rebuttal' },
+  { id: '82', pattern: 'rip off', type: 'phrase', category: 'rebuttal' },
+  { id: '83', pattern: 'better deal', type: 'phrase', category: 'rebuttal' },
+  { id: '84', pattern: 'switch providers', type: 'phrase', category: 'rebuttal' },
+  { id: '85', pattern: 'think about it', type: 'phrase', category: 'rebuttal' },
+  { id: '86', pattern: 'not interested', type: 'phrase', category: 'rebuttal' },
+
+  // ── Regex Patterns (8) ──
+  { id: '90', pattern: 'lawsuit|attorney|legal action|litigat', type: 'regex', category: 'legal' },
+  { id: '91', pattern: 'guarantee|guarante|promis', type: 'regex', category: 'compliance' },
+  { id: '92', pattern: 'BBB|better business bureau|consumer affairs', type: 'regex', category: 'legal' },
+  { id: '93', pattern: 'discriminat|harass|threaten', type: 'regex', category: 'safety' },
+  { id: '94', pattern: 'kill|die|hurt|weapon', type: 'regex', category: 'safety' },
+  { id: '95', pattern: 'HIPAA|FERPA|GDPR|PCI|SOX', type: 'regex', category: 'pii' },
   { id: '96', pattern: '\\b\\d{3}-\\d{2}-\\d{4}\\b', type: 'regex', category: 'pii' },
   { id: '97', pattern: '\\b\\d{4}[- ]?\\d{4}[- ]?\\d{4}[- ]?\\d{4}\\b', type: 'regex', category: 'pii' },
-  { id: '98', pattern: '\\bDOB\\b|\\bdate of birth\\b', type: 'regex', category: 'pii' },
-  // Rebuttal
-  { id: '80', pattern: 'too expensive', type: 'phrase', category: 'rebuttal' },
-  // Safety
-  { id: '93', pattern: 'discriminat|harass|threaten', type: 'regex', category: 'safety' },
-  // HIPAA / Health Data
-  { id: '100', pattern: 'diagnosis', type: 'keyword', category: 'hipaa' },
-  { id: '101', pattern: 'prescription', type: 'keyword', category: 'hipaa' },
-  { id: '102', pattern: 'hipaa', type: 'keyword', category: 'hipaa' },
-  { id: '103', pattern: 'medical record', type: 'phrase', category: 'hipaa' },
-  { id: '104', pattern: 'health information', type: 'phrase', category: 'hipaa' },
-  { id: '105', pattern: 'patient data', type: 'phrase', category: 'hipaa' },
-  { id: '106', pattern: '\\b(diagnosis|prognosis|treatment plan|medical history|PHI|protected health)\\b', type: 'regex', category: 'hipaa' },
-  // Financial Disclosures
-  { id: '110', pattern: 'guaranteed returns', type: 'keyword', category: 'financial' },
-  { id: '111', pattern: 'no risk', type: 'keyword', category: 'financial' },
-  { id: '112', pattern: 'not financial advice', type: 'phrase', category: 'financial' },
-  { id: '113', pattern: 'past performance', type: 'phrase', category: 'financial' },
-  { id: '114', pattern: 'wire transfer', type: 'phrase', category: 'financial' },
-  { id: '115', pattern: 'routing number', type: 'phrase', category: 'financial' },
-  { id: '116', pattern: 'account number', type: 'phrase', category: 'financial' },
-  { id: '117', pattern: '\\b(guaranteed|no[- ]risk|risk[- ]free)\\s+(return|profit|income)', type: 'regex', category: 'financial' },
-  { id: '118', pattern: '\\b(insider|non[- ]public)\\s+(information|trading|knowledge)', type: 'regex', category: 'financial' },
-  // Profanity
-  { id: '120', pattern: '\\b(damn|hell|crap|ass|bastard)\\b', type: 'regex', category: 'profanity' },
-  { id: '121', pattern: '\\b(f[u*][c*]k|sh[i*]t|b[i*]tch)\\b', type: 'regex', category: 'profanity' },
-  { id: '122', pattern: '\\b(stupid|idiot|moron|dumb)\\b', type: 'regex', category: 'profanity' },
-  // Additional compliance/safety
-  { id: '130', pattern: 'off the record', type: 'phrase', category: 'compliance' },
 ];
 
 // Compliance Scripts sub-component
