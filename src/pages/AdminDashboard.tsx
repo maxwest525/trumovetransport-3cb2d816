@@ -13,12 +13,6 @@ const QUICK_SETUP = [
   { title: "Configure analytics", sub: "Connect tracking pixels" },
 ];
 
-const INTEGRATIONS = [
-  { name: "DashClicks", status: "disconnected" },
-  { name: "Google Analytics", status: "disconnected" },
-  { name: "Meta Pixel", status: "disconnected" },
-  { name: "Stripe", status: "disconnected" },
-];
 
 const ROLE_COLORS = ["hsl(var(--primary))", "hsl(var(--chart-2))", "hsl(var(--chart-3))", "hsl(var(--chart-4))"];
 const ROLE_LABELS: Record<string, string> = { owner: "Owners", admin: "Admins", manager: "Managers", agent: "Agents" };
@@ -148,10 +142,9 @@ const GrowthTooltip = ({ active, payload, label, growthData }: any) => {
 export default function AdminDashboard() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [stats, setStats] = useState([
+  const [stats, setStats] = useState<{ label: string; value: string; sub?: string }[]>([
     { label: "Total Users", value: "–" },
     { label: "Active Sessions", value: "–" },
-    { label: "Integrations", value: "0/4", sub: "Connected" },
     { label: "Open Tickets", value: "–" },
   ]);
   const [roleData, setRoleData] = useState<{ role: string; count: number; fill: string }[]>([]);
@@ -182,7 +175,6 @@ export default function AdminDashboard() {
       setStats([
         { label: "Total Users", value: String(totalUsers) },
         { label: "Active Sessions", value: String(onlineCount) },
-        { label: "Integrations", value: "0/4", sub: "Connected" },
         { label: "Open Tickets", value: String(tickets.length) },
       ]);
 
@@ -301,8 +293,8 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Growth + Quick Setup + Integrations */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        {/* Growth + Quick Setup */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {/* Growth line chart */}
           <div className="rounded-xl border border-border bg-card p-4">
             <h2 className="text-sm font-semibold text-foreground mb-4">User Growth</h2>
@@ -330,20 +322,6 @@ export default function AdminDashboard() {
                   <p className="text-sm font-medium text-foreground">{q.title}</p>
                   <p className="text-xs text-muted-foreground">{q.sub}</p>
                 </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Integrations */}
-          <div className="rounded-xl border border-border bg-card p-4">
-            <h2 className="text-sm font-semibold text-foreground mb-3">Integrations</h2>
-            {INTEGRATIONS.map((int, i) => (
-              <div key={i} className="flex items-center justify-between py-2.5 px-2">
-                <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-muted-foreground/30" />
-                  <span className="text-sm text-foreground">{int.name}</span>
-                </div>
-                <span className="text-[11px] text-muted-foreground border border-border rounded px-2 py-0.5">{int.status}</span>
               </div>
             ))}
           </div>
