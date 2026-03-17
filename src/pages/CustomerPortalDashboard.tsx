@@ -308,44 +308,6 @@ export default function CustomerPortalDashboard() {
               </div>
             </div>
           )}
-
-          {/* WEBSITES */}
-          {activeTab === "websites" && (
-            <div className="space-y-6">
-              <div>
-                <h2 className="text-lg font-semibold text-foreground mb-1">Customer Facing Websites</h2>
-                <p className="text-sm text-muted-foreground">Preview and access your public-facing websites.</p>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <a
-                  href="/classic"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="rounded-xl border border-border bg-card p-6 hover:border-primary/40 hover:shadow-md transition-all group"
-                >
-                  <div className="flex items-center justify-between mb-3">
-                    <Globe className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
-                    <ExternalLink className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </div>
-                  <h3 className="text-sm font-semibold text-foreground mb-1">Classic Website</h3>
-                  <p className="text-xs text-muted-foreground">The original TruMove website design.</p>
-                </a>
-                <a
-                  href="/homepage-2"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="rounded-xl border border-border bg-card p-6 hover:border-primary/40 hover:shadow-md transition-all group"
-                >
-                  <div className="flex items-center justify-between mb-3">
-                    <Globe className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
-                    <ExternalLink className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </div>
-                  <h3 className="text-sm font-semibold text-foreground mb-1">New Color TruMove</h3>
-                  <p className="text-xs text-muted-foreground">The redesigned homepage with updated branding.</p>
-                </a>
-              </div>
-            </div>
-          )}
         </>
       )}
     </CustomerPortalShell>
