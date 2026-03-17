@@ -140,9 +140,9 @@ export default function GrowthIntegrations() {
         <div>
           <h1 className="text-2xl font-bold text-foreground">Integrations</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Connect your marketing tools. {connectedCount} of {INTEGRATIONS.length} connected.
-          </p>
-        </div>
+          Connect your marketing tools and lead routing systems. {connectedCount} of {INTEGRATIONS.length} connected.
+        </p>
+      </div>
 
         {/* Helper */}
         <div className="bg-primary/5 border border-primary/10 rounded-xl px-4 py-3 flex items-start gap-3">
