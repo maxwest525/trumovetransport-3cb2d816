@@ -1,21 +1,23 @@
 
 
-## Replace Demo TrudyChatBox with Live ElevenLabs AI
+## Add "Customer Facing Websites" Tab to Customer Portal
 
-The current `TrudyChatBox` uses hardcoded pattern-matching for responses. We'll replace it with real ElevenLabs Conversational AI using the existing infrastructure (edge function, API keys, and `@elevenlabs/react` SDK) — the same setup the floating Trudy widget already uses.
+### What
+Add a new tab called **"Websites"** to the Customer Portal shell navigation. This tab will display cards linking to the two customer-facing website variants:
+- **Classic** (`/classic`) — the traditional TruMove site
+- **New Color TruMove** (`/homepage-2`) — the redesigned homepage
 
 ### Changes
 
-**`src/components/TrudyChatBox.tsx`**
-- Remove the `simulateResponse` pattern-matching logic
-- Add the `useConversation` hook from `@elevenlabs/react` in text-only mode
-- On mount, fetch a signed URL from the existing `elevenlabs-conversation-token` edge function and start a session
-- Route `handleSend` through `conversation.sendUserMessage()` instead of pattern matching
-- Handle `onMessage` callbacks to display real AI responses
-- Keep the existing visual design (glassmorphism, avatars, quick prompts, typing indicator) — only the response engine changes
-- Remove the "Demo" badge since it's now live
-- Show a connecting state while the WebSocket session initializes
-- Add error handling with a retry button if connection fails
+**1. `src/components/layout/CustomerPortalShell.tsx`**
+- Import `Globe` icon from lucide-react
+- Add `{ id: "websites", label: "Websites", icon: Globe }` to the `navItems` array
 
-**No new edge functions or secrets needed** — reuses the existing `elevenlabs-conversation-token` function and `ELEVENLABS_API_KEY` / `ELEVENLABS_AGENT_ID` secrets.
+**2. `src/pages/CustomerPortalDashboard.tsx`**
+- Add a new `activeTab === "websites"` section after the messages tab
+- Render two styled cards, each with a title, short description, and an "Open" link that opens the respective page in a new browser tab (`target="_blank"`)
+  - **Classic Website** → `/classic`
+  - **New Color TruMove** → `/homepage-2`
+
+The cards will follow the existing portal card styling (rounded-xl, border, bg-card) for visual consistency.
 
