@@ -257,6 +257,13 @@ export default function AgentMoveDetails() {
                   <Label className="text-xs">Full Packing Service</Label>
                   <Switch checked={form.packing_service} onCheckedChange={v => set("packing_service", v)} />
                 </div>
+                <div className="flex items-center justify-between p-3 rounded-lg border col-span-2">
+                  <div>
+                    <Label className="text-xs">Auto Transport</Label>
+                    <p className="text-[10px] text-muted-foreground mt-0.5">Vehicle shipping included with this move</p>
+                  </div>
+                  <Switch checked={form.auto_transport} onCheckedChange={v => set("auto_transport", v)} />
+                </div>
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs">Special Treatment Notes</Label>
