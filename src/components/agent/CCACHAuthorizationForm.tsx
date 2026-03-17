@@ -235,16 +235,17 @@ export function CCACHAuthorizationForm({
   };
 
   return (
-    <div className="min-h-[600px] py-4">
+    <div className={embedded ? "" : "min-h-[600px] py-4"}>
       <ClientSearchModal
         open={showClientSearch}
         onClose={() => setShowClientSearch(false)}
         onSelect={handleClientSelect}
       />
       
-      <div className="max-w-[1200px] mx-auto flex gap-6">
+      <div className={embedded ? "" : "max-w-[1200px] mx-auto flex gap-6"}>
         
-        {/* Left Sidebar */}
+        {/* Left Sidebar - hidden in embedded mode */}
+        {!embedded && (
         <div className="w-72 flex-shrink-0 space-y-4">
           {/* E-Sign Send Buttons */}
           <div className="flex gap-2">
