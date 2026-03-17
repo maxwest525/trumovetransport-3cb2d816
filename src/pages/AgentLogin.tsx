@@ -5,7 +5,7 @@ import SiteShell from "@/components/layout/SiteShell";
 import PortalAuthForm from "@/components/auth/PortalAuthForm";
 import {
   Users, BarChart3, Shield, ArrowRight, LogOut, Sparkles,
-  DollarSign, Building2, ClipboardCheck,
+  DollarSign, Building2, ClipboardCheck, Globe, ExternalLink,
 } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import logoImg from "@/assets/logo.png";
@@ -208,6 +208,43 @@ export default function AgentLogin() {
               </button>
             );
           })}
+        </div>
+
+        {/* Customer Facing Websites */}
+        <div className="w-full max-w-[960px] mt-10 z-10">
+          <h2 className="text-sm font-semibold text-foreground mb-3">Customer Facing Websites</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <a
+              href="/classic"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex items-center gap-4 rounded-xl border border-border/60 bg-card p-4 hover:border-border hover:shadow-md transition-all"
+            >
+              <div className="w-10 h-10 rounded-xl bg-foreground/[0.06] border border-foreground/10 flex items-center justify-center group-hover:border-foreground/20 transition-colors">
+                <Globe className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="text-sm font-bold text-foreground">Classic</h3>
+                <p className="text-[11px] text-muted-foreground">Original TruMove website</p>
+              </div>
+              <ExternalLink className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+            </a>
+            <a
+              href="/homepage-2"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex items-center gap-4 rounded-xl border border-border/60 bg-card p-4 hover:border-border hover:shadow-md transition-all"
+            >
+              <div className="w-10 h-10 rounded-xl bg-foreground/[0.06] border border-foreground/10 flex items-center justify-center group-hover:border-foreground/20 transition-colors">
+                <Globe className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="text-sm font-bold text-foreground">New Color TruMove</h3>
+                <p className="text-[11px] text-muted-foreground">Redesigned homepage with updated branding</p>
+              </div>
+              <ExternalLink className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+            </a>
+          </div>
         </div>
 
         {/* Remember checkbox */}
