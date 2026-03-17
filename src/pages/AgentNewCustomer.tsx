@@ -17,8 +17,7 @@ const DEMO_DATA = {
   email: "marcus.rivera@gmail.com", phone: "(305) 555-8421",
   source: "website", originAddress: "1842 Ocean Drive, Miami, FL 33139",
   destinationAddress: "456 Peachtree St NE, Atlanta, GA 30308",
-  moveDate: "2026-04-15", estimatedValue: "4200",
-  notes: "3BR/2BA apartment, 2nd floor with elevator. Has a piano that needs special handling.",
+  moveDate: "2026-04-15", estimatedValue: "", notes: "",
 };
 
 export default function AgentNewCustomer() {
