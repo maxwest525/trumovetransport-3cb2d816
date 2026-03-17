@@ -59,6 +59,7 @@ export default function AgentMoveDetails() {
           fragile_items: data.fragile_items,
           special_treatment_notes: data.special_treatment_notes || "",
           packing_service: data.packing_service,
+          auto_transport: (data as any).auto_transport ?? false,
         });
       }
     });
