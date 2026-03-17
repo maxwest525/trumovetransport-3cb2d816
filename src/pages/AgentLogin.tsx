@@ -5,7 +5,7 @@ import SiteShell from "@/components/layout/SiteShell";
 import PortalAuthForm from "@/components/auth/PortalAuthForm";
 import {
   Users, BarChart3, Shield, ArrowRight, LogOut, Sparkles,
-  DollarSign, Building2, ClipboardCheck, Globe,
+  DollarSign, Building2, ClipboardCheck, Globe, Zap,
 } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import logoImg from "@/assets/logo.png";
@@ -21,6 +21,7 @@ const ROLES = [
     accent: "from-violet-500/20 to-purple-500/10",
     iconAccent: "text-violet-500",
     ring: "group-hover:ring-violet-500/30",
+    iconBg: "bg-violet-500/[0.08] border-violet-500/15",
   },
   {
     id: "agent",
@@ -31,6 +32,7 @@ const ROLES = [
     accent: "from-blue-500/20 to-cyan-500/10",
     iconAccent: "text-blue-500",
     ring: "group-hover:ring-blue-500/30",
+    iconBg: "bg-blue-500/[0.08] border-blue-500/15",
   },
   {
     id: "manager",
@@ -41,6 +43,7 @@ const ROLES = [
     accent: "from-emerald-500/20 to-green-500/10",
     iconAccent: "text-emerald-500",
     ring: "group-hover:ring-emerald-500/30",
+    iconBg: "bg-emerald-500/[0.08] border-emerald-500/15",
   },
   {
     id: "marketing",
@@ -51,6 +54,7 @@ const ROLES = [
     accent: "from-pink-500/20 to-rose-500/10",
     iconAccent: "text-pink-500",
     ring: "group-hover:ring-pink-500/30",
+    iconBg: "bg-pink-500/[0.08] border-pink-500/15",
   },
   {
     id: "accounting",
@@ -61,6 +65,7 @@ const ROLES = [
     accent: "from-teal-500/20 to-cyan-500/10",
     iconAccent: "text-teal-500",
     ring: "group-hover:ring-teal-500/30",
+    iconBg: "bg-teal-500/[0.08] border-teal-500/15",
   },
   {
     id: "leads",
@@ -71,6 +76,7 @@ const ROLES = [
     accent: "from-orange-500/20 to-yellow-500/10",
     iconAccent: "text-orange-500",
     ring: "group-hover:ring-orange-500/30",
+    iconBg: "bg-orange-500/[0.08] border-orange-500/15",
   },
   {
     id: "compliance",
@@ -81,6 +87,7 @@ const ROLES = [
     accent: "from-sky-500/20 to-indigo-500/10",
     iconAccent: "text-sky-500",
     ring: "group-hover:ring-sky-500/30",
+    iconBg: "bg-sky-500/[0.08] border-sky-500/15",
   },
 ];
 
@@ -146,9 +153,12 @@ export default function AgentLogin() {
 
   return (
     <SiteShell centered backendMode hideHeader>
-      <div className="flex flex-col items-center justify-center min-h-[80vh] px-4 py-16 relative">
+      <div className="flex flex-col items-center justify-center min-h-[100vh] px-4 py-20 relative overflow-hidden">
 
-        {/* Top bar: back link */}
+        {/* Ambient background glow */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-to-b from-primary/[0.04] via-transparent to-transparent rounded-full blur-3xl pointer-events-none" />
+
+        {/* Top bar */}
         <Link
           to="/"
           className="absolute top-6 left-6 inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors z-10"
@@ -158,17 +168,26 @@ export default function AgentLogin() {
         </Link>
 
         {/* Logo + Header */}
-        <div className="flex flex-col items-center gap-3 mb-12 z-10">
-          <img src={logoImg} alt="TruMove" className="h-8 dark:invert" />
+        <div className="flex flex-col items-center gap-4 mb-14 z-10">
+          <div className="relative">
+            <div className="absolute -inset-4 bg-gradient-to-br from-primary/[0.06] to-transparent rounded-3xl blur-2xl" />
+            <img src={logoImg} alt="TruMove" className="h-9 dark:invert relative" />
+          </div>
           <div className="text-center">
-            <h1 className="text-2xl font-bold tracking-tight text-foreground">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-foreground/[0.03] border border-foreground/[0.06] mb-4">
+              <Zap className="w-3 h-3 text-primary" />
+              <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-muted-foreground">
+                Command Center
+              </span>
+            </div>
+            <h1 className="text-3xl font-bold tracking-tight text-foreground">
               Workspace
             </h1>
-            <p className="text-sm text-muted-foreground mt-1.5">
+            <p className="text-sm text-muted-foreground mt-2">
               {session.user.email}
               <button
                 onClick={handleSignOut}
-                className="ml-2 inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive transition-colors"
+                className="ml-2.5 inline-flex items-center gap-1 text-xs text-muted-foreground/70 hover:text-destructive transition-colors"
               >
                 <LogOut className="w-3 h-3" /> Sign out
               </button>
@@ -176,33 +195,34 @@ export default function AgentLogin() {
           </div>
         </div>
 
-        {/* Role cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 w-full max-w-[960px] z-10">
-          {ROLES.map((role) => {
+        {/* Role cards grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 w-full max-w-[1000px] z-10">
+          {ROLES.map((role, i) => {
             const Icon = role.icon;
             return (
               <button
                 key={role.id}
                 onClick={() => handleClick(role.id, role.href)}
-                className={`group relative flex flex-col gap-3 rounded-xl border border-border/60 bg-card p-5 ring-2 ring-transparent ${role.ring} hover:border-border hover:shadow-[0_12px_40px_-12px_hsl(var(--foreground)/0.15)] transition-all duration-300 text-left overflow-hidden`}
+                className={`group relative flex flex-col gap-4 rounded-2xl border border-border/60 bg-card p-5 ring-2 ring-transparent ${role.ring} hover:border-border hover:shadow-[0_16px_48px_-12px_hsl(var(--foreground)/0.1)] transition-all duration-300 text-left overflow-hidden`}
+                style={{ animationDelay: `${i * 40}ms` }}
               >
                 {/* Gradient background on hover */}
                 <div className={`absolute inset-0 bg-gradient-to-br ${role.accent} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
 
                 <div className="relative flex items-center gap-3">
-                  <div className={`w-10 h-10 rounded-xl bg-foreground/[0.06] border border-foreground/10 flex items-center justify-center group-hover:border-foreground/20 transition-colors`}>
+                  <div className={`w-10 h-10 rounded-xl border flex items-center justify-center group-hover:scale-105 transition-transform duration-200 ${role.iconBg}`}>
                     <Icon className={`w-5 h-5 ${role.iconAccent}`} />
                   </div>
-                  <h3 className="font-bold text-foreground text-sm">{role.title}</h3>
+                  <h3 className="font-bold text-foreground text-sm tracking-tight">{role.title}</h3>
                 </div>
 
                 <p className="relative text-[11px] text-muted-foreground leading-relaxed flex-1">
                   {role.description}
                 </p>
 
-                <div className="relative mt-auto pt-1">
-                  <span className="inline-flex items-center gap-2 text-[11px] font-semibold text-foreground/60 group-hover:text-foreground transition-colors">
-                    Open workspace <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                <div className="relative mt-auto pt-2 border-t border-foreground/[0.04]">
+                  <span className="inline-flex items-center gap-2 text-[11px] font-semibold text-foreground/40 group-hover:text-foreground transition-colors">
+                    Open workspace <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform duration-200" />
                   </span>
                 </div>
               </button>
@@ -212,33 +232,34 @@ export default function AgentLogin() {
           {/* Customer Facing Sites */}
           <button
             onClick={() => navigate("/customer-facing-sites")}
-            className="group relative flex flex-col gap-3 rounded-xl border border-border/60 bg-card p-5 ring-2 ring-transparent hover:ring-muted-foreground/20 hover:border-border hover:shadow-[0_12px_40px_-12px_hsl(var(--foreground)/0.15)] transition-all duration-300 text-left overflow-hidden"
+            className="group relative flex flex-col gap-4 rounded-2xl border border-border/60 bg-card p-5 ring-2 ring-transparent hover:ring-muted-foreground/20 hover:border-border hover:shadow-[0_16px_48px_-12px_hsl(var(--foreground)/0.1)] transition-all duration-300 text-left overflow-hidden"
           >
+            <div className="absolute inset-0 bg-gradient-to-br from-foreground/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             <div className="relative flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-foreground/[0.06] border border-foreground/10 flex items-center justify-center group-hover:border-foreground/20 transition-colors">
+              <div className="w-10 h-10 rounded-xl bg-foreground/[0.05] border border-foreground/10 flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
                 <Globe className="w-5 h-5 text-muted-foreground" />
               </div>
-              <h3 className="font-bold text-foreground text-sm">Customer Facing Sites</h3>
+              <h3 className="font-bold text-foreground text-sm tracking-tight">Customer Sites</h3>
             </div>
             <p className="relative text-[11px] text-muted-foreground leading-relaxed flex-1">
               Preview and manage all public-facing website variants.
             </p>
-            <div className="relative mt-auto pt-1">
-              <span className="inline-flex items-center gap-2 text-[11px] font-semibold text-foreground/60 group-hover:text-foreground transition-colors">
-                Open workspace <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+            <div className="relative mt-auto pt-2 border-t border-foreground/[0.04]">
+              <span className="inline-flex items-center gap-2 text-[11px] font-semibold text-foreground/40 group-hover:text-foreground transition-colors">
+                Open workspace <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform duration-200" />
               </span>
             </div>
           </button>
         </div>
 
         {/* Remember checkbox */}
-        <label className="flex items-center gap-2.5 mt-10 cursor-pointer select-none z-10">
+        <label className="flex items-center gap-2.5 mt-12 cursor-pointer select-none z-10">
           <Checkbox
             checked={remember}
             onCheckedChange={(v) => setRemember(v === true)}
-            className="border-foreground/20"
+            className="border-foreground/15"
           />
-          <span className="text-xs text-muted-foreground">Remember my choice on this device</span>
+          <span className="text-xs text-muted-foreground/70">Remember my choice on this device</span>
         </label>
       </div>
     </SiteShell>
