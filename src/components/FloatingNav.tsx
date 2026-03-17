@@ -105,7 +105,7 @@ export default function FloatingNav({ onChatOpen, iconsOnly = false }: FloatingN
       {/* TruMove Logo at top */}
       <Tooltip>
         <TooltipTrigger asChild>
-          <Link to="/" className="tru-static-nav-logo" aria-label="TruMove Home">
+          <Link to="/site" className="tru-static-nav-logo" aria-label="TruMove Home">
             <img src={logoImg} alt="TruMove" />
           </Link>
         </TooltipTrigger>
