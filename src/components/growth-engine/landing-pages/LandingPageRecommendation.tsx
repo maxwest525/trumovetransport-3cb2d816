@@ -61,7 +61,7 @@ function getRecommendation(s: WizardSelections): Recommendation {
       backup: "Call-First Landing Page",
       why: "Structured form captures origin, destination, move date. Better lead context for agents.",
       cta: "Get Your Free Quote",
-      routing: "Form → webhook → Convoso queue",
+      routing: "Form → attribution → webhook → Convoso queue",
       kpi: "Form completion rate, cost per qualified lead",
     };
   }
