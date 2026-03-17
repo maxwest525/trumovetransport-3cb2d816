@@ -225,7 +225,7 @@ export default function HomepageV2() {
       moveDate: moveDate?.toISOString(), size,
       ts: Date.now()
     }));
-    navigate("/online-estimate");
+    navigate("/site/online-estimate");
   };
 
   const handleContactSubmit = (e: React.FormEvent) => {
