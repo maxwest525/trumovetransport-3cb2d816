@@ -141,18 +141,20 @@ export default function MoveSummaryPanel({ form, lead }: MoveSummaryPanelProps) 
           <h3 className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground/50 font-semibold">
             Move Summary
           </h3>
-          <div className="space-y-1">
-            <div className="flex justify-between text-[10px] text-muted-foreground">
-              <span>Completeness</span>
-              <span className="font-medium">{completeness}%</span>
+          {isFormMode && (
+            <div className="space-y-1">
+              <div className="flex justify-between text-[10px] text-muted-foreground">
+                <span>Lead Info</span>
+                <span className="font-medium">{completeness}%</span>
+              </div>
+              <div className="h-1 bg-muted rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-primary rounded-full transition-all duration-500 ease-out"
+                  style={{ width: `${completeness}%` }}
+                />
+              </div>
             </div>
-            <div className="h-1 bg-muted rounded-full overflow-hidden">
-              <div
-                className="h-full bg-primary rounded-full transition-all duration-500 ease-out"
-                style={{ width: `${completeness}%` }}
-              />
-            </div>
-          </div>
+          )}
         </div>
 
         {/* Customer */}
