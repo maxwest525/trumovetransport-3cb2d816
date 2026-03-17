@@ -37,7 +37,7 @@ function getRecommendation(s: WizardSelections): Recommendation {
       backup: "Full LP with dual CTA",
       why: "High-intent searchers ready to act. Fastest speed-to-lead for interstate moves.",
       cta: "Call Now for Free Quote (sticky button)",
-      routing: "Call → CallRail attribution → webhook → Convoso",
+      routing: "Call → attribution → Convoso instant dial / callback queue",
       kpi: "Call rate, speed-to-answer, booked rate",
     };
   }
