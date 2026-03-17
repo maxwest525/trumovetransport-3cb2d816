@@ -57,6 +57,7 @@ import AgentInventory from "./pages/AgentInventory";
 import AdminESignAudit from "./pages/AdminESignAudit";
 import CustomerFacingSites from "./pages/CustomerFacingSites";
 import IntegrationPlaceholder from "./pages/IntegrationPlaceholder";
+import AdminPricing from "./pages/AdminPricing";
 
 const queryClient = new QueryClient();
 
