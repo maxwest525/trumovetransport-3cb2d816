@@ -75,10 +75,24 @@ export default function MiniSoftphone() {
   return (
     <>
       {/* ── Desktop floating card (sm+) ── */}
-      <div className={cn(
-        "fixed bottom-4 right-4 z-50 rounded-2xl border border-border bg-card shadow-xl overflow-hidden hidden sm:block transition-all duration-200",
-        fullView ? "w-80" : "w-72"
-      )}>
+      <div
+        ref={cardRef}
+        style={{ transform: `translate(${pos.x}px, ${pos.y}px)` }}
+        className={cn(
+          "fixed bottom-4 right-4 z-50 rounded-2xl border border-border bg-card shadow-xl overflow-hidden hidden sm:block transition-shadow",
+          fullView ? "w-[340px]" : "w-80",
+          dragging && "shadow-2xl"
+        )}
+      >
+        {/* Drag handle */}
+        <div
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={onPointerUp}
+          className="flex items-center justify-center py-1 cursor-grab active:cursor-grabbing select-none"
+        >
+          <GripHorizontal className="w-4 h-4 text-muted-foreground/40" />
+        </div>
         {/* Header */}
         <div className={cn(
           "px-4 py-2 flex items-center justify-between",
