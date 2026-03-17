@@ -3,12 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import SiteShell from "@/components/layout/SiteShell";
 import PortalAuthForm from "@/components/auth/PortalAuthForm";
-import {
-  Users, BarChart3, Megaphone, Receipt, Package, ShieldCheck, Globe,
-  LogOut, Bell, Phone, PhoneCall, Database, Gauge, PenTool, MessageSquare,
-  Headphones, Settings, ExternalLink, UserCog, Plug, TrendingUp,
-  type LucideIcon,
-} from "lucide-react";
+import { LogOut, Bell, ExternalLink } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import logoImg from "@/assets/logo.png";
 import { useAgentProfile } from "@/hooks/useAgentProfile";
@@ -17,77 +12,68 @@ import { motion } from "framer-motion";
 import type { Session } from "@supabase/supabase-js";
 
 /* ------------------------------------------------------------------ */
-/*  Types                                                              */
+/*  Data                                                               */
 /* ------------------------------------------------------------------ */
 
-interface HubItem {
-  id: string;
-  title: string;
-  description: string;
-  icon: LucideIcon;
-  /** Internal route OR external URL (starts with http) */
+interface LinkItem {
+  label: string;
   href: string;
   external?: boolean;
 }
 
-interface HubSection {
+interface Section {
   key: string;
   title: string;
-  /** DB roles that can see this section. owner always sees everything. */
   allowedRoles: string[];
-  items: HubItem[];
+  links: LinkItem[];
 }
 
-/* ------------------------------------------------------------------ */
-/*  Section definitions                                                */
-/* ------------------------------------------------------------------ */
-
-const SECTIONS: HubSection[] = [
+const SECTIONS: Section[] = [
   {
     key: "agents",
     title: "Agents",
     allowedRoles: ["owner", "admin", "manager", "agent"],
-    items: [
-      { id: "convoso", title: "Convoso Dialer", description: "Power dialer & campaigns.", icon: Phone, href: "https://app.convoso.com", external: true },
-      { id: "ringcentral", title: "RingCentral", description: "Cloud phone system.", icon: PhoneCall, href: "https://app.ringcentral.com", external: true },
-      { id: "granot-agent", title: "Granot CRM", description: "Customer & move management.", icon: Database, href: "https://app.granot.com", external: true },
-      { id: "agent-dash", title: "Agent Dashboard", description: "Overview & daily stats.", icon: Gauge, href: "/agent/dashboard" },
-      { id: "pipeline", title: "Pipeline", description: "Leads, deals & stages.", icon: TrendingUp, href: "/agent/pipeline" },
-      { id: "dialer", title: "Dialer", description: "Built-in softphone.", icon: Headphones, href: "/agent/dialer" },
-      { id: "esign", title: "E-Sign Hub", description: "Contracts & signatures.", icon: PenTool, href: "/agent/esign" },
-      { id: "customers", title: "Customers", description: "Client records & history.", icon: Users, href: "/agent/customers" },
-      { id: "operations", title: "Operations", description: "Bookings & dispatching.", icon: Settings, href: "/agent/operations" },
-      { id: "team-chat", title: "Team Chat", description: "Internal messaging.", icon: MessageSquare, href: "/agent/team-chat" },
+    links: [
+      { label: "Convoso Dialer", href: "https://app.convoso.com", external: true },
+      { label: "RingCentral", href: "https://app.ringcentral.com", external: true },
+      { label: "Granot CRM", href: "https://app.granot.com", external: true },
+      { label: "Dashboard", href: "/agent/dashboard" },
+      { label: "Pipeline", href: "/agent/pipeline" },
+      { label: "Dialer", href: "/agent/dialer" },
+      { label: "E-Sign", href: "/agent/esign" },
+      { label: "Customers", href: "/agent/customers" },
+      { label: "Operations", href: "/agent/operations" },
+      { label: "Team Chat", href: "/agent/team-chat" },
     ],
   },
   {
     key: "managers",
     title: "Managers",
     allowedRoles: ["owner", "admin", "manager"],
-    items: [
-      { id: "convoso-admin", title: "Convoso Admin", description: "Dialer admin & analytics.", icon: Phone, href: "https://admin.convoso.com", external: true },
-      { id: "rc-admin", title: "RingCentral Admin", description: "Phone system admin.", icon: PhoneCall, href: "https://admin.ringcentral.com", external: true },
-      { id: "granot-mgr", title: "Granot Manager", description: "Manager / admin CRM view.", icon: Database, href: "https://app.granot.com/manager", external: true },
-      { id: "pulseos", title: "PulseOS", description: "FMCSA compliance platform.", icon: ShieldCheck, href: "https://app.pulseos.com", external: true },
-      { id: "mgr-dashboard", title: "Team Dashboard", description: "Performance & approvals.", icon: BarChart3, href: "/manager/dashboard" },
-      { id: "coaching", title: "Coaching", description: "Agent coaching & call reviews.", icon: Headphones, href: "/coaching" },
+    links: [
+      { label: "Convoso Admin", href: "https://admin.convoso.com", external: true },
+      { label: "RingCentral Admin", href: "https://admin.ringcentral.com", external: true },
+      { label: "Granot Manager", href: "https://app.granot.com/manager", external: true },
+      { label: "PulseOS", href: "https://app.pulseos.com", external: true },
+      { label: "Team Dashboard", href: "/manager/dashboard" },
+      { label: "Coaching", href: "/coaching" },
     ],
   },
   {
     key: "admin",
     title: "Admin / Owner",
     allowedRoles: ["owner", "admin"],
-    items: [
-      { id: "admin-dash", title: "Admin Dashboard", description: "System overview & health.", icon: Settings, href: "/admin/dashboard" },
-      { id: "marketing", title: "Marketing Suite", description: "AI campaigns & A/B testing.", icon: Megaphone, href: "/marketing/dashboard" },
-      { id: "sites", title: "Customer Sites", description: "Public-facing website variants.", icon: Globe, href: "/customer-facing-sites" },
-      { id: "compliance", title: "Compliance", description: "FMCSA filings & audits.", icon: ShieldCheck, href: "/compliance/dashboard" },
-      { id: "accounting", title: "Accounting", description: "Invoices, payroll & revenue.", icon: Receipt, href: "/accounting/dashboard" },
-      { id: "vendors", title: "Lead Vendors", description: "Sources, budgets & ROI.", icon: Package, href: "/leads/dashboard" },
-      { id: "users", title: "User Management", description: "Team members & roles.", icon: UserCog, href: "/admin/users" },
-      { id: "integrations", title: "Integrations", description: "Connected services.", icon: Plug, href: "/admin/integrations" },
-      { id: "support", title: "Support Tickets", description: "Customer support queue.", icon: MessageSquare, href: "/admin/support-tickets" },
-      { id: "kpis", title: "KPIs", description: "Company-wide metrics.", icon: TrendingUp, href: "/kpi" },
+    links: [
+      { label: "Admin Dashboard", href: "/admin/dashboard" },
+      { label: "Marketing Suite", href: "/marketing/dashboard" },
+      { label: "Customer Sites", href: "/customer-facing-sites" },
+      { label: "Compliance", href: "/compliance/dashboard" },
+      { label: "Accounting", href: "/accounting/dashboard" },
+      { label: "Lead Vendors", href: "/leads/dashboard" },
+      { label: "Users & Roles", href: "/admin/users" },
+      { label: "Integrations", href: "/admin/integrations" },
+      { label: "Support Tickets", href: "/admin/support-tickets" },
+      { label: "KPIs", href: "/kpi" },
     ],
   },
 ];
@@ -102,42 +88,7 @@ function getGreeting(): string {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Card component                                                     */
-/* ------------------------------------------------------------------ */
-
-const cardVariants = {
-  hidden: { opacity: 0, y: 12, scale: 0.97 },
-  visible: (i: number) => ({
-    opacity: 1, y: 0, scale: 1,
-    transition: { delay: i * 0.04, duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] as const },
-  }),
-};
-
-function HubCard({ item, index, onClick }: { item: HubItem; index: number; onClick: () => void }) {
-  const Icon = item.icon;
-  return (
-    <motion.button
-      custom={index}
-      variants={cardVariants}
-      initial="hidden"
-      animate="visible"
-      onClick={onClick}
-      className="group relative flex flex-col gap-1.5 rounded-xl border border-border/40 bg-card p-4 hover:border-border hover:shadow-md transition-all duration-200 text-left"
-    >
-      {item.external && (
-        <ExternalLink className="absolute top-3 right-3 w-3 h-3 text-muted-foreground/40" />
-      )}
-      <div className="flex items-center gap-2.5">
-        <Icon className="w-[18px] h-[18px] text-muted-foreground shrink-0" strokeWidth={1.5} />
-        <h3 className="font-semibold text-foreground text-[13px] tracking-tight">{item.title}</h3>
-      </div>
-      <p className="text-[11px] text-muted-foreground/70 leading-relaxed pl-[30px]">{item.description}</p>
-    </motion.button>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/*  Main page                                                          */
+/*  Page                                                               */
 /* ------------------------------------------------------------------ */
 
 export default function AgentLogin() {
@@ -150,7 +101,6 @@ export default function AgentLogin() {
   const { unreadCount } = useNotifications();
   const greeting = useMemo(() => getGreeting(), []);
 
-  // Auth listener
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, s) => {
       setSession(s);
@@ -163,7 +113,6 @@ export default function AgentLogin() {
     return () => subscription.unsubscribe();
   }, []);
 
-  // Fetch roles
   useEffect(() => {
     if (!session?.user) { setUserRoles([]); setRolesLoading(false); return; }
     supabase
@@ -176,21 +125,19 @@ export default function AgentLogin() {
       });
   }, [session?.user?.id]);
 
-  // Visible sections based on roles
   const visibleSections = useMemo(() => {
     if (rolesLoading) return [];
-    // Fallback: show everything if no roles assigned yet
     if (userRoles.length === 0) return SECTIONS;
     return SECTIONS.filter((s) =>
       s.allowedRoles.some((ar) => userRoles.includes(ar))
     );
   }, [userRoles, rolesLoading]);
 
-  const handleClick = (item: HubItem) => {
-    if (item.external) {
-      window.open(item.href, "_blank", "noopener");
+  const handleClick = (link: LinkItem) => {
+    if (link.external) {
+      window.open(link.href, "_blank", "noopener");
     } else {
-      navigate(item.href);
+      navigate(link.href);
     }
   };
 
@@ -199,7 +146,6 @@ export default function AgentLogin() {
     localStorage.removeItem(STORAGE_KEY);
   };
 
-  // Loading state
   if (loading) {
     return (
       <SiteShell centered backendMode hideHeader>
@@ -210,7 +156,6 @@ export default function AgentLogin() {
     );
   }
 
-  // Auth gate
   if (!session) {
     return (
       <SiteShell centered backendMode hideHeader>
@@ -223,26 +168,26 @@ export default function AgentLogin() {
 
   return (
     <SiteShell centered backendMode hideHeader>
-      <div className="flex flex-col items-center min-h-[100vh] px-4 py-16">
+      <div className="flex flex-col items-center justify-center min-h-[100vh] px-4 py-20">
 
-        {/* Header */}
+        {/* Header — logo + greeting */}
         <motion.div
-          initial={{ opacity: 0, y: -10 }}
+          initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, ease: "easeOut" }}
-          className="flex flex-col items-center gap-2 mb-12"
+          transition={{ duration: 0.35 }}
+          className="flex flex-col items-center gap-1.5 mb-14"
         >
-          <img src={logoImg} alt="TruMove" className="h-8 dark:invert" />
-          <h1 className="text-2xl font-bold tracking-tight text-foreground mt-3 flex items-center gap-2">
+          <img src={logoImg} alt="TruMove" className="h-7 dark:invert" />
+          <h1 className="text-lg font-semibold tracking-tight text-foreground mt-2 flex items-center gap-2">
             {greeting}, {displayName}
             {unreadCount > 0 && (
-              <span className="inline-flex items-center gap-1 bg-destructive text-destructive-foreground rounded-full px-2 py-0.5 text-[10px] font-semibold">
-                <Bell className="w-3 h-3" />
+              <span className="inline-flex items-center gap-1 bg-destructive text-destructive-foreground rounded-full px-1.5 py-0.5 text-[9px] font-semibold">
+                <Bell className="w-2.5 h-2.5" />
                 {unreadCount}
               </span>
             )}
           </h1>
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
             <span>{session.user.email}</span>
             <span className="text-border">·</span>
             <button
@@ -254,31 +199,40 @@ export default function AgentLogin() {
           </div>
         </motion.div>
 
-        {/* Sections */}
-        <div className="w-full max-w-[960px] space-y-10">
+        {/* Link sections */}
+        <div className="w-full max-w-md space-y-8">
           {rolesLoading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <Skeleton key={i} className="h-[72px] rounded-xl" />
+            <div className="space-y-3">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <Skeleton key={i} className="h-4 w-40 rounded" />
               ))}
             </div>
           ) : (
-            visibleSections.map((section) => (
-              <div key={section.key}>
-                <h2 className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-3 pl-1">
+            visibleSections.map((section, si) => (
+              <motion.div
+                key={section.key}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: si * 0.08, duration: 0.3 }}
+              >
+                <h2 className="text-[10px] font-semibold uppercase tracking-[0.15em] text-muted-foreground/60 mb-2">
                   {section.title}
                 </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
-                  {section.items.map((item, i) => (
-                    <HubCard
-                      key={item.id}
-                      item={item}
-                      index={i}
-                      onClick={() => handleClick(item)}
-                    />
+                <div className="flex flex-wrap gap-x-4 gap-y-1">
+                  {section.links.map((link) => (
+                    <button
+                      key={link.label}
+                      onClick={() => handleClick(link)}
+                      className="inline-flex items-center gap-1 text-[13px] text-foreground/80 hover:text-foreground transition-colors py-0.5"
+                    >
+                      {link.label}
+                      {link.external && (
+                        <ExternalLink className="w-2.5 h-2.5 text-muted-foreground/40" />
+                      )}
+                    </button>
                   ))}
                 </div>
-              </div>
+              </motion.div>
             ))
           )}
         </div>
