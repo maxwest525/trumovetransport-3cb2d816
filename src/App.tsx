@@ -125,6 +125,7 @@ const App = () => (
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/marketing/dashboard" element={<GrowthDashboard />} />
             <Route path="/marketing/campaigns" element={<GrowthCampaignBuilder />} />
+            <Route path="/marketing/campaign-summary" element={<GrowthCampaignSummary />} />
             <Route path="/marketing/integrations" element={<GrowthIntegrations />} />
             <Route path="/marketing/landing-pages" element={<GrowthLandingPages />} />
             <Route path="/marketing/seo" element={<GrowthStubPage />} />
