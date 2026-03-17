@@ -64,6 +64,9 @@ import PulseAgent from "./pages/pulse/PulseAgent";
 import PulseDashboard from "./pages/pulse/PulseDashboard";
 import PulseCallReview from "./pages/pulse/PulseCallReview";
 import PulseManager from "./pages/pulse/PulseManager";
+import AgentPulse from "./pages/AgentPulse";
+import ManagerPulse from "./pages/ManagerPulse";
+import AdminPulse from "./pages/AdminPulse";
 
 const queryClient = new QueryClient();
 
