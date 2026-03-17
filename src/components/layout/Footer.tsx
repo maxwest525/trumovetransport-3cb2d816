@@ -12,22 +12,22 @@ export default function Footer() {
         </div>
 
         <nav className="footer-nav">
-          <Link className="footer-link" to="/about">
+          <Link className="footer-link" to="/site/about">
             About
           </Link>
-          <Link className="footer-link" to="/carrier-vetting">
+          <Link className="footer-link" to="/site/carrier-vetting">
             Carrier Vetting
           </Link>
-          <Link className="footer-link" to="/book">
+          <Link className="footer-link" to="/site/book">
             Book a consult
           </Link>
-          <Link className="footer-link" to="/faq">
+          <Link className="footer-link" to="/site/faq">
             FAQ
           </Link>
-          <Link className="footer-link" to="/privacy">
+          <Link className="footer-link" to="/site/privacy">
             Privacy
           </Link>
-          <Link className="footer-link" to="/terms">
+          <Link className="footer-link" to="/site/terms">
             Terms
           </Link>
           <Link className="footer-link footer-link-muted" to="/">

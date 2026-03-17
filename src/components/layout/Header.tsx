@@ -278,7 +278,7 @@ export default function Header({ whiteLogo = false }: HeaderProps) {
             </nav>
             <div className="header-mobile-actions">
               <Link 
-                to="/book" 
+                to="/site/book" 
                 className="header-mobile-btn is-primary"
                 onClick={() => setMobileMenuOpen(false)}
               >
