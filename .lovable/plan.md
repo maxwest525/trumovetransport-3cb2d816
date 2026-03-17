@@ -1,91 +1,21 @@
 
 
-## Rework the `/` Portal Page
+## Replace Demo TrudyChatBox with Live ElevenLabs AI
 
-The current portal is a flat grid of role-based cards. You want it restructured into **three clear sections** that map to how employees actually work, with external tool launchers built in.
+The current `TrudyChatBox` uses hardcoded pattern-matching for responses. We'll replace it with real ElevenLabs Conversational AI using the existing infrastructure (edge function, API keys, and `@elevenlabs/react` SDK) — the same setup the floating Trudy widget already uses.
 
-### New Layout: Three-Section Hub
+### Changes
 
-```text
-┌──────────────────────────────────────────────────┐
-│  Logo  ·  Good morning, Name  ·  Sign out        │
-├──────────────────────────────────────────────────┤
-│                                                  │
-│  ── AGENTS ──────────────────────────────────── │
-│  [Convoso Dialer]  [RingCentral]  [Granot CRM]  │
-│  [Pipeline]  [Customers]  [Messages]             │
-│                                                  │
-│  ── MANAGERS ────────────────────────────────── │
-│  [Convoso Admin]  [RingCentral Admin]            │
-│  [Granot Manager]  [PulseOS Compliance]          │
-│  [Team Performance]  [Coaching]                  │
-│                                                  │
-│  ── ADMIN / OWNER ───────────────────────────── │
-│  [Marketing Suite]  [Customer-Facing Sites]      │
-│  [Compliance]  [Accounting]  [Lead Vendors]      │
-│  [User Management]  [Integrations]               │
-│                                                  │
-│  ☐ Remember my choice                           │
-└──────────────────────────────────────────────────┘
-```
+**`src/components/TrudyChatBox.tsx`**
+- Remove the `simulateResponse` pattern-matching logic
+- Add the `useConversation` hook from `@elevenlabs/react` in text-only mode
+- On mount, fetch a signed URL from the existing `elevenlabs-conversation-token` edge function and start a session
+- Route `handleSend` through `conversation.sendUserMessage()` instead of pattern matching
+- Handle `onMessage` callbacks to display real AI responses
+- Keep the existing visual design (glassmorphism, avatars, quick prompts, typing indicator) — only the response engine changes
+- Remove the "Demo" badge since it's now live
+- Show a connecting state while the WebSocket session initializes
+- Add error handling with a retry button if connection fails
 
-### Section Details
-
-**1. Agents Section** (visible to: agent, manager, admin, owner)
-- **Convoso** — external link launcher (URL TBD, opens new tab)
-- **RingCentral** — external link launcher (URL TBD, opens new tab)
-- **Granot CRM** — external link launcher (URL TBD, opens new tab)
-- **Pipeline** → `/agent/pipeline`
-- **Customers** → `/agent/customers`
-- **Messages** → `/agent/messages`
-- **Dialer** → `/agent/dialer`
-
-**2. Managers Section** (visible to: manager, admin, owner)
-- **Convoso Admin** — external link (admin panel URL)
-- **RingCentral Admin** — external link (admin panel URL)
-- **Granot Manager View** — external link
-- **PulseOS Compliance** — external link
-- **Team Dashboard** → `/manager/dashboard`
-- **Coaching** → existing coaching route
-
-**3. Admin / Owner Section** (visible to: admin, owner)
-- **Marketing Suite** → `/marketing/dashboard`
-- **Customer-Facing Sites** → `/customer-facing-sites`
-- **Compliance** → `/compliance/dashboard`
-- **Accounting** → `/accounting/dashboard`
-- **Lead Vendors** → `/leads/dashboard`
-- **User Management** → `/admin/users`
-- **Integrations** → `/admin/integrations`
-- **KPIs** → `/kpi`
-
-### Technical Approach
-
-1. **Rewrite `src/pages/AgentLogin.tsx`** — Replace the flat `ROLES` grid with three grouped sections, each with a heading and its own card grid. Role-based visibility filtering stays (sections hidden if user lacks the role).
-
-2. **Card types** — Two kinds:
-   - **Internal**: navigates within the app (existing behavior)
-   - **External**: opens a new tab to Convoso, RingCentral, Granot, PulseOS (placeholder URLs with `window.open`)
-
-3. **Keep existing**: Auth flow, greeting, sign out, remember-me, notification badge, animations.
-
-### Things You May Have Missed
-
-- **Agent Dashboard** (`/agent/dashboard`) — should this be a card in the Agents section?
-- **E-Sign Hub** (`/agent/esign`) — include as an agent tool?
-- **Bookings / Operations** (`/agent/operations`) — include?
-- **Team Chat** (`/agent/team-chat`) — agents or managers or both?
-- **Admin Dashboard** (`/admin/dashboard`) — include in Admin section?
-- **Support Tickets** (`/admin/support-tickets`) — include?
-- **Leads Performance** (`/leads/performance`) — include under Admin?
-- **Profile Settings** (`/agent/profile`) — accessible from header or a card?
-
-### Open Question
-
-I need the external URLs (or placeholder domains) for:
-- Convoso (agent + admin views)
-- RingCentral (agent + admin views)
-- Granot CRM (agent + manager/admin views)
-- PulseOS
-
-I can use placeholder URLs and you can update them later.
+**No new edge functions or secrets needed** — reuses the existing `elevenlabs-conversation-token` function and `ELEVENLABS_API_KEY` / `ELEVENLABS_AGENT_ID` secrets.
 
