@@ -57,6 +57,7 @@ const AI_RECS = [
 
 const ALERTS = [
   { text: "Google Ads conversion tracking pixel not firing on /thank-you page", type: "error" },
+  { text: "5 leads not worked within 2 minutes. Check Convoso queue status.", type: "warning" },
   { text: "3 missed calls from paid leads in the last 2 hours", type: "warning" },
   { text: "Meta Ads account spending 15% over daily budget", type: "warning" },
 ];

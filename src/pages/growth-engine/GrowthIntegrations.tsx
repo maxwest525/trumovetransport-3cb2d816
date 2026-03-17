@@ -148,9 +148,9 @@ export default function GrowthIntegrations() {
         <div className="bg-primary/5 border border-primary/10 rounded-xl px-4 py-3 flex items-start gap-3">
           <HelpCircle className="w-4 h-4 text-primary mt-0.5 shrink-0" />
           <div>
-            <span className="text-[11px] font-semibold text-primary uppercase tracking-wider">What this does</span>
+            <span className="text-[11px] font-semibold text-primary uppercase tracking-wider">How lead routing works</span>
             <p className="text-[12px] text-muted-foreground mt-0.5">
-              Integrations connect your ad platforms, analytics tools, and CRM so all your data flows into one place. Start with the "Essential" ones, then add more as you grow.
+              Leads flow from your ad platforms and landing pages through attribution capture, then route instantly via webhook to Convoso for immediate call attempts. Your CRM (GHL, Granot, or custom) receives a synced copy as the system of record. One CRM should be designated as primary per workflow.
             </p>
           </div>
         </div>

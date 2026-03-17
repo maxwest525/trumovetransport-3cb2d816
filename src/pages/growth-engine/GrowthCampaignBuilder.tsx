@@ -333,8 +333,28 @@ export default function GrowthCampaignBuilder() {
                   <p className="text-sm font-medium text-foreground mt-0.5">{LANDING_PAGES.find(p => p.id === selectedPage)?.name || "Not set"}</p>
                 </div>
               </div>
+
+              {/* Lead routing path */}
+              <div className="bg-primary/5 border border-primary/10 rounded-xl p-4">
+                <span className="text-[11px] font-semibold text-primary uppercase tracking-wider">Lead routing path</span>
+                <div className="flex flex-wrap items-center gap-1.5 mt-2 text-[11px] font-medium text-foreground">
+                  <span className="bg-muted rounded-md px-2 py-1">Ad Click</span>
+                  <ChevronRight className="w-3 h-3 text-muted-foreground" />
+                  <span className="bg-muted rounded-md px-2 py-1">Landing Page</span>
+                  <ChevronRight className="w-3 h-3 text-muted-foreground" />
+                  <span className="bg-muted rounded-md px-2 py-1">Attribution Capture</span>
+                  <ChevronRight className="w-3 h-3 text-muted-foreground" />
+                  <span className="bg-muted rounded-md px-2 py-1">Webhook / Router</span>
+                  <ChevronRight className="w-3 h-3 text-muted-foreground" />
+                  <span className="bg-emerald-500/10 text-emerald-600 rounded-md px-2 py-1">Convoso Instant Call</span>
+                  <ChevronRight className="w-3 h-3 text-muted-foreground" />
+                  <span className="bg-muted rounded-md px-2 py-1">CRM Sync</span>
+                </div>
+                <p className="text-[11px] text-muted-foreground mt-2">Leads are routed to Convoso for immediate call attempts. Your CRM receives a synced copy as the system of record.</p>
+              </div>
+
               <button
-                onClick={() => toast.success("Campaign created! Integrations will sync when connected.")}
+                onClick={() => toast.success("Campaign created! Leads will route to Convoso instantly when connected.")}
                 className="w-full py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
               >
                 <Rocket className="w-4 h-4" />

@@ -35,8 +35,8 @@ const PAGE_INFO: Record<string, { title: string; description: string; hint: stri
   },
   "/marketing/automation": {
     title: "Automation Center",
-    description: "Visual workflow builder for lead routing, follow-ups, notifications, and webhook flows.",
-    hint: "Automation handles repetitive tasks so you never miss a lead. Example: when someone fills out a form, instantly text them AND notify your sales team.",
+    description: "Speed-to-lead routing, missed-call recovery, after-hours queuing, duplicate suppression, escalation alerts, and webhook flows.",
+    hint: "Automation supports your instant-call workflow. Example: a form lead is routed to Convoso within seconds. If not reached, SMS fires automatically. If after hours, the lead queues for the next calling block with an auto-text sent immediately.",
   },
   "/marketing/competitors": {
     title: "Competitor Intel",
