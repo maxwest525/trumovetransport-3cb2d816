@@ -254,7 +254,12 @@ const PulseManager: React.FC<{ embedded?: boolean }> = ({ embedded = false }) =>
         const { data, error } = await supabase.from('pulse_watch_patterns' as any).select('patterns').eq('config_key', 'default').maybeSingle();
         if (!error && data && (data as any).patterns) {
           const dbPatterns = (data as any).patterns as WatchEntry[];
-          if (Array.isArray(dbPatterns) && dbPatterns.length > 0) { setEntries(dbPatterns); localStorage.setItem('pulse-watch-entries', JSON.stringify(dbPatterns)); }
+          if (Array.isArray(dbPatterns) && dbPatterns.length >= defaultEntries.length) {
+            setEntries(dbPatterns); localStorage.setItem('pulse-watch-entries', JSON.stringify(dbPatterns));
+          } else {
+            // DB has fewer patterns than defaults — sync full set
+            setEntries(defaultEntries); localStorage.setItem('pulse-watch-entries', JSON.stringify(defaultEntries));
+          }
         }
       } catch {} finally { setDbPatternsLoaded(true); }
     };
