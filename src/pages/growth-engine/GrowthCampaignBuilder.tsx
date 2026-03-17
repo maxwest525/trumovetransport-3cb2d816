@@ -640,10 +640,35 @@ export default function GrowthCampaignBuilder() {
                   <span className="bg-emerald-500/10 text-emerald-600 rounded-md px-2.5 py-1.5 ring-1 ring-emerald-500/20">Convoso Instant Call</span>
                   <ChevronRight className="w-3 h-3 text-muted-foreground" />
                   <span className="bg-muted rounded-md px-2.5 py-1.5">CRM Sync</span>
-                  <ChevronRight className="w-3 h-3 text-muted-foreground" />
-                  <span className="bg-muted rounded-md px-2.5 py-1.5 text-muted-foreground">Backup Logic</span>
                 </div>
-                <p className="text-[11px] text-muted-foreground mt-2">Leads are routed to Convoso for immediate call attempts within seconds. Your CRM receives a synced copy as the system of record. Backup logic handles unreached leads.</p>
+              </div>
+
+              {/* Routing logic by scenario */}
+              <div className="bg-card rounded-xl border border-border p-4">
+                <span className="text-[11px] font-semibold text-foreground uppercase tracking-wider">How Leads Are Handled</span>
+                <div className="mt-3 space-y-3">
+                  <div className="flex items-start gap-3 p-3 bg-emerald-500/5 rounded-lg border border-emerald-500/10">
+                    <Clock className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
+                    <div>
+                      <div className="text-[12px] font-semibold text-foreground">During business hours</div>
+                      <p className="text-[11px] text-muted-foreground mt-0.5">Lead routes instantly to Convoso. First call attempt within seconds of form submission or inbound call.</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 p-3 bg-blue-500/5 rounded-lg border border-blue-500/10">
+                    <Shield className="w-4 h-4 text-blue-500 mt-0.5 shrink-0" />
+                    <div>
+                      <div className="text-[12px] font-semibold text-foreground">After hours</div>
+                      <p className="text-[11px] text-muted-foreground mt-0.5">Lead queued for next available calling block. Auto-text sent immediately confirming receipt and next steps.</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 p-3 bg-amber-500/5 rounded-lg border border-amber-500/10">
+                    <AlertTriangle className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
+                    <div>
+                      <div className="text-[12px] font-semibold text-foreground">If unreached</div>
+                      <p className="text-[11px] text-muted-foreground mt-0.5">SMS recovery triggered after failed attempts. Escalation alert created if no contact within threshold. Lead stays in callback queue.</p>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               {/* Readiness checklist */}
