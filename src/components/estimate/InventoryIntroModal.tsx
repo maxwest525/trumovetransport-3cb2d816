@@ -89,7 +89,7 @@ export default function InventoryIntroModal({
                 Prefer to talk?
               </a>
               <Link
-                to="/book"
+                to="/site/book"
                 className="tru-modal-secondary-btn"
               >
                 <Video className="w-4 h-4" />

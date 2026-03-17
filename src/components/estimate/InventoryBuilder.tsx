@@ -564,7 +564,7 @@ export default function InventoryBuilder({
           {/* Scan Room - Links to feature page */}
           <button
             type="button"
-            onClick={() => navigate("/scan-room")}
+            onClick={() => navigate("/site/scan-room")}
             className="flex items-center gap-3 p-3 rounded-xl border border-dashed border-primary/30 bg-primary/5 hover:bg-primary/10 transition-all text-left cursor-pointer shadow-sm hover:shadow-md"
           >
             <div className="p-2 rounded-lg bg-primary/10">
