@@ -95,6 +95,11 @@ export default function MiniSoftphone() {
 
   const isOnDialer = location.pathname === "/agent/dialer";
   const hasActiveCall = call && call.state !== "idle" && call.state !== "wrap_up";
+  const fmt = (s: number) => `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
+  const isHold = call?.state === "on_hold";
+
+  // Always show on non-dialer pages
+  if (isOnDialer) return null;
 
   const handleDialKey = (key: string) => {
     setDialNumber(prev => prev + key);
