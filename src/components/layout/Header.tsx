@@ -157,7 +157,7 @@ export default function Header({ whiteLogo = false }: HeaderProps) {
       <header className={`header-main header-floating ${isScrolled ? "is-scrolled" : ""}`}>
         <div className="header-inner">
           {/* Logo */}
-          <Link to="/" className="header-logo" aria-label="TruMove Home">
+          <Link to="/site" className="header-logo" aria-label="TruMove Home">
             <img src={logo} alt="TruMove" className={whiteLogo ? "brightness-0 invert" : ""} />
           </Link>
 
