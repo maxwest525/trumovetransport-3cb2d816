@@ -109,7 +109,7 @@ export default function ManagerShell({ children, breadcrumb = "" }: ManagerShell
           <button onClick={handleResetPreference} className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">
             <RotateCcw className="w-4 h-4" /><span>Reset Preference</span>
           </button>
-          <Link to="/agent-login" className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">
+          <Link to="/" className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">
             <Home className="w-4 h-4" /><span>Back to Roles</span>
           </Link>
         </div>
