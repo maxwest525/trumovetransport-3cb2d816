@@ -57,6 +57,9 @@ const PulseDashboard: React.FC<{ embedded?: boolean; basePath?: string }> = ({ e
   const [liveTranscriptAgent, setLiveTranscriptAgent] = useState<string>('Agent Smith');
   const [transcriptViewMode, setTranscriptViewMode] = useState<'flagged' | 'full'>('flagged');
   const [liveCallData, setLiveCallData] = useState<{ id: string; agent_name: string; client_name: string; transcript: string; flagged_keywords: string[]; status: string } | null>(null);
+  const [transcriptModal, setTranscriptModal] = useState<{ open: boolean; callId: string | null; agentName: string; clientName: string; keyword: string }>({ open: false, callId: null, agentName: '', clientName: '', keyword: '' });
+  const [modalTranscript, setModalTranscript] = useState<{ transcript: string; flagged_keywords: string[] } | null>(null);
+  const [modalLoading, setModalLoading] = useState(false);
 
   const fetchAlerts = useCallback(async () => {
     setIsLoading(true);
@@ -163,6 +166,17 @@ const PulseDashboard: React.FC<{ embedded?: boolean; basePath?: string }> = ({ e
     toast.info(`Barged into ${agentName}'s call`, { description: 'You are now listening to the live call' });
     setLiveTranscriptAgent(agentName);
     setActivityFeed(prev => [{ id: `barge-${Date.now()}`, type: 'alert' as const, agent: agentName, detail: 'manager barged into call', severity: 'high', timestamp: new Date().toISOString() }, ...prev].slice(0, 50));
+  }, []);
+
+  const openTranscriptModal = useCallback(async (alert: DbAlert) => {
+    setTranscriptModal({ open: true, callId: alert.call_id, agentName: alert.agent_name, clientName: alert.client_name, keyword: alert.matched_text });
+    setModalLoading(true);
+    setModalTranscript(null);
+    if (alert.call_id) {
+      const { data } = await supabase.from('pulse_calls' as any).select('transcript, flagged_keywords').eq('id', alert.call_id).maybeSingle();
+      if (data) setModalTranscript({ transcript: (data as any).transcript || '', flagged_keywords: (data as any).flagged_keywords || [] });
+    }
+    setModalLoading(false);
   }, []);
 
   // Parse transcript lines for display
@@ -322,7 +336,7 @@ const PulseDashboard: React.FC<{ embedded?: boolean; basePath?: string }> = ({ e
                                 {highlightKeywords(alert.context, [alert.matched_text])}
                               </p>
                             )}
-                            {alert.call_id && <Link to={`${basePath}/call/${alert.call_id}`} className="text-[10px] text-primary flex items-center gap-1 hover:underline font-medium"><FileText className="w-3 h-3" />View Full Transcript</Link>}
+                            {alert.call_id && <button onClick={e => { e.stopPropagation(); openTranscriptModal(alert); }} className="text-[10px] text-primary flex items-center gap-1 hover:underline font-medium"><FileText className="w-3 h-3" />View Full Transcript</button>}
                           </div>
                         )}
                       </div>
@@ -457,6 +471,40 @@ const PulseDashboard: React.FC<{ embedded?: boolean; basePath?: string }> = ({ e
           </div>
         </div>
       </main>
+
+      {/* Full Transcript Modal */}
+      <Dialog open={transcriptModal.open} onOpenChange={v => setTranscriptModal(prev => ({ ...prev, open: v }))}>
+        <DialogContent className="sm:max-w-2xl max-h-[80vh] flex flex-col overflow-hidden">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <FileText className="w-5 h-5 text-primary" /> Call Transcript
+            </DialogTitle>
+          </DialogHeader>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <User className="w-3.5 h-3.5" /> {transcriptModal.agentName}
+              <span>→</span>
+              <User className="w-3.5 h-3.5" /> {transcriptModal.clientName}
+            </div>
+            {transcriptModal.keyword && (
+              <Badge variant="destructive" className="text-[10px]">{transcriptModal.keyword}</Badge>
+            )}
+          </div>
+          <ScrollArea className="flex-1 min-h-0 max-h-[60vh]">
+            {modalLoading ? (
+              <div className="text-center py-12"><RefreshCw className="w-5 h-5 mx-auto animate-spin text-muted-foreground/30" /><p className="text-xs text-muted-foreground mt-2">Loading transcript...</p></div>
+            ) : modalTranscript ? (
+              <div className="rounded-lg border border-border bg-destructive/5 p-4">
+                <p className="text-sm leading-relaxed whitespace-pre-wrap">
+                  {highlightKeywords(modalTranscript.transcript || 'No transcript content', modalTranscript.flagged_keywords || [])}
+                </p>
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground/50 italic text-center py-8">No transcript available for this call</p>
+            )}
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
