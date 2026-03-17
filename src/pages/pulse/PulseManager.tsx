@@ -405,9 +405,35 @@ const PulseManager: React.FC<{ embedded?: boolean }> = ({ embedded = false }) =>
                 );
               })}
             </div>
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 flex-wrap">
               <Button variant="outline" size="sm" className="h-7 text-[10px] gap-1 flex-1" onClick={resetToDefaults}><RotateCcw className="w-3 h-3" /> Reset</Button>
               <Button variant="outline" size="sm" className="h-7 text-[10px] gap-1 flex-1" onClick={restorePrevious} disabled={!previousEntries}><Undo2 className="w-3 h-3" /> Restore</Button>
+              <Button variant="outline" size="sm" className="h-7 text-[10px] gap-1 flex-1" onClick={() => {
+                const blob = new Blob([JSON.stringify(entries, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a'); a.href = url; a.download = 'pulse-watch-patterns.json'; a.click();
+                URL.revokeObjectURL(url);
+                toast.success('Patterns exported');
+              }}><CloudUpload className="w-3 h-3" /> Export</Button>
+              <Button variant="outline" size="sm" className="h-7 text-[10px] gap-1 flex-1" onClick={() => {
+                const input = document.createElement('input'); input.type = 'file'; input.accept = '.json';
+                input.onchange = (e) => {
+                  const file = (e.target as HTMLInputElement).files?.[0];
+                  if (!file) return;
+                  const reader = new FileReader();
+                  reader.onload = (ev) => {
+                    try {
+                      const imported = JSON.parse(ev.target?.result as string) as WatchEntry[];
+                      if (!Array.isArray(imported) || !imported.every(e => e.pattern && e.type)) { toast.error('Invalid pattern file'); return; }
+                      setPreviousEntries(entries);
+                      setEntries(imported);
+                      toast.success(`Imported ${imported.length} patterns`);
+                    } catch { toast.error('Failed to parse file'); }
+                  };
+                  reader.readAsText(file);
+                };
+                input.click();
+              }}><Upload className="w-3 h-3" /> Import</Button>
             </div>
           </div>
 
