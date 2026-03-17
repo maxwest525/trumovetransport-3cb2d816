@@ -472,10 +472,20 @@ const PulseManager: React.FC<{ embedded?: boolean }> = ({ embedded = false }) =>
                     {items.length === 0 ? (
                       <p className="text-sm text-muted-foreground/60 italic text-center py-6">{searchFilter ? 'No matches' : `No ${section.label.toLowerCase()} yet`}</p>
                     ) : (
-                      <div className="space-y-1 pr-3">
+                      <div className={keywordViewMode === 'horizontal' ? 'flex flex-wrap gap-1.5 pr-3' : 'space-y-1 pr-3'}>
                         {items.map(entry => {
                           const catMeta = entry.category ? CATEGORY_META[entry.category] : null;
                           const isEditing = editingId === entry.id;
+                          if (keywordViewMode === 'horizontal' && !isEditing) {
+                            return (
+                              <div key={entry.id} onClick={() => setSelectedIds(prev => { const next = new Set(prev); if (next.has(entry.id)) next.delete(entry.id); else next.add(entry.id); return next; })} className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border cursor-pointer transition-colors group ${selectedIds.has(entry.id) ? 'border-primary/30 bg-primary/5' : 'border-border/30 hover:bg-secondary/20'}`}>
+                                <Checkbox checked={selectedIds.has(entry.id)} onCheckedChange={() => {}} className="shrink-0 pointer-events-none scale-75" />
+                                <span className={`text-xs ${section.mono ? 'font-mono' : ''}`}>{entry.pattern}</span>
+                                {catMeta && <span className={`text-[8px] px-1 py-0 rounded border font-medium shrink-0 ${catMeta.bg} ${catMeta.color}`}>{catMeta.label}</span>}
+                                <button onClick={e => { e.stopPropagation(); removeEntry(entry.id); }} className="text-muted-foreground hover:text-destructive shrink-0 opacity-0 group-hover:opacity-100"><X className="w-3 h-3" /></button>
+                              </div>
+                            );
+                          }
                           return (
                             <div key={entry.id} className={`flex items-center gap-2 px-3 py-2 rounded-lg border transition-colors group cursor-pointer ${selectedIds.has(entry.id) ? 'border-primary/30 bg-primary/5' : 'border-border/30 hover:bg-secondary/20'}`} onClick={() => { if (!isEditing) setSelectedIds(prev => { const next = new Set(prev); if (next.has(entry.id)) next.delete(entry.id); else next.add(entry.id); return next; }); }}>
                               {!isEditing && <Checkbox checked={selectedIds.has(entry.id)} onCheckedChange={() => {}} className="shrink-0 pointer-events-none" />}
