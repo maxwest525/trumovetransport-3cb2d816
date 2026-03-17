@@ -51,9 +51,10 @@ const PulseCallReview: React.FC<{ embedded?: boolean; basePath?: string }> = ({ 
   const flaggedKws = call.flagged_keywords || [];
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className={cn(embedded ? "flex flex-col" : "min-h-screen bg-background text-foreground")}>
+      {!embedded && (
       <header className="sticky top-0 z-40 h-14 flex items-center gap-3 px-6 border-b border-border bg-background/80 backdrop-blur-xl">
-        <Link to="/pulse/dashboard" className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"><ArrowLeft className="w-4 h-4" />Back to Dashboard</Link>
+        <Link to={basePath} className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"><ArrowLeft className="w-4 h-4" />Back to Dashboard</Link>
         <div className="w-px h-5 bg-border/50 mx-2" />
         <span className="font-bold text-lg tracking-tight">Call Review</span>
         <Badge variant="destructive" className="text-[10px]">BETA</Badge>
