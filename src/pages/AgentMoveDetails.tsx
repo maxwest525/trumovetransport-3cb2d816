@@ -61,6 +61,7 @@ export default function AgentMoveDetails() {
           special_treatment_notes: data.special_treatment_notes || "",
           packing_service: data.packing_service,
           auto_transport: (data as any).auto_transport ?? false,
+          auto_transport_vehicles: (data as any).auto_transport_vehicles ?? [],
         });
       }
     });
