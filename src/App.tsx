@@ -96,8 +96,6 @@ const App = () => (
             <Route path="/admin/esign-audit" element={<AdminESignAudit />} />
             <Route path="/agent/pipeline" element={<AgentPipeline />} />
             <Route path="/agent/profile" element={<ProfileSettings />} />
-            <Route path="/demo" element={<Demo />} />
-            <Route path="/agent-login-old" element={<AgentLoginOld />} />
             <Route path="/manager/dashboard" element={<ManagerDashboard />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/users" element={<AdminUsersPage />} />
