@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import SiteShell from "@/components/layout/SiteShell";
 import PortalAuthForm from "@/components/auth/PortalAuthForm";
-import { LogOut, Bell, ExternalLink } from "lucide-react";
+import { LogOut, Bell, ArrowRight } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import logoImg from "@/assets/logo.png";
 import { useAgentProfile } from "@/hooks/useAgentProfile";
@@ -18,7 +18,6 @@ import type { Session } from "@supabase/supabase-js";
 interface LinkItem {
   label: string;
   href: string;
-  external?: boolean;
 }
 
 interface Section {
@@ -34,9 +33,9 @@ const SECTIONS: Section[] = [
     title: "Agents",
     allowedRoles: ["owner", "admin", "manager", "agent"],
     links: [
-      { label: "Convoso Dialer", href: "https://app.convoso.com", external: true },
-      { label: "RingCentral", href: "https://app.ringcentral.com", external: true },
-      { label: "Granot CRM", href: "https://app.granot.com", external: true },
+      { label: "Convoso Dialer", href: "/tools/convoso" },
+      { label: "RingCentral", href: "/tools/ringcentral" },
+      { label: "Granot CRM", href: "/tools/granot" },
       { label: "Dashboard", href: "/agent/dashboard" },
       { label: "Pipeline", href: "/agent/pipeline" },
       { label: "Dialer", href: "/agent/dialer" },
@@ -51,10 +50,10 @@ const SECTIONS: Section[] = [
     title: "Managers",
     allowedRoles: ["owner", "admin", "manager"],
     links: [
-      { label: "Convoso Admin", href: "https://admin.convoso.com", external: true },
-      { label: "RingCentral Admin", href: "https://admin.ringcentral.com", external: true },
-      { label: "Granot Manager", href: "https://app.granot.com/manager", external: true },
-      { label: "PulseOS", href: "https://app.pulseos.com", external: true },
+      { label: "Convoso Admin", href: "/tools/convoso-admin" },
+      { label: "RingCentral Admin", href: "/tools/ringcentral-admin" },
+      { label: "Granot Manager", href: "/tools/granot-manager" },
+      { label: "PulseOS", href: "/tools/pulseos" },
       { label: "Team Dashboard", href: "/manager/dashboard" },
       { label: "Coaching", href: "/coaching" },
     ],
@@ -133,14 +132,6 @@ export default function AgentLogin() {
     );
   }, [userRoles, rolesLoading]);
 
-  const handleClick = (link: LinkItem) => {
-    if (link.external) {
-      navigate(link.href);
-    } else {
-      navigate(link.href);
-    }
-  };
-
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     localStorage.removeItem(STORAGE_KEY);
@@ -170,7 +161,7 @@ export default function AgentLogin() {
     <SiteShell centered backendMode hideHeader>
       <div className="flex flex-col items-center justify-center min-h-[100vh] px-4 py-20">
 
-        {/* Header — logo + greeting */}
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
@@ -229,13 +220,11 @@ export default function AgentLogin() {
                     {section.links.map((link) => (
                       <button
                         key={link.label}
-                        onClick={() => handleClick(link)}
+                        onClick={() => navigate(link.href)}
                         className="flex items-center justify-between gap-2 text-[13px] text-foreground/80 hover:text-foreground hover:bg-muted/50 transition-colors py-1.5 px-2 -mx-2 rounded-md text-left group"
                       >
                         <span>{link.label}</span>
-                        {link.external && (
-                          <ExternalLink className="w-3 h-3 text-muted-foreground/30 group-hover:text-muted-foreground/60 shrink-0" />
-                        )}
+                        <ArrowRight className="w-3 h-3 text-muted-foreground/0 group-hover:text-muted-foreground/40 transition-colors shrink-0" />
                       </button>
                     ))}
                   </div>
