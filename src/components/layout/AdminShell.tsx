@@ -14,7 +14,7 @@ import { setPortalContext } from "@/hooks/usePortalContext";
 const NAV_ITEMS = [
   { label: "Dashboard", icon: LayoutDashboard, href: "/admin/dashboard" },
   { label: "Users & Roles", icon: Users, href: "/admin/users" },
-  { label: "Integrations", icon: Link2, href: "/admin/integrations" },
+  { label: "Developer", icon: Link2, href: "/admin/developer" },
   { label: "Support Tickets", icon: ScrollText, href: "/admin/support-tickets" },
   { label: "Products & Pricing", icon: DollarSign, href: "/admin/pricing" },
 ];
