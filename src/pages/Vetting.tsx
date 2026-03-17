@@ -108,7 +108,7 @@ export default function Vetting() {
             </div>
 
             <div className="tru-vetting-hero-cta">
-              <Link to="/carrier-vetting" className="tru-vetting-primary-btn">
+              <Link to="/site/carrier-vetting" className="tru-vetting-primary-btn">
                 Vet a Carrier
                 <Search className="w-4 h-4" />
               </Link>
