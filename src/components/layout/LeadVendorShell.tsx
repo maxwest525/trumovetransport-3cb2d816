@@ -8,7 +8,7 @@ import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 import { setPortalContext } from "@/hooks/usePortalContext";
 import { useIsMobile } from "@/hooks/use-mobile";
-import DemoDataToggle from "@/components/leads/DemoDataToggle";
+
 import logoImg from "@/assets/logo.png";
 
 const NAV_ITEMS = [
