@@ -96,15 +96,6 @@ export function MarketingHubDashboard({
       glowColor: 'hsl(170 80% 45% / 0.15)',
       action: () => onNavigate('abtest'),
     },
-    {
-      id: 'sites',
-      title: 'Customer Facing Sites',
-      subtitle: 'Manage live websites, landing pages & variants',
-      icon: Globe,
-      gradient: 'from-indigo-400 via-blue-500 to-sky-500',
-      glowColor: 'hsl(220 80% 55% / 0.15)',
-      action: () => navigate('/customer-facing-sites'),
-    },
   ];
 
   const statItems = [
