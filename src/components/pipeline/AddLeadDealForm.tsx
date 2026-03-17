@@ -123,10 +123,10 @@ export function AddLeadDealForm({ open, onOpenChange, onAdded }: AddLeadDealForm
             </div>
             <div>
               <Label className="text-xs">Lead Vendor</Label>
-              <Select value={form.vendor_id} onValueChange={(v) => update("vendor_id", v)}>
+              <Select value={form.vendor_id || "none"} onValueChange={(v) => update("vendor_id", v === "none" ? "" : v)}>
                 <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="None" /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">None</SelectItem>
+                  <SelectItem value="none">None</SelectItem>
                   {vendors.map((v) => (
                     <SelectItem key={v.id} value={v.id}>{v.name}</SelectItem>
                   ))}
