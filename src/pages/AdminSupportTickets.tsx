@@ -81,12 +81,12 @@ export default function AdminSupportTickets() {
   }, {} as Record<string, number>);
 
   return (
-    <AdminShell breadcrumb=" / Support Tickets">
+    <AdminShell breadcrumb=" / Employee Requests">
       {/* Header row */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-bold text-foreground">Support Tickets</h1>
-          <p className="text-sm text-muted-foreground">{tickets.length} total tickets</p>
+          <h1 className="text-xl font-bold text-foreground">Employee Requests</h1>
+          <p className="text-sm text-muted-foreground">{tickets.length} total requests</p>
         </div>
         <Button variant="outline" size="sm" onClick={fetchTickets} disabled={loading}>
           <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />

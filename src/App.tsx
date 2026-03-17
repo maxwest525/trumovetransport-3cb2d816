@@ -94,7 +94,10 @@ const App = () => (
             <Route path="/site/customer-service" element={<CustomerService />} />
             <Route path="/agent/dashboard" element={<AgentDashboard />} />
             <Route path="/admin/developer" element={<AdminDeveloper />} />
+            <Route path="/admin/employee-requests" element={<AdminSupportTickets />} />
             <Route path="/admin/support-tickets" element={<AdminSupportTickets />} />
+            <Route path="/admin/quickbooks" element={<IntegrationPlaceholder />} />
+            <Route path="/admin/payroll" element={<IntegrationPlaceholder />} />
             <Route path="/admin/esign-audit" element={<AdminESignAudit />} />
             <Route path="/agent/pipeline" element={<AgentPipeline />} />
             <Route path="/agent/profile" element={<ProfileSettings />} />
