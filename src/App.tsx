@@ -93,7 +93,7 @@ const App = () => (
             <Route path="/site/track" element={<LiveTracking />} />
             <Route path="/site/customer-service" element={<CustomerService />} />
             <Route path="/agent/dashboard" element={<AgentDashboard />} />
-            <Route path="/admin/integrations" element={<AdminIntegrations />} />
+            <Route path="/admin/developer" element={<AdminDeveloper />} />
             <Route path="/admin/support-tickets" element={<AdminSupportTickets />} />
             <Route path="/admin/esign-audit" element={<AdminESignAudit />} />
             <Route path="/agent/pipeline" element={<AgentPipeline />} />
