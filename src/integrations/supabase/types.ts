@@ -759,6 +759,7 @@ export type Database = {
       move_details: {
         Row: {
           auto_transport: boolean
+          auto_transport_vehicles: Json
           bedrooms: number
           created_at: string
           floors: number
@@ -778,6 +779,7 @@ export type Database = {
         }
         Insert: {
           auto_transport?: boolean
+          auto_transport_vehicles?: Json
           bedrooms?: number
           created_at?: string
           floors?: number
@@ -797,6 +799,7 @@ export type Database = {
         }
         Update: {
           auto_transport?: boolean
+          auto_transport_vehicles?: Json
           bedrooms?: number
           created_at?: string
           floors?: number
