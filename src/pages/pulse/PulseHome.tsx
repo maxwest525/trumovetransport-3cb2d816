@@ -5,9 +5,9 @@ import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/ca
 import { motion } from "framer-motion";
 
 const SECTIONS = [
-  { icon: Activity, title: "Agent Monitor", desc: "Live call transcription & keyword alerts" },
-  { icon: BarChart3, title: "Dashboard", desc: "Compliance metrics & analytics" },
-  { icon: Settings2, title: "Logic Manager", desc: "Rules, scripts & alert configuration" },
+  { icon: Activity, title: "Agent Monitor", desc: "Live call transcription & keyword alerts", path: "/pulse/agent" },
+  { icon: BarChart3, title: "Dashboard", desc: "Compliance metrics & analytics", path: "/pulse/dashboard" },
+  { icon: Settings2, title: "Logic Manager", desc: "Rules, scripts & alert configuration", path: "/pulse/manager" },
 ];
 
 export default function PulseHome() {
