@@ -226,10 +226,6 @@ export function ClientSearchModal({ open, onClose, onSelect }: ClientSearchModal
               <Button onClick={handleMoveSearch} size="sm">
                 <Search className="w-4 h-4" />
               </Button>
-              <Button onClick={loadAllMoveDemo} variant="outline" size="sm" className="gap-1">
-                <Sparkles className="w-4 h-4" />
-                Demo
-              </Button>
             </div>
 
             {/* Past Moves List */}
