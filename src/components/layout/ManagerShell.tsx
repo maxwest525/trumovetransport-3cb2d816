@@ -16,7 +16,6 @@ const NAV_ITEMS = [
   { label: "Dashboard", icon: LayoutDashboard, href: "/manager/dashboard" },
   { label: "My KPIs", icon: Gauge, href: "/kpi" },
   { label: "Pulse Dashboard", icon: Activity, href: "/manager/pulse" },
-  { label: "Team Chat", icon: MessageSquare, href: "/manager/team-chat" },
 ];
 
 const ADVANCED_ITEMS: { label: string; icon: typeof Target; badge?: number; href?: string }[] = [
