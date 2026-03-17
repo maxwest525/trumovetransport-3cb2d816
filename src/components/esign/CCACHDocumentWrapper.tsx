@@ -22,6 +22,7 @@ export function CCACHDocumentWrapper({
       <CCACHAuthorizationForm 
         externalTypedName={typedName}
         onExternalTypedNameChange={onTypedNameChange}
+        embedded
       />
       
       {/* Footer with Continue button */}

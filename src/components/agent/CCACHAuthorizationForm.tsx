@@ -17,11 +17,14 @@ type SignatureField = "initial1" | "initial2" | "signature";
 interface CCACHAuthorizationFormProps {
   externalTypedName?: string;
   onExternalTypedNameChange?: (name: string) => void;
+  /** When true, hides the built-in sidebar (used when embedded inside ESignViewPage which provides its own sidebar) */
+  embedded?: boolean;
 }
 
 export function CCACHAuthorizationForm({ 
   externalTypedName, 
-  onExternalTypedNameChange 
+  onExternalTypedNameChange,
+  embedded = false,
 }: CCACHAuthorizationFormProps = {}) {
   useEffect(() => { window.scrollTo(0, 0); }, []);
   
@@ -232,16 +235,17 @@ export function CCACHAuthorizationForm({
   };
 
   return (
-    <div className="min-h-[600px] py-4">
+    <div className={embedded ? "" : "min-h-[600px] py-4"}>
       <ClientSearchModal
         open={showClientSearch}
         onClose={() => setShowClientSearch(false)}
         onSelect={handleClientSelect}
       />
       
-      <div className="max-w-[1200px] mx-auto flex gap-6">
+      <div className={embedded ? "" : "max-w-[1200px] mx-auto flex gap-6"}>
         
-        {/* Left Sidebar */}
+        {/* Left Sidebar - hidden in embedded mode */}
+        {!embedded && (
         <div className="w-72 flex-shrink-0 space-y-4">
           {/* E-Sign Send Buttons */}
           <div className="flex gap-2">
@@ -388,6 +392,7 @@ export function CCACHAuthorizationForm({
             <span>PCI-DSS Compliant • 256-bit Encryption</span>
           </div>
         </div>
+        )}
 
         {/* Document Container - Paper Size */}
         <div className="flex-1 max-w-[8.5in]">
