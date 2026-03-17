@@ -13,7 +13,7 @@ const SEVERITY_META: Record<Severity, { label: string; color: string; icon: Reac
   critical: { label: 'Critical', color: 'text-destructive', icon: AlertTriangle },
 };
 
-const PulseCallReview: React.FC = () => {
+const PulseCallReview: React.FC<{ embedded?: boolean; basePath?: string }> = ({ embedded = false, basePath = '/pulse/dashboard' }) => {
   const { callId } = useParams<{ callId: string }>();
   const [call, setCall] = useState<any>(null);
   const [callAlerts, setCallAlerts] = useState<any[]>([]);
