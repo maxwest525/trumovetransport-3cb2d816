@@ -125,11 +125,6 @@ export default function LeadVendorShell({ children, breadcrumb = "", onRefresh }
               <Globe className="w-3.5 h-3.5" />
               <span>Portal</span>
             </Link>
-            <div className="w-px h-4 bg-border hidden sm:block" />
-            <Link to="/agent-login" className="hidden sm:flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
-              <Home className="w-3.5 h-3.5" />
-              <span>Portal</span>
-            </Link>
             <span className="text-xs text-muted-foreground truncate hidden sm:inline">/ Lead Vendors{breadcrumb}</span>
           </div>
           <div className="flex items-center gap-3">

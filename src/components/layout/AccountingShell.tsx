@@ -114,11 +114,6 @@ export default function AccountingShell({ children, breadcrumb = "" }: Accountin
               <Globe className="w-3.5 h-3.5" />
               <span>Portal</span>
             </Link>
-            <div className="w-px h-4 bg-border" />
-            <Link to="/agent-login" className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
-              <Home className="w-3.5 h-3.5" />
-              <span>Portal</span>
-            </Link>
             <span className="text-xs text-muted-foreground">/ Accounting{breadcrumb}</span>
           </div>
           <div className="flex items-center gap-2">
