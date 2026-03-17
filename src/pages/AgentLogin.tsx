@@ -211,7 +211,7 @@ export default function AgentLogin() {
 
           {/* Customer Facing Websites */}
           {[
-            { title: "Classic", desc: "Original TruMove website", href: "/classic" },
+            { title: "Customer Facing Sites", desc: "Original TruMove website", href: "/classic" },
             { title: "New Color TruMove", desc: "Redesigned homepage with updated branding", href: "/homepage-2" },
           ].map((site) => (
             <a
