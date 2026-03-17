@@ -1,8 +1,8 @@
 import GrowthEngineShell from "@/components/layout/GrowthEngineShell";
 import { cn } from "@/lib/utils";
 import {
-  Check, X, RefreshCw, Settings, ExternalLink, HelpCircle,
-  Plug, Zap, Clock,
+  Check, X, RefreshCw, Settings, HelpCircle,
+  Plug, Clock,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -10,6 +10,7 @@ interface Integration {
   id: string;
   name: string;
   category: string;
+  group: string;
   description: string;
   dataAvailable: string;
   connected: boolean;
@@ -18,26 +19,43 @@ interface Integration {
   tag?: string;
 }
 
+const INTEGRATION_GROUPS = [
+  { id: "traffic", label: "Traffic Sources", desc: "Where your leads come from" },
+  { id: "tracking", label: "Tracking", desc: "Measure and attribute everything" },
+  { id: "routing", label: "Lead Routing", desc: "Get leads to your team instantly" },
+  { id: "crm", label: "CRM Sync", desc: "System of record (pick one primary)" },
+  { id: "automation", label: "Automation / Support", desc: "Optional workflows and tools" },
+];
+
 const INTEGRATIONS: Integration[] = [
-  { id: "convoso", name: "Convoso", category: "Dialer / Speed-to-Lead", description: "Your instant-call engine. Leads are routed here via webhook for immediate call attempts within seconds of submission.", dataAvailable: "Call queue, dispositions, agent status, dial attempts, contact rate, callback scheduling", connected: true, lastSync: "Live", status: "healthy", tag: "Essential" },
-  { id: "google_ads", name: "Google Ads", category: "Advertising", description: "Import campaign data, keyword performance, and conversion tracking from Google Ads.", dataAvailable: "Campaigns, keywords, clicks, conversions, spend, quality scores", connected: true, lastSync: "2 min ago", status: "healthy", tag: "Essential" },
-  { id: "meta_ads", name: "Meta Ads", category: "Advertising", description: "Sync Facebook and Instagram ad performance including leads, reach, and creative metrics.", dataAvailable: "Ad sets, creatives, leads, reach, frequency, CPM, ROAS", connected: true, lastSync: "5 min ago", status: "healthy", tag: "Essential" },
-  { id: "google_analytics", name: "Google Analytics", category: "Analytics", description: "Pull website traffic data, user behavior, and conversion funnels from GA4.", dataAvailable: "Sessions, users, bounce rate, conversion paths, traffic sources", connected: true, lastSync: "15 min ago", status: "healthy" },
-  { id: "callrail", name: "CallRail", category: "Call Tracking", description: "Track inbound calls with source attribution, call recordings, and keyword tracking.", dataAvailable: "Call logs, source attribution, recordings, keywords, caller data", connected: true, lastSync: "1 min ago", status: "healthy", tag: "Essential" },
-  { id: "gtm", name: "Google Tag Manager", category: "Tracking", description: "Monitor tag firing status and manage tracking pixels across your site.", dataAvailable: "Tag status, firing rules, container versions", connected: false, tag: "Recommended" },
-  { id: "gsc", name: "Google Search Console", category: "SEO", description: "View organic search performance, keyword rankings, and indexing status.", dataAvailable: "Impressions, clicks, CTR, average position, indexed pages", connected: true, lastSync: "1 hr ago", status: "healthy" },
-  { id: "semrush", name: "SEMrush", category: "SEO", description: "Access keyword research, competitor analysis, backlink data, and site audit results.", dataAvailable: "Keyword rankings, competitor traffic, backlinks, site health", connected: false, tag: "Recommended" },
-  { id: "ghl", name: "GoHighLevel", category: "CRM Sync", description: "Mirror leads and pipeline data to GoHighLevel for backup sequences and reporting. Optional secondary sync target.", dataAvailable: "Contacts, opportunities, pipeline stages, SMS/email sequences", connected: false },
-  { id: "granot", name: "Granot CRM", category: "CRM Sync", description: "Sync lead records and disposition data to Granot as your system of record. Optional secondary sync target.", dataAvailable: "Lead records, move details, status history, agent assignments", connected: false },
-  { id: "custom_crm", name: "Custom CRM / System of Record", category: "CRM Sync", description: "Connect your own CRM or system of record via API. One CRM should be designated as primary per workflow.", dataAvailable: "Configurable via API mapping", connected: false, tag: "Flexible" },
-  { id: "zapier", name: "Zapier", category: "Automation", description: "Connect 5,000+ apps with automated workflows (Zaps) triggered by events.", dataAvailable: "Webhook triggers, action logs, error reports", connected: false },
-  { id: "make", name: "Make (Integromat)", category: "Automation", description: "Build complex multi-step automations with visual workflow builder.", dataAvailable: "Scenario runs, data transfers, error logs", connected: false },
-  { id: "webhooks", name: "Custom Webhooks", category: "Developer", description: "Send or receive data via custom webhook endpoints for any platform.", dataAvailable: "Event payloads, delivery logs, retry status", connected: true, lastSync: "Just now", status: "healthy" },
-  { id: "dashclicks", name: "DashClicks", category: "Agency", description: "White-label fulfillment and campaign management integration.", dataAvailable: "Orders, campaigns, fulfillment status", connected: false, tag: "Coming Soon" },
-  { id: "firecrawl", name: "Firecrawl", category: "Data", description: "Scrape competitor websites, landing pages, and review sites for intelligence.", dataAvailable: "Page content, metadata, structured data", connected: false },
-  { id: "tiktok", name: "TikTok Ads", category: "Advertising", description: "Import TikTok ad campaign performance and audience data.", dataAvailable: "Campaigns, impressions, clicks, conversions, video views", connected: false, tag: "Coming Soon" },
-  { id: "microsoft_ads", name: "Microsoft Ads", category: "Advertising", description: "Sync Bing/Microsoft Search ad campaigns and performance data.", dataAvailable: "Campaigns, keywords, clicks, conversions, audience data", connected: false },
-  { id: "linkedin", name: "LinkedIn Ads", category: "Advertising", description: "Import LinkedIn ad campaign performance for B2B targeting.", dataAvailable: "Campaigns, leads, impressions, company targeting", connected: false, tag: "Coming Soon" },
+  // Traffic Sources
+  { id: "google_ads", name: "Google Ads", category: "Advertising", group: "traffic", description: "Import campaign data, keyword performance, and conversion tracking. Your primary source of high-intent moving leads.", dataAvailable: "Campaigns, keywords, clicks, conversions, spend, quality scores", connected: true, lastSync: "2 min ago", status: "healthy", tag: "Essential" },
+  { id: "meta_ads", name: "Meta Ads", category: "Advertising", group: "traffic", description: "Sync Facebook and Instagram ad performance including leads, reach, and creative metrics.", dataAvailable: "Ad sets, creatives, leads, reach, frequency, CPM, ROAS", connected: true, lastSync: "5 min ago", status: "healthy", tag: "Essential" },
+  { id: "tiktok", name: "TikTok Ads", category: "Advertising", group: "traffic", description: "Import TikTok ad campaign performance and audience data.", dataAvailable: "Campaigns, impressions, clicks, conversions, video views", connected: false, tag: "Coming Soon" },
+  { id: "microsoft_ads", name: "Microsoft Ads", category: "Advertising", group: "traffic", description: "Sync Bing/Microsoft Search ad campaigns. Lower CPCs, older demographic.", dataAvailable: "Campaigns, keywords, clicks, conversions", connected: false, tag: "Optional" },
+  { id: "linkedin", name: "LinkedIn Ads", category: "Advertising", group: "traffic", description: "LinkedIn ad campaign performance for B2B or corporate relocation.", dataAvailable: "Campaigns, leads, impressions", connected: false, tag: "Coming Soon" },
+
+  // Tracking
+  { id: "google_analytics", name: "Google Analytics", category: "Analytics", group: "tracking", description: "Pull website traffic data, user behavior, and conversion funnels from GA4.", dataAvailable: "Sessions, users, bounce rate, conversion paths, traffic sources", connected: true, lastSync: "15 min ago", status: "healthy", tag: "Essential" },
+  { id: "callrail", name: "CallRail", category: "Call Tracking", group: "tracking", description: "Track inbound calls with source attribution, call recordings, and keyword-level tracking.", dataAvailable: "Call logs, source attribution, recordings, keywords, caller data", connected: true, lastSync: "1 min ago", status: "healthy", tag: "Essential" },
+  { id: "gtm", name: "Google Tag Manager", category: "Tag Management", group: "tracking", description: "Monitor tag firing status and manage tracking pixels across your site.", dataAvailable: "Tag status, firing rules, container versions", connected: false, tag: "Recommended" },
+  { id: "gsc", name: "Google Search Console", category: "SEO", group: "tracking", description: "View organic search performance, keyword rankings, and indexing status.", dataAvailable: "Impressions, clicks, CTR, average position, indexed pages", connected: true, lastSync: "1 hr ago", status: "healthy" },
+  { id: "semrush", name: "SEMrush", category: "SEO", group: "tracking", description: "Access keyword research, competitor analysis, backlink data, and site audit results.", dataAvailable: "Keyword rankings, competitor traffic, backlinks, site health", connected: false, tag: "Recommended" },
+
+  // Lead Routing
+  { id: "convoso", name: "Convoso", category: "Dialer / Speed-to-Lead", group: "routing", description: "Your instant-call engine. Leads are routed here via webhook for immediate call attempts within seconds of submission. This is the primary destination for all new leads.", dataAvailable: "Call queue, dispositions, agent status, dial attempts, contact rate, callback scheduling", connected: true, lastSync: "Live", status: "healthy", tag: "Essential" },
+  { id: "webhooks", name: "Custom Webhooks", category: "Developer", group: "routing", description: "Send or receive data via custom webhook endpoints for any platform.", dataAvailable: "Event payloads, delivery logs, retry status", connected: true, lastSync: "Just now", status: "healthy" },
+
+  // CRM Sync
+  { id: "ghl", name: "GoHighLevel", category: "CRM Sync", group: "crm", description: "Mirror leads and pipeline data to GoHighLevel for backup sequences and reporting. Optional secondary sync target.", dataAvailable: "Contacts, opportunities, pipeline stages, SMS/email sequences", connected: false, tag: "Optional" },
+  { id: "granot", name: "Granot CRM", category: "CRM Sync", group: "crm", description: "Sync lead records and disposition data to Granot as your system of record.", dataAvailable: "Lead records, move details, status history, agent assignments", connected: false, tag: "Optional" },
+  { id: "custom_crm", name: "Custom CRM / System of Record", category: "CRM Sync", group: "crm", description: "Connect your own CRM via API. Designate one CRM as primary per workflow.", dataAvailable: "Configurable via API mapping", connected: false, tag: "Flexible" },
+
+  // Automation
+  { id: "zapier", name: "Zapier", category: "Automation", group: "automation", description: "Connect 5,000+ apps with automated workflows triggered by events.", dataAvailable: "Webhook triggers, action logs, error reports", connected: false, tag: "Optional" },
+  { id: "make", name: "Make (Integromat)", category: "Automation", group: "automation", description: "Build complex multi-step automations with visual workflow builder.", dataAvailable: "Scenario runs, data transfers, error logs", connected: false, tag: "Optional" },
+  { id: "dashclicks", name: "DashClicks", category: "Agency", group: "automation", description: "White-label fulfillment and campaign management integration.", dataAvailable: "Orders, campaigns, fulfillment status", connected: false, tag: "Coming Soon" },
+  { id: "firecrawl", name: "Firecrawl", category: "Data", group: "automation", description: "Scrape competitor websites, landing pages, and review sites for intelligence.", dataAvailable: "Page content, metadata, structured data", connected: false, tag: "Optional" },
 ];
 
 function IntegrationCard({ integration }: { integration: Integration }) {
@@ -62,6 +80,7 @@ function IntegrationCard({ integration }: { integration: Integration }) {
                   "text-[9px] font-bold uppercase px-1.5 py-0.5 rounded-full",
                   integration.tag === "Essential" ? "bg-primary/10 text-primary" :
                   integration.tag === "Recommended" ? "bg-blue-500/10 text-blue-600" :
+                  integration.tag === "Coming Soon" ? "bg-muted text-muted-foreground" :
                   "bg-muted text-muted-foreground"
                 )}>{integration.tag}</span>
               )}
@@ -93,9 +112,6 @@ function IntegrationCard({ integration }: { integration: Integration }) {
         <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground mb-3">
           <Clock className="w-3 h-3" />
           Last sync: {integration.lastSync}
-          {integration.status === "warning" && (
-            <span className="text-amber-500 font-medium ml-1">Sync delayed</span>
-          )}
         </div>
       )}
 
@@ -131,7 +147,6 @@ function IntegrationCard({ integration }: { integration: Integration }) {
 }
 
 export default function GrowthIntegrations() {
-  const categories = [...new Set(INTEGRATIONS.map(i => i.category))];
   const connectedCount = INTEGRATIONS.filter(i => i.connected).length;
 
   return (
@@ -140,9 +155,9 @@ export default function GrowthIntegrations() {
         <div>
           <h1 className="text-2xl font-bold text-foreground">Integrations</h1>
           <p className="text-sm text-muted-foreground mt-1">
-          Connect your marketing tools and lead routing systems. {connectedCount} of {INTEGRATIONS.length} connected.
-        </p>
-      </div>
+            Connect your marketing tools and lead routing systems. {connectedCount} of {INTEGRATIONS.length} connected.
+          </p>
+        </div>
 
         {/* Helper */}
         <div className="bg-primary/5 border border-primary/10 rounded-xl px-4 py-3 flex items-start gap-3">
@@ -155,24 +170,24 @@ export default function GrowthIntegrations() {
           </div>
         </div>
 
-        {/* Summary bar */}
-        <div className="flex gap-3 overflow-x-auto pb-1">
-          {categories.map(cat => {
-            const items = INTEGRATIONS.filter(i => i.category === cat);
-            const connected = items.filter(i => i.connected).length;
-            return (
-              <div key={cat} className="bg-card rounded-lg border border-border px-3 py-2 whitespace-nowrap">
-                <span className="text-[11px] font-medium text-foreground">{cat}</span>
-                <span className="text-[10px] text-muted-foreground ml-2">{connected}/{items.length}</span>
+        {/* Grouped integrations */}
+        {INTEGRATION_GROUPS.map(group => {
+          const items = INTEGRATIONS.filter(i => i.group === group.id);
+          if (items.length === 0) return null;
+          const connected = items.filter(i => i.connected).length;
+          return (
+            <div key={group.id}>
+              <div className="flex items-center gap-3 mb-3">
+                <h2 className="text-sm font-semibold text-foreground">{group.label}</h2>
+                <span className="text-[10px] text-muted-foreground">{group.desc}</span>
+                <span className="text-[10px] bg-muted px-2 py-0.5 rounded-full text-muted-foreground ml-auto">{connected}/{items.length} connected</span>
               </div>
-            );
-          })}
-        </div>
-
-        {/* Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {INTEGRATIONS.map(i => <IntegrationCard key={i.id} integration={i} />)}
-        </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mb-6">
+                {items.map(i => <IntegrationCard key={i.id} integration={i} />)}
+              </div>
+            </div>
+          );
+        })}
       </div>
     </GrowthEngineShell>
   );
