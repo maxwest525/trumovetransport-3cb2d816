@@ -32,7 +32,7 @@ export default function AgentSidebar({ onDialerToggle }: AgentSidebarProps) {
 
   const handleResetPreference = () => {
     localStorage.removeItem("truemove_remembered_role");
-    navigate("/agent-login");
+    navigate("/");
   };
 
   return (
