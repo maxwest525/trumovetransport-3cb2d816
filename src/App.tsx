@@ -19,7 +19,7 @@ import PropertyLookup from "./pages/PropertyLookup";
 import Auth from "./pages/Auth";
 import AgentLogin from "./pages/AgentLogin";
 import AgentDashboard from "./pages/AgentDashboard";
-import AdminIntegrations from "./pages/AdminIntegrations";
+import AdminDeveloper from "./pages/AdminDeveloper";
 import ScanRoom from "./pages/ScanRoom";
 import Classic from "./pages/Classic";
 import LiveTracking from "./pages/LiveTracking";
