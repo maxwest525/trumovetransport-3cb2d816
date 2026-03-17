@@ -48,10 +48,11 @@ const TOP_PAGES = [
 ];
 
 const AI_RECS = [
+  { text: "Lead response time is averaging 4.2 minutes. Target under 60 seconds by reviewing Convoso queue priority rules.", priority: "high" },
   { text: "Your Meta Ads CPL dropped 12% this week. Consider increasing budget by $200/day to scale winners.", priority: "high" },
   { text: "The 'Long Distance LP' conversion rate dropped. Try testing a new hero headline focused on pricing transparency.", priority: "medium" },
   { text: "'Piano movers' keyword has low competition and high intent. Add it to your Google Ads campaign.", priority: "medium" },
-  { text: "You have 4 unclaimed Google reviews this week. Responding within 24hrs improves local rank.", priority: "low" },
+  { text: "23 leads hit the after-hours queue last night. Review your calling block schedule to capture more of these.", priority: "medium" },
 ];
 
 const ALERTS = [
