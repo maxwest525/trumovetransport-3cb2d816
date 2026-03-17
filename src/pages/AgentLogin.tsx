@@ -199,41 +199,49 @@ export default function AgentLogin() {
           </div>
         </motion.div>
 
-        {/* Link sections */}
-        <div className="w-full max-w-md space-y-8">
+        {/* Three columns */}
+        <div className="w-full max-w-5xl">
           {rolesLoading ? (
-            <div className="space-y-3">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <Skeleton key={i} className="h-4 w-40 rounded" />
+            <div className="grid grid-cols-3 gap-8">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="space-y-3">
+                  <Skeleton className="h-4 w-24 rounded" />
+                  {Array.from({ length: 5 }).map((_, j) => (
+                    <Skeleton key={j} className="h-4 w-36 rounded" />
+                  ))}
+                </div>
               ))}
             </div>
           ) : (
-            visibleSections.map((section, si) => (
-              <motion.div
-                key={section.key}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: si * 0.08, duration: 0.3 }}
-              >
-                <h2 className="text-[10px] font-semibold uppercase tracking-[0.15em] text-muted-foreground/60 mb-2">
-                  {section.title}
-                </h2>
-                <div className="flex flex-wrap gap-x-4 gap-y-1">
-                  {section.links.map((link) => (
-                    <button
-                      key={link.label}
-                      onClick={() => handleClick(link)}
-                      className="inline-flex items-center gap-1 text-[13px] text-foreground/80 hover:text-foreground transition-colors py-0.5"
-                    >
-                      {link.label}
-                      {link.external && (
-                        <ExternalLink className="w-2.5 h-2.5 text-muted-foreground/40" />
-                      )}
-                    </button>
-                  ))}
-                </div>
-              </motion.div>
-            ))
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-8">
+              {visibleSections.map((section, si) => (
+                <motion.div
+                  key={section.key}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: si * 0.1, duration: 0.3 }}
+                  className="space-y-3"
+                >
+                  <h2 className="text-[11px] font-semibold uppercase tracking-[0.15em] text-muted-foreground/50 pb-2 border-b border-border/30">
+                    {section.title}
+                  </h2>
+                  <div className="flex flex-col gap-0.5">
+                    {section.links.map((link) => (
+                      <button
+                        key={link.label}
+                        onClick={() => handleClick(link)}
+                        className="flex items-center justify-between gap-2 text-[13px] text-foreground/80 hover:text-foreground hover:bg-muted/50 transition-colors py-1.5 px-2 -mx-2 rounded-md text-left group"
+                      >
+                        <span>{link.label}</span>
+                        {link.external && (
+                          <ExternalLink className="w-3 h-3 text-muted-foreground/30 group-hover:text-muted-foreground/60 shrink-0" />
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
           )}
         </div>
       </div>
