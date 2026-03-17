@@ -961,6 +961,256 @@ export type Database = {
         }
         Relationships: []
       }
+      pulse_agent_messages: {
+        Row: {
+          agent_name: string
+          call_id: string | null
+          created_at: string
+          id: string
+          message: string
+          read: boolean
+        }
+        Insert: {
+          agent_name: string
+          call_id?: string | null
+          created_at?: string
+          id?: string
+          message: string
+          read?: boolean
+        }
+        Update: {
+          agent_name?: string
+          call_id?: string | null
+          created_at?: string
+          id?: string
+          message?: string
+          read?: boolean
+        }
+        Relationships: []
+      }
+      pulse_alerts: {
+        Row: {
+          agent_name: string
+          call_id: string | null
+          client_name: string
+          context: string | null
+          created_at: string
+          id: string
+          keyword: string
+          match_type: string
+          matched_text: string
+          severity: string
+        }
+        Insert: {
+          agent_name: string
+          call_id?: string | null
+          client_name?: string
+          context?: string | null
+          created_at?: string
+          id?: string
+          keyword: string
+          match_type?: string
+          matched_text: string
+          severity?: string
+        }
+        Update: {
+          agent_name?: string
+          call_id?: string | null
+          client_name?: string
+          context?: string | null
+          created_at?: string
+          id?: string
+          keyword?: string
+          match_type?: string
+          matched_text?: string
+          severity?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pulse_alerts_call_id_fkey"
+            columns: ["call_id"]
+            isOneToOne: false
+            referencedRelation: "pulse_calls"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pulse_calls: {
+        Row: {
+          agent_name: string
+          client_name: string
+          compliance_score: number | null
+          created_at: string
+          duration_seconds: number | null
+          ended_at: string | null
+          flagged_keywords: string[] | null
+          id: string
+          severity: string
+          started_at: string
+          status: string
+          summary: string | null
+          talk_ratio_agent: number | null
+          talk_ratio_client: number | null
+          transcript: string
+        }
+        Insert: {
+          agent_name: string
+          client_name?: string
+          compliance_score?: number | null
+          created_at?: string
+          duration_seconds?: number | null
+          ended_at?: string | null
+          flagged_keywords?: string[] | null
+          id?: string
+          severity?: string
+          started_at?: string
+          status?: string
+          summary?: string | null
+          talk_ratio_agent?: number | null
+          talk_ratio_client?: number | null
+          transcript?: string
+        }
+        Update: {
+          agent_name?: string
+          client_name?: string
+          compliance_score?: number | null
+          created_at?: string
+          duration_seconds?: number | null
+          ended_at?: string | null
+          flagged_keywords?: string[] | null
+          id?: string
+          severity?: string
+          started_at?: string
+          status?: string
+          summary?: string | null
+          talk_ratio_agent?: number | null
+          talk_ratio_client?: number | null
+          transcript?: string
+        }
+        Relationships: []
+      }
+      pulse_compliance_scripts: {
+        Row: {
+          created_at: string
+          description: string | null
+          file_path: string
+          file_size: number
+          id: string
+          is_active: boolean
+          mime_type: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          file_path: string
+          file_size?: number
+          id?: string
+          is_active?: boolean
+          mime_type?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          file_path?: string
+          file_size?: number
+          id?: string
+          is_active?: boolean
+          mime_type?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      pulse_notification_settings: {
+        Row: {
+          config_key: string
+          created_at: string
+          id: string
+          settings: Json
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          config_key?: string
+          created_at?: string
+          id?: string
+          settings?: Json
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          config_key?: string
+          created_at?: string
+          id?: string
+          settings?: Json
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      pulse_transcript_annotations: {
+        Row: {
+          alert_id: string
+          created_at: string
+          id: string
+          line_index: number
+          note: string
+        }
+        Insert: {
+          alert_id: string
+          created_at?: string
+          id?: string
+          line_index: number
+          note: string
+        }
+        Update: {
+          alert_id?: string
+          created_at?: string
+          id?: string
+          line_index?: number
+          note?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pulse_transcript_annotations_alert_id_fkey"
+            columns: ["alert_id"]
+            isOneToOne: false
+            referencedRelation: "pulse_alerts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pulse_watch_patterns: {
+        Row: {
+          config_key: string
+          created_at: string
+          id: string
+          patterns: Json
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          config_key?: string
+          created_at?: string
+          id?: string
+          patterns?: Json
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          config_key?: string
+          created_at?: string
+          id?: string
+          patterns?: Json
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       read_receipts: {
         Row: {
           id: string
