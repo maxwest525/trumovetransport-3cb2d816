@@ -54,7 +54,7 @@ import CustomerPortalDashboard from "./pages/CustomerPortalDashboard";
 import HomepageV2 from "./pages/HomepageV2";
 import AgentInventory from "./pages/AgentInventory";
 import AgentMoveDetails from "./pages/AgentMoveDetails";
-import AgentOperations from "./pages/AgentOperations";
+import CustomerFacingSites from "./pages/CustomerFacingSites";
 import IntegrationPlaceholder from "./pages/IntegrationPlaceholder";
 import AdminPricing from "./pages/AdminPricing";
 import PulseCallReview from "./pages/pulse/PulseCallReview";
@@ -103,10 +103,6 @@ const App = () => (
             <Route path="/agent/dashboard" element={<AgentDashboard />} />
             <Route path="/admin/developer" element={<AdminDeveloper />} />
             <Route path="/admin/employee-requests" element={<AdminSupportTickets />} />
-            <Route path="/admin/support-tickets" element={<AdminSupportTickets />} />
-            <Route path="/admin/quickbooks" element={<IntegrationPlaceholder />} />
-            <Route path="/admin/payroll" element={<IntegrationPlaceholder />} />
-            <Route path="/admin/esign-audit" element={<AdminESignAudit />} />
             <Route path="/agent/pipeline" element={<AgentPipeline />} />
             <Route path="/agent/profile" element={<ProfileSettings />} />
             <Route path="/manager/dashboard" element={<ManagerDashboard />} />
@@ -121,7 +117,6 @@ const App = () => (
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/marketing/dashboard" element={<MarketingDashboard />} />
             <Route path="/accounting/dashboard" element={<AccountingDashboard />} />
-            <Route path="/compliance/dashboard" element={<ComplianceDashboard />} />
             
             <Route path="/agent/operations" element={<AgentOperations />} />
             <Route path="/agent/new-customer" element={<AgentNewCustomer />} />
