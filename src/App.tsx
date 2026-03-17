@@ -37,7 +37,10 @@ import LeadsDashboard from "./pages/LeadsDashboard";
 import LeadsPerformance from "./pages/LeadsPerformance";
 import KpiDashboard from "./pages/KpiDashboard";
 import ResetPassword from "./pages/ResetPassword";
-import MarketingDashboard from "./pages/MarketingDashboard";
+import GrowthDashboard from "./pages/growth-engine/GrowthDashboard";
+import GrowthCampaignBuilder from "./pages/growth-engine/GrowthCampaignBuilder";
+import GrowthIntegrations from "./pages/growth-engine/GrowthIntegrations";
+import GrowthStubPage from "./pages/growth-engine/GrowthStubPage";
 import AccountingDashboard from "./pages/AccountingDashboard";
 import AgentOperations from "./pages/AgentOperations";
 import AgentNewCustomer from "./pages/AgentNewCustomer";
@@ -115,7 +118,18 @@ const App = () => (
             <Route path="/leads/performance" element={<LeadsPerformance />} />
             <Route path="/kpi" element={<KpiDashboard />} />
             <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/marketing/dashboard" element={<MarketingDashboard />} />
+            <Route path="/marketing/dashboard" element={<GrowthDashboard />} />
+            <Route path="/marketing/campaigns" element={<GrowthCampaignBuilder />} />
+            <Route path="/marketing/integrations" element={<GrowthIntegrations />} />
+            <Route path="/marketing/landing-pages" element={<GrowthStubPage />} />
+            <Route path="/marketing/seo" element={<GrowthStubPage />} />
+            <Route path="/marketing/ad-copy" element={<GrowthStubPage />} />
+            <Route path="/marketing/tracking" element={<GrowthStubPage />} />
+            <Route path="/marketing/leads" element={<GrowthStubPage />} />
+            <Route path="/marketing/reviews" element={<GrowthStubPage />} />
+            <Route path="/marketing/automation" element={<GrowthStubPage />} />
+            <Route path="/marketing/competitors" element={<GrowthStubPage />} />
+            <Route path="/marketing/settings" element={<GrowthStubPage />} />
             <Route path="/accounting/dashboard" element={<AccountingDashboard />} />
             
             <Route path="/agent/operations" element={<AgentOperations />} />

@@ -1,11 +1,10 @@
-import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
   Layout, TrendingUp, Target,
   DollarSign, BarChart3,
   ChevronRight, MessageSquare, Sparkles, Rocket, Wand2,
-  Zap, Activity, FlaskConical, Globe
+  Zap, Activity, FlaskConical
 } from "lucide-react";
 import { RecentCreations } from "./RecentCreations";
 import { cn } from "@/lib/utils";
@@ -35,7 +34,7 @@ export function MarketingHubDashboard({
   onViewPage,
   onEditPage
 }: MarketingHubDashboardProps) {
-  const navigate = useNavigate();
+  
   
   const handleCreateLandingPage = () => {
     if (onQuickCreate) {
@@ -95,15 +94,6 @@ export function MarketingHubDashboard({
       gradient: 'from-emerald-400 via-teal-500 to-cyan-500',
       glowColor: 'hsl(170 80% 45% / 0.15)',
       action: () => onNavigate('abtest'),
-    },
-    {
-      id: 'sites',
-      title: 'Customer Facing Sites',
-      subtitle: 'Manage live websites, landing pages & variants',
-      icon: Globe,
-      gradient: 'from-indigo-400 via-blue-500 to-sky-500',
-      glowColor: 'hsl(220 80% 55% / 0.15)',
-      action: () => navigate('/customer-facing-sites'),
     },
   ];
 
