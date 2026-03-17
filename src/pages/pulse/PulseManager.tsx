@@ -157,7 +157,7 @@ const ComplianceScripts: React.FC = () => {
   );
 };
 
-const PulseManager: React.FC = () => {
+const PulseManager: React.FC<{ embedded?: boolean }> = ({ embedded = false }) => {
   const [entries, setEntries] = useState<WatchEntry[]>(() => {
     try { const saved = localStorage.getItem('pulse-watch-entries'); if (saved) return JSON.parse(saved); } catch {}
     return defaultEntries;
