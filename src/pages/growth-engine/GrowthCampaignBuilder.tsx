@@ -93,11 +93,12 @@ const KEYWORD_BUCKETS = [
 ];
 
 const LANDING_PAGES = [
-  { id: "longdist", name: "Long-Distance Movers LP", conv: "7.8%", status: "live", bestFor: "Best for Google Search", tier: "primary", reason: "Optimized for interstate moving searches. Shows licensing, insurance, route coverage, and a fast quote form. Your highest-converting page for paid search.", sections: "Hero, Trust Strip, Route Map, Reviews, Quote Form, Sticky CTA" },
-  { id: "quote", name: "Free Quote LP", conv: "6.8%", status: "live", bestFor: "Best for higher quote quality", tier: "primary", reason: "Multi-step form captures origin, destination, move size, and date. Produces higher-quality leads with more detail for accurate quoting.", sections: "Hero, Price Preview, Trust Badges, Multi-Step Form, FAQ" },
-  { id: "meta", name: "Social Traffic LP", conv: "7.1%", status: "live", bestFor: "Best for Meta", tier: "primary", reason: "Shorter page for social traffic. Visual, fast-loading, strong CTA above fold. Use for all Facebook and Instagram campaigns.", sections: "Visual Hero, Offer Strip, 3-Step Process, Reviews, Sticky Form" },
-  { id: "call_first", name: "Call-First LP", conv: "9.2%", status: "live", bestFor: "Best for urgent leads", tier: "secondary", reason: "Minimal page with a prominent click-to-call button. Best for high-urgency searches and mobile traffic.", sections: "Hero with Phone CTA, Trust Strip, Reviews, Hours" },
-  { id: "new", name: "+ Create New Landing Page", conv: "", status: "new", bestFor: "", tier: "secondary", reason: "", sections: "" },
+  { id: "longdist", name: "Long-Distance Movers LP", conv: "7.8%", status: "live", bestFor: "Google Search", tier: "primary", quality: "High", cta: "Quote form + call", reason: "Interstate search traffic. Route coverage, licensing, fast quote form.", captureType: "form" },
+  { id: "quote", name: "Multi-Step Quote LP", conv: "6.8%", status: "live", bestFor: "Quality leads", tier: "primary", quality: "Highest", cta: "Multi-step form", reason: "Captures origin, destination, size, date. Best lead detail for agents.", captureType: "form" },
+  { id: "meta", name: "Social Traffic LP", conv: "7.1%", status: "live", bestFor: "Meta / Facebook", tier: "primary", quality: "Medium", cta: "Short form", reason: "Visual, fast-loading. Strong CTA above fold for social traffic.", captureType: "form" },
+  { id: "call_first", name: "Call-First LP", conv: "9.2%", status: "live", bestFor: "Urgent / mobile", tier: "secondary", quality: "High", cta: "Click-to-call", reason: "Minimal page, prominent call button. Highest conversion on mobile.", captureType: "call" },
+  { id: "meta_instant", name: "Meta Instant Form", conv: "5.5%", status: "live", bestFor: "Meta volume", tier: "secondary", quality: "Lower", cta: "In-app auto-fill", reason: "No landing page needed. Fast, cheap testing. Lower quality leads.", captureType: "instant" },
+  { id: "new", name: "+ Create New Page", conv: "", status: "new", bestFor: "", tier: "secondary", quality: "", cta: "", reason: "", captureType: "form" },
 ];
 
 export default function GrowthCampaignBuilder() {
@@ -512,64 +513,38 @@ export default function GrowthCampaignBuilder() {
             <div className="space-y-4">
               <h2 className="text-lg font-semibold text-foreground">Choose a landing page</h2>
 
-              {/* Education block */}
-              <div className="bg-primary/5 border border-primary/10 rounded-xl p-4 space-y-2">
-                <span className="text-[11px] font-semibold text-primary uppercase tracking-wider">What are these pages?</span>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] text-muted-foreground">
-                  <div>
-                    <strong className="text-foreground">Landing page:</strong> A standalone page built to convert ad traffic. No navigation links. One goal: get the lead to call or fill out a form.
-                  </div>
-                  <div>
-                    <strong className="text-foreground">Call-first page:</strong> Minimal page with a big click-to-call button. Best for mobile traffic and high-urgency searches.
-                  </div>
-                  <div>
-                    <strong className="text-foreground">Quote form page:</strong> Multi-step form that captures move details (origin, destination, size, date). Produces higher-quality leads.
-                  </div>
-                  <div>
-                    <strong className="text-foreground">Meta instant form:</strong> A form inside Facebook/Instagram (no landing page needed). Fast, but lower quality. Best for high-volume testing.
-                  </div>
-                </div>
-                <p className="text-[10px] text-muted-foreground italic">For long-distance leads, dedicated landing pages typically convert 2-3x better than your homepage. Call-first pages convert highest on mobile.</p>
+              <div className="bg-primary/5 border border-primary/10 rounded-lg px-4 py-2.5 text-[11px] text-muted-foreground">
+                Dedicated landing pages convert 2-3x better than your homepage. Pick the type that matches your traffic source and goal.
               </div>
 
-              {/* Primary recommendations */}
-              <div className="text-[10px] font-bold text-primary uppercase tracking-wider mb-1">Recommended Pages</div>
-              <div className="grid grid-cols-1 gap-3">
+              <div className="text-[10px] font-bold text-primary uppercase tracking-wider mb-1">Recommended</div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {LANDING_PAGES.filter(p => p.tier === "primary").map(p => (
                   <button
                     key={p.id}
                     onClick={() => setSelectedPage(p.id)}
                     className={cn(
-                      "text-left p-4 rounded-xl border-2 transition-all",
+                      "text-left p-3.5 rounded-xl border-2 transition-all",
                       selectedPage === p.id ? "border-primary bg-primary/5" : "border-border hover:border-primary/30",
                     )}
                   >
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-sm font-semibold text-foreground">{p.name}</span>
-                      {p.conv && <span className="text-[11px] text-emerald-600 font-medium">{p.conv} conv rate</span>}
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-[13px] font-bold text-foreground">{p.name}</span>
+                      {p.conv && <span className="text-[10px] text-emerald-600 font-semibold">{p.conv}</span>}
                     </div>
-                    <div className="flex gap-1.5 mb-2">
-                      <span className={cn(
-                        "text-[9px] px-1.5 py-0.5 rounded-full font-bold",
-                        p.bestFor.includes("Google") ? "bg-blue-500/10 text-blue-600" :
-                        p.bestFor.includes("Meta") ? "bg-indigo-500/10 text-indigo-600" :
-                        "bg-emerald-500/10 text-emerald-600"
-                      )}>{p.bestFor}</span>
+                    <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-[10px] mb-2">
+                      <div><span className="text-muted-foreground">Best for:</span> <span className="font-medium text-foreground">{p.bestFor}</span></div>
+                      <div><span className="text-muted-foreground">Quality:</span> <span className="font-medium text-foreground">{p.quality}</span></div>
+                      <div><span className="text-muted-foreground">CTA:</span> <span className="font-medium text-foreground">{p.cta}</span></div>
+                      <div><span className="text-muted-foreground">Capture:</span> <span className="font-medium text-foreground">{p.captureType}</span></div>
                     </div>
-                    <p className="text-[11px] text-muted-foreground">{p.reason}</p>
-                    {p.sections && (
-                      <div className="flex flex-wrap gap-1 mt-2">
-                        {p.sections.split(", ").map(s => (
-                          <span key={s} className="text-[9px] bg-muted text-muted-foreground px-1.5 py-0.5 rounded font-medium">{s}</span>
-                        ))}
-                      </div>
-                    )}
+                    <p className="text-[10px] text-muted-foreground">{p.reason}</p>
                   </button>
                 ))}
               </div>
 
               <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mt-4 mb-1">Other Options</div>
-              <div className="grid grid-cols-1 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {LANDING_PAGES.filter(p => p.tier === "secondary").map(p => (
                   <button
                     key={p.id}
@@ -580,12 +555,14 @@ export default function GrowthCampaignBuilder() {
                       p.status === "new" && "border-dashed"
                     )}
                   >
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-[13px] font-semibold text-foreground">{p.name}</span>
-                      {p.conv && <span className="text-[11px] text-emerald-600 font-medium">{p.conv} conv rate</span>}
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-[12px] font-semibold text-foreground">{p.name}</span>
+                      {p.conv && <span className="text-[10px] text-emerald-600 font-medium">{p.conv}</span>}
                     </div>
-                    {p.bestFor && <span className="text-[9px] bg-muted text-muted-foreground px-1.5 py-0.5 rounded-full font-bold">{p.bestFor}</span>}
-                    {p.reason && <p className="text-[11px] text-muted-foreground mt-1">{p.reason}</p>}
+                    {p.bestFor && (
+                      <div className="text-[10px] mb-1"><span className="text-muted-foreground">Best for:</span> <span className="font-medium text-foreground">{p.bestFor}</span></div>
+                    )}
+                    {p.reason && <p className="text-[10px] text-muted-foreground">{p.reason}</p>}
                   </button>
                 ))}
               </div>
@@ -625,24 +602,67 @@ export default function GrowthCampaignBuilder() {
                 </div>
               </div>
 
-              {/* Lead routing path */}
-              <div className="bg-primary/5 border border-primary/10 rounded-xl p-4">
-                <span className="text-[11px] font-semibold text-primary uppercase tracking-wider">Lead Routing Path</span>
-                <div className="flex flex-wrap items-center gap-1.5 mt-2 text-[11px] font-medium text-foreground">
-                  <span className="bg-muted rounded-md px-2.5 py-1.5">Ad Click</span>
-                  <ChevronRight className="w-3 h-3 text-muted-foreground" />
-                  <span className="bg-muted rounded-md px-2.5 py-1.5">Landing Page</span>
-                  <ChevronRight className="w-3 h-3 text-muted-foreground" />
-                  <span className="bg-muted rounded-md px-2.5 py-1.5">Form / Call</span>
-                  <ChevronRight className="w-3 h-3 text-muted-foreground" />
-                  <span className="bg-muted rounded-md px-2.5 py-1.5">Attribution Capture</span>
-                  <ChevronRight className="w-3 h-3 text-muted-foreground" />
-                  <span className="bg-muted rounded-md px-2.5 py-1.5">Webhook / Router</span>
-                  <ChevronRight className="w-3 h-3 text-muted-foreground" />
-                  <span className="bg-emerald-500/10 text-emerald-600 rounded-md px-2.5 py-1.5 ring-1 ring-emerald-500/20">Convoso / CRM / Queue</span>
-                </div>
-                <p className="text-[10px] text-muted-foreground mt-2">Leads are captured on your page, tagged with attribution, then routed via webhook to Convoso for instant agent contact.</p>
-              </div>
+              {/* Lead routing path - conditional by capture type */}
+              {(() => {
+                const page = LANDING_PAGES.find(p => p.id === selectedPage);
+                const captureType = page?.captureType || "form";
+                const isMeta = selectedPlatforms.includes("meta_fb");
+                const isInstant = captureType === "instant";
+                const isCallFirst = captureType === "call";
+
+                const flowSteps = isInstant
+                  ? [
+                      { label: "Meta Ad", highlight: false },
+                      { label: "Instant Form", highlight: false },
+                      { label: "Attribution Capture", highlight: false },
+                      { label: "Webhook / Router", highlight: false },
+                      { label: "Convoso Queue / CRM Sync", highlight: true },
+                    ]
+                  : isCallFirst
+                  ? [
+                      { label: isMeta ? "Meta Ad" : "Ad Click", highlight: false },
+                      { label: "Call Event", highlight: false },
+                      { label: "Attribution Capture", highlight: false },
+                      { label: "Convoso / Callback / CRM", highlight: true },
+                    ]
+                  : [
+                      { label: isMeta ? "Meta Ad Click" : "Ad Click", highlight: false },
+                      { label: "Landing Page", highlight: false },
+                      { label: "Form Submit or Call", highlight: false },
+                      { label: "Attribution Capture", highlight: false },
+                      { label: "Webhook / Router", highlight: false },
+                      { label: "Convoso Queue / CRM Sync", highlight: true },
+                    ];
+
+                return (
+                  <div className="bg-primary/5 border border-primary/10 rounded-xl p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-[11px] font-semibold text-primary uppercase tracking-wider">Lead Routing Path</span>
+                      <span className="text-[9px] bg-muted text-muted-foreground px-2 py-0.5 rounded-full font-medium">
+                        {isInstant ? "Instant form flow" : isCallFirst ? "Call-first flow" : "Landing page flow"}
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-1.5 text-[11px] font-medium text-foreground">
+                      {flowSteps.map((s, i) => (
+                        <div key={s.label} className="flex items-center gap-1.5">
+                          <span className={cn(
+                            "rounded-md px-2.5 py-1.5",
+                            s.highlight ? "bg-emerald-500/10 text-emerald-600 ring-1 ring-emerald-500/20" : "bg-muted"
+                          )}>{s.label}</span>
+                          {i < flowSteps.length - 1 && <ChevronRight className="w-3 h-3 text-muted-foreground" />}
+                        </div>
+                      ))}
+                    </div>
+                    <p className="text-[10px] text-muted-foreground mt-2">
+                      {isInstant
+                        ? "Leads submit in-app on Meta. Tagged with attribution, then routed via webhook to Convoso for instant agent follow-up."
+                        : isCallFirst
+                        ? "Calls are attributed via tracking number, then routed to Convoso for instant dialing or callback queue."
+                        : "Leads are captured on your page, tagged with attribution, then routed via webhook to Convoso for instant agent contact."}
+                    </p>
+                  </div>
+                );
+              })()}
 
               {/* Routing logic */}
               <div className="bg-card rounded-xl border border-border p-4">
@@ -699,6 +719,7 @@ export default function GrowthCampaignBuilder() {
 
               <button
                 onClick={() => {
+                  const page = LANDING_PAGES.find(p => p.id === selectedPage);
                   navigate("/marketing/campaign-summary", {
                     state: {
                       campaign: {
@@ -708,7 +729,9 @@ export default function GrowthCampaignBuilder() {
                         geoMode: GEO_MODES.find(m => m.id === geoMode)?.label || "Not set",
                         budget,
                         keywords: selectedBuckets.join(", ") || "None",
-                        landingPage: LANDING_PAGES.find(p => p.id === selectedPage)?.name || "Not set",
+                        landingPage: page?.name || "Not set",
+                        captureType: page?.captureType || "form",
+                        isMeta: selectedPlatforms.includes("meta_fb"),
                       },
                     },
                   });

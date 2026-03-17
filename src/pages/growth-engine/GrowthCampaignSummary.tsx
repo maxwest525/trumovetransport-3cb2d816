@@ -4,8 +4,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
   CheckCircle2, ArrowRight, BarChart3, Phone, FileText, Globe,
-  MapPin, DollarSign, Tag, Zap, Eye, Target, TrendingUp,
-  Clock, Shield, AlertTriangle, Activity, ExternalLink
+  MapPin, DollarSign, Tag, Eye, Target, TrendingUp,
+  Clock, Shield, AlertTriangle, ExternalLink, ChevronRight,
+  Settings, Activity
 } from "lucide-react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 
@@ -14,7 +15,6 @@ export default function GrowthCampaignSummary() {
   const navigate = useNavigate();
   const campaign = location.state?.campaign;
 
-  // Fallback if navigated directly
   if (!campaign) {
     return (
       <GrowthEngineShell>
@@ -28,15 +28,40 @@ export default function GrowthCampaignSummary() {
     );
   }
 
-  const FLOW_STEPS = [
-    { label: "Ad Click", sub: campaign.platforms },
-    { label: "Landing Page", sub: campaign.landingPage },
-    { label: "Form / Call", sub: "Lead capture" },
-    { label: "Attribution", sub: "UTM captured" },
-    { label: "Webhook", sub: "Instant route" },
-    { label: "Convoso", sub: "Agent dials", highlight: true },
-    { label: "CRM Sync", sub: "Record saved" },
-  ];
+  // Build conditional flow steps based on capture type
+  const captureType = campaign.captureType || "form";
+  const isMeta = campaign.isMeta || false;
+
+  const FLOW_STEPS = captureType === "instant"
+    ? [
+        { label: "Meta Ad", sub: "Impression" },
+        { label: "Instant Form", sub: "In-app auto-fill" },
+        { label: "Attribution", sub: "UTM captured" },
+        { label: "Webhook", sub: "Instant route" },
+        { label: "Convoso Queue", sub: "Agent dials", highlight: true },
+        { label: "CRM Sync", sub: "Record saved" },
+      ]
+    : captureType === "call"
+    ? [
+        { label: isMeta ? "Meta Ad" : "Ad Click", sub: campaign.platforms },
+        { label: "Call Event", sub: "Tracking number" },
+        { label: "Attribution", sub: "Source captured" },
+        { label: "Convoso / Callback", sub: "Instant dial or queue", highlight: true },
+        { label: "CRM Sync", sub: "Record saved" },
+      ]
+    : [
+        { label: isMeta ? "Meta Ad Click" : "Ad Click", sub: campaign.platforms },
+        { label: "Landing Page", sub: campaign.landingPage },
+        { label: "Form / Call", sub: "Lead capture" },
+        { label: "Attribution", sub: "UTM captured" },
+        { label: "Webhook", sub: "Instant route" },
+        { label: "Convoso Queue", sub: "Agent dials", highlight: true },
+        { label: "CRM Sync", sub: "Record saved" },
+      ];
+
+  const flowLabel = captureType === "instant" ? "Instant form flow"
+    : captureType === "call" ? "Call-first flow"
+    : "Landing page flow";
 
   const WATCH_FIRST = [
     { kpi: "Cost per Lead", why: "Are you paying too much per form or call?", icon: DollarSign },
@@ -46,10 +71,10 @@ export default function GrowthCampaignSummary() {
   ];
 
   const NEXT_STEPS = [
-    { action: "Check tracking is firing", link: "/marketing/tracking", label: "Tracking" },
-    { action: "Watch leads come in", link: "/marketing/leads", label: "Leads" },
-    { action: "Verify Convoso routing", link: "/marketing/automation", label: "Automation" },
-    { action: "Review after 50-100 clicks", link: "/marketing/dashboard", label: "Dashboard" },
+    { action: "Check tracking is firing", link: "/marketing/tracking", label: "Tracking", icon: Activity },
+    { action: "Watch leads come in", link: "/marketing/leads", label: "Leads", icon: Eye },
+    { action: "Verify Convoso routing", link: "/marketing/automation", label: "Automation", icon: Shield },
+    { action: "Review after 50-100 clicks", link: "/marketing/dashboard", label: "Dashboard", icon: BarChart3 },
   ];
 
   return (
@@ -67,6 +92,22 @@ export default function GrowthCampaignSummary() {
             </p>
           </div>
           <Badge className="bg-green-500/10 text-green-600 border-0 text-xs">Active</Badge>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="flex flex-wrap gap-2">
+          <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5" asChild>
+            <Link to="/marketing/tracking"><Activity className="w-3 h-3" /> Open Tracking</Link>
+          </Button>
+          <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5" asChild>
+            <Link to="/marketing/leads"><Eye className="w-3 h-3" /> Open Leads</Link>
+          </Button>
+          <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5" asChild>
+            <Link to="/marketing/campaigns"><Settings className="w-3 h-3" /> Edit Campaign</Link>
+          </Button>
+          <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5" asChild>
+            <Link to="/marketing/automation"><Shield className="w-3 h-3" /> Verify Routing</Link>
+          </Button>
         </div>
 
         {/* Summary Grid */}
@@ -94,10 +135,13 @@ export default function GrowthCampaignSummary() {
           })}
         </div>
 
-        {/* Lead Flow */}
+        {/* Lead Flow - conditional */}
         <Card className="border-primary/20 bg-primary/5">
           <CardContent className="p-4 space-y-3">
-            <span className="text-xs font-semibold text-primary uppercase tracking-wide">Lead Flow</span>
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-primary uppercase tracking-wide">Lead Flow</span>
+              <span className="text-[9px] bg-muted text-muted-foreground px-2 py-0.5 rounded-full font-medium">{flowLabel}</span>
+            </div>
             <div className="flex items-center gap-1.5 flex-wrap">
               {FLOW_STEPS.map((s, i) => (
                 <div key={s.label} className="flex items-center gap-1.5">
@@ -112,7 +156,11 @@ export default function GrowthCampaignSummary() {
               ))}
             </div>
             <p className="text-[11px] text-muted-foreground">
-              Leads are captured on your landing page, attributed with UTMs, then routed via webhook to Convoso for instant agent contact.
+              {captureType === "instant"
+                ? "Leads submit in-app on Meta. Tagged with attribution, then routed via webhook to Convoso for instant agent follow-up."
+                : captureType === "call"
+                ? "Calls are attributed via tracking number, then routed to Convoso for instant dialing or callback queue."
+                : "Leads are captured on your page, tagged with attribution, then routed via webhook to Convoso for instant agent contact."}
             </p>
           </CardContent>
         </Card>
@@ -125,7 +173,7 @@ export default function GrowthCampaignSummary() {
                 <Clock className="w-3.5 h-3.5 text-green-600" />
                 <span className="text-xs font-semibold text-foreground">Business Hours</span>
               </div>
-              <p className="text-[11px] text-muted-foreground">Lead routed to Convoso instantly. Agent dials within seconds.</p>
+              <p className="text-[11px] text-muted-foreground">Instant route to Convoso queue. Agent dials within seconds.</p>
             </CardContent>
           </Card>
           <Card className="border-blue-500/20">
@@ -174,19 +222,22 @@ export default function GrowthCampaignSummary() {
           <CardContent className="p-4 space-y-3">
             <span className="text-sm font-semibold text-foreground">What to Do Next</span>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
-              {NEXT_STEPS.map((ns, i) => (
-                <Link
-                  key={ns.action}
-                  to={ns.link}
-                  className="flex items-center gap-2 p-3 rounded-lg border bg-muted/20 hover:bg-muted/40 transition-colors"
-                >
-                  <span className="w-5 h-5 rounded-full bg-primary/10 text-primary text-[10px] font-bold flex items-center justify-center shrink-0">
-                    {i + 1}
-                  </span>
-                  <span className="text-xs font-medium text-foreground">{ns.action}</span>
-                  <ExternalLink className="w-3 h-3 text-muted-foreground ml-auto shrink-0" />
-                </Link>
-              ))}
+              {NEXT_STEPS.map((ns, i) => {
+                const Icon = ns.icon;
+                return (
+                  <Link
+                    key={ns.action}
+                    to={ns.link}
+                    className="flex items-center gap-2 p-3 rounded-lg border bg-muted/20 hover:bg-muted/40 transition-colors"
+                  >
+                    <span className="w-5 h-5 rounded-full bg-primary/10 text-primary text-[10px] font-bold flex items-center justify-center shrink-0">
+                      {i + 1}
+                    </span>
+                    <span className="text-xs font-medium text-foreground">{ns.action}</span>
+                    <ExternalLink className="w-3 h-3 text-muted-foreground ml-auto shrink-0" />
+                  </Link>
+                );
+              })}
             </div>
           </CardContent>
         </Card>

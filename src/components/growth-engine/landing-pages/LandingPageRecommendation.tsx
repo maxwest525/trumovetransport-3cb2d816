@@ -25,7 +25,7 @@ function getRecommendation(s: WizardSelections): Recommendation {
       backup: "Simple Quote Form LP",
       why: "Meta traffic converts best with in-app forms. No page load friction.",
       cta: "Get My Free Quote (auto-fill)",
-      routing: "Instant form → attribution → webhook → Convoso",
+      routing: "Instant form → attribution → webhook → Convoso queue",
       kpi: "Cost per lead, form completion rate",
     };
   }
@@ -37,7 +37,7 @@ function getRecommendation(s: WizardSelections): Recommendation {
       backup: "Full LP with dual CTA",
       why: "High-intent searchers ready to act. Fastest speed-to-lead for interstate moves.",
       cta: "Call Now for Free Quote (sticky button)",
-      routing: "Call → CallRail attribution → webhook → Convoso",
+      routing: "Call → attribution → Convoso instant dial / callback queue",
       kpi: "Call rate, speed-to-answer, booked rate",
     };
   }
