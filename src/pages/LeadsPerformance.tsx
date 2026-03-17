@@ -92,7 +92,7 @@ export default function LeadsPerformance() {
 
   const handleRefresh = () => setRefreshKey((k) => k + 1);
 
-  if (loading) return <LeadVendorShell breadcrumb=" / Performance" onRefresh={handleRefresh}><p className="text-sm text-muted-foreground text-center py-12">Loading...</p></LeadVendorShell>;
+  if (loading) return <LeadVendorShell breadcrumb=" / Performance"><p className="text-sm text-muted-foreground text-center py-12">Loading...</p></LeadVendorShell>;
 
   return (
     <LeadVendorShell breadcrumb=" / Performance" onRefresh={handleRefresh}>
