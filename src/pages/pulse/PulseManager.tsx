@@ -449,7 +449,7 @@ const PulseManager: React.FC<{ embedded?: boolean }> = ({ embedded = false }) =>
             return (
               <Dialog key={section.type} open={openTypeModal === section.type} onOpenChange={open => { setOpenTypeModal(open ? section.type : null); if (!open) { setSearchFilter(''); setSelectedIds(new Set()); } }}>
                 <DialogContent className="sm:max-w-2xl max-h-[85vh] flex flex-col overflow-hidden">
-                  <DialogHeader><DialogTitle className="flex items-center gap-2"><Icon className={`w-5 h-5 ${section.color}`} />{section.label}<Badge variant="secondary" className="text-[10px] ml-1">{allItems.length}</Badge></DialogTitle></DialogHeader>
+                  <DialogHeader><DialogTitle className="flex items-center gap-2"><Icon className={`w-5 h-5 ${section.color}`} />{section.label}<Badge variant="secondary" className="text-[10px] ml-1">{allItems.length}</Badge><div className="flex-1" /><div className="flex items-center gap-0.5 border border-border/40 rounded-md p-0.5"><button onClick={() => setKeywordViewMode('list')} className={`p-1 rounded ${keywordViewMode === 'list' ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:text-foreground'}`}><List className="w-3.5 h-3.5" /></button><button onClick={() => setKeywordViewMode('horizontal')} className={`p-1 rounded ${keywordViewMode === 'horizontal' ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:text-foreground'}`}><LayoutGrid className="w-3.5 h-3.5" /></button></div></DialogTitle></DialogHeader>
                   <div className="flex items-center gap-2">
                     <input type="text" value={section.value} onChange={e => section.setter(e.target.value)} onKeyDown={e => e.key === 'Enter' && addEntry(section.type)} placeholder={`Add ${section.type}… e.g. ${section.example}`} className={`flex-1 h-9 px-3 text-sm bg-secondary/30 border border-border/40 rounded-md placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/30 ${section.mono ? 'font-mono' : ''}`} autoFocus />
                     <Button size="sm" className="h-9 gap-1" onClick={() => addEntry(section.type)}><Plus className="w-3.5 h-3.5" /> Add</Button>
@@ -472,10 +472,20 @@ const PulseManager: React.FC<{ embedded?: boolean }> = ({ embedded = false }) =>
                     {items.length === 0 ? (
                       <p className="text-sm text-muted-foreground/60 italic text-center py-6">{searchFilter ? 'No matches' : `No ${section.label.toLowerCase()} yet`}</p>
                     ) : (
-                      <div className="space-y-1 pr-3">
+                      <div className={keywordViewMode === 'horizontal' ? 'flex flex-wrap gap-1.5 pr-3' : 'space-y-1 pr-3'}>
                         {items.map(entry => {
                           const catMeta = entry.category ? CATEGORY_META[entry.category] : null;
                           const isEditing = editingId === entry.id;
+                          if (keywordViewMode === 'horizontal' && !isEditing) {
+                            return (
+                              <div key={entry.id} onClick={() => setSelectedIds(prev => { const next = new Set(prev); if (next.has(entry.id)) next.delete(entry.id); else next.add(entry.id); return next; })} className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border cursor-pointer transition-colors group ${selectedIds.has(entry.id) ? 'border-primary/30 bg-primary/5' : 'border-border/30 hover:bg-secondary/20'}`}>
+                                <Checkbox checked={selectedIds.has(entry.id)} onCheckedChange={() => {}} className="shrink-0 pointer-events-none scale-75" />
+                                <span className={`text-xs ${section.mono ? 'font-mono' : ''}`}>{entry.pattern}</span>
+                                {catMeta && <span className={`text-[8px] px-1 py-0 rounded border font-medium shrink-0 ${catMeta.bg} ${catMeta.color}`}>{catMeta.label}</span>}
+                                <button onClick={e => { e.stopPropagation(); removeEntry(entry.id); }} className="text-muted-foreground hover:text-destructive shrink-0 opacity-0 group-hover:opacity-100"><X className="w-3 h-3" /></button>
+                              </div>
+                            );
+                          }
                           return (
                             <div key={entry.id} className={`flex items-center gap-2 px-3 py-2 rounded-lg border transition-colors group cursor-pointer ${selectedIds.has(entry.id) ? 'border-primary/30 bg-primary/5' : 'border-border/30 hover:bg-secondary/20'}`} onClick={() => { if (!isEditing) setSelectedIds(prev => { const next = new Set(prev); if (next.has(entry.id)) next.delete(entry.id); else next.add(entry.id); return next; }); }}>
                               {!isEditing && <Checkbox checked={selectedIds.has(entry.id)} onCheckedChange={() => {}} className="shrink-0 pointer-events-none" />}
