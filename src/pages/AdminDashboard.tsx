@@ -142,10 +142,9 @@ const GrowthTooltip = ({ active, payload, label, growthData }: any) => {
 export default function AdminDashboard() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [stats, setStats] = useState([
+  const [stats, setStats] = useState<{ label: string; value: string; sub?: string }[]>([
     { label: "Total Users", value: "–" },
     { label: "Active Sessions", value: "–" },
-    { label: "Integrations", value: "—" },
     { label: "Open Tickets", value: "–" },
   ]);
   const [roleData, setRoleData] = useState<{ role: string; count: number; fill: string }[]>([]);
