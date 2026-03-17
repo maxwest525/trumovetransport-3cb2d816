@@ -1719,7 +1719,7 @@ export default function Index() {
                           <button 
                             type="button" 
                             className="tru-qb-option-card tru-qb-option-card-outline"
-                            onClick={() => navigate("/online-estimate")}
+                            onClick={() => navigate("/site/online-estimate")}
                           >
                             <Boxes className="w-5 h-5" />
                             <div className="tru-qb-option-text">
