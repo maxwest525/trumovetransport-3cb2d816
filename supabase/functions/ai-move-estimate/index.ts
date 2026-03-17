@@ -159,6 +159,8 @@ IMPORTANT: Start from the company base rate of $${baseRate}/cu ft and adjust bas
 
     if (toolCall?.function?.arguments) {
       const estimate = JSON.parse(toolCall.function.arguments);
+      // Enforce $4 minimum per cu ft
+      estimate.pricePerCuFt = Math.max(4, estimate.pricePerCuFt);
       return new Response(JSON.stringify(estimate), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
