@@ -46,7 +46,7 @@ export default function CustomerFacingSites() {
 
         {/* Back link */}
         <Link
-          to="/agent-login"
+          to="/"
           className="absolute top-6 left-6 inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors z-10"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
