@@ -1,26 +1,21 @@
 
 
-# Add PulseAI Compliance Beta Card to Portal Hub
+## Replace Demo TrudyChatBox with Live ElevenLabs AI
 
-## What
+The current `TrudyChatBox` uses hardcoded pattern-matching for responses. We'll replace it with real ElevenLabs Conversational AI using the existing infrastructure (edge function, API keys, and `@elevenlabs/react` SDK) — the same setup the floating Trudy widget already uses.
 
-Add a 4th card to the "/" portal page labeled "Pulse Command" with subtitle "PulseAI Beta", using an AI-themed icon (e.g., `Brain` from lucide-react). It links to `/pulse` which will show a placeholder page for now.
+### Changes
 
-## Changes
+**`src/components/TrudyChatBox.tsx`**
+- Remove the `simulateResponse` pattern-matching logic
+- Add the `useConversation` hook from `@elevenlabs/react` in text-only mode
+- On mount, fetch a signed URL from the existing `elevenlabs-conversation-token` edge function and start a session
+- Route `handleSend` through `conversation.sendUserMessage()` instead of pattern matching
+- Handle `onMessage` callbacks to display real AI responses
+- Keep the existing visual design (glassmorphism, avatars, quick prompts, typing indicator) — only the response engine changes
+- Remove the "Demo" badge since it's now live
+- Show a connecting state while the WebSocket session initializes
+- Add error handling with a retry button if connection fails
 
-### 1. `src/pages/AgentLogin.tsx`
-- Add a 4th entry to the `PORTALS` array:
-  ```
-  key: "pulse", label: "Pulse Command", description: "PulseAI Compliance Beta",
-  href: "/pulse", icon: Brain, accentHsl: "0 72% 51%" (red accent)
-  ```
-- The grid already uses `md:grid-cols-3` — we'll keep the top 3 cards on one row and the Pulse card below-left (matching the screenshot layout). Change to a layout that places the 4th card below.
-
-### 2. `src/pages/pulse/PulseHome.tsx` (new)
-- Simple placeholder page branded "PulseAI Compliance Beta" with a beta badge and back-to-portal link. Coming-soon cards for Agent Monitor, Dashboard, and Logic Manager.
-
-### 3. `src/App.tsx`
-- Add route: `/pulse` → `PulseHome`
-
-This gets the card on the portal now. The full Pulse functionality will be built in subsequent steps.
+**No new edge functions or secrets needed** — reuses the existing `elevenlabs-conversation-token` function and `ELEVENLABS_API_KEY` / `ELEVENLABS_AGENT_ID` secrets.
 
