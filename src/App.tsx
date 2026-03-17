@@ -54,6 +54,7 @@ import CustomerPortal from "./pages/CustomerPortal";
 import CustomerPortalDashboard from "./pages/CustomerPortalDashboard";
 import HomepageV2 from "./pages/HomepageV2";
 import AgentInventory from "./pages/AgentInventory";
+import AgentMoveDetails from "./pages/AgentMoveDetails";
 import AdminESignAudit from "./pages/AdminESignAudit";
 import CustomerFacingSites from "./pages/CustomerFacingSites";
 import IntegrationPlaceholder from "./pages/IntegrationPlaceholder";
