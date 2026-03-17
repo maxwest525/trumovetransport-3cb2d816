@@ -9,7 +9,7 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, Building2, Home, Footprints, Package, Sparkles, Loader2, Truck } from "lucide-react";
+import { ArrowRight, Building2, Home, Footprints, Package, Sparkles, Loader2, Truck, Plus, X } from "lucide-react";
 import MoveSummaryPanel from "@/components/agent/MoveSummaryPanel";
 
 export default function AgentMoveDetails() {
