@@ -127,7 +127,7 @@ export default function LeadVendorShell({ children, breadcrumb = "" }: LeadVendo
             <span className="text-xs text-muted-foreground truncate hidden sm:inline">/ Lead Vendors{breadcrumb}</span>
           </div>
           <div className="flex items-center gap-3">
-            <DemoDataToggle onToggle={onRefresh} />
+            
             <button onClick={() => setTheme(theme === "dark" ? "light" : "dark")} className="p-1.5 rounded-lg hover:bg-muted transition-colors">
               {theme === "dark" ? <Sun className="w-4 h-4 text-muted-foreground" /> : <Moon className="w-4 h-4 text-muted-foreground" />}
             </button>

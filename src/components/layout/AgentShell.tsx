@@ -35,7 +35,7 @@ export default function AgentShell({ children, breadcrumb = "" }: AgentShellProp
             <span className="text-sm text-muted-foreground">Agent Workspace{breadcrumb}</span>
           </div>
           <div className="flex items-center gap-2">
-            <DemoDataToggle />
+            
             <Link to="/agent-login" className="p-1.5 rounded-lg hover:bg-muted transition-colors">
               <Home className="w-4 h-4 text-muted-foreground" />
             </Link>
