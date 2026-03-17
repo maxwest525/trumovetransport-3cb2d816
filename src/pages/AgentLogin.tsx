@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import SiteShell from "@/components/layout/SiteShell";
 import PortalAuthForm from "@/components/auth/PortalAuthForm";
-import { LogOut, Bell, Headset, Users, Shield, Brain } from "lucide-react";
+import { LogOut, Bell, Headset, Users, Shield, Brain, Sparkles } from "lucide-react";
 import logoImg from "@/assets/logo.png";
 import PortalCard from "@/components/portal/PortalCard";
 import { useAgentProfile } from "@/hooks/useAgentProfile";
@@ -36,6 +36,14 @@ const PORTALS = [
     href: "/manager/dashboard",
     icon: Users,
     accentHsl: "217 91% 60%",
+  },
+  {
+    key: "marketing",
+    label: "Max's Crazy Marketing Things",
+    description: "Ads, landing pages, Trudy tools & creative experiments",
+    href: "/marketing/dashboard",
+    icon: Sparkles,
+    accentHsl: "325 84% 54%",
   },
   {
     key: "admin",
