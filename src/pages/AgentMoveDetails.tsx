@@ -9,7 +9,7 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, Building2, Home, Footprints, Package, Sparkles, Loader2, Truck } from "lucide-react";
+import { ArrowRight, Building2, Home, Footprints, Package, Sparkles, Loader2, Truck, Plus, X } from "lucide-react";
 import MoveSummaryPanel from "@/components/agent/MoveSummaryPanel";
 
 export default function AgentMoveDetails() {
@@ -33,6 +33,7 @@ export default function AgentMoveDetails() {
     special_treatment_notes: "",
     packing_service: false,
     auto_transport: false,
+    auto_transport_vehicles: [] as { make: string; model: string; year: string }[],
   });
 
   const [aiEstimate, setAiEstimate] = useState<{ cuFt?: number; weight?: number; pricePerCuFt?: number } | null>(null);
@@ -60,6 +61,7 @@ export default function AgentMoveDetails() {
           special_treatment_notes: data.special_treatment_notes || "",
           packing_service: data.packing_service,
           auto_transport: (data as any).auto_transport ?? false,
+          auto_transport_vehicles: (data as any).auto_transport_vehicles ?? [],
         });
       }
     });
@@ -264,6 +266,82 @@ export default function AgentMoveDetails() {
                   </div>
                   <Switch checked={form.auto_transport} onCheckedChange={v => set("auto_transport", v)} />
                 </div>
+
+                {/* Vehicle details when auto transport is on */}
+                {form.auto_transport && (
+                  <div className="col-span-2 space-y-2 p-3 rounded-lg border border-primary/20 bg-primary/5">
+                    <div className="flex items-center justify-between">
+                      <Label className="text-xs font-medium">Vehicles</Label>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 px-2 text-[10px] gap-1"
+                        onClick={() => set("auto_transport_vehicles", [...form.auto_transport_vehicles, { make: "", model: "", year: "" }])}
+                      >
+                        <Plus className="w-3 h-3" /> Add Vehicle
+                      </Button>
+                    </div>
+                    {form.auto_transport_vehicles.length === 0 && (
+                      <p className="text-[10px] text-muted-foreground">No vehicles added yet. Click "Add Vehicle" above.</p>
+                    )}
+                    {form.auto_transport_vehicles.map((v, i) => (
+                      <div key={i} className="grid grid-cols-[1fr_1fr_80px_28px] gap-2 items-end">
+                        <div className="space-y-1">
+                          {i === 0 && <Label className="text-[10px] text-muted-foreground">Make</Label>}
+                          <Input
+                            value={v.make}
+                            onChange={e => {
+                              const updated = [...form.auto_transport_vehicles];
+                              updated[i] = { ...updated[i], make: e.target.value };
+                              set("auto_transport_vehicles", updated);
+                            }}
+                            placeholder="Toyota"
+                            className="h-8 text-xs"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          {i === 0 && <Label className="text-[10px] text-muted-foreground">Model</Label>}
+                          <Input
+                            value={v.model}
+                            onChange={e => {
+                              const updated = [...form.auto_transport_vehicles];
+                              updated[i] = { ...updated[i], model: e.target.value };
+                              set("auto_transport_vehicles", updated);
+                            }}
+                            placeholder="Camry"
+                            className="h-8 text-xs"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          {i === 0 && <Label className="text-[10px] text-muted-foreground">Year</Label>}
+                          <Input
+                            value={v.year}
+                            onChange={e => {
+                              const updated = [...form.auto_transport_vehicles];
+                              updated[i] = { ...updated[i], year: e.target.value };
+                              set("auto_transport_vehicles", updated);
+                            }}
+                            placeholder="2024"
+                            className="h-8 text-xs"
+                          />
+                        </div>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-7 text-muted-foreground hover:text-destructive"
+                          onClick={() => {
+                            const updated = form.auto_transport_vehicles.filter((_, idx) => idx !== i);
+                            set("auto_transport_vehicles", updated);
+                          }}
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs">Special Treatment Notes</Label>
