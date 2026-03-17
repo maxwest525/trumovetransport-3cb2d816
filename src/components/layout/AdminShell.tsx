@@ -17,11 +17,10 @@ const NAV_ITEMS = [
   { label: "Users & Roles", icon: Users, href: "/admin/users" },
   { label: "Integrations", icon: Link2, href: "/admin/integrations" },
   { label: "Support Tickets", icon: ScrollText, href: "/admin/support-tickets" },
-  { label: "E-Sign Audit", icon: ScrollText, href: "/admin/esign-audit" },
+  { label: "Products & Pricing", icon: DollarSign, href: "/admin/pricing" },
 ];
 
 const ADVANCED_ITEMS = [
-  { label: "Products & Pricing", icon: Package },
   { label: "Automations", icon: Zap },
   { label: "Audit Log", icon: ScrollText },
 ];

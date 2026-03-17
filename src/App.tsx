@@ -57,6 +57,7 @@ import AgentInventory from "./pages/AgentInventory";
 import AdminESignAudit from "./pages/AdminESignAudit";
 import CustomerFacingSites from "./pages/CustomerFacingSites";
 import IntegrationPlaceholder from "./pages/IntegrationPlaceholder";
+import AdminPricing from "./pages/AdminPricing";
 
 const queryClient = new QueryClient();
 
@@ -100,6 +101,7 @@ const App = () => (
             <Route path="/manager/dashboard" element={<ManagerDashboard />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/users" element={<AdminUsersPage />} />
+            <Route path="/admin/pricing" element={<AdminPricing />} />
             <Route path="/admin/lead-vendors" element={<AdminLeadVendors />} />
             <Route path="/leads/dashboard" element={<LeadsDashboard />} />
             <Route path="/leads/vendors" element={<AdminLeadVendors />} />
