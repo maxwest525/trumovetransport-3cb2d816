@@ -127,6 +127,7 @@ export default function MoveSummaryPanel({ form, lead }: MoveSummaryPanelProps) 
   const distance = useMemo(() => estimateDistance(data.originAddress, data.destinationAddress), [data.originAddress, data.destinationAddress]);
   const daysLeft = useMemo(() => daysUntil(data.moveDate), [data.moveDate]);
 
+  const isFormMode = !!form;
   const completeness = useMemo(() => {
     const fields = [data.firstName, data.lastName, data.email, data.phone, data.originAddress, data.destinationAddress, data.moveDate, data.estimatedValue];
     return Math.round((fields.filter(Boolean).length / fields.length) * 100);
