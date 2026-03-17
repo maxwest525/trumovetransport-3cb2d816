@@ -295,8 +295,8 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Growth + Quick Setup + Integrations */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        {/* Growth + Quick Setup */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {/* Growth line chart */}
           <div className="rounded-xl border border-border bg-card p-4">
             <h2 className="text-sm font-semibold text-foreground mb-4">User Growth</h2>
@@ -324,20 +324,6 @@ export default function AdminDashboard() {
                   <p className="text-sm font-medium text-foreground">{q.title}</p>
                   <p className="text-xs text-muted-foreground">{q.sub}</p>
                 </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Integrations */}
-          <div className="rounded-xl border border-border bg-card p-4">
-            <h2 className="text-sm font-semibold text-foreground mb-3">Integrations</h2>
-            {INTEGRATIONS.map((int, i) => (
-              <div key={i} className="flex items-center justify-between py-2.5 px-2">
-                <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-muted-foreground/30" />
-                  <span className="text-sm text-foreground">{int.name}</span>
-                </div>
-                <span className="text-[11px] text-muted-foreground border border-border rounded px-2 py-0.5">{int.status}</span>
               </div>
             ))}
           </div>
