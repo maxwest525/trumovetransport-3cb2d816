@@ -52,6 +52,9 @@ const PulseDashboard: React.FC<{ embedded?: boolean; basePath?: string }> = ({ e
   const [activityFeed, setActivityFeed] = useState<PulseFeedItem[]>([]);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [newAlertIds, setNewAlertIds] = useState<Set<string>>(new Set());
+  const [coachingMsg, setCoachingMsg] = useState('');
+  const [coachingTarget, setCoachingTarget] = useState<string>('Agent Smith');
+  const [sendingCoaching, setSendingCoaching] = useState(false);
 
   const fetchAlerts = useCallback(async () => {
     setIsLoading(true);
