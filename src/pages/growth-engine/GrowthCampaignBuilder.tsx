@@ -93,11 +93,12 @@ const KEYWORD_BUCKETS = [
 ];
 
 const LANDING_PAGES = [
-  { id: "longdist", name: "Long-Distance Movers LP", conv: "7.8%", status: "live", bestFor: "Best for Google Search", tier: "primary", reason: "Optimized for interstate moving searches. Shows licensing, insurance, route coverage, and a fast quote form. Your highest-converting page for paid search.", sections: "Hero, Trust Strip, Route Map, Reviews, Quote Form, Sticky CTA" },
-  { id: "quote", name: "Free Quote LP", conv: "6.8%", status: "live", bestFor: "Best for higher quote quality", tier: "primary", reason: "Multi-step form captures origin, destination, move size, and date. Produces higher-quality leads with more detail for accurate quoting.", sections: "Hero, Price Preview, Trust Badges, Multi-Step Form, FAQ" },
-  { id: "meta", name: "Social Traffic LP", conv: "7.1%", status: "live", bestFor: "Best for Meta", tier: "primary", reason: "Shorter page for social traffic. Visual, fast-loading, strong CTA above fold. Use for all Facebook and Instagram campaigns.", sections: "Visual Hero, Offer Strip, 3-Step Process, Reviews, Sticky Form" },
-  { id: "call_first", name: "Call-First LP", conv: "9.2%", status: "live", bestFor: "Best for urgent leads", tier: "secondary", reason: "Minimal page with a prominent click-to-call button. Best for high-urgency searches and mobile traffic.", sections: "Hero with Phone CTA, Trust Strip, Reviews, Hours" },
-  { id: "new", name: "+ Create New Landing Page", conv: "", status: "new", bestFor: "", tier: "secondary", reason: "", sections: "" },
+  { id: "longdist", name: "Long-Distance Movers LP", conv: "7.8%", status: "live", bestFor: "Google Search", tier: "primary", quality: "High", cta: "Quote form + call", reason: "Interstate search traffic. Route coverage, licensing, fast quote form.", captureType: "form" },
+  { id: "quote", name: "Multi-Step Quote LP", conv: "6.8%", status: "live", bestFor: "Quality leads", tier: "primary", quality: "Highest", cta: "Multi-step form", reason: "Captures origin, destination, size, date. Best lead detail for agents.", captureType: "form" },
+  { id: "meta", name: "Social Traffic LP", conv: "7.1%", status: "live", bestFor: "Meta / Facebook", tier: "primary", quality: "Medium", cta: "Short form", reason: "Visual, fast-loading. Strong CTA above fold for social traffic.", captureType: "form" },
+  { id: "call_first", name: "Call-First LP", conv: "9.2%", status: "live", bestFor: "Urgent / mobile", tier: "secondary", quality: "High", cta: "Click-to-call", reason: "Minimal page, prominent call button. Highest conversion on mobile.", captureType: "call" },
+  { id: "meta_instant", name: "Meta Instant Form", conv: "5.5%", status: "live", bestFor: "Meta volume", tier: "secondary", quality: "Lower", cta: "In-app auto-fill", reason: "No landing page needed. Fast, cheap testing. Lower quality leads.", captureType: "instant" },
+  { id: "new", name: "+ Create New Page", conv: "", status: "new", bestFor: "", tier: "secondary", quality: "", cta: "", reason: "", captureType: "form" },
 ];
 
 export default function GrowthCampaignBuilder() {
