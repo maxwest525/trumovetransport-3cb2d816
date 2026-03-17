@@ -38,7 +38,7 @@ function checkMatch(text: string, entry: WatchEntry): string | null {
   return null;
 }
 
-const PulseAgent: React.FC = () => {
+const PulseAgent: React.FC<{ embedded?: boolean }> = ({ embedded = false }) => {
   const { isListening, transcript, interimText, isSupported, start, stop, clear, appendText } = usePulseSpeechRecognition();
   const [liveCallId, setLiveCallId] = useState<string | null>(null);
   const [liveFlags, setLiveFlags] = useState<FlaggedKeyword[]>([]);
