@@ -1,52 +1,21 @@
 
 
-## Plan: Portal Page Enhancements
+## Replace Demo TrudyChatBox with Live ElevenLabs AI
 
-Three changes to `/agent-login`:
+The current `TrudyChatBox` uses hardcoded pattern-matching for responses. We'll replace it with real ElevenLabs Conversational AI using the existing infrastructure (edge function, API keys, and `@elevenlabs/react` SDK) — the same setup the floating Trudy widget already uses.
 
-### 1. Time-of-day greeting
-Replace the static "Portal" heading with a dynamic greeting based on the hour:
-- Before 12pm: "Good morning"
-- 12pm-5pm: "Good afternoon"  
-- After 5pm: "Good evening"
+### Changes
 
-Display as: "Good morning, {first name or email prefix}" with "Portal" as a smaller subtitle.
+**`src/components/TrudyChatBox.tsx`**
+- Remove the `simulateResponse` pattern-matching logic
+- Add the `useConversation` hook from `@elevenlabs/react` in text-only mode
+- On mount, fetch a signed URL from the existing `elevenlabs-conversation-token` edge function and start a session
+- Route `handleSend` through `conversation.sendUserMessage()` instead of pattern matching
+- Handle `onMessage` callbacks to display real AI responses
+- Keep the existing visual design (glassmorphism, avatars, quick prompts, typing indicator) — only the response engine changes
+- Remove the "Demo" badge since it's now live
+- Show a connecting state while the WebSocket session initializes
+- Add error handling with a retry button if connection fails
 
-### 2. Flat emoji-style icons instead of gradient icon boxes
-Remove the gradient `bg-gradient-to-br` icon containers. Instead, use **emoji characters** rendered as the card's visual identity — large, flat, no background box. This gives a modern, playful, picture-like feel without gradients.
-
-Mapping:
-- Admin → 🛠️
-- Agent → 🚚  
-- Manager → 📊
-- Marketing → 📣
-- Accounting → 💰
-- Lead Vendors → 📦
-- Compliance → 🛡️
-- Customer Sites → 🌐
-
-Remove the `gradient`, `iconColor`, `shadowColor` fields from `RoleConfig`. Add an `emoji: string` field instead. The `WorkspaceCard` renders the emoji at ~28-32px font size, no icon background div needed.
-
-### 3. Live stats badges on each card
-Fetch counts from the database on mount and display a small badge on relevant cards:
-
-| Card | Query | Badge label |
-|------|-------|-------------|
-| Admin | `profiles` count | "X users" |
-| Agent | `leads` where status = 'new' | "X new leads" |
-| Manager | `deals` count | "X deals" |
-| Marketing | — | skip |
-| Accounting | — | skip |
-| Lead Vendors | `lead_vendors` where status = 'active' | "X vendors" |
-| Compliance | — | skip |
-
-Implementation:
-- Create a `usePortalStats()` hook that runs parallel queries on mount
-- Return a `Record<string, string>` mapping role id to badge text
-- Render as a small muted pill/badge in the top-right of the card (e.g., `text-[10px] bg-muted rounded-full px-2 py-0.5`)
-- Show skeleton dots while loading
-
-### Files changed
-- `src/pages/AgentLogin.tsx` — all three changes
-- New: `src/hooks/usePortalStats.ts` — stats fetching hook
+**No new edge functions or secrets needed** — reuses the existing `elevenlabs-conversation-token` function and `ELEVENLABS_API_KEY` / `ELEVENLABS_AGENT_ID` secrets.
 
