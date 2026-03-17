@@ -1,21 +1,42 @@
 
 
-## Replace Demo TrudyChatBox with Live ElevenLabs AI
+## Redesign: Portal Page — Clean, Modern, Premium
 
-The current `TrudyChatBox` uses hardcoded pattern-matching for responses. We'll replace it with real ElevenLabs Conversational AI using the existing infrastructure (edge function, API keys, and `@elevenlabs/react` SDK) — the same setup the floating Trudy widget already uses.
+The emojis and current card style look dated. Here's a complete visual overhaul inspired by Linear/Vercel — ultra-clean, monochrome, text-forward.
 
-### Changes
+### Direction
+- **No emojis, no gradients, no colored icon boxes**
+- Monochrome Lucide icons (thin, 20px, `text-muted-foreground`) — no backgrounds or circles around them
+- Cards: minimal — tight padding, `rounded-xl`, very subtle border, no shadow at rest. On hover: slight border brightening + subtle shadow
+- Remove the ambient background blurs (the colored gradient orbs) — they add visual noise
+- Remove the "Open →" CTA row from each card — the whole card is clickable, it's obvious
+- Header: logo + greeting + email/sign-out on one tight block, less vertical spacing
+- Grid: 4 columns on desktop, tighter `gap-2.5`, `max-w-[900px]`
+- Overall feel: dark-mode-friendly, high contrast text, lots of whitespace, no decoration
 
-**`src/components/TrudyChatBox.tsx`**
-- Remove the `simulateResponse` pattern-matching logic
-- Add the `useConversation` hook from `@elevenlabs/react` in text-only mode
-- On mount, fetch a signed URL from the existing `elevenlabs-conversation-token` edge function and start a session
-- Route `handleSend` through `conversation.sendUserMessage()` instead of pattern matching
-- Handle `onMessage` callbacks to display real AI responses
-- Keep the existing visual design (glassmorphism, avatars, quick prompts, typing indicator) — only the response engine changes
-- Remove the "Demo" badge since it's now live
-- Show a connecting state while the WebSocket session initializes
-- Add error handling with a retry button if connection fails
+### Icon mapping (Lucide, monochrome)
+| Card | Icon |
+|------|------|
+| Admin | `Settings` |
+| Agent | `Users` |
+| Manager | `BarChart3` |
+| Marketing | `Megaphone` |
+| Accounting | `Receipt` |
+| Lead Vendors | `Package` |
+| Compliance | `ShieldCheck` |
+| Customer Sites | `Globe` |
 
-**No new edge functions or secrets needed** — reuses the existing `elevenlabs-conversation-token` function and `ELEVENLABS_API_KEY` / `ELEVENLABS_AGENT_ID` secrets.
+### Card structure (simplified)
+```
+┌─────────────────────┐
+│ [icon]  Title        │  ← icon + title on same line
+│ Description text     │
+│            stat pill →│  ← top-right corner if exists
+└─────────────────────┘
+```
+
+Cards become horizontal-ish: icon left-aligned inline with the title, description below, stat badge top-right. More compact, less "tile-y".
+
+### Files changed
+- `src/pages/AgentLogin.tsx` — full card and header redesign, swap emojis for Lucide icons, remove ambient blurs and "Open" CTA
 
