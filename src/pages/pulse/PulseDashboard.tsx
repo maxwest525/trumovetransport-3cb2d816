@@ -39,7 +39,7 @@ const DEFAULT_QUICK_MESSAGES = [
   'Offer the retention deal',
 ];
 
-const PulseDashboard: React.FC<{ embedded?: boolean }> = ({ embedded = false }) => {
+const PulseDashboard: React.FC<{ embedded?: boolean; basePath?: string }> = ({ embedded = false, basePath = '/pulse' }) => {
   const [alerts, setAlerts] = useState<DbAlert[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedAgent, setSelectedAgent] = useState<string>('all');
