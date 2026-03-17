@@ -326,7 +326,7 @@ export default function HomepageV2() {
           </p>
 
           {/* CTA */}
-          <Link to="/online-estimate">
+          <Link to="/site/online-estimate">
             <button className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl text-base font-semibold text-white transition-all hover:brightness-110" style={{ background: teal, boxShadow: `0 0 40px hsl(175, 70%, 40%, 0.35), 0 4px 20px hsl(175, 70%, 40%, 0.2)` }}>
               Get Estimate
             </button>
