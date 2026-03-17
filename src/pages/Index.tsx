@@ -1790,7 +1790,7 @@ export default function Index() {
                   
                   {/* CTA Button */}
                   <button 
-                    onClick={() => navigate("/scan-room")}
+                    onClick={() => navigate("/site/scan-room")}
                     className="tru-ai-cta-btn animate-fade-scale-in opacity-0"
                     style={{ animationDelay: '350ms' }}
                   >

@@ -6,7 +6,7 @@ export default function PropertyLookup() {
   const navigate = useNavigate();
   
   useEffect(() => {
-    navigate("/track", { replace: true });
+    navigate("/site/track", { replace: true });
   }, [navigate]);
   
   return null;

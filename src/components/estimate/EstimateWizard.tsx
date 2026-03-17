@@ -87,7 +87,7 @@ export default function EstimateWizard({ onComplete, initialDetails }: EstimateW
         originAddress: details.fromLocation,
         destAddress: details.toLocation,
       }));
-      navigate('/track');
+      navigate('/site/track');
     }
   };
 
