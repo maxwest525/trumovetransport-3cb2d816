@@ -13,7 +13,6 @@ import { setPortalContext } from "@/hooks/usePortalContext";
 
 const NAV_ITEMS = [
   { label: "Dashboard", icon: LayoutDashboard, href: "/admin/dashboard" },
-  { label: "My KPIs", icon: Gauge, href: "/kpi" },
   { label: "Users & Roles", icon: Users, href: "/admin/users" },
   { label: "Integrations", icon: Link2, href: "/admin/integrations" },
   { label: "Support Tickets", icon: ScrollText, href: "/admin/support-tickets" },
@@ -21,7 +20,6 @@ const NAV_ITEMS = [
 ];
 
 const ADVANCED_ITEMS = [
-  { label: "Automations", icon: Zap },
   { label: "Audit Log", icon: ScrollText },
 ];
 
