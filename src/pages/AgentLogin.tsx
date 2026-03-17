@@ -134,7 +134,7 @@ export default function AgentLogin() {
         </motion.div>
 
         {/* Portal cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-3xl">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-4xl">
           {PORTALS.map((portal, i) => (
             <PortalCard
               key={portal.key}

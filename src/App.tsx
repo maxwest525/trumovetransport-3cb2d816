@@ -135,6 +135,7 @@ const App = () => (
             <Route path="/homepage-2" element={<HomepageV2 />} />
             <Route path="/customer-facing-sites" element={<CustomerFacingSites />} />
             <Route path="/tools/:tool" element={<IntegrationPlaceholder />} />
+            <Route path="/pulse" element={<PulseHome />} />
             
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
