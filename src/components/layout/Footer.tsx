@@ -33,9 +33,6 @@ export default function Footer() {
           <Link className="footer-link footer-link-muted" to="/agent-login">
             Portal
           </Link>
-          <Link className="footer-link footer-link-muted" to="/classic">
-            Classic
-          </Link>
         </nav>
       </div>
     </footer>
