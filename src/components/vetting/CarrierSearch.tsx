@@ -29,7 +29,7 @@ export function CarrierSearch({ onSelect, className, isLoading: externalLoading 
   const [showResults, setShowResults] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const debounceRef = useRef<NodeJS.Timeout>();
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>();
   const fmcsaKeyRef = useRef<string | null>(null);
   
   const isLoading = isSearching || externalLoading;

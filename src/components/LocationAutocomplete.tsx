@@ -465,7 +465,7 @@ export default function LocationAutocomplete({
   const [originalUserInput, setOriginalUserInput] = useState<string>(""); // Track original input for comparison
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
   const isClickingDropdownRef = useRef(false);
 

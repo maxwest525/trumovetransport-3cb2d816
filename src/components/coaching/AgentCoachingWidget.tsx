@@ -67,7 +67,7 @@ export function AgentCoachingWidget({
 
   // Call timer
   useEffect(() => {
-    let interval: NodeJS.Timeout;
+    let interval: ReturnType<typeof setInterval>;
     if (isCallActive) {
       interval = setInterval(() => {
         setCallTimer(prev => prev + 1);

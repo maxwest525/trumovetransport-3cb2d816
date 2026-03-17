@@ -89,7 +89,7 @@ export function useRealtimeETA({
   
   const previousETARef = useRef<string | null>(null);
   const previousDelayRef = useRef<number>(0);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Calculate interpolated current position based on progress
   const getCurrentPosition = useCallback((): [number, number] | null => {

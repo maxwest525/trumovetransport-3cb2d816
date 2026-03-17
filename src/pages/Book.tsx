@@ -1027,7 +1027,7 @@ function DemoVideoPlaceholder({ onLeave, isPiP = false, onWhiteboardOpen }: { on
       { delay: 12000, text: "Want to share your screen so I can see your inventory? Or I can answer any questions you have about pricing, timelines, or logistics!" },
     ];
 
-    const timeouts: NodeJS.Timeout[] = [];
+    const timeouts: ReturnType<typeof setTimeout>[] = [];
 
     timeline.forEach((event) => {
       const timeout = setTimeout(() => {
