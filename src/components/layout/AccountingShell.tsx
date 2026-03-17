@@ -2,7 +2,7 @@ import { useEffect, type ReactNode } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Home, Sun, Moon, Bell, LayoutDashboard, DollarSign, Receipt,
-  CreditCard, FileText, Users, TrendingDown, BarChart3, Globe,
+  CreditCard, FileText, Users, TrendingDown, BarChart3, Home,
   RotateCcw, Gauge,
 } from "lucide-react";
 import { toast } from "sonner";

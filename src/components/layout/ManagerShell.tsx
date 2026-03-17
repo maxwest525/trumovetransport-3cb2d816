@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Home, Sun, Moon, Bell, LayoutDashboard,
   Target, AlertTriangle, CheckCircle, BarChart3,
-  RotateCcw, Gauge, Globe,
+  RotateCcw, Gauge, Home,
 } from "lucide-react";
 import logoImg from "@/assets/logo.png";
 import { toast } from "sonner";

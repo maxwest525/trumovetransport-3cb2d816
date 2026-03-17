@@ -1,7 +1,7 @@
 import { useState, useEffect, type ReactNode } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
-  Home, Sun, Moon, Bell, Globe, Sparkles, LineChart, LayoutDashboard,
+  Home, Sun, Moon, Bell, Sparkles, LineChart, LayoutDashboard,
   RotateCcw, Gauge, Menu, X,
 } from "lucide-react";
 import { toast } from "sonner";

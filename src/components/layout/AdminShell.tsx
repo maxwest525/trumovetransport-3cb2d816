@@ -2,7 +2,7 @@ import { useState, useEffect, type ReactNode } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Home, Sun, Moon, Bell, LayoutDashboard, Users, Link2, Package,
-  Globe, Zap, ScrollText, RotateCcw, Gauge, Sparkles, DollarSign,
+  Home, Zap, ScrollText, RotateCcw, Gauge, Sparkles, DollarSign,
   FileText, BookOpen, CreditCard,
 } from "lucide-react";
 import logoImg from "@/assets/logo.png";
