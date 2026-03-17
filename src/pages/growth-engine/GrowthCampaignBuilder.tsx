@@ -20,7 +20,7 @@ const STEPS = [
 
 const GOALS = [
   { id: "calls", label: "Phone Calls", desc: "Best for beginners. Drive inbound calls from people ready to get a quote.", icon: Phone, recommended: true },
-  { id: "forms", label: "Quote Forms", desc: "Capture lead info through a landing page form. Great for follow-up.", icon: FileText, recommended: true },
+  { id: "forms", label: "Quote Forms", desc: "Capture lead info through a landing page form. Feeds directly into your instant-call workflow for fastest contact.", icon: FileText, recommended: true },
   { id: "estimates", label: "Booked Estimates", desc: "Optimize for people who complete the full booking flow.", icon: Target, recommended: false },
   { id: "awareness", label: "Brand Awareness", desc: "Get your name in front of more people. Best when paired with other goals.", icon: Eye, recommended: false },
   { id: "retargeting", label: "Retargeting", desc: "Show ads to people who already visited your site but didn't convert.", icon: Megaphone, recommended: false },
