@@ -142,7 +142,7 @@ export default function AgentShell({ children, breadcrumb = "" }: AgentShellProp
         </main>
       </div>
       <FloatingDialer open={dialerOpen} onOpenChange={setDialerOpen} prefillNumber={dialerPrefill} />
-      <MiniSoftphone />
+      {/* <MiniSoftphone /> — hidden for now */}
     </div>
   );
 }
