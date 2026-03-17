@@ -125,7 +125,16 @@ export default function ManagerShell({ children, breadcrumb = "" }: ManagerShell
             </Link>
             <span className="text-sm text-muted-foreground">Management{breadcrumb}</span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
+            <Link
+              to="/manager/team-chat"
+              className={`p-1.5 rounded-lg transition-colors relative ${
+                location.pathname === "/manager/team-chat" ? "bg-primary/10 text-primary" : "hover:bg-muted text-muted-foreground"
+              }`}
+            >
+              <MessageSquare className="w-4 h-4" />
+              <span className="absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full bg-primary" />
+            </Link>
             <button className="p-1.5 rounded-lg hover:bg-muted transition-colors relative">
               <Bell className="w-4 h-4 text-muted-foreground" />
               <span className="absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full" style={{ background: "hsl(142 71% 45%)" }} />
