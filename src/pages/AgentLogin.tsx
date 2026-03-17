@@ -5,6 +5,7 @@ import SiteShell from "@/components/layout/SiteShell";
 import PortalAuthForm from "@/components/auth/PortalAuthForm";
 import { LogOut, Bell, Headset, Users, Shield } from "lucide-react";
 import logoImg from "@/assets/logo.png";
+import PortalCard from "@/components/portal/PortalCard";
 import { useAgentProfile } from "@/hooks/useAgentProfile";
 import { useNotifications } from "@/hooks/useNotifications";
 import { motion } from "framer-motion";
