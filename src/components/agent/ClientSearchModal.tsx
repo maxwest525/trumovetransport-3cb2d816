@@ -168,7 +168,7 @@ export function ClientSearchModal({ open, onClose, onSelect }: ClientSearchModal
               {customers.length === 0 ? (
                 <div className="py-12 text-center text-muted-foreground">
                   <Users className="w-12 h-12 mx-auto mb-3 opacity-30" />
-                  <p className="text-sm">Search for customers or load demo data</p>
+                  <p className="text-sm">Search for customers by name, email, or phone</p>
                 </div>
               ) : (
                 customers.map((customer) => (
