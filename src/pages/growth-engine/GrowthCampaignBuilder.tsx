@@ -513,64 +513,38 @@ export default function GrowthCampaignBuilder() {
             <div className="space-y-4">
               <h2 className="text-lg font-semibold text-foreground">Choose a landing page</h2>
 
-              {/* Education block */}
-              <div className="bg-primary/5 border border-primary/10 rounded-xl p-4 space-y-2">
-                <span className="text-[11px] font-semibold text-primary uppercase tracking-wider">What are these pages?</span>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] text-muted-foreground">
-                  <div>
-                    <strong className="text-foreground">Landing page:</strong> A standalone page built to convert ad traffic. No navigation links. One goal: get the lead to call or fill out a form.
-                  </div>
-                  <div>
-                    <strong className="text-foreground">Call-first page:</strong> Minimal page with a big click-to-call button. Best for mobile traffic and high-urgency searches.
-                  </div>
-                  <div>
-                    <strong className="text-foreground">Quote form page:</strong> Multi-step form that captures move details (origin, destination, size, date). Produces higher-quality leads.
-                  </div>
-                  <div>
-                    <strong className="text-foreground">Meta instant form:</strong> A form inside Facebook/Instagram (no landing page needed). Fast, but lower quality. Best for high-volume testing.
-                  </div>
-                </div>
-                <p className="text-[10px] text-muted-foreground italic">For long-distance leads, dedicated landing pages typically convert 2-3x better than your homepage. Call-first pages convert highest on mobile.</p>
+              <div className="bg-primary/5 border border-primary/10 rounded-lg px-4 py-2.5 text-[11px] text-muted-foreground">
+                Dedicated landing pages convert 2-3x better than your homepage. Pick the type that matches your traffic source and goal.
               </div>
 
-              {/* Primary recommendations */}
-              <div className="text-[10px] font-bold text-primary uppercase tracking-wider mb-1">Recommended Pages</div>
-              <div className="grid grid-cols-1 gap-3">
+              <div className="text-[10px] font-bold text-primary uppercase tracking-wider mb-1">Recommended</div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {LANDING_PAGES.filter(p => p.tier === "primary").map(p => (
                   <button
                     key={p.id}
                     onClick={() => setSelectedPage(p.id)}
                     className={cn(
-                      "text-left p-4 rounded-xl border-2 transition-all",
+                      "text-left p-3.5 rounded-xl border-2 transition-all",
                       selectedPage === p.id ? "border-primary bg-primary/5" : "border-border hover:border-primary/30",
                     )}
                   >
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-sm font-semibold text-foreground">{p.name}</span>
-                      {p.conv && <span className="text-[11px] text-emerald-600 font-medium">{p.conv} conv rate</span>}
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-[13px] font-bold text-foreground">{p.name}</span>
+                      {p.conv && <span className="text-[10px] text-emerald-600 font-semibold">{p.conv}</span>}
                     </div>
-                    <div className="flex gap-1.5 mb-2">
-                      <span className={cn(
-                        "text-[9px] px-1.5 py-0.5 rounded-full font-bold",
-                        p.bestFor.includes("Google") ? "bg-blue-500/10 text-blue-600" :
-                        p.bestFor.includes("Meta") ? "bg-indigo-500/10 text-indigo-600" :
-                        "bg-emerald-500/10 text-emerald-600"
-                      )}>{p.bestFor}</span>
+                    <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-[10px] mb-2">
+                      <div><span className="text-muted-foreground">Best for:</span> <span className="font-medium text-foreground">{p.bestFor}</span></div>
+                      <div><span className="text-muted-foreground">Quality:</span> <span className="font-medium text-foreground">{p.quality}</span></div>
+                      <div><span className="text-muted-foreground">CTA:</span> <span className="font-medium text-foreground">{p.cta}</span></div>
+                      <div><span className="text-muted-foreground">Capture:</span> <span className="font-medium text-foreground">{p.captureType}</span></div>
                     </div>
-                    <p className="text-[11px] text-muted-foreground">{p.reason}</p>
-                    {p.sections && (
-                      <div className="flex flex-wrap gap-1 mt-2">
-                        {p.sections.split(", ").map(s => (
-                          <span key={s} className="text-[9px] bg-muted text-muted-foreground px-1.5 py-0.5 rounded font-medium">{s}</span>
-                        ))}
-                      </div>
-                    )}
+                    <p className="text-[10px] text-muted-foreground">{p.reason}</p>
                   </button>
                 ))}
               </div>
 
               <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mt-4 mb-1">Other Options</div>
-              <div className="grid grid-cols-1 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {LANDING_PAGES.filter(p => p.tier === "secondary").map(p => (
                   <button
                     key={p.id}
@@ -581,12 +555,14 @@ export default function GrowthCampaignBuilder() {
                       p.status === "new" && "border-dashed"
                     )}
                   >
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-[13px] font-semibold text-foreground">{p.name}</span>
-                      {p.conv && <span className="text-[11px] text-emerald-600 font-medium">{p.conv} conv rate</span>}
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-[12px] font-semibold text-foreground">{p.name}</span>
+                      {p.conv && <span className="text-[10px] text-emerald-600 font-medium">{p.conv}</span>}
                     </div>
-                    {p.bestFor && <span className="text-[9px] bg-muted text-muted-foreground px-1.5 py-0.5 rounded-full font-bold">{p.bestFor}</span>}
-                    {p.reason && <p className="text-[11px] text-muted-foreground mt-1">{p.reason}</p>}
+                    {p.bestFor && (
+                      <div className="text-[10px] mb-1"><span className="text-muted-foreground">Best for:</span> <span className="font-medium text-foreground">{p.bestFor}</span></div>
+                    )}
+                    {p.reason && <p className="text-[10px] text-muted-foreground">{p.reason}</p>}
                   </button>
                 ))}
               </div>
