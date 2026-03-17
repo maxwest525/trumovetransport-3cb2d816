@@ -57,6 +57,7 @@ import CustomerPortalDashboard from "./pages/CustomerPortalDashboard";
 import HomepageV2 from "./pages/HomepageV2";
 import AgentInventory from "./pages/AgentInventory";
 import AdminESignAudit from "./pages/AdminESignAudit";
+import CustomerFacingSites from "./pages/CustomerFacingSites";
 
 const queryClient = new QueryClient();
 
