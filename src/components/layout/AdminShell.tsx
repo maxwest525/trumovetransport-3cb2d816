@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Home, Sun, Moon, Bell, LayoutDashboard, Users, Link2, Package,
   Zap, ScrollText, RotateCcw, Gauge, Sparkles, DollarSign,
-  FileText, BookOpen, CreditCard,
+  FileText, BookOpen, CreditCard, Settings2,
 } from "lucide-react";
 import logoImg from "@/assets/logo.png";
 import { toast } from "sonner";
