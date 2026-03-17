@@ -13,12 +13,6 @@ const QUICK_SETUP = [
   { title: "Configure analytics", sub: "Connect tracking pixels" },
 ];
 
-const INTEGRATIONS = [
-  { name: "DashClicks", status: "disconnected" },
-  { name: "Google Analytics", status: "disconnected" },
-  { name: "Meta Pixel", status: "disconnected" },
-  { name: "Stripe", status: "disconnected" },
-];
 
 const ROLE_COLORS = ["hsl(var(--primary))", "hsl(var(--chart-2))", "hsl(var(--chart-3))", "hsl(var(--chart-4))"];
 const ROLE_LABELS: Record<string, string> = { owner: "Owners", admin: "Admins", manager: "Managers", agent: "Agents" };
