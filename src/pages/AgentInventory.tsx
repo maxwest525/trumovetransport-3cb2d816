@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import AgentShell from "@/components/layout/AgentShell";
 import { Button } from "@/components/ui/button";
@@ -7,13 +7,14 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
-  ArrowRight, Package, Upload, Wrench, Plus, Minus, Trash2, Search, X,
+  ArrowRight, ArrowLeft, Package, Upload, Wrench, Plus, Minus, Trash2, Search, X,
   Scale, Box, DollarSign, Save, Loader2, ChevronRight
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ROOM_SUGGESTIONS, type ItemDefinition, calculateTotalCubicFeet, calculateTotalWeight, DENSITY_FACTOR } from "@/lib/priceCalculator";
 import { cn } from "@/lib/utils";
+import MoveSummaryPanel from "@/components/agent/MoveSummaryPanel";
 import { 
   Sofa, Bed, UtensilsCrossed, Tv, Laptop, Baby, TreePine, Dumbbell,
   type LucideIcon 
@@ -52,6 +53,20 @@ export default function AgentInventory() {
   const [pricePerCuFt, setPricePerCuFt] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [activeTab, setActiveTab] = useState("manual");
+  const [leadData, setLeadData] = useState<any>(null);
+
+  // Fetch lead data for the summary panel
+  useEffect(() => {
+    if (!leadId) return;
+    supabase
+      .from("leads")
+      .select("*")
+      .eq("id", leadId)
+      .single()
+      .then(({ data }) => {
+        if (data) setLeadData(data);
+      });
+  }, [leadId]);
 
   const suggestions = ROOM_SUGGESTIONS[activeRoom] || [];
 
@@ -168,10 +183,18 @@ export default function AgentInventory() {
 
   return (
     <AgentShell breadcrumb=" / Inventory">
-      <div className="p-4 h-[calc(100vh-3.5rem)] flex flex-col">
+      <div className="p-4 h-[calc(100vh-3.5rem)] flex gap-6">
+        {/* Main content */}
+        <div className="flex-1 min-w-0 flex flex-col">
         {/* Workflow breadcrumb */}
         <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3">
-          <span className="text-muted-foreground">New Lead</span>
+          <button
+            onClick={() => navigate("/agent/new-customer")}
+            className="flex items-center gap-1 text-primary hover:underline font-semibold"
+          >
+            <ArrowLeft className="w-3 h-3" />
+            New Lead
+          </button>
           <ArrowRight className="w-3 h-3" />
           <span className="text-primary font-semibold">Inventory</span>
           <ArrowRight className="w-3 h-3" />
@@ -455,6 +478,10 @@ export default function AgentInventory() {
             </div>
           </TabsContent>
         </Tabs>
+        </div>
+
+        {/* Move Summary sidebar */}
+        {leadData && <MoveSummaryPanel lead={leadData} />}
       </div>
     </AgentShell>
   );
