@@ -112,7 +112,7 @@ export default function Vetting() {
                 Vet a Carrier
                 <Search className="w-4 h-4" />
               </Link>
-              <Link to="/online-estimate" className="tru-vetting-secondary-btn">
+              <Link to="/site/online-estimate" className="tru-vetting-secondary-btn">
                 Get Protected Quote
                 <ArrowRight className="w-4 h-4" />
               </Link>
