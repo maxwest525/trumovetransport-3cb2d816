@@ -8,6 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
 import logoImg from "@/assets/logo.png";
 import { useAgentProfile } from "@/hooks/useAgentProfile";
+import { useNotifications } from "@/hooks/useNotifications";
 import { usePortalStats } from "@/hooks/usePortalStats";
 import type { Session } from "@supabase/supabase-js";
 
