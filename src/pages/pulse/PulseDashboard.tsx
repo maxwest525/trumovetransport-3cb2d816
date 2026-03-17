@@ -471,6 +471,40 @@ const PulseDashboard: React.FC<{ embedded?: boolean; basePath?: string }> = ({ e
           </div>
         </div>
       </main>
+
+      {/* Full Transcript Modal */}
+      <Dialog open={transcriptModal.open} onOpenChange={v => setTranscriptModal(prev => ({ ...prev, open: v }))}>
+        <DialogContent className="sm:max-w-2xl max-h-[80vh] flex flex-col overflow-hidden">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <FileText className="w-5 h-5 text-primary" /> Call Transcript
+            </DialogTitle>
+          </DialogHeader>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <User className="w-3.5 h-3.5" /> {transcriptModal.agentName}
+              <span>→</span>
+              <User className="w-3.5 h-3.5" /> {transcriptModal.clientName}
+            </div>
+            {transcriptModal.keyword && (
+              <Badge variant="destructive" className="text-[10px]">{transcriptModal.keyword}</Badge>
+            )}
+          </div>
+          <ScrollArea className="flex-1 min-h-0 max-h-[60vh]">
+            {modalLoading ? (
+              <div className="text-center py-12"><RefreshCw className="w-5 h-5 mx-auto animate-spin text-muted-foreground/30" /><p className="text-xs text-muted-foreground mt-2">Loading transcript...</p></div>
+            ) : modalTranscript ? (
+              <div className="rounded-lg border border-border bg-destructive/5 p-4">
+                <p className="text-sm leading-relaxed whitespace-pre-wrap">
+                  {highlightKeywords(modalTranscript.transcript || 'No transcript content', modalTranscript.flagged_keywords || [])}
+                </p>
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground/50 italic text-center py-8">No transcript available for this call</p>
+            )}
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
