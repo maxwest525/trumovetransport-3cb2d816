@@ -76,9 +76,6 @@ export default function AgentShell({ children, breadcrumb = "" }: AgentShellProp
             <Link to="/" className="p-1.5 rounded-lg hover:bg-muted transition-colors">
               <Home className="w-4 h-4 text-muted-foreground" />
             </Link>
-            <button onClick={() => setTheme(theme === "dark" ? "light" : "dark")} className="p-1.5 rounded-lg hover:bg-muted transition-colors">
-              {theme === "dark" ? <Sun className="w-4 h-4 text-muted-foreground" /> : <Moon className="w-4 h-4 text-muted-foreground" />}
-            </button>
 
             {/* Team Chat */}
             <Link
@@ -126,6 +123,10 @@ export default function AgentShell({ children, breadcrumb = "" }: AgentShellProp
                 <DropdownMenuItem onClick={() => navigate("/agent/profile")}>
                   <Settings className="w-4 h-4 mr-2" />
                   Edit Settings
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
+                  {theme === "dark" ? <Sun className="w-4 h-4 mr-2" /> : <Moon className="w-4 h-4 mr-2" />}
+                  {theme === "dark" ? "Light Mode" : "Dark Mode"}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleSignOut} className="text-destructive focus:text-destructive">
