@@ -629,7 +629,7 @@ export default function HomepageV2() {
             <p className="text-xs mb-6" style={{ color: textMuted }}>
               Invaluable support, lasting impact. 🏆
             </p>
-            <Link to="/online-estimate">
+            <Link to="/site/online-estimate">
               <button className="px-6 py-2.5 rounded-lg text-sm font-semibold text-white transition-all hover:brightness-110" style={{ background: teal }}>
                 Get Estimate
               </button>
