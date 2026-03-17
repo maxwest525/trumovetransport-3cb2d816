@@ -24,6 +24,9 @@ const CATEGORY_META: Record<Category, { label: string; icon: React.ElementType; 
   pii: { label: 'PII / NIST', icon: Lock, color: 'text-violet-500', bg: 'bg-violet-500/10 border-violet-500/20' },
   rebuttal: { label: 'Rebuttal', icon: MessageCircleWarning, color: 'text-cyan-600', bg: 'bg-cyan-600/10 border-cyan-600/20' },
   safety: { label: 'Safety', icon: HandMetal, color: 'text-red-600', bg: 'bg-red-600/10 border-red-600/20' },
+  hipaa: { label: 'HIPAA', icon: Shield, color: 'text-emerald-600', bg: 'bg-emerald-600/10 border-emerald-600/20' },
+  financial: { label: 'Financial', icon: Scale, color: 'text-amber-600', bg: 'bg-amber-600/10 border-amber-600/20' },
+  profanity: { label: 'Profanity', icon: AlertTriangle, color: 'text-red-500', bg: 'bg-red-500/10 border-red-500/20' },
 };
 
 interface WatchEntry { id: string; pattern: string; type: MatchType; category?: Category; }
