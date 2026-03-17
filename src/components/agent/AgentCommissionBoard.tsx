@@ -14,14 +14,7 @@ interface AgentCommissionBoardProps {
   onOpenChange: (open: boolean) => void;
 }
 
-const DEMO_AGENTS = [
-  { id: 1, name: "Sarah Mitchell", avatar: "SM", deposits: 47500, jobs: 32, premium: 12800, commission: 8950, conversionRate: 68, trend: "up" as const, streak: 5 },
-  { id: 2, name: "Marcus Johnson", avatar: "MJ", deposits: 42300, jobs: 28, premium: 9500, commission: 7820, conversionRate: 62, trend: "up" as const, streak: 3 },
-  { id: 3, name: "Emily Rodriguez", avatar: "ER", deposits: 38900, jobs: 25, premium: 8200, commission: 7150, conversionRate: 58, trend: "same" as const, streak: 0 },
-  { id: 4, name: "David Kim", avatar: "DK", deposits: 35200, jobs: 24, premium: 7800, commission: 6480, conversionRate: 55, trend: "down" as const, streak: 0 },
-  { id: 5, name: "Jessica Thompson", avatar: "JT", deposits: 31800, jobs: 21, premium: 6500, commission: 5890, conversionRate: 52, trend: "up" as const, streak: 2 },
-  { id: 6, name: "Michael Chen", avatar: "MC", deposits: 28400, jobs: 19, premium: 5800, commission: 5240, conversionRate: 48, trend: "down" as const, streak: 0 },
-];
+type AgentData = { id: number; name: string; avatar: string; deposits: number; jobs: number; premium: number; commission: number; conversionRate: number; trend: "up" | "down" | "same"; streak: number };
 
 type SortKey = "deposits" | "jobs" | "commission";
 
@@ -31,7 +24,8 @@ const rankIcon = (r: number) => r === 1 ? <Crown className="w-4 h-4 text-yellow-
 
 export function AgentCommissionBoard({ open, onOpenChange }: AgentCommissionBoardProps) {
   const [sortKey, setSortKey] = useState<SortKey>("commission");
-  const sorted = [...DEMO_AGENTS].sort((a, b) => b[sortKey] - a[sortKey]);
+  const agents: AgentData[] = []; // TODO: fetch from DB
+  const sorted = [...agents].sort((a, b) => b[sortKey] - a[sortKey]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
