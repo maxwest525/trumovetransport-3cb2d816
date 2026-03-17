@@ -27,7 +27,7 @@ const navItems: NavItem[] = [
   { icon: MapPin, label: "Shipment Tracking", href: "/track" },
   { icon: Sparkles, label: "AI Estimator", href: "/online-estimate" },
   { icon: Headphones, label: "Call Us", href: "tel:+16097277647" },
-  { icon: User, label: "Portal", href: "/agent-login", isAgentLogin: true },
+  { icon: User, label: "Portal", href: "/", isAgentLogin: true },
 ];
 
 export default function FloatingNav({ onChatOpen, iconsOnly = false }: FloatingNavProps) {

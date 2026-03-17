@@ -270,7 +270,7 @@ export default function HomepageV2() {
             <Link to="/track" className="hover:text-white transition-colors">Track Shipment</Link>
           </div>
           <div className="flex items-center gap-3">
-            <Link to="/agent-login">
+            <Link to="/">
               <Button variant="ghost" size="sm" className="hover:bg-white/5" style={{ color: textSecondary }}>
                 Log in
               </Button>

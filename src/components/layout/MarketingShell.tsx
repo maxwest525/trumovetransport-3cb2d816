@@ -42,7 +42,7 @@ export default function MarketingShell({ children, breadcrumb = "" }: MarketingS
 
   const handleResetPreference = () => {
     localStorage.removeItem("truemove_remembered_role");
-    navigate("/agent-login");
+    navigate("/");
   };
 
   const sidebarContent = (
@@ -98,7 +98,7 @@ export default function MarketingShell({ children, breadcrumb = "" }: MarketingS
           <span>Reset Preference</span>
         </button>
         <Link
-          to="/agent-login"
+          to="/"
           className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
         >
           <Home className="w-4 h-4" />
@@ -136,7 +136,7 @@ export default function MarketingShell({ children, breadcrumb = "" }: MarketingS
               </button>
             )}
             <Link
-              to="/agent-login"
+              to="/"
               className="flex items-center gap-1.5 px-2 py-1 rounded-md border border-border bg-background text-xs font-medium text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-all shrink-0"
             >
               <Globe className="w-3.5 h-3.5" />

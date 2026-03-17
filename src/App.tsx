@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
@@ -70,7 +70,13 @@ const App = () => (
         <BrowserRouter>
           <ScrollToTop />
           <Routes>
-            <Route path="/" element={<Index />} />
+            {/* Portal is the root */}
+            <Route path="/" element={<AgentLogin />} />
+            {/* Legacy route redirect */}
+            <Route path="/agent-login" element={<Navigate to="/" replace />} />
+
+            {/* Public website moved to /site */}
+            <Route path="/site" element={<Index />} />
             <Route path="/online-estimate" element={<OnlineEstimate />} />
             <Route path="/book" element={<Book />} />
             <Route path="/vetting" element={<CarrierVetting />} />
@@ -82,7 +88,6 @@ const App = () => (
             <Route path="/terms" element={<Terms />} />
             <Route path="/property-lookup" element={<PropertyLookup />} />
             <Route path="/auth" element={<Auth />} />
-            <Route path="/agent-login" element={<AgentLogin />} />
             <Route path="/agent/dashboard" element={<AgentDashboard />} />
             <Route path="/admin/integrations" element={<AdminIntegrations />} />
             <Route path="/scan-room" element={<ScanRoom />} />

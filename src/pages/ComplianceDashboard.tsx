@@ -14,7 +14,7 @@ export default function ComplianceDashboard() {
     <SiteShell centered backendMode hideHeader>
       <div className="flex flex-col items-center justify-center min-h-[80vh] px-4 py-16">
         <Link
-          to="/agent-login"
+          to="/"
           className="inline-flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground hover:text-foreground transition-colors mb-10"
         >
           <ArrowLeft className="w-3.5 h-3.5" />

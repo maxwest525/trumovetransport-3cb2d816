@@ -46,7 +46,7 @@ export default function AgentTopBar({ crumbs, onLogout }: AgentTopBarProps) {
     }
     await supabase.auth.signOut();
     toast({ title: "Signed out successfully" });
-    navigate("/agent-login");
+    navigate("/");
   };
 
   return (
@@ -55,7 +55,7 @@ export default function AgentTopBar({ crumbs, onLogout }: AgentTopBarProps) {
         {/* Left: Back to Website + Breadcrumb */}
         <div className="flex items-center gap-3 min-w-0">
           <Link 
-            to="/agent-login" 
+            to="/" 
             className="flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-border bg-background text-xs font-medium text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-all shrink-0"
           >
             <Globe className="w-3.5 h-3.5" />

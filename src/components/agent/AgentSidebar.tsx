@@ -32,7 +32,7 @@ export default function AgentSidebar({ onDialerToggle }: AgentSidebarProps) {
 
   const handleResetPreference = () => {
     localStorage.removeItem("truemove_remembered_role");
-    navigate("/agent-login");
+    navigate("/");
   };
 
   return (
@@ -73,7 +73,7 @@ export default function AgentSidebar({ onDialerToggle }: AgentSidebarProps) {
           <span>Reset Preference</span>
         </button>
         <Link
-          to="/agent-login"
+          to="/"
           className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
         >
           <Home className="w-4 h-4" />

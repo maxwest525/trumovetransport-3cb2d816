@@ -45,7 +45,7 @@ export default function ProfileSettings() {
     const fetchProfile = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.user) {
-        navigate("/agent-login");
+        navigate("/");
         return;
       }
 

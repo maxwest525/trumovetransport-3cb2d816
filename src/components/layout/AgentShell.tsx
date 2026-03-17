@@ -36,7 +36,7 @@ export default function AgentShell({ children, breadcrumb = "" }: AgentShellProp
           </div>
           <div className="flex items-center gap-2">
             
-            <Link to="/agent-login" className="p-1.5 rounded-lg hover:bg-muted transition-colors">
+            <Link to="/" className="p-1.5 rounded-lg hover:bg-muted transition-colors">
               <Home className="w-4 h-4 text-muted-foreground" />
             </Link>
             <button onClick={() => setTheme(theme === "dark" ? "light" : "dark")} className="p-1.5 rounded-lg hover:bg-muted transition-colors">
