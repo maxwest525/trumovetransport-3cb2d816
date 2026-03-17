@@ -168,6 +168,17 @@ const PulseDashboard: React.FC<{ embedded?: boolean; basePath?: string }> = ({ e
     setActivityFeed(prev => [{ id: `barge-${Date.now()}`, type: 'alert' as const, agent: agentName, detail: 'manager barged into call', severity: 'high', timestamp: new Date().toISOString() }, ...prev].slice(0, 50));
   }, []);
 
+  const openTranscriptModal = useCallback(async (alert: DbAlert) => {
+    setTranscriptModal({ open: true, callId: alert.call_id, agentName: alert.agent_name, clientName: alert.client_name, keyword: alert.matched_text });
+    setModalLoading(true);
+    setModalTranscript(null);
+    if (alert.call_id) {
+      const { data } = await supabase.from('pulse_calls' as any).select('transcript, flagged_keywords').eq('id', alert.call_id).maybeSingle();
+      if (data) setModalTranscript({ transcript: (data as any).transcript || '', flagged_keywords: (data as any).flagged_keywords || [] });
+    }
+    setModalLoading(false);
+  }, []);
+
   // Parse transcript lines for display
   const transcriptLines = useMemo(() => {
     if (!liveCallData?.transcript) return [];
