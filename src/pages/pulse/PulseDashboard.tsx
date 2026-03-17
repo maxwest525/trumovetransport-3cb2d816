@@ -39,7 +39,7 @@ const DEFAULT_QUICK_MESSAGES = [
   'Offer the retention deal',
 ];
 
-const PulseDashboard: React.FC<{ embedded?: boolean }> = ({ embedded = false }) => {
+const PulseDashboard: React.FC<{ embedded?: boolean; basePath?: string }> = ({ embedded = false, basePath = '/pulse' }) => {
   const [alerts, setAlerts] = useState<DbAlert[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedAgent, setSelectedAgent] = useState<string>('all');
@@ -189,7 +189,7 @@ const PulseDashboard: React.FC<{ embedded?: boolean }> = ({ embedded = false }) 
                       {isExpanded && alert.context && (
                         <div className="px-4 pb-3 pt-2 border-t border-border/30 space-y-2 animate-in fade-in duration-200">
                           <p className="text-xs text-muted-foreground leading-relaxed bg-secondary/20 rounded p-2">{alert.context}</p>
-                          {alert.call_id && <Link to={`/pulse/call/${alert.call_id}`} className="text-[10px] text-primary flex items-center gap-1 hover:underline font-medium"><FileText className="w-3 h-3" />View Call Review</Link>}
+                          {alert.call_id && <Link to={`${basePath}/call/${alert.call_id}`} className="text-[10px] text-primary flex items-center gap-1 hover:underline font-medium"><FileText className="w-3 h-3" />View Call Review</Link>}
                         </div>
                       )}
                     </div>

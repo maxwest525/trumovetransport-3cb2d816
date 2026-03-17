@@ -4,7 +4,7 @@ import PulseDashboard from "@/pages/pulse/PulseDashboard";
 export default function ManagerPulse() {
   return (
     <ManagerShell breadcrumb="/ Pulse Dashboard">
-      <PulseDashboard embedded />
+      <PulseDashboard embedded basePath="/manager/pulse" />
     </ManagerShell>
   );
 }

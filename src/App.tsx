@@ -67,6 +67,9 @@ import PulseManager from "./pages/pulse/PulseManager";
 import AgentPulse from "./pages/AgentPulse";
 import ManagerPulse from "./pages/ManagerPulse";
 import AdminPulse from "./pages/AdminPulse";
+import AgentPulseCallReview from "./pages/AgentPulseCallReview";
+import ManagerPulseCallReview from "./pages/ManagerPulseCallReview";
+import AdminPulseCallReview from "./pages/AdminPulseCallReview";
 import ManagerTeamChat from "./pages/ManagerTeamChat";
 import AdminTeamChat from "./pages/AdminTeamChat";
 
@@ -150,8 +153,11 @@ const App = () => (
             <Route path="/pulse/call/:callId" element={<PulseCallReview />} />
             <Route path="/pulse/manager" element={<PulseManager />} />
             <Route path="/agent/pulse" element={<AgentPulse />} />
+            <Route path="/agent/pulse/call/:callId" element={<AgentPulseCallReview />} />
             <Route path="/manager/pulse" element={<ManagerPulse />} />
+            <Route path="/manager/pulse/call/:callId" element={<ManagerPulseCallReview />} />
             <Route path="/admin/pulse" element={<AdminPulse />} />
+            <Route path="/admin/pulse/call/:callId" element={<AdminPulseCallReview />} />
             <Route path="/manager/team-chat" element={<ManagerTeamChat />} />
             <Route path="/admin/team-chat" element={<AdminTeamChat />} />
             

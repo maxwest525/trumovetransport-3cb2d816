@@ -4,6 +4,7 @@ import { ArrowLeft, AlertTriangle, Clock, User, Phone, Shield, ShieldAlert, Shie
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { supabase } from '@/integrations/supabase/client';
+import { cn } from '@/lib/utils';
 
 type Severity = 'low' | 'medium' | 'high' | 'critical';
 const SEVERITY_META: Record<Severity, { label: string; color: string; icon: React.ElementType }> = {
@@ -13,7 +14,7 @@ const SEVERITY_META: Record<Severity, { label: string; color: string; icon: Reac
   critical: { label: 'Critical', color: 'text-destructive', icon: AlertTriangle },
 };
 
-const PulseCallReview: React.FC = () => {
+const PulseCallReview: React.FC<{ embedded?: boolean; basePath?: string }> = ({ embedded = false, basePath = '/pulse/dashboard' }) => {
   const { callId } = useParams<{ callId: string }>();
   const [call, setCall] = useState<any>(null);
   const [callAlerts, setCallAlerts] = useState<any[]>([]);
@@ -42,8 +43,8 @@ const PulseCallReview: React.FC = () => {
     } catch { return text; }
   };
 
-  if (isLoading) return <div className="min-h-screen bg-background flex items-center justify-center"><RefreshCw className="w-6 h-6 animate-spin text-muted-foreground" /></div>;
-  if (!call) return <div className="min-h-screen bg-background flex flex-col items-center justify-center text-muted-foreground"><AlertTriangle className="w-10 h-10 mb-3 opacity-30" /><p className="text-sm">Call not found</p><Link to="/pulse/dashboard" className="text-xs text-primary mt-2 hover:underline">← Back to Dashboard</Link></div>;
+  if (isLoading) return <div className={cn(embedded ? "flex items-center justify-center py-20" : "min-h-screen bg-background flex items-center justify-center")}><RefreshCw className="w-6 h-6 animate-spin text-muted-foreground" /></div>;
+  if (!call) return <div className={cn(embedded ? "flex flex-col items-center justify-center py-20 text-muted-foreground" : "min-h-screen bg-background flex flex-col items-center justify-center text-muted-foreground")}><AlertTriangle className="w-10 h-10 mb-3 opacity-30" /><p className="text-sm">Call not found</p><Link to={basePath} className="text-xs text-primary mt-2 hover:underline">← Back to Dashboard</Link></div>;
 
   const sev = (call.severity as Severity) || 'medium';
   const sevMeta = SEVERITY_META[sev];
@@ -51,14 +52,16 @@ const PulseCallReview: React.FC = () => {
   const flaggedKws = call.flagged_keywords || [];
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <header className="sticky top-0 z-40 h-14 flex items-center gap-3 px-6 border-b border-border bg-background/80 backdrop-blur-xl">
-        <Link to="/pulse/dashboard" className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"><ArrowLeft className="w-4 h-4" />Back to Dashboard</Link>
-        <div className="w-px h-5 bg-border/50 mx-2" />
-        <span className="font-bold text-lg tracking-tight">Call Review</span>
-        <Badge variant="destructive" className="text-[10px]">BETA</Badge>
-        <div className={`flex items-center gap-1.5 ml-3 ${sevMeta.color}`}><SevIcon className="w-4 h-4" /><span className="text-xs font-bold uppercase">{sevMeta.label}</span></div>
-      </header>
+    <div className={cn(embedded ? "flex flex-col" : "min-h-screen bg-background text-foreground")}>
+      {!embedded && (
+        <header className="sticky top-0 z-40 h-14 flex items-center gap-3 px-6 border-b border-border bg-background/80 backdrop-blur-xl">
+          <Link to={basePath} className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"><ArrowLeft className="w-4 h-4" />Back to Dashboard</Link>
+          <div className="w-px h-5 bg-border/50 mx-2" />
+          <span className="font-bold text-lg tracking-tight">Call Review</span>
+          <Badge variant="destructive" className="text-[10px]">BETA</Badge>
+          <div className={`flex items-center gap-1.5 ml-3 ${sevMeta.color}`}><SevIcon className="w-4 h-4" /><span className="text-xs font-bold uppercase">{sevMeta.label}</span></div>
+        </header>
+      )}
 
       <main className="max-w-6xl mx-auto p-6 space-y-6">
         <div className="flex items-center gap-6 p-4 rounded-xl border border-border bg-secondary/20">
