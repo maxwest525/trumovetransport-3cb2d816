@@ -40,7 +40,7 @@ const PORTALS = [
   {
     key: "marketing",
     label: "Max's Crazy Marketing Things",
-    description: "Ads, landing pages, Trudy tools & creative experiments",
+    description: "Ads, landing pages, customer-facing sites, Trudy tools & creative experiments",
     href: "/marketing/dashboard",
     icon: Sparkles,
     accentHsl: "325 84% 54%",
@@ -48,7 +48,7 @@ const PORTALS = [
   {
     key: "admin",
     label: "Admin / Owner",
-    description: "Marketing, compliance, accounting & settings",
+    description: "Overhead, expenses, invoices, vendors, payroll, compliance & settings",
     href: "/admin/dashboard",
     icon: Shield,
     accentHsl: "38 92% 50%",
