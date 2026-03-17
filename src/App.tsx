@@ -67,6 +67,8 @@ import PulseManager from "./pages/pulse/PulseManager";
 import AgentPulse from "./pages/AgentPulse";
 import ManagerPulse from "./pages/ManagerPulse";
 import AdminPulse from "./pages/AdminPulse";
+import ManagerTeamChat from "./pages/ManagerTeamChat";
+import AdminTeamChat from "./pages/AdminTeamChat";
 
 const queryClient = new QueryClient();
 
@@ -150,6 +152,8 @@ const App = () => (
             <Route path="/agent/pulse" element={<AgentPulse />} />
             <Route path="/manager/pulse" element={<ManagerPulse />} />
             <Route path="/admin/pulse" element={<AdminPulse />} />
+            <Route path="/manager/team-chat" element={<ManagerTeamChat />} />
+            <Route path="/admin/team-chat" element={<AdminTeamChat />} />
             
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

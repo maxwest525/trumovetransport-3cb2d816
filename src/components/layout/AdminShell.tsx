@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Home, Sun, Moon, Bell, LayoutDashboard, Users, Link2, Package,
   Zap, ScrollText, RotateCcw, Gauge, Sparkles, DollarSign,
-  FileText, BookOpen, CreditCard, Settings2,
+  FileText, BookOpen, CreditCard, Settings2, MessageSquare,
 } from "lucide-react";
 import logoImg from "@/assets/logo.png";
 import { toast } from "sonner";
@@ -19,6 +19,7 @@ const NAV_ITEMS = [
   { label: "Products & Pricing", icon: DollarSign, href: "/admin/pricing" },
   { label: "Developer", icon: Link2, href: "/admin/developer" },
   { label: "Pulse Settings", icon: Settings2, href: "/admin/pulse" },
+  { label: "Team Chat", icon: MessageSquare, href: "/admin/team-chat" },
 ];
 
 const ADVANCED_ITEMS = [

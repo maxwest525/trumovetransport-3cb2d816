@@ -46,7 +46,7 @@ const DEMO_PROFILES: Profile[] = [];
 const DEMO_CONVERSATIONS: Conversation[] = [];
 const DEMO_MESSAGES: Record<string, Message[]> = {};
 
-export default function AgentTeamChat() {
+export default function AgentTeamChat({ embedded = false }: { embedded?: boolean }) {
   const [activeTab, setActiveTab] = useState("messages");
   const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
   const [messageInput, setMessageInput] = useState("");
@@ -108,8 +108,7 @@ export default function AgentTeamChat() {
   const filteredConversations = conversations.filter(conv => getConversationName(conv).toLowerCase().includes(searchQuery.toLowerCase()));
   const filteredProfiles = profiles.filter(p => p.display_name.toLowerCase().includes(searchQuery.toLowerCase()) || p.email.toLowerCase().includes(searchQuery.toLowerCase()));
 
-  return (
-    <AgentShell breadcrumb=" / Team Chat">
+  const content = (
       <div className="flex h-[calc(100vh-3rem)] overflow-hidden">
         {/* Left sidebar */}
         <div className="w-80 border-r flex flex-col">
@@ -251,6 +250,13 @@ export default function AgentTeamChat() {
           )}
         </div>
       </div>
+  );
+
+  if (embedded) return content;
+
+  return (
+    <AgentShell breadcrumb=" / Team Chat">
+      {content}
     </AgentShell>
   );
 }
