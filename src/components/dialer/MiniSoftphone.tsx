@@ -96,11 +96,15 @@ export default function MiniSoftphone() {
   const isOnDialer = location.pathname === "/agent/dialer";
   const hasActiveCall = call && call.state !== "idle" && call.state !== "wrap_up";
 
-  // Always show on non-dialer pages (idle = compact ready state)
-  if (isOnDialer) return null;
+  const handleDialKey = (key: string) => {
+    setDialNumber(prev => prev + key);
+  };
 
-  const fmt = (s: number) => `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
-  const isHold = call?.state === "on_hold";
+  const handleStartCall = () => {
+    if (!dialNumber.trim()) return;
+    DialerProvider.startCall(dialNumber.trim());
+    setDialNumber("");
+  };
 
   // ── Idle / Ready state (no active call) ──
   if (!hasActiveCall) {
@@ -108,7 +112,7 @@ export default function MiniSoftphone() {
       <div
         ref={cardRef}
         style={{ transform: `translate(${pos.x}px, ${pos.y}px)` }}
-        className="fixed bottom-4 right-4 z-50 rounded-2xl border border-border bg-card shadow-xl overflow-hidden hidden sm:block w-64"
+        className="fixed bottom-4 right-4 z-50 rounded-2xl border border-border bg-card shadow-xl overflow-hidden hidden sm:block w-72"
       >
         <div
           onPointerDown={onPointerDown}
@@ -118,26 +122,77 @@ export default function MiniSoftphone() {
         >
           <GripHorizontal className="w-4 h-4 text-muted-foreground/40" />
         </div>
-        <div className="px-4 py-3 space-y-2.5">
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-emerald-500" />
-            <span className="text-xs font-medium text-muted-foreground">Ready</span>
+        <div className="px-4 pb-4 space-y-2.5">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-emerald-500" />
+              <span className="text-xs font-medium text-muted-foreground">Ready</span>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-6 px-1.5 text-[10px] text-muted-foreground"
+              onClick={() => navigate("/agent/new-customer")}
+            >
+              <Plus className="w-3 h-3 mr-1" /> New Lead
+            </Button>
           </div>
-          <Button
-            size="sm"
-            className="w-full gap-1.5 text-xs h-8"
-            onClick={() => navigate("/agent/dialer")}
-          >
-            <Phone className="w-3.5 h-3.5" /> Open Dialer
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            className="w-full gap-1.5 text-xs h-8"
-            onClick={() => navigate("/agent/new-customer")}
-          >
-            <Plus className="w-3.5 h-3.5" /> New Lead
-          </Button>
+
+          {/* Number display */}
+          <div className="relative">
+            <input
+              type="tel"
+              value={dialNumber}
+              onChange={e => setDialNumber(e.target.value)}
+              placeholder="Enter number..."
+              className="w-full h-10 rounded-lg bg-muted border-0 text-center text-base font-mono font-semibold text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/30"
+              onKeyDown={e => { if (e.key === "Enter") handleStartCall(); }}
+            />
+          </div>
+
+          {/* Dialpad */}
+          {idleShowDialpad && (
+            <div className="grid grid-cols-3 gap-1">
+              {DIALPAD.flat().map((key) => (
+                <button
+                  key={key}
+                  className="h-9 rounded-lg bg-muted hover:bg-muted/80 text-foreground text-sm font-semibold transition-colors active:scale-95"
+                  onClick={() => handleDialKey(key)}
+                >
+                  {key}
+                </button>
+              ))}
+            </div>
+          )}
+
+          <div className="flex gap-1.5">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 px-2 text-[10px]"
+              onClick={() => setIdleShowDialpad(!idleShowDialpad)}
+            >
+              <Hash className="w-3.5 h-3.5" />
+            </Button>
+            <Button
+              size="sm"
+              className="flex-1 h-8 gap-1.5 text-xs"
+              disabled={!dialNumber.trim()}
+              onClick={handleStartCall}
+            >
+              <Phone className="w-3.5 h-3.5" /> Call
+            </Button>
+            {dialNumber && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 px-2 text-[10px] text-muted-foreground"
+                onClick={() => setDialNumber("")}
+              >
+                Clear
+              </Button>
+            )}
+          </div>
         </div>
       </div>
     );
