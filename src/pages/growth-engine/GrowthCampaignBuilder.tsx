@@ -22,7 +22,7 @@ const STEPS = [
 ];
 
 const GOALS = [
-  { id: "calls", label: "Phone Calls", desc: "Drive inbound calls from people ready to get a long-distance moving quote. Routes instantly to Convoso.", icon: Phone, recommended: true, tag: "Start here first" },
+  { id: "calls", label: "Phone Calls", desc: "Drive inbound calls from people searching for long-distance movers. Calls are attributed, then routed to Convoso for instant follow-up.", icon: Phone, recommended: true, tag: "Start here first" },
   { id: "forms", label: "Quote Forms", desc: "Capture lead details through a landing page form. Feeds into your instant-call workflow.", icon: FileText, recommended: true, tag: "Best for interstate movers" },
   { id: "retargeting", label: "Retargeting", desc: "Re-show ads to site visitors who didn't convert. Add after you have traffic flowing.", icon: Megaphone, recommended: false, tag: "Good for retargeting" },
   { id: "estimates", label: "Booked Estimates", desc: "Optimize for full booking completions. Requires a working funnel first.", icon: Target, recommended: false, tag: "Optional later" },

@@ -9,9 +9,9 @@ import {
 
 const WORKFLOWS = [
   {
-    name: "New Form Lead → Instant Convoso Route",
+    name: "New Form Lead → Attribution → Convoso Route",
     trigger: "Form submitted on any landing page",
-    steps: ["Capture UTM + lead data", "Deduplicate check", "Push to Convoso via webhook", "Agent dials within seconds"],
+    steps: ["Capture UTM + lead data", "Attribution tagged", "Deduplicate check", "Push to Convoso via webhook", "Agent dials within seconds"],
     status: "active",
     icon: Zap,
     priority: "primary",
