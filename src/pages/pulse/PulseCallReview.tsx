@@ -42,8 +42,8 @@ const PulseCallReview: React.FC<{ embedded?: boolean; basePath?: string }> = ({ 
     } catch { return text; }
   };
 
-  if (isLoading) return <div className="min-h-screen bg-background flex items-center justify-center"><RefreshCw className="w-6 h-6 animate-spin text-muted-foreground" /></div>;
-  if (!call) return <div className="min-h-screen bg-background flex flex-col items-center justify-center text-muted-foreground"><AlertTriangle className="w-10 h-10 mb-3 opacity-30" /><p className="text-sm">Call not found</p><Link to="/pulse/dashboard" className="text-xs text-primary mt-2 hover:underline">← Back to Dashboard</Link></div>;
+  if (isLoading) return <div className={cn(embedded ? "flex items-center justify-center py-20" : "min-h-screen bg-background flex items-center justify-center")}><RefreshCw className="w-6 h-6 animate-spin text-muted-foreground" /></div>;
+  if (!call) return <div className={cn(embedded ? "flex flex-col items-center justify-center py-20 text-muted-foreground" : "min-h-screen bg-background flex flex-col items-center justify-center text-muted-foreground")}><AlertTriangle className="w-10 h-10 mb-3 opacity-30" /><p className="text-sm">Call not found</p><Link to={basePath} className="text-xs text-primary mt-2 hover:underline">← Back to Dashboard</Link></div>;
 
   const sev = (call.severity as Severity) || 'medium';
   const sevMeta = SEVERITY_META[sev];
