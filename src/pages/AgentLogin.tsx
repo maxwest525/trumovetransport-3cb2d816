@@ -209,32 +209,26 @@ export default function AgentLogin() {
             );
           })}
 
-          {/* Customer Facing Websites */}
-          {[
-            { title: "Customer Facing Sites", desc: "Original TruMove website", href: "/classic" },
-            { title: "New Color TruMove", desc: "Redesigned homepage with updated branding", href: "/homepage-2" },
-          ].map((site) => (
-            <a
-              key={site.href}
-              href={site.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group relative flex flex-col gap-3 rounded-xl border border-border/60 bg-card p-5 ring-2 ring-transparent hover:ring-muted-foreground/20 hover:border-border hover:shadow-[0_12px_40px_-12px_hsl(var(--foreground)/0.15)] transition-all duration-300 text-left overflow-hidden"
-            >
-              <div className="relative flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-foreground/[0.06] border border-foreground/10 flex items-center justify-center group-hover:border-foreground/20 transition-colors">
-                  <Globe className="w-5 h-5 text-muted-foreground" />
-                </div>
-                <h3 className="font-bold text-foreground text-sm">{site.title}</h3>
+          {/* Customer Facing Sites */}
+          <button
+            onClick={() => navigate("/customer-facing-sites")}
+            className="group relative flex flex-col gap-3 rounded-xl border border-border/60 bg-card p-5 ring-2 ring-transparent hover:ring-muted-foreground/20 hover:border-border hover:shadow-[0_12px_40px_-12px_hsl(var(--foreground)/0.15)] transition-all duration-300 text-left overflow-hidden"
+          >
+            <div className="relative flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-foreground/[0.06] border border-foreground/10 flex items-center justify-center group-hover:border-foreground/20 transition-colors">
+                <Globe className="w-5 h-5 text-muted-foreground" />
               </div>
-              <p className="relative text-[11px] text-muted-foreground leading-relaxed flex-1">{site.desc}</p>
-              <div className="relative mt-auto pt-1">
-                <span className="inline-flex items-center gap-2 text-[11px] font-semibold text-foreground/60 group-hover:text-foreground transition-colors">
-                  Open site <ExternalLink className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-                </span>
-              </div>
-            </a>
-          ))}
+              <h3 className="font-bold text-foreground text-sm">Customer Facing Sites</h3>
+            </div>
+            <p className="relative text-[11px] text-muted-foreground leading-relaxed flex-1">
+              Preview and manage all public-facing website variants.
+            </p>
+            <div className="relative mt-auto pt-1">
+              <span className="inline-flex items-center gap-2 text-[11px] font-semibold text-foreground/60 group-hover:text-foreground transition-colors">
+                Open workspace <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+              </span>
+            </div>
+          </button>
         </div>
 
         {/* Remember checkbox */}
