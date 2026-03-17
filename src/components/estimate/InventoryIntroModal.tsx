@@ -75,7 +75,7 @@ export default function InventoryIntroModal({
             {/* Secondary CTAs */}
             <div className="flex items-center justify-center gap-3 flex-wrap">
               <Link
-                to="/scan-room"
+                to="/site/scan-room"
                 className="tru-modal-secondary-btn"
               >
                 <Scan className="w-4 h-4" />
