@@ -65,7 +65,7 @@ export default function AgentNewCustomer() {
       if (dealError) throw dealError;
 
       toast.success(`Customer ${form.firstName} ${form.lastName} created`);
-      navigate(`/agent/inventory/${lead.id}`);
+      navigate(`/agent/move-details/${lead.id}`);
     } catch (err: any) {
       console.error("Error creating customer:", err);
       toast.error("Failed to create customer", { description: err.message });
