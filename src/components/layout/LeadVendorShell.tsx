@@ -38,7 +38,7 @@ export default function LeadVendorShell({ children, breadcrumb = "" }: LeadVendo
 
   const handleResetPreference = () => {
     localStorage.removeItem("truemove_remembered_role");
-    navigate("/agent-login");
+    navigate("/");
   };
 
   const sidebarContent = (
