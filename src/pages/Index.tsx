@@ -1708,7 +1708,7 @@ export default function Index() {
                           <button 
                             type="button" 
                             className="tru-qb-option-card"
-                            onClick={() => navigate("/scan-room")}
+                            onClick={() => navigate("/site/scan-room")}
                           >
                             <Scan className="w-5 h-5" />
                             <div className="tru-qb-option-text">
