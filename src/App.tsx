@@ -67,6 +67,8 @@ import PulseManager from "./pages/pulse/PulseManager";
 import AgentPulse from "./pages/AgentPulse";
 import ManagerPulse from "./pages/ManagerPulse";
 import AdminPulse from "./pages/AdminPulse";
+import ManagerTeamChat from "./pages/ManagerTeamChat";
+import AdminTeamChat from "./pages/AdminTeamChat";
 
 const queryClient = new QueryClient();
 
