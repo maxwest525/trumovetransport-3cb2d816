@@ -756,6 +756,71 @@ export type Database = {
           },
         ]
       }
+      move_details: {
+        Row: {
+          bedrooms: number
+          created_at: string
+          floors: number
+          fragile_items: boolean
+          has_elevator: boolean
+          has_stairs: boolean
+          id: string
+          is_apartment: boolean
+          lead_id: string
+          long_carry_ft: number
+          packing_service: boolean
+          property_type: string
+          special_packaging: boolean
+          special_treatment_notes: string | null
+          stair_flights: number
+          updated_at: string
+        }
+        Insert: {
+          bedrooms?: number
+          created_at?: string
+          floors?: number
+          fragile_items?: boolean
+          has_elevator?: boolean
+          has_stairs?: boolean
+          id?: string
+          is_apartment?: boolean
+          lead_id: string
+          long_carry_ft?: number
+          packing_service?: boolean
+          property_type?: string
+          special_packaging?: boolean
+          special_treatment_notes?: string | null
+          stair_flights?: number
+          updated_at?: string
+        }
+        Update: {
+          bedrooms?: number
+          created_at?: string
+          floors?: number
+          fragile_items?: boolean
+          has_elevator?: boolean
+          has_stairs?: boolean
+          id?: string
+          is_apartment?: boolean
+          lead_id?: string
+          long_carry_ft?: number
+          packing_service?: boolean
+          property_type?: string
+          special_packaging?: boolean
+          special_treatment_notes?: string | null
+          stair_flights?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "move_details_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: true
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notifications: {
         Row: {
           created_at: string
