@@ -125,41 +125,18 @@ export default function AgentLogin() {
         </motion.div>
 
         {/* Portal cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 w-full max-w-3xl">
-          {PORTALS.map((portal, i) => {
-            const Icon = portal.icon;
-            return (
-              <motion.button
-                key={portal.key}
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 + i * 0.08, duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
-                onClick={() => navigate(portal.href)}
-                className={`group relative flex flex-col items-center text-center gap-4 rounded-2xl border border-border/60 bg-card p-8 pb-7 cursor-pointer transition-all duration-300 ${portal.borderHover} ${portal.glowColor} hover:-translate-y-1`}
-              >
-                {/* Gradient background on hover */}
-                <div className={`absolute inset-0 rounded-2xl bg-gradient-to-b ${portal.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
-
-                {/* Icon */}
-                <div className="relative z-10">
-                  <div className={`w-14 h-14 rounded-xl bg-muted/60 group-hover:bg-background flex items-center justify-center transition-all duration-300 group-hover:scale-110`}>
-                    <Icon className={`w-6 h-6 text-muted-foreground ${portal.iconColor.replace('text-', 'group-hover:text-')} transition-colors duration-300`} />
-                  </div>
-                </div>
-
-                {/* Text */}
-                <div className="relative z-10 space-y-1.5">
-                  <h2 className="text-[15px] font-semibold text-foreground tracking-tight">{portal.label}</h2>
-                  <p className="text-[11px] text-muted-foreground leading-relaxed">{portal.description}</p>
-                </div>
-
-                {/* Arrow */}
-                <div className="relative z-10 mt-1">
-                  <ArrowRight className="w-4 h-4 text-muted-foreground/0 group-hover:text-muted-foreground/60 transition-all duration-300 group-hover:translate-x-0.5" />
-                </div>
-              </motion.button>
-            );
-          })}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-3xl">
+          {PORTALS.map((portal, i) => (
+            <PortalCard
+              key={portal.key}
+              label={portal.label}
+              description={portal.description}
+              icon={portal.icon}
+              accentHsl={portal.accentHsl}
+              index={i}
+              onClick={() => navigate(portal.href)}
+            />
+          ))}
         </div>
       </div>
     </SiteShell>
