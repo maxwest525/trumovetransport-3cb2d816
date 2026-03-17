@@ -200,7 +200,7 @@ export default function LiveMoveDashboard({
           <Phone className="w-4 h-4" />
           <span>Call Now</span>
         </a>
-        <a href="/book" className="live-dashboard-cta is-primary">
+        <a href="/site/book" className="live-dashboard-cta is-primary">
           <Video className="w-4 h-4" />
           <span>Book Video Consult</span>
         </a>

@@ -86,7 +86,7 @@ export default function ScanIntroModal({
                 Prefer to talk?
               </a>
               <a
-                href="/book"
+                href="/site/book"
                 className="tru-modal-secondary-btn"
               >
                 <Video className="w-4 h-4" />

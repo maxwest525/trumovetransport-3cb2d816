@@ -144,7 +144,7 @@ function ScannerDemoCard() {
               <span>{totalWeight} lbs</span>
             </div>
             {count > 0 && (
-              <Link to="/scan-room" className="text-[10px] hover:underline" style={{ color: "hsl(175, 70%, 55%)" }}>
+              <Link to="/site/scan-room" className="text-[10px] hover:underline" style={{ color: "hsl(175, 70%, 55%)" }}>
                 Try Full Scanner →
               </Link>
             )}
@@ -225,7 +225,7 @@ export default function HomepageV2() {
       moveDate: moveDate?.toISOString(), size,
       ts: Date.now()
     }));
-    navigate("/online-estimate");
+    navigate("/site/online-estimate");
   };
 
   const handleContactSubmit = (e: React.FormEvent) => {
@@ -264,10 +264,10 @@ export default function HomepageV2() {
             <span className="text-lg font-bold tracking-tight">TruMove</span>
           </Link>
           <div className="hidden md:flex items-center gap-8 text-sm" style={{ color: textSecondary }}>
-            <Link to="/online-estimate" className="hover:text-white transition-colors">Estimate</Link>
-            <Link to="/scan-room" className="hover:text-white transition-colors">AI Scanner</Link>
-            <Link to="/vetting" className="hover:text-white transition-colors">Carrier Vetting</Link>
-            <Link to="/track" className="hover:text-white transition-colors">Track Shipment</Link>
+            <Link to="/site/online-estimate" className="hover:text-white transition-colors">Estimate</Link>
+            <Link to="/site/scan-room" className="hover:text-white transition-colors">AI Scanner</Link>
+            <Link to="/site/vetting" className="hover:text-white transition-colors">Carrier Vetting</Link>
+            <Link to="/site/track" className="hover:text-white transition-colors">Track Shipment</Link>
           </div>
           <div className="flex items-center gap-3">
             <Link to="/">
@@ -275,7 +275,7 @@ export default function HomepageV2() {
                 Log in
               </Button>
             </Link>
-            <Link to="/book">
+            <Link to="/site/book">
               <Button size="sm" className="border-0 rounded-lg px-5 font-semibold" style={{ background: teal, color: "white" }}>
                 Buy Now
               </Button>
@@ -326,7 +326,7 @@ export default function HomepageV2() {
           </p>
 
           {/* CTA */}
-          <Link to="/online-estimate">
+          <Link to="/site/online-estimate">
             <button className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl text-base font-semibold text-white transition-all hover:brightness-110" style={{ background: teal, boxShadow: `0 0 40px hsl(175, 70%, 40%, 0.35), 0 4px 20px hsl(175, 70%, 40%, 0.2)` }}>
               Get Estimate
             </button>
@@ -629,7 +629,7 @@ export default function HomepageV2() {
             <p className="text-xs mb-6" style={{ color: textMuted }}>
               Invaluable support, lasting impact. 🏆
             </p>
-            <Link to="/online-estimate">
+            <Link to="/site/online-estimate">
               <button className="px-6 py-2.5 rounded-lg text-sm font-semibold text-white transition-all hover:brightness-110" style={{ background: teal }}>
                 Get Estimate
               </button>
@@ -654,7 +654,7 @@ export default function HomepageV2() {
                 From AI room scanning to FMCSA-vetted carriers, we've refined every detail to make each move seamlessly stress-free.
               </p>
               <div className="flex flex-wrap gap-4">
-                <Link to="/online-estimate">
+                <Link to="/site/online-estimate">
                   <button className="px-8 py-3 rounded-xl text-sm font-semibold text-white transition-all hover:brightness-110" style={{ background: teal, boxShadow: `0 0 30px hsl(175, 70%, 40%, 0.25)` }}>
                     Get Estimate
                   </button>
@@ -741,26 +741,26 @@ export default function HomepageV2() {
             <div>
               <h4 className="text-xs font-semibold uppercase tracking-wider mb-4" style={{ color: textPrimary }}>Company</h4>
               <div className="space-y-2.5">
-                <Link to="/about" className="block text-xs transition-colors hover:text-white" style={{ color: textSecondary }}>About</Link>
-                <Link to="/faq" className="block text-xs transition-colors hover:text-white" style={{ color: textSecondary }}>FAQ</Link>
-                <Link to="/customer-service" className="block text-xs transition-colors hover:text-white" style={{ color: textSecondary }}>Customer Service</Link>
-                <Link to="/book" className="block text-xs transition-colors hover:text-white" style={{ color: textSecondary }}>Book a Call</Link>
+                <Link to="/site/about" className="block text-xs transition-colors hover:text-white" style={{ color: textSecondary }}>About</Link>
+                <Link to="/site/faq" className="block text-xs transition-colors hover:text-white" style={{ color: textSecondary }}>FAQ</Link>
+                <Link to="/site/customer-service" className="block text-xs transition-colors hover:text-white" style={{ color: textSecondary }}>Customer Service</Link>
+                <Link to="/site/book" className="block text-xs transition-colors hover:text-white" style={{ color: textSecondary }}>Book a Call</Link>
               </div>
             </div>
             <div>
               <h4 className="text-xs font-semibold uppercase tracking-wider mb-4" style={{ color: textPrimary }}>Services</h4>
               <div className="space-y-2.5">
-                <Link to="/online-estimate" className="block text-xs transition-colors hover:text-white" style={{ color: textSecondary }}>Online Estimate</Link>
-                <Link to="/scan-room" className="block text-xs transition-colors hover:text-white" style={{ color: textSecondary }}>AI Room Scanner</Link>
-                <Link to="/vetting" className="block text-xs transition-colors hover:text-white" style={{ color: textSecondary }}>Carrier Vetting</Link>
-                <Link to="/track" className="block text-xs transition-colors hover:text-white" style={{ color: textSecondary }}>Live Tracking</Link>
+                <Link to="/site/online-estimate" className="block text-xs transition-colors hover:text-white" style={{ color: textSecondary }}>Online Estimate</Link>
+                <Link to="/site/scan-room" className="block text-xs transition-colors hover:text-white" style={{ color: textSecondary }}>AI Room Scanner</Link>
+                <Link to="/site/vetting" className="block text-xs transition-colors hover:text-white" style={{ color: textSecondary }}>Carrier Vetting</Link>
+                <Link to="/site/track" className="block text-xs transition-colors hover:text-white" style={{ color: textSecondary }}>Live Tracking</Link>
               </div>
             </div>
             <div>
               <h4 className="text-xs font-semibold uppercase tracking-wider mb-4" style={{ color: textPrimary }}>Legal</h4>
               <div className="space-y-2.5">
-                <Link to="/privacy" className="block text-xs transition-colors hover:text-white" style={{ color: textSecondary }}>Privacy Policy</Link>
-                <Link to="/terms" className="block text-xs transition-colors hover:text-white" style={{ color: textSecondary }}>Terms of Service</Link>
+                <Link to="/site/privacy" className="block text-xs transition-colors hover:text-white" style={{ color: textSecondary }}>Privacy Policy</Link>
+                <Link to="/site/terms" className="block text-xs transition-colors hover:text-white" style={{ color: textSecondary }}>Terms of Service</Link>
                 <Link to="/portal" className="block text-xs transition-colors hover:text-white" style={{ color: textSecondary }}>Customer Portal</Link>
                 <Link to="/site" className="block text-xs transition-colors hover:text-white" style={{ color: textSecondary }}>Classic Site</Link>
               </div>

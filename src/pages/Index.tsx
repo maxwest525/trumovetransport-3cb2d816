@@ -699,7 +699,7 @@ function ShipmentTrackerSection({ navigate }: { navigate: (path: string) => void
             
             {/* CTA Button */}
             <button 
-              onClick={() => navigate("/track")}
+              onClick={() => navigate("/site/track")}
               className="tru-ai-cta-btn"
             >
               <MapPin className="w-4 h-4" />
@@ -787,7 +787,7 @@ function StepsCompactSection({ navigate }: { navigate: (path: string) => void })
               key={step.num}
               className={`tru-steps-compact-card tru-steps-parallax-card ${isInView ? 'in-view' : ''}`}
               style={{ '--card-index': index } as React.CSSProperties}
-              onClick={() => navigate("/online-estimate")}
+              onClick={() => navigate("/site/online-estimate")}
             >
               <div className="tru-steps-compact-num">{step.num}</div>
               <div className="tru-steps-compact-card-content">
@@ -1515,7 +1515,7 @@ export default function Index() {
                                 originAddress: fromLocationDisplay,
                                 destAddress: toLocationDisplay,
                               }));
-                              navigate('/track');
+                              navigate('/site/track');
                             }}
                           >
                             <Truck className="w-4 h-4" />
@@ -1622,7 +1622,7 @@ export default function Index() {
                             className="tru-qb-method-card tru-qb-method-primary"
                             onClick={() => {
                               handleSubmit(new Event('submit') as any);
-                              navigate("/scan-room");
+                              navigate("/site/scan-room");
                             }}
                           >
                             <div className="tru-qb-method-icon-wrap tru-qb-method-icon-ai">
@@ -1645,7 +1645,7 @@ export default function Index() {
                             className="tru-qb-method-card"
                             onClick={() => {
                               handleSubmit(new Event('submit') as any);
-                              navigate("/online-estimate");
+                              navigate("/site/online-estimate");
                             }}
                           >
                             <div className="tru-qb-method-icon-wrap">
@@ -1664,7 +1664,7 @@ export default function Index() {
                             className="tru-qb-method-card"
                             onClick={() => {
                               handleSubmit(new Event('submit') as any);
-                              navigate("/book");
+                              navigate("/site/book");
                             }}
                           >
                             <div className="tru-qb-method-icon-wrap">
@@ -1708,7 +1708,7 @@ export default function Index() {
                           <button 
                             type="button" 
                             className="tru-qb-option-card"
-                            onClick={() => navigate("/scan-room")}
+                            onClick={() => navigate("/site/scan-room")}
                           >
                             <Scan className="w-5 h-5" />
                             <div className="tru-qb-option-text">
@@ -1719,7 +1719,7 @@ export default function Index() {
                           <button 
                             type="button" 
                             className="tru-qb-option-card tru-qb-option-card-outline"
-                            onClick={() => navigate("/online-estimate")}
+                            onClick={() => navigate("/site/online-estimate")}
                           >
                             <Boxes className="w-5 h-5" />
                             <div className="tru-qb-option-text">
@@ -1730,7 +1730,7 @@ export default function Index() {
                           <button 
                             type="button" 
                             className="tru-qb-option-card tru-qb-option-card-outline"
-                            onClick={() => navigate("/book")}
+                            onClick={() => navigate("/site/book")}
                           >
                             <Video className="w-5 h-5" />
                             <div className="tru-qb-option-text">
@@ -1790,7 +1790,7 @@ export default function Index() {
                   
                   {/* CTA Button */}
                   <button 
-                    onClick={() => navigate("/scan-room")}
+                    onClick={() => navigate("/site/scan-room")}
                     className="tru-ai-cta-btn animate-fade-scale-in opacity-0"
                     style={{ animationDelay: '350ms' }}
                   >

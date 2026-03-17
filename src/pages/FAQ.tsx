@@ -99,7 +99,7 @@ export default function FAQ() {
               Talk to a Specialist
             </a>
             <Link
-              to="/book"
+              to="/site/book"
               className="inline-flex items-center gap-2 h-12 px-6 rounded-xl border border-border/60 bg-card text-foreground text-sm font-bold tracking-wide uppercase transition-all hover:bg-muted/50"
             >
               <Calendar className="w-4 h-4" />

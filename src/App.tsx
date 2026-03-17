@@ -75,25 +75,25 @@ const App = () => (
             {/* Legacy route redirect */}
             <Route path="/agent-login" element={<Navigate to="/" replace />} />
 
-            {/* Public website moved to /site */}
+            {/* Public website — all nested under /site */}
             <Route path="/site" element={<Index />} />
-            <Route path="/online-estimate" element={<OnlineEstimate />} />
-            <Route path="/book" element={<Book />} />
-            <Route path="/vetting" element={<CarrierVetting />} />
-            <Route path="/vetting-dashboard" element={<VettingDashboard />} />
-            <Route path="/carrier-vetting" element={<CarrierVetting />} />
-            <Route path="/faq" element={<FAQ />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/privacy" element={<Privacy />} />
-            <Route path="/terms" element={<Terms />} />
-            <Route path="/property-lookup" element={<PropertyLookup />} />
-            <Route path="/auth" element={<Auth />} />
+            <Route path="/site/online-estimate" element={<OnlineEstimate />} />
+            <Route path="/site/book" element={<Book />} />
+            <Route path="/site/vetting" element={<CarrierVetting />} />
+            <Route path="/site/vetting-dashboard" element={<VettingDashboard />} />
+            <Route path="/site/carrier-vetting" element={<CarrierVetting />} />
+            <Route path="/site/faq" element={<FAQ />} />
+            <Route path="/site/about" element={<About />} />
+            <Route path="/site/privacy" element={<Privacy />} />
+            <Route path="/site/terms" element={<Terms />} />
+            <Route path="/site/property-lookup" element={<PropertyLookup />} />
+            <Route path="/site/auth" element={<Auth />} />
+            <Route path="/site/scan-room" element={<ScanRoom />} />
+            <Route path="/site/classic" element={<Classic />} />
+            <Route path="/site/track" element={<LiveTracking />} />
+            <Route path="/site/customer-service" element={<CustomerService />} />
             <Route path="/agent/dashboard" element={<AgentDashboard />} />
             <Route path="/admin/integrations" element={<AdminIntegrations />} />
-            <Route path="/scan-room" element={<ScanRoom />} />
-            <Route path="/classic" element={<Classic />} />
-            <Route path="/track" element={<LiveTracking />} />
-            <Route path="/customer-service" element={<CustomerService />} />
             <Route path="/admin/support-tickets" element={<AdminSupportTickets />} />
             <Route path="/admin/esign-audit" element={<AdminESignAudit />} />
             <Route path="/agent/pipeline" element={<AgentPipeline />} />

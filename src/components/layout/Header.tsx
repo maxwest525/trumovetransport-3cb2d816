@@ -55,9 +55,9 @@ interface SubNavItem {
 
 const NAV: NavItem[] = [
   { href: "/site", label: "Home" },
-  { href: "/customer-service", label: "Meet Trudy" },
+  { href: "/site/customer-service", label: "Meet Trudy" },
   { 
-    href: "/book", 
+    href: "/site/book", 
     label: "Connect With Us",
     hasDropdown: true,
     dropdownContent: {
@@ -70,7 +70,7 @@ const NAV: NavItem[] = [
     },
     subItems: [
       {
-        href: "/book",
+        href: "/site/book",
         label: "Book a Call",
         description: "Schedule a free consultation",
         icon: Phone,
@@ -78,7 +78,7 @@ const NAV: NavItem[] = [
     ]
   },
   { 
-    href: "/online-estimate", 
+    href: "/site/online-estimate", 
     label: "AI Move Estimator",
     hasDropdown: true,
     dropdownContent: {
@@ -91,14 +91,14 @@ const NAV: NavItem[] = [
     },
     subItems: [
       {
-        href: "/scan-room",
+        href: "/site/scan-room",
         label: "Scan Your Room",
         description: "AI auto-detects your furniture",
         icon: Scan,
         badge: "Beta"
       },
       {
-        href: "/online-estimate",
+        href: "/site/online-estimate",
         label: "Build Manually",
         description: "Pick from 200+ items",
         icon: Calculator
@@ -106,7 +106,7 @@ const NAV: NavItem[] = [
     ]
   },
   { 
-    href: "/track", 
+    href: "/site/track", 
     label: "Shipment Tracking",
     hasDropdown: true,
     dropdownContent: {
@@ -119,7 +119,7 @@ const NAV: NavItem[] = [
     }
   },
   { 
-    href: "/carrier-vetting", 
+    href: "/site/carrier-vetting", 
     label: "Carrier Vetting",
     hasDropdown: true,
     dropdownContent: {
@@ -278,7 +278,7 @@ export default function Header({ whiteLogo = false }: HeaderProps) {
             </nav>
             <div className="header-mobile-actions">
               <Link 
-                to="/book" 
+                to="/site/book" 
                 className="header-mobile-btn is-primary"
                 onClick={() => setMobileMenuOpen(false)}
               >

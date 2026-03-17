@@ -758,7 +758,7 @@ export default function ScanRoom() {
                 <span className="tru-scan-floating-bar-label">cu ft</span>
               </div>
               {detectedItems.length > 0 && (
-                <Link to="/online-estimate" className="tru-scan-floating-bar-btn">
+                <Link to="/site/online-estimate" className="tru-scan-floating-bar-btn">
                   <ArrowRight className="w-4 h-4" />
                   View All
                 </Link>
@@ -905,7 +905,7 @@ export default function ScanRoom() {
                           title: "Inventory Migrated Successfully!",
                           description: `${detectedItems.length} items have been synced to the manual builder.`,
                         });
-                        navigate('/online-estimate');
+                        navigate('/site/online-estimate');
                       }}
                       disabled={detectedItems.length === 0}
                       className="tru-scan-btn-dark"
@@ -924,7 +924,7 @@ export default function ScanRoom() {
         <section className="tru-scan-bottom-cta">
           <div className="tru-scan-bottom-buttons">
             <button
-              onClick={() => navigate("/online-estimate")}
+              onClick={() => navigate("/site/online-estimate")}
               className="tru-scan-alt-btn"
             >
               <Sparkles className="w-4 h-4" />
@@ -937,7 +937,7 @@ export default function ScanRoom() {
               <Phone className="w-4 h-4" />
               Prefer to talk?
             </a>
-            <Link to="/book" className="tru-secondary-action-btn">
+            <Link to="/site/book" className="tru-secondary-action-btn">
               <Video className="w-4 h-4" />
               Book Video Consult
             </Link>
