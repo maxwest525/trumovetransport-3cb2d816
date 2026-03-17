@@ -60,21 +60,54 @@ const migrateNotifSettings = (raw: any): NotificationSettings => {
 };
 
 const defaultEntries: WatchEntry[] = [
+  // Legal
   { id: '1', pattern: 'cancel', type: 'keyword', category: 'legal' },
   { id: '2', pattern: 'refund', type: 'keyword', category: 'legal' },
   { id: '3', pattern: 'lawsuit', type: 'keyword', category: 'legal' },
   { id: '4', pattern: 'attorney', type: 'keyword', category: 'legal' },
+  { id: '90', pattern: 'lawsuit|attorney|legal action|litigat', type: 'regex', category: 'legal' },
+  // Anger
   { id: '20', pattern: 'furious', type: 'keyword', category: 'anger' },
   { id: '21', pattern: 'outraged', type: 'keyword', category: 'anger' },
+  // Escalation
   { id: '40', pattern: 'speak to a supervisor', type: 'phrase', category: 'escalation' },
   { id: '41', pattern: 'speak to a manager', type: 'phrase', category: 'escalation' },
+  // Compliance
   { id: '60', pattern: 'I guarantee', type: 'phrase', category: 'compliance' },
   { id: '61', pattern: 'I promise', type: 'phrase', category: 'compliance' },
+  // PII
   { id: '70', pattern: 'social security', type: 'phrase', category: 'pii' },
-  { id: '80', pattern: 'too expensive', type: 'phrase', category: 'rebuttal' },
-  { id: '90', pattern: 'lawsuit|attorney|legal action|litigat', type: 'regex', category: 'legal' },
-  { id: '93', pattern: 'discriminat|harass|threaten', type: 'regex', category: 'safety' },
   { id: '96', pattern: '\\b\\d{3}-\\d{2}-\\d{4}\\b', type: 'regex', category: 'pii' },
+  { id: '97', pattern: '\\b\\d{4}[- ]?\\d{4}[- ]?\\d{4}[- ]?\\d{4}\\b', type: 'regex', category: 'pii' },
+  { id: '98', pattern: '\\bDOB\\b|\\bdate of birth\\b', type: 'regex', category: 'pii' },
+  // Rebuttal
+  { id: '80', pattern: 'too expensive', type: 'phrase', category: 'rebuttal' },
+  // Safety
+  { id: '93', pattern: 'discriminat|harass|threaten', type: 'regex', category: 'safety' },
+  // HIPAA / Health Data
+  { id: '100', pattern: 'diagnosis', type: 'keyword', category: 'hipaa' },
+  { id: '101', pattern: 'prescription', type: 'keyword', category: 'hipaa' },
+  { id: '102', pattern: 'hipaa', type: 'keyword', category: 'hipaa' },
+  { id: '103', pattern: 'medical record', type: 'phrase', category: 'hipaa' },
+  { id: '104', pattern: 'health information', type: 'phrase', category: 'hipaa' },
+  { id: '105', pattern: 'patient data', type: 'phrase', category: 'hipaa' },
+  { id: '106', pattern: '\\b(diagnosis|prognosis|treatment plan|medical history|PHI|protected health)\\b', type: 'regex', category: 'hipaa' },
+  // Financial Disclosures
+  { id: '110', pattern: 'guaranteed returns', type: 'keyword', category: 'financial' },
+  { id: '111', pattern: 'no risk', type: 'keyword', category: 'financial' },
+  { id: '112', pattern: 'not financial advice', type: 'phrase', category: 'financial' },
+  { id: '113', pattern: 'past performance', type: 'phrase', category: 'financial' },
+  { id: '114', pattern: 'wire transfer', type: 'phrase', category: 'financial' },
+  { id: '115', pattern: 'routing number', type: 'phrase', category: 'financial' },
+  { id: '116', pattern: 'account number', type: 'phrase', category: 'financial' },
+  { id: '117', pattern: '\\b(guaranteed|no[- ]risk|risk[- ]free)\\s+(return|profit|income)', type: 'regex', category: 'financial' },
+  { id: '118', pattern: '\\b(insider|non[- ]public)\\s+(information|trading|knowledge)', type: 'regex', category: 'financial' },
+  // Profanity
+  { id: '120', pattern: '\\b(damn|hell|crap|ass|bastard)\\b', type: 'regex', category: 'profanity' },
+  { id: '121', pattern: '\\b(f[u*][c*]k|sh[i*]t|b[i*]tch)\\b', type: 'regex', category: 'profanity' },
+  { id: '122', pattern: '\\b(stupid|idiot|moron|dumb)\\b', type: 'regex', category: 'profanity' },
+  // Additional compliance/safety
+  { id: '130', pattern: 'off the record', type: 'phrase', category: 'compliance' },
 ];
 
 // Compliance Scripts sub-component
