@@ -70,12 +70,12 @@ export default function AgentShell({ children, breadcrumb = "" }: AgentShellProp
       <div className="flex-1 flex flex-col h-screen overflow-hidden">
         <header className="h-12 border-b border-border bg-card flex items-center justify-between px-4 shrink-0">
           <div className="flex items-center gap-3">
-            <span className="text-sm text-muted-foreground">Agent Workspace{breadcrumb}</span>
-          </div>
-          <div className="flex items-center gap-1.5">
             <Link to="/" className="p-1.5 rounded-lg hover:bg-muted transition-colors">
               <Home className="w-4 h-4 text-muted-foreground" />
             </Link>
+            <span className="text-sm text-muted-foreground">Agent Workspace{breadcrumb}</span>
+          </div>
+          <div className="flex items-center gap-1.5">
 
             {/* Team Chat */}
             <Link

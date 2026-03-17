@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback, type ReactNode } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
-  Home, Sun, Moon, Bell, Globe, LayoutDashboard, Building2,
+  Home, Sun, Moon, Bell, LayoutDashboard, Building2,
   RotateCcw, Menu, X, BarChart3,
 } from "lucide-react";
 import { useTheme } from "next-themes";
@@ -117,14 +117,10 @@ export default function LeadVendorShell({ children, breadcrumb = "" }: LeadVendo
                 <Menu className="w-4 h-4 text-muted-foreground" />
               </button>
             )}
-            <Link
-              to="/"
-              className="flex items-center gap-1.5 px-2 py-1 rounded-md border border-border bg-background text-xs font-medium text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-all shrink-0"
-            >
-              <Globe className="w-3.5 h-3.5" />
-              <span>Portal</span>
+            <Link to="/" className="p-1.5 rounded-lg hover:bg-muted transition-colors shrink-0">
+              <Home className="w-4 h-4 text-muted-foreground" />
             </Link>
-            <span className="text-xs text-muted-foreground truncate hidden sm:inline">/ Lead Vendors{breadcrumb}</span>
+            <span className="text-sm text-muted-foreground truncate hidden sm:inline">Lead Vendors{breadcrumb}</span>
           </div>
           <div className="flex items-center gap-3">
             

@@ -1,7 +1,7 @@
 import { useState, useEffect, type ReactNode } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
-  Home, Sun, Moon, Bell, Globe, Sparkles, LineChart, LayoutDashboard,
+  Home, Sun, Moon, Bell, Sparkles, LineChart, LayoutDashboard,
   RotateCcw, Gauge, Menu, X,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -135,20 +135,12 @@ export default function MarketingShell({ children, breadcrumb = "" }: MarketingS
                 <Menu className="w-4 h-4 text-muted-foreground" />
               </button>
             )}
-            <Link
-              to="/"
-              className="flex items-center gap-1.5 px-2 py-1 rounded-md border border-border bg-background text-xs font-medium text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-all shrink-0"
-            >
-              <Globe className="w-3.5 h-3.5" />
-              <span>Portal</span>
+            <Link to="/" className="p-1.5 rounded-lg hover:bg-muted transition-colors shrink-0">
+              <Home className="w-4 h-4 text-muted-foreground" />
             </Link>
-            <span className="text-xs text-muted-foreground truncate hidden sm:inline">/ Marketing{breadcrumb}</span>
+            <span className="text-sm text-muted-foreground truncate hidden sm:inline">Marketing{breadcrumb}</span>
           </div>
           <div className="flex items-center gap-2">
-            
-            <button onClick={() => setTheme(theme === "dark" ? "light" : "dark")} className="p-1.5 rounded-lg hover:bg-muted transition-colors">
-              {theme === "dark" ? <Sun className="w-4 h-4 text-muted-foreground" /> : <Moon className="w-4 h-4 text-muted-foreground" />}
-            </button>
             <button className="p-1.5 rounded-lg hover:bg-muted transition-colors relative">
               <Bell className="w-4 h-4 text-muted-foreground" />
               <span className="absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full bg-primary" />

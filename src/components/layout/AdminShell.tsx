@@ -2,7 +2,7 @@ import { useState, useEffect, type ReactNode } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Home, Sun, Moon, Bell, LayoutDashboard, Users, Link2, Package,
-  Globe, Zap, ScrollText, RotateCcw, Gauge, Sparkles, DollarSign,
+  Zap, ScrollText, RotateCcw, Gauge, Sparkles, DollarSign,
   FileText, BookOpen, CreditCard,
 } from "lucide-react";
 import logoImg from "@/assets/logo.png";
@@ -114,14 +114,10 @@ export default function AdminShell({ children, breadcrumb = "" }: AdminShellProp
       <div className="flex-1 flex flex-col min-h-screen">
         <header className="h-12 border-b border-border bg-card flex items-center justify-between px-4 shrink-0">
           <div className="flex items-center gap-3">
-            <Link
-              to="/"
-              className="flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-border bg-background text-xs font-medium text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-all"
-            >
-              <Globe className="w-3.5 h-3.5" />
-              <span>Portal</span>
+            <Link to="/" className="p-1.5 rounded-lg hover:bg-muted transition-colors">
+              <Home className="w-4 h-4 text-muted-foreground" />
             </Link>
-            <span className="text-xs text-muted-foreground">/ Admin{breadcrumb}</span>
+            <span className="text-sm text-muted-foreground">Admin{breadcrumb}</span>
           </div>
           <div className="flex items-center gap-2">
             
