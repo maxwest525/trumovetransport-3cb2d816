@@ -73,7 +73,7 @@ export default function RecordingsLibrary() {
       setPlaybackProgress(0);
       // Simulate playback progress
       let p = 0;
-      const rec = MOCK_RECORDINGS.find(r => r.id === id);
+      const rec = recordings.find(r => r.id === id);
       const dur = rec?.duration || 60;
       const interval = setInterval(() => {
         p += 1;

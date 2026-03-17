@@ -161,116 +161,16 @@ export const DEMO_COMPLIANCE_ALERTS: ComplianceAlert[] = [
   { id: 'ca-4', label: 'Mention cancellation policy', severity: 'warning', isAcknowledged: false },
 ];
 
-export const DEMO_ACTIVE_CALLS: ActiveCall[] = [
-  {
-    id: 'call-1',
-    agentId: 'agent-1',
-    agentName: 'Sarah Mitchell',
-    customerName: 'John Anderson',
-    customerPhone: '(555) 234-5678',
-    moveRoute: 'NYC → Miami',
-    startTime: new Date(Date.now() - 8 * 60 * 1000),
-    complianceScore: 85,
-    completedItems: ['1', '2', '3', '6'],
-    status: 'active'
-  },
-  {
-    id: 'call-2',
-    agentId: 'agent-2',
-    agentName: 'Mike Johnson',
-    customerName: 'Emily Chen',
-    customerPhone: '(555) 345-6789',
-    moveRoute: 'LA → Seattle',
-    startTime: new Date(Date.now() - 3 * 60 * 1000),
-    complianceScore: 92,
-    completedItems: ['1', '2', '3', '4', '5', '6', '7'],
-    status: 'active'
-  },
-  {
-    id: 'call-3',
-    agentId: 'agent-3',
-    agentName: 'Lisa Wong',
-    customerName: 'David Martinez',
-    customerPhone: '(555) 456-7890',
-    moveRoute: 'Chicago → Denver',
-    startTime: new Date(Date.now() - 12 * 60 * 1000),
-    complianceScore: 78,
-    completedItems: ['1', '2', '3'],
-    status: 'on-hold'
-  },
-];
+// Active calls and performance data should come from DB
+export const DEMO_ACTIVE_CALLS: ActiveCall[] = [];
 
-export const DEMO_AGENT_PERFORMANCE: AgentPerformance[] = [
-  {
-    agentId: 'agent-1',
-    agentName: 'Sarah Mitchell',
-    callsToday: 12,
-    avgHandleTime: '6:45',
-    complianceRate: 94,
-    conversionRate: 42,
-    status: 'on-call'
-  },
-  {
-    agentId: 'agent-2',
-    agentName: 'Mike Johnson',
-    callsToday: 15,
-    avgHandleTime: '5:20',
-    complianceRate: 98,
-    conversionRate: 38,
-    status: 'on-call'
-  },
-  {
-    agentId: 'agent-3',
-    agentName: 'Lisa Wong',
-    callsToday: 9,
-    avgHandleTime: '7:10',
-    complianceRate: 86,
-    conversionRate: 35,
-    status: 'on-call'
-  },
-  {
-    agentId: 'agent-4',
-    agentName: 'Tom Harris',
-    callsToday: 11,
-    avgHandleTime: '5:55',
-    complianceRate: 91,
-    conversionRate: 44,
-    status: 'available'
-  },
-  {
-    agentId: 'agent-5',
-    agentName: 'Anna Rodriguez',
-    callsToday: 8,
-    avgHandleTime: '8:15',
-    complianceRate: 88,
-    conversionRate: 52,
-    status: 'away'
-  },
-];
+export const DEMO_AGENT_PERFORMANCE: AgentPerformance[] = [];
 
 export const DEMO_TEAM_METRICS: TeamMetrics = {
-  totalCalls: 847,
-  avgComplianceScore: 91,
-  conversionRate: 38,
-  avgHandleTime: '6:24',
-  callsByHour: [
-    { hour: '8am', calls: 45 },
-    { hour: '9am', calls: 82 },
-    { hour: '10am', calls: 96 },
-    { hour: '11am', calls: 88 },
-    { hour: '12pm', calls: 64 },
-    { hour: '1pm', calls: 78 },
-    { hour: '2pm', calls: 92 },
-    { hour: '3pm', calls: 86 },
-    { hour: '4pm', calls: 74 },
-    { hour: '5pm', calls: 52 },
-  ],
-  topPerformers: [
-    { name: 'Mike Johnson', score: 98 },
-    { name: 'Sarah Mitchell', score: 94 },
-    { name: 'Tom Harris', score: 91 },
-    { name: 'Anna Rodriguez', score: 88 },
-    { name: 'Lisa Wong', score: 86 },
-  ],
-  alertsCount: 3,
+  totalCalls: 0,
+  avgComplianceScore: 0,
+  conversionRate: 0,
+  avgHandleTime: '0:00',
+  callsByHour: [],
+  alertsCount: 0,
 };
