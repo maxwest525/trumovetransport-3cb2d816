@@ -5,7 +5,7 @@ import SiteShell from "@/components/layout/SiteShell";
 import PortalAuthForm from "@/components/auth/PortalAuthForm";
 import {
   Users, BarChart3, Shield, ArrowRight, LogOut, Sparkles,
-  DollarSign, Building2, ClipboardCheck, Globe, ExternalLink,
+  DollarSign, Building2, ClipboardCheck, Globe,
 } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import logoImg from "@/assets/logo.png";
