@@ -29,8 +29,6 @@ import CustomerService from "./pages/CustomerService";
 import AdminSupportTickets from "./pages/AdminSupportTickets";
 import AgentPipeline from "./pages/AgentPipeline";
 import ProfileSettings from "./pages/ProfileSettings";
-import Demo from "./pages/Demo";
-import AgentLoginOld from "./pages/AgentLoginOld";
 import ManagerDashboard from "./pages/ManagerDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminUsersPage from "./pages/AdminUsersPage";
