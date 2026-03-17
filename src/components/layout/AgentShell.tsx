@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Home, Sun, Moon, Bell } from "lucide-react";
 import { useTheme } from "next-themes";
 import AgentSidebar from "@/components/agent/AgentSidebar";
-import DemoDataToggle from "@/components/leads/DemoDataToggle";
+
 import { FloatingDialer } from "@/components/agent/FloatingDialer";
 import MiniSoftphone from "@/components/dialer/MiniSoftphone";
 import { setPortalContext } from "@/hooks/usePortalContext";
