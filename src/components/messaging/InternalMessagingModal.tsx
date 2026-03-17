@@ -52,26 +52,7 @@ interface InternalMessagingModalProps {
 const DEMO_PROFILES: Profile[] = [];
 const DEMO_CONVERSATIONS: Conversation[] = [];
 
-const DEMO_MESSAGES: Record<string, Message[]> = {
-  conv1: [
-    { id: "m1a", content: "Hey, got a new lead from the website", sender_id: "1", created_at: new Date(Date.now() - 600000).toISOString() },
-    { id: "m1b", content: "Great! What's the details?", sender_id: "current", created_at: new Date(Date.now() - 540000).toISOString() },
-    { id: "m1c", content: "Cross-country move, NYC to LA. 4BR home.", sender_id: "1", created_at: new Date(Date.now() - 480000).toISOString() },
-    { id: "m1d", content: "Sounds good, I'll reach out now", sender_id: "current", created_at: new Date(Date.now() - 420000).toISOString() },
-    { id: "m1e", content: "Can you handle the Johnson move?", sender_id: "1", created_at: new Date(Date.now() - 300000).toISOString() },
-  ],
-  conv2: [
-    { id: "m2a", content: "Team standup reminder", sender_id: "2", created_at: new Date(Date.now() - 3600000).toISOString() },
-    { id: "m2b", content: "I'll be 5 min late", sender_id: "3", created_at: new Date(Date.now() - 3000000).toISOString() },
-    { id: "m2c", content: "No problem!", sender_id: "4", created_at: new Date(Date.now() - 2400000).toISOString() },
-    { id: "m2d", content: "Meeting at 3pm today", sender_id: "2", created_at: new Date(Date.now() - 1800000).toISOString() },
-  ],
-  conv3: [
-    { id: "m3a", content: "The Williams estimate is ready for review", sender_id: "current", created_at: new Date(Date.now() - 172800000).toISOString() },
-    { id: "m3b", content: "Looking at it now", sender_id: "5", created_at: new Date(Date.now() - 172000000).toISOString() },
-    { id: "m3c", content: "Quote approved!", sender_id: "5", created_at: new Date(Date.now() - 86400000).toISOString() },
-  ],
-};
+const DEMO_MESSAGES: Record<string, Message[]> = {};
 
 export function InternalMessagingModal({ open, onOpenChange }: InternalMessagingModalProps) {
   const [activeTab, setActiveTab] = useState("messages");
