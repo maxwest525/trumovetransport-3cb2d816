@@ -49,7 +49,7 @@ function getRecommendation(s: WizardSelections): Recommendation {
       backup: "Long-form Authority Page",
       why: "Captures detailed move info upfront. Filters casual browsers from serious movers.",
       cta: "Get My Interstate Moving Quote",
-      routing: "Form submit → webhook → Convoso with full context",
+      routing: "Form submit → attribution → webhook → Convoso",
       kpi: "Form rate, lead quality score, close rate",
     };
   }
