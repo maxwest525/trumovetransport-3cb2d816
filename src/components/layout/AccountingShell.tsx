@@ -23,7 +23,7 @@ const NAV_ITEMS = [
   { label: "Overhead & Costs", icon: DollarSign },
   { label: "Lead Costs", icon: Receipt },
   { label: "Subscriptions", icon: Receipt },
-  { label: "QuickBooks", icon: Globe },
+  { label: "QuickBooks", icon: CreditCard },
 ];
 
 interface AccountingShellProps {
