@@ -55,17 +55,28 @@ export default function AgentInventory() {
   const [activeTab, setActiveTab] = useState("manual");
   const [leadData, setLeadData] = useState<any>(null);
 
-  // Fetch lead data for the summary panel
+  // Fetch lead data + admin base rate for pre-fill
   useEffect(() => {
     if (!leadId) return;
-    supabase
-      .from("leads")
-      .select("*")
-      .eq("id", leadId)
-      .single()
-      .then(({ data }) => {
-        if (data) setLeadData(data);
+
+    // Load lead
+    supabase.from("leads").select("*").eq("id", leadId).single().then(({ data }) => {
+      if (data) {
+        setLeadData(data);
+        // Pre-fill from lead's price_per_cuft (set by AI estimate on move details page)
+        if (data.price_per_cuft && Number(data.price_per_cuft) > 0) {
+          setPricePerCuFt(String(data.price_per_cuft));
+          return; // lead-specific rate takes priority
+        }
+      }
+      // Fallback: pull admin base rate
+      supabase.from("pricing_settings").select("setting_value").eq("setting_key", "base_rate_per_cuft").maybeSingle().then(({ data: ps }) => {
+        const val = (ps?.setting_value as any)?.value;
+        if (val && !pricePerCuFt) {
+          setPricePerCuFt(String(val));
+        }
       });
+    });
   }, [leadId]);
 
   const suggestions = ROOM_SUGGESTIONS[activeRoom] || [];
