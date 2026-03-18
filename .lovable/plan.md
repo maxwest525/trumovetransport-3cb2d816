@@ -1,54 +1,31 @@
-# Growth Engine Architecture
 
-## Lead Flow (Canonical)
 
-```text
-Traffic Source → Landing Page / Call Tracking → Attribution Capture
-  → Webhook / Router → Convoso (Instant Call) → CRM Sync
-  → Backup Follow-Up Logic
-```
+## Agent Tool Launcher on Dashboard
 
-### Key Principles
+**Flow:** `/ (Portal Hub)` → click "Agents" → `/agent/dashboard` → **Tool Launcher Modal auto-opens on first visit**
 
-- **Convoso** is the primary instant-call engine. Leads route here first for immediate dial attempts.
-- **CRM** (GHL, Granot, or custom) is a sync target / system of record, not the primary destination.
-- Each workflow should designate **one primary CRM**; others are optional secondary sync targets.
-- GHL does not replace Convoso. It provides backup sequences and reporting.
-- "Follow-up automation" means support logic around the instant-call flow, not passive CRM drip sequences.
+### What to build
 
-### Lead Statuses (Convoso feedback loop)
+1. **`AgentToolLauncherModal.tsx`** (new component)
+   - Dialog with two large cards: **Granot CRM** and **Convoso Dialer**
+   - "Skip to Dashboard →" link to dismiss
+   - Clicking a tool navigates to `/tools/granot` or `/tools/convoso`
+   - Uses sessionStorage flag so it only auto-opens once per session (not every page refresh)
 
-- New Lead
-- In Queue
-- Attempted
-- Connected
-- Not Reached
-- Escalated
-- Duplicate
-- Suppressed
+2. **`AgentDashboardContent.tsx`** (update)
+   - Import and render the modal, auto-open on mount if no sessionStorage flag set
+   - Add a small "My Tools" button somewhere in the dashboard header so agents can re-open the launcher anytime
 
-### Backup Automation Recipes
+3. **`IntegrationPlaceholder.tsx`** (update)
+   - Remove `AgentShell` wrapper (no sidebar)
+   - Replace with a minimal fullscreen layout: slim 40px header with logo, tool name, and "← Back to Dashboard" button
+   - Rest of viewport = tool content area (placeholder now, iframe-ready later)
 
-1. New form lead → capture attribution → webhook to Convoso → instant call attempt → sync to CRM
-2. Lead not reached after 60s → trigger SMS with quote link
-3. No contact after 5 minutes → escalate to supervisor dashboard alert
-4. Missed inbound call from paid source → create Convoso callback + alert
-5. After-hours form submission → queue for next calling block + send auto-text
-6. Duplicate lead detected → suppress in Convoso, tag in CRM
-7. Source/campaign changes on re-submission → preserve original attribution in CRM
-8. Lead not worked within 2 minutes → flash alert on Growth Dashboard
+### Files
 
-### After-Hours Logic (First-Class)
+| File | Action |
+|------|--------|
+| `src/components/agent/AgentToolLauncherModal.tsx` | Create |
+| `src/components/agent/AgentDashboardContent.tsx` | Add modal + trigger |
+| `src/pages/IntegrationPlaceholder.tsx` | Minimal fullscreen shell |
 
-- Business hours rules per location/team
-- Queue timing and next-call-block scheduling
-- Auto-text behavior for after-hours submissions
-- Morning queue priority ordering
-
-## Upgrade Plan (Pending)
-
-### Pass 1: Dashboard + Landing Pages + Leads + SEO Hub
-### Pass 2: Ad Copy + Tracking + Automation + Reviews
-### Pass 3: Competitors + Settings + Campaign Builder Enhancement + Shell Polish
-
-See previous conversation for full details on each pass.
