@@ -633,7 +633,7 @@ function ShipmentTrackerSection({ navigate }: { navigate: (path: string) => void
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-semibold tracking-wider uppercase text-[#8b7e6a]">Cross-Reference Check</span>
                     <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#22c55e]">
-                      <CheckCircle2 className="w-3 h-3" />
+                      <CheckCircle className="w-3 h-3" />
                       Verified
                     </span>
                   </div>
