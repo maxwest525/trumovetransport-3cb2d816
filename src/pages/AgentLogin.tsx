@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import SiteShell from "@/components/layout/SiteShell";
 import PortalAuthForm from "@/components/auth/PortalAuthForm";
-import { LogOut, Bell, Headset, Users, Shield, Brain, Sparkles } from "lucide-react";
+import { LogOut, Bell, Headset, Users, Shield, Sparkles } from "lucide-react";
 import logoImg from "@/assets/logo.png";
 import PortalCard from "@/components/portal/PortalCard";
 import { useAgentProfile } from "@/hooks/useAgentProfile";
@@ -54,14 +54,6 @@ const PORTALS = [
     href: "/admin/dashboard",
     icon: Shield,
     accentHsl: "38 92% 50%",
-  },
-  {
-    key: "pulse",
-    label: "Pulse Command",
-    description: "PulseAI Compliance Beta",
-    href: "/pulse",
-    icon: Brain,
-    accentHsl: "0 72% 51%",
   },
 ];
 
