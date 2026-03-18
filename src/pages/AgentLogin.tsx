@@ -170,7 +170,7 @@ export default function AgentLogin() {
           ))}
         </div>
 
-        <AgentToolLauncherModal open={launcherOpen} onOpenChange={setLauncherOpen} />
+        
       </div>
     </PageShell>
   );
