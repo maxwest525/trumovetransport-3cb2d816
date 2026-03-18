@@ -20,8 +20,8 @@ export default function AgentToolLauncherModal({ open, onOpenChange }: AgentTool
   const handleLaunchAll = () => {
     const sw = window.screen.availWidth;
     const sh = window.screen.availHeight;
-    const sl = window.screen.availLeft ?? 0;
-    const st = window.screen.availTop ?? 0;
+    const sl = (window.screen as any).availLeft ?? 0;
+    const st = (window.screen as any).availTop ?? 0;
     const count = TOOLS.length;
     const w = Math.floor(sw / count);
 
