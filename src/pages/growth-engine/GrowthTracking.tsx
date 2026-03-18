@@ -1,39 +1,55 @@
 import GrowthEngineShell from "@/components/layout/GrowthEngineShell";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-  ArrowRight, CheckCircle2, AlertTriangle, XCircle, HelpCircle,
-  Lightbulb, Phone, ClipboardList, BarChart3, Globe, Link2,
-  Copy, Crosshair, Zap, Shield, Eye, TrendingUp, Activity
+  CheckCircle2, AlertTriangle, XCircle, Link2,
+  Copy, Globe, Activity, ArrowUpRight, ArrowDownRight,
+  Phone, FileText, Clock, Zap
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-
-const CONVERSION_PATHS = [
-  { from: "Click", to: "Form", icon: ClipboardList, color: "text-blue-500" },
-  { from: "Click", to: "Call", icon: Phone, color: "text-green-500" },
-  { from: "Form", to: "Sale", icon: TrendingUp, color: "text-purple-500" },
-  { from: "Call", to: "Sale", icon: TrendingUp, color: "text-amber-500" },
-  { from: "Landing Page", to: "Sale", icon: BarChart3, color: "text-cyan-500" },
-  { from: "Source", to: "Sale", icon: Globe, color: "text-red-500" },
-];
+import { cn } from "@/lib/utils";
 
 const PIXEL_HEALTH = [
-  { name: "Google Ads Conversion Tag", status: "active", lastFired: "2 min ago", events: 847 },
+  { name: "Google Ads Tag", status: "active", lastFired: "2 min ago", events: 847 },
   { name: "Meta Pixel", status: "active", lastFired: "5 min ago", events: 1203 },
-  { name: "Google Analytics 4", status: "active", lastFired: "1 min ago", events: 3241 },
-  { name: "CallRail Tracking", status: "warning", lastFired: "3 hours ago", events: 156 },
-  { name: "Google Search Console", status: "active", lastFired: "1 hour ago", events: null },
+  { name: "GA4", status: "active", lastFired: "1 min ago", events: 3241 },
+  { name: "CallRail", status: "warning", lastFired: "3 hours ago", events: 156 },
+  { name: "Search Console", status: "active", lastFired: "1 hour ago", events: null },
 ];
 
-const TROUBLESHOOTING = [
-  { issue: "Leads not showing source", fix: "Check UTM parameters on ad URLs. Ensure utm_source and utm_medium are set." },
-  { issue: "Calls not tracked", fix: "Verify CallRail number pool is active. Check that dynamic number insertion script is on your landing pages." },
-  { issue: "Conversions not in Google Ads", fix: "Confirm conversion action is set to 'Primary'. Check that the Google tag fires on your thank-you page or form submit." },
-  { issue: "Meta pixel not firing", fix: "Use Meta Pixel Helper browser extension. Confirm pixel ID matches your ad account." },
-  { issue: "Duplicate leads", fix: "Check webhook deduplication rules. Ensure forms have duplicate submission prevention." },
+const ATTRIBUTION_BY_SOURCE = [
+  { source: "Google Search", firstTouch: 234, lastTouch: 218, assisted: 42, bookedFirstTouch: 42, bookedLastTouch: 38 },
+  { source: "Meta Ads", firstTouch: 156, lastTouch: 172, assisted: 28, bookedFirstTouch: 18, bookedLastTouch: 22 },
+  { source: "Organic", firstTouch: 89, lastTouch: 67, assisted: 34, bookedFirstTouch: 14, bookedLastTouch: 11 },
+  { source: "Referral", firstTouch: 41, lastTouch: 38, assisted: 8, bookedFirstTouch: 11, bookedLastTouch: 10 },
+  { source: "Direct", firstTouch: 67, lastTouch: 92, assisted: 0, bookedFirstTouch: 12, bookedLastTouch: 16 },
+];
+
+const CONVERSION_EVENTS = [
+  { event: "Form Submit", source: "Google Search", count: 184, lastSeen: "3 min ago", status: "active" },
+  { event: "Phone Call", source: "CallRail", count: 234, lastSeen: "8 min ago", status: "active" },
+  { event: "Form Submit", source: "Meta Pixel", count: 112, lastSeen: "12 min ago", status: "active" },
+  { event: "Quote Started", source: "GA4", count: 567, lastSeen: "1 min ago", status: "active" },
+  { event: "Lead Event", source: "Meta CAPI", count: 98, lastSeen: "15 min ago", status: "active" },
+  { event: "Thank You Page", source: "Google Ads", count: 0, lastSeen: "Never", status: "error" },
+];
+
+const WEBHOOK_LOG = [
+  { time: "2:34 PM", event: "Form Submit", source: "Google", destination: "Convoso", status: "success", latency: "0.8s" },
+  { time: "2:31 PM", event: "Phone Call", source: "CallRail", destination: "CRM", status: "success", latency: "1.2s" },
+  { time: "2:28 PM", event: "Form Submit", source: "Meta", destination: "Convoso", status: "success", latency: "0.6s" },
+  { time: "2:22 PM", event: "Form Submit", source: "Google", destination: "Convoso", status: "failed", latency: "timeout" },
+  { time: "2:18 PM", event: "Instant Form", source: "Meta", destination: "Convoso", status: "success", latency: "0.4s" },
+];
+
+const RESPONSE_SPEED_BY_SOURCE = [
+  { source: "Google Search", avgSpeed: "8s", median: "5s", p90: "22s", status: "good" },
+  { source: "Meta Ads", avgSpeed: "14s", median: "10s", p90: "45s", status: "ok" },
+  { source: "Meta Instant Form", avgSpeed: "6s", median: "4s", p90: "12s", status: "good" },
+  { source: "Organic", avgSpeed: "22s", median: "18s", p90: "1m 40s", status: "ok" },
+  { source: "CallRail Inbound", avgSpeed: "3s", median: "2s", p90: "8s", status: "good" },
 ];
 
 export default function GrowthTracking() {
@@ -52,199 +68,188 @@ export default function GrowthTracking() {
 
   return (
     <GrowthEngineShell>
-      <div className="space-y-6">
-        {/* Header */}
+      <div className="space-y-5">
         <div>
           <h1 className="text-xl font-bold text-foreground">Tracking & Attribution</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Understand what is converting and where your best leads come from
-          </p>
+          <p className="text-sm text-muted-foreground mt-0.5">Pixel health, conversion events, attribution comparison, and routing verification.</p>
         </div>
 
-        {/* What is attribution */}
-        <Card className="border-primary/20 bg-primary/5">
-          <CardContent className="p-4">
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                <HelpCircle className="w-4 h-4 text-primary" />
-              </div>
-              <div className="space-y-2">
-                <h3 className="text-sm font-semibold text-foreground">What is attribution?</h3>
-                <ul className="text-xs text-muted-foreground space-y-1">
-                  <li>• Attribution tells you which ad, keyword, or page brought each lead</li>
-                  <li>• Without it, you cannot tell what is working and what is wasting money</li>
-                  <li>• It connects the dots from click all the way to a booked move</li>
-                </ul>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Visual Attribution Flow */}
-        <Card>
-          <CardContent className="p-4 space-y-3">
-            <h3 className="text-sm font-semibold text-foreground">Your Attribution Flow</h3>
-            <div className="flex items-center gap-2 flex-wrap py-2">
-              {["Ad Click", "Landing Page", "Form / Call", "Attribution Capture", "Webhook / Router", "Convoso / CRM", "Booked / Sale"].map((step, i, arr) => (
-                <div key={step} className="flex items-center gap-2">
-                  <div className={`px-3 py-1.5 rounded-lg text-xs font-medium ${
-                    i === 0 ? 'bg-blue-500/10 text-blue-600' :
-                    i === arr.length - 1 ? 'bg-green-500/10 text-green-600' :
-                    i === 5 ? 'bg-emerald-500/10 text-emerald-600' :
-                    'bg-muted text-foreground'
-                  }`}>
-                    {step}
-                  </div>
-                  {i < arr.length - 1 && <ArrowRight className="w-3 h-3 text-muted-foreground" />}
+        {/* Pixel Health */}
+        <div className="bg-card rounded-xl border border-border p-5">
+          <h2 className="text-sm font-semibold text-foreground mb-3">Pixel & Event Health</h2>
+          <div className="space-y-1.5">
+            {PIXEL_HEALTH.map(p => (
+              <div key={p.name} className="flex items-center justify-between py-2 border-b border-border/50 last:border-0">
+                <div className="flex items-center gap-2.5">
+                  <span className={cn("w-2 h-2 rounded-full", p.status === "active" ? "bg-emerald-500" : p.status === "warning" ? "bg-amber-500" : "bg-red-500")} />
+                  <span className="text-[12px] font-medium text-foreground">{p.name}</span>
                 </div>
-              ))}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Leads are captured on your page or form, attributed with UTM tags, then routed via webhook to Convoso and your CRM.
-            </p>
-          </CardContent>
-        </Card>
-
-        {/* Conversion Paths */}
-        <div className="space-y-3">
-          <h2 className="text-sm font-semibold text-foreground">Conversion Paths You Track</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            {CONVERSION_PATHS.map((path) => {
-              const Icon = path.icon;
-              return (
-                <Card key={`${path.from}-${path.to}`}>
-                  <CardContent className="p-3 flex items-center gap-2.5">
-                    <Icon className={`w-4 h-4 shrink-0 ${path.color}`} />
-                    <div>
-                      <span className="text-xs font-semibold text-foreground">{path.from} → {path.to}</span>
-                      <p className="text-[10px] text-muted-foreground">Track conversion rate</p>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* First Touch vs Last Touch */}
-        <Card>
-          <CardContent className="p-4 space-y-3">
-            <h3 className="text-sm font-semibold text-foreground">First Touch vs Last Touch</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div className="p-3 rounded-lg bg-blue-500/5 border border-blue-500/20 space-y-1.5">
-                <span className="text-xs font-semibold text-blue-600">First Touch</span>
-                <p className="text-xs text-muted-foreground">
-                  How did this lead first discover you? (e.g., Google Search for "interstate movers California")
-                </p>
-                <Badge variant="outline" className="text-[10px]">Best for: understanding what drives awareness</Badge>
+                <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
+                  <span>Last: {p.lastFired}</span>
+                  {p.events !== null && <Badge variant="secondary" className="text-[10px]">{p.events.toLocaleString()}</Badge>}
+                </div>
               </div>
-              <div className="p-3 rounded-lg bg-green-500/5 border border-green-500/20 space-y-1.5">
-                <span className="text-xs font-semibold text-green-600">Last Touch</span>
-                <p className="text-xs text-muted-foreground">
-                  What was the last thing they did before converting? (e.g., clicked a Meta retargeting ad)
-                </p>
-                <Badge variant="outline" className="text-[10px]">Best for: understanding what closes the deal</Badge>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Pixel & Event Health */}
-        <div className="space-y-3">
-          <h2 className="text-sm font-semibold text-foreground">Pixel & Event Health</h2>
-          <div className="space-y-2">
-            {PIXEL_HEALTH.map((pixel) => (
-              <Card key={pixel.name}>
-                <CardContent className="p-3 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className={`w-2 h-2 rounded-full ${
-                      pixel.status === 'active' ? 'bg-green-500' :
-                      pixel.status === 'warning' ? 'bg-amber-500' : 'bg-red-500'
-                    }`} />
-                    <div>
-                      <span className="text-xs font-semibold text-foreground">{pixel.name}</span>
-                      <p className="text-[10px] text-muted-foreground">Last fired: {pixel.lastFired}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {pixel.events !== null && (
-                      <Badge variant="secondary" className="text-[10px]">{pixel.events.toLocaleString()} events</Badge>
-                    )}
-                    <Badge variant={pixel.status === 'active' ? 'default' : 'secondary'} className="text-[10px]">
-                      {pixel.status === 'active' ? <CheckCircle2 className="w-2.5 h-2.5 mr-0.5" /> :
-                       pixel.status === 'warning' ? <AlertTriangle className="w-2.5 h-2.5 mr-0.5" /> :
-                       <XCircle className="w-2.5 h-2.5 mr-0.5" />}
-                      {pixel.status}
-                    </Badge>
-                  </div>
-                </CardContent>
-              </Card>
             ))}
           </div>
+        </div>
+
+        {/* Conversion Events Log */}
+        <div className="bg-card rounded-xl border border-border p-5">
+          <h2 className="text-sm font-semibold text-foreground mb-3">Conversion Events</h2>
+          <table className="w-full text-[11px]">
+            <thead>
+              <tr className="border-b border-border">
+                <th className="text-left py-2 text-muted-foreground font-semibold">Event</th>
+                <th className="text-left py-2 text-muted-foreground font-semibold">Source</th>
+                <th className="text-right py-2 text-muted-foreground font-semibold">Count (30d)</th>
+                <th className="text-right py-2 text-muted-foreground font-semibold">Last Seen</th>
+                <th className="text-right py-2 text-muted-foreground font-semibold">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {CONVERSION_EVENTS.map((e, i) => (
+                <tr key={i} className={cn("border-b border-border/50", e.status === "error" && "bg-red-500/3")}>
+                  <td className="py-2 font-medium text-foreground">{e.event}</td>
+                  <td className="py-2 text-muted-foreground">{e.source}</td>
+                  <td className="py-2 text-right text-foreground">{e.count}</td>
+                  <td className="py-2 text-right text-muted-foreground">{e.lastSeen}</td>
+                  <td className="py-2 text-right">
+                    <span className={cn("inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full",
+                      e.status === "active" ? "bg-emerald-500/10 text-emerald-600" : "bg-red-500/10 text-red-600"
+                    )}>
+                      {e.status === "active" ? <CheckCircle2 className="w-2.5 h-2.5" /> : <XCircle className="w-2.5 h-2.5" />}
+                      {e.status}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Attribution comparison + Response speed */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="bg-card rounded-xl border border-border p-5">
+            <h2 className="text-sm font-semibold text-foreground mb-3">Attribution Comparison</h2>
+            <table className="w-full text-[11px]">
+              <thead>
+                <tr className="border-b border-border">
+                  <th className="text-left py-2 text-muted-foreground font-semibold">Source</th>
+                  <th className="text-right py-2 text-muted-foreground font-semibold">First Touch</th>
+                  <th className="text-right py-2 text-muted-foreground font-semibold">Last Touch</th>
+                  <th className="text-right py-2 text-muted-foreground font-semibold">Assisted</th>
+                  <th className="text-right py-2 text-muted-foreground font-semibold">Booked (FT)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {ATTRIBUTION_BY_SOURCE.map(row => (
+                  <tr key={row.source} className="border-b border-border/50">
+                    <td className="py-2 font-medium text-foreground">{row.source}</td>
+                    <td className="py-2 text-right text-foreground">{row.firstTouch}</td>
+                    <td className="py-2 text-right text-foreground">{row.lastTouch}</td>
+                    <td className="py-2 text-right text-muted-foreground">{row.assisted}</td>
+                    <td className="py-2 text-right font-semibold text-emerald-600">{row.bookedFirstTouch}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="bg-card rounded-xl border border-border p-5">
+            <h2 className="text-sm font-semibold text-foreground mb-3">Response Speed by Source</h2>
+            <table className="w-full text-[11px]">
+              <thead>
+                <tr className="border-b border-border">
+                  <th className="text-left py-2 text-muted-foreground font-semibold">Source</th>
+                  <th className="text-right py-2 text-muted-foreground font-semibold">Avg</th>
+                  <th className="text-right py-2 text-muted-foreground font-semibold">Median</th>
+                  <th className="text-right py-2 text-muted-foreground font-semibold">P90</th>
+                  <th className="text-right py-2 text-muted-foreground font-semibold">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {RESPONSE_SPEED_BY_SOURCE.map(row => (
+                  <tr key={row.source} className="border-b border-border/50">
+                    <td className="py-2 font-medium text-foreground">{row.source}</td>
+                    <td className="py-2 text-right text-foreground">{row.avgSpeed}</td>
+                    <td className="py-2 text-right text-foreground">{row.median}</td>
+                    <td className="py-2 text-right text-muted-foreground">{row.p90}</td>
+                    <td className="py-2 text-right">
+                      <span className={cn("w-2 h-2 rounded-full inline-block", row.status === "good" ? "bg-emerald-500" : "bg-amber-500")} />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Webhook Log */}
+        <div className="bg-card rounded-xl border border-border p-5">
+          <h2 className="text-sm font-semibold text-foreground mb-3">Webhook / Routing Log</h2>
+          <table className="w-full text-[11px]">
+            <thead>
+              <tr className="border-b border-border">
+                <th className="text-left py-2 text-muted-foreground font-semibold">Time</th>
+                <th className="text-left py-2 text-muted-foreground font-semibold">Event</th>
+                <th className="text-left py-2 text-muted-foreground font-semibold">Source</th>
+                <th className="text-left py-2 text-muted-foreground font-semibold">Destination</th>
+                <th className="text-right py-2 text-muted-foreground font-semibold">Latency</th>
+                <th className="text-right py-2 text-muted-foreground font-semibold">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {WEBHOOK_LOG.map((row, i) => (
+                <tr key={i} className={cn("border-b border-border/50", row.status === "failed" && "bg-red-500/3")}>
+                  <td className="py-2 text-muted-foreground">{row.time}</td>
+                  <td className="py-2 font-medium text-foreground">{row.event}</td>
+                  <td className="py-2 text-foreground">{row.source}</td>
+                  <td className="py-2 text-foreground">{row.destination}</td>
+                  <td className="py-2 text-right text-foreground">{row.latency}</td>
+                  <td className="py-2 text-right">
+                    <span className={cn("text-[10px] font-bold px-2 py-0.5 rounded-full",
+                      row.status === "success" ? "bg-emerald-500/10 text-emerald-600" : "bg-red-500/10 text-red-600"
+                    )}>{row.status}</span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
 
         {/* UTM Builder */}
-        <Card>
-          <CardContent className="p-4 space-y-3">
-            <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
-              <Link2 className="w-4 h-4 text-primary" /> UTM Builder
-            </h3>
-            <p className="text-xs text-muted-foreground">
-              UTM tags tell you exactly which campaign, source, and keyword brought each lead. Add them to every ad URL.
-            </p>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1">
-                <label className="text-[10px] font-medium text-muted-foreground uppercase">Base URL</label>
-                <Input value={baseUrl} onChange={e => setBaseUrl(e.target.value)} className="h-8 text-xs" />
-              </div>
-              <div className="space-y-1">
-                <label className="text-[10px] font-medium text-muted-foreground uppercase">Source</label>
-                <Input value={utmSource} onChange={e => setUtmSource(e.target.value)} className="h-8 text-xs" placeholder="google, facebook" />
-              </div>
-              <div className="space-y-1">
-                <label className="text-[10px] font-medium text-muted-foreground uppercase">Medium</label>
-                <Input value={utmMedium} onChange={e => setUtmMedium(e.target.value)} className="h-8 text-xs" placeholder="cpc, social" />
-              </div>
-              <div className="space-y-1">
-                <label className="text-[10px] font-medium text-muted-foreground uppercase">Campaign</label>
-                <Input value={utmCampaign} onChange={e => setUtmCampaign(e.target.value)} className="h-8 text-xs" placeholder="interstate-moving-ca" />
-              </div>
-              <div className="space-y-1 col-span-2">
-                <label className="text-[10px] font-medium text-muted-foreground uppercase">Term (keyword)</label>
-                <Input value={utmTerm} onChange={e => setUtmTerm(e.target.value)} className="h-8 text-xs" placeholder="long distance movers" />
-              </div>
+        <div className="bg-card rounded-xl border border-border p-5">
+          <h3 className="text-sm font-semibold text-foreground flex items-center gap-2 mb-3">
+            <Link2 className="w-4 h-4 text-primary" /> UTM Builder
+          </h3>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1">
+              <label className="text-[10px] font-medium text-muted-foreground uppercase">Base URL</label>
+              <Input value={baseUrl} onChange={e => setBaseUrl(e.target.value)} className="h-8 text-xs" />
             </div>
-            <div className="flex items-center gap-2 p-2 rounded-lg bg-muted">
-              <code className="text-[10px] text-muted-foreground flex-1 truncate">{utmUrl}</code>
-              <Button variant="outline" size="sm" className="h-7 text-xs gap-1 shrink-0" onClick={copyUtm}>
-                <Copy className="w-3 h-3" /> Copy
-              </Button>
+            <div className="space-y-1">
+              <label className="text-[10px] font-medium text-muted-foreground uppercase">Source</label>
+              <Input value={utmSource} onChange={e => setUtmSource(e.target.value)} className="h-8 text-xs" />
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Troubleshooting */}
-        <div className="space-y-3">
-          <h2 className="text-sm font-semibold text-foreground flex items-center gap-2">
-            <AlertTriangle className="w-4 h-4 text-amber-500" /> Troubleshooting Broken Attribution
-          </h2>
-          <div className="space-y-2">
-            {TROUBLESHOOTING.map((item) => (
-              <Card key={item.issue}>
-                <CardContent className="p-3 space-y-1">
-                  <span className="text-xs font-semibold text-foreground">{item.issue}</span>
-                  <p className="text-xs text-muted-foreground">{item.fix}</p>
-                </CardContent>
-              </Card>
-            ))}
+            <div className="space-y-1">
+              <label className="text-[10px] font-medium text-muted-foreground uppercase">Medium</label>
+              <Input value={utmMedium} onChange={e => setUtmMedium(e.target.value)} className="h-8 text-xs" />
+            </div>
+            <div className="space-y-1">
+              <label className="text-[10px] font-medium text-muted-foreground uppercase">Campaign</label>
+              <Input value={utmCampaign} onChange={e => setUtmCampaign(e.target.value)} className="h-8 text-xs" />
+            </div>
+            <div className="space-y-1 col-span-2">
+              <label className="text-[10px] font-medium text-muted-foreground uppercase">Term</label>
+              <Input value={utmTerm} onChange={e => setUtmTerm(e.target.value)} className="h-8 text-xs" />
+            </div>
           </div>
-        </div>
-
-        {/* Evolution note */}
-        <div className="text-center py-4">
-          <p className="text-xs text-muted-foreground">
-            As real data flows in, use this page to identify broken tracking, verify pixel health, and understand which sources drive actual booked moves.
-          </p>
+          <div className="flex items-center gap-2 p-2 rounded-lg bg-muted mt-3">
+            <code className="text-[10px] text-muted-foreground flex-1 truncate">{utmUrl}</code>
+            <Button variant="outline" size="sm" className="h-7 text-xs gap-1 shrink-0" onClick={copyUtm}>
+              <Copy className="w-3 h-3" /> Copy
+            </Button>
+          </div>
         </div>
       </div>
     </GrowthEngineShell>

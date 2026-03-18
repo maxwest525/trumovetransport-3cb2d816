@@ -2,450 +2,371 @@ import GrowthEngineShell from "@/components/layout/GrowthEngineShell";
 import {
   TrendingUp, TrendingDown, Phone, FileText, AlertTriangle,
   DollarSign, MousePointerClick, Target, BarChart3, Zap,
-  ArrowUpRight, ArrowDownRight, Activity, Globe, Megaphone,
-  Search, Users, Eye, CheckCircle, XCircle, Lightbulb,
-  Clock, Star, Shield, ChevronRight, Server, Database,
-  RefreshCw, ToggleLeft,
+  ArrowUpRight, ArrowDownRight, Activity, Globe, Users,
+  CheckCircle, XCircle, Lightbulb, Clock, Star, Pause,
+  Play, ChevronRight, RefreshCw, Ban, PhoneOff, Search,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Link } from "react-router-dom";
 
-const STATS = [
-  { label: "Leads Today", value: "23", change: "+18%", up: true, icon: Users, color: "text-emerald-500" },
-  { label: "Leads This Week", value: "142", change: "+12%", up: true, icon: TrendingUp, color: "text-blue-500" },
-  { label: "Leads This Month", value: "587", change: "+8%", up: true, icon: BarChart3, color: "text-violet-500" },
-  { label: "Avg Cost Per Lead", value: "$24.80", change: "-6%", up: true, icon: DollarSign, color: "text-amber-500" },
-];
-
-const CHANNEL_SCORES = [
-  { name: "Google Ads", leads: 234, cpl: "$22.40", conv: "4.8%", score: 92, trend: "up" as const, primary: true },
-  { name: "Meta Ads", leads: 156, cpl: "$18.90", conv: "3.2%", score: 78, trend: "up" as const, primary: true },
-  { name: "Organic SEO", leads: 89, cpl: "$0", conv: "6.1%", score: 85, trend: "stable" as const, primary: false },
-  { name: "Google Maps", leads: 67, cpl: "$0", conv: "8.3%", score: 88, trend: "up" as const, primary: false },
-  { name: "Referral", leads: 41, cpl: "$0", conv: "12.5%", score: 95, trend: "stable" as const, primary: false },
-];
-
-const FUNNEL_STAGES = [
-  { label: "Ad Clicks", count: 8420, pct: 100, color: "bg-blue-500" },
-  { label: "LP Views", count: 6234, pct: 74, color: "bg-indigo-500" },
-  { label: "Form / Call", count: 587, pct: 7, color: "bg-violet-500" },
-  { label: "Qualified", count: 342, pct: 4.1, color: "bg-purple-500" },
-  { label: "Estimate Sent", count: 198, pct: 2.4, color: "bg-fuchsia-500" },
-  { label: "Booked", count: 89, pct: 1.1, color: "bg-pink-500" },
-];
-
-const TOP_KEYWORDS = [
-  { keyword: "long distance movers", clicks: 1240, conv: 34, cpc: "$3.80" },
-  { keyword: "interstate moving company", clicks: 890, conv: 28, cpc: "$4.20" },
-  { keyword: "cross country movers", clicks: 760, conv: 22, cpc: "$2.90" },
-  { keyword: "full service movers", clicks: 540, conv: 18, cpc: "$5.10" },
-  { keyword: "movers from FL to NY", clicks: 420, conv: 14, cpc: "$4.80" },
-];
-
-const TOP_PAGES = [
-  { name: "Long-Distance LP", views: 2840, conv: "7.8%", trend: "up" },
-  { name: "Free Quote LP", views: 1920, conv: "6.8%", trend: "up" },
-  { name: "Social Traffic LP", views: 1340, conv: "7.1%", trend: "stable" },
-  { name: "Homepage", views: 3200, conv: "2.1%", trend: "down" },
-];
-
-const AI_RECS = [
-  { text: "Speed-to-lead averaging 4.2 min. Target under 60s. Review Convoso queue priority.", priority: "high", action: "Review Queue" },
-  { text: "Meta CPL dropped 12% this week. Consider increasing budget $200/day on winners.", priority: "high", action: "Scale Budget" },
-  { text: "'Cross country movers' keyword converting at 6.2%. Increase bid and budget.", priority: "medium", action: "Adjust Bid" },
-  { text: "Homepage gets 3,200 views but only 2.1% conversion. Send ad traffic to dedicated LPs instead.", priority: "medium", action: "Fix Routing" },
-  { text: "23 leads hit after-hours queue last night. Review calling block schedule.", priority: "medium", action: "Set Hours" },
-];
+/* ─── MOCK DATA ─── */
 
 const ALERTS = [
-  { text: "Google Ads pixel not firing on /thank-you page", type: "error" },
-  { text: "5 leads not worked within 2 min. Check Convoso queue.", type: "warning" },
-  { text: "3 missed calls from paid leads in 2 hours", type: "warning" },
+  { text: "Google Ads pixel not firing on /thank-you page. Fix now or lose attribution.", type: "error", action: "Fix Tracking", href: "/marketing/tracking" },
+  { text: "5 leads unworked > 2 min. Convoso queue backed up.", type: "warning", action: "Open Queue", href: "/marketing/leads" },
+  { text: "3 missed paid calls in last 2 hours. Callback needed.", type: "warning", action: "View Calls", href: "/marketing/leads" },
 ];
 
-const PRIORITIES = [
-  { label: "5 unworked leads in Convoso queue", status: "urgent", action: "Open Queue" },
-  { label: "Fix tracking pixel on thank-you page", status: "urgent", action: "Fix Tracking" },
-  { label: "3 missed paid calls need callbacks", status: "action", action: "View Calls" },
-  { label: "Scale Meta budget on winning ad sets", status: "opportunity", action: "Scale Now" },
+const SOURCE_TO_SALE = [
+  { source: "Google Search", leads: 234, cpl: "$22.40", contacted: 218, booked: 42, bookedRate: "18.0%", costPerBook: "$124", revenue: "$84,000", roas: "15.1x", verdict: "scale", speed: "8s" },
+  { source: "Meta Ads", leads: 156, cpl: "$18.90", contacted: 128, booked: 18, bookedRate: "11.5%", costPerBook: "$164", revenue: "$36,000", roas: "12.2x", verdict: "scale", speed: "14s" },
+  { source: "Google Maps", leads: 67, cpl: "$0", contacted: 61, booked: 12, bookedRate: "17.9%", costPerBook: "$0", revenue: "$24,000", roas: "—", verdict: "maintain", speed: "Direct" },
+  { source: "Organic SEO", leads: 89, cpl: "$0", contacted: 78, booked: 14, bookedRate: "15.7%", costPerBook: "$0", revenue: "$28,000", roas: "—", verdict: "maintain", speed: "22s" },
+  { source: "Referral", leads: 41, cpl: "$0", contacted: 39, booked: 11, bookedRate: "26.8%", costPerBook: "$0", revenue: "$22,000", roas: "—", verdict: "maintain", speed: "Direct" },
 ];
 
-const LEAD_STATUSES = [
-  { label: "New", count: 12, color: "bg-blue-500", desc: "Just arrived" },
-  { label: "In Queue", count: 8, color: "bg-indigo-500", desc: "In Convoso" },
-  { label: "Attempted", count: 15, color: "bg-violet-500", desc: "Called, no answer" },
-  { label: "Connected", count: 67, color: "bg-emerald-500", desc: "Spoke with lead" },
-  { label: "Not Reached", count: 34, color: "bg-amber-500", desc: "Multiple attempts" },
-  { label: "Escalated", count: 3, color: "bg-red-500", desc: "Needs attention" },
+const PAGE_PERFORMANCE = [
+  { page: "Long-Distance LP", views: 2840, leads: 221, conv: "7.8%", booked: 38, bookedRate: "17.2%", costPerBook: "$112", verdict: "scale" },
+  { page: "Social Traffic LP", views: 1340, leads: 95, conv: "7.1%", booked: 11, bookedRate: "11.6%", costPerBook: "$148", verdict: "watch" },
+  { page: "Free Quote LP", views: 1920, leads: 131, conv: "6.8%", booked: 16, bookedRate: "12.2%", costPerBook: "$138", verdict: "watch" },
+  { page: "Homepage", views: 3200, leads: 67, conv: "2.1%", booked: 4, bookedRate: "6.0%", costPerBook: "$380", verdict: "pause" },
+];
+
+const KEYWORD_PERFORMANCE = [
+  { keyword: "long distance movers", clicks: 1240, leads: 34, conv: "2.7%", cpc: "$3.80", booked: 8, costPerBook: "$161", verdict: "scale" },
+  { keyword: "interstate moving company", clicks: 890, leads: 28, conv: "3.1%", cpc: "$4.20", booked: 7, costPerBook: "$162", verdict: "scale" },
+  { keyword: "cross country movers", clicks: 760, leads: 22, conv: "2.9%", cpc: "$2.90", booked: 5, costPerBook: "$132", verdict: "scale" },
+  { keyword: "movers near me", clicks: 2100, leads: 12, conv: "0.6%", cpc: "$5.10", booked: 1, costPerBook: "$1,071", verdict: "pause" },
+  { keyword: "movers from FL to NY", clicks: 420, leads: 14, conv: "3.3%", cpc: "$4.80", booked: 4, costPerBook: "$144", verdict: "scale" },
+];
+
+const CAMPAIGN_PERFORMANCE = [
+  { campaign: "Interstate CA", platform: "Google", spend: "$2,840", leads: 98, cpl: "$29", booked: 19, bookedRate: "19.4%", costPerBook: "$149", verdict: "scale" },
+  { campaign: "FL Interstate", platform: "Meta", spend: "$1,420", leads: 82, cpl: "$17", booked: 9, bookedRate: "11.0%", costPerBook: "$158", verdict: "watch" },
+  { campaign: "Interstate TX", platform: "Google", spend: "$1,980", leads: 74, cpl: "$27", booked: 14, bookedRate: "18.9%", costPerBook: "$141", verdict: "scale" },
+  { campaign: "Retargeting National", platform: "Meta", spend: "$680", leads: 34, cpl: "$20", booked: 3, bookedRate: "8.8%", costPerBook: "$227", verdict: "watch" },
+  { campaign: "Interstate NY", platform: "Google", spend: "$2,100", leads: 62, cpl: "$34", booked: 8, bookedRate: "12.9%", costPerBook: "$263", verdict: "cut" },
+];
+
+const RECOMMENDATIONS = [
+  { text: "Speed-to-lead averaging 4.2 min. Target under 60s. Review Convoso queue priority.", priority: "high", action: "Fix Queue", href: "/marketing/automation" },
+  { text: "'Movers near me' keyword: $1,071 per booked job. Pause or add negative keywords.", priority: "high", action: "Pause Keyword", href: "/marketing/tracking" },
+  { text: "Homepage converting at 2.1%. Stop sending ad traffic there. Use Long-Distance LP instead.", priority: "high", action: "Fix Routing", href: "/marketing/landing-pages" },
+  { text: "Meta CPL dropped 12% this week. Consider increasing budget $200/day on winning ad sets.", priority: "medium", action: "Scale Budget", href: "/marketing/campaigns" },
+  { text: "Interstate NY campaign: $263 per booked job. Cut budget or pause.", priority: "medium", action: "Review", href: "/marketing/campaigns" },
+];
+
+const LEAD_HEALTH = [
+  { label: "Duplicate Rate", value: "2.2%", status: "good" },
+  { label: "Missed Call Rate", value: "5.1%", status: "warning" },
+  { label: "Unreached Rate", value: "9.2%", status: "warning" },
+  { label: "Junk/Suppressed", value: "3.6%", status: "good" },
+  { label: "Webhook Errors", value: "0", status: "good" },
+  { label: "Routing Failures", value: "2", status: "warning" },
 ];
 
 const CONVERSION_METRICS = [
   { label: "Click to Form", rate: "7.0%", trend: "up" },
   { label: "Click to Call", rate: "3.2%", trend: "up" },
-  { label: "Form to Sale", rate: "15.2%", trend: "stable" },
-  { label: "Call to Sale", rate: "22.8%", trend: "up" },
-  { label: "LP to Sale", rate: "1.6%", trend: "stable" },
-  { label: "Source to Sale", rate: "1.1%", trend: "up" },
+  { label: "Form to Booked", rate: "15.2%", trend: "stable" },
+  { label: "Call to Booked", rate: "22.8%", trend: "up" },
+  { label: "Source to Booked", rate: "1.1%", trend: "up" },
+  { label: "Cost per Booked Job", rate: "$148", trend: "down" },
 ];
 
-function StatCard({ stat }: { stat: typeof STATS[0] }) {
-  const Icon = stat.icon;
+function VerdictBadge({ verdict }: { verdict: string }) {
+  const styles: Record<string, string> = {
+    scale: "bg-emerald-500/10 text-emerald-600",
+    watch: "bg-amber-500/10 text-amber-600",
+    maintain: "bg-blue-500/10 text-blue-600",
+    pause: "bg-red-500/10 text-red-600",
+    cut: "bg-red-500/10 text-red-600",
+  };
+  const icons: Record<string, typeof Play> = {
+    scale: ArrowUpRight, watch: Clock, maintain: RefreshCw, pause: Pause, cut: XCircle,
+  };
+  const Icon = icons[verdict] || Clock;
   return (
-    <div className="bg-card rounded-xl border border-border p-4 hover:shadow-md transition-shadow">
-      <div className="flex items-center justify-between mb-3">
-        <Icon className={cn("w-5 h-5", stat.color)} />
-        <span className={cn(
-          "text-[11px] font-semibold flex items-center gap-0.5",
-          stat.up ? "text-emerald-500" : "text-red-500"
-        )}>
-          {stat.up ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
-          {stat.change}
-        </span>
-      </div>
-      <div className="text-2xl font-bold text-foreground">{stat.value}</div>
-      <div className="text-[11px] text-muted-foreground mt-0.5">{stat.label}</div>
-    </div>
+    <span className={cn("inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase", styles[verdict] || "bg-muted text-muted-foreground")}>
+      <Icon className="w-2.5 h-2.5" />{verdict}
+    </span>
   );
 }
 
 export default function GrowthDashboard() {
   return (
     <GrowthEngineShell>
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Growth Dashboard</h1>
-          <p className="text-sm text-muted-foreground mt-1">Interstate moving lead generation at a glance.</p>
+      <div className="space-y-5">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-foreground">Growth Dashboard</h1>
+            <p className="text-sm text-muted-foreground">What is working. What is not. What to do next.</p>
+          </div>
+          <span className="text-[10px] bg-muted text-muted-foreground px-2 py-1 rounded-full">Last 30 days</span>
         </div>
 
         {/* Alerts */}
         {ALERTS.length > 0 && (
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             {ALERTS.map((alert, i) => (
               <div key={i} className={cn(
-                "flex items-center gap-3 px-4 py-2.5 rounded-lg border text-sm",
-                alert.type === "error" ? "bg-red-500/5 border-red-500/20 text-red-600 dark:text-red-400" : "bg-amber-500/5 border-amber-500/20 text-amber-600 dark:text-amber-400"
+                "flex items-center justify-between px-4 py-2.5 rounded-lg border text-sm",
+                alert.type === "error" ? "bg-red-500/5 border-red-500/20" : "bg-amber-500/5 border-amber-500/20"
               )}>
-                {alert.type === "error" ? <XCircle className="w-4 h-4 shrink-0" /> : <AlertTriangle className="w-4 h-4 shrink-0" />}
-                <span>{alert.text}</span>
+                <div className="flex items-center gap-2.5">
+                  {alert.type === "error" ? <XCircle className="w-4 h-4 text-red-500 shrink-0" /> : <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0" />}
+                  <span className={cn("text-[12px]", alert.type === "error" ? "text-red-600 dark:text-red-400" : "text-amber-600 dark:text-amber-400")}>{alert.text}</span>
+                </div>
+                <Link to={alert.href} className="text-[10px] font-bold text-primary hover:underline whitespace-nowrap ml-3">{alert.action}</Link>
               </div>
             ))}
           </div>
         )}
 
-        {/* Top Priorities + Speed-to-Lead + System Architecture */}
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-          <div className="lg:col-span-3 bg-card rounded-xl border border-border p-5">
-            <div className="flex items-center gap-2 mb-4">
-              <Star className="w-4 h-4 text-amber-500" />
-              <h2 className="text-sm font-semibold text-foreground">Top Priorities Today</h2>
-              <span className="text-[9px] bg-primary/10 text-primary px-1.5 py-0.5 rounded-full font-bold">START HERE</span>
-            </div>
-            <div className="space-y-2">
-              {PRIORITIES.map((p, i) => (
-                <div key={i} className={cn(
-                  "flex items-center justify-between p-3 rounded-lg border",
-                  p.status === "urgent" ? "bg-red-500/5 border-red-500/15" :
-                  p.status === "action" ? "bg-amber-500/5 border-amber-500/15" :
-                  "bg-emerald-500/5 border-emerald-500/15"
-                )}>
-                  <div className="flex items-center gap-2.5">
-                    <span className={cn(
-                      "w-2 h-2 rounded-full shrink-0",
-                      p.status === "urgent" ? "bg-red-500" : p.status === "action" ? "bg-amber-500" : "bg-emerald-500"
-                    )} />
-                    <span className="text-[12px] font-medium text-foreground">{p.label}</span>
-                  </div>
-                  <button className="text-[10px] font-semibold text-primary hover:underline whitespace-nowrap">{p.action}</button>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="lg:col-span-2 space-y-4">
-            <div className="bg-card rounded-xl border border-border p-5">
-              <div className="flex items-center gap-2 mb-3">
-                <Zap className="w-4 h-4 text-amber-500" />
-                <h2 className="text-sm font-semibold text-foreground">Speed-to-Lead</h2>
-              </div>
-              <div className="text-3xl font-bold text-amber-500">4m 12s</div>
-              <p className="text-[11px] text-muted-foreground mt-1">Avg time: form submit to first call</p>
-              <div className="mt-3 bg-amber-500/5 border border-amber-500/10 rounded-lg px-3 py-2">
-                <p className="text-[10px] text-amber-600 font-medium">Target: under 60s. Review queue priority.</p>
-              </div>
-            </div>
-
-            <div className="bg-card rounded-xl border border-border p-5">
-              <div className="flex items-center gap-2 mb-3">
-                <Activity className="w-4 h-4 text-emerald-500" />
-                <h2 className="text-sm font-semibold text-foreground">Convoso Queue</h2>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <div className="text-lg font-bold text-foreground">8</div>
-                  <div className="text-[10px] text-muted-foreground">In Queue</div>
-                </div>
-                <div>
-                  <div className="text-lg font-bold text-emerald-500">3</div>
-                  <div className="text-[10px] text-muted-foreground">Agents Active</div>
-                </div>
-                <div>
-                  <div className="text-lg font-bold text-amber-500">5</div>
-                  <div className="text-[10px] text-muted-foreground">Callbacks</div>
-                </div>
-                <div>
-                  <div className="text-lg font-bold text-foreground">67%</div>
-                  <div className="text-[10px] text-muted-foreground">Contact Rate</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* System Architecture */}
-        <div className="bg-card rounded-xl border border-border p-5">
-          <div className="flex items-center gap-2 mb-3">
-            <Server className="w-4 h-4 text-primary" />
-            <h2 className="text-sm font-semibold text-foreground">System Architecture</h2>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div className="bg-emerald-500/5 border border-emerald-500/15 rounded-lg p-3">
-              <div className="text-[10px] font-semibold text-emerald-600 uppercase tracking-wider mb-1">Primary Dialer</div>
-              <div className="text-[13px] font-semibold text-foreground">Convoso</div>
-              <span className="flex items-center gap-1 mt-1 text-[10px] text-emerald-600">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> Connected
-              </span>
-            </div>
-            <div className="bg-blue-500/5 border border-blue-500/15 rounded-lg p-3">
-              <div className="text-[10px] font-semibold text-blue-600 uppercase tracking-wider mb-1">System of Record</div>
-              <div className="text-[13px] font-semibold text-foreground">Not configured</div>
-              <span className="text-[10px] text-muted-foreground">Set up in Integrations</span>
-            </div>
-            <div className="bg-muted/50 border border-border rounded-lg p-3">
-              <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1">Backup Sync</div>
-              <div className="text-[13px] font-semibold text-muted-foreground">None</div>
-              <span className="text-[10px] text-muted-foreground">Optional</span>
-            </div>
-          </div>
-        </div>
-
-        {/* KPI cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          {STATS.map(stat => <StatCard key={stat.label} stat={stat} />)}
-        </div>
-
-        {/* Conversion Metrics + Lead Status */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {/* Conversion metrics */}
+        {/* Top row: Speed-to-lead + Queue + Conversion rates */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <div className="bg-card rounded-xl border border-border p-5">
-            <div className="flex items-center gap-2 mb-3">
+            <div className="flex items-center gap-2 mb-2">
+              <Zap className="w-4 h-4 text-amber-500" />
+              <h2 className="text-sm font-semibold text-foreground">Speed-to-Lead</h2>
+            </div>
+            <div className="text-3xl font-bold text-amber-500">4m 12s</div>
+            <p className="text-[11px] text-muted-foreground mt-1">Avg time from lead event to first call</p>
+            <div className="mt-3 bg-red-500/5 border border-red-500/10 rounded-lg px-3 py-2">
+              <p className="text-[10px] text-red-600 font-semibold">Too slow. Target: under 60s. Fix Convoso queue priority.</p>
+            </div>
+          </div>
+
+          <div className="bg-card rounded-xl border border-border p-5">
+            <div className="flex items-center gap-2 mb-2">
+              <Activity className="w-4 h-4 text-emerald-500" />
+              <h2 className="text-sm font-semibold text-foreground">Convoso Queue</h2>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div><div className="text-lg font-bold text-foreground">8</div><div className="text-[10px] text-muted-foreground">In Queue</div></div>
+              <div><div className="text-lg font-bold text-emerald-500">3</div><div className="text-[10px] text-muted-foreground">Agents Active</div></div>
+              <div><div className="text-lg font-bold text-amber-500">5</div><div className="text-[10px] text-muted-foreground">Callbacks</div></div>
+              <div><div className="text-lg font-bold text-foreground">67%</div><div className="text-[10px] text-muted-foreground">Contact Rate</div></div>
+            </div>
+          </div>
+
+          <div className="bg-card rounded-xl border border-border p-5">
+            <div className="flex items-center gap-2 mb-2">
               <Target className="w-4 h-4 text-primary" />
-              <h2 className="text-sm font-semibold text-foreground">Conversion Funnel</h2>
-              <span className="text-[9px] bg-muted text-muted-foreground px-1.5 py-0.5 rounded-full font-bold">WHAT'S CONVERTING</span>
+              <h2 className="text-sm font-semibold text-foreground">Conversion Rates</h2>
             </div>
             <div className="grid grid-cols-2 gap-2">
               {CONVERSION_METRICS.map(m => (
-                <div key={m.label} className="bg-muted/30 rounded-lg p-3">
-                  <div className="text-[10px] text-muted-foreground mb-1">{m.label}</div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-lg font-bold text-foreground">{m.rate}</span>
-                    {m.trend === "up" && <ArrowUpRight className="w-3 h-3 text-emerald-500" />}
-                    {m.trend === "down" && <ArrowDownRight className="w-3 h-3 text-red-500" />}
+                <div key={m.label} className="bg-muted/30 rounded-lg p-2">
+                  <div className="text-[9px] text-muted-foreground">{m.label}</div>
+                  <div className="flex items-center gap-1">
+                    <span className="text-sm font-bold text-foreground">{m.rate}</span>
+                    {m.trend === "up" && <ArrowUpRight className="w-2.5 h-2.5 text-emerald-500" />}
+                    {m.trend === "down" && <ArrowDownRight className="w-2.5 h-2.5 text-emerald-500" />}
                   </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Lead Status */}
-          <div className="bg-card rounded-xl border border-border p-5">
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-sm font-semibold text-foreground">Lead Status</h2>
-              <span className="text-[10px] text-muted-foreground bg-muted px-2 py-0.5 rounded-full">This month</span>
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              {LEAD_STATUSES.map(s => (
-                <div key={s.label} className="bg-muted/30 rounded-lg p-3">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className={cn("w-2.5 h-2.5 rounded-full shrink-0", s.color)} />
-                    <span className="text-[11px] font-semibold text-foreground">{s.label}</span>
-                  </div>
-                  <div className="text-xl font-bold text-foreground">{s.count}</div>
-                  <div className="text-[9px] text-muted-foreground">{s.desc}</div>
                 </div>
               ))}
             </div>
           </div>
         </div>
 
-        {/* Funnel + Channel scores */}
+        {/* Source to Sale table */}
+        <div className="bg-card rounded-xl border border-border p-5">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <Globe className="w-4 h-4 text-primary" />
+              <h2 className="text-sm font-semibold text-foreground">Source to Sale</h2>
+              <span className="text-[9px] bg-primary/10 text-primary px-1.5 py-0.5 rounded-full font-bold">KEY TABLE</span>
+            </div>
+            <Link to="/marketing/leads" className="text-[10px] text-primary font-semibold hover:underline flex items-center gap-0.5">View leads <ChevronRight className="w-3 h-3" /></Link>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-[11px]">
+              <thead>
+                <tr className="border-b border-border">
+                  <th className="text-left py-2 text-muted-foreground font-semibold">Source</th>
+                  <th className="text-right py-2 text-muted-foreground font-semibold">Leads</th>
+                  <th className="text-right py-2 text-muted-foreground font-semibold">CPL</th>
+                  <th className="text-right py-2 text-muted-foreground font-semibold">Speed</th>
+                  <th className="text-right py-2 text-muted-foreground font-semibold">Contacted</th>
+                  <th className="text-right py-2 text-muted-foreground font-semibold">Booked</th>
+                  <th className="text-right py-2 text-muted-foreground font-semibold">Book %</th>
+                  <th className="text-right py-2 text-muted-foreground font-semibold">$/Booked</th>
+                  <th className="text-right py-2 text-muted-foreground font-semibold">Revenue</th>
+                  <th className="text-right py-2 text-muted-foreground font-semibold">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {SOURCE_TO_SALE.map(row => (
+                  <tr key={row.source} className="border-b border-border/50 hover:bg-muted/20">
+                    <td className="py-2 font-medium text-foreground">{row.source}</td>
+                    <td className="py-2 text-right text-foreground">{row.leads}</td>
+                    <td className="py-2 text-right text-foreground">{row.cpl}</td>
+                    <td className="py-2 text-right text-foreground">{row.speed}</td>
+                    <td className="py-2 text-right text-foreground">{row.contacted}</td>
+                    <td className="py-2 text-right font-semibold text-emerald-600">{row.booked}</td>
+                    <td className="py-2 text-right text-foreground">{row.bookedRate}</td>
+                    <td className="py-2 text-right text-foreground">{row.costPerBook}</td>
+                    <td className="py-2 text-right text-foreground">{row.revenue}</td>
+                    <td className="py-2 text-right"><VerdictBadge verdict={row.verdict} /></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Campaign Performance */}
+        <div className="bg-card rounded-xl border border-border p-5">
+          <div className="flex items-center gap-2 mb-3">
+            <BarChart3 className="w-4 h-4 text-primary" />
+            <h2 className="text-sm font-semibold text-foreground">Campaign Performance</h2>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-[11px]">
+              <thead>
+                <tr className="border-b border-border">
+                  <th className="text-left py-2 text-muted-foreground font-semibold">Campaign</th>
+                  <th className="text-left py-2 text-muted-foreground font-semibold">Platform</th>
+                  <th className="text-right py-2 text-muted-foreground font-semibold">Spend</th>
+                  <th className="text-right py-2 text-muted-foreground font-semibold">Leads</th>
+                  <th className="text-right py-2 text-muted-foreground font-semibold">CPL</th>
+                  <th className="text-right py-2 text-muted-foreground font-semibold">Booked</th>
+                  <th className="text-right py-2 text-muted-foreground font-semibold">Book %</th>
+                  <th className="text-right py-2 text-muted-foreground font-semibold">$/Booked</th>
+                  <th className="text-right py-2 text-muted-foreground font-semibold">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {CAMPAIGN_PERFORMANCE.map(row => (
+                  <tr key={row.campaign} className={cn(
+                    "border-b border-border/50 hover:bg-muted/20",
+                    row.verdict === "cut" && "bg-red-500/3"
+                  )}>
+                    <td className="py-2 font-medium text-foreground">{row.campaign}</td>
+                    <td className="py-2 text-muted-foreground">{row.platform}</td>
+                    <td className="py-2 text-right text-foreground">{row.spend}</td>
+                    <td className="py-2 text-right text-foreground">{row.leads}</td>
+                    <td className="py-2 text-right text-foreground">{row.cpl}</td>
+                    <td className="py-2 text-right font-semibold text-emerald-600">{row.booked}</td>
+                    <td className="py-2 text-right text-foreground">{row.bookedRate}</td>
+                    <td className="py-2 text-right text-foreground">{row.costPerBook}</td>
+                    <td className="py-2 text-right"><VerdictBadge verdict={row.verdict} /></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Page + Keyword side by side */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {/* Page Performance */}
+          <div className="bg-card rounded-xl border border-border p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <FileText className="w-4 h-4 text-primary" />
+              <h2 className="text-sm font-semibold text-foreground">Page to Sale</h2>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-[11px]">
+                <thead>
+                  <tr className="border-b border-border">
+                    <th className="text-left py-2 text-muted-foreground font-semibold">Page</th>
+                    <th className="text-right py-2 text-muted-foreground font-semibold">Conv %</th>
+                    <th className="text-right py-2 text-muted-foreground font-semibold">Booked</th>
+                    <th className="text-right py-2 text-muted-foreground font-semibold">Book %</th>
+                    <th className="text-right py-2 text-muted-foreground font-semibold">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {PAGE_PERFORMANCE.map(row => (
+                    <tr key={row.page} className={cn("border-b border-border/50", row.verdict === "pause" && "bg-red-500/3")}>
+                      <td className="py-2 font-medium text-foreground">{row.page}</td>
+                      <td className="py-2 text-right text-foreground">{row.conv}</td>
+                      <td className="py-2 text-right font-semibold text-emerald-600">{row.booked}</td>
+                      <td className="py-2 text-right text-foreground">{row.bookedRate}</td>
+                      <td className="py-2 text-right"><VerdictBadge verdict={row.verdict} /></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Keyword Performance */}
+          <div className="bg-card rounded-xl border border-border p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <Search className="w-4 h-4 text-primary" />
+              <h2 className="text-sm font-semibold text-foreground">Keyword to Sale</h2>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-[11px]">
+                <thead>
+                  <tr className="border-b border-border">
+                    <th className="text-left py-2 text-muted-foreground font-semibold">Keyword</th>
+                    <th className="text-right py-2 text-muted-foreground font-semibold">Conv %</th>
+                    <th className="text-right py-2 text-muted-foreground font-semibold">Booked</th>
+                    <th className="text-right py-2 text-muted-foreground font-semibold">$/Booked</th>
+                    <th className="text-right py-2 text-muted-foreground font-semibold">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {KEYWORD_PERFORMANCE.map(row => (
+                    <tr key={row.keyword} className={cn("border-b border-border/50", row.verdict === "pause" && "bg-red-500/3")}>
+                      <td className="py-2 font-medium text-foreground">{row.keyword}</td>
+                      <td className="py-2 text-right text-foreground">{row.conv}</td>
+                      <td className="py-2 text-right font-semibold text-emerald-600">{row.booked}</td>
+                      <td className="py-2 text-right text-foreground">{row.costPerBook}</td>
+                      <td className="py-2 text-right"><VerdictBadge verdict={row.verdict} /></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        {/* Lead Health + Recommendations */}
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-          <div className="lg:col-span-3 bg-card rounded-xl border border-border p-5">
-            <h2 className="text-sm font-semibold text-foreground mb-1">Traffic to Booked Funnel</h2>
-            <p className="text-[11px] text-muted-foreground mb-3">Last 30 days</p>
-            <div className="space-y-2">
-              {FUNNEL_STAGES.map((stage) => (
-                <div key={stage.label} className="flex items-center gap-3">
-                  <span className="text-[11px] text-muted-foreground w-24 shrink-0 text-right">{stage.label}</span>
-                  <div className="flex-1 h-7 bg-muted/50 rounded-lg overflow-hidden relative">
-                    <div className={cn("h-full rounded-lg", stage.color)} style={{ width: `${Math.max(stage.pct, 3)}%` }} />
-                    <span className="absolute inset-0 flex items-center px-3 text-[11px] font-semibold text-foreground">{stage.count.toLocaleString()}</span>
-                  </div>
-                  <span className="text-[11px] text-muted-foreground w-10 text-right">{stage.pct}%</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
+          {/* Lead Health */}
           <div className="lg:col-span-2 bg-card rounded-xl border border-border p-5">
-            <h2 className="text-sm font-semibold text-foreground mb-1">Channel Scorecard</h2>
-            <p className="text-[11px] text-muted-foreground mb-3">Performance by source</p>
-            <div className="space-y-2">
-              {CHANNEL_SCORES.map(ch => (
-                <div key={ch.name} className={cn("flex items-center gap-3 p-2 rounded-lg", ch.primary && "bg-primary/3")}>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-[12px] font-medium text-foreground truncate">{ch.name}</span>
-                        {ch.primary && <span className="text-[8px] bg-primary/10 text-primary px-1 py-0.5 rounded font-bold">PRIMARY</span>}
-                      </div>
-                      <div className={cn(
-                        "w-8 h-5 rounded-full flex items-center justify-center text-[9px] font-bold",
-                        ch.score >= 90 ? "bg-emerald-500/10 text-emerald-600" : ch.score >= 75 ? "bg-blue-500/10 text-blue-600" : "bg-amber-500/10 text-amber-600"
-                      )}>{ch.score}</div>
-                    </div>
-                    <div className="flex gap-4 mt-1 text-[10px] text-muted-foreground">
-                      <span>{ch.leads} leads</span>
-                      <span>CPL: {ch.cpl}</span>
-                      <span>Conv: {ch.conv}</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Lead types */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="bg-card rounded-xl border border-border p-5">
             <div className="flex items-center gap-2 mb-3">
-              <Phone className="w-4 h-4 text-blue-500" />
-              <h2 className="text-sm font-semibold text-foreground">Call Leads</h2>
+              <Activity className="w-4 h-4 text-primary" />
+              <h2 className="text-sm font-semibold text-foreground">Lead Health</h2>
             </div>
-            <div className="text-3xl font-bold text-foreground">234</div>
-            <p className="text-[11px] text-muted-foreground mt-1">This month | Avg duration: 3m 42s</p>
-            <div className="mt-3 grid grid-cols-2 gap-2 text-[11px]">
-              <div className="bg-emerald-500/5 rounded-lg p-2">
-                <span className="text-muted-foreground">Connected</span>
-                <div className="text-foreground font-semibold">67</div>
-              </div>
-              <div className="bg-indigo-500/5 rounded-lg p-2">
-                <span className="text-muted-foreground">In Queue</span>
-                <div className="text-foreground font-semibold">89</div>
-              </div>
-              <div className="bg-amber-500/5 rounded-lg p-2">
-                <span className="text-muted-foreground">Not Reached</span>
-                <div className="text-amber-500 font-semibold">34</div>
-              </div>
-              <div className="bg-red-500/5 rounded-lg p-2">
-                <span className="text-muted-foreground">Missed</span>
-                <div className="text-red-500 font-semibold">12</div>
-              </div>
+            <div className="space-y-2">
+              {LEAD_HEALTH.map(item => (
+                <div key={item.label} className="flex items-center justify-between py-1.5 border-b border-border/50 last:border-0">
+                  <span className="text-[12px] text-muted-foreground">{item.label}</span>
+                  <div className="flex items-center gap-2">
+                    <span className={cn("text-[12px] font-semibold", item.status === "good" ? "text-emerald-600" : "text-amber-600")}>{item.value}</span>
+                    <span className={cn("w-2 h-2 rounded-full", item.status === "good" ? "bg-emerald-500" : "bg-amber-500")} />
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
-          <div className="bg-card rounded-xl border border-border p-5">
+
+          {/* Recommendations */}
+          <div className="lg:col-span-3 bg-card rounded-xl border border-border p-5">
             <div className="flex items-center gap-2 mb-3">
-              <FileText className="w-4 h-4 text-violet-500" />
-              <h2 className="text-sm font-semibold text-foreground">Form Leads</h2>
-            </div>
-            <div className="text-3xl font-bold text-foreground">353</div>
-            <p className="text-[11px] text-muted-foreground mt-1">This month | Avg response: 4m 18s</p>
-            <div className="mt-3 grid grid-cols-2 gap-2 text-[11px]">
-              <div className="bg-emerald-500/5 rounded-lg p-2">
-                <span className="text-muted-foreground">Qualified</span>
-                <div className="text-foreground font-semibold">198</div>
-              </div>
-              <div className="bg-indigo-500/5 rounded-lg p-2">
-                <span className="text-muted-foreground">In Queue</span>
-                <div className="text-foreground font-semibold">112</div>
-              </div>
-              <div className="bg-amber-500/5 rounded-lg p-2">
-                <span className="text-muted-foreground">Attempted</span>
-                <div className="text-amber-500 font-semibold">43</div>
-              </div>
-              <div className="bg-red-500/5 rounded-lg p-2">
-                <span className="text-muted-foreground">Junk</span>
-                <div className="text-red-500 font-semibold">18</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Keywords + Pages + AI Recs */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          <div className="bg-card rounded-xl border border-border p-5">
-            <h2 className="text-sm font-semibold text-foreground mb-1">Top Keywords</h2>
-            <p className="text-[11px] text-muted-foreground mb-3">Best performing search terms</p>
-            <div className="space-y-2">
-              {TOP_KEYWORDS.map(kw => (
-                <div key={kw.keyword} className="flex items-center justify-between py-1.5 border-b border-border/50 last:border-0">
-                  <div>
-                    <span className="text-[12px] font-medium text-foreground">{kw.keyword}</span>
-                    <div className="text-[10px] text-muted-foreground">{kw.clicks} clicks | CPC: {kw.cpc}</div>
-                  </div>
-                  <span className="text-[11px] font-semibold text-emerald-500">{kw.conv} conv</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="bg-card rounded-xl border border-border p-5">
-            <h2 className="text-sm font-semibold text-foreground mb-1">Landing Page Performance</h2>
-            <p className="text-[11px] text-muted-foreground mb-3">Conv rate by page</p>
-            <div className="space-y-2">
-              {TOP_PAGES.map(page => (
-                <div key={page.name} className="flex items-center justify-between py-1.5 border-b border-border/50 last:border-0">
-                  <div>
-                    <span className="text-[12px] font-medium text-foreground">{page.name}</span>
-                    <div className="text-[10px] text-muted-foreground">{page.views.toLocaleString()} views</div>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-[12px] font-semibold text-foreground">{page.conv}</span>
-                    <div className="flex items-center justify-end">
-                      {page.trend === "up" && <ArrowUpRight className="w-3 h-3 text-emerald-500" />}
-                      {page.trend === "down" && <ArrowDownRight className="w-3 h-3 text-red-500" />}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="bg-card rounded-xl border border-border p-5">
-            <div className="flex items-center gap-2 mb-1">
               <Lightbulb className="w-4 h-4 text-amber-500" />
-              <h2 className="text-sm font-semibold text-foreground">Recommendations</h2>
+              <h2 className="text-sm font-semibold text-foreground">What to Do Next</h2>
             </div>
-            <p className="text-[11px] text-muted-foreground mb-3">What to do next</p>
             <div className="space-y-2">
-              {AI_RECS.map((rec, i) => (
+              {RECOMMENDATIONS.map((rec, i) => (
                 <div key={i} className={cn(
-                  "p-3 rounded-lg border text-[12px] leading-relaxed",
-                  rec.priority === "high" ? "bg-primary/5 border-primary/20 text-foreground" : "bg-muted/50 border-border/50 text-muted-foreground"
+                  "flex items-center justify-between p-3 rounded-lg border",
+                  rec.priority === "high" ? "bg-primary/5 border-primary/15" : "bg-muted/30 border-border/50"
                 )}>
-                  <p>{rec.text}</p>
-                  <button className="text-[10px] font-semibold text-primary mt-1.5 hover:underline">{rec.action} &rarr;</button>
+                  <div className="flex items-start gap-2.5 flex-1 min-w-0">
+                    <span className={cn("w-2 h-2 rounded-full mt-1.5 shrink-0", rec.priority === "high" ? "bg-red-500" : "bg-amber-500")} />
+                    <span className="text-[12px] text-foreground">{rec.text}</span>
+                  </div>
+                  <Link to={rec.href} className="text-[10px] font-bold text-primary hover:underline whitespace-nowrap ml-3">{rec.action}</Link>
                 </div>
               ))}
             </div>
-          </div>
-        </div>
-
-        {/* Evolution note */}
-        <div className="bg-muted/30 border border-border/50 rounded-xl px-4 py-3 flex items-start gap-3">
-          <RefreshCw className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0" />
-          <div>
-            <span className="text-[11px] font-semibold text-foreground">This dashboard evolves with your data</span>
-            <p className="text-[10px] text-muted-foreground mt-0.5">As campaigns run, turn off weak keywords, shift budget to winning markets, remove underperforming pages, and adjust routing based on real conversion feedback.</p>
           </div>
         </div>
       </div>
