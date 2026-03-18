@@ -128,20 +128,7 @@ export default function AgentToolLauncherModal({ open, onOpenChange }: AgentTool
   }, []);
 
   const handleLaunchAll = () => {
-    const sw = window.screen.availWidth;
-    const sh = window.screen.availHeight;
-    const sl = (window.screen as any).availLeft ?? 0;
-    const st = (window.screen as any).availTop ?? 0;
-    const w = Math.floor(sw / TOOLS.length);
-
-    TOOLS.forEach((tool, i) => {
-      window.open(
-        tool.url,
-        `tool_${tool.key}`,
-        `left=${sl + i * w},top=${st},width=${w},height=${sh},menubar=no,toolbar=no,location=yes,status=no`
-      );
-    });
-
+    TOOLS.forEach((tool) => window.open(tool.url, "_blank"));
     onOpenChange(false);
   };
 
