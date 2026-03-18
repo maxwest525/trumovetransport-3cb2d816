@@ -1788,6 +1788,8 @@ export default function Index() {
           {/* SHIPMENT TRACKER - Mirrored Layout */}
           <ShipmentTrackerSection navigate={navigate} />
 
+          <FeatureTrustStrip />
+
           {/* DUPLICATE SCAN SECTION - Below ELD Tracking */}
           <section className="tru-ai-steps-section">
             <div className="tru-ai-steps-inner">
