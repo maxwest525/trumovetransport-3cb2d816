@@ -1723,12 +1723,6 @@ export default function Index() {
 
               </div>
 
-              
-              {/* Secondary call button */}
-              <a href="tel:+16097277647" className="tru-hero-call-btn">
-                <Phone className="w-4 h-4" />
-                Call a moving specialist
-              </a>
             </div>
           </section>
         </div> {/* End tru-hero-wrapper */}
