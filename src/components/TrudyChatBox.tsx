@@ -276,6 +276,28 @@ export default function TrudyChatBox() {
           className="px-4 py-4 space-y-4 overflow-y-auto"
           style={{ height: 340, scrollBehavior: 'smooth' }}
         >
+          {connectionState === 'error' && messages.length === 0 && (
+            <div className="flex flex-col items-center justify-center py-10 gap-3 text-center">
+              <div className="w-10 h-10 rounded-full bg-destructive/10 flex items-center justify-center">
+                <RefreshCw className="w-5 h-5 text-destructive" />
+              </div>
+              <p className="text-[13px] text-muted-foreground">Trudy is temporarily unavailable</p>
+              <button
+                onClick={connectToAgent}
+                className="px-4 py-2 text-[12px] font-medium bg-foreground text-background rounded-full hover:opacity-80 active:scale-95 transition-all"
+              >
+                Try Again
+              </button>
+            </div>
+          )}
+          {connectionState === 'connecting' && messages.length === 0 && (
+            <div className="flex items-center justify-center py-10">
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span className="text-[13px]">Connecting to Trudy…</span>
+              </div>
+            </div>
+          )}
           {messages.map((msg, i) => (
             <MessageBubble key={msg.id} message={msg} isLast={i === messages.length - 1} />
           ))}
