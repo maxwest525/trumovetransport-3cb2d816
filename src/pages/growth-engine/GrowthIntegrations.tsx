@@ -2,7 +2,7 @@ import { useState } from "react";
 import GrowthEngineShell from "@/components/layout/GrowthEngineShell";
 import { cn } from "@/lib/utils";
 import {
-  Check, X, RefreshCw, Settings, HelpCircle,
+  Check, X, RefreshCw, Settings,
   Plug, Clock, ChevronDown, ChevronUp,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -10,10 +10,9 @@ import { toast } from "sonner";
 interface Integration {
   id: string;
   name: string;
-  category: string;
+  role: string;
   group: string;
   description: string;
-  dataAvailable: string;
   connected: boolean;
   lastSync?: string;
   status?: "healthy" | "warning" | "error";
@@ -21,43 +20,37 @@ interface Integration {
 }
 
 const INTEGRATION_GROUPS = [
-  { id: "traffic", label: "Traffic Sources", desc: "Primary ad platforms" },
-  { id: "tracking", label: "Tracking", desc: "Measure and attribute" },
-  { id: "routing", label: "Lead Routing", desc: "Get leads to agents fast" },
-  { id: "crm", label: "CRM Sync", desc: "System of record" },
+  { id: "traffic", label: "Traffic Sources", desc: "Where paid leads come from" },
+  { id: "routing", label: "Lead Routing & Follow-up", desc: "Get leads to agents fast" },
+  { id: "research", label: "Research & Support", desc: "Competitive intel and data" },
+  { id: "crm", label: "CRM / System of Record", desc: "Where lead data lives" },
 ];
 
 const INTEGRATIONS: Integration[] = [
   // Traffic
-  { id: "google_ads", name: "Google Ads", category: "Advertising", group: "traffic", description: "Campaign data, keyword performance, conversions. Primary source of high-intent interstate moving leads.", dataAvailable: "Campaigns, keywords, clicks, conversions, spend", connected: true, lastSync: "2 min ago", status: "healthy", tag: "Essential" },
-  { id: "meta_ads", name: "Meta Ads", category: "Advertising", group: "traffic", description: "Facebook and Instagram ad performance, leads, and creative metrics.", dataAvailable: "Ad sets, creatives, leads, reach, ROAS", connected: true, lastSync: "5 min ago", status: "healthy", tag: "Essential" },
-
-  // Tracking
-  { id: "google_analytics", name: "Google Analytics", category: "Analytics", group: "tracking", description: "Website traffic, user behavior, conversion funnels from GA4.", dataAvailable: "Sessions, users, bounce rate, conversion paths", connected: true, lastSync: "15 min ago", status: "healthy", tag: "Essential" },
-  { id: "callrail", name: "CallRail", category: "Call Tracking", group: "tracking", description: "Inbound call tracking with source attribution and keyword-level data.", dataAvailable: "Call logs, source attribution, recordings, keywords", connected: true, lastSync: "1 min ago", status: "healthy", tag: "Essential" },
-  { id: "gsc", name: "Google Search Console", category: "SEO", group: "tracking", description: "Organic search performance and keyword rankings.", dataAvailable: "Impressions, clicks, CTR, position, indexed pages", connected: true, lastSync: "1 hr ago", status: "healthy" },
-  { id: "gtm", name: "Google Tag Manager", category: "Tag Management", group: "tracking", description: "Tag firing status and tracking pixel management.", dataAvailable: "Tag status, firing rules, containers", connected: false, tag: "Recommended" },
-  { id: "semrush", name: "SEMrush", category: "SEO", group: "tracking", description: "Keyword research and competitor analysis. Support tool, not a traffic source.", dataAvailable: "Rankings, competitor data, backlinks", connected: false, tag: "Support tool" },
+  { id: "google_ads", name: "Google Ads", role: "Primary traffic source", group: "traffic", description: "High-intent search campaigns for interstate moving leads. Keyword, campaign, and conversion data.", connected: true, lastSync: "2 min ago", status: "healthy", tag: "Primary" },
+  { id: "meta_ads", name: "Meta Ads", role: "Primary traffic source", group: "traffic", description: "Facebook and Instagram ad performance, instant forms, retargeting, and creative metrics.", connected: true, lastSync: "5 min ago", status: "healthy", tag: "Primary" },
 
   // Routing
-  { id: "convoso", name: "Convoso", category: "Dialer / Speed-to-Lead", group: "routing", description: "Instant-call engine. Leads route here via webhook for immediate call attempts.", dataAvailable: "Queue, dispositions, agents, contact rate, callbacks", connected: true, lastSync: "Live", status: "healthy", tag: "Essential" },
-  { id: "webhooks", name: "Custom Webhooks", category: "Developer", group: "routing", description: "Send or receive data via custom webhook endpoints.", dataAvailable: "Event payloads, delivery logs, retry status", connected: true, lastSync: "Just now", status: "healthy" },
+  { id: "convoso", name: "Convoso", role: "Dialer / queue / callback", group: "routing", description: "Instant-call engine. Leads route here via webhook for immediate dial attempts, callback handling, and queue management.", connected: true, lastSync: "Live", status: "healthy", tag: "Essential" },
+  { id: "webhooks", name: "Custom Webhooks", role: "Event routing", group: "routing", description: "Send or receive lead events via webhook endpoints. Powers the routing between forms, Convoso, and CRM.", connected: true, lastSync: "Just now", status: "healthy", tag: "Essential" },
+
+  // Research
+  { id: "semrush", name: "SEMrush", role: "Keyword & competitor research", group: "research", description: "Keyword rankings, competitor ad spend, backlink analysis. Used for research, not as a traffic source.", connected: false, tag: "Research" },
+  { id: "firecrawl", name: "Firecrawl", role: "Page scraping & monitoring", group: "research", description: "Scrape competitor landing pages, monitor changes, extract page structures for analysis.", connected: false, tag: "Research" },
+  { id: "ga4", name: "Google Analytics (GA4)", role: "Site analytics", group: "research", description: "Website traffic, behavior flows, and conversion funnels.", connected: true, lastSync: "1 min ago", status: "healthy" },
+  { id: "gsc", name: "Search Console", role: "Organic search data", group: "research", description: "Organic impressions, clicks, CTR, and keyword positions.", connected: true, lastSync: "1 hr ago", status: "healthy" },
 
   // CRM
-  { id: "ghl", name: "GoHighLevel", category: "CRM Sync", group: "crm", description: "Backup sequences and reporting. Optional sync target.", dataAvailable: "Contacts, opportunities, pipeline, sequences", connected: false, tag: "Optional" },
-  { id: "granot", name: "Granot CRM", category: "CRM Sync", group: "crm", description: "System of record option. Sync lead records and dispositions.", dataAvailable: "Leads, move details, status history, assignments", connected: false, tag: "Optional" },
-  { id: "custom_crm", name: "Custom CRM", category: "CRM Sync", group: "crm", description: "Connect your own CRM via API. Designate as primary per workflow.", dataAvailable: "Configurable via API mapping", connected: false, tag: "Flexible" },
+  { id: "ghl", name: "GoHighLevel (GHL)", role: "CRM / sequences / reporting", group: "crm", description: "Lead management, follow-up sequences, pipeline reporting. Can serve as primary CRM or backup sync.", connected: false, tag: "Recommended" },
+  { id: "granot", name: "Granot CRM", role: "System of record", group: "crm", description: "Moving-specific CRM. Sync lead records, move details, and disposition history.", connected: false, tag: "Optional" },
+  { id: "custom_crm", name: "Custom CRM / API", role: "Flexible integration", group: "crm", description: "Connect any CRM via REST API. Map fields and configure sync rules.", connected: false, tag: "Flexible" },
 ];
 
 const OPTIONAL_LATER: Integration[] = [
-  { id: "tiktok", name: "TikTok Ads", category: "Advertising", group: "traffic", description: "Video ad campaigns.", dataAvailable: "Campaigns, impressions, clicks", connected: false, tag: "Coming Soon" },
-  { id: "youtube", name: "YouTube Ads", category: "Advertising", group: "traffic", description: "Video ads on YouTube.", dataAvailable: "Views, clicks, conversions", connected: false, tag: "Coming Soon" },
-  { id: "microsoft_ads", name: "Microsoft Ads", category: "Advertising", group: "traffic", description: "Bing search ads. Lower CPCs.", dataAvailable: "Campaigns, keywords, clicks", connected: false, tag: "Optional" },
-  { id: "linkedin", name: "LinkedIn Ads", category: "Advertising", group: "traffic", description: "B2B and corporate relocation.", dataAvailable: "Campaigns, leads", connected: false, tag: "Coming Soon" },
-  { id: "zapier", name: "Zapier", category: "Automation", group: "automation", description: "Connect 5,000+ apps with automated workflows.", dataAvailable: "Triggers, actions, logs", connected: false, tag: "Optional" },
-  { id: "make", name: "Make (Integromat)", category: "Automation", group: "automation", description: "Multi-step automation builder.", dataAvailable: "Scenario runs, data transfers", connected: false, tag: "Optional" },
-  { id: "dashclicks", name: "DashClicks", category: "Agency", group: "automation", description: "White-label campaign management.", dataAvailable: "Orders, campaigns", connected: false, tag: "Coming Soon" },
-  { id: "firecrawl", name: "Firecrawl", category: "Data", group: "automation", description: "Competitor page scraping.", dataAvailable: "Page content, metadata", connected: false, tag: "Optional" },
+  { id: "dashclicks", name: "DashClicks", role: "White-label management", group: "routing", description: "Agency campaign management and fulfillment.", connected: false, tag: "Optional" },
+  { id: "zapier", name: "Zapier", role: "Automation glue", group: "routing", description: "Connect tools with automated workflows.", connected: false, tag: "Optional" },
+  { id: "make", name: "Make (Integromat)", role: "Advanced automation", group: "routing", description: "Multi-step automation builder.", connected: false, tag: "Optional" },
 ];
 
 function IntegrationCard({ integration }: { integration: Integration }) {
@@ -80,14 +73,15 @@ function IntegrationCard({ integration }: { integration: Integration }) {
               {integration.tag && (
                 <span className={cn(
                   "text-[9px] font-bold uppercase px-1.5 py-0.5 rounded-full",
-                  integration.tag === "Essential" ? "bg-primary/10 text-primary" :
+                  integration.tag === "Primary" ? "bg-primary/10 text-primary" :
+                  integration.tag === "Essential" ? "bg-emerald-500/10 text-emerald-600" :
+                  integration.tag === "Research" ? "bg-violet-500/10 text-violet-600" :
                   integration.tag === "Recommended" ? "bg-blue-500/10 text-blue-600" :
-                  integration.tag === "Support tool" ? "bg-violet-500/10 text-violet-600" :
                   "bg-muted text-muted-foreground"
                 )}>{integration.tag}</span>
               )}
             </div>
-            <span className="text-[10px] text-muted-foreground">{integration.category}</span>
+            <span className="text-[10px] text-muted-foreground">{integration.role}</span>
           </div>
         </div>
         {integration.connected ? (
@@ -101,12 +95,7 @@ function IntegrationCard({ integration }: { integration: Integration }) {
         )}
       </div>
 
-      <p className="text-[11px] text-muted-foreground mb-2">{integration.description}</p>
-
-      <div className="bg-muted/50 rounded-lg p-2 mb-2">
-        <span className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider">Data</span>
-        <p className="text-[10px] text-foreground mt-0.5">{integration.dataAvailable}</p>
-      </div>
+      <p className="text-[11px] text-muted-foreground mb-3">{integration.description}</p>
 
       {integration.lastSync && (
         <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground mb-2">
@@ -131,8 +120,6 @@ function IntegrationCard({ integration }: { integration: Integration }) {
               <Settings className="w-3 h-3" /> Configure
             </button>
           </>
-        ) : integration.tag === "Coming Soon" ? (
-          <span className="text-[10px] text-muted-foreground italic">Coming soon</span>
         ) : (
           <button
             onClick={() => toast.success(`${integration.name} setup wizard opened`)}
@@ -146,34 +133,6 @@ function IntegrationCard({ integration }: { integration: Integration }) {
   );
 }
 
-function CompactOptionalCard({ integration }: { integration: Integration }) {
-  return (
-    <div className="flex items-center justify-between p-2.5 rounded-lg border border-border/60 bg-muted/20">
-      <div className="flex items-center gap-2 min-w-0">
-        <Plug className="w-3 h-3 text-muted-foreground shrink-0" />
-        <div className="min-w-0">
-          <div className="flex items-center gap-1.5">
-            <span className="text-[11px] font-medium text-muted-foreground">{integration.name}</span>
-            {integration.tag && (
-              <span className="text-[8px] font-bold uppercase px-1 py-0.5 rounded bg-muted text-muted-foreground">{integration.tag}</span>
-            )}
-          </div>
-        </div>
-      </div>
-      {integration.tag === "Coming Soon" ? (
-        <span className="text-[10px] text-muted-foreground italic shrink-0">Soon</span>
-      ) : (
-        <button
-          onClick={() => toast.success(`${integration.name} setup wizard opened`)}
-          className="text-[10px] font-medium text-primary hover:underline shrink-0"
-        >
-          Connect
-        </button>
-      )}
-    </div>
-  );
-}
-
 export default function GrowthIntegrations() {
   const [showOptional, setShowOptional] = useState(false);
   const connectedCount = INTEGRATIONS.filter(i => i.connected).length;
@@ -182,21 +141,10 @@ export default function GrowthIntegrations() {
     <GrowthEngineShell>
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Integrations</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Core tools for interstate moving lead generation. {connectedCount}/{INTEGRATIONS.length} connected.
+          <h1 className="text-xl font-bold text-foreground">Integrations</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">
+            Your tool stack. {connectedCount}/{INTEGRATIONS.length} connected.
           </p>
-        </div>
-
-        {/* Helper */}
-        <div className="bg-primary/5 border border-primary/10 rounded-xl px-4 py-3 flex items-start gap-3">
-          <HelpCircle className="w-4 h-4 text-primary mt-0.5 shrink-0" />
-          <div>
-            <span className="text-[11px] font-semibold text-primary uppercase tracking-wider">How it works</span>
-            <p className="text-[11px] text-muted-foreground mt-0.5">
-              Ads generate clicks. Landing pages capture leads with attribution. Webhooks route instantly to Convoso for call attempts. CRM gets a synced copy as system of record.
-            </p>
-          </div>
         </div>
 
         {/* Grouped integrations */}
@@ -225,15 +173,23 @@ export default function GrowthIntegrations() {
             className="w-full flex items-center justify-between px-4 py-3 text-left bg-muted/30 hover:bg-muted/50 transition-colors"
           >
             <div className="flex items-center gap-2">
-              <span className="text-[12px] font-semibold text-muted-foreground">Optional / Advanced</span>
-              <span className="text-[10px] text-muted-foreground">{OPTIONAL_LATER.length} additional tools</span>
+              <span className="text-[12px] font-semibold text-muted-foreground">Optional / Future</span>
+              <span className="text-[10px] text-muted-foreground">{OPTIONAL_LATER.length} tools</span>
             </div>
             {showOptional ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
           </button>
           {showOptional && (
             <div className="p-4 space-y-2">
-              <p className="text-[10px] text-muted-foreground mb-3">Add these after your core stack (Google Ads, Meta, CallRail, Convoso) is running well.</p>
-              {OPTIONAL_LATER.map(i => <CompactOptionalCard key={i.id} integration={i} />)}
+              {OPTIONAL_LATER.map(i => (
+                <div key={i.id} className="flex items-center justify-between p-2.5 rounded-lg border border-border/60 bg-muted/20">
+                  <div className="flex items-center gap-2">
+                    <Plug className="w-3 h-3 text-muted-foreground" />
+                    <span className="text-[11px] font-medium text-muted-foreground">{i.name}</span>
+                    <span className="text-[9px] bg-muted text-muted-foreground px-1.5 py-0.5 rounded-full">{i.role}</span>
+                  </div>
+                  <button onClick={() => toast.success(`${i.name} setup opened`)} className="text-[10px] font-medium text-primary hover:underline">Connect</button>
+                </div>
+              ))}
             </div>
           )}
         </div>

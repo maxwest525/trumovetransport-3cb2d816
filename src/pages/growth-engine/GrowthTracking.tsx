@@ -15,7 +15,7 @@ const PIXEL_HEALTH = [
   { name: "Google Ads Tag", status: "active", lastFired: "2 min ago", events: 847 },
   { name: "Meta Pixel", status: "active", lastFired: "5 min ago", events: 1203 },
   { name: "GA4", status: "active", lastFired: "1 min ago", events: 3241 },
-  { name: "CallRail", status: "warning", lastFired: "3 hours ago", events: 156 },
+  { name: "GHL Webhook", status: "active", lastFired: "8 min ago", events: 412 },
   { name: "Search Console", status: "active", lastFired: "1 hour ago", events: null },
 ];
 
@@ -28,8 +28,8 @@ const ATTRIBUTION_BY_SOURCE = [
 ];
 
 const CONVERSION_EVENTS = [
-  { event: "Form Submit", source: "Google Search", count: 184, lastSeen: "3 min ago", status: "active" },
-  { event: "Phone Call", source: "CallRail", count: 234, lastSeen: "8 min ago", status: "active" },
+  { event: "Form Submit", source: "Google Ads", count: 184, lastSeen: "3 min ago", status: "active" },
+  { event: "Inbound Call", source: "Convoso", count: 234, lastSeen: "8 min ago", status: "active" },
   { event: "Form Submit", source: "Meta Pixel", count: 112, lastSeen: "12 min ago", status: "active" },
   { event: "Quote Started", source: "GA4", count: 567, lastSeen: "1 min ago", status: "active" },
   { event: "Lead Event", source: "Meta CAPI", count: 98, lastSeen: "15 min ago", status: "active" },
@@ -38,9 +38,9 @@ const CONVERSION_EVENTS = [
 
 const WEBHOOK_LOG = [
   { time: "2:34 PM", event: "Form Submit", source: "Google", destination: "Convoso", status: "success", latency: "0.8s" },
-  { time: "2:31 PM", event: "Phone Call", source: "CallRail", destination: "CRM", status: "success", latency: "1.2s" },
+  { time: "2:31 PM", event: "Inbound Call", source: "Webhook", destination: "Convoso", status: "success", latency: "1.2s" },
   { time: "2:28 PM", event: "Form Submit", source: "Meta", destination: "Convoso", status: "success", latency: "0.6s" },
-  { time: "2:22 PM", event: "Form Submit", source: "Google", destination: "Convoso", status: "failed", latency: "timeout" },
+  { time: "2:22 PM", event: "Form Submit", source: "Google", destination: "GHL Sync", status: "failed", latency: "timeout" },
   { time: "2:18 PM", event: "Instant Form", source: "Meta", destination: "Convoso", status: "success", latency: "0.4s" },
 ];
 
@@ -49,7 +49,7 @@ const RESPONSE_SPEED_BY_SOURCE = [
   { source: "Meta Ads", avgSpeed: "14s", median: "10s", p90: "45s", status: "ok" },
   { source: "Meta Instant Form", avgSpeed: "6s", median: "4s", p90: "12s", status: "good" },
   { source: "Organic", avgSpeed: "22s", median: "18s", p90: "1m 40s", status: "ok" },
-  { source: "CallRail Inbound", avgSpeed: "3s", median: "2s", p90: "8s", status: "good" },
+  { source: "Inbound Call", avgSpeed: "3s", median: "2s", p90: "8s", status: "good" },
 ];
 
 export default function GrowthTracking() {

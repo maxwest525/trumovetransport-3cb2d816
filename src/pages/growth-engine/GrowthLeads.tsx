@@ -150,7 +150,7 @@ export default function GrowthLeads() {
               <SelectItem value="all">All Sources</SelectItem>
               <SelectItem value="Google">Google</SelectItem>
               <SelectItem value="Meta">Meta</SelectItem>
-              <SelectItem value="CallRail">CallRail</SelectItem>
+              <SelectItem value="Inbound">Inbound</SelectItem>
             </SelectContent>
           </Select>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
