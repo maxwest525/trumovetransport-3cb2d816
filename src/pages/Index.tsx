@@ -1701,8 +1701,9 @@ export default function Index() {
           <section className="py-20 px-4">
             <div className="max-w-4xl mx-auto">
               <div className="text-center mb-10">
-                <h2 className="text-2xl font-bold tracking-tight text-foreground mb-2">Get in Touch</h2>
-                <p className="text-sm text-muted-foreground max-w-md mx-auto">Choose the way that works best for you. We're here to help.</p>
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary mb-3">Contact Us</p>
+                <h2 className="text-3xl font-black tracking-tight text-foreground mb-3">We're Here to Help</h2>
+                <p className="text-sm text-muted-foreground max-w-lg mx-auto leading-relaxed">Reach out however works best for you — voice, video, text, or form. Our team is standing by.</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-[1fr_1.5fr_1fr] gap-4 items-start">
@@ -1710,7 +1711,7 @@ export default function Index() {
                 <div className="flex flex-col gap-4">
                   <button
                     onClick={() => window.dispatchEvent(new CustomEvent('trudy-start'))}
-                    className="group relative flex flex-col items-center text-center rounded-2xl border border-border bg-card p-8 hover:border-primary/40 hover:-translate-y-1 hover:shadow-lg transition-all duration-200"
+                    className="group relative flex flex-col items-center text-center rounded-2xl border border-foreground/15 bg-card p-8 shadow-md hover:border-primary/40 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,0,0,0.25)] transition-all duration-200"
                   >
                     <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
                       <Mic className="h-5 w-5 text-primary" />
@@ -1724,7 +1725,7 @@ export default function Index() {
 
                   <button
                     onClick={() => navigate("/book")}
-                    className="group relative flex flex-col items-center text-center rounded-2xl border border-border bg-card p-8 hover:border-primary/40 hover:-translate-y-1 hover:shadow-lg transition-all duration-200"
+                    className="group relative flex flex-col items-center text-center rounded-2xl border border-foreground/15 bg-card p-8 shadow-md hover:border-primary/40 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,0,0,0.25)] transition-all duration-200"
                   >
                     <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
                       <Video className="h-5 w-5 text-primary" />
@@ -1738,7 +1739,7 @@ export default function Index() {
                 </div>
 
                 {/* Send a Message — center, larger */}
-                <div className="group relative flex flex-col rounded-2xl border border-border bg-card p-8 hover:border-primary/40 hover:-translate-y-1 hover:shadow-lg transition-all duration-200">
+                <div className="group relative flex flex-col rounded-2xl border border-foreground/15 bg-card p-8 shadow-md hover:border-primary/40 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,0,0,0.25)] transition-all duration-200">
                   <div className="flex flex-col items-center text-center mb-5">
                     <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
                       <MessageSquare className="h-5 w-5 text-primary" />
@@ -1762,7 +1763,7 @@ export default function Index() {
                 <div className="flex flex-col gap-4">
                   <a
                     href="tel:+16097277647"
-                    className="group relative flex flex-col items-center text-center rounded-2xl border border-border bg-card p-8 hover:border-primary/40 hover:-translate-y-1 hover:shadow-lg transition-all duration-200"
+                    className="group relative flex flex-col items-center text-center rounded-2xl border border-foreground/15 bg-card p-8 shadow-md hover:border-primary/40 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,0,0,0.25)] transition-all duration-200"
                   >
                     <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
                       <Phone className="h-5 w-5 text-primary" />
@@ -1777,7 +1778,7 @@ export default function Index() {
 
                   <a
                     href="sms:+16097277647"
-                    className="group relative flex flex-col items-center text-center rounded-2xl border border-border bg-card p-8 hover:border-primary/40 hover:-translate-y-1 hover:shadow-lg transition-all duration-200"
+                    className="group relative flex flex-col items-center text-center rounded-2xl border border-foreground/15 bg-card p-8 shadow-md hover:border-primary/40 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,0,0,0.25)] transition-all duration-200"
                   >
                     <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
                       <MessageSquare className="h-5 w-5 text-primary" />
