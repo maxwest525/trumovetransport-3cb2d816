@@ -6369,12 +6369,12 @@
 }
 
 .tru-floating-form-content {
-  padding: 32px 28px 20px;
+  padding: 24px 24px 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  min-height: 320px;
+  min-height: auto;
   flex: 1;
   gap: 16px;
   border-top: 1px solid hsl(var(--tm-ink) / 0.04);

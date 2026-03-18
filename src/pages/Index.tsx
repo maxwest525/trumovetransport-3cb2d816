@@ -1458,10 +1458,22 @@ export default function Index() {
                           </div>
                         </div>
 
+                        {formError && (
+                          <p style={{ color: 'hsl(0 70% 55%)', fontSize: '13px', textAlign: 'center', margin: '4px 0 0' }}>{formError}</p>
+                        )}
                         <button
                           type="button"
                           className="tru-qb-continue tru-engine-btn"
-                          onClick={goNext}
+                          onClick={() => {
+                            const name = contactName.trim();
+                            const email = contactEmail.trim();
+                            const phone = contactPhone.trim();
+                            if (!name) { setFormError('Please enter your name.'); return; }
+                            if (!email || !email.includes('@') || !email.includes('.')) { setFormError('Please enter a valid email.'); return; }
+                            if (!isValidPhoneNumber(phone)) { setFormError('Please enter a valid 10-digit phone number.'); return; }
+                            setFormError('');
+                            goNext();
+                          }}
                           style={{ marginTop: '16px' }}
                         >
                           <span>Talk to Support</span>
