@@ -616,7 +616,7 @@ function ShipmentTrackerSection({ navigate }: { navigate: (path: string) => void
             <div className="tru-ai-headline-block">
               <h2 className="tru-ai-main-headline">
                 Real-Time<br />
-                <span className="tru-ai-headline-accent">ELD Tracking.</span>
+                <span className="tru-ai-headline-accent">Truck Tracking.</span>
               </h2>
               <p className="tru-ai-subheadline">
                 Connect to your carriers ELD and track movements in real-time
