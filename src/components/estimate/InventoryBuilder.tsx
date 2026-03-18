@@ -867,32 +867,6 @@ export default function InventoryBuilder({
                   </div>
                 )}
 
-                {/* Room Presets - Inline */}
-                <div className="flex items-center flex-wrap gap-2 mt-3 pt-3 border-t border-border/40">
-                  <span className="text-[10px] font-black tracking-[0.15em] uppercase text-muted-foreground">
-                    Presets
-                  </span>
-                  <div className="flex gap-1.5">
-                    {[
-                      { id: 'studio', label: 'Studio' },
-                      { id: '1br', label: '1 BR' },
-                      { id: '2br', label: '2 BR' },
-                      { id: '3br', label: '3+ BR' },
-                    ].map((preset) => (
-                      <button
-                        key={preset.id}
-                        type="button"
-                        onClick={() => {
-                          setSelectedPreset(preset.id);
-                          setPresetDialogOpen(true);
-                        }}
-                        className="px-2.5 py-1 rounded-md text-[10px] font-semibold bg-muted text-muted-foreground border border-border/40 hover:bg-muted/80 hover:text-foreground transition-all"
-                      >
-                        {preset.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
               </>
             ) : (
               <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
