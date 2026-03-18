@@ -1,149 +1,134 @@
+import { useState } from "react";
 import GrowthEngineShell from "@/components/layout/GrowthEngineShell";
 import { cn } from "@/lib/utils";
 import {
-  FileText, ArrowUpRight, ArrowDownRight, Pause, Play,
-  Clock, XCircle, CheckCircle2, AlertTriangle, Zap,
-  Phone, ClipboardList, Globe
+  Plus, Eye, Copy, MoreHorizontal, ExternalLink,
+  FileText, Phone, ClipboardList, Globe,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { toast } from "sonner";
 
-const PAGE_DATA = [
-  { name: "Long-Distance Movers LP", views: 2840, leads: 221, conv: "7.8%", calls: 34, forms: 187, booked: 38, bookedRate: "17.2%", costPerBook: "$112", speed: "8s", status: "live", verdict: "scale" },
-  { name: "Social Traffic LP", views: 1340, leads: 95, conv: "7.1%", calls: 8, forms: 87, booked: 11, bookedRate: "11.6%", costPerBook: "$148", speed: "12s", status: "live", verdict: "watch" },
-  { name: "Free Quote LP", views: 1920, leads: 131, conv: "6.8%", calls: 21, forms: 110, booked: 16, bookedRate: "12.2%", costPerBook: "$138", speed: "14s", status: "live", verdict: "watch" },
-  { name: "Call-First LP", views: 680, leads: 63, conv: "9.2%", calls: 59, forms: 4, booked: 14, bookedRate: "22.2%", costPerBook: "$98", speed: "3s", status: "live", verdict: "scale" },
-  { name: "Meta Instant Form", views: 0, leads: 84, conv: "5.5%", calls: 0, forms: 84, booked: 6, bookedRate: "7.1%", costPerBook: "$210", speed: "6s", status: "live", verdict: "watch" },
-  { name: "Homepage", views: 3200, leads: 67, conv: "2.1%", calls: 12, forms: 55, booked: 4, bookedRate: "6.0%", costPerBook: "$380", speed: "45s", status: "live", verdict: "pause" },
-];
-
-const AB_TESTS = [
-  { name: "Long-Distance LP vs Call-First LP", metric: "Booked Rate", a: "17.2%", b: "22.2%", winner: "Call-First LP", confidence: "92%", status: "running" },
-  { name: "Quote LP: Short Form vs Multi-Step", metric: "Lead Quality", a: "65 avg", b: "82 avg", winner: "Multi-Step", confidence: "88%", status: "concluded" },
-];
-
-function VerdictBadge({ verdict }: { verdict: string }) {
-  const styles: Record<string, string> = { scale: "bg-emerald-500/10 text-emerald-600", watch: "bg-amber-500/10 text-amber-600", pause: "bg-red-500/10 text-red-600" };
-  const icons: Record<string, typeof Play> = { scale: ArrowUpRight, watch: Clock, pause: Pause };
-  const Icon = icons[verdict] || Clock;
-  return (
-    <span className={cn("inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase", styles[verdict])}>
-      <Icon className="w-2.5 h-2.5" />{verdict}
-    </span>
-  );
+interface Page {
+  id: string;
+  name: string;
+  type: "landing" | "instant-form" | "homepage";
+  status: "live" | "draft" | "paused";
+  url?: string;
+  cta: string;
+  leads: number;
+  conv: string;
+  booked: number;
 }
 
+const PAGES: Page[] = [
+  { id: "1", name: "Long-Distance Movers LP", type: "landing", status: "live", url: "/long-distance", cta: "Form + Click-to-Call", leads: 221, conv: "7.8%", booked: 38 },
+  { id: "2", name: "Social Traffic LP", type: "landing", status: "live", url: "/social-quote", cta: "Multi-step Form", leads: 95, conv: "7.1%", booked: 11 },
+  { id: "3", name: "Free Quote LP", type: "landing", status: "live", url: "/free-quote", cta: "Short Form", leads: 131, conv: "6.8%", booked: 16 },
+  { id: "4", name: "Call-First LP", type: "landing", status: "live", url: "/call-now", cta: "Click-to-Call", leads: 63, conv: "9.2%", booked: 14 },
+  { id: "5", name: "Meta Instant Form", type: "instant-form", status: "live", cta: "Instant Form", leads: 84, conv: "5.5%", booked: 6 },
+  { id: "6", name: "Homepage", type: "homepage", status: "live", url: "/", cta: "Nav Form", leads: 67, conv: "2.1%", booked: 4 },
+];
+
+const TEMPLATES = [
+  { name: "Interstate Quote Funnel", desc: "Form + trust badges + route area", cta: "Multi-step form" },
+  { name: "Call-First Page", desc: "Phone number hero + urgency", cta: "Click-to-call" },
+  { name: "Route-Specific", desc: "City-to-city focused LP", cta: "Form + call" },
+  { name: "Social Proof Page", desc: "Reviews + gallery + form", cta: "Short form" },
+];
+
 export default function GrowthLandingPages() {
+  const [view, setView] = useState<"pages" | "templates">("pages");
+
   return (
     <GrowthEngineShell>
-      <div className="space-y-5">
+      <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-xl font-bold text-foreground">Landing Pages</h1>
-            <p className="text-sm text-muted-foreground mt-0.5">Page performance, conversion rates, and A/B test results.</p>
+          <h1 className="text-lg font-bold text-foreground">Landing Pages</h1>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-px bg-muted rounded-lg overflow-hidden">
+              <button onClick={() => setView("pages")} className={cn("px-2.5 py-1 text-[10px] font-medium", view === "pages" ? "bg-primary text-primary-foreground" : "text-muted-foreground")}>Pages</button>
+              <button onClick={() => setView("templates")} className={cn("px-2.5 py-1 text-[10px] font-medium", view === "templates" ? "bg-primary text-primary-foreground" : "text-muted-foreground")}>Templates</button>
+            </div>
+            <button
+              onClick={() => toast.info("Page builder coming soon")}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium bg-primary text-primary-foreground hover:opacity-90"
+            >
+              <Plus className="w-3 h-3" /> New Page
+            </button>
           </div>
-          <Link to="/marketing/campaigns" className="text-[11px] font-semibold text-primary hover:underline">+ Launch New Page</Link>
         </div>
 
-        {/* Page Performance Table */}
-        <div className="bg-card rounded-xl border border-border p-5">
-          <h2 className="text-sm font-semibold text-foreground mb-3">Page Performance</h2>
-          <div className="overflow-x-auto">
+        {view === "pages" && (
+          <div className="bg-card rounded-lg border border-border">
             <table className="w-full text-[11px]">
               <thead>
-                <tr className="border-b border-border">
-                  <th className="text-left py-2 text-muted-foreground font-semibold">Page</th>
-                  <th className="text-right py-2 text-muted-foreground font-semibold">Views</th>
-                  <th className="text-right py-2 text-muted-foreground font-semibold">Leads</th>
-                  <th className="text-right py-2 text-muted-foreground font-semibold">Conv %</th>
-                  <th className="text-right py-2 text-muted-foreground font-semibold">Calls</th>
-                  <th className="text-right py-2 text-muted-foreground font-semibold">Forms</th>
-                  <th className="text-right py-2 text-muted-foreground font-semibold">Booked</th>
-                  <th className="text-right py-2 text-muted-foreground font-semibold">Book %</th>
-                  <th className="text-right py-2 text-muted-foreground font-semibold">$/Booked</th>
-                  <th className="text-right py-2 text-muted-foreground font-semibold">Speed</th>
-                  <th className="text-right py-2 text-muted-foreground font-semibold">Action</th>
+                <tr className="border-b border-border bg-muted/30">
+                  {["Page", "Type", "Status", "CTA", "Leads", "Conv %", "Booked", ""].map((h, i) => (
+                    <th key={i} className={cn("py-1.5 px-2 text-[10px] text-muted-foreground font-semibold", i === 0 ? "text-left" : i >= 4 ? "text-right" : "text-left")}>{h}</th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
-                {PAGE_DATA.map(row => (
-                  <tr key={row.name} className={cn("border-b border-border/50 hover:bg-muted/20", row.verdict === "pause" && "bg-red-500/3")}>
-                    <td className="py-2.5 font-medium text-foreground">{row.name}</td>
-                    <td className="py-2.5 text-right text-foreground">{row.views > 0 ? row.views.toLocaleString() : "N/A"}</td>
-                    <td className="py-2.5 text-right text-foreground">{row.leads}</td>
-                    <td className="py-2.5 text-right text-foreground">{row.conv}</td>
-                    <td className="py-2.5 text-right text-foreground">{row.calls}</td>
-                    <td className="py-2.5 text-right text-foreground">{row.forms}</td>
-                    <td className="py-2.5 text-right font-semibold text-emerald-600">{row.booked}</td>
-                    <td className="py-2.5 text-right text-foreground">{row.bookedRate}</td>
-                    <td className="py-2.5 text-right text-foreground">{row.costPerBook}</td>
-                    <td className="py-2.5 text-right text-foreground">{row.speed}</td>
-                    <td className="py-2.5 text-right"><VerdictBadge verdict={row.verdict} /></td>
+                {PAGES.map(p => (
+                  <tr key={p.id} className="border-b border-border/30 hover:bg-muted/10">
+                    <td className="py-2 px-2">
+                      <div className="font-medium text-foreground">{p.name}</div>
+                      {p.url && <div className="text-[9px] text-muted-foreground">{p.url}</div>}
+                    </td>
+                    <td className="py-2 px-2">
+                      <span className={cn("text-[9px] font-bold px-1.5 py-0.5 rounded capitalize",
+                        p.type === "landing" ? "bg-blue-500/10 text-blue-600" :
+                        p.type === "instant-form" ? "bg-indigo-500/10 text-indigo-600" :
+                        "bg-muted text-muted-foreground"
+                      )}>{p.type.replace("-", " ")}</span>
+                    </td>
+                    <td className="py-2 px-2">
+                      <span className={cn("text-[9px] font-bold px-1.5 py-0.5 rounded",
+                        p.status === "live" ? "bg-emerald-500/10 text-emerald-600" :
+                        p.status === "draft" ? "bg-muted text-muted-foreground" :
+                        "bg-amber-500/10 text-amber-600"
+                      )}>{p.status}</span>
+                    </td>
+                    <td className="py-2 px-2 text-muted-foreground text-[10px]">{p.cta}</td>
+                    <td className="py-2 px-2 text-right text-foreground">{p.leads}</td>
+                    <td className="py-2 px-2 text-right text-foreground">{p.conv}</td>
+                    <td className="py-2 px-2 text-right font-bold text-emerald-600">{p.booked}</td>
+                    <td className="py-2 px-2 text-right">
+                      <div className="flex items-center gap-1 justify-end">
+                        <button onClick={() => toast.info(`Preview ${p.name}`)} className="p-1 rounded hover:bg-muted"><Eye className="w-3 h-3 text-muted-foreground" /></button>
+                        <button onClick={() => toast.info(`Edit ${p.name}`)} className="p-1 rounded hover:bg-muted"><MoreHorizontal className="w-3 h-3 text-muted-foreground" /></button>
+                      </div>
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-        </div>
+        )}
 
-        {/* A/B Tests */}
-        <div className="bg-card rounded-xl border border-border p-5">
-          <h2 className="text-sm font-semibold text-foreground mb-3">A/B Tests</h2>
-          <div className="space-y-3">
-            {AB_TESTS.map(test => (
-              <div key={test.name} className="border border-border/50 rounded-lg p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-[12px] font-semibold text-foreground">{test.name}</span>
-                  <span className={cn("text-[10px] font-bold px-2 py-0.5 rounded-full",
-                    test.status === "running" ? "bg-blue-500/10 text-blue-600" : "bg-emerald-500/10 text-emerald-600"
-                  )}>{test.status}</span>
+        {view === "templates" && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {TEMPLATES.map(t => (
+              <div key={t.name} className="bg-card rounded-lg border border-border p-4 hover:shadow-sm transition-shadow">
+                <div className="flex items-start justify-between mb-2">
+                  <div>
+                    <h3 className="text-[13px] font-semibold text-foreground">{t.name}</h3>
+                    <p className="text-[10px] text-muted-foreground mt-0.5">{t.desc}</p>
+                  </div>
+                  <span className="text-[9px] bg-muted text-muted-foreground px-1.5 py-0.5 rounded">{t.cta}</span>
                 </div>
-                <div className="grid grid-cols-4 gap-3 text-[11px]">
-                  <div><span className="text-muted-foreground">Metric:</span> <span className="font-medium text-foreground">{test.metric}</span></div>
-                  <div><span className="text-muted-foreground">Variant A:</span> <span className="font-medium text-foreground">{test.a}</span></div>
-                  <div><span className="text-muted-foreground">Variant B:</span> <span className="font-medium text-foreground">{test.b}</span></div>
-                  <div><span className="text-muted-foreground">Winner:</span> <span className="font-semibold text-emerald-600">{test.winner}</span> <span className="text-muted-foreground">({test.confidence})</span></div>
+                <div className="h-24 bg-muted/30 rounded-lg border border-dashed border-border/60 flex items-center justify-center mb-3">
+                  <span className="text-[10px] text-muted-foreground">Preview</span>
                 </div>
+                <button
+                  onClick={() => toast.info(`Creating page from "${t.name}" template`)}
+                  className="w-full flex items-center justify-center gap-1 py-1.5 rounded-lg text-[11px] font-medium bg-primary text-primary-foreground hover:opacity-90"
+                >
+                  <Plus className="w-3 h-3" /> Use Template
+                </button>
               </div>
             ))}
           </div>
-        </div>
-
-        {/* Quick signals */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
-          <div className="bg-card rounded-xl border border-border p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <AlertTriangle className="w-4 h-4 text-red-500" />
-              <span className="text-[12px] font-semibold text-foreground">Pause These</span>
-            </div>
-            {PAGE_DATA.filter(p => p.verdict === "pause").map(p => (
-              <div key={p.name} className="text-[11px] text-muted-foreground py-1">
-                <span className="font-medium text-foreground">{p.name}</span>: {p.conv} conv, {p.bookedRate} booked, {p.costPerBook}/book
-              </div>
-            ))}
-          </div>
-          <div className="bg-card rounded-xl border border-border p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <ArrowUpRight className="w-4 h-4 text-emerald-500" />
-              <span className="text-[12px] font-semibold text-foreground">Scale These</span>
-            </div>
-            {PAGE_DATA.filter(p => p.verdict === "scale").map(p => (
-              <div key={p.name} className="text-[11px] text-muted-foreground py-1">
-                <span className="font-medium text-foreground">{p.name}</span>: {p.conv} conv, {p.bookedRate} booked, {p.costPerBook}/book
-              </div>
-            ))}
-          </div>
-          <div className="bg-card rounded-xl border border-border p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <Clock className="w-4 h-4 text-amber-500" />
-              <span className="text-[12px] font-semibold text-foreground">Watch These</span>
-            </div>
-            {PAGE_DATA.filter(p => p.verdict === "watch").map(p => (
-              <div key={p.name} className="text-[11px] text-muted-foreground py-1">
-                <span className="font-medium text-foreground">{p.name}</span>: {p.conv} conv, {p.bookedRate} booked
-              </div>
-            ))}
-          </div>
-        </div>
+        )}
       </div>
     </GrowthEngineShell>
   );

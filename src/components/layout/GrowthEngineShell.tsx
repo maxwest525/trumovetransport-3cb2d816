@@ -1,10 +1,9 @@
 import { useState, useEffect, type ReactNode } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
-  Home, Sun, Moon, Bell, Menu, X, ChevronDown, ChevronRight,
-  LayoutDashboard, Rocket, FileText, Search, PenTool, Plug,
-  Crosshair, Users, Star, Zap, Eye, Settings, RotateCcw,
-  HelpCircle, TrendingUp,
+  Home, Sun, Moon, Bell, Menu, X,
+  LayoutDashboard, Rocket, FileText, Plug,
+  Zap, RotateCcw, TrendingUp,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useTheme } from "next-themes";
@@ -13,22 +12,12 @@ import { setPortalContext } from "@/hooks/usePortalContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import logoImg from "@/assets/logo.png";
 
-const NAV_PRIMARY = [
+const NAV = [
   { label: "Dashboard", icon: LayoutDashboard, href: "/marketing/dashboard" },
-  { label: "Tracking", icon: Crosshair, href: "/marketing/tracking" },
-  { label: "Leads & Pipeline", icon: Users, href: "/marketing/leads" },
-  { label: "Automation", icon: Zap, href: "/marketing/automation" },
-  { label: "Integrations", icon: Plug, href: "/marketing/integrations" },
-];
-
-const NAV_SECONDARY = [
-  { label: "Campaign Builder", icon: Rocket, href: "/marketing/campaigns" },
+  { label: "Campaigns", icon: Rocket, href: "/marketing/campaigns" },
   { label: "Landing Pages", icon: FileText, href: "/marketing/landing-pages" },
-  { label: "SEO Hub", icon: Search, href: "/marketing/seo" },
-  { label: "Ad Copy Studio", icon: PenTool, href: "/marketing/ad-copy" },
-  { label: "Reviews", icon: Star, href: "/marketing/reviews" },
-  { label: "Competitor Intel", icon: Eye, href: "/marketing/competitors" },
-  { label: "Settings", icon: Settings, href: "/marketing/settings" },
+  { label: "Integrations", icon: Plug, href: "/marketing/integrations" },
+  { label: "Routing", icon: Zap, href: "/marketing/routing" },
 ];
 
 interface GrowthEngineShellProps {
@@ -36,7 +25,6 @@ interface GrowthEngineShellProps {
 }
 
 export default function GrowthEngineShell({ children }: GrowthEngineShellProps) {
-  const [secondaryOpen, setSecondaryOpen] = useState(false);
   const { theme, setTheme } = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
@@ -52,17 +40,16 @@ export default function GrowthEngineShell({ children }: GrowthEngineShellProps) 
     setSidebarOpen(false);
   }, [location.pathname]);
 
-  const handleResetPreference = () => {
+  const handleReset = () => {
     localStorage.removeItem("truemove_remembered_role");
     navigate("/");
   };
 
   const isActive = (href: string) => location.pathname === href;
 
-  const sidebarContent = (
+  const sidebar = (
     <div className="flex flex-col h-full">
-      {/* Brand header */}
-      <div className="px-4 py-5 border-b border-border/50">
+      <div className="px-4 py-5 border-b border-border/40">
         <div className="flex items-center gap-2.5">
           <img src={logoImg} alt="TruMove" className="h-5 dark:invert" />
           {isMobile && (
@@ -71,17 +58,14 @@ export default function GrowthEngineShell({ children }: GrowthEngineShellProps) 
             </button>
           )}
         </div>
-        <div className="mt-2.5 flex items-center gap-1.5">
+        <div className="mt-2 flex items-center gap-1.5">
           <TrendingUp className="w-3 h-3 text-primary" />
-          <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-primary">
-            Growth Engine
-          </span>
+          <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-primary">Growth Engine</span>
         </div>
       </div>
 
-      {/* Navigation */}
-      <nav className="flex-1 px-2 py-3 space-y-0.5 overflow-y-auto">
-        {NAV_PRIMARY.map((item) => {
+      <nav className="flex-1 px-2 py-4 space-y-0.5">
+        {NAV.map((item) => {
           const Icon = item.icon;
           const active = isActive(item.href);
           return (
@@ -96,42 +80,13 @@ export default function GrowthEngineShell({ children }: GrowthEngineShellProps) 
               )}
             >
               <Icon className="w-4 h-4 shrink-0" />
-              <span className="truncate">{item.label}</span>
-            </Link>
-          );
-        })}
-
-        {/* Secondary collapsed */}
-        <button
-          onClick={() => setSecondaryOpen(!secondaryOpen)}
-          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[11px] font-medium text-muted-foreground/60 hover:text-muted-foreground transition-colors mt-3"
-        >
-          <ChevronRight className={cn("w-3 h-3 transition-transform", secondaryOpen && "rotate-90")} />
-          <span>More</span>
-        </button>
-        {secondaryOpen && NAV_SECONDARY.map((item) => {
-          const Icon = item.icon;
-          const active = isActive(item.href);
-          return (
-            <Link
-              key={item.label}
-              to={item.href}
-              className={cn(
-                "flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-[12px] font-medium transition-all duration-150 ml-2",
-                active
-                  ? "bg-primary/10 text-primary"
-                  : "text-muted-foreground/60 hover:bg-muted hover:text-foreground"
-              )}
-            >
-              <Icon className="w-3.5 h-3.5 shrink-0" />
-              <span className="truncate">{item.label}</span>
+              <span>{item.label}</span>
             </Link>
           );
         })}
       </nav>
 
-      {/* Footer */}
-      <div className="px-2 pb-4 pt-2 border-t border-border/50 space-y-0.5">
+      <div className="px-2 pb-4 pt-2 border-t border-border/40 space-y-0.5">
         <button
           onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
           className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
@@ -140,7 +95,7 @@ export default function GrowthEngineShell({ children }: GrowthEngineShellProps) 
           <span>{theme === "dark" ? "Light Mode" : "Dark Mode"}</span>
         </button>
         <button
-          onClick={handleResetPreference}
+          onClick={handleReset}
           className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
         >
           <RotateCcw className="w-4 h-4" />
@@ -159,26 +114,23 @@ export default function GrowthEngineShell({ children }: GrowthEngineShellProps) 
 
   return (
     <div className="flex min-h-screen bg-background text-foreground">
-      {/* Desktop Sidebar */}
       {!isMobile && (
-        <aside className="w-56 shrink-0 border-r border-border bg-card flex flex-col min-h-screen sticky top-0 h-screen">
-          {sidebarContent}
+        <aside className="w-52 shrink-0 border-r border-border bg-card flex flex-col min-h-screen sticky top-0 h-screen">
+          {sidebar}
         </aside>
       )}
 
-      {/* Mobile Sidebar */}
       {isMobile && sidebarOpen && (
         <>
           <div className="fixed inset-0 bg-black/50 z-40" onClick={() => setSidebarOpen(false)} />
-          <aside className="fixed inset-y-0 left-0 w-56 z-50 bg-card border-r border-border flex flex-col">
-            {sidebarContent}
+          <aside className="fixed inset-y-0 left-0 w-52 z-50 bg-card border-r border-border flex flex-col">
+            {sidebar}
           </aside>
         </>
       )}
 
       <div className="flex-1 flex flex-col min-h-screen min-w-0">
-        {/* Top bar */}
-        <header className="h-12 border-b border-border bg-card/80 backdrop-blur-sm flex items-center justify-between px-4 shrink-0 sticky top-0 z-30">
+        <header className="h-11 border-b border-border bg-card/80 backdrop-blur-sm flex items-center justify-between px-4 shrink-0 sticky top-0 z-30">
           <div className="flex items-center gap-3 min-w-0">
             {isMobile && (
               <button onClick={() => setSidebarOpen(true)} className="p-1.5 rounded-lg hover:bg-muted transition-colors">
@@ -186,18 +138,15 @@ export default function GrowthEngineShell({ children }: GrowthEngineShellProps) 
               </button>
             )}
             <span className="text-sm font-medium text-foreground truncate">
-              {[...NAV_PRIMARY, ...NAV_SECONDARY].find(s => isActive(s.href))?.label || "Growth Engine"}
+              {NAV.find(s => isActive(s.href))?.label || "Growth Engine"}
             </span>
           </div>
-          <div className="flex items-center gap-2">
-            <button className="p-1.5 rounded-lg hover:bg-muted transition-colors" onClick={() => toast.info("Help center coming soon")}>
-              <HelpCircle className="w-4 h-4 text-muted-foreground" />
-            </button>
+          <div className="flex items-center gap-1.5">
             <button className="p-1.5 rounded-lg hover:bg-muted transition-colors relative">
               <Bell className="w-4 h-4 text-muted-foreground" />
               <span className="absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full bg-primary" />
             </button>
-            <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary ml-1">
+            <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
               TM
             </div>
           </div>
