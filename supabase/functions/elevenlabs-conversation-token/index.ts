@@ -42,8 +42,14 @@ serve(async (req) => {
     if (!response.ok) {
       const errorText = await response.text();
       console.error("ElevenLabs API error:", response.status, errorText);
+      
+      const isPermissionError = errorText.includes("missing_permissions") || response.status === 401;
       return new Response(
-        JSON.stringify({ error: `ElevenLabs API error: ${response.status}`, details: errorText }),
+        JSON.stringify({ 
+          error: isPermissionError 
+            ? "Voice assistant is temporarily unavailable" 
+            : `ElevenLabs API error: ${response.status}`,
+        }),
         { status: response.status, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }

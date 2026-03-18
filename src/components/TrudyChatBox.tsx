@@ -151,6 +151,10 @@ export default function TrudyChatBox() {
       
       if (error || !data?.signed_url) {
         console.error('Failed to get signed URL:', error);
+        const errorMsg = error?.message || "";
+        if (errorMsg.includes("401") || errorMsg.includes("missing_permissions")) {
+          console.warn("ElevenLabs API key missing permissions — showing graceful fallback");
+        }
         setConnectionState('error');
         return;
       }

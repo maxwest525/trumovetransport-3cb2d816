@@ -151,11 +151,15 @@ export default function AIChatContainer({ agentId, onSwitchToQuickQuote, pageCon
 
       if (fetchError) {
         console.error("Token fetch error:", fetchError);
-        throw new Error(fetchError.message || "Failed to get conversation token");
+        const errorMsg = fetchError.message || "";
+        if (errorMsg.includes("401") || errorMsg.includes("missing_permissions")) {
+          throw new Error("Trudy is temporarily unavailable. Please try again later.");
+        }
+        throw new Error("Could not connect to Trudy. Please try again.");
       }
 
       if (!data?.signed_url) {
-        throw new Error("No signed URL received from server");
+        throw new Error("Could not connect to Trudy. Please try again.");
       }
 
       // Start the conversation session with WebSocket (for text-only agents)
