@@ -304,9 +304,6 @@ export default function AgentESign() {
                             <Button size="sm" variant="outline" className="gap-1.5 text-xs h-8 border-primary text-primary hover:bg-primary hover:text-primary-foreground" onClick={() => viewDocument(doc)}>
                               <Eye className="w-3 h-3" />View
                             </Button>
-                            <Button size="sm" variant="ghost" className="gap-1.5 text-xs h-8" onClick={() => simulateProgress(doc.id)}>
-                              <Sparkles className="w-3 h-3" />Simulate
-                            </Button>
                           </div>
                         </div>
                         {/* Progress Timeline */}
