@@ -503,7 +503,7 @@ function ShipmentTrackerSection({ navigate }: {navigate: (path: string) => void;
   };
 
   return (
-    <section className="tru-ai-steps-section">
+    <section className="tru-ai-steps-section py-20">
       <div className="tru-ai-steps-inner">
         <div className="flex flex-col lg:flex-row items-center justify-center gap-10 lg:gap-16 w-full">
           {/* Map with SVG overlay */}
