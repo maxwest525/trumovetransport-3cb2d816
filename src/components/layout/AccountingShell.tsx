@@ -1,9 +1,9 @@
 import { useEffect, type ReactNode } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   Home, Sun, Moon, Bell, LayoutDashboard, DollarSign, Receipt,
   CreditCard, FileText, Users, TrendingDown, BarChart3,
-  RotateCcw, Gauge,
+  Gauge,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useTheme } from "next-themes";
