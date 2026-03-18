@@ -23,6 +23,7 @@ import StatsStrip from "@/components/StatsStrip";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { useParallax } from "@/hooks/useParallax";
 import logoImg from "@/assets/logo.png";
+import eldMapImg from "@/assets/eld-map.jpg";
 
 // Preview images for value cards
 import previewAiScanner from "@/assets/preview-ai-scanner.jpg";
