@@ -71,13 +71,6 @@ export default function ElevenLabsTrudyWidget() {
   useEffect(() => { transcriptRef.current = transcript; }, [transcript]);
   useEffect(() => { scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' }); }, [transcript]);
 
-  // Listen for programmatic start from other components
-  useEffect(() => {
-    const handleStart = () => { if (!isConnecting && conversation.status === 'disconnected') startConversation(); };
-    window.addEventListener('trudy-start', handleStart);
-    return () => window.removeEventListener('trudy-start', handleStart);
-  }, [startConversation, isConnecting, conversation.status]);
-
 
   const startConversation = useCallback(async () => {
     if (isConnecting) return;
