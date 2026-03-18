@@ -1,8 +1,8 @@
 import { useEffect, useState, useCallback, type ReactNode } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
-  Home, Sun, Moon, Bell, LayoutDashboard, Building2,
-  RotateCcw, Menu, X, BarChart3,
+  Sun, Moon, Bell, LayoutDashboard, Building2,
+  Menu, X, BarChart3,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
