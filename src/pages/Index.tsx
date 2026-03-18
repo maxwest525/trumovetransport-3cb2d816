@@ -508,7 +508,8 @@ function ShipmentTrackerSection({ navigate }: {navigate: (path: string) => void;
         <div className="flex flex-col lg:flex-row items-center justify-center gap-10 lg:gap-16 w-full">
           {/* Map with SVG overlay */}
           <div className="w-full max-w-[600px]">
-            <div className="rounded-xl overflow-hidden border-2 border-black shadow-[0_4px_20px_hsl(0_0%_0%/0.5),0_8px_40px_hsl(0_0%_0%/0.3),0_0_60px_hsl(142_71%_45%/0.12)] relative">
+            <div className="rounded-xl border-2 border-black relative" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), 0 0 60px rgba(34,197,94,0.12)' }}>
+              <div className="rounded-xl overflow-hidden relative">
               <img src={eldMapImg} alt="US Map" className="w-full h-auto block" />
               <svg viewBox="0 0 600 340" className="absolute inset-0 w-full h-full" preserveAspectRatio="xMidYMid slice">
                 {routes.map((route, i) => {
