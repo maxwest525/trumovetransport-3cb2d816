@@ -1702,7 +1702,7 @@ export default function Index() {
           {/* GET IN TOUCH */}
           <section className="py-20 px-4">
             <div className="max-w-5xl mx-auto">
-              <div className="flex flex-col md:flex-row gap-10 items-start">
+              <div className="flex flex-col md:flex-row gap-10 items-center">
                 {/* Left: Headline block */}
                 <div className="md:w-64 shrink-0 md:sticky md:top-24 rounded-2xl border-2 border-black bg-card p-8" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), inset 0 2px 8px rgba(0,0,0,0.15)' }}>
                   <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary mb-3">Contact Us</p>
@@ -1711,7 +1711,7 @@ export default function Index() {
                 </div>
 
                 {/* Right: Contact cards */}
-                <div className="flex-1 grid grid-cols-1 md:grid-cols-[1fr_2fr_1fr] gap-4 items-start">
+                <div className="flex-1 grid grid-cols-1 md:grid-cols-[1fr_3fr_1fr] gap-4 items-start">
                 {/* Left column: Talk to Trudy + Book Video Consult */}
                 <div className="flex flex-col gap-4">
                   <button
@@ -1762,6 +1762,9 @@ export default function Index() {
                       Send Message
                     </button>
                   </form>
+                  <p className="text-center text-[11px] text-muted-foreground mt-3">
+                    or email <a href="mailto:support@trumove.com" className="text-primary underline underline-offset-2 hover:text-primary/80">support@trumove.com</a>
+                  </p>
                 </div>
 
                 {/* Right column: Call Us + Text Support */}
@@ -1798,9 +1801,6 @@ export default function Index() {
               </div>
               </div>
 
-              <p className="text-center text-[11px] text-muted-foreground mt-6">
-                or email <a href="mailto:support@trumove.com" className="text-primary underline underline-offset-2 hover:text-primary/80">support@trumove.com</a>
-              </p>
             </div>
           </section>
 
