@@ -561,21 +561,31 @@ export default function InventoryBuilder({
             </div>
           </button>
 
-          {/* Scan Room - Links to feature page */}
+          {/* Scan Room - Prominent preview card */}
           <button
             type="button"
             onClick={() => navigate("/site/scan-room")}
-            className="flex items-center gap-3 p-3 rounded-xl border border-dashed border-primary/30 bg-primary/5 hover:bg-primary/10 transition-all text-left cursor-pointer shadow-sm hover:shadow-md"
+            className="relative flex items-center gap-4 p-4 rounded-xl border border-primary/20 bg-gradient-to-r from-primary/5 to-primary/10 hover:from-primary/10 hover:to-primary/15 transition-all text-left cursor-pointer shadow-sm hover:shadow-lg group overflow-hidden"
           >
-            <div className="p-2 rounded-lg bg-primary/10">
-              <Camera className="w-4 h-4 text-primary" />
+            {/* Preview thumbnail */}
+            <div className="relative w-20 h-16 rounded-lg overflow-hidden border border-primary/20 flex-shrink-0">
+              <img 
+                src={scanRoomPreview} 
+                alt="AI Room Scanner preview" 
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+              <div className="absolute inset-0 bg-primary/10 flex items-center justify-center">
+                <Camera className="w-5 h-5 text-primary drop-shadow-sm" />
+              </div>
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-1.5">
-                <span className="text-xs font-semibold text-foreground">Scan Room</span>
-                <span className="text-[8px] font-bold uppercase px-1.5 py-0.5 rounded-full bg-muted border border-border/60 text-muted-foreground">Soon</span>
+                <span className="text-sm font-bold text-foreground">Scan Your Room</span>
               </div>
-              <span className="text-[10px] text-muted-foreground">Auto-detect items via camera</span>
+              <span className="text-[11px] text-muted-foreground block">Point your camera and auto-detect items instantly</span>
+              <span className="text-[10px] text-primary font-semibold mt-1 inline-flex items-center gap-1 group-hover:underline">
+                Try it now →
+              </span>
             </div>
           </button>
         </div>
