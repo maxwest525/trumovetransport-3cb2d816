@@ -34476,9 +34476,16 @@ gmp-map-3d-element .gmnoprint {
     text-align: center !important;
   }
 
-  .tru-hero-feature-line {
-    font-size: 11px !important;
+  .tru-hero-bullets {
     text-align: center !important;
+  }
+  .tru-hero-bullets li {
+    font-size: 12px !important;
+    text-align: left !important;
+  }
+  .tru-hero-cta-prompt {
+    font-size: 12px !important;
+    justify-content: center !important;
   }
 
   .tru-hero-logo {
