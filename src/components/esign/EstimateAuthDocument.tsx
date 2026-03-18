@@ -18,6 +18,8 @@ interface EstimateAuthDocumentProps {
   isSubmitted?: boolean;
   refNumber: string;
   today: string;
+  consentGiven?: boolean;
+  onConsentChange?: (given: boolean) => void;
 }
 
 export function EstimateAuthDocument({
