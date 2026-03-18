@@ -1788,6 +1788,49 @@ export default function Index() {
           {/* SHIPMENT TRACKER - Mirrored Layout */}
           <ShipmentTrackerSection navigate={navigate} />
 
+          {/* DUPLICATE SCAN SECTION - Below ELD Tracking */}
+          <section className="tru-ai-steps-section">
+            <div className="tru-ai-steps-inner">
+              <div className="tru-ai-header-row">
+                {/* LEFT: Description content */}
+                <div className="tru-ai-content-left" style={{ justifyContent: 'center' }}>
+                  <div className="tru-ai-headline-block">
+                    <h2 className="tru-ai-main-headline">
+                      Scan. Catalog.<br />
+                      <span className="tru-ai-headline-accent">Estimate.</span>
+                    </h2>
+                    <p className="tru-ai-subheadline">
+                      Point your camera at any room. Our AI identifies every item and calculates your move in seconds—not hours.
+                    </p>
+                  </div>
+                  
+                  <button 
+                    onClick={() => navigate("/site/scan-room")}
+                    className="tru-ai-cta-btn"
+                  >
+                    <Home className="w-4 h-4" />
+                    Scan Your Home
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
+                
+                {/* CENTER: Scanner Preview */}
+                <div className="tru-ai-scanner-center">
+                  <ScannerPreview 
+                    isRunning={false} 
+                    visibleCount={0}
+                    onStartDemo={() => {}} 
+                  />
+                </div>
+                
+                {/* RIGHT: Detection List */}
+                <div className="tru-ai-detection-right">
+                  <DetectionList visibleCount={0} />
+                </div>
+              </div>
+            </div>
+          </section>
+
 
         </div>
       </div>
