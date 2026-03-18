@@ -55,14 +55,6 @@ const PORTALS = [
     icon: Shield,
     accentHsl: "38 92% 50%",
   },
-  {
-    key: "pulse",
-    label: "Pulse Command",
-    description: "PulseAI Compliance Beta",
-    href: "/pulse",
-    icon: Brain,
-    accentHsl: "0 72% 51%",
-  },
 ];
 
 export default function AgentLogin() {
