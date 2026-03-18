@@ -251,8 +251,8 @@ export default function EstimateWizard({ onComplete, initialDetails }: EstimateW
           {/* Header - Matching homepage style */}
            <div className="tru-summary-header-large">
              <div className="text-center flex-1">
-               <h3 className="text-lg font-black text-foreground">
-                 Where are you <span className="tru-qb-title-accent">moving</span> from?
+               <h3 className="text-xl font-black text-foreground">
+                 Where are you <span className="tru-qb-title-accent">moving from?</span>
                </h3>
              </div>
            </div>
