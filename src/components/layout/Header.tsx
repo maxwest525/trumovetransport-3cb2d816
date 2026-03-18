@@ -132,11 +132,7 @@ const NAV: NavItem[] = [
   },
 ];
 
-interface HeaderProps {
-  whiteLogo?: boolean;
-}
-
-export default function Header({ whiteLogo = false }: HeaderProps) {
+export default function Header() {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
