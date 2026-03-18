@@ -437,15 +437,177 @@ const ROUTE_WAYPOINTS = [
 
 // Shipment Tracker Section - Compact ELD verification layout
 function ShipmentTrackerSection({ navigate }: { navigate: (path: string) => void }) {
+  const [truckProgress, setTruckProgress] = useState(0);
+  const animationRef = useRef<number>();
+
+  useEffect(() => {
+    let p = 0;
+    const tick = () => {
+      p += 0.0008;
+      if (p > 1) p = 0;
+      setTruckProgress(p);
+      animationRef.current = requestAnimationFrame(tick);
+    };
+    tick();
+    return () => { if (animationRef.current) cancelAnimationFrame(animationRef.current); };
+  }, []);
+
+  // Routes mapped to the map image coordinates (percentage-based for responsiveness)
+  const routes = useMemo(() => [
+    {
+      label: 'LA → NYC',
+      color: 'hsl(142, 71%, 45%)',
+      offset: 0,
+      speed: 1,
+      // Los Angeles to New York
+      path: 'M 12,68 C 18,65 25,60 32,58 C 40,55 48,52 55,48 C 62,44 70,40 78,35 C 84,30 88,26 92,22',
+    },
+    {
+      label: 'CHI → MIA',
+      color: 'hsl(200, 80%, 55%)',
+      offset: 0.35,
+      speed: 1.2,
+      // Chicago to Miami
+      path: 'M 62,25 C 65,32 67,40 70,48 C 73,55 75,62 78,70 C 80,75 82,80 84,85',
+    },
+    {
+      label: 'SEA → DEN',
+      color: 'hsl(35, 90%, 55%)',
+      offset: 0.6,
+      speed: 0.9,
+      // Seattle to Denver
+      path: 'M 12,14 C 18,18 24,24 30,30 C 36,35 42,40 48,44',
+    },
+    {
+      label: 'DAL → ATL',
+      color: 'hsl(280, 65%, 60%)',
+      offset: 0.15,
+      speed: 1.4,
+      // Dallas to Atlanta
+      path: 'M 45,70 C 50,66 56,62 62,58 C 68,55 74,52 78,50',
+    },
+  ], []);
+
+  // Calculate position along SVG path at a given progress
+  const getPointOnPath = useCallback((pathD: string, progress: number) => {
+    if (typeof document === 'undefined') return { x: 0, y: 0 };
+    const svgNS = 'http://www.w3.org/2000/svg';
+    const path = document.createElementNS(svgNS, 'path');
+    path.setAttribute('d', pathD);
+    const len = path.getTotalLength();
+    const pt = path.getPointAtLength(progress * len);
+    return { x: pt.x, y: pt.y };
+  }, []);
 
   return (
     <section className="tru-ai-steps-section">
       <div className="tru-ai-steps-inner">
         <div className="flex flex-col lg:flex-row items-center justify-center gap-10 lg:gap-16 w-full">
-          {/* Map image */}
+          {/* Map with animated routes */}
           <div className="w-full max-w-[600px]">
-            <div className="rounded-xl overflow-hidden border border-foreground/10 shadow-lg">
+            <div className="relative rounded-xl overflow-hidden border border-foreground/10 shadow-lg">
               <img src={eldMapImg} alt="Real-Time ELD Tracking Map" className="w-full h-auto block" />
+              
+              {/* SVG overlay for routes */}
+              <svg
+                viewBox="0 0 100 100"
+                preserveAspectRatio="none"
+                className="absolute inset-0 w-full h-full"
+                style={{ pointerEvents: 'none' }}
+              >
+                <defs>
+                  {routes.map((route, i) => (
+                    <filter key={`glow-${i}`} id={`route-glow-${i}`}>
+                      <feGaussianBlur stdDeviation="0.8" result="blur" />
+                      <feMerge>
+                        <feMergeNode in="blur" />
+                        <feMergeNode in="SourceGraphic" />
+                      </feMerge>
+                    </filter>
+                  ))}
+                </defs>
+
+                {routes.map((route, i) => {
+                  const progress = ((truckProgress * route.speed) + route.offset) % 1;
+                  const truckPos = getPointOnPath(route.path, progress);
+
+                  return (
+                    <g key={i}>
+                      {/* Route glow */}
+                      <path
+                        d={route.path}
+                        fill="none"
+                        stroke={route.color}
+                        strokeWidth="0.8"
+                        strokeOpacity="0.15"
+                        filter={`url(#route-glow-${i})`}
+                      />
+                      {/* Route line */}
+                      <path
+                        d={route.path}
+                        fill="none"
+                        stroke={route.color}
+                        strokeWidth="0.3"
+                        strokeOpacity="0.6"
+                        strokeDasharray="1 0.8"
+                      />
+                      {/* Truck glow */}
+                      <circle
+                        cx={truckPos.x}
+                        cy={truckPos.y}
+                        r="2"
+                        fill={route.color}
+                        opacity="0.25"
+                      />
+                      {/* Truck dot outer */}
+                      <circle
+                        cx={truckPos.x}
+                        cy={truckPos.y}
+                        r="1"
+                        fill="hsl(220, 15%, 6%)"
+                        stroke={route.color}
+                        strokeWidth="0.3"
+                      />
+                      {/* Truck dot inner */}
+                      <circle
+                        cx={truckPos.x}
+                        cy={truckPos.y}
+                        r="0.5"
+                        fill={route.color}
+                      />
+                    </g>
+                  );
+                })}
+
+                {/* LIVE badge on first truck */}
+                {(() => {
+                  const mainProgress = ((truckProgress * routes[0].speed) + routes[0].offset) % 1;
+                  const pos = getPointOnPath(routes[0].path, mainProgress);
+                  return (
+                    <g>
+                      <rect
+                        x={pos.x + 1.5}
+                        y={pos.y - 3}
+                        width="6"
+                        height="2.5"
+                        rx="0.8"
+                        fill="hsl(142, 71%, 45%)"
+                      />
+                      <circle cx={pos.x + 3} cy={pos.y - 1.75} r="0.35" fill="white" />
+                      <text
+                        x={pos.x + 4}
+                        y={pos.y - 1.3}
+                        fill="hsl(220, 15%, 6%)"
+                        fontSize="1.3"
+                        fontWeight="bold"
+                        fontFamily="sans-serif"
+                      >
+                        LIVE
+                      </text>
+                    </g>
+                  );
+                })()}
+              </svg>
             </div>
           </div>
           
