@@ -508,7 +508,7 @@ function ShipmentTrackerSection({ navigate }: {navigate: (path: string) => void;
         <div className="flex flex-col lg:flex-row items-center justify-center gap-10 lg:gap-16 w-full">
           {/* Map with SVG overlay */}
           <div className="w-full max-w-[600px]">
-            <div className="rounded-xl overflow-hidden border border-foreground/10 shadow-lg relative">
+            <div className="rounded-xl overflow-hidden border-2 border-black shadow-[0_4px_20px_hsl(0_0%_0%/0.5),0_8px_40px_hsl(0_0%_0%/0.3),0_0_60px_hsl(142_71%_45%/0.12)] relative">
               <img src={eldMapImg} alt="US Map" className="w-full h-auto block" />
               <svg viewBox="0 0 600 340" className="absolute inset-0 w-full h-full" preserveAspectRatio="xMidYMid slice">
                 {routes.map((route, i) => {
@@ -549,8 +549,8 @@ function ShipmentTrackerSection({ navigate }: {navigate: (path: string) => void;
             </div>
           </div>
           
-          {/* Headline + CTA */}
-          <div className="flex flex-col items-center text-center gap-4">
+          {/* Headline + CTA - card style */}
+          <div className="flex flex-col items-center text-center gap-4 bg-card border-2 border-black rounded-xl p-8 shadow-[0_4px_20px_hsl(0_0%_0%/0.5),0_8px_40px_hsl(0_0%_0%/0.3),inset_0_2px_8px_hsl(0_0%_0%/0.15)]">
             <div className="tru-ai-headline-block">
               <h2 className="tru-ai-main-headline">
                 Real-Time<br />
