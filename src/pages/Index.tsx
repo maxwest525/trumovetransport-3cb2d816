@@ -1701,14 +1701,17 @@ export default function Index() {
 
           {/* GET IN TOUCH */}
           <section className="py-20 px-4">
-            <div className="max-w-4xl mx-auto">
-              <div className="text-center mb-10">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary mb-3">Contact Us</p>
-                <h2 className="text-3xl font-black tracking-tight text-foreground mb-3">We're Here to Help</h2>
-                <p className="text-sm text-muted-foreground max-w-lg mx-auto leading-relaxed">Reach out however works best for you — voice, video, text, or form. Our team is standing by.</p>
-              </div>
+            <div className="max-w-5xl mx-auto">
+              <div className="flex flex-col md:flex-row gap-10 items-start">
+                {/* Left: Headline block */}
+                <div className="md:w-64 shrink-0 md:sticky md:top-24">
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary mb-3">Contact Us</p>
+                  <h2 className="text-3xl font-black tracking-tight text-foreground mb-3">We're Here to Help</h2>
+                  <p className="text-sm text-muted-foreground leading-relaxed">Reach out however works best for you — voice, video, text, or form. Our team is standing by.</p>
+                </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-[1fr_1.5fr_1fr] gap-4 items-start">
+                {/* Right: Contact cards */}
+                <div className="flex-1 grid grid-cols-1 md:grid-cols-[1fr_1.5fr_1fr] gap-4 items-start">
                 {/* Left column: Talk to Trudy + Book Video Consult */}
                 <div className="flex flex-col gap-4">
                   <button
