@@ -131,15 +131,18 @@ export default function GrowthEngineShell({ children }: GrowthEngineShellProps) 
       )}
 
       <div className="flex-1 flex flex-col min-h-screen min-w-0">
-        <header className="h-11 border-b border-border bg-card/80 backdrop-blur-sm flex items-center justify-between px-4 shrink-0 sticky top-0 z-30">
+        <header className="h-12 border-b border-border bg-card flex items-center justify-between px-4 shrink-0 sticky top-0 z-30">
           <div className="flex items-center gap-3 min-w-0">
             {isMobile && (
               <button onClick={() => setSidebarOpen(true)} className="p-1.5 rounded-lg hover:bg-muted transition-colors">
                 <Menu className="w-4 h-4 text-muted-foreground" />
               </button>
             )}
-            <span className="text-sm font-medium text-foreground truncate">
-              {NAV.find(s => isActive(s.href))?.label || "Growth Engine"}
+            <Link to="/" className="p-1.5 rounded-lg hover:bg-muted transition-colors">
+              <Home className="w-4 h-4 text-muted-foreground" />
+            </Link>
+            <span className="text-sm text-muted-foreground truncate">
+              Growth Engine &gt; {NAV.find(s => isActive(s.href))?.label || "Dashboard"}
             </span>
           </div>
           <div className="flex items-center gap-1.5">
@@ -147,7 +150,7 @@ export default function GrowthEngineShell({ children }: GrowthEngineShellProps) 
               <Bell className="w-4 h-4 text-muted-foreground" />
               <span className="absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full bg-primary" />
             </button>
-            <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
+            <div className="w-7 h-7 rounded-full bg-muted flex items-center justify-center text-xs font-medium text-foreground ml-1">
               TM
             </div>
           </div>
