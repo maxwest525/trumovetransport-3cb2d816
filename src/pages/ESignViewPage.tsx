@@ -210,6 +210,8 @@ export default function ESignViewPage() {
                   isSubmitted={completedDocuments.estimate}
                   refNumber={refNumber}
                   today={today}
+                  consentGiven={consentGiven}
+                  onConsentChange={handleConsentChange}
                 />
               ) : (
                 <CCACHDocumentWrapper
