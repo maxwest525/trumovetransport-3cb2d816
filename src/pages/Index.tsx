@@ -575,29 +575,27 @@ function ShipmentTrackerSection({ navigate }: { navigate: (path: string) => void
   return (
     <section className="tru-tracker-section">
       <div className="tru-tracker-inner">
-        <div className="flex items-center gap-10 lg:gap-14">
+        <div className="flex flex-col items-center text-center gap-6">
           
-          {/* LEFT: Map canvas — taller, ~60% width */}
-          <div className="flex-1 rounded-xl overflow-hidden border border-foreground/10 shadow-lg max-w-[420px]">
+          {/* Map canvas */}
+          <div className="rounded-xl overflow-hidden border border-foreground/10 shadow-lg max-w-[420px] w-full">
             <canvas ref={canvasRef} width={600} height={340} className="w-full h-auto block" />
           </div>
           
-          {/* RIGHT: Headline + CTA — centered, clean */}
-          <div className="flex-1 flex flex-col items-center justify-center text-center space-y-5">
-            <h2 className="tru-ai-main-headline" style={{ fontSize: '2rem', lineHeight: '1.15' }}>
-              Real-Time<br />
-              <span className="tru-ai-headline-accent">ELD Tracking.</span>
-            </h2>
-            <p className="tru-ai-subheadline" style={{ fontSize: '0.85rem', maxWidth: '260px' }}>
-              Connect to your carriers ELD and track movements in real-time
-            </p>
-            
-            <button onClick={() => navigate("/site/track")} className="tru-ai-cta-btn">
-              <MapPin className="w-4 h-4" />
-              Track Shipment
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
+          {/* Headline + CTA */}
+          <h2 className="tru-ai-main-headline" style={{ fontSize: '2rem', lineHeight: '1.15' }}>
+            Real-Time<br />
+            <span className="tru-ai-headline-accent">ELD Tracking.</span>
+          </h2>
+          <p className="tru-ai-subheadline" style={{ fontSize: '0.85rem', maxWidth: '280px' }}>
+            Connect to your carriers ELD and track movements in real-time
+          </p>
+          
+          <button onClick={() => navigate("/site/track")} className="tru-ai-cta-btn">
+            <MapPin className="w-4 h-4" />
+            Track Shipment
+            <ArrowRight className="w-4 h-4" />
+          </button>
         </div>
       </div>
     </section>
