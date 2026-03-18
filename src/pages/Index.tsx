@@ -1711,7 +1711,7 @@ export default function Index() {
                 </div>
 
                 {/* Right: Contact cards */}
-                <div className="flex-1 grid grid-cols-1 md:grid-cols-[1fr_1.5fr_1fr] gap-4 items-start">
+                <div className="flex-1 grid grid-cols-1 md:grid-cols-[1fr_2fr_1fr] gap-4 items-start">
                 {/* Left column: Talk to Trudy + Book Video Consult */}
                 <div className="flex flex-col gap-4">
                   <button
