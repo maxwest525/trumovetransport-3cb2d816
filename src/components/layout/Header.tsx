@@ -153,11 +153,7 @@ export default function Header() {
         <div className="header-inner">
           {/* Logo */}
           <Link to="/site" className="header-logo" aria-label="TruMove Home">
-            <img 
-              src={logo} 
-              alt="TruMove" 
-              style={{ filter: 'drop-shadow(0 0 4px rgba(255,255,255,1)) drop-shadow(0 0 10px rgba(255,255,255,0.85)) drop-shadow(0 0 22px rgba(255,255,255,0.5)) drop-shadow(0 0 40px rgba(255,255,255,0.25))' }}
-            />
+            <img src={logo} alt="TruMove" />
           </Link>
 
           {/* Desktop Nav with Mega-Menus */}
