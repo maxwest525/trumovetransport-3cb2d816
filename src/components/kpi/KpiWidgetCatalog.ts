@@ -25,4 +25,4 @@ export const KPI_WIDGETS: KpiWidgetDef[] = [
   { id: "close_rate_team", label: "Team Close Rate", icon: BarChart3, category: "team", defaultValue: "0%" },
 ];
 
-export const DEFAULT_WIDGET_IDS = ["pipeline_value", "revenue_month", "win_rate", "new_leads", "bookings_week", "tasks_due"];
+export const DEFAULT_WIDGET_IDS = ["pipeline_value", "revenue_month", "win_rate", "new_leads"];
