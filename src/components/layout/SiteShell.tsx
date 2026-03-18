@@ -25,10 +25,8 @@ export default function SiteShell({ children, centered = false, hideTrustStrip =
     <div className="min-h-screen flex flex-col bg-background text-foreground font-sans">
       {!hideHeader && (
         <div className="sticky top-0 z-[90]">
-          <div className="pt-2 px-6 pb-3 md:pb-[25px] relative z-10">
-            <div className="dark">
-              <Header />
-            </div>
+          <div className="dark pt-2 px-6 pb-3 md:pb-[25px] relative z-10">
+            <Header />
             {!hideTrustStrip && !backendMode && <SaferTrustStrip />}
           </div>
           {stickySubHeader}
