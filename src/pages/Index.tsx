@@ -1837,6 +1837,8 @@ export default function Index() {
                 </div>
               </div>
             </div>
+          </section>
+
           {/* CONTACT A HUMAN */}
           <section className="py-16 px-4">
             <div className="max-w-xl mx-auto">
