@@ -1788,8 +1788,14 @@
     text-align: center;
   }
   
-  .tru-hero-feature-line {
+  .tru-hero-bullets {
     text-align: center;
+  }
+  .tru-hero-bullets li {
+    text-align: left;
+  }
+  .tru-hero-cta-prompt {
+    justify-content: center;
   }
   
   .tru-hero-right-column {
