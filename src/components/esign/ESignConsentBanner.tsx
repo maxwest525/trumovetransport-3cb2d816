@@ -33,7 +33,7 @@ export function ESignConsentBanner({ consentGiven, onConsentChange, className }:
               </span>
             )}
           </div>
-          <p className="text-xs text-muted-foreground leading-relaxed">{CONSENT_TEXT}</p>
+          
           <div className="flex items-center gap-2 pt-1">
             <Checkbox
               id="esign-consent"
