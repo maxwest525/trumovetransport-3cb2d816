@@ -466,25 +466,25 @@ function ShipmentTrackerSection({ navigate }: { navigate: (path: string) => void
     // Grid
     ctx.strokeStyle = 'hsl(220, 15%, 12%)';
     ctx.lineWidth = 0.5;
-    for (let i = 0; i < w; i += 24) { ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, h); ctx.stroke(); }
-    for (let i = 0; i < h; i += 24) { ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(w, i); ctx.stroke(); }
+    for (let i = 0; i < w; i += 28) { ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, h); ctx.stroke(); }
+    for (let i = 0; i < h; i += 28) { ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(w, i); ctx.stroke(); }
     
-    // Road network
+    // Road network hints
     ctx.strokeStyle = 'hsl(220, 15%, 14%)';
     ctx.lineWidth = 1;
-    [[30, 60, 560, 55], [30, 130, 560, 125], [30, 200, 560, 195],
-     [80, 10, 85, 250], [200, 10, 195, 250], [330, 10, 340, 250], [460, 10, 455, 250]
+    [[30, 80, 570, 75], [30, 170, 570, 165], [30, 260, 570, 255],
+     [100, 10, 105, 330], [220, 10, 215, 330], [360, 10, 365, 330], [490, 10, 485, 330]
     ].forEach(([x1, y1, x2, y2]) => {
       ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
     });
     
-    // Realistic curved route (LA → Phoenix → Albuquerque → Dallas → Memphis → Knoxville → NYC)
+    // Realistic curved route (LA → NYC) scaled to 600x340
     const pts: [number, number][] = [
-      [35, 195], [55, 188], [80, 176], [105, 172], [130, 180],
-      [150, 170], [175, 155], [200, 148], [220, 152], [240, 140],
-      [265, 132], [290, 140], [310, 128], [335, 118], [360, 110],
-      [385, 105], [405, 112], [425, 100], [445, 92], [465, 85],
-      [485, 78], [505, 72], [525, 65], [545, 58],
+      [40, 280], [65, 270], [90, 255], [115, 248], [140, 256],
+      [165, 244], [190, 225], [215, 215], [240, 220], [265, 205],
+      [290, 195], [315, 204], [340, 188], [365, 175], [390, 165],
+      [415, 158], [440, 166], [460, 150], [480, 138], [500, 125],
+      [520, 115], [540, 105], [555, 92], [570, 80],
     ];
     
     // Bezier-smooth drawing helper
