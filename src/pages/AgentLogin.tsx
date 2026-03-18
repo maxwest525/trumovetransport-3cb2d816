@@ -164,15 +164,7 @@ export default function AgentLogin() {
               accentHsl={portal.accentHsl}
               index={i}
               onClick={() => {
-                if (portal.key === "agents") {
-                  if (sessionStorage.getItem("agent_tools_launched") === "true") {
-                    navigate("/agent/dashboard");
-                  } else {
-                    setLauncherOpen(true);
-                  }
-                } else {
-                  navigate(portal.href);
-                }
+                navigate(portal.key === "agents" ? "/agent/dashboard" : portal.href);
               }}
             />
           ))}
