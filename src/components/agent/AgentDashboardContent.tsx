@@ -147,7 +147,7 @@ export default function AgentDashboardContent() {
           <p className="text-sm text-muted-foreground">Welcome back! Here's what needs your attention today.</p>
         </div>
         <button
-          onClick={() => setLauncherOpen(true)}
+          onClick={() => setWorkspaceOpen(true)}
           className="flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground hover:border-primary/40 transition-all"
         >
           <Wrench className="h-3.5 w-3.5" />
