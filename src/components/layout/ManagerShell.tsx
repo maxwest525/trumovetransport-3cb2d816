@@ -1,7 +1,7 @@
 import { useState, useEffect, type ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
-  Sun, Moon, Bell, LayoutDashboard,
+  Home, Sun, Moon, Bell, LayoutDashboard,
   Target, AlertTriangle, CheckCircle, BarChart3,
   Gauge, Activity, MessageSquare, Trophy,
 } from "lucide-react";

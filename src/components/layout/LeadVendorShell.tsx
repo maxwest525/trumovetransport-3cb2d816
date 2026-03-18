@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback, type ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
-  Sun, Moon, Bell, LayoutDashboard, Building2,
+  Home, Sun, Moon, Bell, LayoutDashboard, Building2,
   Menu, X, BarChart3,
 } from "lucide-react";
 import { useTheme } from "next-themes";
