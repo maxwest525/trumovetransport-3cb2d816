@@ -1808,11 +1808,25 @@ export default function Index() {
                     </p>
                   </div>
                   
-                  <div className="flex flex-wrap gap-2">
-                    {["Instant Quotes", "Shipment Tracking", "24/7 Available", "Smart Scheduling"].map((pill) => (
-                      <span key={pill} className="text-[11px] font-medium text-muted-foreground bg-muted/60 border border-border/60 px-3 py-1.5 rounded-full">
-                        {pill}
-                      </span>
+                  {/* Capability grid */}
+                  <div className="grid grid-cols-2 gap-2 w-full">
+                    {[
+                      { label: "Instant Quotes", desc: "AI-powered estimates in seconds" },
+                      { label: "Live Tracking", desc: "Real-time GPS location & ETA" },
+                      { label: "Scheduling", desc: "Book or reschedule moves" },
+                      { label: "Carrier Vetting", desc: "FMCSA safety verified" },
+                      { label: "Room Scanner", desc: "Photo-based inventory" },
+                      { label: "Packing Help", desc: "Tips & checklists" },
+                      { label: "Video Consult", desc: "Live virtual walk-through" },
+                      { label: "General Support", desc: "Insurance, claims, storage" },
+                    ].map((item) => (
+                      <div
+                        key={item.label}
+                        className="flex flex-col rounded-lg border border-border/60 bg-muted/30 px-3 py-2"
+                      >
+                        <span className="text-[11px] font-semibold text-foreground leading-tight">{item.label}</span>
+                        <span className="text-[10px] text-muted-foreground leading-snug mt-0.5">{item.desc}</span>
+                      </div>
                     ))}
                   </div>
                 </div>
