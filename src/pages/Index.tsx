@@ -547,6 +547,7 @@ function ShipmentTrackerSection({ navigate }: {navigate: (path: string) => void;
                   );
                 })}
               </svg>
+              </div>
             </div>
           </div>
           
