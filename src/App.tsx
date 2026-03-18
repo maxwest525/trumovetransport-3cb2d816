@@ -70,6 +70,7 @@ import ManagerPulseCallReview from "./pages/ManagerPulseCallReview";
 import AdminPulseCallReview from "./pages/AdminPulseCallReview";
 import ManagerTeamChat from "./pages/ManagerTeamChat";
 import AdminTeamChat from "./pages/AdminTeamChat";
+import Leaderboard from "./pages/Leaderboard";
 
 const queryClient = new QueryClient();
 
@@ -118,6 +119,7 @@ const App = () => (
             <Route path="/leads/vendors" element={<AdminLeadVendors />} />
             <Route path="/leads/performance" element={<LeadsPerformance />} />
             <Route path="/kpi" element={<KpiDashboard />} />
+            <Route path="/leaderboard" element={<Leaderboard />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/marketing/dashboard" element={<GrowthDashboard />} />
             <Route path="/marketing/campaigns" element={<GrowthCampaigns />} />

@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Home, Sun, Moon, Bell, LayoutDashboard, Users, Link2, Package,
   Zap, ScrollText, RotateCcw, Gauge, Sparkles, DollarSign,
-  FileText, BookOpen, CreditCard, Settings2, MessageSquare,
+  FileText, BookOpen, CreditCard, Settings2, MessageSquare, Trophy,
 } from "lucide-react";
 import logoImg from "@/assets/logo.png";
 import { toast } from "sonner";
@@ -16,6 +16,7 @@ const NAV_ITEMS = [
   { label: "Dashboard", icon: LayoutDashboard, href: "/admin/dashboard" },
   { label: "Users & Roles", icon: Users, href: "/admin/users" },
   { label: "Employee Requests", icon: FileText, href: "/admin/employee-requests" },
+  { label: "Leaderboard", icon: Trophy, href: "/leaderboard" },
   { label: "Products & Pricing", icon: DollarSign, href: "/admin/pricing" },
   { label: "Developer", icon: Link2, href: "/admin/developer" },
   { label: "Pulse Settings", icon: Settings2, href: "/admin/pulse" },

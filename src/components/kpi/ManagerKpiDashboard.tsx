@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Users, DollarSign, Target, TrendingUp, Phone, UserCheck, Banknote, BarChart3 } from "lucide-react";
+import AgentBreakdownTable from "./AgentBreakdownTable";
 
 interface FloorStats {
   agentsOnline: number;
@@ -216,6 +217,8 @@ export default function ManagerKpiDashboard() {
           );
         })}
       </div>
+
+      <AgentBreakdownTable />
     </div>
   );
 }

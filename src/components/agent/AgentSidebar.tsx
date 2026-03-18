@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
-  LayoutDashboard, UserPlus, CalendarCheck, Home, RotateCcw, Users, Phone, Mail, Kanban, Activity,
+  LayoutDashboard, UserPlus, CalendarCheck, Home, RotateCcw, Users, Phone, Mail, Kanban, Activity, Trophy,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import logoImg from "@/assets/logo.png";
@@ -25,6 +25,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Dialer", icon: Phone, href: "/agent/dialer", beta: true },
   { label: "Bookings", icon: CalendarCheck, href: "/agent/operations" },
   { label: "Pulse Monitor", icon: Activity, href: "/agent/pulse" },
+  { label: "Leaderboard", icon: Trophy, href: "/leaderboard" },
 ];
 
 export default function AgentSidebar({ onDialerToggle }: AgentSidebarProps) {

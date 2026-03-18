@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Home, Sun, Moon, Bell, LayoutDashboard,
   Target, AlertTriangle, CheckCircle, BarChart3,
-  RotateCcw, Gauge, Activity, MessageSquare,
+  RotateCcw, Gauge, Activity, MessageSquare, Trophy,
 } from "lucide-react";
 import logoImg from "@/assets/logo.png";
 import { toast } from "sonner";
@@ -15,6 +15,7 @@ import { setPortalContext } from "@/hooks/usePortalContext";
 const NAV_ITEMS = [
   { label: "Dashboard", icon: LayoutDashboard, href: "/manager/dashboard" },
   { label: "My KPIs", icon: Gauge, href: "/kpi" },
+  { label: "Leaderboard", icon: Trophy, href: "/leaderboard" },
   { label: "Pulse Dashboard", icon: Activity, href: "/manager/pulse" },
 ];
 
