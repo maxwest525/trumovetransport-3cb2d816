@@ -81,7 +81,7 @@ export default function GrowthEngineShell({ children }: GrowthEngineShellProps) 
 
       {/* Navigation */}
       <nav className="flex-1 px-2 py-3 space-y-0.5 overflow-y-auto">
-        {NAV_SECTIONS.map((item) => {
+        {NAV_PRIMARY.map((item) => {
           const Icon = item.icon;
           const active = isActive(item.href);
           return (
@@ -96,6 +96,34 @@ export default function GrowthEngineShell({ children }: GrowthEngineShellProps) 
               )}
             >
               <Icon className="w-4 h-4 shrink-0" />
+              <span className="truncate">{item.label}</span>
+            </Link>
+          );
+        })}
+
+        {/* Secondary collapsed */}
+        <button
+          onClick={() => setSecondaryOpen(!secondaryOpen)}
+          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[11px] font-medium text-muted-foreground/60 hover:text-muted-foreground transition-colors mt-3"
+        >
+          <ChevronRight className={cn("w-3 h-3 transition-transform", secondaryOpen && "rotate-90")} />
+          <span>More</span>
+        </button>
+        {secondaryOpen && NAV_SECONDARY.map((item) => {
+          const Icon = item.icon;
+          const active = isActive(item.href);
+          return (
+            <Link
+              key={item.label}
+              to={item.href}
+              className={cn(
+                "flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-[12px] font-medium transition-all duration-150 ml-2",
+                active
+                  ? "bg-primary/10 text-primary"
+                  : "text-muted-foreground/60 hover:bg-muted hover:text-foreground"
+              )}
+            >
+              <Icon className="w-3.5 h-3.5 shrink-0" />
               <span className="truncate">{item.label}</span>
             </Link>
           );
