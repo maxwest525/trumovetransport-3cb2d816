@@ -584,18 +584,20 @@ function ShipmentTrackerSection({ navigate }: { navigate: (path: string) => void
           
           {/* Headline + CTA to the right — 25% larger */}
           <div className="flex flex-col items-center text-center space-y-6" style={{ maxWidth: '320px' }}>
-            <h2 className="tru-ai-main-headline" style={{ fontSize: '2.5rem', lineHeight: '1.15' }}>
-              Real-Time<br />
-              <span className="tru-ai-headline-accent">ELD Tracking.</span>
-            </h2>
-            <p className="tru-ai-subheadline" style={{ fontSize: '1.06rem' }}>
-              Connect to your carriers ELD and track movements in real-time
-            </p>
+            <div className="tru-ai-headline-block">
+              <h2 className="tru-ai-main-headline">
+                Real-Time<br />
+                <span className="tru-ai-headline-accent">ELD Tracking.</span>
+              </h2>
+              <p className="tru-ai-subheadline">
+                Connect to your carriers ELD and track movements in real-time
+              </p>
+            </div>
             
-            <button onClick={() => navigate("/site/track")} className="tru-ai-cta-btn" style={{ fontSize: '1rem', padding: '0.75rem 1.75rem' }}>
-              <MapPin className="w-5 h-5" />
+            <button onClick={() => navigate("/site/track")} className="tru-ai-cta-btn">
+              <MapPin className="w-4 h-4" />
               Track Shipment
-              <ArrowRight className="w-5 h-5" />
+              <ArrowRight className="w-4 h-4" />
             </button>
           </div>
         </div>
