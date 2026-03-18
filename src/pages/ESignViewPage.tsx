@@ -86,10 +86,6 @@ export default function ESignViewPage() {
   });
 
   const handleSign = (field: SignatureField) => {
-    if (!consentGiven) {
-      toast.error("Please accept the electronic signature consent before signing.");
-      return;
-    }
     if (field === "signature" && typedName.length < 2) return;
     if (field !== "signature" && typedInitials.length < 1) return;
 
