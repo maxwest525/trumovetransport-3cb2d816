@@ -1716,7 +1716,7 @@ export default function Index() {
                 <div className="flex flex-col gap-4">
                   <button
                     onClick={() => window.dispatchEvent(new CustomEvent('trudy-start'))}
-                    className="group relative flex flex-col items-center text-center rounded-2xl border border-foreground/15 bg-card p-8 shadow-md hover:border-primary/40 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,0,0,0.25)] transition-all duration-200"
+                    className="group relative flex flex-col items-center text-center rounded-2xl border-2 border-black bg-card p-8 hover:border-primary/40 hover:-translate-y-1 transition-all duration-200" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), inset 0 2px 8px rgba(0,0,0,0.15)' }}
                   >
                     <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
                       <Mic className="h-5 w-5 text-primary" />
