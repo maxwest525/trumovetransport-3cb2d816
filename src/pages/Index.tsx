@@ -602,32 +602,23 @@ function ShipmentTrackerSection({ navigate }: { navigate: (path: string) => void
             </div>
           </div>
           
-          {/* RIGHT: Live ELD data panel — same slot as detection list */}
-          <div className="tru-ai-detection-right">
-            <div className="rounded-xl border border-foreground/10 bg-card p-4 space-y-3 shadow-sm">
-              <div className="flex items-center gap-2 text-xs font-semibold tracking-widest uppercase text-muted-foreground">
-                <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                Live ELD Feed
-              </div>
-              <div className="space-y-3">
-                {[
-                  { label: 'Tractor ID', value: '#8291' },
-                  { label: 'MC Number', value: 'MC-133655' },
-                  { label: 'Current Speed', value: '62 mph' },
-                  { label: 'Hours of Service', value: '6h 12m remaining' },
-                  { label: 'Status', value: 'In Transit' },
-                ].map((item) => (
-                  <div key={item.label} className="flex items-center justify-between py-1.5 border-b border-foreground/5 last:border-0">
-                    <span className="text-xs text-muted-foreground">{item.label}</span>
-                    <span className="text-sm font-semibold text-foreground font-mono">{item.value}</span>
-                  </div>
-                ))}
-              </div>
-              <div className="flex items-center justify-between pt-1 text-[10px] text-muted-foreground">
-                <span>Last update: 12s ago</span>
-                <span className="text-primary font-semibold">● LIVE</span>
-              </div>
+          {/* RIGHT: Headline + CTA — mirrors left column of Scan section */}
+          <div className="tru-ai-detection-right" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: '1rem' }}>
+            <div className="tru-ai-headline-block">
+              <h2 className="tru-ai-main-headline">
+                Real-Time<br />
+                <span className="tru-ai-headline-accent">ELD Tracking.</span>
+              </h2>
+              <p className="tru-ai-subheadline">
+                Connect to your carriers ELD and track movements in real-time
+              </p>
             </div>
+            
+            <button onClick={() => navigate("/site/track")} className="tru-ai-cta-btn">
+              <MapPin className="w-4 h-4" />
+              Track Shipment
+              <ArrowRight className="w-4 h-4" />
+            </button>
           </div>
         </div>
       </div>
