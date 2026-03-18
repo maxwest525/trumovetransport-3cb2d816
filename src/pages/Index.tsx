@@ -50,7 +50,7 @@ import {
   CalendarIcon, ChevronLeft, Lock, Truck, Sparkles, Star, Users,
   Database, ChevronRight, Radar, CreditCard, ShieldCheck, BarChart3, Zap,
   Home, Building2, MoveVertical, ArrowUpDown, Scan, ChevronUp, ChevronDown, Camera, Globe,
-  Play, Pause, MapPinned, Calendar
+  Play, Pause, MapPinned, Calendar, Mail, MessageSquare
 } from "lucide-react";
 
 
@@ -1148,12 +1148,20 @@ export default function Index() {
             </span>
           </div>
 
-          {/* Right - Session ID */}
-          <div className="flex items-center gap-4">
-            <div className="text-right">
-              <div className="text-[11px] text-white/80 uppercase tracking-wider">Session ID</div>
-              <div className="text-sm font-mono text-white">TM-{String(Date.now()).slice(-8)}</div>
-            </div>
+          {/* Right - Action Buttons */}
+          <div className="flex items-center gap-2">
+            <a href="tel:+18001234567" className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 transition text-[11px] font-semibold text-white/90 uppercase tracking-wider">
+              <Phone className="w-3.5 h-3.5" /> Call Now
+            </a>
+            <button onClick={() => navigate("/book")} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 transition text-[11px] font-semibold text-white/90 uppercase tracking-wider">
+              <Video className="w-3.5 h-3.5" /> Video Consult
+            </button>
+            <a href="mailto:support@trumove.com" className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 transition text-[11px] font-semibold text-white/90 uppercase tracking-wider">
+              <Mail className="w-3.5 h-3.5" /> Email a Rep
+            </a>
+            <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 transition text-[11px] font-semibold text-white/90 uppercase tracking-wider">
+              <MessageSquare className="w-3.5 h-3.5" /> Text Support
+            </button>
           </div>
         </header>
       </div>
