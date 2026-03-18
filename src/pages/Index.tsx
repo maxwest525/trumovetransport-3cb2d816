@@ -455,26 +455,29 @@ function ShipmentTrackerSection({ navigate }: {navigate: (path: string) => void;
     color: 'hsl(142, 71%, 45%)',
     startLabel: 'Los Angeles', endLabel: 'New York',
     offset: 0, speed: 1,
-    // SVG viewBox 600x340 coordinates
-    pts: [[40,280],[90,255],[140,256],[190,225],[240,220],[290,195],[340,188],[390,165],[440,166],[480,138],[520,115],[555,92],[570,80]] as [number,number][]
+    // LA (southwest) → across southern route → up to NYC (northeast)
+    pts: [[72,218],[120,210],[175,195],[230,175],[285,160],[340,148],[390,130],[435,118],[475,108],[520,100],[545,95]] as [number,number][]
   },
   {
     color: 'hsl(200, 80%, 55%)',
     startLabel: 'Chicago', endLabel: 'Miami',
     offset: 0.35, speed: 1.2,
-    pts: [[320,90],[338,125],[365,158],[395,190],[430,225],[460,258],[488,285],[520,310]] as [number,number][]
+    // Chicago (upper midwest) → south through heartland → Miami (SE tip)
+    pts: [[378,95],[390,130],[405,158],[420,185],[440,210],[455,235],[470,258],[488,280],[495,295]] as [number,number][]
   },
   {
     color: 'hsl(35, 90%, 55%)',
     startLabel: 'Seattle', endLabel: 'Denver',
     offset: 0.6, speed: 0.9,
-    pts: [[55,55],[95,80],[140,108],[188,130],[235,155],[278,178],[298,185]] as [number,number][]
+    // Seattle (NW) → south-east to Denver (central)
+    pts: [[78,48],[105,72],[135,98],[168,120],[200,138],[228,152],[248,160]] as [number,number][]
   },
   {
     color: 'hsl(280, 65%, 60%)',
     startLabel: 'Dallas', endLabel: 'Atlanta',
     offset: 0.15, speed: 1.4,
-    pts: [[260,270],[302,248],[348,225],[392,210],[432,200]] as [number,number][]
+    // Dallas (south-central) → east to Atlanta (southeast)
+    pts: [[308,245],[340,232],[375,218],[410,210],[445,205]] as [number,number][]
   }], []);
 
   // Helper: build smooth SVG path from points
