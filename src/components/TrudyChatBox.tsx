@@ -86,8 +86,6 @@ export default function TrudyChatBox() {
   const [connectionState, setConnectionState] = useState<'idle' | 'connecting' | 'connected' | 'error'>('idle');
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const pendingResponseRef = useRef('');
-
   const conversation = useConversation({
     textOnly: true,
     onConnect: () => {
@@ -107,11 +105,21 @@ export default function TrudyChatBox() {
     },
     onMessage: (message: any) => {
       console.log('ElevenLabs message:', message);
-      
-      if (message.type === 'agent_response') {
+
+      if (message?.source === 'ai' && message?.role === 'agent' && message?.message) {
+        setMessages(prev => [...prev, {
+          id: Date.now().toString(),
+          role: 'trudy',
+          content: message.message,
+          timestamp: new Date(),
+        }]);
+        setIsTyping(false);
+        return;
+      }
+
+      if (message?.type === 'agent_response') {
         const agentText = message.agent_response_event?.agent_response;
         if (agentText) {
-          pendingResponseRef.current = agentText;
           setMessages(prev => [...prev, {
             id: Date.now().toString(),
             role: 'trudy',
@@ -120,7 +128,7 @@ export default function TrudyChatBox() {
           }]);
           setIsTyping(false);
         }
-      } else if (message.type === 'agent_response_correction') {
+      } else if (message?.type === 'agent_response_correction') {
         const corrected = message.agent_response_correction_event?.corrected_agent_response;
         if (corrected) {
           setMessages(prev => {
@@ -133,6 +141,7 @@ export default function TrudyChatBox() {
             }
             return updated;
           });
+          setIsTyping(false);
         }
       }
     },
