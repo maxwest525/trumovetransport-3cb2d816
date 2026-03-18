@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Monitor, Phone, Globe, Rocket, Volume2 } from "lucide-react";
+import { Monitor, Phone, Globe, Rocket, Volume2, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -178,7 +178,7 @@ export default function AgentToolLauncherModal({ open, onOpenChange }: AgentTool
                 transition={isSpeaking ? { duration: 1.2, repeat: Infinity } : {}}
                 className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 flex items-center justify-center"
               >
-                <span className="text-lg">🤖</span>
+                <Sparkles className="w-5 h-5 text-primary" />
               </motion.div>
               {/* Online dot */}
               <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-primary border-2 border-background" />
