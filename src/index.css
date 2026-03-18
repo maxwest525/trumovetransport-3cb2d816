@@ -13473,14 +13473,19 @@
     0 32px 80px hsl(var(--tm-ink) / 0.08);
 }
 
-/* Dark mode - solid dark background with shadow */
+/* Dark mode - glassmorphism with blur */
 .dark .header-main {
-  background: hsl(220 15% 10%);
-  border-bottom-color: hsl(0 0% 100% / 0.1);
+  background: hsl(220 15% 10% / 0.82);
+  backdrop-filter: blur(16px) saturate(1.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  border-bottom-color: hsl(0 0% 100% / 0.08);
 }
 
 .dark .header-main.header-floating {
-  background: hsl(220 15% 10%);
+  background: hsl(220 15% 10% / 0.78);
+  backdrop-filter: blur(20px) saturate(1.5);
+  -webkit-backdrop-filter: blur(20px) saturate(1.5);
+  border: 1px solid hsl(0 0% 100% / 0.06);
   box-shadow: 
     0 4px 12px hsl(0 0% 0% / 0.3),
     0 12px 32px hsl(0 0% 0% / 0.35),
@@ -13488,6 +13493,7 @@
 }
 
 .dark .header-main.header-floating.is-scrolled {
+  background: hsl(220 15% 10% / 0.88);
   box-shadow: 
     0 6px 16px hsl(0 0% 0% / 0.35),
     0 16px 40px hsl(0 0% 0% / 0.4),
