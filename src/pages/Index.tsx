@@ -23,6 +23,7 @@ import StatsStrip from "@/components/StatsStrip";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { useParallax } from "@/hooks/useParallax";
 import logoImg from "@/assets/logo.png";
+import eldMapImg from "@/assets/eld-map.jpg";
 
 // Preview images for value cards
 import previewAiScanner from "@/assets/preview-ai-scanner.jpg";
@@ -436,7 +437,6 @@ const ROUTE_WAYPOINTS = [
 
 // Shipment Tracker Section - Compact ELD verification layout
 function ShipmentTrackerSection({ navigate }: {navigate: (path: string) => void;}) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number>();
   const [truckProgress, setTruckProgress] = useState(0);
 
@@ -452,192 +452,103 @@ function ShipmentTrackerSection({ navigate }: {navigate: (path: string) => void;
     return () => {if (animationRef.current) cancelAnimationFrame(animationRef.current);};
   }, []);
 
-  // Route definitions: multiple trucks on different paths
+  // Route definitions for SVG overlay
   const routes = useMemo(() => [
   {
-    label: 'LA → NYC',
     color: 'hsl(142, 71%, 45%)',
-    colorAlpha: 'hsla(142, 71%, 45%,',
     startLabel: 'Los Angeles', endLabel: 'New York',
-    offset: 0,
-    speed: 1,
-    pts: [
-    [40, 280], [65, 270], [90, 255], [115, 248], [140, 256],
-    [165, 244], [190, 225], [215, 215], [240, 220], [265, 205],
-    [290, 195], [315, 204], [340, 188], [365, 175], [390, 165],
-    [415, 158], [440, 166], [460, 150], [480, 138], [500, 125],
-    [520, 115], [540, 105], [555, 92], [570, 80]] as
-    [number, number][]
+    offset: 0, speed: 1,
+    // SVG viewBox 600x340 coordinates
+    pts: [[40,280],[90,255],[140,256],[190,225],[240,220],[290,195],[340,188],[390,165],[440,166],[480,138],[520,115],[555,92],[570,80]] as [number,number][]
   },
   {
-    label: 'CHI → MIA',
     color: 'hsl(200, 80%, 55%)',
-    colorAlpha: 'hsla(200, 80%, 55%,',
     startLabel: 'Chicago', endLabel: 'Miami',
-    offset: 0.35,
-    speed: 1.2,
-    pts: [
-    [320, 90], [330, 105], [338, 125], [350, 145], [365, 158],
-    [380, 175], [395, 190], [415, 208], [430, 225], [448, 240],
-    [460, 258], [472, 272], [488, 285], [505, 298], [520, 310]] as
-    [number, number][]
+    offset: 0.35, speed: 1.2,
+    pts: [[320,90],[338,125],[365,158],[395,190],[430,225],[460,258],[488,285],[520,310]] as [number,number][]
   },
   {
-    label: 'SEA → DEN',
     color: 'hsl(35, 90%, 55%)',
-    colorAlpha: 'hsla(35, 90%, 55%,',
     startLabel: 'Seattle', endLabel: 'Denver',
-    offset: 0.6,
-    speed: 0.9,
-    pts: [
-    [55, 55], [72, 65], [95, 80], [118, 95], [140, 108],
-    [165, 118], [188, 130], [210, 145], [235, 155], [258, 168],
-    [278, 178], [298, 185]] as
-    [number, number][]
+    offset: 0.6, speed: 0.9,
+    pts: [[55,55],[95,80],[140,108],[188,130],[235,155],[278,178],[298,185]] as [number,number][]
   },
   {
-    label: 'DAL → ATL',
     color: 'hsl(280, 65%, 60%)',
-    colorAlpha: 'hsla(280, 65%, 60%,',
     startLabel: 'Dallas', endLabel: 'Atlanta',
-    offset: 0.15,
-    speed: 1.4,
-    pts: [
-    [260, 270], [280, 260], [302, 248], [325, 238], [348, 225],
-    [370, 218], [392, 210], [412, 205], [432, 200]] as
-    [number, number][]
-  }],
-  []);
+    offset: 0.15, speed: 1.4,
+    pts: [[260,270],[302,248],[348,225],[392,210],[432,200]] as [number,number][]
+  }], []);
 
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    const w = canvas.width;
-    const h = canvas.height;
-
-    ctx.fillStyle = 'hsl(220, 15%, 6%)';
-    ctx.fillRect(0, 0, w, h);
-
-    // Grid
-    ctx.strokeStyle = 'hsl(220, 15%, 12%)';
-    ctx.lineWidth = 0.5;
-    for (let i = 0; i < w; i += 28) {ctx.beginPath();ctx.moveTo(i, 0);ctx.lineTo(i, h);ctx.stroke();}
-    for (let i = 0; i < h; i += 28) {ctx.beginPath();ctx.moveTo(0, i);ctx.lineTo(w, i);ctx.stroke();}
-
-    // Road network hints
-    ctx.strokeStyle = 'hsl(220, 15%, 14%)';
-    ctx.lineWidth = 1;
-    [[30, 80, 570, 75], [30, 170, 570, 165], [30, 260, 570, 255],
-    [100, 10, 105, 330], [220, 10, 215, 330], [360, 10, 365, 330], [490, 10, 485, 330]].
-    forEach(([x1, y1, x2, y2]) => {
-      ctx.beginPath();ctx.moveTo(x1, y1);ctx.lineTo(x2, y2);ctx.stroke();
-    });
-
-    // Bezier-smooth drawing helper
-    function drawSmooth(points: [number, number][]) {
-      ctx.beginPath();
-      ctx.moveTo(points[0][0], points[0][1]);
-      for (let i = 0; i < points.length - 1; i++) {
-        const xc = (points[i][0] + points[i + 1][0]) / 2;
-        const yc = (points[i][1] + points[i + 1][1]) / 2;
-        ctx.quadraticCurveTo(points[i][0], points[i][1], xc, yc);
-      }
-      const last = points[points.length - 1];
-      ctx.lineTo(last[0], last[1]);
-      ctx.stroke();
+  // Helper: build smooth SVG path from points
+  const buildPath = (pts: [number,number][]) => {
+    let d = `M ${pts[0][0]} ${pts[0][1]}`;
+    for (let i = 0; i < pts.length - 1; i++) {
+      const xc = (pts[i][0] + pts[i+1][0]) / 2;
+      const yc = (pts[i][1] + pts[i+1][1]) / 2;
+      d += ` Q ${pts[i][0]} ${pts[i][1]} ${xc} ${yc}`;
     }
+    const last = pts[pts.length - 1];
+    d += ` L ${last[0]} ${last[1]}`;
+    return d;
+  };
 
-    // Draw each route
-    routes.forEach((route) => {
-      const { pts, color, colorAlpha, startLabel, endLabel, offset, speed } = route;
-      const progress = (truckProgress * speed + offset) % 1;
-
-      // Route glow
-      ctx.strokeStyle = `${colorAlpha} 0.08)`;
-      ctx.lineWidth = 10;
-      ctx.lineCap = 'round';ctx.lineJoin = 'round';
-      drawSmooth(pts);
-
-      // Route line
-      const start = pts[0],end = pts[pts.length - 1];
-      const grad = ctx.createLinearGradient(start[0], start[1], end[0], end[1]);
-      grad.addColorStop(0, `${colorAlpha} 0.3)`);
-      grad.addColorStop(0.5, color);
-      grad.addColorStop(1, `${colorAlpha} 0.4)`);
-      ctx.strokeStyle = grad;
-      ctx.lineWidth = 2;
-      drawSmooth(pts);
-
-      // Truck position
-      const segs = pts.length - 1;
-      const sf = progress * segs;
-      const si = Math.min(Math.floor(sf), segs - 1);
-      const t = sf - si;
-      const tx = pts[si][0] + (pts[si + 1][0] - pts[si][0]) * t;
-      const ty = pts[si][1] + (pts[si + 1][1] - pts[si][1]) * t;
-
-      // Glow
-      const glow = ctx.createRadialGradient(tx, ty, 0, tx, ty, 16);
-      glow.addColorStop(0, `${colorAlpha} 0.3)`);
-      glow.addColorStop(1, `${colorAlpha} 0)`);
-      ctx.fillStyle = glow;
-      ctx.beginPath();ctx.arc(tx, ty, 16, 0, Math.PI * 2);ctx.fill();
-
-      // Truck dot
-      ctx.fillStyle = 'hsl(220, 15%, 6%)';
-      ctx.beginPath();ctx.arc(tx, ty, 6, 0, Math.PI * 2);ctx.fill();
-      ctx.strokeStyle = color;
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();ctx.arc(tx, ty, 6, 0, Math.PI * 2);ctx.stroke();
-      ctx.fillStyle = color;
-      ctx.beginPath();ctx.arc(tx, ty, 3.5, 0, Math.PI * 2);ctx.fill();
-
-      // Endpoints
-      ctx.fillStyle = color;
-      ctx.beginPath();ctx.arc(start[0], start[1], 3.5, 0, Math.PI * 2);ctx.fill();
-      ctx.fillStyle = `${colorAlpha} 0.6)`;
-      ctx.beginPath();ctx.arc(end[0], end[1], 3.5, 0, Math.PI * 2);ctx.fill();
-
-      // City labels
-      ctx.fillStyle = 'hsl(220, 15%, 40%)';
-      ctx.font = '8px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText(startLabel, start[0], start[1] + 14);
-      ctx.fillText(endLabel, end[0], end[1] - 10);
-    });
-
-    // LIVE badge on first truck
-    const mainRoute = routes[0];
-    const mainProgress = (truckProgress * mainRoute.speed + mainRoute.offset) % 1;
-    const mainSegs = mainRoute.pts.length - 1;
-    const mainSf = mainProgress * mainSegs;
-    const mainSi = Math.min(Math.floor(mainSf), mainSegs - 1);
-    const mainT = mainSf - mainSi;
-    const mainTx = mainRoute.pts[mainSi][0] + (mainRoute.pts[mainSi + 1][0] - mainRoute.pts[mainSi][0]) * mainT;
-    const mainTy = mainRoute.pts[mainSi][1] + (mainRoute.pts[mainSi + 1][1] - mainRoute.pts[mainSi][1]) * mainT;
-    const bx = mainTx + 10,by = mainTy - 12;
-    ctx.fillStyle = 'hsl(142, 71%, 45%)';
-    ctx.beginPath();ctx.roundRect(bx, by, 30, 12, 5);ctx.fill();
-    ctx.fillStyle = '#fff';
-    ctx.beginPath();ctx.arc(bx + 7, by + 6, 1.5, 0, Math.PI * 2);ctx.fill();
-    ctx.fillStyle = 'hsl(220, 15%, 6%)';
-    ctx.font = 'bold 6.5px sans-serif';
-    ctx.textAlign = 'left';
-    ctx.fillText('LIVE', bx + 11, by + 7.8);
-
-  }, [truckProgress, routes]);
+  // Get truck position along route
+  const getTruckPos = (pts: [number,number][], progress: number): [number,number] => {
+    const segs = pts.length - 1;
+    const sf = progress * segs;
+    const si = Math.min(Math.floor(sf), segs - 1);
+    const t = sf - si;
+    return [
+      pts[si][0] + (pts[si+1][0] - pts[si][0]) * t,
+      pts[si][1] + (pts[si+1][1] - pts[si][1]) * t
+    ];
+  };
 
   return (
     <section className="tru-ai-steps-section">
       <div className="tru-ai-steps-inner">
         <div className="flex flex-col lg:flex-row items-center justify-center gap-10 lg:gap-16 w-full">
-          {/* Map canvas */}
+          {/* Map with SVG overlay */}
           <div className="w-full max-w-[600px]">
-            <div className="rounded-xl overflow-hidden border border-foreground/10 shadow-lg">
-              <canvas ref={canvasRef} width={600} height={340} className="w-full h-auto block" />
+            <div className="rounded-xl overflow-hidden border border-foreground/10 shadow-lg relative">
+              <img src={eldMapImg} alt="US Map" className="w-full h-auto block" />
+              <svg viewBox="0 0 600 340" className="absolute inset-0 w-full h-full" preserveAspectRatio="xMidYMid slice">
+                {routes.map((route, i) => {
+                  const path = buildPath(route.pts);
+                  const progress = (truckProgress * route.speed + route.offset) % 1;
+                  const [tx, ty] = getTruckPos(route.pts, progress);
+                  const start = route.pts[0];
+                  const end = route.pts[route.pts.length - 1];
+                  return (
+                    <g key={i}>
+                      {/* Glow */}
+                      <path d={path} fill="none" stroke={route.color} strokeWidth={8} strokeLinecap="round" strokeLinejoin="round" opacity={0.08} />
+                      {/* Line */}
+                      <path d={path} fill="none" stroke={route.color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" opacity={0.7} />
+                      {/* Endpoints */}
+                      <circle cx={start[0]} cy={start[1]} r={3.5} fill={route.color} />
+                      <circle cx={end[0]} cy={end[1]} r={3.5} fill={route.color} opacity={0.6} />
+                      {/* Labels */}
+                      <text x={start[0]} y={start[1] + 14} fill="hsl(220, 15%, 40%)" fontSize={8} textAnchor="middle">{route.startLabel}</text>
+                      <text x={end[0]} y={end[1] - 10} fill="hsl(220, 15%, 40%)" fontSize={8} textAnchor="middle">{route.endLabel}</text>
+                      {/* Truck glow */}
+                      <circle cx={tx} cy={ty} r={16} fill={route.color} opacity={0.15} />
+                      {/* Truck dot */}
+                      <circle cx={tx} cy={ty} r={6} fill="black" stroke={route.color} strokeWidth={1.5} />
+                      <circle cx={tx} cy={ty} r={3.5} fill={route.color} />
+                      {/* LIVE badge on first route */}
+                      {i === 0 && (
+                        <g>
+                          <rect x={tx + 10} y={ty - 12} width={30} height={12} rx={5} fill="hsl(142, 71%, 45%)" />
+                          <circle cx={tx + 17} cy={ty - 6} r={1.5} fill="white" />
+                          <text x={tx + 21} y={ty - 4.2} fill="#0a0c10" fontSize={6.5} fontWeight="bold">LIVE</text>
+                        </g>
+                      )}
+                    </g>
+                  );
+                })}
+              </svg>
             </div>
           </div>
           
