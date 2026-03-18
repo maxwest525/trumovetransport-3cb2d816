@@ -32356,12 +32356,15 @@ html.dark .tru-summary-header-large,
   filter: brightness(0) invert(1);
 }
 
-/* Header logo dark mode visibility - ensure "MOVE" text is visible */
+/* Header logo dark mode - keep original colors with strong white backing glow */
 .dark header img[alt="TruMove"],
 .dark header .tru-logo-image,
 .dark .tru-header-logo,
 .dark .header-logo img {
-  filter: brightness(0) invert(1);
+  filter: none;
+  background: radial-gradient(ellipse at center, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.6) 45%, transparent 72%);
+  padding: 4px 8px;
+  border-radius: 8px;
 }
 
 /* Note: The tracking-header has its own logo with brightness(0) invert(1) applied inline.
