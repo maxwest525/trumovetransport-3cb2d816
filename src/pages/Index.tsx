@@ -35,6 +35,7 @@ import heroFamilyMove from "@/assets/hero-family-move.jpg";
 import trudyAvatar from "@/assets/trudy-model.jpg";
 
 import TrudyChatBox from "@/components/TrudyChatBox";
+import ContactHumanTabs from "@/components/ContactHumanTabs";
 import ChatModal from "@/components/chat/ChatModal";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
