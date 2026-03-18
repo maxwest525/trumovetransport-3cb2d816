@@ -575,19 +575,14 @@ function ShipmentTrackerSection({ navigate }: { navigate: (path: string) => void
   return (
     <section className="tru-ai-steps-section">
       <div className="tru-ai-steps-inner">
-        <div className="tru-ai-header-row">
-          {/* LEFT: empty to match grid structure */}
-          <div className="tru-ai-content-left" />
-          
-          {/* CENTER: Map canvas — same slot as scanner preview */}
-          <div className="tru-ai-scanner-center">
-            <div className="rounded-xl overflow-hidden border border-foreground/10 shadow-lg">
-              <canvas ref={canvasRef} width={600} height={340} className="w-full h-auto block" />
-            </div>
+        <div className="flex items-center gap-10" style={{ maxWidth: '820px' }}>
+          {/* Map canvas */}
+          <div className="rounded-xl overflow-hidden border border-foreground/10 shadow-lg flex-shrink-0" style={{ width: '420px' }}>
+            <canvas ref={canvasRef} width={600} height={340} className="w-full h-auto block" />
           </div>
           
-          {/* RIGHT: Headline + CTA — mirrors left column of Scan section */}
-          <div className="tru-ai-detection-right" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: '1rem' }}>
+          {/* Headline + CTA */}
+          <div className="flex flex-col justify-center gap-4">
             <div className="tru-ai-headline-block">
               <h2 className="tru-ai-main-headline">
                 Real-Time<br />
