@@ -1331,8 +1331,14 @@ export default function Index() {
               <h1 className="tru-hero-headline">
                 The Smarter Way To <span className="tru-hero-accent">Move</span>
               </h1>
-              <p className="tru-hero-feature-line">
-                AI-powered inventory · FMCSA-vetted carriers · Live video consults · Shipment Tracking
+              <ul className="tru-hero-bullets">
+                <li>Scan, document, and build your own inventory — your items stay private and secure</li>
+                <li>Meet your broker virtually, face to face, from anywhere</li>
+                <li>Track your most valuable belongings every step of the way</li>
+                <li>See the full history and performance record of your movers</li>
+              </ul>
+              <p className="tru-hero-cta-prompt">
+                Fill out the form on the right to get started <ArrowRight className="w-4 h-4 inline-block ml-1" />
               </p>
             </div>
 
