@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import CustomKpiDashboard from "@/components/kpi/CustomKpiDashboard";
+import ManagerKpiDashboard from "@/components/kpi/ManagerKpiDashboard";
 import { usePortalContext } from "@/hooks/usePortalContext";
 import AgentShell from "@/components/layout/AgentShell";
 import AdminShell from "@/components/layout/AdminShell";
@@ -10,15 +11,13 @@ export default function KpiDashboard() {
 
   useEffect(() => { window.scrollTo(0, 0); }, []);
 
-  const content = <CustomKpiDashboard />;
-
   if (portalContext === "admin") {
-    return <AdminShell breadcrumb=" / KPIs">{content}</AdminShell>;
+    return <AdminShell breadcrumb=" / KPIs"><CustomKpiDashboard /></AdminShell>;
   }
 
   if (portalContext === "manager") {
-    return <ManagerShell breadcrumb=" / KPIs">{content}</ManagerShell>;
+    return <ManagerShell breadcrumb=" / KPIs"><ManagerKpiDashboard /></ManagerShell>;
   }
 
-  return <AgentShell breadcrumb=" / KPIs">{content}</AgentShell>;
+  return <AgentShell breadcrumb=" / KPIs"><CustomKpiDashboard /></AgentShell>;
 }
