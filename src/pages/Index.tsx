@@ -1191,7 +1191,7 @@ export default function Index() {
     <SiteShell centered hideTrustStrip>
       {/* Sticky Header Block - TruMove Command Center */}
       <div className="sticky top-[6.375rem] z-40">
-        <header className="tracking-header">
+        <header className="tracking-header" style={{ justifyContent: 'center' }}>
           {/* Left - Logo & Title */}
           <div className="flex items-center gap-3">
             <img 
@@ -1204,19 +1204,22 @@ export default function Index() {
             </span>
           </div>
 
-          {/* Right - Action Buttons */}
-          <div className="flex items-center gap-2">
-            <a href="tel:+18001234567" className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 transition text-[11px] font-semibold text-white/90 uppercase tracking-wider">
-              <Phone className="w-3.5 h-3.5" /> Call Now
+          {/* Separator */}
+          <div className="w-px h-5 bg-white/20 mx-3" />
+
+          {/* CTA Buttons - centered, spread, bold */}
+          <div className="flex items-center gap-5">
+            <a href="tel:+18001234567" className="flex items-center gap-2 px-4 py-2 rounded-md bg-white/10 hover:bg-white/20 border border-white/10 hover:border-white/25 transition-all text-[11px] font-extrabold text-white uppercase tracking-[0.15em]">
+              <Phone className="w-4 h-4 text-[hsl(142,71%,45%)]" /> Call Now
             </a>
-            <button onClick={() => navigate("/book")} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 transition text-[11px] font-semibold text-white/90 uppercase tracking-wider">
-              <Video className="w-3.5 h-3.5" /> Video Consult
+            <button onClick={() => navigate("/book")} className="flex items-center gap-2 px-4 py-2 rounded-md bg-white/10 hover:bg-white/20 border border-white/10 hover:border-white/25 transition-all text-[11px] font-extrabold text-white uppercase tracking-[0.15em]">
+              <Video className="w-4 h-4 text-[hsl(142,71%,45%)]" /> Video Consult
             </button>
-            <a href="mailto:support@trumove.com" className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 transition text-[11px] font-semibold text-white/90 uppercase tracking-wider">
-              <Mail className="w-3.5 h-3.5" /> Email a Rep
+            <a href="mailto:support@trumove.com" className="flex items-center gap-2 px-4 py-2 rounded-md bg-white/10 hover:bg-white/20 border border-white/10 hover:border-white/25 transition-all text-[11px] font-extrabold text-white uppercase tracking-[0.15em]">
+              <Mail className="w-4 h-4 text-[hsl(142,71%,45%)]" /> Email a Rep
             </a>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 transition text-[11px] font-semibold text-white/90 uppercase tracking-wider">
-              <MessageSquare className="w-3.5 h-3.5" /> Text Support
+            <button className="flex items-center gap-2 px-4 py-2 rounded-md bg-white/10 hover:bg-white/20 border border-white/10 hover:border-white/25 transition-all text-[11px] font-extrabold text-white uppercase tracking-[0.15em]">
+              <MessageSquare className="w-4 h-4 text-[hsl(142,71%,45%)]" /> Text Support
             </button>
           </div>
         </header>
