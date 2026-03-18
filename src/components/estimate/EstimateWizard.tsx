@@ -249,11 +249,13 @@ export default function EstimateWizard({ onComplete, initialDetails }: EstimateW
           </div>
           
           {/* Header - Matching homepage style */}
-          <div className="tru-qb-form-header tru-qb-form-header-pill">
-            <div className="tru-qb-form-title-group">
-              <span className="tru-qb-form-title tru-qb-form-title-large">WHERE ARE YOU <span className="tru-qb-title-accent">MOVING</span> FROM?</span>
-            </div>
-          </div>
+           <div className="tru-summary-header-large">
+             <div className="text-center flex-1">
+               <h3 className="text-lg font-black text-foreground">
+                 Where are you <span className="tru-qb-title-accent">moving</span> from?
+               </h3>
+             </div>
+           </div>
 
           <div className="tru-floating-form-content">
             {/* Step 1: Moving FROM Details + Parking */}
