@@ -156,7 +156,7 @@ export default function Header() {
             <img 
               src={logo} 
               alt="TruMove" 
-              style={{ filter: 'drop-shadow(0 0 6px rgba(255,255,255,0.9)) drop-shadow(0 0 14px rgba(255,255,255,0.5))' }}
+              style={{ filter: 'drop-shadow(0 0 4px rgba(255,255,255,1)) drop-shadow(0 0 10px rgba(255,255,255,0.85)) drop-shadow(0 0 22px rgba(255,255,255,0.5)) drop-shadow(0 0 40px rgba(255,255,255,0.25))' }}
             />
           </Link>
 
