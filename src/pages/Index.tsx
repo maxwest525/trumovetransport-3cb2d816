@@ -1801,9 +1801,6 @@ export default function Index() {
               </div>
               </div>
 
-              <p className="text-center text-[11px] text-muted-foreground mt-6">
-                or email <a href="mailto:support@trumove.com" className="text-primary underline underline-offset-2 hover:text-primary/80">support@trumove.com</a>
-              </p>
             </div>
           </section>
 
