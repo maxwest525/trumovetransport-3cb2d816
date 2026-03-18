@@ -31,6 +31,12 @@ interface ManagerShellProps {
 export default function ManagerShell({ children, breadcrumb = "" }: ManagerShellProps) {
   const { theme, setTheme } = useTheme();
   const location = useLocation();
+  const [showAdvanced] = useState(true);
+
+  useEffect(() => {
+    setPortalContext("manager");
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     <div className="flex min-h-screen bg-background text-foreground">
