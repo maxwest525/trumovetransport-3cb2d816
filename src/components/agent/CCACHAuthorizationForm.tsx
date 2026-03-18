@@ -6,7 +6,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import logo from "@/assets/logo.png";
-import { Check, Download, Printer, CreditCard, Building, Send, Mail, UserPlus, Shield, Lock, FileText, Loader2 } from "lucide-react";
+import { Check, CreditCard, Building, Send, Mail, UserPlus, Shield, Lock, FileText, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { ClientSearchModal, type ClientData } from "./ClientSearchModal";
 import { ESignStatusCard } from "@/components/esign/ESignStatusCard";
