@@ -1769,7 +1769,7 @@ export default function Index() {
                 <div className="flex flex-col gap-4 md:w-44 shrink-0">
                   <a
                     href="tel:+16097277647"
-                    className="group relative flex flex-col items-center text-center rounded-2xl border-2 border-black bg-card p-6 hover:border-primary/40 hover:-translate-y-1 transition-all duration-200" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), inset 0 2px 8px rgba(0,0,0,0.15)' }}
+                    className="group relative flex flex-col items-center text-center rounded-2xl border-2 border-black bg-card p-6 hover:-translate-y-1 transition-all duration-200" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), inset 0 2px 8px rgba(0,0,0,0.15)' }}
                   >
                     <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center mb-3 group-hover:bg-primary/20 transition-colors">
                       <Phone className="h-4 w-4 text-primary" />
