@@ -147,6 +147,7 @@ const App = () => (
             <Route path="/homepage-2" element={<HomepageV2 />} />
             <Route path="/customer-facing-sites" element={<CustomerFacingSites />} />
             <Route path="/tools/:tool" element={<IntegrationPlaceholder />} />
+            <Route path="/agent/preferences" element={<AgentPreferences />} />
             <Route path="/agent/pulse" element={<AgentPulse />} />
             <Route path="/agent/pulse/call/:callId" element={<AgentPulseCallReview />} />
             <Route path="/manager/pulse" element={<ManagerPulse />} />
