@@ -576,24 +576,8 @@ function ShipmentTrackerSection({ navigate }: { navigate: (path: string) => void
     <section className="tru-ai-steps-section">
       <div className="tru-ai-steps-inner">
         <div className="tru-ai-header-row">
-          {/* LEFT: Headline + CTA — mirrors Scan section exactly */}
-          <div className="tru-ai-content-left" style={{ justifyContent: 'center' }}>
-            <div className="tru-ai-headline-block">
-              <h2 className="tru-ai-main-headline">
-                Real-Time<br />
-                <span className="tru-ai-headline-accent">ELD Tracking.</span>
-              </h2>
-              <p className="tru-ai-subheadline">
-                Connect to your carriers ELD and track movements in real-time
-              </p>
-            </div>
-            
-            <button onClick={() => navigate("/site/track")} className="tru-ai-cta-btn">
-              <MapPin className="w-4 h-4" />
-              Track Shipment
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
+          {/* LEFT: empty to match grid structure */}
+          <div className="tru-ai-content-left" />
           
           {/* CENTER: Map canvas — same slot as scanner preview */}
           <div className="tru-ai-scanner-center">
