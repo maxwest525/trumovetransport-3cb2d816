@@ -1670,20 +1670,52 @@
     drop-shadow(0 2px 8px hsl(var(--tm-green) / 0.35));
 }
 
-/* Feature line - single line, muted, elegant spacing */
-.tru-hero-feature-line {
-  font-size: clamp(12px, 1.1vw, 15px);
-  font-weight: 500;
-  color: hsl(0 0% 100% / 0.88);
-  letter-spacing: 0.03em;
-  line-height: 1.6;
+/* Hero bullets — value proposition list */
+.tru-hero-bullets {
+  list-style: none;
+  padding: 0;
   margin: 0;
-  text-shadow: 
-    0 2px 6px hsl(0 0% 0% / 0.9),
-    0 4px 16px hsl(0 0% 0% / 0.7);
-  /* Entrance animation with 250ms delay */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
   opacity: 0;
   animation: hero-element-enter 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.25s forwards;
+}
+
+.tru-hero-bullets li {
+  font-size: clamp(13px, 1.15vw, 16px);
+  font-weight: 500;
+  color: hsl(0 0% 100% / 0.92);
+  line-height: 1.5;
+  padding-left: 20px;
+  position: relative;
+  text-shadow:
+    0 2px 6px hsl(0 0% 0% / 0.9),
+    0 4px 16px hsl(0 0% 0% / 0.7);
+}
+
+.tru-hero-bullets li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: hsl(var(--tm-green));
+  font-weight: 700;
+  filter: drop-shadow(0 0 4px hsl(var(--tm-green) / 0.5));
+}
+
+/* CTA prompt line */
+.tru-hero-cta-prompt {
+  font-size: clamp(13px, 1.1vw, 15px);
+  font-weight: 600;
+  color: hsl(0 0% 100% / 0.95);
+  margin: 4px 0 0 0;
+  display: flex;
+  align-items: center;
+  text-shadow:
+    0 2px 6px hsl(0 0% 0% / 0.9),
+    0 4px 16px hsl(0 0% 0% / 0.7);
+  opacity: 0;
+  animation: hero-element-enter 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.35s forwards;
 }
 
 /* RIGHT COLUMN - Form + CTAs */
