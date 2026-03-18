@@ -463,12 +463,12 @@ function ShipmentTrackerSection({ navigate }: { navigate: (path: string) => void
     const w = canvas.width;
     const h = canvas.height;
     
-    // Warm beige background
-    ctx.fillStyle = '#f5f0e8';
+    // Dark navy background
+    ctx.fillStyle = '#0c1425';
     ctx.fillRect(0, 0, w, h);
     
     // Subtle grid
-    ctx.strokeStyle = '#e8e0d4';
+    ctx.strokeStyle = '#1a2540';
     ctx.lineWidth = 0.5;
     for (let i = 0; i < w; i += 30) {
       ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, h); ctx.stroke();
@@ -477,8 +477,8 @@ function ShipmentTrackerSection({ navigate }: { navigate: (path: string) => void
       ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(w, i); ctx.stroke();
     }
     
-    // Subtle road network (horizontal + vertical lines like a real map)
-    ctx.strokeStyle = '#ddd5c8';
+    // Subtle road network
+    ctx.strokeStyle = '#162038';
     ctx.lineWidth = 1.5;
     const roads = [
       [[40, 120], [700, 80]], [[40, 200], [700, 190]], [[40, 300], [700, 310]],
@@ -489,15 +489,15 @@ function ShipmentTrackerSection({ navigate }: { navigate: (path: string) => void
       ctx.beginPath(); ctx.moveTo(from[0], from[1]); ctx.lineTo(to[0], to[1]); ctx.stroke();
     });
     
-    // Main route (blue gradient line - I-10 style)
+    // Main route
     const routePoints: [number, number][] = [
       [60, 310], [140, 280], [220, 260], [300, 240], [380, 220],
       [440, 200], [500, 180], [560, 160], [620, 140], [680, 120],
     ];
     
-    // Route shadow
-    ctx.strokeStyle = '#4285F420';
-    ctx.lineWidth = 12;
+    // Route glow
+    ctx.strokeStyle = '#22c55e18';
+    ctx.lineWidth = 14;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
     ctx.beginPath();
@@ -506,10 +506,11 @@ function ShipmentTrackerSection({ navigate }: { navigate: (path: string) => void
     
     // Route line
     const routeGrad = ctx.createLinearGradient(60, 310, 680, 120);
-    routeGrad.addColorStop(0, '#93c5fd');
-    routeGrad.addColorStop(1, '#3b82f6');
+    routeGrad.addColorStop(0, '#22c55e60');
+    routeGrad.addColorStop(0.5, '#22c55e');
+    routeGrad.addColorStop(1, '#22c55e80');
     ctx.strokeStyle = routeGrad;
-    ctx.lineWidth = 4;
+    ctx.lineWidth = 3;
     ctx.beginPath();
     routePoints.forEach((p, i) => i === 0 ? ctx.moveTo(p[0], p[1]) : ctx.lineTo(p[0], p[1]));
     ctx.stroke();
@@ -523,32 +524,38 @@ function ShipmentTrackerSection({ navigate }: { navigate: (path: string) => void
     const ty = routePoints[segI][1] + (routePoints[segI + 1][1] - routePoints[segI][1]) * t;
     
     // Truck glow
-    const glowGrad = ctx.createRadialGradient(tx, ty, 0, tx, ty, 30);
-    glowGrad.addColorStop(0, '#22c55e40');
+    const glowGrad = ctx.createRadialGradient(tx, ty, 0, tx, ty, 35);
+    glowGrad.addColorStop(0, '#22c55e50');
+    glowGrad.addColorStop(0.5, '#22c55e20');
     glowGrad.addColorStop(1, '#22c55e00');
     ctx.fillStyle = glowGrad;
-    ctx.beginPath(); ctx.arc(tx, ty, 30, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(tx, ty, 35, 0, Math.PI * 2); ctx.fill();
     
-    // Truck dot
-    ctx.fillStyle = '#fff';
-    ctx.beginPath(); ctx.arc(tx, ty, 14, 0, Math.PI * 2); ctx.fill();
+    // Truck outer ring
+    ctx.fillStyle = '#0c1425';
+    ctx.beginPath(); ctx.arc(tx, ty, 15, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = '#22c55e';
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(tx, ty, 15, 0, Math.PI * 2); ctx.stroke();
+    
+    // Truck inner dot
     ctx.fillStyle = '#22c55e';
-    ctx.beginPath(); ctx.arc(tx, ty, 11, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(tx, ty, 10, 0, Math.PI * 2); ctx.fill();
     
-    // Truck icon (simple)
+    // Truck icon
     ctx.fillStyle = '#fff';
     ctx.font = 'bold 12px sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText('🚛', tx, ty);
     
-    // "LIVE" badge near truck
-    ctx.fillStyle = '#1a1a1a';
+    // "LIVE" badge
     const badgeX = tx + 20;
     const badgeY = ty - 22;
     const badgeW = 48;
     const badgeH = 20;
     const radius = 10;
+    ctx.fillStyle = '#22c55e';
     ctx.beginPath();
     ctx.moveTo(badgeX + radius, badgeY);
     ctx.lineTo(badgeX + badgeW - radius, badgeY);
@@ -561,47 +568,68 @@ function ShipmentTrackerSection({ navigate }: { navigate: (path: string) => void
     ctx.arcTo(badgeX, badgeY, badgeX + radius, badgeY, radius);
     ctx.fill();
     
-    ctx.fillStyle = '#22c55e';
-    ctx.beginPath(); ctx.arc(badgeX + 12, badgeY + 10, 3, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = '#fff';
+    ctx.beginPath(); ctx.arc(badgeX + 12, badgeY + 10, 3, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#0c1425';
     ctx.font = 'bold 10px sans-serif';
     ctx.textAlign = 'left';
     ctx.fillText('LIVE', badgeX + 19, badgeY + 13);
     
+    // Origin marker (green dot)
+    ctx.fillStyle = '#22c55e';
+    ctx.beginPath(); ctx.arc(60, 310, 5, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = '#22c55e40';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.arc(60, 310, 9, 0, Math.PI * 2); ctx.stroke();
+    
+    // Destination marker
+    ctx.fillStyle = '#ef4444';
+    ctx.beginPath(); ctx.arc(680, 120, 5, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = '#ef444440';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.arc(680, 120, 9, 0, Math.PI * 2); ctx.stroke();
+    
     // City labels
-    ctx.fillStyle = '#8b7e6a';
+    ctx.fillStyle = '#4a5578';
     ctx.font = '11px sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('Los Angeles', 80, 335);
-    ctx.fillText('Culver City', 80, 360);
-    ctx.fillText('El Monte', 680, 108);
+    ctx.fillText('Los Angeles', 80, 340);
+    ctx.fillStyle = '#3a4560';
+    ctx.font = '10px sans-serif';
+    ctx.fillText('Pickup', 80, 355);
+    ctx.fillStyle = '#4a5578';
+    ctx.font = '11px sans-serif';
+    ctx.fillText('New York', 665, 108);
+    ctx.fillStyle = '#3a4560';
+    ctx.font = '10px sans-serif';
+    ctx.fillText('Delivery', 665, 95);
     
   }, [truckProgress]);
 
   return (
     <section className="tru-tracker-section">
       <div className="tru-tracker-inner">
-        <div className="relative rounded-2xl overflow-hidden bg-[#f5f0e8] border border-[#e8e0d4]" style={{ padding: '3rem' }}>
+        <div className="relative rounded-2xl overflow-hidden bg-[#0c1425] border border-[#1a2540]" style={{ padding: '3rem' }}>
           <div className="flex items-start gap-8">
             {/* LEFT: Headline + Map */}
             <div className="flex-1 space-y-5">
               {/* Live badge */}
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#22c55e40] bg-[#22c55e08]">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#22c55e30] bg-[#22c55e08]">
                 <span className="w-2 h-2 rounded-full bg-[#22c55e] animate-pulse" />
                 <span className="text-xs font-semibold tracking-widest uppercase text-[#22c55e]">Live Verification</span>
               </div>
               
-              <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: '2.5rem', lineHeight: 1.1, fontWeight: 400, color: '#1a1a1a' }}>
+              <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: '2.5rem', lineHeight: 1.1, fontWeight: 400, color: '#e2e8f0' }}>
                 Precision Tracking,<br />
-                <span style={{ fontWeight: 400 }}>Zero Guesswork.</span>
+                <span style={{ fontWeight: 400, color: '#94a3b8' }}>Zero Guesswork.</span>
               </h2>
               
-              <p className="text-sm leading-relaxed max-w-md" style={{ color: '#6b5e4b' }}>
-                Connect to your carrier's <strong>ELD</strong> and track movements in real-time. Stop double brokering before the truck even arrives at the pickup facility.
+              <p className="text-sm leading-relaxed max-w-md" style={{ color: '#64748b' }}>
+                Connect to your carrier's <strong style={{ color: '#94a3b8' }}>ELD</strong> and track movements in real-time. Stop double brokering before the truck even arrives at the pickup facility.
               </p>
               
               {/* Map */}
-              <div className="rounded-xl overflow-hidden border border-[#e0d8cc] shadow-sm" style={{ width: '100%', maxWidth: 700 }}>
+              <div className="rounded-xl overflow-hidden border border-[#1a2540] shadow-lg" style={{ width: '100%', maxWidth: 700 }}>
                 <canvas ref={canvasRef} width={700} height={380} className="w-full h-auto block" />
               </div>
             </div>
@@ -609,54 +637,54 @@ function ShipmentTrackerSection({ navigate }: { navigate: (path: string) => void
             {/* RIGHT: ELD Verification Card */}
             <div className="w-[280px] flex-shrink-0 space-y-3 pt-24">
               {/* Carrier Card */}
-              <div className="bg-white rounded-xl border border-[#e5e0d6] shadow-sm p-5 space-y-4">
+              <div className="bg-[#111b2e] rounded-xl border border-[#1e2d48] shadow-lg p-5 space-y-4">
                 <div>
-                  <span className="text-[10px] font-semibold tracking-widest uppercase text-[#8b7e6a]">Verified Carrier</span>
-                  <p className="text-xl font-bold text-[#1a1a1a] mt-0.5">ABC Freight</p>
+                  <span className="text-[10px] font-semibold tracking-widest uppercase text-[#4a5578]">Verified Carrier</span>
+                  <p className="text-xl font-bold text-[#e2e8f0] mt-0.5">ABC Freight</p>
                 </div>
                 
                 {/* Current Location */}
-                <div className="border border-[#e8e0d4] rounded-lg p-3 space-y-1">
+                <div className="border border-[#1e2d48] rounded-lg p-3 space-y-1 bg-[#0c1425]">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-semibold tracking-wider uppercase text-[#8b7e6a]">Current Location</span>
+                    <span className="text-[10px] font-semibold tracking-wider uppercase text-[#4a5578]">Current Location</span>
                     <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#22c55e]">
                       <span className="w-1.5 h-1.5 rounded-full bg-[#22c55e] animate-pulse" />
                       LIVE
                     </span>
                   </div>
-                  <p className="text-sm font-semibold text-[#1a1a1a]">I-10 Eastbound, Los Angeles</p>
-                  <p className="text-xs text-[#8b7e6a]">Tractor 8291 · MC 133655</p>
+                  <p className="text-sm font-semibold text-[#e2e8f0]">I-10 Eastbound, Los Angeles</p>
+                  <p className="text-xs text-[#4a5578]">Tractor 8291 · MC 133655</p>
                 </div>
                 
                 {/* Cross-Reference Check */}
-                <div className="border border-[#e8e0d4] rounded-lg p-3 space-y-2.5">
+                <div className="border border-[#1e2d48] rounded-lg p-3 space-y-2.5 bg-[#0c1425]">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-semibold tracking-wider uppercase text-[#8b7e6a]">Cross-Reference Check</span>
+                    <span className="text-[10px] font-semibold tracking-wider uppercase text-[#4a5578]">Cross-Reference Check</span>
                     <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#22c55e]">
                       <CheckCircle className="w-3 h-3" />
                       Verified
                     </span>
                   </div>
                   
-                  <div className="flex items-center justify-between py-1.5 border-b border-[#f0ebe3]">
+                  <div className="flex items-center justify-between py-1.5 border-b border-[#1e2d48]">
                     <div className="flex items-center gap-2">
-                      <FileText className="w-3.5 h-3.5 text-[#8b7e6a]" />
-                      <span className="text-xs text-[#1a1a1a]">ELD Sensor</span>
+                      <FileText className="w-3.5 h-3.5 text-[#4a5578]" />
+                      <span className="text-xs text-[#94a3b8]">ELD Sensor</span>
                     </div>
-                    <span className="text-xs font-mono text-[#1a1a1a]">1GDT••••849</span>
+                    <span className="text-xs font-mono text-[#e2e8f0]">1GDT••••849</span>
                   </div>
                   
                   <div className="flex items-center justify-between py-1.5">
                     <div className="flex items-center gap-2">
-                      <FileText className="w-3.5 h-3.5 text-[#8b7e6a]" />
-                      <span className="text-xs text-[#1a1a1a]">Policy COI</span>
+                      <FileText className="w-3.5 h-3.5 text-[#4a5578]" />
+                      <span className="text-xs text-[#94a3b8]">Policy COI</span>
                     </div>
-                    <span className="text-xs font-mono text-[#1a1a1a]">1GDT••••849</span>
+                    <span className="text-xs font-mono text-[#e2e8f0]">1GDT••••849</span>
                   </div>
                 </div>
                 
                 {/* Identity Match */}
-                <div className="flex items-center justify-center gap-2 py-2.5 rounded-lg bg-[#22c55e10] border border-[#22c55e30]">
+                <div className="flex items-center justify-center gap-2 py-2.5 rounded-lg bg-[#22c55e10] border border-[#22c55e25]">
                   <CheckCircle className="w-4 h-4 text-[#22c55e]" />
                   <span className="text-xs font-bold tracking-wide uppercase text-[#22c55e]">Identity Match Confirmed</span>
                 </div>
