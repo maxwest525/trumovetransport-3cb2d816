@@ -139,7 +139,8 @@ export default function AgentDashboardContent() {
 
   return (
     <div className="p-6 max-w-[1400px] mx-auto space-y-6">
-      <AgentToolLauncherModal open={launcherOpen} onOpenChange={setLauncherOpen} />
+      <AgentToolLauncherModal open={launcherOpen} onOpenChange={setLauncherOpen} onLaunchWorkspace={() => setWorkspaceOpen(true)} />
+      <AgentToolWorkspace open={workspaceOpen} onClose={() => setWorkspaceOpen(false)} />
 
       <div className="flex items-center justify-between">
         <div>
