@@ -578,7 +578,7 @@ function ShipmentTrackerSection({ navigate }: { navigate: (path: string) => void
         <div className="flex items-center gap-10 lg:gap-14">
           
           {/* LEFT: Map canvas — taller, ~60% width */}
-          <div className="flex-[1.6] rounded-xl overflow-hidden border border-foreground/10 shadow-lg">
+          <div className="flex-1 rounded-xl overflow-hidden border border-foreground/10 shadow-lg max-w-[420px]">
             <canvas ref={canvasRef} width={600} height={340} className="w-full h-auto block" />
           </div>
           
