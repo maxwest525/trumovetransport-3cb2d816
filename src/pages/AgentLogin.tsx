@@ -10,6 +10,7 @@ import { useAgentProfile } from "@/hooks/useAgentProfile";
 import { useNotifications } from "@/hooks/useNotifications";
 import { motion } from "framer-motion";
 import type { Session } from "@supabase/supabase-js";
+import AgentToolLauncherModal from "@/components/agent/AgentToolLauncherModal";
 
 const STORAGE_KEY = "truemove_remembered_role";
 
