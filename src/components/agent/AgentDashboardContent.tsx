@@ -137,9 +137,20 @@ export default function AgentDashboardContent() {
 
   return (
     <div className="p-6 max-w-[1400px] mx-auto space-y-6">
-      <div>
-        <h1 className="text-xl font-bold text-foreground">Dashboard</h1>
-        <p className="text-sm text-muted-foreground">Welcome back! Here's what needs your attention today.</p>
+      <AgentToolLauncherModal open={launcherOpen} onOpenChange={setLauncherOpen} />
+
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-xl font-bold text-foreground">Dashboard</h1>
+          <p className="text-sm text-muted-foreground">Welcome back! Here's what needs your attention today.</p>
+        </div>
+        <button
+          onClick={() => setLauncherOpen(true)}
+          className="flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground hover:border-primary/40 transition-all"
+        >
+          <Wrench className="h-3.5 w-3.5" />
+          My Tools
+        </button>
       </div>
 
       {/* KPI Stats */}
