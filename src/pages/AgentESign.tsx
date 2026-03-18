@@ -264,19 +264,9 @@ export default function AgentESign() {
           {/* SEND TAB */}
           <TabsContent value="send" className="space-y-4">
             <Card>
-              <CardHeader><CardTitle className="text-lg flex items-center gap-2"><Send className="w-5 h-5" />Send Document for Signature</CardTitle></CardHeader>
+              <CardHeader><CardTitle className="text-lg flex items-center gap-2"><Send className="w-5 h-5" />Send Documents for Signature</CardTitle></CardHeader>
               <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label>Document Type</Label>
-                  <div className="flex gap-2">
-                    {(["estimate", "ccach"] as DocumentType[]).map(type => (
-                      <Button key={type} variant={newDoc.type === type ? "default" : "outline"} size="sm" className="gap-1.5 text-xs" onClick={() => setNewDoc(prev => ({ ...prev, type }))}>
-                        <FileText className="w-3.5 h-3.5" />
-                        {DOCUMENT_LABELS[type]}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
+                <p className="text-xs text-muted-foreground">Both Estimate Authorization and CC/ACH Authorization will be sent together.</p>
 
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
@@ -308,7 +298,7 @@ export default function AgentESign() {
 
                 <Button className="w-full gap-2" onClick={handleSendDocument} disabled={isSending}>
                   {isSending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
-                  {isSending ? "Sending..." : `Send ${DOCUMENT_LABELS[newDoc.type]}`}
+                  {isSending ? "Sending..." : "Send & Open Preview"}
                 </Button>
               </CardContent>
             </Card>
