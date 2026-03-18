@@ -58,20 +58,46 @@ export default function AgentESign() {
   const prefillPhone = searchParams.get("phone") || "";
   const leadId = searchParams.get("leadId") || "";
 
+  const [leadData, setLeadData] = useState<{ name: string; email: string; phone: string } | null>(null);
+
+  // Fetch lead data if leadId is provided but name/email are missing
+  useEffect(() => {
+    if (leadId && !prefillName) {
+      supabase
+        .from("leads")
+        .select("first_name, last_name, email, phone")
+        .eq("id", leadId)
+        .single()
+        .then(({ data }) => {
+          if (data) {
+            setLeadData({
+              name: `${data.first_name} ${data.last_name}`.trim(),
+              email: data.email || "",
+              phone: data.phone || "",
+            });
+          }
+        });
+    }
+  }, [leadId, prefillName]);
+
+  const resolvedName = prefillName || leadData?.name || "";
+  const resolvedEmail = prefillEmail || leadData?.email || "";
+  const resolvedPhone = prefillPhone || leadData?.phone || "";
+
   // Only show documents for the current customer (matched by leadId context)
-  const currentCustomerName = prefillName || "Sarah Chen";
+  const currentCustomerName = resolvedName || "Sarah Chen";
   const DEMO_DOCUMENTS: DocumentRecord[] = [
     {
       id: "demo-1", type: "estimate", refNumber: "EST-2026-0042",
-      customerName: currentCustomerName, customerEmail: prefillEmail || "sarah.chen@gmail.com",
-      customerPhone: prefillPhone || "(415) 555-7890", status: "opened",
+      customerName: currentCustomerName, customerEmail: resolvedEmail || "sarah.chen@gmail.com",
+      customerPhone: resolvedPhone || "(415) 555-7890", status: "opened",
       sentAt: new Date(Date.now() - 3600000), openedAt: new Date(Date.now() - 1800000),
       deliveryMethod: "email",
     },
     {
       id: "demo-2", type: "ccach", refNumber: "CC-2026-0039",
-      customerName: currentCustomerName, customerEmail: prefillEmail || "sarah.chen@gmail.com",
-      customerPhone: prefillPhone || "(415) 555-7890", status: "sent",
+      customerName: currentCustomerName, customerEmail: resolvedEmail || "sarah.chen@gmail.com",
+      customerPhone: resolvedPhone || "(415) 555-7890", status: "sent",
       sentAt: new Date(Date.now() - 7200000), deliveryMethod: "email",
     },
   ];
@@ -80,12 +106,29 @@ export default function AgentESign() {
   const [showClientSearch, setShowClientSearch] = useState(false);
   const [isSending, setIsSending] = useState(false);
   
+  // Update documents when lead data loads
+  useEffect(() => {
+    if (leadData) {
+      setDocuments(prev => prev.map(doc => ({
+        ...doc,
+        customerName: leadData.name || doc.customerName,
+        customerEmail: leadData.email || doc.customerEmail,
+        customerPhone: leadData.phone || doc.customerPhone,
+      })));
+      setNewDoc(prev => ({
+        ...prev,
+        customerName: leadData.name || prev.customerName,
+        customerEmail: leadData.email || prev.customerEmail,
+        customerPhone: leadData.phone || prev.customerPhone,
+      }));
+    }
+  }, [leadData]);
 
   const [newDoc, setNewDoc] = useState({
     type: "estimate" as DocumentType,
-    customerName: prefillName,
-    customerEmail: prefillEmail,
-    customerPhone: prefillPhone,
+    customerName: resolvedName,
+    customerEmail: resolvedEmail,
+    customerPhone: resolvedPhone,
     deliveryMethod: "email" as DeliveryMethod,
   });
 
