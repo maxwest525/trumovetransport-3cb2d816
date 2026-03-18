@@ -1837,8 +1837,18 @@ export default function Index() {
                 </div>
               </div>
             </div>
-          </section>
+          {/* CONTACT A HUMAN */}
+          <section className="py-16 px-4">
+            <div className="max-w-xl mx-auto">
+              <div className="flex items-center gap-2 mb-1">
+                <h2 className="text-sm font-bold tracking-widest uppercase text-foreground">Contact a Human</h2>
+                <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground bg-muted px-2 py-0.5 rounded-full">Optional</span>
+              </div>
+              <p className="text-xs text-muted-foreground mb-6">Trudy handles 95% of requests. For the rest, we're here.</p>
 
+              <ContactHumanTabs />
+            </div>
+          </section>
 
         </div>
       </div>
