@@ -174,7 +174,8 @@ export default function AgentLogin() {
           ))}
         </div>
 
-        <AgentToolLauncherModal open={launcherOpen} onOpenChange={setLauncherOpen} />
+        <AgentToolLauncherModal open={launcherOpen} onOpenChange={setLauncherOpen} onLaunchWorkspace={() => setWorkspaceOpen(true)} />
+        <AgentToolWorkspace open={workspaceOpen} onClose={() => setWorkspaceOpen(false)} />
       </div>
     </PageShell>
   );
