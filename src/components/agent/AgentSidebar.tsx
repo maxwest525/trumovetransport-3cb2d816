@@ -1,6 +1,6 @@
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
-  LayoutDashboard, UserPlus, CalendarCheck, Home, RotateCcw, Users, Phone, Mail, Kanban, Activity, Trophy,
+  LayoutDashboard, UserPlus, CalendarCheck, Users, Phone, Mail, Kanban, Activity, Trophy, ExternalLink, Monitor,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import logoImg from "@/assets/logo.png";
@@ -30,12 +30,6 @@ const NAV_ITEMS: NavItem[] = [
 
 export default function AgentSidebar({ onDialerToggle }: AgentSidebarProps) {
   const location = useLocation();
-  const navigate = useNavigate();
-
-  const handleResetPreference = () => {
-    localStorage.removeItem("truemove_remembered_role");
-    navigate("/");
-  };
 
   return (
     <aside className="w-52 shrink-0 border-r border-border bg-card flex flex-col min-h-screen">
@@ -74,20 +68,26 @@ export default function AgentSidebar({ onDialerToggle }: AgentSidebarProps) {
       </nav>
 
       <div className="px-2 pb-4 space-y-0.5">
-        <button
-          onClick={handleResetPreference}
+        <a
+          href="https://granot.com"
+          target="_blank"
+          rel="noopener noreferrer"
           className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
         >
-          <RotateCcw className="w-4 h-4" />
-          <span>Reset Preference</span>
-        </button>
-        <Link
-          to="/"
-          className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+          <Monitor className="w-4 h-4" />
+          <span>Granot CRM</span>
+          <ExternalLink className="w-3 h-3 ml-auto opacity-50" />
+        </a>
+        <a
+          href="https://convoso.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
         >
-          <Home className="w-4 h-4" />
-          <span>Back to Roles</span>
-        </Link>
+          <Phone className="w-4 h-4" />
+          <span>Convoso Dialer</span>
+          <ExternalLink className="w-3 h-3 ml-auto opacity-50" />
+        </a>
       </div>
     </aside>
   );
