@@ -432,15 +432,28 @@ const ROUTE_WAYPOINTS = [
 // Note: useTruckAnimation hook preserved for use on other pages (e.g., live tracking)
 // Homepage now uses static demo preview - no animation needed
 
-// Route Overview Panel - Free OpenStreetMap static image (no API key needed)
-function RouteOverviewPanel() {
-  // Use free static map from OpenStreetMap tile server via a simple image approach
-  // Shows LA to NY corridor at a zoom that fits both cities
-  const staticMapUrl = `https://maps.geoapify.com/v1/staticmap?style=dark-matter-dark-grey&width=420&height=480&center=lonlat:-95,38&zoom=3.8&marker=lonlat:-118.24,34.05;color:%2322c55e;size:small|lonlat:-74.00,40.71;color:%23ef4444;size:small&apiKey=`;
-
-  // Fallback: use a canvas-drawn map if no API key
+// Shipment Tracker Section - ELD-powered live verification layout
+function ShipmentTrackerSection({ navigate }: { navigate: (path: string) => void }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const animationRef = useRef<number>();
+  const [truckProgress, setTruckProgress] = useState(0.62);
   
+  // Animated truck progress
+  useEffect(() => {
+    let p = 0.62;
+    let direction = 1;
+    const tick = () => {
+      p += 0.0003 * direction;
+      if (p > 0.72) direction = -1;
+      if (p < 0.58) direction = 1;
+      setTruckProgress(p);
+      animationRef.current = requestAnimationFrame(tick);
+    };
+    tick();
+    return () => { if (animationRef.current) cancelAnimationFrame(animationRef.current); };
+  }, []);
+  
+  // Canvas map
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -450,264 +463,215 @@ function RouteOverviewPanel() {
     const w = canvas.width;
     const h = canvas.height;
     
-    // Dark background
-    ctx.fillStyle = '#1a1a2e';
+    // Warm beige background
+    ctx.fillStyle = '#f5f0e8';
     ctx.fillRect(0, 0, w, h);
     
-    // Simple US outline/grid lines for context
-    ctx.strokeStyle = '#2a2a4a';
-    ctx.lineWidth = 1;
-    for (let i = 0; i < w; i += 40) {
+    // Subtle grid
+    ctx.strokeStyle = '#e8e0d4';
+    ctx.lineWidth = 0.5;
+    for (let i = 0; i < w; i += 30) {
       ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, h); ctx.stroke();
     }
-    for (let i = 0; i < h; i += 40) {
+    for (let i = 0; i < h; i += 30) {
       ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(w, i); ctx.stroke();
     }
     
-    // Convert rough lat/lng to canvas coords (simple mercator approximation for continental US)
-    const toCanvas = (lng: number, lat: number): [number, number] => {
-      const x = ((lng + 130) / 65) * w;
-      const y = ((50 - lat) / 25) * h;
-      return [x, y];
-    };
+    // Subtle road network (horizontal + vertical lines like a real map)
+    ctx.strokeStyle = '#ddd5c8';
+    ctx.lineWidth = 1.5;
+    const roads = [
+      [[40, 120], [700, 80]], [[40, 200], [700, 190]], [[40, 300], [700, 310]],
+      [[100, 20], [120, 380]], [[250, 20], [240, 380]], [[400, 20], [410, 380]],
+      [[550, 20], [540, 380]], [[80, 250], [680, 230]],
+    ];
+    roads.forEach(([from, to]) => {
+      ctx.beginPath(); ctx.moveTo(from[0], from[1]); ctx.lineTo(to[0], to[1]); ctx.stroke();
+    });
     
-    // Route waypoints
-    const cities: [number, number][] = [
-      [-118.24, 34.05], [-114.29, 34.14], [-111.65, 35.19],
-      [-106.65, 35.08], [-101.83, 35.22], [-97.52, 35.47],
-      [-94.58, 39.10], [-90.20, 38.63], [-86.16, 39.77],
-      [-82.98, 40.00], [-79.99, 40.44], [-74.00, 40.71],
+    // Main route (blue gradient line - I-10 style)
+    const routePoints: [number, number][] = [
+      [60, 310], [140, 280], [220, 260], [300, 240], [380, 220],
+      [440, 200], [500, 180], [560, 160], [620, 140], [680, 120],
     ];
     
-    // Draw route line
-    ctx.strokeStyle = '#4285F4';
-    ctx.lineWidth = 3;
-    ctx.shadowColor = '#4285F4';
-    ctx.shadowBlur = 8;
+    // Route shadow
+    ctx.strokeStyle = '#4285F420';
+    ctx.lineWidth = 12;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
     ctx.beginPath();
-    cities.forEach((city, i) => {
-      const [x, y] = toCanvas(city[0], city[1]);
-      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-    });
+    routePoints.forEach((p, i) => i === 0 ? ctx.moveTo(p[0], p[1]) : ctx.lineTo(p[0], p[1]));
     ctx.stroke();
-    ctx.shadowBlur = 0;
     
-    // Origin marker (green)
-    const [ox, oy] = toCanvas(-118.24, 34.05);
+    // Route line
+    const routeGrad = ctx.createLinearGradient(60, 310, 680, 120);
+    routeGrad.addColorStop(0, '#93c5fd');
+    routeGrad.addColorStop(1, '#3b82f6');
+    ctx.strokeStyle = routeGrad;
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    routePoints.forEach((p, i) => i === 0 ? ctx.moveTo(p[0], p[1]) : ctx.lineTo(p[0], p[1]));
+    ctx.stroke();
+    
+    // Interpolate truck position along route
+    const totalSegs = routePoints.length - 1;
+    const segF = truckProgress * totalSegs;
+    const segI = Math.min(Math.floor(segF), totalSegs - 1);
+    const t = segF - segI;
+    const tx = routePoints[segI][0] + (routePoints[segI + 1][0] - routePoints[segI][0]) * t;
+    const ty = routePoints[segI][1] + (routePoints[segI + 1][1] - routePoints[segI][1]) * t;
+    
+    // Truck glow
+    const glowGrad = ctx.createRadialGradient(tx, ty, 0, tx, ty, 30);
+    glowGrad.addColorStop(0, '#22c55e40');
+    glowGrad.addColorStop(1, '#22c55e00');
+    ctx.fillStyle = glowGrad;
+    ctx.beginPath(); ctx.arc(tx, ty, 30, 0, Math.PI * 2); ctx.fill();
+    
+    // Truck dot
+    ctx.fillStyle = '#fff';
+    ctx.beginPath(); ctx.arc(tx, ty, 14, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = '#22c55e';
-    ctx.beginPath(); ctx.arc(ox, oy, 6, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(tx, ty, 11, 0, Math.PI * 2); ctx.fill();
+    
+    // Truck icon (simple)
     ctx.fillStyle = '#fff';
-    ctx.font = 'bold 9px sans-serif';
-    ctx.fillText('LA', ox + 10, oy + 3);
+    ctx.font = 'bold 12px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('🚛', tx, ty);
     
-    // Destination marker (red)
-    const [dx, dy] = toCanvas(-74.00, 40.71);
-    ctx.fillStyle = '#ef4444';
-    ctx.beginPath(); ctx.arc(dx, dy, 6, 0, Math.PI * 2); ctx.fill();
+    // "LIVE" badge near truck
+    ctx.fillStyle = '#1a1a1a';
+    const badgeX = tx + 20;
+    const badgeY = ty - 22;
+    const badgeW = 48;
+    const badgeH = 20;
+    const radius = 10;
+    ctx.beginPath();
+    ctx.moveTo(badgeX + radius, badgeY);
+    ctx.lineTo(badgeX + badgeW - radius, badgeY);
+    ctx.arcTo(badgeX + badgeW, badgeY, badgeX + badgeW, badgeY + radius, radius);
+    ctx.lineTo(badgeX + badgeW, badgeY + badgeH - radius);
+    ctx.arcTo(badgeX + badgeW, badgeY + badgeH, badgeX + badgeW - radius, badgeY + badgeH, radius);
+    ctx.lineTo(badgeX + radius, badgeY + badgeH);
+    ctx.arcTo(badgeX, badgeY + badgeH, badgeX, badgeY + badgeH - radius, radius);
+    ctx.lineTo(badgeX, badgeY + radius);
+    ctx.arcTo(badgeX, badgeY, badgeX + radius, badgeY, radius);
+    ctx.fill();
+    
+    ctx.fillStyle = '#22c55e';
+    ctx.beginPath(); ctx.arc(badgeX + 12, badgeY + 10, 3, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = '#fff';
-    ctx.fillText('NYC', dx + 10, dy + 3);
+    ctx.font = 'bold 10px sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('LIVE', badgeX + 19, badgeY + 13);
     
-    // Truck position (middle of route, yellow)
-    const mid = cities[Math.floor(cities.length / 2)];
-    const [mx, my] = toCanvas(mid[0], mid[1]);
-    ctx.fillStyle = '#facc15';
-    ctx.beginPath(); ctx.arc(mx, my, 5, 0, Math.PI * 2); ctx.fill();
+    // City labels
+    ctx.fillStyle = '#8b7e6a';
+    ctx.font = '11px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Los Angeles', 80, 335);
+    ctx.fillText('Culver City', 80, 360);
+    ctx.fillText('El Monte', 680, 108);
     
-    // Labels
-    ctx.fillStyle = '#ffffff90';
-    ctx.font = '10px sans-serif';
-    ctx.fillText('ROUTE OVERVIEW', 12, 20);
-    ctx.fillText('2,789 mi', w - 70, h - 12);
-    
-  }, []);
-  
-  return (
-    <div className="tru-tracker-satellite-panel tru-tracker-satellite-enlarged tru-map-window-frame">
-      <canvas ref={canvasRef} width={420} height={480} className="w-full h-full" />
-    </div>
-  );
-}
-
-// Truck View Panel - Canvas-based animated truck driving (no API key needed)
-function TruckViewPanel() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const animationRef = useRef<number>();
-  
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    
-    const w = canvas.width;
-    const h = canvas.height;
-    let frame = 0;
-    
-    const animate = () => {
-      frame++;
-      ctx.fillStyle = '#0f172a';
-      ctx.fillRect(0, 0, w, h);
-      
-      // Moving road perspective
-      const vanishY = h * 0.35;
-      const vanishX = w * 0.5;
-      
-      // Sky gradient
-      const skyGrad = ctx.createLinearGradient(0, 0, 0, vanishY);
-      skyGrad.addColorStop(0, '#0c1222');
-      skyGrad.addColorStop(1, '#1a2744');
-      ctx.fillStyle = skyGrad;
-      ctx.fillRect(0, 0, w, vanishY);
-      
-      // Ground
-      const groundGrad = ctx.createLinearGradient(0, vanishY, 0, h);
-      groundGrad.addColorStop(0, '#1e293b');
-      groundGrad.addColorStop(1, '#0f172a');
-      ctx.fillStyle = groundGrad;
-      ctx.fillRect(0, vanishY, w, h - vanishY);
-      
-      // Road
-      ctx.fillStyle = '#334155';
-      ctx.beginPath();
-      ctx.moveTo(vanishX - 2, vanishY);
-      ctx.lineTo(0, h);
-      ctx.lineTo(w, h);
-      ctx.lineTo(vanishX + 2, vanishY);
-      ctx.fill();
-      
-      // Road edges
-      ctx.strokeStyle = '#475569';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(vanishX - 2, vanishY); ctx.lineTo(w * 0.1, h); ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(vanishX + 2, vanishY); ctx.lineTo(w * 0.9, h); ctx.stroke();
-      
-      // Dashed center line (animated)
-      const dashOffset = (frame * 2) % 60;
-      for (let i = 0; i < 12; i++) {
-        const t = (i * 60 + dashOffset) / (h - vanishY);
-        if (t > 1) continue;
-        const perspT = t * t; // perspective acceleration
-        const y = vanishY + perspT * (h - vanishY);
-        const lineLen = 8 + perspT * 20;
-        const lineW = 1 + perspT * 3;
-        
-        ctx.strokeStyle = '#facc15';
-        ctx.lineWidth = lineW;
-        ctx.beginPath();
-        ctx.moveTo(vanishX, y);
-        ctx.lineTo(vanishX, Math.min(y + lineLen, h));
-        ctx.stroke();
-      }
-      
-      // Stars
-      ctx.fillStyle = '#ffffff40';
-      for (let i = 0; i < 20; i++) {
-        const sx = ((i * 97 + 13) % w);
-        const sy = ((i * 43 + 7) % (vanishY - 10));
-        const twinkle = Math.sin(frame * 0.02 + i) * 0.5 + 0.5;
-        ctx.globalAlpha = twinkle * 0.6;
-        ctx.fillRect(sx, sy, 1.5, 1.5);
-      }
-      ctx.globalAlpha = 1;
-      
-      animationRef.current = requestAnimationFrame(animate);
-    };
-    
-    animate();
-    
-    return () => {
-      if (animationRef.current) cancelAnimationFrame(animationRef.current);
-    };
-  }, []);
-  
-  return (
-    <div className="tru-tracker-road-map tru-map-window-frame">
-      <canvas ref={canvasRef} width={480} height={480} className="w-full h-full" />
-      
-      {/* Truck marker - centered, fixed position */}
-      <div className="tru-homepage-truck-marker">
-        <div className="tru-homepage-truck-glow" />
-        <div className="tru-homepage-truck-glow tru-homepage-truck-glow-2" />
-        <div className="tru-homepage-truck-icon">
-          <Truck className="w-6 h-6" />
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Shipment Tracker Section - 3-column layout: Route Overview | Truck View (centered) | Description
-function ShipmentTrackerSection({ navigate }: { navigate: (path: string) => void }) {
-  // Street View Thumbnail component - tiny corner preview
-  const StreetViewThumbnail = () => {
-    const [loaded, setLoaded] = useState(false);
-    const [error, setError] = useState(false);
-    
-    // Kansas City position (middle of cross-country route)
-    const position = { lat: 39.0997, lng: -94.5786 };
-    
-    // Use Google Street View Static API directly (publishable key, same as route analysis)
-    const streetViewUrl = `https://maps.googleapis.com/maps/api/streetview?size=120x80&location=${position.lat},${position.lng}&heading=90&pitch=0&fov=100&key=AIzaSyCWDpAPlxVRXnl1w5rz0Df5S3vGsHY6Xoo`;
-    
-    if (error) return null;
-    
-    return (
-      <div className="tru-streetview-thumbnail">
-        {!loaded && (
-          <div className="tru-streetview-loading">
-            <Globe className="w-3 h-3 animate-pulse" />
-          </div>
-        )}
-        <img 
-          src={streetViewUrl}
-          alt="Street View"
-          onLoad={() => setLoaded(true)}
-          onError={() => setError(true)}
-          className={loaded ? 'opacity-100' : 'opacity-0'}
-        />
-        <span className="tru-streetview-label">Street View</span>
-      </div>
-    );
-  };
+  }, [truckProgress]);
 
   return (
     <section className="tru-tracker-section">
       <div className="tru-tracker-inner">
-        <div className="tru-tracker-header-row">
-          {/* Route Overview - LEFT */}
-          <div className="tru-tracker-satellite-left">
-            <RouteOverviewPanel />
-            <StreetViewThumbnail />
-          </div>
-          
-          {/* Truck View - CENTER (aligned with AI demo above) */}
-          <div className="tru-tracker-roadmap-center">
-            <TruckViewPanel />
-          </div>
-          
-          {/* Content - RIGHT */}
-          <div className="tru-tracker-content-right" style={{ justifyContent: 'center' }}>
-            <div className="tru-ai-headline-block">
-              <h2 className="tru-ai-main-headline">
-                Track. Monitor.<br />
-                <span className="tru-ai-headline-accent">Arrive.</span>
+        <div className="relative rounded-2xl overflow-hidden bg-[#f5f0e8] border border-[#e8e0d4]" style={{ padding: '3rem' }}>
+          <div className="flex items-start gap-8">
+            {/* LEFT: Headline + Map */}
+            <div className="flex-1 space-y-5">
+              {/* Live badge */}
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#22c55e40] bg-[#22c55e08]">
+                <span className="w-2 h-2 rounded-full bg-[#22c55e] animate-pulse" />
+                <span className="text-xs font-semibold tracking-widest uppercase text-[#22c55e]">Live Verification</span>
+              </div>
+              
+              <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: '2.5rem', lineHeight: 1.1, fontWeight: 400, color: '#1a1a1a' }}>
+                Precision Tracking,<br />
+                <span style={{ fontWeight: 400 }}>Zero Guesswork.</span>
               </h2>
-              <p className="tru-ai-subheadline">
-                Know exactly where your belongings are. GPS tracking, live ETAs, and instant updates—from pickup to delivery.
+              
+              <p className="text-sm leading-relaxed max-w-md" style={{ color: '#6b5e4b' }}>
+                Connect to your carrier's <strong>ELD</strong> and track movements in real-time. Stop double brokering before the truck even arrives at the pickup facility.
               </p>
+              
+              {/* Map */}
+              <div className="rounded-xl overflow-hidden border border-[#e0d8cc] shadow-sm" style={{ width: '100%', maxWidth: 700 }}>
+                <canvas ref={canvasRef} width={700} height={380} className="w-full h-auto block" />
+              </div>
             </div>
             
-            {/* CTA Button */}
-            <button 
-              onClick={() => navigate("/site/track")}
-              className="tru-ai-cta-btn"
-            >
-              <MapPin className="w-4 h-4" />
-              Track Your Shipment
-              <ArrowRight className="w-4 h-4" />
-            </button>
+            {/* RIGHT: ELD Verification Card */}
+            <div className="w-[280px] flex-shrink-0 space-y-3 pt-24">
+              {/* Carrier Card */}
+              <div className="bg-white rounded-xl border border-[#e5e0d6] shadow-sm p-5 space-y-4">
+                <div>
+                  <span className="text-[10px] font-semibold tracking-widest uppercase text-[#8b7e6a]">Verified Carrier</span>
+                  <p className="text-xl font-bold text-[#1a1a1a] mt-0.5">ABC Freight</p>
+                </div>
+                
+                {/* Current Location */}
+                <div className="border border-[#e8e0d4] rounded-lg p-3 space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-semibold tracking-wider uppercase text-[#8b7e6a]">Current Location</span>
+                    <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#22c55e]">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#22c55e] animate-pulse" />
+                      LIVE
+                    </span>
+                  </div>
+                  <p className="text-sm font-semibold text-[#1a1a1a]">I-10 Eastbound, Los Angeles</p>
+                  <p className="text-xs text-[#8b7e6a]">Tractor 8291 · MC 133655</p>
+                </div>
+                
+                {/* Cross-Reference Check */}
+                <div className="border border-[#e8e0d4] rounded-lg p-3 space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-semibold tracking-wider uppercase text-[#8b7e6a]">Cross-Reference Check</span>
+                    <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#22c55e]">
+                      <CheckCircle2 className="w-3 h-3" />
+                      Verified
+                    </span>
+                  </div>
+                  
+                  <div className="flex items-center justify-between py-1.5 border-b border-[#f0ebe3]">
+                    <div className="flex items-center gap-2">
+                      <FileText className="w-3.5 h-3.5 text-[#8b7e6a]" />
+                      <span className="text-xs text-[#1a1a1a]">ELD Sensor</span>
+                    </div>
+                    <span className="text-xs font-mono text-[#1a1a1a]">1GDT••••849</span>
+                  </div>
+                  
+                  <div className="flex items-center justify-between py-1.5">
+                    <div className="flex items-center gap-2">
+                      <FileText className="w-3.5 h-3.5 text-[#8b7e6a]" />
+                      <span className="text-xs text-[#1a1a1a]">Policy COI</span>
+                    </div>
+                    <span className="text-xs font-mono text-[#1a1a1a]">1GDT••••849</span>
+                  </div>
+                </div>
+                
+                {/* Identity Match */}
+                <div className="flex items-center justify-center gap-2 py-2.5 rounded-lg bg-[#22c55e10] border border-[#22c55e30]">
+                  <CheckCircle2 className="w-4 h-4 text-[#22c55e]" />
+                  <span className="text-xs font-bold tracking-wide uppercase text-[#22c55e]">Identity Match Confirmed</span>
+                </div>
+              </div>
+              
+              {/* CTA */}
+              <button 
+                onClick={() => navigate("/site/track")}
+                className="tru-ai-cta-btn w-full"
+              >
+                <MapPin className="w-4 h-4" />
+                Track Your Shipment
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         </div>
       </div>
