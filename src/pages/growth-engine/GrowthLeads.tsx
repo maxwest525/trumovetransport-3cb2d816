@@ -30,8 +30,8 @@ const LEAD_STATUS_BY_SOURCE = [
   { source: "Google Search", total: 234, inQueue: 8, connected: 156, notReached: 32, booked: 42, bookedRate: "18.0%", avgSpeed: "8s" },
   { source: "Meta Ads", total: 156, inQueue: 6, connected: 98, notReached: 24, booked: 18, bookedRate: "11.5%", avgSpeed: "14s" },
   { source: "Meta Instant", total: 84, inQueue: 4, connected: 52, notReached: 18, booked: 6, bookedRate: "7.1%", avgSpeed: "6s" },
-  { source: "Organic", total: 89, inQueue: 2, connected: 68, notReached: 8, booked: 14, bookedRate: "15.7%", avgSpeed: "22s" },
-  { source: "CallRail", total: 67, inQueue: 3, connected: 54, notReached: 4, booked: 12, bookedRate: "17.9%", avgSpeed: "3s" },
+  { source: "Organic / SEO", total: 89, inQueue: 2, connected: 68, notReached: 8, booked: 14, bookedRate: "15.7%", avgSpeed: "22s" },
+  { source: "Inbound Call", total: 67, inQueue: 3, connected: 54, notReached: 4, booked: 12, bookedRate: "17.9%", avgSpeed: "3s" },
 ];
 
 const MOCK_LEADS = [
