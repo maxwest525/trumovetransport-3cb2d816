@@ -8,7 +8,6 @@ import { motion, AnimatePresence } from "framer-motion";
 interface AgentToolLauncherModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onLaunchWorkspace?: () => void;
 }
 
 const TOOLS = [
