@@ -153,7 +153,7 @@ export default function CustomKpiDashboard() {
       ) : (
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
           <SortableContext items={activeIds} strategy={rectSortingStrategy}>
-            <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
               {activeWidgets.map(w => (
                 <SortableWidget key={w.id} widget={w} onRemove={() => removeWidget(w.id)} />
               ))}
