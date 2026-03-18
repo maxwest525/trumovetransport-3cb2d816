@@ -38,7 +38,9 @@ export default function ManagerKpiDashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetch() {
+    const REFRESH_MS = 30_000;
+    let interval: ReturnType<typeof setInterval>;
+    async function fetchData() {
       const today = startOfDay();
       const week = startOfWeek();
 
@@ -114,7 +116,9 @@ export default function ManagerKpiDashboard() {
       });
       setLoading(false);
     }
-    fetch();
+    fetchData();
+    interval = setInterval(fetchData, REFRESH_MS);
+    return () => clearInterval(interval);
   }, []);
 
   if (loading) {
