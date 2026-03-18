@@ -1,54 +1,36 @@
-# Growth Engine Architecture
 
-## Lead Flow (Canonical)
 
-```text
-Traffic Source → Landing Page / Call Tracking → Attribution Capture
-  → Webhook / Router → Convoso (Instant Call) → CRM Sync
-  → Backup Follow-Up Logic
-```
+# Enhance Contact Us Section
 
-### Key Principles
+## What Changes
 
-- **Convoso** is the primary instant-call engine. Leads route here first for immediate dial attempts.
-- **CRM** (GHL, Granot, or custom) is a sync target / system of record, not the primary destination.
-- Each workflow should designate **one primary CRM**; others are optional secondary sync targets.
-- GHL does not replace Convoso. It provides backup sequences and reporting.
-- "Follow-up automation" means support logic around the instant-call flow, not passive CRM drip sequences.
+Replace the current minimal Contact Us section with a polished 3-option layout that gives users clear paths to get help:
 
-### Lead Statuses (Convoso feedback loop)
+1. **Talk to Trudy** — A card that triggers the existing Trudy voice widget (not a chatbot). Clicking it programmatically starts the ElevenLabs conversation already available via the floating widget.
 
-- New Lead
-- In Queue
-- Attempted
-- Connected
-- Not Reached
-- Escalated
-- Duplicate
-- Suppressed
+2. **Call Us** — A card with phone number, business hours, and a tap-to-call button.
 
-### Backup Automation Recipes
+3. **Send a Message** — A card with the contact form (name, email, message, submit).
 
-1. New form lead → capture attribution → webhook to Convoso → instant call attempt → sync to CRM
-2. Lead not reached after 60s → trigger SMS with quote link
-3. No contact after 5 minutes → escalate to supervisor dashboard alert
-4. Missed inbound call from paid source → create Convoso callback + alert
-5. After-hours form submission → queue for next calling block + send auto-text
-6. Duplicate lead detected → suppress in Convoso, tag in CRM
-7. Source/campaign changes on re-submission → preserve original attribution in CRM
-8. Lead not worked within 2 minutes → flash alert on Growth Dashboard
+## Layout
 
-### After-Hours Logic (First-Class)
+Three cards in a responsive grid (`grid-cols-1 md:grid-cols-3`), each with an icon, title, short description, and CTA. Clean, consistent styling matching the site's dark/minimal aesthetic.
 
-- Business hours rules per location/team
-- Queue timing and next-call-block scheduling
-- Auto-text behavior for after-hours submissions
-- Morning queue priority ordering
+## Technical Details
 
-## Upgrade Plan (Pending)
+**File: `src/pages/Index.tsx`** (lines 1700-1708)
+- Replace the current `<ContactHumanTabs />` wrapper with a new inline section containing the 3-card grid.
+- The "Talk to Trudy" card dispatches a custom event (`trudy-start`) that the `ElevenLabsTrudyWidget` listens for.
 
-### Pass 1: Dashboard + Landing Pages + Leads + SEO Hub
-### Pass 2: Ad Copy + Tracking + Automation + Reviews
-### Pass 3: Competitors + Settings + Campaign Builder Enhancement + Shell Polish
+**File: `src/components/ElevenLabsTrudyWidget.tsx`**
+- Add a `useEffect` listener for a `trudy-start` custom event on `window` that calls `startConversation()`.
 
-See previous conversation for full details on each pass.
+**File: `src/components/ContactHumanTabs.tsx`**
+- Can be removed or kept — the new section replaces it on the homepage.
+
+## Visual Design
+- Section heading: "Get in Touch" with a subtle subtitle
+- Cards: rounded-2xl, border, subtle hover lift effect
+- Icons: `Mic` for Trudy, `Phone` for Call, `MessageSquare` for Form
+- Consistent with the site's existing design philosophy (minimal, text-centric)
+
