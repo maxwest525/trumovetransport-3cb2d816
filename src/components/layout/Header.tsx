@@ -55,7 +55,6 @@ interface SubNavItem {
 
 const NAV: NavItem[] = [
   { href: "/site", label: "Home" },
-  { href: "/site/customer-service", label: "Meet Trudy" },
   { 
     href: "/site/book", 
     label: "Connect With Us",
