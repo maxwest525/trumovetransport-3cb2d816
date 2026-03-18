@@ -30,6 +30,7 @@ export default function AgentDashboardContent() {
   const [pipelineData, setPipelineData] = useState<{ stage: string; count: number }[]>([]);
   const [tasks, setTasks] = useState<TaskItem[]>([]);
   const [launcherOpen, setLauncherOpen] = useState(() => !sessionStorage.getItem("agent_launcher_shown"));
+  const [workspaceOpen, setWorkspaceOpen] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
