@@ -1399,7 +1399,7 @@ export default function Index() {
                             value={contactEmail}
                             onChange={(e) => setContactEmail(e.target.value)}
                             placeholder="Email"
-                            className="tru-qb-text-input"
+                            className="tru-qb-input"
                           />
                         </div>
                         
