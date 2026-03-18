@@ -121,8 +121,8 @@ export default function AgentLogin() {
           transition={{ duration: 0.35 }}
           className="flex flex-col items-center gap-1.5 mb-16"
         >
-          <img src={logoImg} alt="TruMove" className="h-7 dark:invert" />
-          <h1 className="text-lg font-semibold tracking-tight text-foreground mt-2 flex items-center gap-2">
+          <img src={logoImg} alt="TruMove" className="h-7 invert" />
+          <h1 className="text-lg font-semibold tracking-tight text-white mt-2 flex items-center gap-2">
             {greeting}, {displayName}
             {unreadCount > 0 && (
               <span className="inline-flex items-center gap-1 bg-destructive text-destructive-foreground rounded-full px-1.5 py-0.5 text-[9px] font-semibold">
