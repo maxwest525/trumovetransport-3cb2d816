@@ -33,6 +33,8 @@ export function EstimateAuthDocument({
   isSubmitted = false,
   refNumber,
   today,
+  consentGiven = false,
+  onConsentChange,
 }: EstimateAuthDocumentProps) {
   const fieldRefs = {
     initial1: useRef<HTMLSpanElement>(null),
