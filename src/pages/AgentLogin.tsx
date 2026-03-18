@@ -11,6 +11,7 @@ import { useNotifications } from "@/hooks/useNotifications";
 import { motion } from "framer-motion";
 import type { Session } from "@supabase/supabase-js";
 import AgentToolLauncherModal from "@/components/agent/AgentToolLauncherModal";
+import AgentToolWorkspace from "@/components/agent/AgentToolWorkspace";
 import GreenParticles from "@/components/portal/GreenParticles";
 
 const STORAGE_KEY = "truemove_remembered_role";
@@ -62,6 +63,7 @@ export default function AgentLogin() {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [launcherOpen, setLauncherOpen] = useState(false);
+  const [workspaceOpen, setWorkspaceOpen] = useState(false);
   const { displayName } = useAgentProfile();
   const { unreadCount } = useNotifications();
   const greeting = useMemo(() => getGreeting(), []);
@@ -172,7 +174,8 @@ export default function AgentLogin() {
           ))}
         </div>
 
-        <AgentToolLauncherModal open={launcherOpen} onOpenChange={setLauncherOpen} />
+        <AgentToolLauncherModal open={launcherOpen} onOpenChange={setLauncherOpen} onLaunchWorkspace={() => setWorkspaceOpen(true)} />
+        <AgentToolWorkspace open={workspaceOpen} onClose={() => setWorkspaceOpen(false)} />
       </div>
     </PageShell>
   );
