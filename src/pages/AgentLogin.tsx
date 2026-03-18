@@ -11,6 +11,7 @@ import { useNotifications } from "@/hooks/useNotifications";
 import { motion } from "framer-motion";
 import type { Session } from "@supabase/supabase-js";
 import AgentToolLauncherModal from "@/components/agent/AgentToolLauncherModal";
+import GreenParticles from "@/components/portal/GreenParticles";
 
 const STORAGE_KEY = "truemove_remembered_role";
 
@@ -90,29 +91,44 @@ export default function AgentLogin() {
     localStorage.removeItem(STORAGE_KEY);
   };
 
+  // Shared page wrapper with shimmery gray bg + particles
+  const PageShell = ({ children }: { children: React.ReactNode }) => (
+    <SiteShell centered backendMode hideHeader>
+      <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-[hsl(220,10%,92%)] via-[hsl(220,8%,88%)] to-[hsl(220,12%,85%)]">
+        {/* Shimmery metallic sheen overlay */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_20%,_hsla(220,15%,98%,0.4)_0%,_transparent_60%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_80%,_hsla(142,30%,90%,0.2)_0%,_transparent_50%)]" />
+        <GreenParticles />
+        <div className="relative z-10">
+          {children}
+        </div>
+      </div>
+    </SiteShell>
+  );
+
   if (loading) {
     return (
-      <SiteShell centered backendMode hideHeader>
-        <div className="flex items-center justify-center min-h-[60vh] bg-[hsl(220,15%,8%)]">
-          <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+      <PageShell>
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="w-5 h-5 border-2 border-foreground/20 border-t-foreground rounded-full animate-spin" />
         </div>
-      </SiteShell>
+      </PageShell>
     );
   }
 
   if (!session) {
     return (
-      <SiteShell centered backendMode hideHeader>
-        <div className="flex items-center justify-center min-h-[60vh] px-4 py-16 bg-[hsl(220,15%,8%)]">
+      <PageShell>
+        <div className="flex items-center justify-center min-h-screen px-4 py-16">
           <PortalAuthForm onAuthenticated={() => {}} />
         </div>
-      </SiteShell>
+      </PageShell>
     );
   }
 
   return (
-    <SiteShell centered backendMode hideHeader>
-      <div className="flex flex-col items-center justify-center min-h-[100vh] px-4 py-20 bg-[hsl(220,15%,8%)] text-white">
+    <PageShell>
+      <div className="flex flex-col items-center justify-center min-h-screen px-4 py-20">
 
         {/* Header */}
         <motion.div
@@ -121,8 +137,8 @@ export default function AgentLogin() {
           transition={{ duration: 0.35 }}
           className="flex flex-col items-center gap-1.5 mb-16"
         >
-          <img src={logoImg} alt="TruMove" className="h-7 invert" />
-          <h1 className="text-lg font-semibold tracking-tight text-white mt-2 flex items-center gap-2">
+          <img src={logoImg} alt="TruMove" className="h-7" />
+          <h1 className="text-lg font-semibold tracking-tight text-foreground mt-2 flex items-center gap-2">
             {greeting}, {displayName}
             {unreadCount > 0 && (
               <span className="inline-flex items-center gap-1 bg-destructive text-destructive-foreground rounded-full px-1.5 py-0.5 text-[9px] font-semibold">
@@ -131,9 +147,9 @@ export default function AgentLogin() {
               </span>
             )}
           </h1>
-          <div className="flex items-center gap-2 text-[11px] text-white/50">
+          <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
             <span>{session.user.email}</span>
-            <span className="text-white/20">·</span>
+            <span className="text-border">·</span>
             <button
               onClick={handleSignOut}
               className="inline-flex items-center gap-1 hover:text-destructive transition-colors"
@@ -166,6 +182,6 @@ export default function AgentLogin() {
 
         <AgentToolLauncherModal open={launcherOpen} onOpenChange={setLauncherOpen} />
       </div>
-    </SiteShell>
+    </PageShell>
   );
 }
