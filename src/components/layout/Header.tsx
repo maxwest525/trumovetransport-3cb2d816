@@ -132,11 +132,7 @@ const NAV: NavItem[] = [
   },
 ];
 
-interface HeaderProps {
-  whiteLogo?: boolean;
-}
-
-export default function Header({ whiteLogo = false }: HeaderProps) {
+export default function Header() {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
@@ -160,8 +156,7 @@ export default function Header({ whiteLogo = false }: HeaderProps) {
             <img 
               src={logo} 
               alt="TruMove" 
-              className={whiteLogo ? "brightness-0 invert" : ""}
-              style={whiteLogo ? { filter: 'brightness(0) invert(1) drop-shadow(0 0 8px rgba(255,255,255,0.8)) drop-shadow(0 0 20px rgba(255,255,255,0.4))' } : undefined}
+              style={{ filter: 'drop-shadow(0 0 6px rgba(255,255,255,0.9)) drop-shadow(0 0 14px rgba(255,255,255,0.5))' }}
             />
           </Link>
 
