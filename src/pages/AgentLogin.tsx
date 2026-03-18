@@ -11,6 +11,7 @@ import { useNotifications } from "@/hooks/useNotifications";
 import { motion } from "framer-motion";
 import type { Session } from "@supabase/supabase-js";
 import AgentToolLauncherModal from "@/components/agent/AgentToolLauncherModal";
+import AgentToolWorkspace from "@/components/agent/AgentToolWorkspace";
 import GreenParticles from "@/components/portal/GreenParticles";
 
 const STORAGE_KEY = "truemove_remembered_role";
