@@ -531,42 +531,12 @@ export default function InventoryBuilder({
 
       {/* Right Content - Item Grid */}
       <div className="flex-1 space-y-3">
-      {/* AI Features Row - AI Estimate + Scan Room */}
-        <div className="grid grid-cols-2 gap-3">
-          {/* AI Estimate Button - themed for dark mode */}
-          <button 
-            type="button"
-            onClick={onAIEstimate}
-            disabled={isEstimating || !homeSize}
-            className="flex items-center gap-3 p-3 rounded-xl border border-border bg-muted/50 hover:bg-muted transition-all text-left disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md"
-          >
-            <div className={cn("p-2 rounded-lg", isEstimating ? "bg-muted" : "bg-muted")}>
-              {isEstimating ? (
-                <div className="w-4 h-4 border-2 border-muted-foreground border-t-foreground rounded-full animate-spin" />
-              ) : (
-                <Wand2 className="w-4 h-4 text-foreground" />
-              )}
-            </div>
-            <div className="flex-1 min-w-0">
-              {isEstimating ? (
-                <>
-                  <div className="h-3 w-20 bg-muted rounded animate-pulse mb-1" />
-                  <div className="h-2 w-28 bg-muted/50 rounded animate-pulse" />
-                </>
-              ) : (
-                <>
-                  <span className="text-xs font-semibold text-foreground block">AI Estimate</span>
-                  <span className="text-[10px] text-muted-foreground">Suggest items based on home size</span>
-                </>
-              )}
-            </div>
-          </button>
-
-          {/* Scan Room - Prominent preview card */}
+      {/* Scan Room Preview */}
+        <div>
           <button
             type="button"
             onClick={() => navigate("/site/scan-room")}
-            className="relative flex items-center gap-4 p-4 rounded-xl border border-primary/20 bg-gradient-to-r from-primary/5 to-primary/10 hover:from-primary/10 hover:to-primary/15 transition-all text-left cursor-pointer shadow-sm hover:shadow-lg group overflow-hidden"
+            className="relative flex items-center gap-4 p-4 rounded-xl border border-primary/20 bg-gradient-to-r from-primary/5 to-primary/10 hover:from-primary/10 hover:to-primary/15 transition-all text-left cursor-pointer shadow-sm hover:shadow-lg group overflow-hidden w-full"
           >
             {/* Preview thumbnail */}
             <div className="relative w-20 h-16 rounded-lg overflow-hidden border border-primary/20 flex-shrink-0">
