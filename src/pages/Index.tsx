@@ -634,10 +634,10 @@ function ShipmentTrackerSection({ navigate }: { navigate: (path: string) => void
     <section className="tru-ai-steps-section">
       <div className="tru-ai-steps-inner">
         <div className="flex flex-col lg:flex-row items-center justify-center gap-10 lg:gap-16 w-full">
-          {/* Map canvas */}
+          {/* Map image */}
           <div className="w-full max-w-[600px]">
             <div className="rounded-xl overflow-hidden border border-foreground/10 shadow-lg">
-              <canvas ref={canvasRef} width={600} height={340} className="w-full h-auto block" />
+              <img src={eldMapImg} alt="Real-Time ELD Tracking Map" className="w-full h-auto block" />
             </div>
           </div>
           
