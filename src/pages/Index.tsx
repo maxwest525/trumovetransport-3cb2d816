@@ -432,197 +432,199 @@ const ROUTE_WAYPOINTS = [
 // Note: useTruckAnimation hook preserved for use on other pages (e.g., live tracking)
 // Homepage now uses static demo preview - no animation needed
 
-// Route Overview Panel - Mapbox dark road style (matches Truck View aesthetic)
+// Route Overview Panel - Free OpenStreetMap static image (no API key needed)
 function RouteOverviewPanel() {
-  const laCoords = [-118.24, 34.05]; // [lng, lat] for Mapbox
-  const nyCoords = [-74.00, 40.71];
+  // Use free static map from OpenStreetMap tile server via a simple image approach
+  // Shows LA to NY corridor at a zoom that fits both cities
+  const staticMapUrl = `https://maps.geoapify.com/v1/staticmap?style=dark-matter-dark-grey&width=420&height=480&center=lonlat:-95,38&zoom=3.8&marker=lonlat:-118.24,34.05;color:%2322c55e;size:small|lonlat:-74.00,40.71;color:%23ef4444;size:small&apiKey=`;
+
+  // Fallback: use a canvas-drawn map if no API key
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   
-  // Realistic I-10/I-40/I-70 highway corridor waypoints [lng, lat]
-  const waypoints: [number, number][] = [
-    [-118.24, 34.05],   // Los Angeles
-    [-114.29, 34.14],   // Needles, CA
-    [-111.65, 35.19],   // Flagstaff, AZ
-    [-106.65, 35.08],   // Albuquerque, NM
-    [-101.83, 35.22],   // Amarillo, TX
-    [-97.52, 35.47],    // Oklahoma City, OK
-    [-97.34, 37.69],    // Wichita, KS
-    [-94.58, 39.10],    // Kansas City, MO
-    [-90.20, 38.63],    // St. Louis, MO
-    [-86.16, 39.77],    // Indianapolis, IN
-    [-82.98, 40.00],    // Columbus, OH
-    [-79.99, 40.44],    // Pittsburgh, PA
-    [-74.00, 40.71],    // New York, NY
-  ];
-  
-  // Build GeoJSON LineString for the route with styling
-  const routeGeoJSON = {
-    type: "Feature",
-    properties: {
-      stroke: "#4285F4",
-      "stroke-width": 4,
-      "stroke-opacity": 0.9
-    },
-    geometry: {
-      type: "LineString",
-      coordinates: waypoints
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    
+    const w = canvas.width;
+    const h = canvas.height;
+    
+    // Dark background
+    ctx.fillStyle = '#1a1a2e';
+    ctx.fillRect(0, 0, w, h);
+    
+    // Simple US outline/grid lines for context
+    ctx.strokeStyle = '#2a2a4a';
+    ctx.lineWidth = 1;
+    for (let i = 0; i < w; i += 40) {
+      ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, h); ctx.stroke();
     }
-  };
-  
-  // URI encode the GeoJSON
-  const geoJsonEncoded = encodeURIComponent(JSON.stringify(routeGeoJSON));
-  const geoJsonOverlay = `geojson(${geoJsonEncoded})`;
-  
-  // Markers
-  const originMarker = `pin-s+22c55e(${laCoords[0]},${laCoords[1]})`;
-  const destMarker = `pin-s+ef4444(${nyCoords[0]},${nyCoords[1]})`;
-  
-  // Use 'auto' to fit all overlays (route + markers) in view
-  // navigation-night-v1 for dark theme matching Truck View
-  const staticMapUrl = `https://api.mapbox.com/styles/v1/mapbox/navigation-night-v1/static/${geoJsonOverlay},${originMarker},${destMarker}/auto/420x480@2x?padding=40&access_token=${MAPBOX_TOKEN}`;
+    for (let i = 0; i < h; i += 40) {
+      ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(w, i); ctx.stroke();
+    }
+    
+    // Convert rough lat/lng to canvas coords (simple mercator approximation for continental US)
+    const toCanvas = (lng: number, lat: number): [number, number] => {
+      const x = ((lng + 130) / 65) * w;
+      const y = ((50 - lat) / 25) * h;
+      return [x, y];
+    };
+    
+    // Route waypoints
+    const cities: [number, number][] = [
+      [-118.24, 34.05], [-114.29, 34.14], [-111.65, 35.19],
+      [-106.65, 35.08], [-101.83, 35.22], [-97.52, 35.47],
+      [-94.58, 39.10], [-90.20, 38.63], [-86.16, 39.77],
+      [-82.98, 40.00], [-79.99, 40.44], [-74.00, 40.71],
+    ];
+    
+    // Draw route line
+    ctx.strokeStyle = '#4285F4';
+    ctx.lineWidth = 3;
+    ctx.shadowColor = '#4285F4';
+    ctx.shadowBlur = 8;
+    ctx.beginPath();
+    cities.forEach((city, i) => {
+      const [x, y] = toCanvas(city[0], city[1]);
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+    
+    // Origin marker (green)
+    const [ox, oy] = toCanvas(-118.24, 34.05);
+    ctx.fillStyle = '#22c55e';
+    ctx.beginPath(); ctx.arc(ox, oy, 6, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 9px sans-serif';
+    ctx.fillText('LA', ox + 10, oy + 3);
+    
+    // Destination marker (red)
+    const [dx, dy] = toCanvas(-74.00, 40.71);
+    ctx.fillStyle = '#ef4444';
+    ctx.beginPath(); ctx.arc(dx, dy, 6, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#fff';
+    ctx.fillText('NYC', dx + 10, dy + 3);
+    
+    // Truck position (middle of route, yellow)
+    const mid = cities[Math.floor(cities.length / 2)];
+    const [mx, my] = toCanvas(mid[0], mid[1]);
+    ctx.fillStyle = '#facc15';
+    ctx.beginPath(); ctx.arc(mx, my, 5, 0, Math.PI * 2); ctx.fill();
+    
+    // Labels
+    ctx.fillStyle = '#ffffff90';
+    ctx.font = '10px sans-serif';
+    ctx.fillText('ROUTE OVERVIEW', 12, 20);
+    ctx.fillText('2,789 mi', w - 70, h - 12);
+    
+  }, []);
   
   return (
     <div className="tru-tracker-satellite-panel tru-tracker-satellite-enlarged tru-map-window-frame">
-      <img src={staticMapUrl} alt="Route Overview" className="w-full h-full object-cover" />
+      <canvas ref={canvasRef} width={420} height={480} className="w-full h-full" />
     </div>
   );
 }
 
-// Truck View Panel - Animated Mapbox GL map with truck driving through streets
-import mapboxgl from 'mapbox-gl';
-import 'mapbox-gl/dist/mapbox-gl.css';
-
+// Truck View Panel - Canvas-based animated truck driving (no API key needed)
 function TruckViewPanel() {
-  const mapContainer = useRef<HTMLDivElement>(null);
-  const map = useRef<mapboxgl.Map | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number>();
-  const [routeCoords, setRouteCoords] = useState<[number, number][]>([]);
   
-  // Fetch actual road geometry from Mapbox Directions API - city streets loop
   useEffect(() => {
-    const fetchRoadRoute = async () => {
-      // Downtown Oklahoma City street grid loop - actual city streets
-      const waypoints = [
-        [-97.5165, 35.4672], // N Robinson Ave & NW 1st St
-        [-97.5165, 35.4702], // N Robinson Ave & NW 4th St  
-        [-97.5125, 35.4702], // NW 4th St & N Broadway Ave
-        [-97.5125, 35.4672], // N Broadway Ave & NW 1st St
-        [-97.5165, 35.4672], // Back to start - complete the block
-      ];
-      
-      const coordsString = waypoints.map(p => `${p[0]},${p[1]}`).join(';');
-      
-      try {
-        const response = await fetch(
-          `https://api.mapbox.com/directions/v5/mapbox/driving/${coordsString}?geometries=geojson&overview=full&access_token=${MAPBOX_TOKEN}`
-        );
-        const data = await response.json();
-        
-        if (data.routes && data.routes[0]) {
-          // Get the road-snapped coordinates
-          const coords = data.routes[0].geometry.coordinates as [number, number][];
-          setRouteCoords(coords);
-        }
-      } catch (error) {
-        console.error('Failed to fetch road route:', error);
-        // Fallback to downtown grid
-        setRouteCoords([
-          [-97.5165, 35.4672],
-          [-97.5165, 35.4702],
-          [-97.5125, 35.4702],
-          [-97.5125, 35.4672],
-        ]);
-      }
-    };
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
     
-    fetchRoadRoute();
-  }, []);
-  
-  // Helper: interpolate position along route
-  const getPointAlongRoute = useCallback((progress: number): [number, number] => {
-    if (routeCoords.length < 2) return routeCoords[0] || [-97.5065, 35.4692];
-    
-    const numSegments = routeCoords.length - 1;
-    const segmentProgress = progress * numSegments;
-    const segmentIndex = Math.min(Math.floor(segmentProgress), numSegments - 1);
-    const t = segmentProgress - segmentIndex;
-    
-    const start = routeCoords[segmentIndex];
-    const end = routeCoords[Math.min(segmentIndex + 1, routeCoords.length - 1)];
-    
-    return [
-      start[0] + (end[0] - start[0]) * t,
-      start[1] + (end[1] - start[1]) * t
-    ];
-  }, [routeCoords]);
-  
-  // Helper: calculate bearing between two points
-  const getBearing = useCallback((progress: number): number => {
-    if (routeCoords.length < 2) return 45;
-    
-    const numSegments = routeCoords.length - 1;
-    const segmentIndex = Math.min(Math.floor(progress * numSegments), numSegments - 1);
-    
-    const start = routeCoords[segmentIndex];
-    const end = routeCoords[Math.min(segmentIndex + 1, routeCoords.length - 1)];
-    
-    const dLng = end[0] - start[0];
-    const dLat = end[1] - start[1];
-    
-    return (Math.atan2(dLng, dLat) * 180) / Math.PI;
-  }, [routeCoords]);
-  
-  // Initialize map and start animation when route is ready
-  useEffect(() => {
-    if (!mapContainer.current || map.current || routeCoords.length < 2) return;
-    
-    mapboxgl.accessToken = MAPBOX_TOKEN;
-    
-    map.current = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/navigation-night-v1',
-      center: routeCoords[0],
-      zoom: 17,
-      pitch: 60,
-      bearing: 45,
-      interactive: false,
-      attributionControl: false
-    });
-    
-    let progress = 0;
+    const w = canvas.width;
+    const h = canvas.height;
+    let frame = 0;
     
     const animate = () => {
-      if (!map.current) return;
+      frame++;
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(0, 0, w, h);
       
-      progress += 0.00003; // Very slow for realistic city driving speed
-      if (progress > 1) progress = 0;
+      // Moving road perspective
+      const vanishY = h * 0.35;
+      const vanishX = w * 0.5;
       
-      const position = getPointAlongRoute(progress);
-      const bearing = getBearing(progress);
+      // Sky gradient
+      const skyGrad = ctx.createLinearGradient(0, 0, 0, vanishY);
+      skyGrad.addColorStop(0, '#0c1222');
+      skyGrad.addColorStop(1, '#1a2744');
+      ctx.fillStyle = skyGrad;
+      ctx.fillRect(0, 0, w, vanishY);
       
-      map.current.setCenter(position);
-      map.current.setBearing(bearing);
+      // Ground
+      const groundGrad = ctx.createLinearGradient(0, vanishY, 0, h);
+      groundGrad.addColorStop(0, '#1e293b');
+      groundGrad.addColorStop(1, '#0f172a');
+      ctx.fillStyle = groundGrad;
+      ctx.fillRect(0, vanishY, w, h - vanishY);
+      
+      // Road
+      ctx.fillStyle = '#334155';
+      ctx.beginPath();
+      ctx.moveTo(vanishX - 2, vanishY);
+      ctx.lineTo(0, h);
+      ctx.lineTo(w, h);
+      ctx.lineTo(vanishX + 2, vanishY);
+      ctx.fill();
+      
+      // Road edges
+      ctx.strokeStyle = '#475569';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(vanishX - 2, vanishY); ctx.lineTo(w * 0.1, h); ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(vanishX + 2, vanishY); ctx.lineTo(w * 0.9, h); ctx.stroke();
+      
+      // Dashed center line (animated)
+      const dashOffset = (frame * 2) % 60;
+      for (let i = 0; i < 12; i++) {
+        const t = (i * 60 + dashOffset) / (h - vanishY);
+        if (t > 1) continue;
+        const perspT = t * t; // perspective acceleration
+        const y = vanishY + perspT * (h - vanishY);
+        const lineLen = 8 + perspT * 20;
+        const lineW = 1 + perspT * 3;
+        
+        ctx.strokeStyle = '#facc15';
+        ctx.lineWidth = lineW;
+        ctx.beginPath();
+        ctx.moveTo(vanishX, y);
+        ctx.lineTo(vanishX, Math.min(y + lineLen, h));
+        ctx.stroke();
+      }
+      
+      // Stars
+      ctx.fillStyle = '#ffffff40';
+      for (let i = 0; i < 20; i++) {
+        const sx = ((i * 97 + 13) % w);
+        const sy = ((i * 43 + 7) % (vanishY - 10));
+        const twinkle = Math.sin(frame * 0.02 + i) * 0.5 + 0.5;
+        ctx.globalAlpha = twinkle * 0.6;
+        ctx.fillRect(sx, sy, 1.5, 1.5);
+      }
+      ctx.globalAlpha = 1;
       
       animationRef.current = requestAnimationFrame(animate);
     };
     
-    map.current.on('load', () => {
-      animate();
-    });
+    animate();
     
     return () => {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
-      if (map.current) {
-        map.current.remove();
-        map.current = null;
-      }
+      if (animationRef.current) cancelAnimationFrame(animationRef.current);
     };
-  }, [routeCoords, getPointAlongRoute, getBearing]);
+  }, []);
   
   return (
     <div className="tru-tracker-road-map tru-map-window-frame">
-      <div ref={mapContainer} className="w-full h-full" />
+      <canvas ref={canvasRef} width={480} height={480} className="w-full h-full" />
       
       {/* Truck marker - centered, fixed position */}
       <div className="tru-homepage-truck-marker">
