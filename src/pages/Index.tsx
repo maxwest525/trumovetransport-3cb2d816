@@ -1701,28 +1701,26 @@ export default function Index() {
 
           {/* GET IN TOUCH */}
           <section className="py-20 px-4">
-            <div className="max-w-5xl mx-auto">
-              <div className="flex flex-col md:flex-row gap-10 items-center">
-                {/* Left: Headline block */}
-                <div className="md:w-64 shrink-0 md:sticky md:top-24 rounded-2xl border-2 border-black bg-card p-8" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), inset 0 2px 8px rgba(0,0,0,0.15)' }}>
+            <div className="max-w-6xl mx-auto">
+              <div className="flex flex-col md:flex-row gap-6 items-center">
+                {/* Col 1: Headline */}
+                <div className="md:w-56 shrink-0 rounded-2xl border-2 border-black bg-card p-8" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), inset 0 2px 8px rgba(0,0,0,0.15)' }}>
                   <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary mb-3">Contact Us</p>
                   <h2 className="text-3xl font-black tracking-tight text-foreground mb-3">We're Here to Help</h2>
                   <p className="text-sm text-muted-foreground leading-relaxed">Reach out however works best for you — voice, video, text, or form. Our team is standing by.</p>
                 </div>
 
-                {/* Right: Contact cards */}
-                <div className="flex-1 grid grid-cols-1 md:grid-cols-[1fr_3fr_1fr] gap-4 items-start">
-                {/* Left column: Talk to Trudy + Book Video Consult */}
-                <div className="flex flex-col gap-4">
+                {/* Col 2: Talk to Trudy + Book Video Consult stacked */}
+                <div className="flex flex-col gap-4 md:w-44 shrink-0">
                   <button
                     onClick={() => window.dispatchEvent(new CustomEvent('trudy-start'))}
-                    className="group relative flex flex-col items-center text-center rounded-2xl border-2 border-black bg-card p-8 hover:border-primary/40 hover:-translate-y-1 transition-all duration-200" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), inset 0 2px 8px rgba(0,0,0,0.15)' }}
+                    className="group relative flex flex-col items-center text-center rounded-2xl border-2 border-black bg-card p-6 hover:border-primary/40 hover:-translate-y-1 transition-all duration-200" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), inset 0 2px 8px rgba(0,0,0,0.15)' }}
                   >
-                    <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-                      <Mic className="h-5 w-5 text-primary" />
+                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center mb-3 group-hover:bg-primary/20 transition-colors">
+                      <Mic className="h-4 w-4 text-primary" />
                     </div>
-                    <h3 className="text-sm font-semibold text-foreground mb-1">Talk to Trudy</h3>
-                    <p className="text-xs text-muted-foreground leading-relaxed mb-4">AI voice assistant — instant quotes, tracking & scheduling.</p>
+                    <h3 className="text-sm font-bold text-foreground mb-1">Talk to Trudy</h3>
+                    <p className="text-[11px] text-muted-foreground leading-relaxed mb-3">AI voice assistant — instant quotes, tracking & scheduling.</p>
                     <span className="mt-auto inline-flex items-center gap-1 text-xs font-medium text-primary group-hover:gap-1.5 transition-all">
                       Start talking <ArrowRight className="h-3 w-3" />
                     </span>
@@ -1730,35 +1728,35 @@ export default function Index() {
 
                   <button
                     onClick={() => navigate("/book")}
-                    className="group relative flex flex-col items-center text-center rounded-2xl border-2 border-black bg-card p-8 hover:border-primary/40 hover:-translate-y-1 transition-all duration-200" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), inset 0 2px 8px rgba(0,0,0,0.15)' }}
+                    className="group relative flex flex-col items-center text-center rounded-2xl border-2 border-black bg-card p-6 hover:border-primary/40 hover:-translate-y-1 transition-all duration-200" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), inset 0 2px 8px rgba(0,0,0,0.15)' }}
                   >
-                    <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-                      <Video className="h-5 w-5 text-primary" />
+                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center mb-3 group-hover:bg-primary/20 transition-colors">
+                      <Video className="h-4 w-4 text-primary" />
                     </div>
-                    <h3 className="text-sm font-semibold text-foreground mb-1">Book Video Consult</h3>
-                    <p className="text-xs text-muted-foreground leading-relaxed mb-4">Face-to-face with a moving specialist via live video.</p>
+                    <h3 className="text-sm font-bold text-foreground mb-1">Book Video Consult</h3>
+                    <p className="text-[11px] text-muted-foreground leading-relaxed mb-3">Face-to-face with a moving specialist via live video.</p>
                     <span className="mt-auto inline-flex items-center gap-1 text-xs font-medium text-primary group-hover:gap-1.5 transition-all">
                       Schedule now <ArrowRight className="h-3 w-3" />
                     </span>
                   </button>
                 </div>
 
-                {/* Send a Message — center, larger */}
-                <div className="group relative flex flex-col rounded-2xl border-2 border-black bg-card p-8 hover:border-primary/40 hover:-translate-y-1 transition-all duration-200" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), inset 0 2px 8px rgba(0,0,0,0.15)' }}>
+                {/* Col 3: Send a Message — wide center */}
+                <div className="flex-1 min-w-0 rounded-2xl border-2 border-black bg-card p-8 hover:border-primary/40 transition-all duration-200" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), inset 0 2px 8px rgba(0,0,0,0.15)' }}>
                   <div className="flex flex-col items-center text-center mb-5">
-                    <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+                    <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
                       <MessageSquare className="h-5 w-5 text-primary" />
                     </div>
-                    <h3 className="text-sm font-semibold text-foreground mb-1">Send a Message</h3>
-                    <p className="text-xs text-muted-foreground leading-relaxed">We'll get back to you within a few hours.</p>
+                    <h3 className="text-base font-semibold text-foreground mb-1">Send a Message</h3>
+                    <p className="text-xs text-muted-foreground">We'll get back to you within a few hours.</p>
                   </div>
-                  <form className="space-y-3 flex-1 flex flex-col" onSubmit={(e) => e.preventDefault()}>
+                  <form className="space-y-3" onSubmit={(e) => e.preventDefault()}>
                     <div className="grid grid-cols-2 gap-3">
-                      <input type="text" required placeholder="Your name" className="w-full rounded-lg border border-border bg-background px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
-                      <input type="email" required placeholder="Email address" className="w-full rounded-lg border border-border bg-background px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
+                      <input type="text" required placeholder="Your name" className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
+                      <input type="email" required placeholder="Email address" className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
                     </div>
-                    <textarea required rows={7} placeholder="How can we help?" className="w-full rounded-lg border border-border bg-background px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary resize-none" />
-                    <button type="submit" className="mt-auto w-full bg-foreground text-background py-2.5 rounded-lg text-xs font-semibold hover:bg-foreground/90 transition-colors">
+                    <textarea required rows={5} placeholder="How can we help?" className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary resize-none" />
+                    <button type="submit" className="w-full bg-foreground text-background py-3 rounded-lg text-sm font-semibold hover:bg-foreground/90 transition-colors">
                       Send Message
                     </button>
                   </form>
@@ -1767,18 +1765,18 @@ export default function Index() {
                   </p>
                 </div>
 
-                {/* Right column: Call Us + Text Support */}
-                <div className="flex flex-col gap-4">
+                {/* Col 4: Call Us + Text Support stacked */}
+                <div className="flex flex-col gap-4 md:w-44 shrink-0">
                   <a
                     href="tel:+16097277647"
-                    className="group relative flex flex-col items-center text-center rounded-2xl border-2 border-black bg-card p-8 hover:border-primary/40 hover:-translate-y-1 transition-all duration-200" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), inset 0 2px 8px rgba(0,0,0,0.15)' }}
+                    className="group relative flex flex-col items-center text-center rounded-2xl border-2 border-black bg-card p-6 hover:border-primary/40 hover:-translate-y-1 transition-all duration-200" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), inset 0 2px 8px rgba(0,0,0,0.15)' }}
                   >
-                    <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-                      <Phone className="h-5 w-5 text-primary" />
+                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center mb-3 group-hover:bg-primary/20 transition-colors">
+                      <Phone className="h-4 w-4 text-primary" />
                     </div>
-                    <h3 className="text-sm font-semibold text-foreground mb-1">Call Us</h3>
-                    <p className="text-xs text-muted-foreground leading-relaxed mb-1">(609) 727-7647</p>
-                    <p className="text-[10px] text-muted-foreground mb-4">Mon – Sat, 8 AM – 8 PM EST</p>
+                    <h3 className="text-sm font-bold text-foreground mb-1">Call Us</h3>
+                    <p className="text-xs text-muted-foreground leading-relaxed mb-0.5">(609) 727-7647</p>
+                    <p className="text-[10px] text-muted-foreground mb-3">Mon – Sat, 8 AM – 8 PM EST</p>
                     <span className="mt-auto inline-flex items-center gap-1 text-xs font-medium text-primary group-hover:gap-1.5 transition-all">
                       Call now <ArrowRight className="h-3 w-3" />
                     </span>
@@ -1786,21 +1784,19 @@ export default function Index() {
 
                   <a
                     href="sms:+16097277647"
-                    className="group relative flex flex-col items-center text-center rounded-2xl border-2 border-black bg-card p-8 hover:border-primary/40 hover:-translate-y-1 transition-all duration-200" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), inset 0 2px 8px rgba(0,0,0,0.15)' }}
+                    className="group relative flex flex-col items-center text-center rounded-2xl border-2 border-black bg-card p-6 hover:border-primary/40 hover:-translate-y-1 transition-all duration-200" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), inset 0 2px 8px rgba(0,0,0,0.15)' }}
                   >
-                    <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-                      <MessageSquare className="h-5 w-5 text-primary" />
+                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center mb-3 group-hover:bg-primary/20 transition-colors">
+                      <MessageSquare className="h-4 w-4 text-primary" />
                     </div>
-                    <h3 className="text-sm font-semibold text-foreground mb-1">Text Support</h3>
-                    <p className="text-xs text-muted-foreground leading-relaxed mb-4">Text us anytime — we typically reply within minutes.</p>
+                    <h3 className="text-sm font-bold text-foreground mb-1">Text Support</h3>
+                    <p className="text-[11px] text-muted-foreground leading-relaxed mb-3">Text us anytime — we typically reply within minutes.</p>
                     <span className="mt-auto inline-flex items-center gap-1 text-xs font-medium text-primary group-hover:gap-1.5 transition-all">
                       Send a text <ArrowRight className="h-3 w-3" />
                     </span>
                   </a>
                 </div>
               </div>
-              </div>
-
             </div>
           </section>
 
