@@ -1555,7 +1555,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 0%;
+  object-position: center -200px;
 }
 
 /* Hero background overlay - dark tint for text legibility */
