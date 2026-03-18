@@ -120,18 +120,10 @@ const App = () => (
             <Route path="/kpi" element={<KpiDashboard />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/marketing/dashboard" element={<GrowthDashboard />} />
-            <Route path="/marketing/campaigns" element={<GrowthCampaignBuilder />} />
-            <Route path="/marketing/campaign-summary" element={<GrowthCampaignSummary />} />
+            <Route path="/marketing/campaigns" element={<GrowthCampaigns />} />
             <Route path="/marketing/integrations" element={<GrowthIntegrations />} />
             <Route path="/marketing/landing-pages" element={<GrowthLandingPages />} />
-            <Route path="/marketing/seo" element={<GrowthStubPage />} />
-            <Route path="/marketing/ad-copy" element={<GrowthStubPage />} />
-            <Route path="/marketing/tracking" element={<GrowthTracking />} />
-            <Route path="/marketing/leads" element={<GrowthLeads />} />
-            <Route path="/marketing/reviews" element={<GrowthStubPage />} />
-            <Route path="/marketing/automation" element={<GrowthAutomation />} />
-            <Route path="/marketing/competitors" element={<GrowthStubPage />} />
-            <Route path="/marketing/settings" element={<GrowthStubPage />} />
+            <Route path="/marketing/routing" element={<GrowthRouting />} />
             <Route path="/accounting/dashboard" element={<AccountingDashboard />} />
             
             <Route path="/agent/operations" element={<AgentOperations />} />
