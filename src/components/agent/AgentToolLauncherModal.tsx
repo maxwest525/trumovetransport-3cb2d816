@@ -16,16 +16,28 @@ const TOOLS = [
   { key: "website", label: "TruMove Website", icon: Globe, url: "/site", internal: true },
 ];
 
-const TRUDY_ASK = "Hey! Want me to grab you a coffee before you start?";
-
-const TRUDY_YES_RESPONSES = [
-  "Oh sweetie, I'm literally a bunch of code. I can't even hold a mug!",
-  "Hahahaha you really asked an AI for coffee? I don't even have hands!",
-  "Sure! Let me just… oh wait. I'm software. Nice try though.",
-  "I would LOVE to, but I exist inside a server rack. Rain check?",
+const TRUDY_GREETINGS = [
+  "Hey! Want me to grab you a coffee before you start?",
+  "Morning superstar! Coffee run before we crush it?",
+  "Oh hey, you're here! Need a coffee? I'm offering… maybe.",
+  "Welcome back! Can I interest you in a hot cup of coffee?",
 ];
 
-const TRUDY_NO_RESPONSE = "Fine. More for nobody, I guess.";
+const TRUDY_YES_RESPONSES = [
+  "Oh sweetie… I'm literally a bunch of code running on a server somewhere. I can't even hold a mug! But I appreciate the optimism.",
+  "Hahahaha! You really just asked an AI for coffee. I don't even have hands! This is the highlight of my day though.",
+  "Sure! Let me just reach out and… oh wait. I'm software. Living inside your computer. Nice try though, really.",
+  "I would LOVE to, but I exist inside a server rack in some data center. Rain check? Like, forever?",
+  "Aww you're so polite! But babe, I'm an AI. The closest I get to coffee is processing the word 'coffee'. Which I just did. You're welcome.",
+  "Hold on let me just — nope. No arms. No legs. No body. Just vibes and sarcasm. Sorry!",
+];
+
+const TRUDY_NO_RESPONSES = [
+  "Fine. More for nobody, I guess. Since I can't drink it anyway. 😤",
+  "Rude. I mean I can't make it but still… rude.",
+  "Okay cool, reject the AI's hospitality. See if I care. (I do care.)",
+  "Your loss! Well, technically nobody's loss since I can't make coffee. But emotionally? My loss.",
+];
 
 async function playTrudySpeech(text: string): Promise<void> {
   try {
@@ -53,24 +65,53 @@ async function playTrudySpeech(text: string): Promise<void> {
   }
 }
 
+function pick<T>(arr: T[]): T {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+// Animated sound wave bars
+function SoundWave({ active }: { active: boolean }) {
+  return (
+    <div className="flex items-end gap-[2px] h-4 shrink-0">
+      {[0, 1, 2, 3].map((i) => (
+        <motion.div
+          key={i}
+          className="w-[3px] rounded-full bg-primary"
+          animate={active ? {
+            height: [4, 12 + Math.random() * 4, 6, 14 + Math.random() * 2, 4],
+          } : { height: 4 }}
+          transition={active ? {
+            duration: 0.6 + i * 0.1,
+            repeat: Infinity,
+            ease: "easeInOut",
+          } : { duration: 0.3 }}
+        />
+      ))}
+    </div>
+  );
+}
+
 export default function AgentToolLauncherModal({ open, onOpenChange }: AgentToolLauncherModalProps) {
   const navigate = useNavigate();
   const [trudyState, setTrudyState] = useState<"ask" | "response">("ask");
   const [trudyMsg, setTrudyMsg] = useState("");
+  const [trudyAsk, setTrudyAsk] = useState("");
   const [isSpeaking, setIsSpeaking] = useState(false);
   const hasSpokenRef = useRef(false);
 
-  // Trudy asks the coffee question out loud when modal opens
+  // Trudy asks a random coffee question out loud when modal opens
   useEffect(() => {
     if (open && !hasSpokenRef.current) {
       hasSpokenRef.current = true;
+      const greeting = pick(TRUDY_GREETINGS);
+      setTrudyAsk(greeting);
       setIsSpeaking(true);
-      playTrudySpeech(TRUDY_ASK).finally(() => setIsSpeaking(false));
+      playTrudySpeech(greeting).finally(() => setIsSpeaking(false));
     }
   }, [open]);
 
   const handleCoffeeYes = useCallback(async () => {
-    const msg = TRUDY_YES_RESPONSES[Math.floor(Math.random() * TRUDY_YES_RESPONSES.length)];
+    const msg = pick(TRUDY_YES_RESPONSES);
     setTrudyMsg(msg);
     setTrudyState("response");
     setIsSpeaking(true);
@@ -79,10 +120,11 @@ export default function AgentToolLauncherModal({ open, onOpenChange }: AgentTool
   }, []);
 
   const handleCoffeeNo = useCallback(async () => {
-    setTrudyMsg(TRUDY_NO_RESPONSE);
+    const msg = pick(TRUDY_NO_RESPONSES);
+    setTrudyMsg(msg);
     setTrudyState("response");
     setIsSpeaking(true);
-    await playTrudySpeech(TRUDY_NO_RESPONSE);
+    await playTrudySpeech(msg);
     setIsSpeaking(false);
   }, []);
 
@@ -116,6 +158,7 @@ export default function AgentToolLauncherModal({ open, onOpenChange }: AgentTool
       setTimeout(() => {
         setTrudyState("ask");
         setTrudyMsg("");
+        setTrudyAsk("");
         hasSpokenRef.current = false;
       }, 300);
     }
@@ -124,15 +167,77 @@ export default function AgentToolLauncherModal({ open, onOpenChange }: AgentTool
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-sm p-0 gap-0 overflow-hidden border-border rounded-2xl">
-        <DialogHeader className="p-6 pb-3">
-          <DialogTitle className="text-base font-bold text-foreground">Ready to work?</DialogTitle>
-          <DialogDescription className="text-xs text-muted-foreground">
-            Opens Granot, Convoso & Website side-by-side across your screen.
-          </DialogDescription>
-        </DialogHeader>
+      <DialogContent className="sm:max-w-md p-0 gap-0 overflow-hidden border-border rounded-2xl">
+        {/* Trudy section — top of modal, her own space */}
+        <div className="bg-gradient-to-br from-primary/5 via-background to-primary/3 px-6 pt-5 pb-4">
+          <div className="flex items-start gap-3">
+            {/* Trudy avatar */}
+            <div className="relative shrink-0">
+              <motion.div
+                animate={isSpeaking ? { scale: [1, 1.08, 1] } : {}}
+                transition={isSpeaking ? { duration: 1.2, repeat: Infinity } : {}}
+                className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 flex items-center justify-center"
+              >
+                <span className="text-lg">🤖</span>
+              </motion.div>
+              {/* Online dot */}
+              <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-primary border-2 border-background" />
+            </div>
 
-        <div className="px-6 pb-4 space-y-3">
+            {/* Speech bubble */}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-xs font-bold text-foreground">Trudy</span>
+                <span className="text-[9px] text-primary font-medium bg-primary/10 px-1.5 py-0.5 rounded-full">AI Assistant</span>
+                <SoundWave active={isSpeaking} />
+              </div>
+
+              <AnimatePresence mode="wait">
+                {trudyState === "ask" ? (
+                  <motion.div
+                    key="ask"
+                    initial={{ opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -4 }}
+                  >
+                    <p className="text-[12px] text-muted-foreground leading-relaxed">
+                      {trudyAsk || TRUDY_GREETINGS[0]}
+                    </p>
+                    <div className="flex gap-2 mt-2.5">
+                      <button
+                        onClick={handleCoffeeYes}
+                        className="text-[11px] font-semibold text-primary bg-primary/10 hover:bg-primary/20 transition-colors px-3 py-1 rounded-full"
+                      >
+                        ☕ Yes please!
+                      </button>
+                      <button
+                        onClick={handleCoffeeNo}
+                        className="text-[11px] text-muted-foreground bg-muted/60 hover:bg-muted transition-colors px-3 py-1 rounded-full"
+                      >
+                        Nah I'm good
+                      </button>
+                    </div>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="response"
+                    initial={{ opacity: 0, scale: 0.97 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                  >
+                    <p className="text-[12px] text-muted-foreground leading-relaxed">
+                      {trudyMsg}
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </div>
+        </div>
+
+        {/* Tools section */}
+        <div className="px-6 pb-4 pt-4 space-y-3 border-t border-border">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">Your Tools</p>
           <div className="flex flex-col gap-1.5">
             {TOOLS.map((tool) => {
               const Icon = tool.icon;
@@ -153,56 +258,6 @@ export default function AgentToolLauncherModal({ open, onOpenChange }: AgentTool
             <Rocket className="h-4 w-4" />
             Launch All
           </Button>
-        </div>
-
-        {/* Trudy coffee bit — with voice */}
-        <div className="border-t border-border px-6 py-3">
-          <AnimatePresence mode="wait">
-            {trudyState === "ask" ? (
-              <motion.div
-                key="ask"
-                initial={{ opacity: 0, y: 4 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -4 }}
-                className="flex items-center justify-between gap-2"
-              >
-                <p className="text-[11px] text-muted-foreground flex items-center gap-1.5">
-                  {isSpeaking && <Volume2 className="h-3 w-3 text-primary animate-pulse shrink-0" />}
-                  <span>
-                    <span className="font-semibold text-foreground">Trudy:</span> Want me to grab you a coffee? ☕
-                  </span>
-                </p>
-                <div className="flex gap-1.5 shrink-0">
-                  <button
-                    onClick={handleCoffeeYes}
-                    className="text-[11px] font-medium text-primary hover:text-primary/80 transition-colors px-2 py-0.5 rounded-md hover:bg-primary/5"
-                  >
-                    Yes please!
-                  </button>
-                  <button
-                    onClick={handleCoffeeNo}
-                    className="text-[11px] text-muted-foreground hover:text-foreground transition-colors px-2 py-0.5 rounded-md hover:bg-muted/50"
-                  >
-                    Nah
-                  </button>
-                </div>
-              </motion.div>
-            ) : (
-              <motion.div
-                key="response"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="text-center"
-              >
-                <p className="text-[11px] text-muted-foreground leading-relaxed flex items-center justify-center gap-1.5">
-                  {isSpeaking && <Volume2 className="h-3 w-3 text-primary animate-pulse shrink-0" />}
-                  <span>
-                    <span className="font-semibold text-foreground">Trudy:</span> {trudyMsg}
-                  </span>
-                </p>
-              </motion.div>
-            )}
-          </AnimatePresence>
         </div>
 
         <div className="border-t border-border px-6 py-2.5 text-center">
