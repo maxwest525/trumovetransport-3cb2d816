@@ -20,7 +20,6 @@ const NAV_ITEMS = [
 
 const ADVANCED_ITEMS: { label: string; icon: typeof Target; badge?: number; href?: string }[] = [
   { label: "Estimates Oversight", icon: Target },
-  { label: "Reports", icon: BarChart3 },
 ];
 
 interface ManagerShellProps {
