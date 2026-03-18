@@ -113,7 +113,10 @@ export default function ESignViewPage() {
   const handleSubmitCCACH = () => {
     setCompletedDocuments((prev) => ({ ...prev, ccach: true }));
     logAuditEvent("document_signed", { documentType: "ccach", documentHash: generateDocHash() });
-    toast.success("CC/ACH Authorization submitted successfully");
+    toast.success("CC/ACH Authorization submitted — proceeding to payment");
+    // Navigate to payment page
+    const leadId = searchParams.get("leadId") || "";
+    navigate(`/agent/payment?name=${encodeURIComponent(typedName)}&email=${encodeURIComponent(customerEmail)}&leadId=${leadId}`);
   };
 
   const handleSubmitBOL = () => {
