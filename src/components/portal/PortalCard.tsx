@@ -58,7 +58,7 @@ export default function PortalCard({ label, description, icon: Icon, accentHsl, 
       />
 
       {/* Card body */}
-      <div className="relative rounded-2xl border border-border/40 bg-card overflow-hidden transition-all duration-500 group-hover:border-transparent">
+      <div className="relative rounded-2xl border border-white/30 bg-white/60 backdrop-blur-md overflow-hidden transition-all duration-500 group-hover:border-transparent group-hover:bg-white/70 shadow-[0_2px_16px_hsla(0,0%,0%,0.06)]">
 
         {/* Idle breathing glow orb */}
         <div
@@ -95,7 +95,7 @@ export default function PortalCard({ label, description, icon: Icon, accentHsl, 
             <motion.div
               animate={hovered ? { scale: 1.12, rotate: 3 } : { scale: 1, rotate: 0 }}
               transition={{ type: "spring", stiffness: 300, damping: 20 }}
-              className="w-16 h-16 rounded-2xl bg-muted/50 backdrop-blur-sm flex items-center justify-center border border-border/30 group-hover:border-transparent transition-colors duration-500"
+              className="w-16 h-16 rounded-2xl bg-white/60 backdrop-blur-sm flex items-center justify-center border border-white/40 group-hover:border-transparent transition-colors duration-500"
               style={{
                 boxShadow: hovered ? `0 8px 32px hsl(${accentHsl} / 0.2)` : "0 4px 12px hsl(var(--foreground) / 0.06)",
               }}
