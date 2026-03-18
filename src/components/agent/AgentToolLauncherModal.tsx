@@ -129,8 +129,16 @@ export default function AgentToolLauncherModal({ open, onOpenChange }: AgentTool
 
   const handleLaunchAll = () => {
     TOOLS.forEach((tool) => window.open(tool.url, "_blank"));
+    sessionStorage.setItem("agent_tools_launched", "true");
     onOpenChange(false);
   };
+
+  // If tools already launched this session, skip the modal
+  useEffect(() => {
+    if (open && sessionStorage.getItem("agent_tools_launched") === "true") {
+      onOpenChange(false);
+    }
+  }, [open, onOpenChange]);
 
   const handleGoToDashboard = () => {
     onOpenChange(false);
