@@ -1697,13 +1697,69 @@ export default function Index() {
 
           <FeatureTrustStrip />
 
-          {/* CONTACT US */}
-          <section className="py-16 px-4">
-            <div className="max-w-xl mx-auto">
-              <h2 className="text-sm font-bold tracking-widest uppercase text-foreground mb-1">Contact Us</h2>
-              <p className="text-xs text-muted-foreground mb-6">Have questions? Reach out to our team directly.</p>
+          {/* GET IN TOUCH */}
+          <section className="py-20 px-4">
+            <div className="max-w-4xl mx-auto">
+              <div className="text-center mb-10">
+                <h2 className="text-2xl font-bold tracking-tight text-foreground mb-2">Get in Touch</h2>
+                <p className="text-sm text-muted-foreground max-w-md mx-auto">Choose the way that works best for you. We're here to help.</p>
+              </div>
 
-              <ContactHumanTabs />
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Talk to Trudy */}
+                <button
+                  onClick={() => window.dispatchEvent(new CustomEvent('trudy-start'))}
+                  className="group relative flex flex-col items-center text-center rounded-2xl border border-border bg-card p-8 hover:border-primary/40 hover:-translate-y-1 hover:shadow-lg transition-all duration-200"
+                >
+                  <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+                    <Mic className="h-5 w-5 text-primary" />
+                  </div>
+                  <h3 className="text-sm font-semibold text-foreground mb-1">Talk to Trudy</h3>
+                  <p className="text-xs text-muted-foreground leading-relaxed mb-4">AI voice assistant — instant quotes, tracking & scheduling.</p>
+                  <span className="mt-auto inline-flex items-center gap-1 text-xs font-medium text-primary group-hover:gap-1.5 transition-all">
+                    Start talking <ArrowRight className="h-3 w-3" />
+                  </span>
+                </button>
+
+                {/* Call Us */}
+                <a
+                  href="tel:+16097277647"
+                  className="group relative flex flex-col items-center text-center rounded-2xl border border-border bg-card p-8 hover:border-primary/40 hover:-translate-y-1 hover:shadow-lg transition-all duration-200"
+                >
+                  <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+                    <Phone className="h-5 w-5 text-primary" />
+                  </div>
+                  <h3 className="text-sm font-semibold text-foreground mb-1">Call Us</h3>
+                  <p className="text-xs text-muted-foreground leading-relaxed mb-1">(609) 727-7647</p>
+                  <p className="text-[10px] text-muted-foreground mb-4">Mon – Sat, 8 AM – 8 PM EST</p>
+                  <span className="mt-auto inline-flex items-center gap-1 text-xs font-medium text-primary group-hover:gap-1.5 transition-all">
+                    Call now <ArrowRight className="h-3 w-3" />
+                  </span>
+                </a>
+
+                {/* Send a Message */}
+                <div className="group relative flex flex-col rounded-2xl border border-border bg-card p-8 hover:border-primary/40 hover:-translate-y-1 hover:shadow-lg transition-all duration-200">
+                  <div className="flex flex-col items-center text-center mb-5">
+                    <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+                      <MessageSquare className="h-5 w-5 text-primary" />
+                    </div>
+                    <h3 className="text-sm font-semibold text-foreground mb-1">Send a Message</h3>
+                    <p className="text-xs text-muted-foreground leading-relaxed">We'll get back to you within a few hours.</p>
+                  </div>
+                  <form className="space-y-3 flex-1 flex flex-col" onSubmit={(e) => e.preventDefault()}>
+                    <input type="text" required placeholder="Your name" className="w-full rounded-lg border border-border bg-background px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
+                    <input type="email" required placeholder="Email address" className="w-full rounded-lg border border-border bg-background px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
+                    <textarea required rows={3} placeholder="How can we help?" className="w-full rounded-lg border border-border bg-background px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary resize-none" />
+                    <button type="submit" className="mt-auto w-full bg-foreground text-background py-2 rounded-lg text-xs font-semibold hover:bg-foreground/90 transition-colors">
+                      Send Message
+                    </button>
+                  </form>
+                </div>
+              </div>
+
+              <p className="text-center text-[11px] text-muted-foreground mt-6">
+                or email <a href="mailto:support@trumove.com" className="text-primary underline underline-offset-2 hover:text-primary/80">support@trumove.com</a>
+              </p>
             </div>
           </section>
 
