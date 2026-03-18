@@ -14,7 +14,6 @@ interface AgentToolLauncherModalProps {
 const TOOLS = [
   { key: "granot", label: "Granot CRM", icon: Monitor, url: "https://granot.co/login" },
   { key: "convoso", label: "Convoso Dialer", icon: Phone, url: "https://login.convoso.com" },
-  { key: "website", label: "TruMove Website", icon: Globe, url: "/site", internal: true },
 ];
 
 const TRUDY_GREETINGS = [
