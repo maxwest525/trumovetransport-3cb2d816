@@ -70,6 +70,7 @@ import ManagerPulseCallReview from "./pages/ManagerPulseCallReview";
 import AdminPulseCallReview from "./pages/AdminPulseCallReview";
 import ManagerTeamChat from "./pages/ManagerTeamChat";
 import AdminTeamChat from "./pages/AdminTeamChat";
+import Leaderboard from "./pages/Leaderboard";
 
 const queryClient = new QueryClient();
 
