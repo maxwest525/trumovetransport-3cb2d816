@@ -10,6 +10,7 @@ import { useAgentProfile } from "@/hooks/useAgentProfile";
 import { useNotifications } from "@/hooks/useNotifications";
 import { motion } from "framer-motion";
 import type { Session } from "@supabase/supabase-js";
+import AgentToolLauncherModal from "@/components/agent/AgentToolLauncherModal";
 
 const STORAGE_KEY = "truemove_remembered_role";
 
@@ -67,6 +68,7 @@ export default function AgentLogin() {
   const navigate = useNavigate();
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [launcherOpen, setLauncherOpen] = useState(false);
   const { displayName } = useAgentProfile();
   const { unreadCount } = useNotifications();
   const greeting = useMemo(() => getGreeting(), []);
@@ -151,10 +153,18 @@ export default function AgentLogin() {
               icon={portal.icon}
               accentHsl={portal.accentHsl}
               index={i}
-              onClick={() => navigate(portal.href)}
+              onClick={() => {
+                if (portal.key === "agents") {
+                  setLauncherOpen(true);
+                } else {
+                  navigate(portal.href);
+                }
+              }}
             />
           ))}
         </div>
+
+        <AgentToolLauncherModal open={launcherOpen} onOpenChange={setLauncherOpen} />
       </div>
     </SiteShell>
   );
