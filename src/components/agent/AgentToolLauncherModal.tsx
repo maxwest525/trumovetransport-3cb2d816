@@ -1,20 +1,18 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Monitor, Phone, Globe, Rocket, Volume2, Sparkles } from "lucide-react";
+import { Monitor, Phone, Rocket, Volume2, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface AgentToolLauncherModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onLaunchWorkspace?: () => void;
 }
 
 const TOOLS = [
   { key: "granot", label: "Granot CRM", icon: Monitor, url: "https://granot.co/login" },
   { key: "convoso", label: "Convoso Dialer", icon: Phone, url: "https://login.convoso.com" },
-  { key: "website", label: "TruMove Website", icon: Globe, url: "/site", internal: true },
 ];
 
 const TRUDY_GREETINGS = [
@@ -92,7 +90,7 @@ function SoundWave({ active }: { active: boolean }) {
   );
 }
 
-export default function AgentToolLauncherModal({ open, onOpenChange, onLaunchWorkspace }: AgentToolLauncherModalProps) {
+export default function AgentToolLauncherModal({ open, onOpenChange }: AgentToolLauncherModalProps) {
   const navigate = useNavigate();
   const [trudyState, setTrudyState] = useState<"ask" | "response">("ask");
   const [trudyMsg, setTrudyMsg] = useState("");
@@ -130,8 +128,21 @@ export default function AgentToolLauncherModal({ open, onOpenChange, onLaunchWor
   }, []);
 
   const handleLaunchAll = () => {
+    const sw = window.screen.availWidth;
+    const sh = window.screen.availHeight;
+    const sl = (window.screen as any).availLeft ?? 0;
+    const st = (window.screen as any).availTop ?? 0;
+    const w = Math.floor(sw / TOOLS.length);
+
+    TOOLS.forEach((tool, i) => {
+      window.open(
+        tool.url,
+        `tool_${tool.key}`,
+        `left=${sl + i * w},top=${st},width=${w},height=${sh},menubar=no,toolbar=no,location=yes,status=no`
+      );
+    });
+
     onOpenChange(false);
-    onLaunchWorkspace?.();
   };
 
   const handleGoToDashboard = () => {
