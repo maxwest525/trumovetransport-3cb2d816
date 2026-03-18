@@ -1762,6 +1762,9 @@ export default function Index() {
                       Send Message
                     </button>
                   </form>
+                  <p className="text-center text-[11px] text-muted-foreground mt-3">
+                    or email <a href="mailto:support@trumove.com" className="text-primary underline underline-offset-2 hover:text-primary/80">support@trumove.com</a>
+                  </p>
                 </div>
 
                 {/* Right column: Call Us + Text Support */}
