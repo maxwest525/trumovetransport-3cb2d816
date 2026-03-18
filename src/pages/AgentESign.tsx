@@ -58,27 +58,21 @@ export default function AgentESign() {
   const prefillPhone = searchParams.get("phone") || "";
   const leadId = searchParams.get("leadId") || "";
 
-  // Demo documents so track/completed tabs aren't empty
+  // Only show documents for the current customer (matched by leadId context)
+  const currentCustomerName = prefillName || "Sarah Chen";
   const DEMO_DOCUMENTS: DocumentRecord[] = [
     {
       id: "demo-1", type: "estimate", refNumber: "EST-2026-0042",
-      customerName: prefillName || "Sarah Chen", customerEmail: prefillEmail || "sarah.chen@gmail.com",
+      customerName: currentCustomerName, customerEmail: prefillEmail || "sarah.chen@gmail.com",
       customerPhone: prefillPhone || "(415) 555-7890", status: "opened",
       sentAt: new Date(Date.now() - 3600000), openedAt: new Date(Date.now() - 1800000),
       deliveryMethod: "email",
     },
     {
       id: "demo-2", type: "ccach", refNumber: "CC-2026-0039",
-      customerName: "James Morrison", customerEmail: "j.morrison@outlook.com",
-      customerPhone: "(212) 555-3344", status: "sent",
+      customerName: currentCustomerName, customerEmail: prefillEmail || "sarah.chen@gmail.com",
+      customerPhone: prefillPhone || "(415) 555-7890", status: "sent",
       sentAt: new Date(Date.now() - 7200000), deliveryMethod: "email",
-    },
-    {
-      id: "demo-4", type: "estimate", refNumber: "EST-2026-0035",
-      customerName: "David Park", customerEmail: "dpark@gmail.com",
-      customerPhone: "(650) 555-1122", status: "completed",
-      sentAt: new Date(Date.now() - 172800000), openedAt: new Date(Date.now() - 169200000),
-      completedAt: new Date(Date.now() - 162000000), deliveryMethod: "email",
     },
   ];
 
