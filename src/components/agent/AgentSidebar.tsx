@@ -9,6 +9,7 @@ interface NavItem {
   label: string;
   icon: React.ElementType;
   href: string;
+  beta?: boolean;
 }
 
 interface AgentSidebarProps {
@@ -21,7 +22,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: "My Customers", icon: Users, href: "/agent/customers" },
   { label: "Pipeline", icon: Kanban, href: "/agent/pipeline" },
   { label: "Customer Chat", icon: Mail, href: "/agent/messages" },
-  { label: "Dialer", icon: Phone, href: "/agent/dialer" },
+  { label: "Dialer", icon: Phone, href: "/agent/dialer", beta: true },
   { label: "Bookings", icon: CalendarCheck, href: "/agent/operations" },
   { label: "Pulse Monitor", icon: Activity, href: "/agent/pulse" },
 ];
@@ -52,13 +53,20 @@ export default function AgentSidebar({ onDialerToggle }: AgentSidebarProps) {
               to={item.href}
               className={cn(
                 "flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors",
+                item.beta && "opacity-40 pointer-events-none",
                 active
                   ? "bg-foreground text-background"
                   : "text-muted-foreground hover:bg-muted hover:text-foreground"
               )}
+              tabIndex={item.beta ? -1 : undefined}
+              aria-disabled={item.beta}
+              onClick={item.beta ? (e) => e.preventDefault() : undefined}
             >
               <Icon className="w-4 h-4" />
               <span>{item.label}</span>
+              {item.beta && (
+                <span className="ml-auto text-[9px] font-semibold uppercase tracking-wider text-muted-foreground bg-muted px-1.5 py-0.5 rounded">Beta</span>
+              )}
             </Link>
           );
         })}
