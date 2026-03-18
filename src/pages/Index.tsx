@@ -456,33 +456,33 @@ function ShipmentTrackerSection({ navigate }: {navigate: (path: string) => void;
     startLabel: 'Los Angeles', endLabel: 'New York',
     offset: 0, speed: 1,
     // SVG viewBox 600x340 coordinates
-    pts: [[40, 280], [90, 255], [140, 256], [190, 225], [240, 220], [290, 195], [340, 188], [390, 165], [440, 166], [480, 138], [520, 115], [555, 92], [570, 80]] as [number, number][]
+    pts: [[40,280],[90,255],[140,256],[190,225],[240,220],[290,195],[340,188],[390,165],[440,166],[480,138],[520,115],[555,92],[570,80]] as [number,number][]
   },
   {
     color: 'hsl(200, 80%, 55%)',
     startLabel: 'Chicago', endLabel: 'Miami',
     offset: 0.35, speed: 1.2,
-    pts: [[320, 90], [338, 125], [365, 158], [395, 190], [430, 225], [460, 258], [488, 285], [520, 310]] as [number, number][]
+    pts: [[320,90],[338,125],[365,158],[395,190],[430,225],[460,258],[488,285],[520,310]] as [number,number][]
   },
   {
     color: 'hsl(35, 90%, 55%)',
     startLabel: 'Seattle', endLabel: 'Denver',
     offset: 0.6, speed: 0.9,
-    pts: [[55, 55], [95, 80], [140, 108], [188, 130], [235, 155], [278, 178], [298, 185]] as [number, number][]
+    pts: [[55,55],[95,80],[140,108],[188,130],[235,155],[278,178],[298,185]] as [number,number][]
   },
   {
     color: 'hsl(280, 65%, 60%)',
     startLabel: 'Dallas', endLabel: 'Atlanta',
     offset: 0.15, speed: 1.4,
-    pts: [[260, 270], [302, 248], [348, 225], [392, 210], [432, 200]] as [number, number][]
+    pts: [[260,270],[302,248],[348,225],[392,210],[432,200]] as [number,number][]
   }], []);
 
   // Helper: build smooth SVG path from points
-  const buildPath = (pts: [number, number][]) => {
+  const buildPath = (pts: [number,number][]) => {
     let d = `M ${pts[0][0]} ${pts[0][1]}`;
     for (let i = 0; i < pts.length - 1; i++) {
-      const xc = (pts[i][0] + pts[i + 1][0]) / 2;
-      const yc = (pts[i][1] + pts[i + 1][1]) / 2;
+      const xc = (pts[i][0] + pts[i+1][0]) / 2;
+      const yc = (pts[i][1] + pts[i+1][1]) / 2;
       d += ` Q ${pts[i][0]} ${pts[i][1]} ${xc} ${yc}`;
     }
     const last = pts[pts.length - 1];
@@ -491,15 +491,15 @@ function ShipmentTrackerSection({ navigate }: {navigate: (path: string) => void;
   };
 
   // Get truck position along route
-  const getTruckPos = (pts: [number, number][], progress: number): [number, number] => {
+  const getTruckPos = (pts: [number,number][], progress: number): [number,number] => {
     const segs = pts.length - 1;
     const sf = progress * segs;
     const si = Math.min(Math.floor(sf), segs - 1);
     const t = sf - si;
     return [
-    pts[si][0] + (pts[si + 1][0] - pts[si][0]) * t,
-    pts[si][1] + (pts[si + 1][1] - pts[si][1]) * t];
-
+      pts[si][0] + (pts[si+1][0] - pts[si][0]) * t,
+      pts[si][1] + (pts[si+1][1] - pts[si][1]) * t
+    ];
   };
 
   return (
@@ -513,13 +513,13 @@ function ShipmentTrackerSection({ navigate }: {navigate: (path: string) => void;
               <img src={eldMapImg} alt="US Map" className="w-full h-auto block" />
               <svg viewBox="0 0 600 340" className="absolute inset-0 w-full h-full" preserveAspectRatio="xMidYMid slice">
                 {routes.map((route, i) => {
-                    const path = buildPath(route.pts);
-                    const progress = (truckProgress * route.speed + route.offset) % 1;
-                    const [tx, ty] = getTruckPos(route.pts, progress);
-                    const start = route.pts[0];
-                    const end = route.pts[route.pts.length - 1];
-                    return (
-                      <g key={i}>
+                  const path = buildPath(route.pts);
+                  const progress = (truckProgress * route.speed + route.offset) % 1;
+                  const [tx, ty] = getTruckPos(route.pts, progress);
+                  const start = route.pts[0];
+                  const end = route.pts[route.pts.length - 1];
+                  return (
+                    <g key={i}>
                       {/* Glow */}
                       <path d={path} fill="none" stroke={route.color} strokeWidth={8} strokeLinecap="round" strokeLinejoin="round" opacity={0.08} />
                       {/* Line */}
@@ -536,16 +536,16 @@ function ShipmentTrackerSection({ navigate }: {navigate: (path: string) => void;
                       <circle cx={tx} cy={ty} r={6} fill="black" stroke={route.color} strokeWidth={1.5} />
                       <circle cx={tx} cy={ty} r={3.5} fill={route.color} />
                       {/* LIVE badge on first route */}
-                      {i === 0 &&
+                      {i === 0 && (
                         <g>
                           <rect x={tx + 10} y={ty - 12} width={30} height={12} rx={5} fill="hsl(142, 71%, 45%)" />
                           <circle cx={tx + 17} cy={ty - 6} r={1.5} fill="white" />
                           <text x={tx + 21} y={ty - 4.2} fill="#0a0c10" fontSize={6.5} fontWeight="bold">LIVE</text>
                         </g>
-                        }
-                    </g>);
-
-                  })}
+                      )}
+                    </g>
+                  );
+                })}
               </svg>
               </div>
             </div>
@@ -1701,64 +1701,66 @@ export default function Index() {
 
           {/* GET IN TOUCH */}
           <section className="py-20 px-4">
-            <div className="max-w-5xl mx-auto">
-              <div className="flex flex-col md:flex-row gap-10 items-center">
-                {/* Left: Headline block */}
-                <div className="md:w-64 shrink-0 md:sticky md:top-24 rounded-2xl border-2 border-black bg-card p-8" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), inset 0 2px 8px rgba(0,0,0,0.15)' }}>
-                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary mb-3">Contact Us</p>
-                  <h2 className="text-3xl font-black tracking-tight text-foreground mb-3">Our team is standing by. Voice, video, text, or email.</h2>
-                  <p className="text-sm text-muted-foreground leading-relaxed">Reach out however works best for you — voice, video, text, or form. Our team is standing by.</p>
+            <div className="max-w-6xl mx-auto">
+              <div className="flex flex-col md:flex-row gap-6 items-center">
+                {/* Col 1: Headline */}
+                <div className="md:w-56 shrink-0 flex flex-col items-center text-center rounded-xl border-2 border-black bg-card p-8" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), inset 0 2px 8px rgba(0,0,0,0.15)' }}>
+                  <h2 className="text-3xl font-black tracking-tight text-foreground mb-3">Contact Us.</h2>
+                  <p className="text-sm text-muted-foreground leading-relaxed mb-5">Our team is standing by — voice, video, text, or email.</p>
+                  <a href="tel:+16097277647" className="inline-flex items-center gap-2 bg-foreground text-background px-6 py-2.5 rounded-full text-sm font-semibold hover:opacity-90 transition-opacity">
+                    <Phone className="w-4 h-4" />
+                    Call Now
+                    <ArrowRight className="w-4 h-4" />
+                  </a>
                 </div>
 
-                {/* Right: Contact cards */}
-                <div className="flex-1 grid grid-cols-1 md:grid-cols-[1fr_3fr_1fr] gap-4 items-start">
-                {/* Left column: Talk to Trudy + Book Video Consult */}
-                <div className="flex flex-col gap-4">
+                {/* Col 2: Talk to Trudy + Book Video Consult stacked */}
+                <div className="flex flex-col gap-4 md:w-44 shrink-0">
                   <button
-                      onClick={() => window.dispatchEvent(new CustomEvent('trudy-start'))}
-                      className="group relative flex flex-col items-center text-center rounded-2xl border-2 border-black bg-card p-8 hover:border-primary/40 hover:-translate-y-1 transition-all duration-200" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), inset 0 2px 8px rgba(0,0,0,0.15)' }}>
-                      
-                    <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-                      <Mic className="h-5 w-5 text-primary" />
+                    onClick={() => window.dispatchEvent(new CustomEvent('trudy-start'))}
+                    className="group relative flex flex-col items-center text-center rounded-2xl border-2 border-black bg-card p-6 hover:-translate-y-1 transition-all duration-200" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), inset 0 2px 8px rgba(0,0,0,0.15)' }}
+                  >
+                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center mb-3 group-hover:bg-primary/20 transition-colors">
+                      <Mic className="h-4 w-4 text-primary" />
                     </div>
-                    <h3 className="text-sm font-semibold text-foreground mb-1">Talk to Trudy</h3>
-                    <p className="text-xs text-muted-foreground leading-relaxed mb-4">AI voice assistant — instant quotes, tracking & scheduling.</p>
+                    <h3 className="text-sm font-bold text-foreground mb-1">Talk to Trudy</h3>
+                    <p className="text-[11px] text-muted-foreground leading-relaxed mb-3">AI voice assistant — instant quotes, tracking & scheduling.</p>
                     <span className="mt-auto inline-flex items-center gap-1 text-xs font-medium text-primary group-hover:gap-1.5 transition-all">
                       Start talking <ArrowRight className="h-3 w-3" />
                     </span>
                   </button>
 
                   <button
-                      onClick={() => navigate("/book")}
-                      className="group relative flex flex-col items-center text-center rounded-2xl border-2 border-black bg-card p-8 hover:border-primary/40 hover:-translate-y-1 transition-all duration-200" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), inset 0 2px 8px rgba(0,0,0,0.15)' }}>
-                      
-                    <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-                      <Video className="h-5 w-5 text-primary" />
+                    onClick={() => navigate("/book")}
+                    className="group relative flex flex-col items-center text-center rounded-2xl border-2 border-black bg-card p-6 hover:-translate-y-1 transition-all duration-200" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), inset 0 2px 8px rgba(0,0,0,0.15)' }}
+                  >
+                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center mb-3 group-hover:bg-primary/20 transition-colors">
+                      <Video className="h-4 w-4 text-primary" />
                     </div>
-                    <h3 className="text-sm font-semibold text-foreground mb-1">Book Video Consult</h3>
-                    <p className="text-xs text-muted-foreground leading-relaxed mb-4">Face-to-face with a moving specialist via live video.</p>
+                    <h3 className="text-sm font-bold text-foreground mb-1">Book Video Consult</h3>
+                    <p className="text-[11px] text-muted-foreground leading-relaxed mb-3">Face-to-face with a moving specialist via live video.</p>
                     <span className="mt-auto inline-flex items-center gap-1 text-xs font-medium text-primary group-hover:gap-1.5 transition-all">
                       Schedule now <ArrowRight className="h-3 w-3" />
                     </span>
                   </button>
                 </div>
 
-                {/* Send a Message — center, larger */}
-                <div className="group relative flex flex-col rounded-2xl border-2 border-black bg-card p-8 hover:border-primary/40 hover:-translate-y-1 transition-all duration-200" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), inset 0 2px 8px rgba(0,0,0,0.15)' }}>
+                {/* Col 3: Send a Message — wide center */}
+                <div className="flex-1 min-w-0 rounded-2xl border-2 border-black bg-card p-8 transition-all duration-200" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), inset 0 2px 8px rgba(0,0,0,0.15)' }}>
                   <div className="flex flex-col items-center text-center mb-5">
-                    <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+                    <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
                       <MessageSquare className="h-5 w-5 text-primary" />
                     </div>
-                    <h3 className="text-sm font-semibold text-foreground mb-1">Send a Message</h3>
-                    <p className="text-xs text-muted-foreground leading-relaxed">We'll get back to you within a few hours.</p>
+                    <h3 className="text-base font-semibold text-foreground mb-1">Send a Message</h3>
+                    <p className="text-xs text-muted-foreground">We'll get back to you within a few hours.</p>
                   </div>
-                  <form className="space-y-3 flex-1 flex flex-col" onSubmit={(e) => e.preventDefault()}>
+                  <form className="space-y-3" onSubmit={(e) => e.preventDefault()}>
                     <div className="grid grid-cols-2 gap-3">
-                      <input type="text" required placeholder="Your name" className="w-full rounded-lg border border-border bg-background px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
-                      <input type="email" required placeholder="Email address" className="w-full rounded-lg border border-border bg-background px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
+                      <input type="text" required placeholder="Your name" className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
+                      <input type="email" required placeholder="Email address" className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
                     </div>
-                    <textarea required rows={7} placeholder="How can we help?" className="w-full rounded-lg border border-border bg-background px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary resize-none" />
-                    <button type="submit" className="mt-auto w-full bg-foreground text-background py-2.5 rounded-lg text-xs font-semibold hover:bg-foreground/90 transition-colors">
+                    <textarea required rows={5} placeholder="How can we help?" className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary resize-none" />
+                    <button type="submit" className="w-full bg-foreground text-background py-3 rounded-lg text-sm font-semibold hover:bg-foreground/90 transition-colors">
                       Send Message
                     </button>
                   </form>
@@ -1767,40 +1769,38 @@ export default function Index() {
                   </p>
                 </div>
 
-                {/* Right column: Call Us + Text Support */}
-                <div className="flex flex-col gap-4">
+                {/* Col 4: Call Us + Text Support stacked */}
+                <div className="flex flex-col gap-4 md:w-44 shrink-0">
                   <a
-                      href="tel:+16097277647"
-                      className="group relative flex flex-col items-center text-center rounded-2xl border-2 border-black bg-card p-8 hover:border-primary/40 hover:-translate-y-1 transition-all duration-200" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), inset 0 2px 8px rgba(0,0,0,0.15)' }}>
-                      
-                    <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-                      <Phone className="h-5 w-5 text-primary" />
+                    href="tel:+16097277647"
+                    className="group relative flex flex-col items-center text-center rounded-2xl border-2 border-black bg-card p-6 hover:-translate-y-1 transition-all duration-200" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), inset 0 2px 8px rgba(0,0,0,0.15)' }}
+                  >
+                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center mb-3 group-hover:bg-primary/20 transition-colors">
+                      <Phone className="h-4 w-4 text-primary" />
                     </div>
-                    <h3 className="text-sm font-semibold text-foreground mb-1">Call Us</h3>
-                    <p className="text-xs text-muted-foreground leading-relaxed mb-1">(609) 727-7647</p>
-                    <p className="text-[10px] text-muted-foreground mb-4">Mon – Sat, 8 AM – 8 PM EST</p>
+                    <h3 className="text-sm font-bold text-foreground mb-1">Call Us</h3>
+                    <p className="text-xs text-muted-foreground leading-relaxed mb-0.5">(609) 727-7647</p>
+                    <p className="text-[10px] text-muted-foreground mb-3">Mon – Sat, 8 AM – 8 PM EST</p>
                     <span className="mt-auto inline-flex items-center gap-1 text-xs font-medium text-primary group-hover:gap-1.5 transition-all">
                       Call now <ArrowRight className="h-3 w-3" />
                     </span>
                   </a>
 
                   <a
-                      href="sms:+16097277647"
-                      className="group relative flex flex-col items-center text-center rounded-2xl border-2 border-black bg-card p-8 hover:border-primary/40 hover:-translate-y-1 transition-all duration-200" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), inset 0 2px 8px rgba(0,0,0,0.15)' }}>
-                      
-                    <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-                      <MessageSquare className="h-5 w-5 text-primary" />
+                    href="sms:+16097277647"
+                    className="group relative flex flex-col items-center text-center rounded-2xl border-2 border-black bg-card p-6 hover:-translate-y-1 transition-all duration-200" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), inset 0 2px 8px rgba(0,0,0,0.15)' }}
+                  >
+                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center mb-3 group-hover:bg-primary/20 transition-colors">
+                      <MessageSquare className="h-4 w-4 text-primary" />
                     </div>
-                    <h3 className="text-sm font-semibold text-foreground mb-1">Text Support</h3>
-                    <p className="text-xs text-muted-foreground leading-relaxed mb-4">Text us anytime — we typically reply within minutes.</p>
+                    <h3 className="text-sm font-bold text-foreground mb-1">Text Support</h3>
+                    <p className="text-[11px] text-muted-foreground leading-relaxed mb-3">Text us anytime — we typically reply within minutes.</p>
                     <span className="mt-auto inline-flex items-center gap-1 text-xs font-medium text-primary group-hover:gap-1.5 transition-all">
                       Send a text <ArrowRight className="h-3 w-3" />
                     </span>
                   </a>
                 </div>
               </div>
-              </div>
-
             </div>
           </section>
 
