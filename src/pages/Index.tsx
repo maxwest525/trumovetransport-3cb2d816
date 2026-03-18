@@ -1706,20 +1706,36 @@ export default function Index() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-[1fr_1.5fr_1fr] gap-4 items-start">
-                {/* Talk to Trudy */}
-                <button
-                  onClick={() => window.dispatchEvent(new CustomEvent('trudy-start'))}
-                  className="group relative flex flex-col items-center text-center rounded-2xl border border-border bg-card p-8 hover:border-primary/40 hover:-translate-y-1 hover:shadow-lg transition-all duration-200"
-                >
-                  <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-                    <Mic className="h-5 w-5 text-primary" />
-                  </div>
-                  <h3 className="text-sm font-semibold text-foreground mb-1">Talk to Trudy</h3>
-                  <p className="text-xs text-muted-foreground leading-relaxed mb-4">AI voice assistant — instant quotes, tracking & scheduling.</p>
-                  <span className="mt-auto inline-flex items-center gap-1 text-xs font-medium text-primary group-hover:gap-1.5 transition-all">
-                    Start talking <ArrowRight className="h-3 w-3" />
-                  </span>
-                </button>
+                {/* Left column: Talk to Trudy + Book Video Consult */}
+                <div className="flex flex-col gap-4">
+                  <button
+                    onClick={() => window.dispatchEvent(new CustomEvent('trudy-start'))}
+                    className="group relative flex flex-col items-center text-center rounded-2xl border border-border bg-card p-8 hover:border-primary/40 hover:-translate-y-1 hover:shadow-lg transition-all duration-200"
+                  >
+                    <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+                      <Mic className="h-5 w-5 text-primary" />
+                    </div>
+                    <h3 className="text-sm font-semibold text-foreground mb-1">Talk to Trudy</h3>
+                    <p className="text-xs text-muted-foreground leading-relaxed mb-4">AI voice assistant — instant quotes, tracking & scheduling.</p>
+                    <span className="mt-auto inline-flex items-center gap-1 text-xs font-medium text-primary group-hover:gap-1.5 transition-all">
+                      Start talking <ArrowRight className="h-3 w-3" />
+                    </span>
+                  </button>
+
+                  <button
+                    onClick={() => navigate("/book")}
+                    className="group relative flex flex-col items-center text-center rounded-2xl border border-border bg-card p-8 hover:border-primary/40 hover:-translate-y-1 hover:shadow-lg transition-all duration-200"
+                  >
+                    <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+                      <Video className="h-5 w-5 text-primary" />
+                    </div>
+                    <h3 className="text-sm font-semibold text-foreground mb-1">Book Video Consult</h3>
+                    <p className="text-xs text-muted-foreground leading-relaxed mb-4">Face-to-face with a moving specialist via live video.</p>
+                    <span className="mt-auto inline-flex items-center gap-1 text-xs font-medium text-primary group-hover:gap-1.5 transition-all">
+                      Schedule now <ArrowRight className="h-3 w-3" />
+                    </span>
+                  </button>
+                </div>
 
                 {/* Send a Message — center, larger */}
                 <div className="group relative flex flex-col rounded-2xl border border-border bg-card p-8 hover:border-primary/40 hover:-translate-y-1 hover:shadow-lg transition-all duration-200">
@@ -1742,21 +1758,37 @@ export default function Index() {
                   </form>
                 </div>
 
-                {/* Call Us */}
-                <a
-                  href="tel:+16097277647"
-                  className="group relative flex flex-col items-center text-center rounded-2xl border border-border bg-card p-8 hover:border-primary/40 hover:-translate-y-1 hover:shadow-lg transition-all duration-200"
-                >
-                  <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-                    <Phone className="h-5 w-5 text-primary" />
-                  </div>
-                  <h3 className="text-sm font-semibold text-foreground mb-1">Call Us</h3>
-                  <p className="text-xs text-muted-foreground leading-relaxed mb-1">(609) 727-7647</p>
-                  <p className="text-[10px] text-muted-foreground mb-4">Mon – Sat, 8 AM – 8 PM EST</p>
-                  <span className="mt-auto inline-flex items-center gap-1 text-xs font-medium text-primary group-hover:gap-1.5 transition-all">
-                    Call now <ArrowRight className="h-3 w-3" />
-                  </span>
-                </a>
+                {/* Right column: Call Us + Text Support */}
+                <div className="flex flex-col gap-4">
+                  <a
+                    href="tel:+16097277647"
+                    className="group relative flex flex-col items-center text-center rounded-2xl border border-border bg-card p-8 hover:border-primary/40 hover:-translate-y-1 hover:shadow-lg transition-all duration-200"
+                  >
+                    <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+                      <Phone className="h-5 w-5 text-primary" />
+                    </div>
+                    <h3 className="text-sm font-semibold text-foreground mb-1">Call Us</h3>
+                    <p className="text-xs text-muted-foreground leading-relaxed mb-1">(609) 727-7647</p>
+                    <p className="text-[10px] text-muted-foreground mb-4">Mon – Sat, 8 AM – 8 PM EST</p>
+                    <span className="mt-auto inline-flex items-center gap-1 text-xs font-medium text-primary group-hover:gap-1.5 transition-all">
+                      Call now <ArrowRight className="h-3 w-3" />
+                    </span>
+                  </a>
+
+                  <a
+                    href="sms:+16097277647"
+                    className="group relative flex flex-col items-center text-center rounded-2xl border border-border bg-card p-8 hover:border-primary/40 hover:-translate-y-1 hover:shadow-lg transition-all duration-200"
+                  >
+                    <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+                      <MessageSquare className="h-5 w-5 text-primary" />
+                    </div>
+                    <h3 className="text-sm font-semibold text-foreground mb-1">Text Support</h3>
+                    <p className="text-xs text-muted-foreground leading-relaxed mb-4">Text us anytime — we typically reply within minutes.</p>
+                    <span className="mt-auto inline-flex items-center gap-1 text-xs font-medium text-primary group-hover:gap-1.5 transition-all">
+                      Send a text <ArrowRight className="h-3 w-3" />
+                    </span>
+                  </a>
+                </div>
               </div>
 
               <p className="text-center text-[11px] text-muted-foreground mt-6">
