@@ -1,54 +1,37 @@
-# Growth Engine Architecture
 
-## Lead Flow (Canonical)
 
-```text
-Traffic Source → Landing Page / Call Tracking → Attribution Capture
-  → Webhook / Router → Convoso (Instant Call) → CRM Sync
-  → Backup Follow-Up Logic
-```
+## Hero Section Redesign
 
-### Key Principles
+### What Changes
 
-- **Convoso** is the primary instant-call engine. Leads route here first for immediate dial attempts.
-- **CRM** (GHL, Granot, or custom) is a sync target / system of record, not the primary destination.
-- Each workflow should designate **one primary CRM**; others are optional secondary sync targets.
-- GHL does not replace Convoso. It provides backup sequences and reporting.
-- "Follow-up automation" means support logic around the instant-call flow, not passive CRM drip sequences.
+**Left Column** — Replace the current single feature line with a bullet-point value proposition list, and add a CTA line pointing to the form:
 
-### Lead Statuses (Convoso feedback loop)
+1. Logo (keep, move up by reducing top padding)
+2. "The Smarter Way To Move" headline (keep)
+3. New sub-bullets (each as its own line with a small icon):
+   - Scan, document, and build your own inventory — your items stay private and secure
+   - Meet your broker virtually, face to face, from anywhere
+   - Track your most valuable belongings every step of the way
+   - See the full history and performance record of your movers
+4. "Fill out the form on the right to get started." (arrow pointing right)
 
-- New Lead
-- In Queue
-- Attempted
-- Connected
-- Not Reached
-- Escalated
-- Duplicate
-- Suppressed
+**Right Column (Form)** — Replace the current multi-step quote builder's Step 1 with a single flat contact form:
+- Row 1: First & Last Name (text) + Phone (tel) — side by side
+- Row 2: Email (full width)
+- Row 3: From + To location fields (keep existing LocationAutocomplete, side by side)
+- CTA button: "Talk to Support"
 
-### Backup Automation Recipes
+Remove the "Let's Get Moving" / "FMCSA-vetted carriers" header text, the date picker, and the "Analyze Route" button from step 1. The multi-step flow (steps 2, 3, confirmation) stays intact but the initial step becomes this simpler contact-first form.
 
-1. New form lead → capture attribution → webhook to Convoso → instant call attempt → sync to CRM
-2. Lead not reached after 60s → trigger SMS with quote link
-3. No contact after 5 minutes → escalate to supervisor dashboard alert
-4. Missed inbound call from paid source → create Convoso callback + alert
-5. After-hours form submission → queue for next calling block + send auto-text
-6. Duplicate lead detected → suppress in Convoso, tag in CRM
-7. Source/campaign changes on re-submission → preserve original attribution in CRM
-8. Lead not worked within 2 minutes → flash alert on Growth Dashboard
+### Files to Edit
 
-### After-Hours Logic (First-Class)
+1. **`src/pages/Index.tsx`** (lines ~1328-1487)
+   - Left column: replace `tru-hero-feature-line` paragraph with a `<ul>` of 4 bullet items + a CTA prompt line
+   - Right column Step 1: restructure to show name+phone row, email row, from+to row, and "Talk to Support" button
+   - Remove date picker and "Analyze Route" from step 1
 
-- Business hours rules per location/team
-- Queue timing and next-call-block scheduling
-- Auto-text behavior for after-hours submissions
-- Morning queue priority ordering
+2. **`src/index.css`**
+   - Add styles for the new bullet list (`.tru-hero-bullets`) — white text, slight text-shadow, spacing
+   - Reduce `.tru-hero-left-column` top padding to push logo higher
+   - Style the new form layout (two-column name+phone row)
 
-## Upgrade Plan (Pending)
-
-### Pass 1: Dashboard + Landing Pages + Leads + SEO Hub
-### Pass 2: Ad Copy + Tracking + Automation + Reviews
-### Pass 3: Competitors + Settings + Campaign Builder Enhancement + Shell Polish
-
-See previous conversation for full details on each pass.
