@@ -153,10 +153,18 @@ export default function AgentLogin() {
               icon={portal.icon}
               accentHsl={portal.accentHsl}
               index={i}
-              onClick={() => navigate(portal.href)}
+              onClick={() => {
+                if (portal.key === "agents") {
+                  setLauncherOpen(true);
+                } else {
+                  navigate(portal.href);
+                }
+              }}
             />
           ))}
         </div>
+
+        <AgentToolLauncherModal open={launcherOpen} onOpenChange={setLauncherOpen} />
       </div>
     </SiteShell>
   );
