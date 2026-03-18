@@ -251,8 +251,7 @@ export default function EstimateWizard({ onComplete, initialDetails }: EstimateW
           {/* Header - Matching homepage style */}
           <div className="tru-qb-form-header tru-qb-form-header-pill">
             <div className="tru-qb-form-title-group">
-              <span className="tru-qb-form-title tru-qb-form-title-large">BUILD YOUR <span className="tru-qb-title-accent">MOVE</span></span>
-              <span className="tru-qb-form-subtitle-compact">Carriers vetted against FMCSA safety records</span>
+              <span className="tru-qb-form-title tru-qb-form-title-large">WHERE ARE YOU <span className="tru-qb-title-accent">MOVING</span> FROM?</span>
             </div>
           </div>
 
