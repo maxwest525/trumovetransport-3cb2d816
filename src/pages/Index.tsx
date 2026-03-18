@@ -657,7 +657,7 @@ function ShipmentTrackerSection({ navigate }: { navigate: (path: string) => void
                 
                 {/* Identity Match */}
                 <div className="flex items-center justify-center gap-2 py-2.5 rounded-lg bg-[#22c55e10] border border-[#22c55e30]">
-                  <CheckCircle2 className="w-4 h-4 text-[#22c55e]" />
+                  <CheckCircle className="w-4 h-4 text-[#22c55e]" />
                   <span className="text-xs font-bold tracking-wide uppercase text-[#22c55e]">Identity Match Confirmed</span>
                 </div>
               </div>
