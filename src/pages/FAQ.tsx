@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import CommandCenterNav from "@/components/layout/CommandCenterNav";
 import { Link } from "react-router-dom";
 import SiteShell from "@/components/layout/SiteShell";
 import {

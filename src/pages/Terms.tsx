@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import CommandCenterNav from "@/components/layout/CommandCenterNav";
 import SiteShell from "@/components/layout/SiteShell";
 
 export default function Terms() {
