@@ -1384,7 +1384,7 @@ export default function Index() {
                           }}>
                           
                           <span>Continue</span>
-                          <ArrowRight className="w-5 h-5 tru-btn-arrow" />
+                          <ArrowRight className="w-5 h-5 tru-btn-arrow text-[hsl(142,71%,45%)]" />
                         </button>
 
                         <button type="button" className="tru-qb-back" onClick={goBack}>

@@ -6767,7 +6767,7 @@
 }
 
 .tru-qb-continue.tru-engine-btn .tru-btn-arrow {
-  color: hsl(0 0% 100%);
+  color: hsl(142 71% 45%);
   filter: none;
   transition: transform 0.2s ease;
 }
@@ -17831,12 +17831,12 @@
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: hsl(var(--muted));
+  background: hsl(142 71% 45% / 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  color: hsl(var(--muted-foreground));
+  color: hsl(142 71% 45%);
   transition: all 0.2s ease;
 }
 
@@ -17895,7 +17895,7 @@
 }
 
 .tru-qb-method-arrow {
-  color: hsl(var(--muted-foreground));
+  color: hsl(142 71% 45%);
   opacity: 0;
   transform: translateX(-8px);
   transition: all 0.2s ease;
@@ -17905,7 +17905,7 @@
 .tru-qb-method-card:hover .tru-qb-method-arrow {
   opacity: 1;
   transform: translateX(0);
-  color: hsl(var(--primary));
+  color: hsl(142 71% 45%);
 }
 
 /* Dark mode method cards */
