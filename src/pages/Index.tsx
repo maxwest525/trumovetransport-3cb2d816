@@ -1720,41 +1720,36 @@ export default function Index() {
                 <div className="flex flex-col gap-3 md:w-40 shrink-0">
                   <a
                     href="tel:+16097277647"
-                    className="group flex flex-col items-center text-center rounded-2xl border-2 border-black bg-card p-4 hover:-translate-y-1 transition-all duration-200 flex-1" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), inset 0 2px 8px rgba(0,0,0,0.15)' }}>
-                    <h3 className="text-sm font-bold text-foreground mb-0.5">Call Us</h3>
-                    <p className="text-xs text-muted-foreground mb-0.5">(609) 727-7647</p>
-                    <p className="text-[10px] text-muted-foreground mb-1">Mon – Sat, 8 AM – 8 PM EST</p>
-                    <span className="mt-auto inline-flex items-center gap-1 text-xs font-medium text-primary group-hover:gap-1.5 transition-all">
+                    className="group flex flex-col items-center text-center rounded-2xl border-2 border-black bg-card p-3 hover:-translate-y-1 transition-all duration-200 flex-1" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), inset 0 2px 8px rgba(0,0,0,0.15)' }}>
+                    <h3 className="text-sm font-bold text-foreground mb-1">Call Us</h3>
+                    <span className="inline-flex items-center gap-1 text-xs font-medium text-primary group-hover:gap-1.5 transition-all">
                       Call now <ArrowRight className="h-3 w-3" />
                     </span>
                   </a>
 
                   <a
                     href="sms:+16097277647"
-                    className="group flex flex-col items-center text-center rounded-2xl border-2 border-black bg-card p-4 hover:-translate-y-1 transition-all duration-200 flex-1" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), inset 0 2px 8px rgba(0,0,0,0.15)' }}>
-                    <h3 className="text-sm font-bold text-foreground mb-0.5">Text Support</h3>
-                    <p className="text-[11px] text-muted-foreground leading-relaxed mb-1">Text us anytime — we typically reply within minutes.</p>
-                    <span className="mt-auto inline-flex items-center gap-1 text-xs font-medium text-primary group-hover:gap-1.5 transition-all">
+                    className="group flex flex-col items-center text-center rounded-2xl border-2 border-black bg-card p-3 hover:-translate-y-1 transition-all duration-200 flex-1" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), inset 0 2px 8px rgba(0,0,0,0.15)' }}>
+                    <h3 className="text-sm font-bold text-foreground mb-1">Text Support</h3>
+                    <span className="inline-flex items-center gap-1 text-xs font-medium text-primary group-hover:gap-1.5 transition-all">
                       Send a text <ArrowRight className="h-3 w-3" />
                     </span>
                   </a>
 
                   <button
                     onClick={() => window.dispatchEvent(new CustomEvent('trudy-start'))}
-                    className="group flex flex-col items-center text-center rounded-2xl border-2 border-black bg-card p-4 hover:-translate-y-1 transition-all duration-200 flex-1" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), inset 0 2px 8px rgba(0,0,0,0.15)' }}>
-                    <h3 className="text-sm font-bold text-foreground mb-0.5">Talk to Trudy</h3>
-                    <p className="text-[11px] text-muted-foreground leading-relaxed mb-1">AI voice assistant — instant quotes & tracking.</p>
-                    <span className="mt-auto inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-full text-xs font-bold group-hover:bg-primary/90 transition-all shadow-md">
+                    className="group flex flex-col items-center text-center rounded-2xl border-2 border-black bg-card p-3 hover:-translate-y-1 transition-all duration-200 flex-1" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), inset 0 2px 8px rgba(0,0,0,0.15)' }}>
+                    <h3 className="text-sm font-bold text-foreground mb-1">Talk to Trudy</h3>
+                    <span className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-1.5 rounded-full text-xs font-bold group-hover:bg-primary/90 transition-all shadow-md">
                       Start Talking
                     </span>
                   </button>
 
                   <button
                     onClick={() => navigate("/site/book")}
-                    className="group flex flex-col items-center text-center rounded-2xl border-2 border-black bg-card p-4 hover:-translate-y-1 transition-all duration-200 flex-1" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), inset 0 2px 8px rgba(0,0,0,0.15)' }}>
-                    <h3 className="text-sm font-bold text-foreground mb-0.5">Book Video Consult</h3>
-                    <p className="text-[11px] text-muted-foreground leading-relaxed mb-1">Face-to-face with a moving specialist via live video.</p>
-                    <span className="mt-auto inline-flex items-center gap-1 text-xs font-medium text-primary group-hover:gap-1.5 transition-all">
+                    className="group flex flex-col items-center text-center rounded-2xl border-2 border-black bg-card p-3 hover:-translate-y-1 transition-all duration-200 flex-1" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), inset 0 2px 8px rgba(0,0,0,0.15)' }}>
+                    <h3 className="text-sm font-bold text-foreground mb-1">Video Consult</h3>
+                    <span className="inline-flex items-center gap-1 text-xs font-medium text-primary group-hover:gap-1.5 transition-all">
                       Schedule now <ArrowRight className="h-3 w-3" />
                     </span>
                   </button>
