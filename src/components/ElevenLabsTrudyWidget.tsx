@@ -1,6 +1,6 @@
 import { useConversation } from '@elevenlabs/react';
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { PhoneOff, Loader2, X, Mic, Copy, Download, Check, Video, ChevronUp, Phone } from 'lucide-react';
+import { PhoneOff, Loader2, X, Mic, Copy, Download, Check, Video, ChevronUp, Phone, GripVertical } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { useNavigate, useLocation } from 'react-router-dom';
 import trudyAvatar from '@/assets/trudy-avatar.png';
@@ -28,6 +28,41 @@ export default function ElevenLabsTrudyWidget() {
   const idRef = useRef(0);
   const scrollRef = useRef<HTMLDivElement>(null);
   const transcriptRef = useRef<TranscriptEntry[]>([]);
+
+  // Draggable state
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [position, setPosition] = useState<{ x: number; y: number } | null>(null);
+  const dragState = useRef<{ dragging: boolean; startX: number; startY: number; origX: number; origY: number }>({ dragging: false, startX: 0, startY: 0, origX: 0, origY: 0 });
+
+  const getDefaultPosition = useCallback(() => {
+    return { x: window.innerWidth - 220, y: window.innerHeight - 100 };
+  }, []);
+
+  useEffect(() => {
+    if (!position) setPosition(getDefaultPosition());
+  }, [position, getDefaultPosition]);
+
+  const handlePointerDown = useCallback((e: React.PointerEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const pos = position || getDefaultPosition();
+    dragState.current = { dragging: true, startX: e.clientX, startY: e.clientY, origX: pos.x, origY: pos.y };
+    (e.target as HTMLElement).setPointerCapture(e.pointerId);
+  }, [position, getDefaultPosition]);
+
+  const handlePointerMove = useCallback((e: React.PointerEvent) => {
+    if (!dragState.current.dragging) return;
+    const dx = e.clientX - dragState.current.startX;
+    const dy = e.clientY - dragState.current.startY;
+    setPosition({
+      x: Math.max(0, Math.min(window.innerWidth - 60, dragState.current.origX + dx)),
+      y: Math.max(0, Math.min(window.innerHeight - 60, dragState.current.origY + dy)),
+    });
+  }, []);
+
+  const handlePointerUp = useCallback(() => {
+    dragState.current.dragging = false;
+  }, []);
 
   const conversation = useConversation({
     onConnect: () => {
