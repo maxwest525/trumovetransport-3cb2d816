@@ -1,14 +1,41 @@
 
 
-## Apply Green Neon Glow to Logo
+## Fix Logo Glow Effect — Add Black Outline + Dark Shadow
 
-The logo currently has a 6-layer **white** underglow via `drop-shadow` filters. The user wants this changed to a **green** neon glow matching the brand green, similar to the effect on the "Move." headline text.
+The current implementation only applied green `drop-shadow` layers to the logo. The user's reference image shows a more complete effect with **four components**:
 
-### Changes
+1. **Green fill** (already part of the logo image)
+2. **Black stroke/outline** around the logo shape
+3. **Green neon underglow** (radiating green bloom)
+4. **Dark drop shadow** for depth/contrast
 
-**File: `src/components/layout/Header.tsx`** (line ~41)
+### The Problem
 
-Replace the white `rgba(255,255,255,...)` drop-shadow values with green `rgba(34,197,94,...)` (the brand green). This will create a green neon bloom radiating from the green parts of the logo, giving it that luminous underglow effect.
+Since the logo is a **PNG image** (not text), we cannot use `-webkit-text-stroke`. For images, all effects must be achieved through CSS `filter: drop-shadow(...)` layers.
 
-The layers would go from tight/bright green close to the logo to softer/wider green further out, creating the characteristic neon glow.
+### Solution
+
+**File: `src/components/layout/Header.tsx`** (~line 41)
+
+Replace the current green-only drop-shadow chain with a layered approach:
+- **Dark outline layers** — tight, opaque black shadows at small radii (1-2px) in multiple directions to simulate a stroke
+- **Dark drop shadow** — a larger black shadow for depth (e.g., `0 4px 6px rgba(0,0,0,0.6)`)
+- **Green glow layers** — progressively larger/softer green shadows for the neon bloom
+
+```
+filter:
+  /* Black outline simulation */
+  drop-shadow(1px 1px 0 rgba(0,0,0,0.9))
+  drop-shadow(-1px -1px 0 rgba(0,0,0,0.9))
+  drop-shadow(1px -1px 0 rgba(0,0,0,0.9))
+  drop-shadow(-1px 1px 0 rgba(0,0,0,0.9))
+  /* Dark depth shadow */
+  drop-shadow(0 4px 6px rgba(0,0,0,0.7))
+  /* Green neon glow */
+  drop-shadow(0 0 8px rgba(34,197,94,0.9))
+  drop-shadow(0 0 20px rgba(34,197,94,0.7))
+  drop-shadow(0 0 40px rgba(34,197,94,0.4))
+```
+
+This replicates all four visual components from the reference image using only CSS filters compatible with PNG images.
 
