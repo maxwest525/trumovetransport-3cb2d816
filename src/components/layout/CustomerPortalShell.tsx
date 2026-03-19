@@ -14,6 +14,7 @@ interface CustomerPortalShellProps {
 const navItems = [
   { id: "tracker", label: "Move Tracker", icon: Package },
   { id: "quote", label: "Quote", icon: FileText },
+  { id: "esigns", label: "E-Signs", icon: PenTool },
   { id: "documents", label: "Documents", icon: Upload },
   { id: "messages", label: "Messages", icon: MessageCircle },
 ];
