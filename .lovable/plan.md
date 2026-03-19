@@ -1,33 +1,24 @@
 
 
-## Add Color Pop to the Hero Form (No Green)
+## Fix White Gap Above Hero Behind Navbar
 
-The form is currently all grays, whites, and blacks — flat and lifeless. The fix is **contrast and warmth**, not green accents.
+**Problem**: The SiteShell wraps the header in a sticky `div` with `bg-background` (white in light mode). The hero content starts below this, creating a visible white band behind the transparent-ish navbar.
 
-### Approach: Dark Header + Warm Amber Accent
+**Solution**: Pull the hero wrapper up behind the navbar using a negative top margin, so the hero background image extends under the header area.
 
-**1. Form Header — Flip to Dark** (`src/index.css`)
-- Change `.tru-qb-form-header-pill` background from `hsl(220 15% 93%)` (light gray) to `hsl(var(--tm-ink))` (near-black)
-- Title and subtitle text become white
-- This creates immediate visual weight and contrast — the form "pops" off the page
+### Changes
 
-**2. Inputs — Warm amber focus states** (`src/index.css`)
-- On `:hover` and `:focus`, use a warm amber/orange border (`hsl(35 95% 55%)`) instead of the current ink/green
-- Subtle warm `box-shadow` on focus: `0 0 0 3px hsl(35 95% 55% / 0.15)`
-- Placeholders stay muted gray — the amber only appears on interaction
+**1. `src/index.css`** — Add negative top margin to `.tru-hero-wrapper`
+- Add `margin-top: -80px` to pull the hero up behind the sticky header
+- Add corresponding extra `padding-top` to `.tru-hero.tru-hero-split` (increase from `96px` to ~`176px`) so the actual content doesn't get hidden behind the nav
 
-**3. CTA Button — Amber highlight stripe** (`src/index.css`)
-- Add a thin amber bottom-border (2px) to the dark CTA button so it pops against the dark surface
-- On hover, the amber border thickens slightly or glows warm
+**2. `src/components/layout/SiteShell.tsx`** — Make the header background transparent on the homepage
+- The header wrapper `div` has a `dark` class forcing a dark background with padding. The `pt-2` and `pb-[25px]` create the visible band. Either:
+  - Make the wrapper background transparent (so the hero shows through), OR
+  - Simply let the negative margin on the hero overlap it
 
-**4. Calendar Icon** (`src/pages/Index.tsx`)
-- Give the Calendar icon a warm amber color class (`text-amber-500`) instead of the current muted opacity
-
-### Dark Mode
-- Dark header stays dark but uses a slightly lighter shade to differentiate from the page background
-- Amber accents remain consistent across both modes
+The cleanest approach: keep SiteShell as-is and just use the negative margin + padding compensation on the hero, since the header is already `sticky` and will float over the pulled-up hero.
 
 ### Files Modified
-- `src/index.css` — header background flip, input hover/focus, button accent
-- `src/pages/Index.tsx` — calendar icon color
+- `src/index.css` — negative margin on `.tru-hero-wrapper`, padding compensation on `.tru-hero.tru-hero-split`
 
