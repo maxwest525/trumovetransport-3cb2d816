@@ -533,50 +533,8 @@ function ShipmentTrackerSection({ navigate }: {navigate: (path: string) => void;
             </button>
           </div>
 
-          {/* Map with SVG overlay - right */}
-          <div className="w-full max-w-[600px] flex-shrink-0">
-            <div className="rounded-xl border-2 border-black relative" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), 0 0 60px rgba(34,197,94,0.12)' }}>
-              <div className="rounded-xl overflow-hidden relative">
-              <img src={eldMapImg} alt="US Map" className="w-full h-auto block" />
-              <svg viewBox="0 0 600 340" className="absolute inset-0 w-full h-full" preserveAspectRatio="xMidYMid slice">
-                {routes.map((route, i) => {
-                    const path = buildPath(route.pts);
-                    const progress = (truckProgress * route.speed + route.offset) % 1;
-                    const [tx, ty] = getTruckPos(route.pts, progress);
-                    const start = route.pts[0];
-                    const end = route.pts[route.pts.length - 1];
-                    return (
-                      <g key={i}>
-                      {/* Glow */}
-                      <path d={path} fill="none" stroke={route.color} strokeWidth={8} strokeLinecap="round" strokeLinejoin="round" opacity={0.08} />
-                      {/* Line */}
-                      <path d={path} fill="none" stroke={route.color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" opacity={0.7} />
-                      {/* Endpoints */}
-                      <circle cx={start[0]} cy={start[1]} r={3.5} fill={route.color} />
-                      <circle cx={end[0]} cy={end[1]} r={3.5} fill={route.color} opacity={0.6} />
-                      {/* Labels */}
-                      <text x={start[0]} y={start[1] + 14} fill="hsl(220, 15%, 40%)" fontSize={8} textAnchor="middle">{route.startLabel}</text>
-                      <text x={end[0]} y={end[1] - 10} fill="hsl(220, 15%, 40%)" fontSize={8} textAnchor="middle">{route.endLabel}</text>
-                      {/* Truck glow */}
-                      <circle cx={tx} cy={ty} r={16} fill={route.color} opacity={0.15} />
-                      {/* Truck dot */}
-                      <circle cx={tx} cy={ty} r={6} fill="black" stroke={route.color} strokeWidth={1.5} />
-                      <circle cx={tx} cy={ty} r={3.5} fill={route.color} />
-                      {/* LIVE badge on first route */}
-                      {i === 0 &&
-                        <g>
-                          <rect x={tx + 10} y={ty - 12} width={30} height={12} rx={5} fill="hsl(142, 71%, 45%)" />
-                          <circle cx={tx + 17} cy={ty - 6} r={1.5} fill="white" />
-                          <text x={tx + 21} y={ty - 4.2} fill="#0a0c10" fontSize={6.5} fontWeight="bold">LIVE</text>
-                        </g>
-                        }
-                    </g>);
 
-                  })}
-              </svg>
-              </div>
-            </div>
-          </div>
+
         </div>
       </div>
     </section>);
