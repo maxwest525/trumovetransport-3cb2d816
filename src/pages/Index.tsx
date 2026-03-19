@@ -1627,73 +1627,79 @@ export default function Index() {
                   </a>
                 </div>
 
-                {/* Right group: remaining cards */}
+                {/* Right group: form + buttons in one box, then agent photo */}
                 <div className="flex flex-col md:flex-row gap-6 flex-1 items-stretch">
 
-                {/* Col 2: Send a Message — wide */}
-                <div className="flex-1 min-w-0 max-w-lg rounded-2xl bg-card p-6 flex-col transition-all duration-200 flex items-center justify-center px-[24px]">
-                  <div className="flex flex-col items-center text-center mb-5">
-                    <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                      <MessageSquare className="h-5 w-5 text-primary" />
+                {/* Combined box: Send a Message + Contact Options */}
+                <div className="flex-1 min-w-0 rounded-2xl bg-card p-6 flex flex-col md:flex-row gap-6 transition-all duration-200">
+                  {/* Send a Message form */}
+                  <div className="flex-1 flex flex-col">
+                    <div className="flex flex-col items-center text-center mb-5">
+                      <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                        <MessageSquare className="h-5 w-5 text-primary" />
+                      </div>
+                      <h3 className="text-base font-semibold text-foreground mb-1">Send a Message</h3>
+                      <p className="text-xs text-muted-foreground">We'll get back to you within a few hours.</p>
                     </div>
-                    <h3 className="text-base font-semibold text-foreground mb-1">Send a Message</h3>
-                    <p className="text-xs text-muted-foreground">We'll get back to you within a few hours.</p>
+                    <form className="flex-1 flex flex-col space-y-3" onSubmit={(e) => e.preventDefault()}>
+                      <div className="grid grid-cols-2 gap-3">
+                        <input type="text" required placeholder="Your name" className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary text-sm" />
+                        <input type="email" required className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary text-sm" placeholder="Email" />
+                      </div>
+                      <textarea required placeholder="How can we help?" className="w-full flex-1 min-h-[120px] rounded-lg border border-border bg-background px-3 py-2.5 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary resize-none text-sm" />
+                      <button type="submit" className="w-full bg-foreground text-background py-3 rounded-lg text-sm font-semibold hover:bg-foreground/90 transition-colors">
+                        Send Message
+                      </button>
+                    </form>
+                    <p className="text-center text-[11px] text-muted-foreground mt-3">
+                      or email <a href="mailto:support@trumove.com" className="text-primary underline underline-offset-2 hover:text-primary/80">support@trumove.com</a>
+                    </p>
                   </div>
-                  <form className="flex-1 flex flex-col space-y-3" onSubmit={(e) => e.preventDefault()}>
-                    <div className="grid grid-cols-2 gap-3">
-                      <input type="text" required placeholder="Your name" className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary text-sm" />
-                      <input type="email" required className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary text-sm" placeholder="Email " />
-                    </div>
-                    <textarea required placeholder="How can we help?" className="w-full flex-1 min-h-[120px] rounded-lg border border-border bg-background px-3 py-2.5 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary resize-none text-sm" />
-                    <button type="submit" className="w-full bg-foreground text-background py-3 rounded-lg text-sm font-semibold hover:bg-foreground/90 transition-colors">
-                      Send Message
+
+                  {/* Divider */}
+                  <div className="hidden md:block w-px bg-border" />
+
+                  {/* Contact options */}
+                  <div className="flex flex-col gap-2 md:w-40 shrink-0 justify-center">
+                    <a
+                        href="tel:+16097277647"
+                        className="group flex flex-col items-center text-center p-3 hover:-translate-y-1 transition-all duration-200">
+                      <h3 className="text-sm font-bold text-foreground mb-1">Call Us</h3>
+                      <span className="inline-flex items-center gap-1 text-xs font-medium text-primary group-hover:gap-1.5 transition-all">
+                        Call now <ArrowRight className="h-3 w-3" />
+                      </span>
+                    </a>
+
+                    <a
+                        href="sms:+16097277647"
+                        className="group flex flex-col items-center text-center p-3 hover:-translate-y-1 transition-all duration-200">
+                      <h3 className="text-sm font-bold text-foreground mb-1">Text Support</h3>
+                      <span className="inline-flex items-center gap-1 text-xs font-medium text-primary group-hover:gap-1.5 transition-all">
+                        Send a text <ArrowRight className="h-3 w-3" />
+                      </span>
+                    </a>
+
+                    <button
+                        onClick={() => window.dispatchEvent(new CustomEvent('trudy-start'))}
+                        className="group flex flex-col items-center text-center p-3 hover:-translate-y-1 transition-all duration-200">
+                      <h3 className="text-sm font-bold text-foreground mb-1">Talk to Trudy</h3>
+                      <span className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-1.5 rounded-full text-xs font-bold group-hover:bg-primary/90 transition-all shadow-md">
+                        Start Talking
+                      </span>
                     </button>
-                  </form>
-                  <p className="text-center text-[11px] text-muted-foreground mt-3">
-                    or email <a href="mailto:support@trumove.com" className="text-primary underline underline-offset-2 hover:text-primary/80">support@trumove.com</a>
-                  </p>
+
+                    <button
+                        onClick={() => navigate("/site/book")}
+                        className="group flex flex-col items-center text-center p-3 hover:-translate-y-1 transition-all duration-200">
+                      <h3 className="text-sm font-bold text-foreground mb-1">Video Consult</h3>
+                      <span className="inline-flex items-center gap-1 text-xs font-medium text-primary group-hover:gap-1.5 transition-all">
+                        Schedule now <ArrowRight className="h-3 w-3" />
+                      </span>
+                    </button>
+                  </div>
                 </div>
 
-                {/* Col 3: All 4 contact options stacked */}
-                <div className="gap-3 md:w-40 shrink-0 self-center items-end justify-center flex flex-col">
-                  <a
-                      href="tel:+16097277647"
-                      className="group flex flex-col items-center text-center bg-card p-3 hover:-translate-y-1 transition-all duration-200 flex-1 border-0 shadow-none rounded-none">
-                    <h3 className="text-sm font-bold text-foreground mb-1">Call Us</h3>
-                    <span className="inline-flex items-center gap-1 text-xs font-medium text-primary group-hover:gap-1.5 transition-all">
-                      Call now <ArrowRight className="h-3 w-3" />
-                    </span>
-                  </a>
-
-                  <a
-                      href="sms:+16097277647"
-                      className="group flex flex-col items-center text-center bg-card p-3 hover:-translate-y-1 transition-all duration-200 flex-1 rounded-none shadow-none border-0">
-                    <h3 className="text-sm font-bold text-foreground mb-1">Text Support</h3>
-                    <span className="inline-flex items-center gap-1 text-xs font-medium text-primary group-hover:gap-1.5 transition-all">
-                      Send a text <ArrowRight className="h-3 w-3" />
-                    </span>
-                  </a>
-
-                  <button
-                      onClick={() => window.dispatchEvent(new CustomEvent('trudy-start'))}
-                      className="group flex-col text-center bg-card p-3 hover:-translate-y-1 transition-all duration-200 flex-1 border-0 rounded-none shadow-none flex items-end justify-start">
-                    <h3 className="text-sm font-bold text-foreground mb-1">Talk to Trudy</h3>
-                    <span className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-1.5 rounded-full text-xs font-bold group-hover:bg-primary/90 transition-all shadow-md">
-                      Start Talking
-                    </span>
-                  </button>
-
-                  <button
-                      onClick={() => navigate("/site/book")}
-                      className="group flex-col text-center bg-card p-3 hover:-translate-y-1 transition-all duration-200 flex-1 border-0 rounded-none shadow-none flex items-end justify-center">
-                    <h3 className="text-sm font-bold text-foreground mb-1">Video Consult</h3>
-                    <span className="inline-flex items-center gap-1 text-xs font-medium text-primary group-hover:gap-1.5 transition-all">
-                      Schedule now <ArrowRight className="h-3 w-3" />
-                    </span>
-                  </button>
-                </div>
-
-                {/* Col 4: Agent photo */}
+                {/* Agent photo */}
                 <div className="hidden lg:flex md:w-64 shrink-0 self-center">
                   <div className="rounded-2xl overflow-hidden w-full">
                     <img src={contactAgentImg} alt="TruMove support agent" className="block w-full h-auto" />
