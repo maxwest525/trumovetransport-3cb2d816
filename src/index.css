@@ -13570,10 +13570,10 @@
 
 /* Hover: white bg with grey outline + drop shadow */
 .header-nav-link:hover {
-  color: hsl(var(--foreground));
-  background: hsl(var(--background));
-  border-color: hsl(var(--foreground) / 0.2);
-  box-shadow: 0 2px 8px hsl(var(--foreground) / 0.08);
+  color: hsl(0 0% 100%);
+  background: hsl(0 0% 100% / 0.1);
+  border-color: hsl(0 0% 100% / 0.2);
+  box-shadow: 0 2px 8px hsl(0 0% 0% / 0.2);
   transform: none;
 }
 
