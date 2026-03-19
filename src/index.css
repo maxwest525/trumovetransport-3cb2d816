@@ -13475,19 +13475,19 @@
 
 /* Dark mode - solid black */
 .dark .header-main {
-  background: hsl(0 0% 0%);
+  background: hsl(0 0% 12%);
   border-bottom-color: hsl(0 0% 100% / 0.08);
 }
 
 .dark .header-main.header-floating {
-  background: hsl(0 0% 0%);
+  background: hsl(0 0% 12%);
   box-shadow: 
     0 4px 12px hsl(0 0% 0% / 0.4),
     0 12px 32px hsl(0 0% 0% / 0.35);
 }
 
 .dark .header-main.header-floating.is-scrolled {
-  background: hsl(0 0% 0%);
+  background: hsl(0 0% 12%);
   box-shadow: 
     0 6px 16px hsl(0 0% 0% / 0.5),
     0 16px 40px hsl(0 0% 0% / 0.4);
