@@ -462,13 +462,6 @@ function ShipmentTrackerSection({ navigate }: {navigate: (path: string) => void;
     pts: [[100,215],[145,208],[195,198],[250,185],[305,170],[355,155],[400,135],[445,120],[485,110],[525,100],[555,92]] as [number,number][]
   },
   {
-    color: 'hsl(200, 80%, 55%)',
-    startLabel: 'Chicago', endLabel: 'Miami',
-    offset: 0.35, speed: 0.8,
-    // Chicago (Great Lakes region) → south through heartland → Miami (FL tip)
-    pts: [[395,100],[400,135],[410,165],[425,195],[440,220],[458,248],[475,270],[490,288],[500,300]] as [number,number][]
-  },
-  {
     color: 'hsl(35, 90%, 55%)',
     startLabel: 'Seattle', endLabel: 'Denver',
     offset: 0.6, speed: 0.7,
