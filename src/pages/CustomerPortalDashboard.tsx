@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import CustomerPortalShell from "@/components/layout/CustomerPortalShell";
-import { Loader2, CheckCircle2, Circle, Upload, Send, FileText, Truck, Package, MapPin } from "lucide-react";
+import { Loader2, CheckCircle2, Circle, Upload, Send, FileText, Truck, Package, MapPin, PenTool, Clock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const DEAL_STAGES = [
