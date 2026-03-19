@@ -6644,7 +6644,7 @@
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: hsl(var(--tm-ink) / 0.38);
+  color: hsl(0 0% 100% / 0.55);
 }
 
 .tru-qb-form-header-centered .tru-qb-header-logo {
