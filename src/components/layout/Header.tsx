@@ -68,25 +68,89 @@ export default function Header() {
           </nav>
 
           {/* Contact Us - right */}
-          <div className="hidden md:flex items-center gap-2 shrink-0">
-            <span className="text-white/70 text-xs font-semibold uppercase tracking-wider mr-1">Contact</span>
-            {CONTACT_ACTIONS.map((action) => {
-              const Icon = action.icon;
-              const isExternal = action.href.startsWith("tel:") || action.href.startsWith("mailto:") || action.href.startsWith("sms:");
-              
-              if (isExternal) {
-                return (
-                  <a
-                    key={action.label}
-                    href={action.href}
-                    title={action.label}
-                    className="flex items-center justify-center w-8 h-8 rounded-full bg-white/10 hover:bg-[hsl(142,71%,45%)]/20 hover:text-[hsl(142,71%,45%)] text-white/80 transition-all duration-200"
-                  >
-                    <Icon className="w-4 h-4" />
-                  </a>
-                );
-              }
+          <div className="hidden md:flex items-center gap-1.5 shrink-0 ml-4">
+            <span className="text-white/60 text-[13px] font-semibold tracking-wide mr-2">Contact Us</span>
+            <div className="flex items-center gap-1 bg-white/[0.06] rounded-full px-1.5 py-1 border border-white/[0.08]">
+              {CONTACT_ACTIONS.map((action) => {
+                const Icon = action.icon;
+                const isExternal = action.href.startsWith("tel:") || action.href.startsWith("mailto:") || action.href.startsWith("sms:");
+                const cls = "flex items-center justify-center w-7 h-7 rounded-full hover:bg-[hsl(142,71%,45%)]/15 text-white/60 hover:text-[hsl(142,71%,45%)] transition-all duration-200";
+                
+                if (isExternal) {
+                  return (
+                    <a key={action.label} href={action.href} title={action.label} className={cls}>
+                      <Icon className="w-3.5 h-3.5" />
+                    </a>
+                  );
+                }
 
+                return (
+                  <Link key={action.label} to={action.href} title={action.label} className={cls}>
+                    <Icon className="w-3.5 h-3.5" />
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Mobile Menu Toggle */}
+          <button 
+            type="button" 
+            className="header-mobile-toggle"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+          >
+            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+        </div>
+
+        {/* Mobile Menu */}
+        {mobileMenuOpen && (
+          <div className="header-mobile-menu">
+            <nav className="header-mobile-nav">
+              {NAV_ITEMS.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.label}
+                    to={item.href}
+                    className={`header-mobile-link ${location.pathname === item.href ? "is-active" : ""}`}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Icon className="w-4 h-4 text-[hsl(142,71%,45%)]" />
+                    {item.label}
+                  </Link>
+                );
+              })}
+              <div className="border-t border-white/10 pt-3 mt-2">
+                <span className="text-white/50 text-xs font-semibold uppercase tracking-wider px-3 mb-2 block">Contact Us</span>
+                <div className="flex gap-3 px-3 pt-1">
+                  {CONTACT_ACTIONS.map((action) => {
+                    const Icon = action.icon;
+                    const isExternal = action.href.startsWith("tel:") || action.href.startsWith("mailto:") || action.href.startsWith("sms:");
+                    const Component = isExternal ? "a" : Link;
+                    const props = isExternal ? { href: action.href } : { to: action.href, onClick: () => setMobileMenuOpen(false) };
+                    return (
+                      <Component
+                        key={action.label}
+                        {...(props as any)}
+                        title={action.label}
+                        className="flex flex-col items-center gap-1 text-white/70 hover:text-[hsl(142,71%,45%)] transition-colors"
+                      >
+                        <Icon className="w-5 h-5" />
+                        <span className="text-[10px]">{action.label}</span>
+                      </Component>
+                    );
+                  })}
+                </div>
+              </div>
+            </nav>
+          </div>
+        )}
+      </header>
+    </>
+  );
+}
               return (
                 <Link
                   key={action.label}
