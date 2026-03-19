@@ -3178,9 +3178,15 @@
   transition: all 0.4s ease;
 }
 
-.tru-ai-header-previews .tru-ai-live-scanner,
-.tru-ai-header-previews .tru-ai-live-inventory {
+.tru-ai-header-previews .tru-ai-live-scanner {
   width: var(--ai-preview-width);
+  height: var(--demo-panel-height);
+  min-height: var(--demo-panel-height);
+  max-height: var(--demo-panel-height);
+}
+
+.tru-ai-header-previews .tru-ai-live-inventory {
+  width: calc(var(--ai-preview-width) * 0.5);
   height: var(--demo-panel-height);
   min-height: var(--demo-panel-height);
   max-height: var(--demo-panel-height);
