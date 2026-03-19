@@ -78,7 +78,7 @@ export default function Header() {
                 if (isExternal) {
                   return (
                     <a key={action.label} href={action.href} title={action.label} className="header-contact-icon">
-                      <Icon className="w-3.5 h-3.5" />
+                      <Icon className="w-5 h-5" />
                     </a>
                   );
                 }
