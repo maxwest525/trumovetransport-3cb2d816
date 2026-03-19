@@ -70,26 +70,6 @@ export default function Header() {
           {/* Contact Us - right */}
           <div className="header-contact-group">
             <Link to="/site/contact" className="header-contact-label">Contact Us</Link>
-            <div className="header-contact-icons">
-              {CONTACT_ACTIONS.map((action) => {
-                const Icon = action.icon;
-                const isExternal = action.href.startsWith("tel:") || action.href.startsWith("mailto:") || action.href.startsWith("sms:");
-                
-                if (isExternal) {
-                  return (
-                    <a key={action.label} href={action.href} title={action.label} className="header-contact-icon">
-                      <Icon className="w-5 h-5" />
-                    </a>
-                  );
-                }
-
-                return (
-                  <Link key={action.label} to={action.href} title={action.label} className="header-contact-icon">
-                    <Icon className="w-5 h-5" />
-                  </Link>
-                );
-              })}
-            </div>
           </div>
 
           {/* Mobile Menu Toggle */}
