@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import { useUserRole } from "./useUserRole";
 
-export type PortalContext = "agent" | "manager" | "admin";
+export type PortalContext = "agent" | "manager" | "admin" | "dispatch";
 
 /**
  * Determines which portal context the user is in based on:
