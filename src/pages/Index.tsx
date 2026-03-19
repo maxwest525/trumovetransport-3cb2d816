@@ -529,7 +529,7 @@ function ShipmentTrackerSection({ navigate }: {navigate: (path: string) => void;
             <button onClick={() => navigate("/site/track")} className="tru-ai-cta-btn">
               <MapPin className="w-4 h-4 text-[#49fe01]" />
               Track Shipment
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-4 h-4 text-[#4ff90b]" />
             </button>
           </div>
 
