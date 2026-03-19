@@ -1693,7 +1693,7 @@
 }
 
 .tru-hero-bullets li {
-  font-size: clamp(13px, 1.15vw, 16px);
+  font-size: 15px;
   font-weight: 500;
   color: hsl(0 0% 100% / 0.92);
   line-height: 1.5;
