@@ -505,15 +505,9 @@ function ShipmentTrackerSection({ navigate }: {navigate: (path: string) => void;
   return (
     <section className="tru-ai-steps-section" style={{ paddingTop: '5rem', paddingBottom: '5rem' }}>
       <div className="tru-ai-steps-inner">
-        <div className="flex flex-col lg:flex-row items-center justify-center gap-10 lg:gap-16 w-full">
-          {/* Lifestyle image - left of map */}
-          <div className="hidden lg:block w-full max-w-[600px] flex-shrink-0">
-            <div className="rounded-xl border-2 border-black overflow-hidden" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3)' }}>
-              <img src={trackingLifestyleImg} alt="Customer tracking their move in real-time" className="w-full h-auto block" />
-            </div>
-          </div>
-          {/* Map with SVG overlay */}
-          <div className="w-full max-w-[600px] flex-shrink-0">
+        <div className="flex flex-col lg:flex-row items-center justify-center gap-6 lg:gap-8 w-full">
+          {/* Map with SVG overlay - largest, left */}
+          <div className="w-full lg:flex-[1.3] max-w-[560px] flex-shrink-0">
             <div className="rounded-xl border-2 border-black relative" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), 0 0 60px rgba(34,197,94,0.12)' }}>
               <div className="rounded-xl overflow-hidden relative">
               <img src={eldMapImg} alt="US Map" className="w-full h-auto block" />
@@ -556,9 +550,16 @@ function ShipmentTrackerSection({ navigate }: {navigate: (path: string) => void;
               </div>
             </div>
           </div>
+
+          {/* Lifestyle image - center */}
+          <div className="hidden lg:block lg:flex-[1] max-w-[420px] flex-shrink-0">
+            <div className="rounded-xl border-2 border-black overflow-hidden" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3)' }}>
+              <img src={trackingLifestyleImg} alt="Customer tracking their move in real-time" className="w-full h-auto block" />
+            </div>
+          </div>
           
-          {/* Headline + CTA - card style */}
-          <div className="flex flex-col items-center text-center gap-4 bg-card border-2 border-black rounded-xl p-8" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), inset 0 2px 8px rgba(0,0,0,0.15)' }}>
+          {/* Headline + CTA - card style, right */}
+          <div className="lg:flex-[0.8] flex flex-col items-center text-center gap-4 bg-card border-2 border-black rounded-xl p-8" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), inset 0 2px 8px rgba(0,0,0,0.15)' }}>
             <div className="tru-ai-headline-block">
               <h2 className="tru-ai-main-headline">
                 Real-Time<br />
