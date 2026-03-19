@@ -1,4 +1,5 @@
 import { useState, useCallback, useMemo, useRef, useEffect } from "react";
+import CommandCenterNav from "@/components/layout/CommandCenterNav";
 
 // Scroll to top on mount
 const useScrollToTop = () => {

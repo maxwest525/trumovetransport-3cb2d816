@@ -1,4 +1,5 @@
 import { useState, useCallback, useMemo, useEffect, useRef } from "react";
+import CommandCenterNav from "@/components/layout/CommandCenterNav";
 import { useNavigate } from "react-router-dom";
 
 // Scroll to top on mount
