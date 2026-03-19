@@ -1562,11 +1562,11 @@ export default function Index() {
                 <div className="tru-ai-content-left border-0 rounded-none shadow-none border-primary-foreground" style={{ justifyContent: 'center' }}>
                   {/* Premium headline block */}
                   <div className="tru-ai-headline-block animate-fade-scale-in opacity-0" style={{ animationDelay: '0ms' }}>
-                    <h2 className="tru-ai-main-headline">
+                    <h2 className="tru-ai-main-headline text-5xl md:text-6xl">
                       Scan. Add.<br />
                       <span className="tru-ai-headline-accent">Estimate.</span>
                     </h2>
-                    <p className="tru-ai-subheadline">
+                    <p className="tru-ai-subheadline text-lg">
                       Point your camera at any room. Our AI identifies every item and calculates your move in seconds—not hours.
                     </p>
                   </div>
