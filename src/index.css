@@ -21129,7 +21129,7 @@
 /* Floating Nav - Matches Move Summary pill style */
 .tru-floating-nav {
   position: absolute;
-  top: 0;
+  top: 5px;
   left: 0;
   z-index: 80;
   display: flex;
