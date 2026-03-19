@@ -684,9 +684,7 @@ export default function Index() {
     triggerOnce: true
   });
 
-  // Parallax effects for hero elements
-  const [parallaxHeadlineRef, headlineParallax] = useParallax<HTMLDivElement>({ speed: 0.15, direction: "up" });
-  const [parallaxFormRef, formParallax] = useParallax<HTMLDivElement>({ speed: 0.05, direction: "up" });
+  // Parallax removed for zoom stability
 
   // Step tracking (1-4)
   const [step, setStep] = useState(1);
