@@ -1591,11 +1591,11 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(24rem, 30rem);
   gap: 48px;
-  align-items: center;
-  padding: 48px 64px 48px;
+  align-items: start;
+  padding: 72px 64px 112px;
   max-width: 1480px;
   margin: 0 auto;
-  min-height: 42rem;
+  min-height: 52rem;
 }
 
 /* LEFT COLUMN - Text Content */
