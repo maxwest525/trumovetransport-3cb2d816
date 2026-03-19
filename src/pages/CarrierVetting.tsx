@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import CommandCenterNav from "@/components/layout/CommandCenterNav";
+
 
 // Scroll to top on mount
 const useScrollToTop = () => {
@@ -508,7 +508,7 @@ export default function CarrierVetting() {
   return (
     <SiteShell hideTrustStrip>
       <div className="min-h-screen carrier-vetting-page">
-        <CommandCenterNav title="Carrier Vetting" />
+        
 
         <div className="min-h-[80vh] flex flex-col items-center justify-center px-6 py-12">
           <div className="w-full max-w-7xl mx-auto">

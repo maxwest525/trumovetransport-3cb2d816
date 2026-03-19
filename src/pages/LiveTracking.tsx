@@ -19,7 +19,7 @@ import TrackingWizard from "@/components/tracking/TrackingWizard";
 import { useRealtimeETA } from "@/hooks/useRealtimeETA";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import SiteShell from "@/components/layout/SiteShell";
-import CommandCenterNav from "@/components/layout/CommandCenterNav";
+
 import Footer from "@/components/layout/Footer";
 import { MAPBOX_TOKEN } from "@/lib/mapboxToken";
 import { getWebGLDiagnostics, type WebGLDiagnostics } from "@/lib/webglDiagnostics";
@@ -605,7 +605,7 @@ export default function LiveTracking() {
 
   return (
     <SiteShell hideTrustStrip>
-      <CommandCenterNav title="Shipment Tracking" />
+      
       <div className="live-tracking-page">
       
       {/* Hero Section - Headline & Subheadline */}

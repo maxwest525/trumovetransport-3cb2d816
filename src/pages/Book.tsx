@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import SiteShell from "@/components/layout/SiteShell";
-import CommandCenterNav from "@/components/layout/CommandCenterNav";
+
 import Footer from "@/components/layout/Footer";
 import { DailyVideoRoom } from "@/components/video-consult/DailyVideoRoom";
 import { 
@@ -1780,7 +1780,7 @@ export default function Book() {
 
   return (
     <SiteShell hideTrustStrip>
-      <CommandCenterNav title="Connect With Us" />
+      
 
       {/* Main Content */}
       <div className="min-h-[80vh] md:min-h-[80vh] flex flex-col items-center justify-center px-4 md:px-6 py-8 md:py-12">

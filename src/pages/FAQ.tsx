@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import CommandCenterNav from "@/components/layout/CommandCenterNav";
+
 import { Link } from "react-router-dom";
 import SiteShell from "@/components/layout/SiteShell";
 import {
@@ -53,7 +53,7 @@ export default function FAQ() {
   useEffect(() => { window.scrollTo(0, 0); }, []);
   return (
     <SiteShell>
-      <CommandCenterNav title="FAQ" />
+      
       <div className="max-w-[900px] mx-auto px-6 py-12">
         {/* Header */}
         <div className="text-center mb-12">

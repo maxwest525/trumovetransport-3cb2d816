@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, type ReactNode } from "react";
-import CommandCenterNav from "@/components/layout/CommandCenterNav";
+
 
 function ScrollFadeIn({ children, delay = 0 }: { children: ReactNode; delay?: number }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -391,7 +391,7 @@ export default function ScanRoom() {
   return (
     <SiteShell hideTrustStrip>
       <div className="tru-scan-page">
-        <CommandCenterNav title="AI Move Estimator" />
+        
 
         {/* Centered Header Section */}
         <section className="tru-scan-header-section">

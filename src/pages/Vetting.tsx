@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import CommandCenterNav from "@/components/layout/CommandCenterNav";
+
 import { Link } from "react-router-dom";
 import SiteShell from "@/components/layout/SiteShell";
 import { Shield, CheckCircle, AlertTriangle, TrendingUp, BadgeCheck, FileSearch, Clock, ArrowRight, Star, Search, Database, Activity, ClipboardCheck } from "lucide-react";
@@ -48,7 +48,7 @@ export default function Vetting() {
   return (
     <SiteShell hideTrustStrip>
       <div className="tru-vetting-page">
-        <CommandCenterNav title="Carrier Vetting" />
+        
 
         {/* Hero Section */}
         <section className="tru-vetting-hero">

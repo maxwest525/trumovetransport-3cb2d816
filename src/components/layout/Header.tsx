@@ -1,23 +1,19 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { 
-  Menu, X, Phone, Video, Mail, MessageSquare
-} from "lucide-react";
+import { Menu, X, Home, Calculator, MapPin, Shield } from "lucide-react";
 import logo from "@/assets/logo.png";
 
-
-interface CtaItem {
+interface NavItem {
   href: string;
   label: string;
   icon: React.ElementType;
-  isExternal?: boolean;
 }
 
-const CTA_ITEMS: CtaItem[] = [
-  { href: "tel:+18001234567", label: "Call Now", icon: Phone, isExternal: true },
-  { href: "/site/book", label: "Video Consult", icon: Video },
-  { href: "mailto:support@trumove.com", label: "Email Support", icon: Mail, isExternal: true },
-  { href: "sms:+18001234567", label: "Text a Rep", icon: MessageSquare, isExternal: true },
+const NAV_ITEMS: NavItem[] = [
+  { href: "/site", label: "Home", icon: Home },
+  { href: "/site/online-estimate", label: "Move Estimator", icon: Calculator },
+  { href: "/site/track", label: "Shipment Tracking", icon: MapPin },
+  { href: "/site/vetting", label: "Carrier Vetting", icon: Shield },
 ];
 
 export default function Header() {
@@ -37,8 +33,8 @@ export default function Header() {
     <>
       <header className={`header-main header-floating ${isScrolled ? "is-scrolled" : ""}`}>
         <div className="header-inner">
-          {/* Logo */}
-          <Link to="/site" className="header-logo" aria-label="TruMove Home">
+          {/* Logo - left */}
+          <Link to="/site" className="header-logo shrink-0" aria-label="TruMove Home">
             <img 
               src={logo} 
               alt="TruMove" 
@@ -46,25 +42,16 @@ export default function Header() {
             />
           </Link>
 
-          {/* Desktop CTA Buttons */}
-          <nav className="header-nav flex-1 justify-evenly" aria-label="Primary">
-            {CTA_ITEMS.map((item) => {
+          {/* Desktop Nav Links - centered */}
+          <nav className="header-nav flex-1 justify-center gap-2" aria-label="Primary">
+            {NAV_ITEMS.map((item) => {
               const Icon = item.icon;
-              if (item.isExternal) {
-                return (
-                  <div key={item.label} className="header-nav-item">
-                    <a href={item.href} className="header-nav-link text-[15px]">
-                      <Icon className="w-5 h-5 text-[hsl(142,71%,45%)]" />
-                      {item.label}
-                    </a>
-                  </div>
-                );
-              }
+              const isActive = location.pathname === item.href;
               return (
                 <div key={item.label} className="header-nav-item">
                   <Link
                     to={item.href}
-                    className={`header-nav-link text-[15px] ${location.pathname === item.href ? "is-active" : ""}`}
+                    className={`header-nav-link text-[15px] ${isActive ? "is-active" : ""}`}
                   >
                     <Icon className="w-5 h-5 text-[hsl(142,71%,45%)]" />
                     {item.label}
@@ -73,6 +60,9 @@ export default function Header() {
               );
             })}
           </nav>
+
+          {/* Spacer to balance logo on the left */}
+          <div className="hidden md:block shrink-0" style={{ width: '120px' }} />
 
           {/* Mobile Menu Toggle */}
           <button 
@@ -89,21 +79,8 @@ export default function Header() {
         {mobileMenuOpen && (
           <div className="header-mobile-menu">
             <nav className="header-mobile-nav">
-              {CTA_ITEMS.map((item) => {
+              {NAV_ITEMS.map((item) => {
                 const Icon = item.icon;
-                if (item.isExternal) {
-                  return (
-                    <a
-                      key={item.label}
-                      href={item.href}
-                      className="header-mobile-link"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      <Icon className="w-4 h-4 text-[hsl(142,71%,45%)]" />
-                      {item.label}
-                    </a>
-                  );
-                }
                 return (
                   <Link
                     key={item.label}
