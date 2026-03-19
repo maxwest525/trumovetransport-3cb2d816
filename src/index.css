@@ -2842,13 +2842,10 @@
   max-width: 24rem;
   z-index: 5;
   background: hsl(var(--card));
-  border: 2px solid hsl(0 0% 0%);
+  border: none;
   border-radius: 12px;
   padding: 2rem 1.5rem;
-  box-shadow:
-    0 4px 20px hsl(0 0% 0% / 0.5),
-    0 8px 40px hsl(0 0% 0% / 0.3),
-    inset 0 2px 8px hsl(0 0% 0% / 0.15);
+  box-shadow: none;
 }
 
 /* Room Scanner Demo - CENTERED at 770px anchor */
