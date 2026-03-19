@@ -1308,7 +1308,7 @@ export default function Index() {
                                 className="tru-qb-input"
                                 style={{ width: '100%', textAlign: 'left', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
                                 
-                                 <Calendar className="w-4 h-4 shrink-0 opacity-60" />
+                                 <Calendar className="w-4 h-4 shrink-0 text-amber-500" />
                                  <span style={{ opacity: moveDate ? 1 : 0.5 }}>
                                    {moveDate ? format(moveDate, 'MMM d, yyyy') : 'Move Date'}
                                  </span>

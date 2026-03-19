@@ -6522,7 +6522,8 @@
   top: 50%;
   transform: translateY(-50%);
   height: 22px;
-  opacity: 0.8;
+  opacity: 1;
+  filter: brightness(10);
 }
 
 .tru-qb-form-header-pill .tru-qb-form-title-group {
