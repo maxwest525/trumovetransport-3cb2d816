@@ -1599,7 +1599,7 @@ export default function Index() {
           <section className="tru-ai-steps-section">
             <div className="tru-ai-steps-inner">
               {/* Header row: info on left, previews on right */}
-              <div className="tru-ai-header-row" ref={scanPreviewRef}>
+              <div className="tru-ai-header-row border-0 rounded-none shadow-none" ref={scanPreviewRef}>
                 {/* LEFT: Description content */}
                 <div className="tru-ai-content-left border-0 rounded-none shadow-none" style={{ justifyContent: 'center' }}>
                   {/* Premium headline block */}
