@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { LogOut, Package, FileText, MessageCircle, Upload, Home } from "lucide-react";
+import { LogOut, Package, FileText, MessageCircle, Upload, Home, PenTool } from "lucide-react";
 import logoImg from "@/assets/logo.png";
 
 interface CustomerPortalShellProps {
@@ -14,6 +14,7 @@ interface CustomerPortalShellProps {
 const navItems = [
   { id: "tracker", label: "Move Tracker", icon: Package },
   { id: "quote", label: "Quote", icon: FileText },
+  { id: "esigns", label: "E-Signs", icon: PenTool },
   { id: "documents", label: "Documents", icon: Upload },
   { id: "messages", label: "Messages", icon: MessageCircle },
 ];

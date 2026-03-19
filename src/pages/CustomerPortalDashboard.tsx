@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import CustomerPortalShell from "@/components/layout/CustomerPortalShell";
-import { Loader2, CheckCircle2, Circle, Upload, Send, FileText, Truck, Package, MapPin } from "lucide-react";
+import { Loader2, CheckCircle2, Circle, Upload, Send, FileText, Truck, Package, MapPin, PenTool, Clock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const DEAL_STAGES = [
@@ -32,6 +32,7 @@ export default function CustomerPortalDashboard() {
   const [documents, setDocuments] = useState<any[]>([]);
   const [uploading, setUploading] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+  const [esignDocs, setEsignDocs] = useState<any[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -56,9 +57,11 @@ export default function CustomerPortalDashboard() {
       setPortalAccess(access);
 
       // Fetch deal + lead
+      let dealLeadId: string | null = null;
       if (access.deal_id) {
         const { data: d } = await supabase.from("deals").select("*").eq("id", access.deal_id).maybeSingle();
         setDeal(d);
+        dealLeadId = d?.lead_id || null;
         if (d?.lead_id) {
           const { data: l } = await supabase.from("leads").select("*").eq("id", d.lead_id).maybeSingle();
           setLead(l);
@@ -79,6 +82,17 @@ export default function CustomerPortalDashboard() {
       // List documents
       const { data: files } = await supabase.storage.from("customer-documents").list(uid);
       setDocuments(files ?? []);
+
+      // Fetch e-sign documents linked to lead
+      const linkedLeadId = access.lead_id || dealLeadId;
+      if (linkedLeadId) {
+        const { data: esigns } = await supabase
+          .from("esign_documents")
+          .select("*")
+          .eq("lead_id", linkedLeadId)
+          .order("created_at", { ascending: false });
+        setEsignDocs(esigns ?? []);
+      }
 
       setLoading(false);
     };
@@ -230,7 +244,74 @@ export default function CustomerPortalDashboard() {
             </div>
           )}
 
-          {/* DOCUMENTS */}
+          {/* E-SIGNS */}
+          {activeTab === "esigns" && (
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-lg font-semibold text-foreground mb-1">Signed Documents</h2>
+                <p className="text-sm text-muted-foreground">View the status of documents sent for your signature.</p>
+              </div>
+              {esignDocs.length === 0 ? (
+                <div className="text-center py-12 text-muted-foreground text-sm">
+                  <PenTool className="w-10 h-10 mx-auto mb-3 opacity-30" />
+                  No e-sign documents yet.
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {esignDocs.map((doc) => {
+                    const isCompleted = doc.status === "completed";
+                    const docLabels: Record<string, string> = {
+                      estimate: "Estimate Authorization",
+                      ccach: "CC/ACH Authorization",
+                      bol: "Bill of Lading",
+                    };
+                    return (
+                      <div key={doc.id} className="rounded-xl border border-border bg-card p-4">
+                        <div className="flex items-center justify-between gap-3">
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${
+                              isCompleted ? "bg-primary/10" : "bg-amber-500/10"
+                            }`}>
+                              {isCompleted
+                                ? <CheckCircle2 className="w-4 h-4 text-primary" />
+                                : <Clock className="w-4 h-4 text-amber-600" />
+                              }
+                            </div>
+                            <div className="min-w-0">
+                              <p className="text-sm font-medium text-foreground truncate">
+                                {docLabels[doc.document_type] || doc.document_type}
+                              </p>
+                              <p className="text-xs text-muted-foreground">
+                                Ref: {doc.ref_number}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="text-right shrink-0">
+                            <span className={`inline-block text-xs font-medium px-2.5 py-1 rounded-full ${
+                              isCompleted
+                                ? "bg-primary/10 text-primary"
+                                : "bg-amber-500/10 text-amber-600"
+                            }`}>
+                              {isCompleted ? "Signed" : doc.status === "sent" ? "Awaiting Signature" : doc.status.charAt(0).toUpperCase() + doc.status.slice(1)}
+                            </span>
+                            <p className="text-[10px] text-muted-foreground mt-1">
+                              {isCompleted && doc.completed_at
+                                ? `Signed ${new Date(doc.completed_at).toLocaleDateString()}`
+                                : doc.sent_at
+                                  ? `Sent ${new Date(doc.sent_at).toLocaleDateString()}`
+                                  : ""}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+
+
           {activeTab === "documents" && (
             <div className="space-y-6">
               <div className="flex items-center justify-between">
