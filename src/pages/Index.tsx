@@ -513,7 +513,7 @@ function ShipmentTrackerSection({ navigate }: {navigate: (path: string) => void;
             </div>
           </div>
           {/* Map with SVG overlay */}
-          <div className="w-full max-w-[300px] flex-shrink-0">
+          <div className="w-full max-w-[400px] flex-shrink-0">
             <div className="rounded-xl border-2 border-black relative" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), 0 0 60px rgba(34,197,94,0.12)' }}>
               <div className="rounded-xl overflow-hidden relative">
               <img src={eldMapImg} alt="US Map" className="w-full h-auto block" />
