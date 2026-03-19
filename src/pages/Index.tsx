@@ -562,7 +562,7 @@ function ShipmentTrackerSection({ navigate }: {navigate: (path: string) => void;
             <div className="tru-ai-headline-block">
               <h2 className="tru-ai-main-headline">
                 Real-Time<br />
-                <span className="tru-ai-headline-accent">Truck Tracking.</span>
+                <span className="tru-ai-headline-accent">Load Tracking.</span>
               </h2>
               <p className="tru-ai-subheadline">
                 Track your carriers movements in real-time
