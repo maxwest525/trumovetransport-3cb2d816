@@ -56,6 +56,14 @@ const PORTALS = [
     icon: Shield,
     accentHsl: "38 92% 50%",
   },
+  {
+    key: "dispatch",
+    label: "Dispatch",
+    description: "Fleet tracking, driver assignments, route management & scheduling",
+    href: "/dispatch/dashboard",
+    icon: Truck,
+    accentHsl: "262 83% 58%",
+  },
 ];
 
 export default function AgentLogin() {
