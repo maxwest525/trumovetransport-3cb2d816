@@ -515,7 +515,7 @@ function ShipmentTrackerSection({ navigate }: {navigate: (path: string) => void;
           </div>
 
           {/* Headline + CTA - center */}
-          <div className="flex flex-col items-center text-center gap-4 bg-card border-black p-8 border-0 shadow-none rounded-none" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), inset 0 2px 8px rgba(0,0,0,0.15)' }}>
+          <div className="flex flex-col items-center text-center gap-4 bg-card p-8 border-0 shadow-none rounded-none border-primary-foreground" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), inset 0 2px 8px rgba(0,0,0,0.15)' }}>
             <div className="tru-ai-headline-block">
               <h2 className="tru-ai-main-headline">
                 Real-Time<br />
