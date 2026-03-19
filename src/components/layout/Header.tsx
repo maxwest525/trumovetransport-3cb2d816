@@ -1,17 +1,10 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { 
-  Menu, X, Phone, Video, ChevronDown, User,
-  Calculator, Calendar, MapPin, Shield, Scan, ArrowRight
+  Menu, X, Phone, Video, Mail, MessageSquare, ArrowRight
 } from "lucide-react";
 import logo from "@/assets/logo.png";
 import { ThemeToggle } from "@/components/ThemeToggle";
-
-// Import preview images
-import previewAiScanner from "@/assets/preview-ai-scanner.jpg";
-import previewVideoConsult from "@/assets/preview-video-consult.jpg";
-import previewPropertyLookup from "@/assets/preview-property-lookup.jpg";
-import previewCarrierVetting from "@/assets/preview-carrier-vetting.jpg";
 
 // Mega-menu preview - clean image card
 const MegaPreviewImage = ({ src, alt }: { src: string; alt: string }) => {
