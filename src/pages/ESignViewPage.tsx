@@ -20,6 +20,7 @@ export default function ESignViewPage() {
   const customerEmail = searchParams.get("email") || "";
   const refNumber = searchParams.get("ref") || "DOC-2026-0001";
   const docTypeParam = searchParams.get("type") || "estimate";
+  const leadId = searchParams.get("leadId") || "";
   const isBol = docTypeParam === "bol";
 
   const [typedName, setTypedName] = useState(customerName);
@@ -45,7 +46,6 @@ export default function ESignViewPage() {
 
   const allSigned = Object.values(signatures).every(Boolean);
 
-  // Generate a simple document hash for tamper detection
   const generateDocHash = useCallback(() => {
     const content = `${refNumber}|${typedName}|${docTypeParam}|${new Date().toISOString().split("T")[0]}`;
     let hash = 0;
@@ -57,7 +57,6 @@ export default function ESignViewPage() {
     return `SHA256-SIM-${Math.abs(hash).toString(16).toUpperCase().padStart(8, "0")}`;
   }, [refNumber, typedName, docTypeParam]);
 
-  // Log audit event
   const logAuditEvent = useCallback(async (eventType: string, eventData?: Record<string, unknown>) => {
     try {
       await supabase.functions.invoke("capture-esign-event", {
@@ -73,17 +72,36 @@ export default function ESignViewPage() {
           consentText: consentGiven
             ? "I consent to conduct this transaction electronically and agree that my electronic signature is legally binding under the ESIGN Act and UETA."
             : undefined,
+          leadId: leadId || undefined,
         },
       });
     } catch (e) {
       console.error("Audit log failed:", e);
     }
-  }, [refNumber, activeDocument, typedName, customerEmail, generateDocHash, consentGiven]);
+  }, [refNumber, activeDocument, typedName, customerEmail, generateDocHash, consentGiven, leadId]);
 
   // Log document_opened on mount
   useState(() => {
     logAuditEvent("document_opened", { documentType: docTypeParam });
   });
+
+  // Helper to update esign_documents status
+  const updateDocumentStatus = useCallback(async (status: string, docType: string) => {
+    if (!leadId) return;
+    try {
+      const updateData: Record<string, any> = { status };
+      if (status === "completed") updateData.completed_at = new Date().toISOString();
+      if (status === "opened") updateData.opened_at = new Date().toISOString();
+
+      await supabase
+        .from("esign_documents")
+        .update(updateData)
+        .eq("lead_id", leadId)
+        .eq("ref_number", refNumber);
+    } catch (e) {
+      console.error("Failed to update document status:", e);
+    }
+  }, [leadId, refNumber]);
 
   const handleSign = (field: SignatureField) => {
     if (field === "signature" && typedName.length < 2) return;
@@ -103,8 +121,8 @@ export default function ESignViewPage() {
     if (Object.values(signatures).every(Boolean)) {
       setCompletedDocuments((prev) => ({ ...prev, estimate: true }));
       logAuditEvent("document_signed", { documentType: "estimate", documentHash: generateDocHash() });
+      updateDocumentStatus("completed", "estimate");
       toast.success("Estimate Authorization submitted successfully");
-      // Auto-advance to next document
       setActiveDocument("ccach");
       window.scrollTo(0, 0);
     }
@@ -113,14 +131,15 @@ export default function ESignViewPage() {
   const handleSubmitCCACH = () => {
     setCompletedDocuments((prev) => ({ ...prev, ccach: true }));
     logAuditEvent("document_signed", { documentType: "ccach", documentHash: generateDocHash() });
+    updateDocumentStatus("completed", "ccach");
     toast.success("CC/ACH Authorization submitted — proceeding to payment");
-    // Navigate to payment page
-    const leadId = searchParams.get("leadId") || "";
-    navigate(`/agent/payment?name=${encodeURIComponent(typedName)}&email=${encodeURIComponent(customerEmail)}&leadId=${leadId}`);
+    const paramLeadId = searchParams.get("leadId") || "";
+    navigate(`/agent/payment?name=${encodeURIComponent(typedName)}&email=${encodeURIComponent(customerEmail)}&leadId=${paramLeadId}`);
   };
 
   const handleSubmitBOL = () => {
     logAuditEvent("document_signed", { documentType: "bol", documentHash: generateDocHash() });
+    updateDocumentStatus("completed", "bol");
     toast.success("Bill of Lading submitted successfully");
   };
 
@@ -171,9 +190,7 @@ export default function ESignViewPage() {
             Back to E-Sign Hub
           </button>
 
-
           <div className="flex gap-6 mt-4">
-            {/* Sidebar */}
             {!isBol && (
               <ESignSidebar
                 typedName={typedName}
@@ -191,7 +208,6 @@ export default function ESignViewPage() {
               />
             )}
 
-            {/* Document */}
             <div className="flex-1 max-w-[8.5in]">
               {isBol ? (
                 <BOLDocumentWrapper
@@ -225,7 +241,6 @@ export default function ESignViewPage() {
               )}
             </div>
           </div>
-
         </div>
       </div>
     </AgentShell>

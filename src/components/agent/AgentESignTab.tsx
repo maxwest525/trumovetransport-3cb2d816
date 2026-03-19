@@ -1,15 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   FileText, Send, Mail, MessageSquare, CheckCircle2,
-  Clock, Eye, Loader2, Sparkles, CreditCard, ExternalLink
+  Clock, Eye, Loader2, CreditCard, ExternalLink
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -55,10 +54,43 @@ export function AgentESignTab({ leadId, customerName, customerEmail, customerPho
   const navigate = useNavigate();
   const [documents, setDocuments] = useState<DocumentRecord[]>([]);
   const [isSending, setIsSending] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [newDoc, setNewDoc] = useState({
     type: "estimate" as DocumentType,
     deliveryMethod: "email" as DeliveryMethod,
   });
+
+  // Load existing documents from DB
+  useEffect(() => {
+    const loadDocuments = async () => {
+      setIsLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from("esign_documents")
+          .select("*")
+          .eq("lead_id", leadId)
+          .order("created_at", { ascending: false });
+
+        if (error) {
+          console.error("Failed to load esign documents:", error);
+        } else if (data) {
+          setDocuments(data.map((row: any) => ({
+            id: row.id,
+            type: row.document_type as DocumentType,
+            refNumber: row.ref_number,
+            status: row.status as SigningStatus,
+            sentAt: row.sent_at ? new Date(row.sent_at) : undefined,
+            openedAt: row.opened_at ? new Date(row.opened_at) : undefined,
+            completedAt: row.completed_at ? new Date(row.completed_at) : undefined,
+            deliveryMethod: row.delivery_method as DeliveryMethod,
+          })));
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadDocuments();
+  }, [leadId]);
 
   const handleSendDocument = async () => {
     if (newDoc.deliveryMethod === "email" && !customerEmail) { toast.error("Customer has no email address"); return; }
@@ -70,22 +102,46 @@ export function AgentESignTab({ leadId, customerName, customerEmail, customerPho
     const signingUrl = `${window.location.origin}/esign/${refNumber}`;
 
     try {
-      const { data, error } = await supabase.functions.invoke("send-esign-document", {
+      // Send the document via edge function
+      const { error: sendError } = await supabase.functions.invoke("send-esign-document", {
         body: {
           documentType: newDoc.type, customerName, customerEmail, customerPhone,
           refNumber, deliveryMethod: newDoc.deliveryMethod, signingUrl,
         },
       });
 
-      if (error) {
-        toast.error("Failed to send document", { description: error.message });
+      if (sendError) {
+        toast.error("Failed to send document", { description: sendError.message });
         setIsSending(false);
         return;
       }
 
+      // Persist to esign_documents table
+      const { data: user } = await supabase.auth.getUser();
+      const { data: insertedDoc, error: insertError } = await supabase
+        .from("esign_documents")
+        .insert({
+          lead_id: leadId,
+          document_type: newDoc.type,
+          ref_number: refNumber,
+          status: "sent",
+          delivery_method: newDoc.deliveryMethod,
+          sent_by: user?.user?.id || null,
+        })
+        .select()
+        .single();
+
+      if (insertError) {
+        console.error("Failed to persist esign document:", insertError);
+      }
+
       const newRecord: DocumentRecord = {
-        id: `doc-${Date.now()}`, type: newDoc.type, refNumber,
-        status: "sent", sentAt: new Date(), deliveryMethod: newDoc.deliveryMethod,
+        id: insertedDoc?.id || `doc-${Date.now()}`,
+        type: newDoc.type,
+        refNumber,
+        status: "sent",
+        sentAt: new Date(),
+        deliveryMethod: newDoc.deliveryMethod,
       };
       setDocuments(prev => [newRecord, ...prev]);
 
@@ -98,24 +154,8 @@ export function AgentESignTab({ leadId, customerName, customerEmail, customerPho
     }
   };
 
-  const simulateProgress = (docId: string) => {
-    setDocuments(prev => prev.map(doc => {
-      if (doc.id !== docId) return doc;
-      const progressMap: Record<SigningStatus, SigningStatus> = {
-        not_sent: "sent", sent: "delivered", delivered: "opened",
-        opened: "signing", signing: "completed", completed: "completed",
-      };
-      const newStatus = progressMap[doc.status];
-      return {
-        ...doc, status: newStatus,
-        ...(newStatus === "opened" && { openedAt: new Date() }),
-        ...(newStatus === "completed" && { completedAt: new Date() }),
-      };
-    }));
-  };
-
   const viewDocument = (doc: DocumentRecord) => {
-    navigate(`/agent/esign/view?type=${doc.type}&name=${encodeURIComponent(customerName)}&email=${encodeURIComponent(customerEmail)}&ref=${encodeURIComponent(doc.refNumber)}`);
+    navigate(`/agent/esign/view?type=${doc.type}&name=${encodeURIComponent(customerName)}&email=${encodeURIComponent(customerEmail)}&ref=${encodeURIComponent(doc.refNumber)}&leadId=${leadId}`);
   };
 
   const formatTime = (date?: Date) => {
@@ -202,7 +242,9 @@ export function AgentESignTab({ leadId, customerName, customerEmail, customerPho
 
         {/* TRACK TAB */}
         <TabsContent value="track" className="space-y-3">
-          {pendingDocs.length === 0 ? (
+          {isLoading ? (
+            <Card><CardContent className="p-8 text-center"><Loader2 className="w-8 h-8 mx-auto animate-spin text-muted-foreground" /></CardContent></Card>
+          ) : pendingDocs.length === 0 ? (
             <Card><CardContent className="p-8 text-center space-y-3">
               <CheckCircle2 className="w-12 h-12 mx-auto text-muted-foreground/30" />
               <p className="text-muted-foreground">No pending documents</p>
@@ -230,9 +272,6 @@ export function AgentESignTab({ leadId, customerName, customerEmail, customerPho
                       <div className="flex flex-col gap-2">
                         <Button size="sm" variant="outline" className="gap-1.5 text-xs h-8 border-primary text-primary hover:bg-primary hover:text-primary-foreground" onClick={() => viewDocument(doc)}>
                           <Eye className="w-3 h-3" />View
-                        </Button>
-                        <Button size="sm" variant="ghost" className="gap-1.5 text-xs h-8" onClick={() => simulateProgress(doc.id)}>
-                          <Sparkles className="w-3 h-3" />Simulate
                         </Button>
                       </div>
                     </div>
