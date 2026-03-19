@@ -32395,13 +32395,7 @@ html.dark .tru-summary-header-large,
   filter: brightness(0) invert(1);
 }
 
-/* Header logo dark mode visibility - ensure "MOVE" text is visible */
-.dark header img[alt="TruMove"],
-.dark header .tru-logo-image,
-.dark .tru-header-logo,
-.dark .header-logo img {
-  filter: brightness(0) invert(1);
-}
+/* Header logo - keep original colors, no inversion */
 
 /* Note: The tracking-header has its own logo with brightness(0) invert(1) applied inline.
    The global nav header logo should NOT be inverted on the tracking page. */
