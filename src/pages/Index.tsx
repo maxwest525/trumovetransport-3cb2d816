@@ -1224,12 +1224,7 @@ export default function Index() {
             </div>
 
             {/* RIGHT COLUMN: Form + CTAs */}
-            <div
-                ref={parallaxFormRef}
-                className="tru-hero-right-column"
-                style={{
-                  transform: `translateY(${formParallax.y}px)`
-                }}>
+            <div className="tru-hero-right-column">
                 
               <div className="tru-hero-form-panel" ref={quoteBuilderRef}>
                 {/* TOP ROW: Form Card */}
