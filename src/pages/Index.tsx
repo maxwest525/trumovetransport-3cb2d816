@@ -1300,20 +1300,31 @@ export default function Index() {
                            </div>
                          </div>
 
-                         {/* Move Date Row */}
                          <div style={{ marginTop: '12px' }}>
-                           <div className="tru-qb-input-wrap tru-qb-input-enhanced">
-                             <input
-                               type="date"
-                               value={moveDate ? moveDate.toISOString().split('T')[0] : ''}
-                               onChange={(e) => {
-                                 const val = e.target.value;
-                                 setMoveDate(val ? new Date(val + 'T00:00:00') : null);
-                               }}
-                               placeholder="Move Date"
-                               className="tru-qb-input"
-                               style={{ colorScheme: 'dark' }} />
-                           </div>
+                           <Popover>
+                             <PopoverTrigger asChild>
+                               <button
+                                 type="button"
+                                 className="tru-qb-input"
+                                 style={{ width: '100%', textAlign: 'left', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
+                               >
+                                 <Calendar className="w-4 h-4 shrink-0 opacity-60" />
+                                 <span style={{ opacity: moveDate ? 1 : 0.5 }}>
+                                   {moveDate ? format(moveDate, 'MMM d, yyyy') : 'Move Date'}
+                                 </span>
+                               </button>
+                             </PopoverTrigger>
+                             <PopoverContent className="w-auto p-0" align="center" side="top">
+                               <CalendarComponent
+                                 mode="single"
+                                 selected={moveDate ?? undefined}
+                                 onSelect={(date) => setMoveDate(date ?? null)}
+                                 disabled={(date) => date < new Date()}
+                                 initialFocus
+                                 className="p-3 pointer-events-auto"
+                               />
+                             </PopoverContent>
+                           </Popover>
                          </div>
 
                          {formError &&
