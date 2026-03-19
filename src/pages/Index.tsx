@@ -1671,11 +1671,6 @@ export default function Index() {
                   Contact <span className="tru-ai-headline-accent">Us.</span>
                 </h2>
                 <p className="tru-ai-subheadline text-lg mt-3">Our team is standing by. Voice, video, text, or email.</p>
-                <a href="tel:+16097277647" className="tru-ai-cta-btn mt-5">
-                  <Phone className="w-5 h-5 text-primary" />
-                  Call Now
-                  <ArrowRight className="w-5 h-5 text-primary" />
-                </a>
               </div>
 
               <div className="flex flex-col md:flex-row gap-5 items-stretch">
