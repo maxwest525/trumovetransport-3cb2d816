@@ -13461,7 +13461,7 @@
 /* Floating variant */
 .header-main.header-floating {
   position: relative;
-  margin: 5px 0 0;
+  margin: 5px 16px 0;
   border-radius: 16px;
   background: hsl(0 0% 30%);
   border: none;
