@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import CommandCenterNav from "@/components/layout/CommandCenterNav";
 import { Link } from "react-router-dom";
 import SiteShell from "@/components/layout/SiteShell";
 import { Shield, CheckCircle, AlertTriangle, TrendingUp, BadgeCheck, FileSearch, Clock, ArrowRight, Star, Search, Database, Activity, ClipboardCheck } from "lucide-react";
@@ -47,37 +48,7 @@ export default function Vetting() {
   return (
     <SiteShell hideTrustStrip>
       <div className="tru-vetting-page">
-        {/* Unified Command Center Header */}
-        <div className="sticky top-[102px] z-40">
-          <header className="tracking-header">
-            {/* Left - Logo & Title */}
-            <div className="flex items-center gap-3">
-              <img src={logoImg} alt="TruMove" className="h-6 brightness-0 invert" />
-              <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-white/90">Carrier Vetting</span>
-            </div>
-
-            {/* Center - Trust Indicators */}
-            <div className="tracking-header-trust">
-              <span className="tracking-header-trust-item"><Database className="w-3.5 h-3.5 text-primary" />SAFER DATABASE</span>
-              <span className="tracking-header-trust-dot">•</span>
-              <span className="tracking-header-trust-item"><Activity className="w-3.5 h-3.5 text-primary" />LIVE DATA</span>
-              <span className="tracking-header-trust-dot">•</span>
-              <span className="tracking-header-trust-item"><Shield className="w-3.5 h-3.5 text-primary" />FMCSA VERIFIED</span>
-              <span className="tracking-header-trust-dot">•</span>
-              <span className="tracking-header-trust-item"><ClipboardCheck className="w-3.5 h-3.5 text-primary" />CSA SCORES</span>
-              <span className="tracking-header-trust-dot">•</span>
-              <span className="tracking-header-trust-item"><BadgeCheck className="w-3.5 h-3.5 text-primary" />AUTHORITY CHECK</span>
-            </div>
-
-            {/* Right - Session ID */}
-            <div className="flex items-center gap-4">
-              <div className="text-right">
-                <div className="text-[11px] text-white/80 uppercase tracking-wider">Session ID</div>
-                <div className="text-sm font-mono text-white">VET-{String(Date.now()).slice(-8)}</div>
-              </div>
-            </div>
-          </header>
-        </div>
+        <CommandCenterNav title="Carrier Vetting" />
 
         {/* Hero Section */}
         <section className="tru-vetting-hero">

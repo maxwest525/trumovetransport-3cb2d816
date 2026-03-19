@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, type ReactNode } from "react";
+import CommandCenterNav from "@/components/layout/CommandCenterNav";
 
 function ScrollFadeIn({ children, delay = 0 }: { children: ReactNode; delay?: number }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -390,40 +391,7 @@ export default function ScanRoom() {
   return (
     <SiteShell hideTrustStrip>
       <div className="tru-scan-page">
-        {/* Sticky Command Center Header - matches OnlineEstimate */}
-        <div className="sticky top-[102px] z-40">
-          <header className="tracking-header">
-            <div className="flex items-center gap-3">
-              <img src={logoImg} alt="TruMove" className="h-6 brightness-0 invert" />
-              <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-white/90">
-                AI Move Estimator
-              </span>
-            </div>
-            {/* Center - Trust Indicators */}
-            <div className="tracking-header-trust">
-              <span className="tracking-header-trust-item">
-                <Scan className="w-3.5 h-3.5 text-primary" />
-                AI DETECTION
-              </span>
-              <span className="tracking-header-trust-dot">•</span>
-              <span className="tracking-header-trust-item">
-                <Camera className="w-3.5 h-3.5 text-primary" />
-                ROOM SCANNER
-              </span>
-              <span className="tracking-header-trust-dot">•</span>
-              <span className="tracking-header-trust-item">
-                <Shield className="w-3.5 h-3.5 text-primary" />
-                INSTANT RESULTS
-              </span>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="text-right">
-                <div className="text-[11px] text-white/80 uppercase tracking-wider">AI Scanner</div>
-                <div className="text-sm font-mono text-white">Beta</div>
-              </div>
-            </div>
-          </header>
-        </div>
+        <CommandCenterNav title="AI Move Estimator" />
 
         {/* Centered Header Section */}
         <section className="tru-scan-header-section">

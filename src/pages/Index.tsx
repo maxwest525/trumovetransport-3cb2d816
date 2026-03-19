@@ -1,4 +1,5 @@
 import { useState, useCallback, useMemo, useRef, useEffect } from "react";
+import CommandCenterNav from "@/components/layout/CommandCenterNav";
 
 // Scroll to top on mount
 const useScrollToTop = () => {
@@ -1107,40 +1108,7 @@ export default function Index() {
 
   return (
     <SiteShell centered hideTrustStrip>
-      {/* Sticky Header Block - TruMove Command Center */}
-      <div className="sticky top-[6.375rem] z-40">
-        <header className="tracking-header">
-          <div className="flex items-center justify-between w-full">
-            {/* Logo & Title */}
-            <div className="flex items-center gap-3">
-              <img
-                src={logoImg}
-                alt="TruMove"
-                className="h-6 brightness-0 invert" />
-              
-              <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-white/90">
-                TruMove Command Center
-              </span>
-            </div>
-
-            {/* CTA Buttons - equally distributed */}
-            <div className="flex-1 flex items-center justify-evenly ml-6">
-              <a href="tel:+18001234567" className="flex items-center gap-2 px-5 py-2 rounded-md bg-white/15 hover:bg-white/25 border border-white/30 hover:border-white/50 shadow-[0_2px_8px_rgba(0,0,0,0.3)] transition-all text-[11px] font-extrabold text-white uppercase tracking-[0.15em]">
-                <Phone className="w-4 h-4 text-[hsl(142,71%,45%)]" /> Call Now
-              </a>
-              <button onClick={() => navigate("/book")} className="flex items-center gap-2 px-5 py-2 rounded-md bg-white/15 hover:bg-white/25 border border-white/30 hover:border-white/50 shadow-[0_2px_8px_rgba(0,0,0,0.3)] transition-all text-[11px] font-extrabold text-white uppercase tracking-[0.15em]">
-                <Video className="w-4 h-4 text-[hsl(142,71%,45%)]" /> Video Consult
-              </button>
-              <a href="mailto:support@trumove.com" className="flex items-center gap-2 px-5 py-2 rounded-md bg-white/15 hover:bg-white/25 border border-white/30 hover:border-white/50 shadow-[0_2px_8px_rgba(0,0,0,0.3)] transition-all text-[11px] font-extrabold text-white uppercase tracking-[0.15em]">
-                <Mail className="w-4 h-4 text-[hsl(142,71%,45%)]" /> Email Support
-              </a>
-              <button className="flex items-center gap-2 px-5 py-2 rounded-md bg-white/15 hover:bg-white/25 border border-white/30 hover:border-white/50 shadow-[0_2px_8px_rgba(0,0,0,0.3)] transition-all text-[11px] font-extrabold text-white uppercase tracking-[0.15em]">
-                <MessageSquare className="w-4 h-4 text-[hsl(142,71%,45%)]" /> Text a Rep
-              </button>
-            </div>
-          </div>
-        </header>
-      </div>
+      <CommandCenterNav />
 
       <div className="tru-page-frame">
         <div className="tru-page-inner">
