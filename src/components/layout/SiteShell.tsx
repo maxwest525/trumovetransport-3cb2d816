@@ -24,15 +24,12 @@ export default function SiteShell({ children, centered = false, hideTrustStrip =
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground font-sans">
       {!hideHeader && (
-        <div className="sticky top-0 z-[90]">
-          <div className="dark pt-2 px-4 md:px-6 pb-[25px] relative z-10">
+        <div className="sticky top-0 z-[90] bg-transparent">
+          <div className="dark bg-transparent pt-2 px-4 md:px-6 pb-2 relative z-10">
             <Header />
             {!hideTrustStrip && !backendMode && <SaferTrustStrip />}
           </div>
           {stickySubHeader}
-          {!backendMode && !stickySubHeader && (
-            <div className="hidden md:block h-8 bg-gradient-to-b from-background to-transparent -mt-8 pointer-events-none" />
-          )}
         </div>
       )}
       <main className={`flex-1 w-full ${centered ? 'flex flex-col justify-center' : ''}`}>{children}</main>

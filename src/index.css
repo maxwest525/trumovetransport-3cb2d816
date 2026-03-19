@@ -1539,8 +1539,12 @@
   position: relative;
   width: 100%;
   min-height: 64rem;
-  overflow-x: hidden;  /* Prevent horizontal scroll */
-  margin-top: -80px;
+  overflow-x: hidden;
+  margin-top: -60px;
+}
+
+.header-logo-glow {
+  filter: drop-shadow(0 0 12px rgba(255,255,255,0.9)) drop-shadow(0 0 30px rgba(255,255,255,0.5));
 }
 
 /* Carousel cards hover within container bounds */
