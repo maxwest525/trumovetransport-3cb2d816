@@ -1711,41 +1711,37 @@ export default function Index() {
                   <div className="hidden md:block w-px bg-border" />
 
                   {/* Contact options */}
-                  <div className="flex flex-col gap-1.5 md:w-40 shrink-0 justify-center">
+                  <div className="flex flex-col gap-2.5 md:w-48 shrink-0 justify-center">
                     <a
                         href="tel:+16097277647"
-                        className="group flex flex-col items-center text-center p-2.5 hover:-translate-y-1 transition-all duration-200">
-                      <h3 className="text-sm font-bold text-foreground mb-0.5">Call Us</h3>
-                      <span className="inline-flex items-center gap-1 text-xs font-medium text-primary group-hover:gap-1.5 transition-all">
-                        Call now <ArrowRight className="h-3 w-3" />
-                      </span>
+                        className="flex items-center justify-center gap-2 bg-foreground text-background px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-foreground/90 transition-colors">
+                      <Phone className="w-4 h-4 text-primary" />
+                      Call Us
+                      <ArrowRight className="w-4 h-4 text-primary" />
                     </a>
 
                     <a
                         href="sms:+16097277647"
-                        className="group flex flex-col items-center text-center p-2.5 hover:-translate-y-1 transition-all duration-200">
-                      <h3 className="text-sm font-bold text-foreground mb-0.5">Text Support</h3>
-                      <span className="inline-flex items-center gap-1 text-xs font-medium text-primary group-hover:gap-1.5 transition-all">
-                        Send a text <ArrowRight className="h-3 w-3" />
-                      </span>
+                        className="flex items-center justify-center gap-2 bg-foreground text-background px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-foreground/90 transition-colors">
+                      <MessageSquare className="w-4 h-4 text-primary" />
+                      Text Support
+                      <ArrowRight className="w-4 h-4 text-primary" />
                     </a>
 
                     <button
                         onClick={() => window.dispatchEvent(new CustomEvent('trudy-start'))}
-                        className="group flex flex-col items-center text-center p-2.5 hover:-translate-y-1 transition-all duration-200">
-                      <h3 className="text-sm font-bold text-foreground mb-0.5">Talk to Trudy</h3>
-                      <span className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-1.5 rounded-full text-xs font-bold group-hover:bg-primary/90 transition-all shadow-md">
-                        Start Talking
-                      </span>
+                        className="flex items-center justify-center gap-2 bg-foreground text-background px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-foreground/90 transition-colors">
+                      <Mic className="w-4 h-4 text-primary" />
+                      Talk to Trudy
+                      <ArrowRight className="w-4 h-4 text-primary" />
                     </button>
 
                     <button
                         onClick={() => navigate("/site/book")}
-                        className="group flex flex-col items-center text-center p-2.5 hover:-translate-y-1 transition-all duration-200">
-                      <h3 className="text-sm font-bold text-foreground mb-0.5">Video Consult</h3>
-                      <span className="inline-flex items-center gap-1 text-xs font-medium text-primary group-hover:gap-1.5 transition-all">
-                        Schedule now <ArrowRight className="h-3 w-3" />
-                      </span>
+                        className="flex items-center justify-center gap-2 bg-foreground text-background px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-foreground/90 transition-colors">
+                      <Video className="w-4 h-4 text-primary" />
+                      Video Consult
+                      <ArrowRight className="w-4 h-4 text-primary" />
                     </button>
                   </div>
                 </div>
