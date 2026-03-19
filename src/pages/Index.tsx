@@ -1685,7 +1685,38 @@ export default function Index() {
                 {/* Right group: remaining cards */}
                 <div className="flex flex-col md:flex-row gap-6 flex-1 items-stretch">
 
-                {/* Col 2: Call Us + Text Support stacked */}
+                {/* Col 2: Agent photo */}
+                <div className="hidden lg:flex items-stretch md:w-48 shrink-0">
+                  <div className="rounded-2xl border-2 border-black overflow-hidden w-full" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3)' }}>
+                    <img src={contactAgentImg} alt="TruMove support agent" className="w-full h-full object-cover" />
+                  </div>
+                </div>
+
+                {/* Col 3: Send a Message — wide */}
+                <div className="flex-1 min-w-0 rounded-2xl border-2 border-black bg-card p-8 transition-all duration-200" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), inset 0 2px 8px rgba(0,0,0,0.15)' }}>
+                  <div className="flex flex-col items-center text-center mb-5">
+                    <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                      <MessageSquare className="h-5 w-5 text-primary" />
+                    </div>
+                    <h3 className="text-base font-semibold text-foreground mb-1">Send a Message</h3>
+                    <p className="text-xs text-muted-foreground">We'll get back to you within a few hours.</p>
+                  </div>
+                  <form className="space-y-3" onSubmit={(e) => e.preventDefault()}>
+                    <div className="grid grid-cols-2 gap-3">
+                      <input type="text" required placeholder="Your name" className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
+                      <input type="email" required placeholder="Email address" className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
+                    </div>
+                    <textarea required rows={5} placeholder="How can we help?" className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary resize-none" />
+                    <button type="submit" className="w-full bg-foreground text-background py-3 rounded-lg text-sm font-semibold hover:bg-foreground/90 transition-colors">
+                      Send Message
+                    </button>
+                  </form>
+                  <p className="text-center text-[11px] text-muted-foreground mt-3">
+                    or email <a href="mailto:support@trumove.com" className="text-primary underline underline-offset-2 hover:text-primary/80">support@trumove.com</a>
+                  </p>
+                </div>
+
+                {/* Col 4: Call Us + Text Support stacked */}
                 <div className="flex flex-col gap-4 md:w-44 shrink-0">
                   <a
                       href="tel:+16097277647"
@@ -1717,31 +1748,7 @@ export default function Index() {
                   </a>
                 </div>
 
-                {/* Col 3: Send a Message — wide center */}
-                <div className="flex-1 min-w-0 rounded-2xl border-2 border-black bg-card p-8 transition-all duration-200" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), inset 0 2px 8px rgba(0,0,0,0.15)' }}>
-                  <div className="flex flex-col items-center text-center mb-5">
-                    <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                      <MessageSquare className="h-5 w-5 text-primary" />
-                    </div>
-                    <h3 className="text-base font-semibold text-foreground mb-1">Send a Message</h3>
-                    <p className="text-xs text-muted-foreground">We'll get back to you within a few hours.</p>
-                  </div>
-                  <form className="space-y-3" onSubmit={(e) => e.preventDefault()}>
-                    <div className="grid grid-cols-2 gap-3">
-                      <input type="text" required placeholder="Your name" className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
-                      <input type="email" required placeholder="Email address" className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
-                    </div>
-                    <textarea required rows={5} placeholder="How can we help?" className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary resize-none" />
-                    <button type="submit" className="w-full bg-foreground text-background py-3 rounded-lg text-sm font-semibold hover:bg-foreground/90 transition-colors">
-                      Send Message
-                    </button>
-                  </form>
-                  <p className="text-center text-[11px] text-muted-foreground mt-3">
-                    or email <a href="mailto:support@trumove.com" className="text-primary underline underline-offset-2 hover:text-primary/80">support@trumove.com</a>
-                  </p>
-                </div>
-
-                {/* Col 4: Talk to Trudy + Book Video Consult stacked */}
+                {/* Col 5: Talk to Trudy + Book Video Consult stacked */}
                 <div className="flex flex-col gap-4 md:w-48 shrink-0">
                   <HoverCard openDelay={200} closeDelay={100}>
                     <HoverCardTrigger asChild>
@@ -1791,13 +1798,6 @@ export default function Index() {
                       </div>
                     </HoverCardContent>
                   </HoverCard>
-                </div>
-
-                {/* Col 5: Agent photo */}
-                <div className="hidden lg:flex items-stretch md:w-56 shrink-0">
-                  <div className="rounded-2xl border-2 border-black overflow-hidden w-full" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3)' }}>
-                    <img src={contactAgentImg} alt="TruMove support agent" className="w-full h-full object-cover" />
-                  </div>
                 </div>
                 </div>
               </div>
