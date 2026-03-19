@@ -9,7 +9,7 @@ interface CommandCenterNavProps {
 
 const navLinks = [
   { href: "/site", label: "Home", icon: Home },
-  { href: "/site/book", label: "Connect With Us", icon: Calendar },
+  
   { href: "/site/online-estimate", label: "AI Move Estimator", icon: Calculator, matchAlso: ["/site/scan-room"] },
   { href: "/site/track", label: "Shipment Tracking", icon: MapPin },
   { href: "/site/vetting", label: "Carrier Vetting", icon: Shield, matchAlso: ["/site/carrier-vetting"] },
