@@ -1,54 +1,25 @@
-# Growth Engine Architecture
 
-## Lead Flow (Canonical)
 
-```text
-Traffic Source → Landing Page / Call Tracking → Attribution Capture
-  → Webhook / Router → Convoso (Instant Call) → CRM Sync
-  → Backup Follow-Up Logic
+## Plan: Increase White Glow Around "MOVE" in Logo
+
+The logo currently has a 4-layer white drop-shadow. Since `drop-shadow` applies uniformly to all non-transparent pixels, we can't selectively target just the dark "MOVE" text vs the green "Tru" portion with a single filter.
+
+However, increasing the intensity and spread of the existing glow will make the dark letters pop more against the black navbar. The green portion already has inherent contrast so it won't be negatively affected.
+
+### Changes
+
+**`src/components/layout/Header.tsx` (line 159)**
+
+Increase the glow radius and opacity across all layers, and add additional wider layers for a stronger halo effect:
+
+```
+Current:  drop-shadow(0 0 4px rgba(255,255,255,1)) drop-shadow(0 0 10px rgba(255,255,255,0.85)) drop-shadow(0 0 22px rgba(255,255,255,0.5)) drop-shadow(0 0 40px rgba(255,255,255,0.25))
+
+Proposed: drop-shadow(0 0 6px rgba(255,255,255,1)) drop-shadow(0 0 14px rgba(255,255,255,1)) drop-shadow(0 0 28px rgba(255,255,255,0.7)) drop-shadow(0 0 44px rgba(255,255,255,0.4)) drop-shadow(0 0 60px rgba(255,255,255,0.2))
 ```
 
-### Key Principles
+Key differences:
+- Inner layers bumped to full opacity (1.0) for a brighter core glow around the black letters
+- Mid-range layers increased from 0.5→0.7 for stronger falloff
+- Added a 5th layer at 60px for a wider, softer halo
 
-- **Convoso** is the primary instant-call engine. Leads route here first for immediate dial attempts.
-- **CRM** (GHL, Granot, or custom) is a sync target / system of record, not the primary destination.
-- Each workflow should designate **one primary CRM**; others are optional secondary sync targets.
-- GHL does not replace Convoso. It provides backup sequences and reporting.
-- "Follow-up automation" means support logic around the instant-call flow, not passive CRM drip sequences.
-
-### Lead Statuses (Convoso feedback loop)
-
-- New Lead
-- In Queue
-- Attempted
-- Connected
-- Not Reached
-- Escalated
-- Duplicate
-- Suppressed
-
-### Backup Automation Recipes
-
-1. New form lead → capture attribution → webhook to Convoso → instant call attempt → sync to CRM
-2. Lead not reached after 60s → trigger SMS with quote link
-3. No contact after 5 minutes → escalate to supervisor dashboard alert
-4. Missed inbound call from paid source → create Convoso callback + alert
-5. After-hours form submission → queue for next calling block + send auto-text
-6. Duplicate lead detected → suppress in Convoso, tag in CRM
-7. Source/campaign changes on re-submission → preserve original attribution in CRM
-8. Lead not worked within 2 minutes → flash alert on Growth Dashboard
-
-### After-Hours Logic (First-Class)
-
-- Business hours rules per location/team
-- Queue timing and next-call-block scheduling
-- Auto-text behavior for after-hours submissions
-- Morning queue priority ordering
-
-## Upgrade Plan (Pending)
-
-### Pass 1: Dashboard + Landing Pages + Leads + SEO Hub
-### Pass 2: Ad Copy + Tracking + Automation + Reviews
-### Pass 3: Competitors + Settings + Campaign Builder Enhancement + Shell Polish
-
-See previous conversation for full details on each pass.
