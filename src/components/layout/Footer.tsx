@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export default function Footer() {
   return (
@@ -27,6 +28,9 @@ export default function Footer() {
           <Link className="footer-link footer-link-muted" to="/">
             Portal
           </Link>
+          <div className="ml-2">
+            <ThemeToggle />
+          </div>
         </nav>
       </div>
     </footer>

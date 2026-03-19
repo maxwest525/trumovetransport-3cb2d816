@@ -4,7 +4,7 @@ import {
   Menu, X, Phone, Video, Mail, MessageSquare
 } from "lucide-react";
 import logo from "@/assets/logo.png";
-import { ThemeToggle } from "@/components/ThemeToggle";
+
 
 interface CtaItem {
   href: string;
@@ -47,14 +47,14 @@ export default function Header() {
           </Link>
 
           {/* Desktop CTA Buttons */}
-          <nav className="header-nav" aria-label="Primary">
+          <nav className="header-nav flex-1 justify-evenly" aria-label="Primary">
             {CTA_ITEMS.map((item) => {
               const Icon = item.icon;
               if (item.isExternal) {
                 return (
                   <div key={item.label} className="header-nav-item">
-                    <a href={item.href} className="header-nav-link">
-                      <Icon className="w-4 h-4 text-[hsl(142,71%,45%)]" />
+                    <a href={item.href} className="header-nav-link text-[15px]">
+                      <Icon className="w-5 h-5 text-[hsl(142,71%,45%)]" />
                       {item.label}
                     </a>
                   </div>
@@ -64,18 +64,14 @@ export default function Header() {
                 <div key={item.label} className="header-nav-item">
                   <Link
                     to={item.href}
-                    className={`header-nav-link ${location.pathname === item.href ? "is-active" : ""}`}
+                    className={`header-nav-link text-[15px] ${location.pathname === item.href ? "is-active" : ""}`}
                   >
-                    <Icon className="w-4 h-4 text-[hsl(142,71%,45%)]" />
+                    <Icon className="w-5 h-5 text-[hsl(142,71%,45%)]" />
                     {item.label}
                   </Link>
                 </div>
               );
             })}
-            {/* Theme Toggle */}
-            <div className="header-nav-item">
-              <ThemeToggle />
-            </div>
           </nav>
 
           {/* Mobile Menu Toggle */}
@@ -121,12 +117,6 @@ export default function Header() {
                 );
               })}
             </nav>
-            <div className="header-mobile-actions">
-              {/* Theme Toggle (Mobile) */}
-              <div className="flex justify-center pt-4 border-t border-border/40 mt-4">
-                <ThemeToggle />
-              </div>
-            </div>
           </div>
         )}
       </header>
