@@ -1685,14 +1685,7 @@ export default function Index() {
                 {/* Right group: remaining cards */}
                 <div className="flex flex-col md:flex-row gap-6 flex-1 items-stretch">
 
-                {/* Col 2: Agent photo */}
-                <div className="hidden lg:flex md:w-64 shrink-0 self-center">
-                  <div className="rounded-2xl border-2 border-black overflow-hidden w-full" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3)' }}>
-                    <img src={contactAgentImg} alt="TruMove support agent" className="block w-full h-auto" />
-                  </div>
-                </div>
-
-                {/* Col 3: Send a Message — wide */}
+                {/* Col 2: Send a Message — wide */}
                 <div className="flex-1 min-w-0 rounded-2xl border-2 border-black bg-card p-8 flex flex-col transition-all duration-200" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), inset 0 2px 8px rgba(0,0,0,0.15)' }}>
                   <div className="flex flex-col items-center text-center mb-5">
                     <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
@@ -1714,6 +1707,13 @@ export default function Index() {
                   <p className="text-center text-[11px] text-muted-foreground mt-3">
                     or email <a href="mailto:support@trumove.com" className="text-primary underline underline-offset-2 hover:text-primary/80">support@trumove.com</a>
                   </p>
+                </div>
+
+                {/* Col 3: Agent photo */}
+                <div className="hidden lg:flex md:w-64 shrink-0 self-center">
+                  <div className="rounded-2xl border-2 border-black overflow-hidden w-full" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3)' }}>
+                    <img src={contactAgentImg} alt="TruMove support agent" className="block w-full h-auto" />
+                  </div>
                 </div>
 
                 {/* Col 4: All 4 contact options stacked */}
