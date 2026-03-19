@@ -13531,7 +13531,7 @@
 }
 
 .header-contact-label {
-  color: hsl(0 0% 100% / 0.6);
+  color: hsl(0 0% 100%);
   font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.05em;
@@ -13542,10 +13542,10 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  background: hsl(0 0% 100% / 0.06);
+  background: transparent;
   border-radius: 9999px;
   padding: 4px 6px;
-  border: 1px solid hsl(0 0% 100% / 0.08);
+  border: 1px solid hsl(0 0% 100% / 0.35);
 }
 
 .header-contact-icon {
@@ -13555,13 +13555,13 @@
   width: 28px;
   height: 28px;
   border-radius: 9999px;
-  color: hsl(0 0% 100% / 0.6);
+  color: hsl(0 0% 100%);
   transition: all 200ms ease;
 }
 
 .header-contact-icon:hover {
-  background: hsl(142 71% 45% / 0.15);
-  color: hsl(142 71% 45%);
+  background: hsl(0 0% 100% / 0.15);
+  color: hsl(0 0% 100%);
 }
 
 /* Nav Item Wrapper (for mega-menu positioning) */
