@@ -69,7 +69,7 @@ export default function Header() {
 
           {/* Contact Us - right */}
           <div className="header-contact-group">
-            <span className="header-contact-label">Contact Us</span>
+            <Link to="/site/contact" className="header-contact-label">Contact Us</Link>
             <div className="header-contact-icons">
               {CONTACT_ACTIONS.map((action) => {
                 const Icon = action.icon;
