@@ -13,13 +13,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/site/online-estimate", label: "Virtual Inventory", icon: Calculator },
   { href: "/site/track", label: "Shipment Tracking", icon: MapPin },
   { href: "/site/vetting", label: "FMCSA Carrier Vetting", icon: Shield },
-];
-
-const CONTACT_ACTIONS = [
-  { icon: MessageSquare, label: "Text", href: "sms:+1234567890" },
-  { icon: Mail, label: "Email", href: "mailto:info@trumove.com" },
-  { icon: Phone, label: "Phone", href: "tel:+1234567890" },
-  { icon: Video, label: "Video", href: "/site/book" },
+  { href: "/site/book", label: "Contact Us", icon: Phone },
 ];
 
 export default function Header() {
