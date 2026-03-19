@@ -515,7 +515,7 @@ function ShipmentTrackerSection({ navigate }: {navigate: (path: string) => void;
           </div>
 
           {/* Headline + CTA - center */}
-          <div className="flex flex-col items-center text-center gap-4 bg-card border-2 border-black rounded-xl p-8" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), inset 0 2px 8px rgba(0,0,0,0.15)' }}>
+          <div className="flex flex-col items-center text-center gap-4 bg-card border-black p-8 border-0 shadow-none rounded-none" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), inset 0 2px 8px rgba(0,0,0,0.15)' }}>
             <div className="tru-ai-headline-block">
               <h2 className="tru-ai-main-headline">
                 Real-Time<br />
@@ -1601,7 +1601,7 @@ export default function Index() {
               {/* Header row: info on left, previews on right */}
               <div className="tru-ai-header-row" ref={scanPreviewRef}>
                 {/* LEFT: Description content */}
-                <div className="tru-ai-content-left" style={{ justifyContent: 'center' }}>
+                <div className="tru-ai-content-left border-0 rounded-none shadow-none" style={{ justifyContent: 'center' }}>
                   {/* Premium headline block */}
                   <div className="tru-ai-headline-block animate-fade-scale-in opacity-0" style={{ animationDelay: '0ms' }}>
                     <h2 className="tru-ai-main-headline">
@@ -1659,7 +1659,7 @@ export default function Index() {
             <div className="max-w-6xl mx-auto">
               <div className="flex flex-col md:flex-row items-stretch">
                 {/* Col 1: Headline — separated left */}
-                <div className="shrink-0 self-center flex flex-col items-center text-center rounded-xl border-2 border-black bg-card p-6 mr-10" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), inset 0 2px 8px rgba(0,0,0,0.15)', marginLeft: '-100px', maxWidth: '240px' }}>
+                <div className="shrink-0 self-center flex flex-col items-center text-center border-black bg-card p-6 mr-10 rounded-none shadow-none border-0" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), inset 0 2px 8px rgba(0,0,0,0.15)', marginLeft: '-100px', maxWidth: '240px' }}>
                   <h2 className="text-3xl font-black tracking-tight text-foreground mb-3">Contact Us.</h2>
                   <p className="text-sm text-muted-foreground leading-relaxed mb-5">Our team is standing by. Voice, video, text, or email.</p>
                   <a href="tel:+16097277647" className="inline-flex items-center gap-2 bg-foreground text-background px-6 py-2.5 rounded-full text-sm font-semibold hover:opacity-90 transition-opacity">
