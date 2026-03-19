@@ -204,33 +204,34 @@ export default function ElevenLabsTrudyWidget() {
 
       {/* Main floating pill */}
       <div
-        className="relative group flex items-center gap-0 select-none"
-        onPointerDown={onDragStart}
-        onPointerMove={onDragMove}
-        onPointerUp={onDragEnd}
+        className="relative group flex items-center gap-2 select-none"
         style={{ touchAction: 'none' }}
       >
-        {/* Ambient glow */}
-        {!isConnected && !isConnecting && (
-          <div className="absolute -inset-1 rounded-full bg-primary/25 blur-lg animate-pulse pointer-events-none" />
-        )}
-
-        <div className={`relative flex items-center rounded-full shadow-2xl transition-all duration-200 cursor-grab active:cursor-grabbing ${
-          isConnected
-            ? 'bg-destructive shadow-destructive/30'
-            : isConnecting
-            ? 'bg-muted'
-            : 'bg-foreground hover:shadow-foreground/30'
-        }`}>
-          {/* Avatar section */}
-          <div className="relative pl-1.5 py-1.5">
-            <img src={trudyAvatar} alt="Trudy" className="h-10 w-10 rounded-full object-cover ring-2 ring-background/20" />
-            {!isConnected && !isConnecting && (
-              <span className="absolute bottom-1 right-0 h-3 w-3 rounded-full bg-primary ring-2 ring-foreground" />
-            )}
-            {isConnected && (
-              <span className="absolute bottom-1 right-0 h-3 w-3 rounded-full bg-destructive ring-2 ring-destructive animate-pulse" />
-            )}
+        <div
+          className={`relative flex items-center rounded-2xl shadow-2xl transition-all duration-200 ${
+            isConnected
+              ? 'bg-destructive shadow-destructive/40'
+              : isConnecting
+              ? 'bg-muted shadow-md'
+              : 'bg-primary shadow-primary/40 hover:shadow-primary/60 hover:shadow-2xl hover:scale-[1.02]'
+          }`}
+        >
+          {/* Drag handle area */}
+          <div
+            onPointerDown={onDragStart}
+            onPointerMove={onDragMove}
+            onPointerUp={onDragEnd}
+            className="flex items-center pl-1.5 py-1.5 cursor-grab active:cursor-grabbing"
+          >
+            <div className="relative">
+              <img src={trudyAvatar} alt="Trudy" className="h-11 w-11 rounded-xl object-cover ring-2 ring-background/20" />
+              {isConnected && (
+                <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-destructive-foreground opacity-75" />
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-destructive-foreground" />
+                </span>
+              )}
+            </div>
           </div>
 
           {/* Text + action */}
@@ -241,22 +242,22 @@ export default function ElevenLabsTrudyWidget() {
               else if (!isConnecting) startConversation();
             }}
             disabled={isConnecting}
-            className="flex items-center gap-2 pl-2.5 pr-4 py-3 rounded-r-full"
+            className="flex items-center gap-2 pl-2.5 pr-5 py-3.5 rounded-r-2xl"
           >
             {isConnecting ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-                <span className="text-[13px] font-semibold text-muted-foreground">Connecting…</span>
+                <span className="text-sm font-bold text-muted-foreground">Connecting…</span>
               </>
             ) : isConnected ? (
               <>
                 <PhoneOff className="h-4 w-4 text-destructive-foreground" />
-                <span className="text-[13px] font-semibold text-destructive-foreground">End Call</span>
+                <span className="text-sm font-bold text-destructive-foreground">End Call</span>
               </>
             ) : (
               <>
-                <Mic className="h-4 w-4 text-background" />
-                <span className="text-[13px] font-semibold text-background whitespace-nowrap">Talk to Trudy</span>
+                <Mic className="h-[18px] w-[18px] text-primary-foreground" />
+                <span className="text-sm font-bold text-primary-foreground whitespace-nowrap">Talk to Trudy</span>
               </>
             )}
           </button>
@@ -266,7 +267,7 @@ export default function ElevenLabsTrudyWidget() {
         {!isConnected && !isConnecting && (
           <button
             onClick={(e) => { e.stopPropagation(); setShowOptions(v => !v); }}
-            className="ml-1.5 flex items-center justify-center h-8 w-8 rounded-full bg-card border border-border shadow-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+            className="flex items-center justify-center h-9 w-9 rounded-xl bg-card border border-border shadow-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
             aria-label="More contact options"
           >
             <Phone className="h-3.5 w-3.5" />
@@ -275,8 +276,8 @@ export default function ElevenLabsTrudyWidget() {
 
         {/* Hover tooltip */}
         {!isConnected && !isConnecting && (
-          <div className="absolute bottom-full right-0 mb-3 w-44 rounded-lg bg-card border border-border shadow-lg px-3 py-2 opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200">
-            <p className="text-[11px] font-medium text-foreground leading-tight">AI Voice Assistant</p>
+          <div className="absolute bottom-full right-0 mb-3 w-44 rounded-xl bg-card border border-border shadow-lg px-3 py-2 opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200">
+            <p className="text-[11px] font-semibold text-foreground leading-tight">AI Voice Assistant</p>
             <p className="text-[10px] text-muted-foreground leading-snug mt-0.5">Quotes, tracking & scheduling. Drag to move.</p>
           </div>
         )}
