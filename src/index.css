@@ -552,7 +552,7 @@
 
 /* Hero Headline Main - Larger Desktop Impact */
 .tru-hero-headline-main {
-  font-size: clamp(2rem, 6vw, 3.75rem);
+  font-size: 48px;
   line-height: 1.12;
   font-weight: 800;
   letter-spacing: -0.02em;
@@ -1538,7 +1538,7 @@
 .tru-hero-wrapper {
   position: relative;
   width: 100%;
-  min-height: calc(100vh - 130px);
+  min-height: auto;
   overflow-x: hidden;  /* Prevent horizontal scroll */
 }
 
@@ -1655,7 +1655,7 @@
 }
 
 .tru-hero-headline {
-  font-size: clamp(40px, 6vw, 72px);
+  font-size: 60px;
   font-weight: 900;
   letter-spacing: -0.035em;
   line-height: 1.02;
@@ -1693,7 +1693,7 @@
 }
 
 .tru-hero-bullets li {
-  font-size: clamp(13px, 1.15vw, 16px);
+  font-size: 15px;
   font-weight: 500;
   color: hsl(0 0% 100% / 0.92);
   line-height: 1.5;
@@ -1717,7 +1717,7 @@
 
 /* CTA prompt line */
 .tru-hero-cta-prompt {
-  font-size: clamp(13px, 1.1vw, 15px);
+  font-size: 14px;
   font-weight: 600;
   color: hsl(0 0% 100% / 0.95);
   margin: 4px 0 0 0;
@@ -1972,7 +1972,7 @@
 
 /* Legacy support for existing headline styles */
 .tru-hero-headline-main {
-  font-size: clamp(40px, 6vw, 72px);
+  font-size: 60px;
   font-weight: 900;
   letter-spacing: -0.03em;
   line-height: 1.05;
@@ -2272,7 +2272,7 @@
 }
 
 .tru-hero-headline-main {
-  font-size: clamp(32px, 4vw, 52px);
+  font-size: 48px;
   font-weight: 800;
   line-height: 1.15;
   color: hsl(var(--tm-ink));
@@ -6202,7 +6202,7 @@
   }
   
   .tru-hero-headline-main {
-    font-size: clamp(24px, 5vw, 32px);
+    font-size: 28px;
   }
   
   .tru-hero-value-props {

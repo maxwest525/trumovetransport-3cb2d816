@@ -22,7 +22,7 @@ import FeatureCarousel from "@/components/FeatureCarousel";
 import FeatureTrustStrip from "@/components/FeatureTrustStrip";
 import StatsStrip from "@/components/StatsStrip";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
-import { useParallax } from "@/hooks/useParallax";
+
 import logoImg from "@/assets/logo.png";
 import eldMapImg from "@/assets/eld-map.jpg";
 import trackingLifestyleImg from "@/assets/tracking-lifestyle.png";
@@ -684,9 +684,7 @@ export default function Index() {
     triggerOnce: true
   });
 
-  // Parallax effects for hero elements
-  const [parallaxHeadlineRef, headlineParallax] = useParallax<HTMLDivElement>({ speed: 0.15, direction: "up" });
-  const [parallaxFormRef, formParallax] = useParallax<HTMLDivElement>({ speed: 0.05, direction: "up" });
+  // Parallax removed for zoom stability
 
   // Step tracking (1-4)
   const [step, setStep] = useState(1);
@@ -1226,12 +1224,7 @@ export default function Index() {
             </div>
 
             {/* RIGHT COLUMN: Form + CTAs */}
-            <div
-                ref={parallaxFormRef}
-                className="tru-hero-right-column"
-                style={{
-                  transform: `translateY(${formParallax.y}px)`
-                }}>
+            <div className="tru-hero-right-column">
                 
               <div className="tru-hero-form-panel" ref={quoteBuilderRef}>
                 {/* TOP ROW: Form Card */}
