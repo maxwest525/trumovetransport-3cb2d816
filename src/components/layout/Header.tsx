@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, Calculator, MapPin, Shield, MessageSquare, Mail, Phone, Video } from "lucide-react";
-import logo from "@/assets/logo-nav.png";
+import logo from "@/assets/logo.png";
 
 interface NavItem {
   href: string;
