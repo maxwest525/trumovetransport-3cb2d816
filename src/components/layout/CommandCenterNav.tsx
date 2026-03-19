@@ -44,10 +44,10 @@ export default function CommandCenterNav({ title = "TruMove Command Center" }: C
               <Link
                 key={item.href}
                 to={item.href}
-                className={`flex items-center gap-2.5 px-4 py-1.5 rounded-lg text-[13px] font-extrabold uppercase tracking-[0.1em] transition-all ${
+                className={`flex items-center gap-2.5 px-4 py-1.5 rounded-lg text-[15px] font-semibold transition-all ${
                   active
-                    ? "text-white"
-                    : "text-white/60 hover:text-white"
+                    ? "text-[hsl(0,0%,100%)]"
+                    : "text-[hsl(0,0%,100%)]/60 hover:text-[hsl(0,0%,100%)]"
                 }`}
               >
                 <Icon className="w-4 h-4 text-[hsl(142,71%,45%)]" />
