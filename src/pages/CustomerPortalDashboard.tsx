@@ -84,7 +84,7 @@ export default function CustomerPortalDashboard() {
       setDocuments(files ?? []);
 
       // Fetch e-sign documents linked to lead
-      const linkedLeadId = access.lead_id || (access.deal_id ? d?.lead_id : null);
+      const linkedLeadId = access.lead_id || dealLeadId;
       if (linkedLeadId) {
         const { data: esigns } = await supabase
           .from("esign_documents")
