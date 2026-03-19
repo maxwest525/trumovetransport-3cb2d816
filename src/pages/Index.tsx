@@ -1717,7 +1717,7 @@ export default function Index() {
                 </div>
 
                 {/* Col 4: All 4 contact options stacked */}
-                <div className="flex flex-col gap-3 md:w-40 shrink-0">
+                <div className="flex flex-col gap-3 md:w-40 shrink-0 self-center">
                   <a
                     href="tel:+16097277647"
                     className="group flex flex-col items-center text-center rounded-2xl border-2 border-black bg-card p-3 hover:-translate-y-1 transition-all duration-200 flex-1" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), inset 0 2px 8px rgba(0,0,0,0.15)' }}>
