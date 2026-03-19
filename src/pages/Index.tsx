@@ -1615,24 +1615,26 @@ export default function Index() {
           {/* GET IN TOUCH */}
           <section className="py-20 px-4">
             <div className="max-w-6xl mx-auto">
-              <div className="flex flex-col md:flex-row items-stretch">
-                {/* Col 1: Headline — separated left */}
-                <div className="shrink-0 self-center flex flex-col items-center text-center bg-card p-6 mr-10 rounded-none shadow-none border-0" style={{ marginLeft: '-100px', maxWidth: '240px' }}>
-                  <h2 className="text-3xl font-black tracking-tight text-foreground mb-3">Contact Us.</h2>
-                  <p className="text-sm text-muted-foreground leading-relaxed mb-5">Our team is standing by. Voice, video, text, or email.</p>
-                  <a href="tel:+16097277647" className="inline-flex items-center gap-2 bg-foreground text-background px-6 py-2.5 rounded-full text-sm font-semibold hover:opacity-90 transition-opacity">
-                    <Phone className="w-4 h-4 text-[#4cff05]" />
-                    Call Now
-                    <ArrowRight className="w-4 h-4 text-[#4cff05]" />
-                  </a>
-                </div>
+              <div className="flex flex-col md:flex-row gap-6 items-stretch">
 
-                {/* Right group: form + buttons in one box, then agent photo */}
-                <div className="flex flex-col md:flex-row gap-6 flex-1 items-stretch">
-
-                {/* Combined box: Send a Message + Contact Options */}
+                {/* Single combined card: Headline + Form + Divider + Buttons */}
                 <div className="flex-1 min-w-0 rounded-2xl bg-card p-6 flex flex-col md:flex-row gap-6 transition-all duration-200">
-                  {/* Send a Message form */}
+                  
+                  {/* Left: Headline */}
+                  <div className="shrink-0 self-center flex flex-col items-center text-center" style={{ maxWidth: '200px' }}>
+                    <h2 className="text-3xl font-black tracking-tight text-foreground mb-3">Contact Us.</h2>
+                    <p className="text-sm text-muted-foreground leading-relaxed mb-5">Our team is standing by. Voice, video, text, or email.</p>
+                    <a href="tel:+16097277647" className="inline-flex items-center gap-2 bg-foreground text-background px-6 py-2.5 rounded-full text-sm font-semibold hover:opacity-90 transition-opacity">
+                      <Phone className="w-4 h-4 text-[#4cff05]" />
+                      Call Now
+                      <ArrowRight className="w-4 h-4 text-[#4cff05]" />
+                    </a>
+                  </div>
+
+                  {/* Divider */}
+                  <div className="hidden md:block w-px bg-border" />
+
+                  {/* Center: Send a Message form */}
                   <div className="flex-1 flex flex-col">
                     <div className="flex flex-col items-center text-center mb-5">
                       <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
@@ -1659,7 +1661,7 @@ export default function Index() {
                   {/* Divider */}
                   <div className="hidden md:block w-px bg-border" />
 
-                  {/* Contact options */}
+                  {/* Right: Contact options */}
                   <div className="flex flex-col gap-2 md:w-40 shrink-0 justify-center">
                     <a
                         href="tel:+16097277647"
@@ -1704,7 +1706,6 @@ export default function Index() {
                   <div className="rounded-2xl overflow-hidden w-full">
                     <img src={contactAgentImg} alt="TruMove support agent" className="block w-full h-auto" />
                   </div>
-                </div>
                 </div>
               </div>
             </div>
