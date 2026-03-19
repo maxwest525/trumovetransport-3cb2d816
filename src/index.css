@@ -13514,6 +13514,52 @@
   width: auto;
 }
 
+/* Individual letter glow overlay for M-O-V-E */
+.logo-glow-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.logo-letter-glow {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  display: flex;
+  pointer-events: none;
+  font-family: 'Arial Black', 'Impact', sans-serif;
+  font-weight: 900;
+  font-size: 18px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: transparent;
+  padding-right: 1px;
+}
+
+.logo-letter-glow span {
+  text-shadow:
+    0 0 8px rgba(255,255,255,1),
+    0 0 16px rgba(255,255,255,1),
+    0 0 30px rgba(255,255,255,0.95),
+    0 0 50px rgba(255,255,255,0.8),
+    0 0 80px rgba(255,255,255,0.6),
+    0 0 120px rgba(255,255,255,0.4),
+    0 0 160px rgba(255,255,255,0.25);
+}
+
+/* Dark mode override - keep glow visible */
+.dark .logo-letter-glow span {
+  text-shadow:
+    0 0 8px rgba(255,255,255,1),
+    0 0 16px rgba(255,255,255,1),
+    0 0 30px rgba(255,255,255,0.95),
+    0 0 50px rgba(255,255,255,0.8),
+    0 0 80px rgba(255,255,255,0.6),
+    0 0 120px rgba(255,255,255,0.4),
+    0 0 160px rgba(255,255,255,0.25);
+}
+
 .header-nav {
   display: flex;
   align-items: center;

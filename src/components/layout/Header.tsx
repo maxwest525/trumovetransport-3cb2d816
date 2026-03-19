@@ -153,11 +153,12 @@ export default function Header() {
         <div className="header-inner">
           {/* Logo */}
           <Link to="/site" className="header-logo" aria-label="TruMove Home">
-            <img 
-              src={logo} 
-              alt="TruMove" 
-              style={{ filter: 'drop-shadow(0 0 14px rgba(255,255,255,1)) drop-shadow(0 0 30px rgba(255,255,255,1)) drop-shadow(0 0 60px rgba(255,255,255,1)) drop-shadow(0 0 100px rgba(255,255,255,1)) drop-shadow(0 0 150px rgba(255,255,255,0.8)) drop-shadow(0 0 200px rgba(255,255,255,0.6))' }}
-            />
+            <div className="logo-glow-wrapper">
+              <img src={logo} alt="TruMove" />
+              <div className="logo-letter-glow" aria-hidden="true">
+                <span>M</span><span>O</span><span>V</span><span>E</span>
+              </div>
+            </div>
           </Link>
 
           {/* Desktop Nav with Mega-Menus */}

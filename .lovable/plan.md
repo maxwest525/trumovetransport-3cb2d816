@@ -1,40 +1,54 @@
+# Growth Engine Architecture
 
+## Lead Flow (Canonical)
 
-## Plan: Individual White Underglow for M-O-V-E Letters
+```text
+Traffic Source → Landing Page / Call Tracking → Attribution Capture
+  → Webhook / Router → Convoso (Instant Call) → CRM Sync
+  → Backup Follow-Up Logic
+```
 
-### Challenge
-The logo is a single PNG image (`logo.png`), so CSS `drop-shadow` applies uniformly to the entire image — we can't target individual letters within a raster image.
+### Key Principles
 
-### Approach
-Overlay invisible text spelling "MOVE" on top of (or behind) the logo image, with each letter wrapped in its own `<span>`. Each span gets a heavy white `text-shadow` glow. The visible letters still come from the PNG; the per-letter glow comes from the text overlay.
+- **Convoso** is the primary instant-call engine. Leads route here first for immediate dial attempts.
+- **CRM** (GHL, Granot, or custom) is a sync target / system of record, not the primary destination.
+- Each workflow should designate **one primary CRM**; others are optional secondary sync targets.
+- GHL does not replace Convoso. It provides backup sequences and reporting.
+- "Follow-up automation" means support logic around the instant-call flow, not passive CRM drip sequences.
 
-### Changes
+### Lead Statuses (Convoso feedback loop)
 
-**`src/components/layout/Header.tsx`**
+- New Lead
+- In Queue
+- Attempted
+- Connected
+- Not Reached
+- Escalated
+- Duplicate
+- Suppressed
 
-1. Remove the massive `drop-shadow` filter from the logo `<img>` (or reduce it significantly to just handle the "Tru" portion's glow).
+### Backup Automation Recipes
 
-2. Wrap the logo in a container with `position: relative`, then add an absolutely-positioned text overlay with four spans:
-   ```tsx
-   <div className="logo-glow-wrapper">
-     <img src={logo} alt="TruMove" />
-     <div className="logo-letter-glow" aria-hidden="true">
-       <span>M</span><span>O</span><span>V</span><span>E</span>
-     </div>
-   </div>
-   ```
+1. New form lead → capture attribution → webhook to Convoso → instant call attempt → sync to CRM
+2. Lead not reached after 60s → trigger SMS with quote link
+3. No contact after 5 minutes → escalate to supervisor dashboard alert
+4. Missed inbound call from paid source → create Convoso callback + alert
+5. After-hours form submission → queue for next calling block + send auto-text
+6. Duplicate lead detected → suppress in Convoso, tag in CRM
+7. Source/campaign changes on re-submission → preserve original attribution in CRM
+8. Lead not worked within 2 minutes → flash alert on Growth Dashboard
 
-3. Each `<span>` gets a layered white `text-shadow` for an individual halo effect.
+### After-Hours Logic (First-Class)
 
-**`src/index.css`**
+- Business hours rules per location/team
+- Queue timing and next-call-block scheduling
+- Auto-text behavior for after-hours submissions
+- Morning queue priority ordering
 
-Add styles for `.logo-glow-wrapper` and `.logo-letter-glow`:
-- Position the text overlay to align with where "MOVE" appears in the logo
-- Match the font size/weight/letter-spacing to the logo's typography
-- Apply per-letter `text-shadow` with multiple white layers
-- Make the text itself transparent (`color: transparent`) so only the glow is visible
+## Upgrade Plan (Pending)
 
-### Caveats
-- Requires manual fine-tuning of font size, position, and letter-spacing to align with the PNG
-- If the logo image ever changes, the overlay will need re-alignment
+### Pass 1: Dashboard + Landing Pages + Leads + SEO Hub
+### Pass 2: Ad Copy + Tracking + Automation + Reviews
+### Pass 3: Competitors + Settings + Campaign Builder Enhancement + Shell Polish
 
+See previous conversation for full details on each pass.
