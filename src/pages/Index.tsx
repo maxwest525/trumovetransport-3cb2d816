@@ -443,7 +443,7 @@ function ShipmentTrackerSection({ navigate }: {navigate: (path: string) => void;
   useEffect(() => {
     let p = 0;
     const tick = () => {
-      p += 0.0006;
+      p += 0.0003;
       if (p > 1) p = 0;
       setTruckProgress(p);
       animationRef.current = requestAnimationFrame(tick);
@@ -452,35 +452,35 @@ function ShipmentTrackerSection({ navigate }: {navigate: (path: string) => void;
     return () => {if (animationRef.current) cancelAnimationFrame(animationRef.current);};
   }, []);
 
-  // Route definitions for SVG overlay
+  // Route definitions for SVG overlay — recalibrated to map image
   const routes = useMemo(() => [
   {
     color: 'hsl(142, 71%, 45%)',
     startLabel: 'Los Angeles', endLabel: 'New York',
     offset: 0, speed: 1,
-    // LA (southwest) → across southern route → up to NYC (northeast)
-    pts: [[72,218],[120,210],[175,195],[230,175],[285,160],[340,148],[390,130],[435,118],[475,108],[520,100],[545,95]] as [number,number][]
+    // LA (SW California) → across southern states → up to NYC (NE coast)
+    pts: [[100,215],[145,208],[195,198],[250,185],[305,170],[355,155],[400,135],[445,120],[485,110],[525,100],[555,92]] as [number,number][]
   },
   {
     color: 'hsl(200, 80%, 55%)',
     startLabel: 'Chicago', endLabel: 'Miami',
-    offset: 0.35, speed: 1.2,
-    // Chicago (upper midwest) → south through heartland → Miami (SE tip)
-    pts: [[378,95],[390,130],[405,158],[420,185],[440,210],[455,235],[470,258],[488,280],[495,295]] as [number,number][]
+    offset: 0.35, speed: 0.8,
+    // Chicago (Great Lakes region) → south through heartland → Miami (FL tip)
+    pts: [[395,100],[400,135],[410,165],[425,195],[440,220],[458,248],[475,270],[490,288],[500,300]] as [number,number][]
   },
   {
     color: 'hsl(35, 90%, 55%)',
     startLabel: 'Seattle', endLabel: 'Denver',
-    offset: 0.6, speed: 0.9,
-    // Seattle (NW) → south-east to Denver (central)
-    pts: [[78,48],[105,72],[135,98],[168,120],[200,138],[228,152],[248,160]] as [number,number][]
+    offset: 0.6, speed: 0.7,
+    // Seattle (WA, NW corner) → SE to Denver (CO, central)
+    pts: [[88,42],[110,65],[138,90],[168,115],[198,135],[225,150],[248,158]] as [number,number][]
   },
   {
     color: 'hsl(280, 65%, 60%)',
     startLabel: 'Dallas', endLabel: 'Atlanta',
-    offset: 0.15, speed: 1.4,
-    // Dallas (south-central) → east to Atlanta (southeast)
-    pts: [[308,245],[340,232],[375,218],[410,210],[445,205]] as [number,number][]
+    offset: 0.15, speed: 0.9,
+    // Dallas (N Texas) → east to Atlanta (N Georgia)
+    pts: [[300,248],[335,238],[370,225],[405,215],[440,208],[460,205]] as [number,number][]
   }], []);
 
   // Helper: build smooth SVG path from points
