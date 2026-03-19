@@ -39,7 +39,7 @@ import videoConsultPreview from "@/assets/video-consult-preview.jpg";
 import trudyVoicePreview from "@/assets/trudy-voice-preview.jpg";
 import contactAgentImg from "@/assets/contact-agent.png";
 
-import { Mic } from "lucide-react";
+import { Mic, Video } from "lucide-react";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
