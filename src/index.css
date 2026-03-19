@@ -3053,9 +3053,11 @@
   .tru-ai-main-headline {
     font-size: 2rem;
   }
-  .tru-ai-header-previews .tru-ai-live-scanner,
-  .tru-ai-header-previews .tru-ai-live-inventory {
+  .tru-ai-header-previews .tru-ai-live-scanner {
     width: 21.25rem; /* 340px in rem */
+  }
+  .tru-ai-header-previews .tru-ai-live-inventory {
+    width: 10.625rem; /* ~170px — half of 340px */
   }
 }
 
@@ -3178,9 +3180,15 @@
   transition: all 0.4s ease;
 }
 
-.tru-ai-header-previews .tru-ai-live-scanner,
-.tru-ai-header-previews .tru-ai-live-inventory {
+.tru-ai-header-previews .tru-ai-live-scanner {
   width: var(--ai-preview-width);
+  height: var(--demo-panel-height);
+  min-height: var(--demo-panel-height);
+  max-height: var(--demo-panel-height);
+}
+
+.tru-ai-header-previews .tru-ai-live-inventory {
+  width: calc(var(--ai-preview-width) * 0.5);
   height: var(--demo-panel-height);
   min-height: var(--demo-panel-height);
   max-height: var(--demo-panel-height);
