@@ -6509,7 +6509,7 @@
   justify-content: center;
   padding: 14px 20px;
   background: hsl(var(--tm-ink));
-  border-bottom: 2px solid hsl(35 95% 55%);
+  border-bottom: 2px solid hsl(var(--primary));
   position: relative;
 }
 
@@ -6709,7 +6709,7 @@
   letter-spacing: 0.02em;
   margin-top: 40px;
   border: 1px solid hsl(var(--tm-ink) / 0.08);
-  border-bottom: 2px solid hsl(35 95% 55%);
+  border-bottom: 2px solid hsl(var(--primary));
   box-shadow: 
     0 0 4px hsl(var(--tm-ink) / 0.03),
     0 4px 16px hsl(var(--tm-ink) / 0.25);
@@ -17371,12 +17371,12 @@
 }
 
 .tru-qb-input:hover {
-  border-color: hsl(35 95% 55% / 0.5);
+  border-color: hsl(var(--primary) / 0.5);
 }
 
 .tru-qb-input:focus {
-  border-color: hsl(35 95% 55%);
-  box-shadow: 0 0 0 3px hsl(35 95% 55% / 0.15);
+  border-color: hsl(var(--primary));
+  box-shadow: 0 0 0 3px hsl(var(--primary) / 0.15);
 }
 
 /* Location Autocomplete Styles */
@@ -18446,8 +18446,8 @@
    ============================================= */
 
 .tru-qb-input:focus {
-  border-color: hsl(35 95% 55%);
-  box-shadow: 0 0 0 3px hsl(35 95% 55% / 0.15);
+  border-color: hsl(var(--primary));
+  box-shadow: 0 0 0 3px hsl(var(--primary) / 0.15);
   transform: translateY(0);
   transition: all 0.2s ease;
 }
