@@ -1685,76 +1685,73 @@ export default function Index() {
               </div>
 
               {/* Mini demo card */}
-              <div className="max-w-2xl mx-auto rounded-2xl bg-card ring-1 ring-border p-6 space-y-5">
+              <div className="max-w-xl mx-auto rounded-2xl bg-card ring-1 ring-border p-5 space-y-4">
                 {/* Carrier header */}
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-lg font-bold text-foreground">Summit Express LLC</h3>
-                    <p className="text-xs text-muted-foreground">MC-892451 · DOT 3847291 · Atlanta, GA</p>
+                <div className="flex items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <h3 className="text-base font-bold text-foreground truncate">Summit Express LLC</h3>
+                    <p className="text-[11px] text-muted-foreground">MC-892451 · DOT 3847291 · Atlanta, GA</p>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className="inline-flex items-center gap-1 bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold">
-                      <ShieldCheck className="w-3.5 h-3.5" /> Authorized
-                    </span>
-                  </div>
+                  <span className="inline-flex items-center gap-1 bg-primary/10 text-primary px-2.5 py-1 rounded-full text-[11px] font-bold shrink-0">
+                    <ShieldCheck className="w-3.5 h-3.5" /> Authorized
+                  </span>
                 </div>
 
-                {/* Safety scores */}
-                <div className="grid grid-cols-3 gap-3">
+                {/* Safety snapshot — single row */}
+                <div className="grid grid-cols-3 gap-2">
                   {[
-                    { label: "Vehicle OOS", value: "14.2%", avg: "22.3%", status: "pass" },
-                    { label: "Driver OOS", value: "3.1%", avg: "6.7%", status: "pass" },
-                    { label: "Hazmat OOS", value: "0.0%", avg: "4.4%", status: "pass" },
-                  ].map((metric) => (
-                    <div key={metric.label} className="rounded-xl bg-background border border-border p-3 text-center">
-                      <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide mb-1">{metric.label}</p>
-                      <p className={`text-xl font-black ${metric.status === "pass" ? "text-primary" : "text-destructive"}`}>{metric.value}</p>
-                      <p className="text-[10px] text-muted-foreground">Nat'l avg: {metric.avg}</p>
+                    { label: "Vehicle OOS", value: "14.2%", avg: "22.3%" },
+                    { label: "Driver OOS", value: "3.1%", avg: "6.7%" },
+                    { label: "Hazmat OOS", value: "0.0%", avg: "4.4%" },
+                  ].map((m) => (
+                    <div key={m.label} className="rounded-lg bg-background border border-border px-3 py-2">
+                      <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">{m.label}</p>
+                      <div className="flex items-baseline gap-1.5 mt-0.5">
+                        <span className="text-lg font-black text-primary leading-none">{m.value}</span>
+                        <span className="text-[10px] text-muted-foreground">/ {m.avg}</span>
+                      </div>
                     </div>
                   ))}
                 </div>
 
-                {/* CSA BASIC bars */}
-                <div className="space-y-2">
-                  <p className="text-xs font-semibold text-foreground">CSA BASIC Scores</p>
+                {/* CSA scores — compact inline */}
+                <div className="space-y-1.5">
+                  <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">CSA Safety Scores</p>
                   {[
                     { label: "Unsafe Driving", score: 28, threshold: 65 },
                     { label: "HOS Compliance", score: 42, threshold: 65 },
-                    { label: "Vehicle Maintenance", score: 55, threshold: 80 },
-                    { label: "Controlled Substances", score: 0, threshold: 80 },
+                    { label: "Vehicle Maint.", score: 55, threshold: 80 },
                     { label: "Driver Fitness", score: 12, threshold: 80 },
-                  ].map((basic) => (
-                    <div key={basic.label} className="flex items-center gap-3">
-                      <span className="text-[11px] text-muted-foreground w-36 shrink-0 text-right">{basic.label}</span>
-                      <div className="flex-1 h-2.5 rounded-full bg-muted overflow-hidden">
+                  ].map((b) => (
+                    <div key={b.label} className="flex items-center gap-2">
+                      <span className="text-[11px] text-muted-foreground w-28 shrink-0 text-right">{b.label}</span>
+                      <div className="flex-1 h-2 rounded-full bg-muted overflow-hidden">
                         <div
-                          className={`h-full rounded-full transition-all ${basic.score > basic.threshold ? "bg-destructive" : "bg-primary"}`}
-                          style={{ width: `${Math.max(basic.score, 2)}%` }}
+                          className={`h-full rounded-full ${b.score > b.threshold ? "bg-destructive" : "bg-primary"}`}
+                          style={{ width: `${Math.max(b.score, 3)}%` }}
                         />
                       </div>
-                      <span className={`text-xs font-bold w-8 ${basic.score > basic.threshold ? "text-destructive" : "text-foreground"}`}>{basic.score}</span>
+                      <span className={`text-[11px] font-bold w-6 text-right ${b.score > b.threshold ? "text-destructive" : "text-foreground"}`}>{b.score}</span>
                     </div>
                   ))}
                 </div>
 
-                {/* Red flags */}
-                <div className="flex flex-wrap gap-2">
-                  <span className="inline-flex items-center gap-1 bg-primary/10 text-primary px-2.5 py-1 rounded-full text-[11px] font-medium">
-                    <CheckCircle className="w-3 h-3" /> BOC-3 on file
-                  </span>
-                  <span className="inline-flex items-center gap-1 bg-primary/10 text-primary px-2.5 py-1 rounded-full text-[11px] font-medium">
-                    <CheckCircle className="w-3 h-3" /> Insurance active
-                  </span>
-                  <span className="inline-flex items-center gap-1 bg-primary/10 text-primary px-2.5 py-1 rounded-full text-[11px] font-medium">
-                    <Shield className="w-3 h-3" /> $1M liability
-                  </span>
-                  <span className="inline-flex items-center gap-1 bg-primary/10 text-primary px-2.5 py-1 rounded-full text-[11px] font-medium">
-                    <CheckCircle className="w-3 h-3" /> No active OOS orders
-                  </span>
+                {/* Compliance badges */}
+                <div className="flex flex-wrap gap-1.5">
+                  {[
+                    { icon: CheckCircle, text: "BOC-3" },
+                    { icon: CheckCircle, text: "Insurance" },
+                    { icon: Shield, text: "$1M Liability" },
+                    { icon: CheckCircle, text: "No OOS Orders" },
+                  ].map((badge) => (
+                    <span key={badge.text} className="inline-flex items-center gap-1 bg-primary/10 text-primary px-2 py-0.5 rounded-full text-[10px] font-semibold">
+                      <badge.icon className="w-2.5 h-2.5" /> {badge.text}
+                    </span>
+                  ))}
                 </div>
 
                 {/* CTA */}
-                <div className="flex justify-center pt-2">
+                <div className="flex justify-center pt-1">
                   <button onClick={() => navigate("/site/online-estimate")} className="tru-ai-cta-btn">
                     <Radar className="w-5 h-5 text-primary" />
                     Try Carrier Vetting
