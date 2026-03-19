@@ -506,12 +506,6 @@ function ShipmentTrackerSection({ navigate }: {navigate: (path: string) => void;
     <section className="tru-ai-steps-section" style={{ paddingTop: '5rem', paddingBottom: '5rem' }}>
       <div className="tru-ai-steps-inner">
         <div className="flex flex-col lg:flex-row items-stretch justify-center gap-10 lg:gap-16 w-full">
-          {/* Lifestyle image - left of map, matches map height */}
-          <div className="hidden lg:block w-full max-w-[600px] flex-shrink-0">
-            <div className="rounded-xl border-2 border-black overflow-hidden h-full" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3)' }}>
-              <img src={trackingLifestyleImg} alt="Customer tracking their move in real-time" className="w-full h-full object-cover block" />
-            </div>
-          </div>
           {/* Map with SVG overlay */}
           <div className="w-full max-w-[600px] flex-shrink-0">
             <div className="rounded-xl border-2 border-black relative" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), 0 0 60px rgba(34,197,94,0.12)' }}>
@@ -554,6 +548,12 @@ function ShipmentTrackerSection({ navigate }: {navigate: (path: string) => void;
                   })}
               </svg>
               </div>
+            </div>
+          </div>
+          {/* Lifestyle image - between map and CTA */}
+          <div className="hidden lg:block w-full max-w-[600px] flex-shrink-0">
+            <div className="rounded-xl border-2 border-black overflow-hidden h-full" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3)' }}>
+              <img src={trackingLifestyleImg} alt="Customer tracking their move in real-time" className="w-full h-full object-cover block" />
             </div>
           </div>
           
