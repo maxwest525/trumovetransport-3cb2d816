@@ -1,10 +1,12 @@
 import { useEffect } from "react";
+import CommandCenterNav from "@/components/layout/CommandCenterNav";
 import SiteShell from "@/components/layout/SiteShell";
 
 export default function Privacy() {
   useEffect(() => { window.scrollTo(0, 0); }, []);
   return (
     <SiteShell>
+      <CommandCenterNav title="Privacy Policy" />
       <div className="max-w-[900px] mx-auto px-6 py-12">
         <h1 className="text-4xl font-black tracking-tight text-foreground mb-2">
           TruMove Inc. Privacy Policy

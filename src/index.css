@@ -13515,8 +13515,8 @@
 .header-nav {
   display: flex;
   align-items: center;
-  gap: 32px;
-  margin: 0 auto;
+  gap: 24px;
+  margin-left: auto;
 }
 
 /* Nav Item Wrapper (for mega-menu positioning) */
@@ -13545,11 +13545,11 @@
   position: relative;
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 7px 14px;
-  font-size: 13px;
-  font-weight: 500;
-  letter-spacing: 0.01em;
+  gap: 8px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
   color: hsl(0 0% 100%);
   text-decoration: none;
   border-radius: 10px;

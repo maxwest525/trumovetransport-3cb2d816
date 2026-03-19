@@ -19,7 +19,7 @@ import TrackingWizard from "@/components/tracking/TrackingWizard";
 import { useRealtimeETA } from "@/hooks/useRealtimeETA";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import SiteShell from "@/components/layout/SiteShell";
-import PageHeaderStrip from "@/components/layout/PageHeaderStrip";
+import CommandCenterNav from "@/components/layout/CommandCenterNav";
 import Footer from "@/components/layout/Footer";
 import { MAPBOX_TOKEN } from "@/lib/mapboxToken";
 import { getWebGLDiagnostics, type WebGLDiagnostics } from "@/lib/webglDiagnostics";
@@ -604,14 +604,8 @@ export default function LiveTracking() {
   ];
 
   return (
-    <SiteShell hideTrustStrip stickySubHeader={
-      <PageHeaderStrip
-        title="Shipment Command Center"
-        trustItems={trackingTrustItems}
-        rightLabel="Shipment ID"
-        rightValue={bookingInput ? `TM-${bookingInput}` : 'TM-2026-78331681'}
-      />
-    }>
+    <SiteShell hideTrustStrip>
+      <CommandCenterNav title="Shipment Tracking" />
       <div className="live-tracking-page">
       
       {/* Hero Section - Headline & Subheadline */}

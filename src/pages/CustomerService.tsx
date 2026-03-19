@@ -7,7 +7,7 @@ import TrudyChatBox from '@/components/TrudyChatBox';
 import AIChatContainer from '@/components/chat/AIChatContainer';
 import { getPageContext } from '@/components/chat/pageContextConfig';
 import SiteShell from '@/components/layout/SiteShell';
-import PageHeaderStrip from '@/components/layout/PageHeaderStrip';
+import CommandCenterNav from '@/components/layout/CommandCenterNav';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -285,14 +285,8 @@ export default function CustomerService() {
   }, [formData]);
 
   return (
-    <SiteShell hideTrustStrip stickySubHeader={
-      <PageHeaderStrip
-        title="Meet Trudy"
-        trustItems={TRUDY_TRUST_ITEMS}
-        rightLabel="Session ID"
-        rightValue={`TM-${new Date().getFullYear()}-51423342`}
-      />
-    }>
+    <SiteShell hideTrustStrip>
+      <CommandCenterNav title="Customer Service" />
       <main className="min-h-screen bg-background">
         {/* ─── HERO ─── */}
         <section className="relative pt-8 pb-6 px-6 md:px-10 lg:px-16 overflow-hidden">

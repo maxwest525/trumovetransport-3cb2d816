@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import CommandCenterNav from "@/components/layout/CommandCenterNav";
 import { Link } from "react-router-dom";
 import SiteShell from "@/components/layout/SiteShell";
 import { Clock, Target, Headphones, CheckCircle2, X } from "lucide-react";
@@ -61,6 +62,7 @@ export default function About() {
   useEffect(() => { window.scrollTo(0, 0); }, []);
   return (
     <SiteShell>
+      <CommandCenterNav title="About Us" />
       <div className="max-w-[1480px] mx-auto px-6 py-12">
         {/* Hero */}
         <div className="text-center mb-16">
