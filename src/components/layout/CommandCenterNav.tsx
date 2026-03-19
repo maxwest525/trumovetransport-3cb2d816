@@ -50,7 +50,7 @@ export default function CommandCenterNav({ title = "TruMove Command Center" }: C
                     : "bg-white/10 border border-white/20 text-white/80 hover:bg-white/20 hover:border-white/40 hover:text-white"
                 }`}
               >
-                <Icon className={`w-4 h-4 ${active ? "text-[hsl(142,71%,45%)]" : "text-white/60"}`} />
+                <Icon className="w-4 h-4 text-[hsl(142,71%,45%)]" />
                 {item.label}
               </Link>
             );
