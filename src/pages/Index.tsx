@@ -507,7 +507,7 @@ function ShipmentTrackerSection({ navigate }: {navigate: (path: string) => void;
       <div className="tru-ai-steps-inner">
         <div className="flex flex-col lg:flex-row items-center justify-center gap-10 lg:gap-16 w-full">
           {/* Lifestyle image - left of map */}
-          <div className="hidden lg:block w-full max-w-[300px] flex-shrink-0">
+          <div className="hidden lg:block w-full max-w-[400px] flex-shrink-0">
             <div className="rounded-xl border-2 border-black overflow-hidden" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3)' }}>
               <img src={trackingLifestyleImg} alt="Customer tracking their move in real-time" className="w-full h-auto block" />
             </div>
