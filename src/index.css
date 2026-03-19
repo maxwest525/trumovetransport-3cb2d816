@@ -1538,7 +1538,7 @@
 .tru-hero-wrapper {
   position: relative;
   width: 100%;
-  min-height: auto;
+  min-height: 42rem;
   overflow-x: hidden;  /* Prevent horizontal scroll */
 }
 
