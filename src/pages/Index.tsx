@@ -34,6 +34,8 @@ import previewPropertyLookup from "@/assets/preview-property-lookup.jpg";
 import sampleRoomLiving from "@/assets/sample-room-living.jpg";
 import scanRoomPreview from "@/assets/scan-room-preview.jpg";
 import heroFamilyMove from "@/assets/hero-family-move.jpg";
+import videoConsultPreview from "@/assets/video-consult-preview.jpg";
+import trudyVoicePreview from "@/assets/trudy-voice-preview.jpg";
 
 import { Mic } from "lucide-react";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
