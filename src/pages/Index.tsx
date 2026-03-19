@@ -1635,23 +1635,26 @@ export default function Index() {
                 <div className="flex animate-marquee gap-5 w-max hover:[animation-play-state:paused]">
                   {[...Array(2)].map((_, dupeIdx) =>
                     [
-                      { name: "Sarah M.", location: "New York → Miami", rating: 5, photo: testimonialSarah, text: "TruMove made our cross-country move seamless. Real-time tracking gave us total peace of mind the entire way." },
-                      { name: "James R.", location: "Chicago → Denver", rating: 5, photo: testimonialJames, text: "The AI inventory scanner saved us hours of manual cataloging. Our estimate was spot-on — no surprise charges." },
-                      { name: "Emily & David K.", location: "Los Angeles → Seattle", rating: 5, photo: testimonialEmilyDavid, text: "Best moving experience we've ever had. The team was professional, on time, and the video consult made planning easy." },
-                      { name: "Marcus T.", location: "Houston → Atlanta", rating: 5, photo: testimonialMarcus, text: "From the first call to delivery day, everything was handled with care. Trudy even helped us prep our inventory list." },
-                      { name: "Lisa W.", location: "Boston → San Francisco", rating: 5, photo: testimonialLisa, text: "We tracked our shipment in real time across the country. The transparency was unlike any other mover we've used." },
-                      { name: "Carlos & Ana P.", location: "Phoenix → Dallas", rating: 5, photo: testimonialCarlosAna, text: "Incredible value. The video consultation caught things we would have missed. Highly recommend TruMove to anyone." },
+                      { name: "Sarah M.", location: "New York → Miami", rating: 5, photo: testimonialSarah, source: "Google", text: "TruMove made our cross-country move seamless. Real-time tracking gave us total peace of mind the entire way." },
+                      { name: "James R.", location: "Chicago → Denver", rating: 5, photo: testimonialJames, source: "Yelp", text: "The AI inventory scanner saved us hours of manual cataloging. Our estimate was spot-on — no surprise charges." },
+                      { name: "Emily & David K.", location: "Los Angeles → Seattle", rating: 5, photo: testimonialEmilyDavid, source: "SiteJabber", text: "Best moving experience we've ever had. The team was professional, on time, and the video consult made planning easy." },
+                      { name: "Marcus T.", location: "Houston → Atlanta", rating: 5, photo: testimonialMarcus, source: "Facebook", text: "From the first call to delivery day, everything was handled with care. Trudy even helped us prep our inventory list." },
+                      { name: "Lisa W.", location: "Boston → San Francisco", rating: 5, photo: testimonialLisa, source: "MovingReviews.com", text: "We tracked our shipment in real time across the country. The transparency was unlike any other mover we've used." },
+                      { name: "Carlos & Ana P.", location: "Phoenix → Dallas", rating: 5, photo: testimonialCarlosAna, source: "BBB", text: "Incredible value. The video consultation caught things we would have missed. Highly recommend TruMove to anyone." },
                     ].map((review, i) => (
                       <div
                         key={`${dupeIdx}-${i}`}
                         className="w-[380px] shrink-0 rounded-2xl bg-card p-6 flex flex-col gap-4 ring-1 ring-border min-h-[220px]"
                       >
-                        <div className="flex gap-0.5">
-                          {Array.from({ length: review.rating }).map((_, s) => (
-                            <svg key={s} className="w-4 h-4 text-primary fill-primary" viewBox="0 0 20 20">
-                              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                            </svg>
-                          ))}
+                        <div className="flex items-center justify-between">
+                          <div className="flex gap-0.5">
+                            {Array.from({ length: review.rating }).map((_, s) => (
+                              <svg key={s} className="w-4 h-4 text-primary fill-primary" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                              </svg>
+                            ))}
+                          </div>
+                          <span className="text-[10px] font-medium text-muted-foreground bg-muted px-2 py-0.5 rounded-full">via {review.source}</span>
                         </div>
                         <p className="text-sm text-foreground leading-relaxed flex-1">"{review.text}"</p>
                         <div className="pt-2 border-t border-border flex items-center gap-3">
