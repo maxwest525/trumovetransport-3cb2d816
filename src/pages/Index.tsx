@@ -1686,9 +1686,9 @@ export default function Index() {
                 <div className="flex flex-col md:flex-row gap-6 flex-1 items-stretch">
 
                 {/* Col 2: Agent photo */}
-                <div className="hidden lg:flex items-stretch md:w-64 shrink-0">
+                <div className="hidden lg:flex md:w-64 shrink-0 self-center">
                   <div className="rounded-2xl border-2 border-black overflow-hidden w-full" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3)' }}>
-                    <img src={contactAgentImg} alt="TruMove support agent" className="w-full h-full object-contain bg-black/5" />
+                    <img src={contactAgentImg} alt="TruMove support agent" className="block w-full h-auto" />
                   </div>
                 </div>
 
