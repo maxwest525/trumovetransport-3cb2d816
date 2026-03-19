@@ -1615,6 +1615,17 @@ export default function Index() {
           {/* GET IN TOUCH */}
           <section className="py-20 px-4">
             <div className="max-w-6xl mx-auto">
+              {/* Headline */}
+              <div className="flex flex-col items-center text-center mb-10">
+                <h2 className="text-5xl font-black tracking-tight text-foreground mb-4">Contact Us.</h2>
+                <p className="text-lg text-muted-foreground leading-relaxed mb-6 max-w-md">Our team is standing by. Voice, video, text, or email.</p>
+                <a href="tel:+16097277647" className="inline-flex items-center gap-2 bg-foreground text-background px-8 py-3 rounded-full text-base font-semibold hover:opacity-90 transition-opacity">
+                  <Phone className="w-5 h-5 text-[hsl(142,71%,45%)]" />
+                  Call Now
+                  <ArrowRight className="w-5 h-5 text-[hsl(142,71%,45%)]" />
+                </a>
+              </div>
+
               <div className="flex flex-col md:flex-row gap-6 items-stretch">
 
                 {/* Single card: Form + Divider + Buttons */}
