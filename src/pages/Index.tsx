@@ -1110,7 +1110,7 @@ export default function Index() {
       {/* Sticky Header Block - TruMove Command Center */}
       <div className="sticky top-[6.375rem] z-40">
         <header className="tracking-header">
-          <div className="flex items-center justify-between w-full max-w-[1480px] mx-auto">
+          <div className="flex items-center justify-between w-full">
             {/* Logo & Title */}
             <div className="flex items-center gap-3">
               <img
