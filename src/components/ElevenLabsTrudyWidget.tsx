@@ -212,8 +212,14 @@ export default function ElevenLabsTrudyWidget() {
   const isPortal = portalPrefixes.some(p => location.pathname.startsWith(p)) || location.pathname === '/kpi';
   if (isPortal) return null;
 
+  const pos = position || getDefaultPosition();
+
   return (
-    <div className="fixed bottom-5 right-5 z-[9999] flex flex-col items-end gap-2 md:bottom-20">
+    <div
+      ref={containerRef}
+      className="fixed z-[9999] flex flex-col items-end gap-2"
+      style={{ left: pos.x, top: pos.y, transform: 'translate(-100%, -100%)' }}
+    >
       {/* Post-call */}
       {showPostCall && !isConnected && savedTranscript.length > 0 && (
         <div className={`${panelClasses} animate-in fade-in slide-in-from-bottom-2 duration-200`}>
@@ -251,6 +257,17 @@ export default function ElevenLabsTrudyWidget() {
 
       {/* FAB row */}
       <div className="flex items-center gap-1.5">
+        {/* Drag handle */}
+        <div
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          className="flex items-center justify-center w-8 h-8 rounded-lg cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors touch-none select-none"
+          aria-label="Drag to reposition"
+        >
+          <GripVertical className="h-4 w-4" />
+        </div>
+
         {!isConnected && !isConnecting && (
           <button
             onClick={toggleOptions}
@@ -264,21 +281,29 @@ export default function ElevenLabsTrudyWidget() {
           <button
             onClick={isConnected ? stopConversation : startConversation}
             disabled={isConnecting}
-            className={`flex items-center gap-2.5 rounded-xl shadow-md transition-all duration-150 active:scale-[0.97] ${
+            className={`relative flex items-center gap-2.5 rounded-xl shadow-lg transition-all duration-150 active:scale-[0.97] ${
               isConnected
-                ? 'bg-destructive text-destructive-foreground px-5 py-3'
+                ? 'bg-destructive text-destructive-foreground px-5 py-3 shadow-destructive/30'
                 : isConnecting
                 ? 'bg-muted text-muted-foreground px-5 py-3'
-                : 'bg-foreground text-background px-5 py-3 hover:bg-foreground/90'
+                : 'bg-primary text-primary-foreground px-5 py-3 hover:bg-primary/90 shadow-primary/40 hover:shadow-primary/60 hover:shadow-xl'
             }`}
             aria-label={isConnected ? 'End call' : 'Talk to Trudy'}
           >
+            {/* Pulse ring for idle state */}
+            {!isConnected && !isConnecting && (
+              <span className="absolute inset-0 rounded-xl animate-ping bg-primary/20 pointer-events-none" style={{ animationDuration: '2s' }} />
+            )}
             {isConnecting ? (
-              <><Loader2 className="h-[18px] w-[18px] animate-spin" /><span className="text-[13px] font-medium tracking-tight">Connecting…</span></>
+              <><Loader2 className="h-[18px] w-[18px] animate-spin" /><span className="text-[13px] font-semibold tracking-tight">Connecting…</span></>
             ) : isConnected ? (
-              <><PhoneOff className="h-[18px] w-[18px]" /><span className="text-[13px] font-medium tracking-tight">End Call</span></>
+              <><PhoneOff className="h-[18px] w-[18px]" /><span className="text-[13px] font-semibold tracking-tight">End Call</span></>
             ) : (
-              <><Mic className="h-[18px] w-[18px]" /><span className="text-[13px] font-medium tracking-tight">Talk to Trudy</span></>
+              <>
+                <img src={trudyAvatar} alt="" className="h-6 w-6 rounded-full object-cover border border-primary-foreground/30" />
+                <span className="text-[13px] font-semibold tracking-tight">Talk to Trudy</span>
+                <Mic className="h-4 w-4 opacity-70" />
+              </>
             )}
           </button>
           {/* Hover tooltip */}
