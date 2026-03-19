@@ -226,10 +226,10 @@ export default function ElevenLabsTrudyWidget() {
           <div className="relative pl-1.5 py-1.5">
             <img src={trudyAvatar} alt="Trudy" className="h-10 w-10 rounded-full object-cover ring-2 ring-background/20" />
             {!isConnected && !isConnecting && (
-              <span className="absolute bottom-1 right-0 h-3 w-3 rounded-full bg-green-500 ring-2 ring-foreground" />
+              <span className="absolute bottom-1 right-0 h-3 w-3 rounded-full bg-primary ring-2 ring-foreground" />
             )}
             {isConnected && (
-              <span className="absolute bottom-1 right-0 h-3 w-3 rounded-full bg-red-400 ring-2 ring-destructive animate-pulse" />
+              <span className="absolute bottom-1 right-0 h-3 w-3 rounded-full bg-destructive ring-2 ring-destructive animate-pulse" />
             )}
           </div>
 
