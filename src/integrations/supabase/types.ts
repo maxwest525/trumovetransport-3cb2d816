@@ -490,6 +490,7 @@ export type Database = {
           event_data: Json | null
           event_type: string
           id: string
+          lead_id: string | null
           ref_number: string
           signer_ip_address: string | null
           user_agent: string | null
@@ -506,6 +507,7 @@ export type Database = {
           event_data?: Json | null
           event_type: string
           id?: string
+          lead_id?: string | null
           ref_number: string
           signer_ip_address?: string | null
           user_agent?: string | null
@@ -522,6 +524,7 @@ export type Database = {
           event_data?: Json | null
           event_type?: string
           id?: string
+          lead_id?: string | null
           ref_number?: string
           signer_ip_address?: string | null
           user_agent?: string | null
@@ -532,6 +535,66 @@ export type Database = {
             columns: ["agent_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "esign_audit_trail_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      esign_documents: {
+        Row: {
+          completed_at: string | null
+          created_at: string | null
+          delivery_method: string
+          document_type: string
+          id: string
+          lead_id: string
+          opened_at: string | null
+          ref_number: string
+          sent_at: string | null
+          sent_by: string | null
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string | null
+          delivery_method?: string
+          document_type: string
+          id?: string
+          lead_id: string
+          opened_at?: string | null
+          ref_number: string
+          sent_at?: string | null
+          sent_by?: string | null
+          status?: string
+          updated_at?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string | null
+          delivery_method?: string
+          document_type?: string
+          id?: string
+          lead_id?: string
+          opened_at?: string | null
+          ref_number?: string
+          sent_at?: string | null
+          sent_by?: string | null
+          status?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "esign_documents_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
             referencedColumns: ["id"]
           },
         ]
