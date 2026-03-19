@@ -19,7 +19,7 @@ import TrackingWizard from "@/components/tracking/TrackingWizard";
 import { useRealtimeETA } from "@/hooks/useRealtimeETA";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import SiteShell from "@/components/layout/SiteShell";
-import PageHeaderStrip from "@/components/layout/PageHeaderStrip";
+import CommandCenterNav from "@/components/layout/CommandCenterNav";
 import Footer from "@/components/layout/Footer";
 import { MAPBOX_TOKEN } from "@/lib/mapboxToken";
 import { getWebGLDiagnostics, type WebGLDiagnostics } from "@/lib/webglDiagnostics";
