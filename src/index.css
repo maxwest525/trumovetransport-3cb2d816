@@ -13532,7 +13532,7 @@
 
 .header-contact-label {
   color: hsl(0 0% 100%);
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
   letter-spacing: 0.05em;
   white-space: nowrap;
@@ -13541,10 +13541,10 @@
 .header-contact-icons {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   background: transparent;
   border-radius: 9999px;
-  padding: 4px 6px;
+  padding: 5px 8px;
   border: 1px solid hsl(0 0% 100% / 0.35);
 }
 
@@ -13552,8 +13552,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   border-radius: 9999px;
   color: hsl(0 0% 100%);
   transition: all 200ms ease;
