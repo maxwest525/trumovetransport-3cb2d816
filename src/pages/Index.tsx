@@ -1654,14 +1654,7 @@ export default function Index() {
                   </p>
                 </div>
 
-                {/* Col 3: Agent photo */}
-                <div className="hidden lg:flex md:w-64 shrink-0 self-center">
-                  <div className="rounded-2xl overflow-hidden w-full">
-                    <img src={contactAgentImg} alt="TruMove support agent" className="block w-full h-auto" />
-                  </div>
-                </div>
-
-                {/* Col 4: All 4 contact options stacked */}
+                {/* Col 3: All 4 contact options stacked */}
                 <div className="gap-3 md:w-40 shrink-0 self-center items-end justify-center flex flex-col">
                   <a
                       href="tel:+16097277647"
@@ -1698,6 +1691,13 @@ export default function Index() {
                       Schedule now <ArrowRight className="h-3 w-3" />
                     </span>
                   </button>
+                </div>
+
+                {/* Col 4: Agent photo */}
+                <div className="hidden lg:flex md:w-64 shrink-0 self-center">
+                  <div className="rounded-2xl overflow-hidden w-full">
+                    <img src={contactAgentImg} alt="TruMove support agent" className="block w-full h-auto" />
+                  </div>
                 </div>
                 </div>
               </div>
