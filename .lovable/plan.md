@@ -1,54 +1,35 @@
-# Growth Engine Architecture
 
-## Lead Flow (Canonical)
 
-```text
-Traffic Source → Landing Page / Call Tracking → Attribution Capture
-  → Webhook / Router → Convoso (Instant Call) → CRM Sync
-  → Backup Follow-Up Logic
-```
+## Problem Analysis
 
-### Key Principles
+The zoom/scaling issues stem from three root causes:
 
-- **Convoso** is the primary instant-call engine. Leads route here first for immediate dial attempts.
-- **CRM** (GHL, Granot, or custom) is a sync target / system of record, not the primary destination.
-- Each workflow should designate **one primary CRM**; others are optional secondary sync targets.
-- GHL does not replace Convoso. It provides backup sequences and reporting.
-- "Follow-up automation" means support logic around the instant-call flow, not passive CRM drip sequences.
+1. **Viewport-relative sizing**: `.tru-hero-wrapper` uses `min-height: calc(100vh - 130px)` — when browser zoom changes, `100vh` stays the same in CSS pixels but the actual viewport shrinks, causing content to overflow and get cut off (the "Let's Get Moving" form being clipped).
 
-### Lead Statuses (Convoso feedback loop)
+2. **Parallax transforms**: The right column (form) has `transform: translateY(${formParallax.y}px)` applied via the `useParallax` hook. This shifts the form based on scroll position, which interacts badly with zoom levels since the calculations use raw pixel values.
 
-- New Lead
-- In Queue
-- Attempted
-- Connected
-- Not Reached
-- Escalated
-- Duplicate
-- Suppressed
+3. **`vw`-based font sizing**: The headline uses `clamp(40px, 6vw, 72px)` and bullets use `clamp(13px, 1.15vw, 16px)` — these shift with zoom since `vw` units change relative to the zoomed viewport.
 
-### Backup Automation Recipes
+## Plan
 
-1. New form lead → capture attribution → webhook to Convoso → instant call attempt → sync to CRM
-2. Lead not reached after 60s → trigger SMS with quote link
-3. No contact after 5 minutes → escalate to supervisor dashboard alert
-4. Missed inbound call from paid source → create Convoso callback + alert
-5. After-hours form submission → queue for next calling block + send auto-text
-6. Duplicate lead detected → suppress in Convoso, tag in CRM
-7. Source/campaign changes on re-submission → preserve original attribution in CRM
-8. Lead not worked within 2 minutes → flash alert on Growth Dashboard
+### 1. Remove viewport-height dependency on hero wrapper
+- Change `.tru-hero-wrapper` from `min-height: calc(100vh - 130px)` to `min-height: auto` or a fixed `min-height` in `px`/`rem`
+- This prevents the form from being cut off at any zoom level
 
-### After-Hours Logic (First-Class)
+### 2. Remove parallax on the form column
+- Remove the `useParallax` hook usage for the form (`parallaxFormRef`, `formParallax`)
+- Remove the inline `transform: translateY(...)` style from the right column div
+- Keep the headline parallax if desired, or remove both for full stability
 
-- Business hours rules per location/team
-- Queue timing and next-call-block scheduling
-- Auto-text behavior for after-hours submissions
-- Morning queue priority ordering
+### 3. Replace `vw`-based sizing with fixed responsive values
+- Change `font-size: clamp(40px, 6vw, 72px)` on `.tru-hero-headline` to a fixed size like `60px` with media query breakpoints
+- Change `font-size: clamp(13px, 1.15vw, 16px)` on `.tru-hero-bullets li` to a fixed `15px`
+- Replace any other `vw`-based sizing in the hero/header area
 
-## Upgrade Plan (Pending)
+### 4. Ensure header uses fixed dimensions
+- Verify `.header-main.header-floating` margins and padding use `px`/`rem` not viewport units (they already appear to be pixel-based, but will audit the mobile overrides)
 
-### Pass 1: Dashboard + Landing Pages + Leads + SEO Hub
-### Pass 2: Ad Copy + Tracking + Automation + Reviews
-### Pass 3: Competitors + Settings + Campaign Builder Enhancement + Shell Polish
+### Files to modify
+- `src/index.css` — hero wrapper min-height, font sizes
+- `src/pages/Index.tsx` — remove parallax transform on form column
 
-See previous conversation for full details on each pass.
