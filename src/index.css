@@ -552,7 +552,7 @@
 
 /* Hero Headline Main - Larger Desktop Impact */
 .tru-hero-headline-main {
-  font-size: clamp(2rem, 6vw, 3.75rem);
+  font-size: 48px;
   line-height: 1.12;
   font-weight: 800;
   letter-spacing: -0.02em;
