@@ -57,9 +57,11 @@ export default function CustomerPortalDashboard() {
       setPortalAccess(access);
 
       // Fetch deal + lead
+      let dealLeadId: string | null = null;
       if (access.deal_id) {
         const { data: d } = await supabase.from("deals").select("*").eq("id", access.deal_id).maybeSingle();
         setDeal(d);
+        dealLeadId = d?.lead_id || null;
         if (d?.lead_id) {
           const { data: l } = await supabase.from("leads").select("*").eq("id", d.lead_id).maybeSingle();
           setLead(l);
