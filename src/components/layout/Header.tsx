@@ -53,83 +53,17 @@ interface SubNavItem {
   badge?: string;
 }
 
-const NAV: NavItem[] = [
-  { href: "/site", label: "Home" },
-  { 
-    href: "/site/book", 
-    label: "Connect With Us",
-    hasDropdown: true,
-    dropdownContent: {
-      icon: Calendar,
-      title: "Connect With Us",
-      tagline: "Real humans. Zero pressure.",
-      cta: "Schedule Free Call",
-      previewImage: previewVideoConsult,
-      previewAlt: "Video Consultation"
-    },
-    subItems: [
-      {
-        href: "/site/book",
-        label: "Book a Call",
-        description: "Schedule a free consultation",
-        icon: Phone,
-      }
-    ]
-  },
-  { 
-    href: "/site/online-estimate", 
-    label: "AI Move Estimator",
-    hasDropdown: true,
-    dropdownContent: {
-      icon: Calculator,
-      title: "AI Move Estimator",
-      tagline: "Point. Scan. Price.",
-      cta: "Try It Now",
-      previewImage: previewAiScanner,
-      previewAlt: "AI Scanner"
-    },
-    subItems: [
-      {
-        href: "/site/scan-room",
-        label: "Scan Your Room",
-        description: "AI auto-detects your furniture",
-        icon: Scan,
-        badge: "Beta"
-      },
-      {
-        href: "/site/online-estimate",
-        label: "Build Manually",
-        description: "Pick from 200+ items",
-        icon: Calculator
-      }
-    ]
-  },
-  { 
-    href: "/site/track", 
-    label: "Shipment Tracking",
-    hasDropdown: true,
-    dropdownContent: {
-      icon: MapPin,
-      title: "Live Tracking",
-      tagline: "GPS • Weather • ETA",
-      cta: "Track Shipment",
-      previewImage: previewPropertyLookup,
-      previewAlt: "Live Tracking"
-    }
-  },
-  { 
-    href: "/site/carrier-vetting", 
-    label: "Carrier Vetting",
-    hasDropdown: true,
-    dropdownContent: {
-      icon: Shield,
-      title: "Carrier Vetting",
-      tagline: "FMCSA verified. Instant results.",
-      cta: "Check Any Mover",
-      previewImage: previewCarrierVetting,
-      previewAlt: "Carrier Vetting"
-    }
-  },
+interface CtaItem {
+  href: string;
+  label: string;
+  icon: React.ElementType;
+  isExternal?: boolean;
+}
+
+const CTA_ITEMS: CtaItem[] = [
+  { href: "tel:+18001234567", label: "Call Now", icon: Phone, isExternal: true },
+  { href: "/site/book", label: "Video Consult", icon: Video },
+  { href: "mailto:support@trumove.com", label: "Email Support", icon: ArrowRight, isExternal: true },
 ];
 
 export default function Header() {
