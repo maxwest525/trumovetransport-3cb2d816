@@ -1617,7 +1617,7 @@ export default function Index() {
             <div className="max-w-6xl mx-auto">
               <div className="flex flex-col md:flex-row items-stretch">
                 {/* Col 1: Headline — separated left */}
-                <div className="shrink-0 self-center flex flex-col items-center text-center bg-card p-6 mr-10 rounded-none shadow-none border-0 border-primary-foreground" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 8px 40px rgba(0,0,0,0.3), inset 0 2px 8px rgba(0,0,0,0.15)', marginLeft: '-100px', maxWidth: '240px' }}>
+                <div className="shrink-0 self-center flex flex-col items-center text-center bg-card p-6 mr-10 rounded-none shadow-none border-0" style={{ marginLeft: '-100px', maxWidth: '240px' }}>
                   <h2 className="text-3xl font-black tracking-tight text-foreground mb-3">Contact Us.</h2>
                   <p className="text-sm text-muted-foreground leading-relaxed mb-5">Our team is standing by. Voice, video, text, or email.</p>
                   <a href="tel:+16097277647" className="inline-flex items-center gap-2 bg-foreground text-background px-6 py-2.5 rounded-full text-sm font-semibold hover:opacity-90 transition-opacity">
