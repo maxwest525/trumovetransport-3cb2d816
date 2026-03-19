@@ -13585,11 +13585,8 @@
   transform: none;
 }
 
-/* Active state: inverted fill */
+/* Active state: no special highlight */
 .header-nav-link.is-active {
-  color: hsl(var(--background));
-  background: hsl(var(--foreground));
-  border-color: hsl(var(--foreground));
   font-weight: 600;
 }
 
@@ -13597,11 +13594,6 @@
   display: none;
 }
 
-.dark .header-nav-link.is-active {
-  color: hsl(var(--background));
-  background: hsl(var(--foreground));
-  border-color: hsl(var(--foreground));
-}
 
 .header-nav-chevron {
   transition: transform 200ms ease;
