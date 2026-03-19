@@ -1612,6 +1612,61 @@ export default function Index() {
 
           <FeatureTrustStrip />
 
+          {/* TESTIMONIALS */}
+          <section className="tru-ai-steps-section">
+            <div className="max-w-6xl mx-auto">
+              <div className="flex flex-col items-center text-center mb-6">
+                <h2 className="tru-ai-main-headline text-5xl md:text-6xl">
+                  What Our Customers <span className="tru-ai-headline-accent">Say.</span>
+                </h2>
+                <p className="tru-ai-subheadline text-lg mt-3">Real stories from real moves across the country.</p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                {[
+                  {
+                    name: "Sarah M.",
+                    location: "New York → Miami",
+                    rating: 5,
+                    text: "TruMove made our cross-country move seamless. Real-time tracking gave us total peace of mind the entire way.",
+                  },
+                  {
+                    name: "James R.",
+                    location: "Chicago → Denver",
+                    rating: 5,
+                    text: "The AI inventory scanner saved us hours of manual cataloging. Our estimate was spot-on — no surprise charges.",
+                  },
+                  {
+                    name: "Emily & David K.",
+                    location: "Los Angeles → Seattle",
+                    rating: 5,
+                    text: "Best moving experience we've ever had. The team was professional, on time, and the video consult made planning easy.",
+                  },
+                ].map((review, i) => (
+                  <div
+                    key={i}
+                    className="rounded-2xl bg-card p-5 flex flex-col gap-3 ring-1 ring-border transition-all duration-200 hover:ring-primary/30 hover:shadow-md"
+                  >
+                    <div className="flex gap-0.5">
+                      {Array.from({ length: review.rating }).map((_, s) => (
+                        <svg key={s} className="w-4 h-4 text-primary fill-primary" viewBox="0 0 20 20">
+                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                      ))}
+                    </div>
+                    <p className="text-sm text-foreground leading-relaxed flex-1">"{review.text}"</p>
+                    <div className="pt-2 border-t border-border">
+                      <p className="text-sm font-semibold text-foreground">{review.name}</p>
+                      <p className="text-xs text-muted-foreground">{review.location}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          <FeatureTrustStrip />
+
           {/* GET IN TOUCH */}
           <section className="tru-ai-steps-section">
             <div className="max-w-6xl mx-auto">
