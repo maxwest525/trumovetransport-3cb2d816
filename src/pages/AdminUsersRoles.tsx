@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useUserRole } from "@/hooks/useUserRole";
-import { Users, Plus, Shield, Crown, BarChart3, UserCheck, Loader2, Mail, X, Sparkles, DollarSign } from "lucide-react";
+import { Users, Plus, Shield, Crown, BarChart3, UserCheck, Loader2, Mail, X, Sparkles, DollarSign, Pencil, Trash2, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type AppRole = "owner" | "admin" | "manager" | "agent" | "marketing" | "accounting";
@@ -36,6 +36,9 @@ export default function AdminUsersRoles() {
   const [inviteRole, setInviteRole] = useState<AppRole>("agent");
   const [inviting, setInviting] = useState(false);
   const [changingRole, setChangingRole] = useState<string | null>(null);
+  const [editingName, setEditingName] = useState<string | null>(null);
+  const [editNameValue, setEditNameValue] = useState("");
+  const [deletingUser, setDeletingUser] = useState<string | null>(null);
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -54,9 +57,8 @@ export default function AdminUsersRoles() {
       role: roleMap.get(p.id) ?? null,
     }));
 
-    // Sort: owners first, then admin, manager, agent, unassigned
     const order: Record<string, number> = { owner: 0, admin: 1, manager: 2, agent: 3, marketing: 4, accounting: 5 };
-    combined.sort((a, b) => (order[a.role ?? ""] ?? 4) - (order[b.role ?? ""] ?? 4));
+    combined.sort((a, b) => (order[a.role ?? ""] ?? 6) - (order[b.role ?? ""] ?? 6));
 
     setUsers(combined);
     setLoading(false);
@@ -109,6 +111,37 @@ export default function AdminUsersRoles() {
       toast({ title: "Failed", description: data?.error || error?.message, variant: "destructive" });
     } else {
       toast({ title: "Role removed" });
+      fetchUsers();
+    }
+  };
+
+  const handleDeleteUser = async (targetUserId: string) => {
+    if (!confirm("Are you sure you want to permanently delete this user? This cannot be undone.")) return;
+    setDeletingUser(targetUserId);
+    const { data, error } = await supabase.functions.invoke("invite-user", {
+      body: { action: "delete_user", user_id: targetUserId },
+    });
+    setDeletingUser(null);
+    if (error || data?.error) {
+      toast({ title: "Delete failed", description: data?.error || error?.message, variant: "destructive" });
+    } else {
+      toast({ title: "User deleted" });
+      fetchUsers();
+    }
+  };
+
+  const handleSaveName = async (targetUserId: string) => {
+    if (!editNameValue.trim()) return;
+    setChangingRole(targetUserId);
+    const { data, error } = await supabase.functions.invoke("invite-user", {
+      body: { action: "update_name", user_id: targetUserId, display_name: editNameValue.trim() },
+    });
+    setChangingRole(null);
+    setEditingName(null);
+    if (error || data?.error) {
+      toast({ title: "Update failed", description: data?.error || error?.message, variant: "destructive" });
+    } else {
+      toast({ title: "Name updated" });
       fetchUsers();
     }
   };
@@ -189,7 +222,7 @@ export default function AdminUsersRoles() {
         </div>
       ) : (
         <div className="rounded-xl border border-border bg-card overflow-hidden">
-          <div className="grid grid-cols-[1fr_auto_auto] sm:grid-cols-[1fr_140px_180px] items-center gap-4 px-4 py-2.5 border-b border-border bg-muted/30">
+          <div className="grid grid-cols-[1fr_auto_auto] sm:grid-cols-[1fr_140px_220px] items-center gap-4 px-4 py-2.5 border-b border-border bg-muted/30">
             <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">User</span>
             <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Role</span>
             <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider text-right">Actions</span>
@@ -198,10 +231,11 @@ export default function AdminUsersRoles() {
             const isSelf = user.id === userId;
             const roleConfig = user.role ? ROLE_CONFIG[user.role] : null;
             const RoleIcon = roleConfig?.icon;
+            const isEditing = editingName === user.id;
             return (
               <div
                 key={user.id}
-                className="grid grid-cols-[1fr_auto_auto] sm:grid-cols-[1fr_140px_180px] items-center gap-4 px-4 py-3 border-b border-border/50 last:border-0 hover:bg-muted/20 transition-colors"
+                className="grid grid-cols-[1fr_auto_auto] sm:grid-cols-[1fr_140px_220px] items-center gap-4 px-4 py-3 border-b border-border/50 last:border-0 hover:bg-muted/20 transition-colors"
               >
                 {/* User info */}
                 <div className="flex items-center gap-3 min-w-0">
@@ -209,10 +243,29 @@ export default function AdminUsersRoles() {
                     {user.display_name?.charAt(0)?.toUpperCase() || user.email?.charAt(0)?.toUpperCase() || "?"}
                   </div>
                   <div className="min-w-0">
-                    <p className="text-sm font-medium text-foreground truncate">
-                      {user.display_name || "Unnamed"}
-                      {isSelf && <span className="text-[10px] text-muted-foreground ml-1.5">(you)</span>}
-                    </p>
+                    {isEditing ? (
+                      <div className="flex items-center gap-1.5">
+                        <input
+                          type="text"
+                          value={editNameValue}
+                          onChange={(e) => setEditNameValue(e.target.value)}
+                          onKeyDown={(e) => e.key === "Enter" && handleSaveName(user.id)}
+                          className="h-6 px-2 rounded border border-border bg-background text-sm w-36 focus:outline-none focus:ring-1 focus:ring-ring"
+                          autoFocus
+                        />
+                        <button onClick={() => handleSaveName(user.id)} className="p-0.5 rounded hover:bg-muted">
+                          <Check className="w-3.5 h-3.5 text-primary" />
+                        </button>
+                        <button onClick={() => setEditingName(null)} className="p-0.5 rounded hover:bg-muted">
+                          <X className="w-3.5 h-3.5 text-muted-foreground" />
+                        </button>
+                      </div>
+                    ) : (
+                      <p className="text-sm font-medium text-foreground truncate">
+                        {user.display_name || "Unnamed"}
+                        {isSelf && <span className="text-[10px] text-muted-foreground ml-1.5">(you)</span>}
+                      </p>
+                    )}
                     <p className="text-xs text-muted-foreground truncate">{user.email}</p>
                   </div>
                 </div>
@@ -230,8 +283,8 @@ export default function AdminUsersRoles() {
                 </div>
 
                 {/* Actions */}
-                <div className="flex items-center justify-end gap-2">
-                  {changingRole === user.id ? (
+                <div className="flex items-center justify-end gap-1.5">
+                  {(changingRole === user.id || deletingUser === user.id) ? (
                     <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
                   ) : isSelf ? (
                     <span className="text-[11px] text-muted-foreground">—</span>
@@ -250,12 +303,20 @@ export default function AdminUsersRoles() {
                           <option key={r} value={r}>{ROLE_CONFIG[r].label}</option>
                         ))}
                       </select>
-                      {user.role && (
+                      <button
+                        onClick={() => { setEditingName(user.id); setEditNameValue(user.display_name || ""); }}
+                        className="p-1.5 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                        title="Edit name"
+                      >
+                        <Pencil className="w-3.5 h-3.5" />
+                      </button>
+                      {isOwner && (
                         <button
-                          onClick={() => handleRemoveRole(user.id)}
-                          className="text-[11px] text-destructive hover:underline"
+                          onClick={() => handleDeleteUser(user.id)}
+                          className="p-1.5 rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
+                          title="Delete user"
                         >
-                          Remove
+                          <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       )}
                     </>

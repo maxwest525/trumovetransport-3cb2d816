@@ -177,6 +177,68 @@ Deno.serve(async (req) => {
       });
     }
 
+    // DELETE USER: Remove user entirely (auth + profile + roles)
+    if (action === "delete_user") {
+      const { user_id } = body;
+      if (!user_id) {
+        return new Response(JSON.stringify({ error: "user_id is required" }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      if (user_id === caller.id) {
+        return new Response(JSON.stringify({ error: "Cannot delete yourself" }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      // Only owners can delete users
+      const callerIsOwner = (callerRoles ?? []).some((r: any) => r.role === "owner");
+      if (!callerIsOwner) {
+        return new Response(JSON.stringify({ error: "Only owners can delete users" }), {
+          status: 403,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      await adminClient.from("user_roles").delete().eq("user_id", user_id);
+      await adminClient.from("profiles").delete().eq("id", user_id);
+      const { error: delError } = await adminClient.auth.admin.deleteUser(user_id);
+      if (delError) {
+        return new Response(JSON.stringify({ error: delError.message }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      return new Response(JSON.stringify({ success: true }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // UPDATE DISPLAY NAME
+    if (action === "update_name") {
+      const { user_id, display_name } = body;
+      if (!user_id || !display_name) {
+        return new Response(JSON.stringify({ error: "user_id and display_name are required" }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      const { error: nameError } = await adminClient
+        .from("profiles")
+        .update({ display_name })
+        .eq("id", user_id);
+      if (nameError) {
+        return new Response(JSON.stringify({ error: nameError.message }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      return new Response(JSON.stringify({ success: true }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     return new Response(JSON.stringify({ error: "Invalid action" }), {
       status: 400,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
