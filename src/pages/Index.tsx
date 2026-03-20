@@ -1689,7 +1689,7 @@ export default function Index() {
                   <h2 className="tru-ai-main-headline text-5xl md:text-6xl">
                     Carrier <span className="tru-ai-headline-accent">Vetting.</span>
                   </h2>
-                  <p className="tru-ai-subheadline text-lg mt-3">Search any carrier. Red flags surfaced instantly.</p>
+                  <p className="tru-ai-subheadline text-lg mt-5">Search any carrier. Red flags surfaced instantly.</p>
                   <div className="pt-5">
                     <button onClick={() => navigate("/site/vetting")} className="tru-ai-cta-btn">
                       <Radar className="w-5 h-5 text-primary" />
