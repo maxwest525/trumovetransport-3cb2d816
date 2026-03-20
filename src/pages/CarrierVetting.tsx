@@ -618,7 +618,7 @@ export default function CarrierVetting() {
 
           {/* Empty State Placeholder - Only show when no carriers */}
           {carriers.length === 0 && (
-            <div className="mb-8 animate-fade-in">
+            <div className="mb-6 animate-fade-in">
               {/* Placeholder Cards Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">
                 {[1, 2, 3].map((i) => (
