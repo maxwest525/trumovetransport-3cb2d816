@@ -52,7 +52,7 @@ export default function AutoTransport() {
   };
 
   return (
-    <SiteShell>
+    <SiteShell hideTrustStrip>
       {/* How It Works */}
       <ScrollFadeIn>
         <div className="pt-8">
