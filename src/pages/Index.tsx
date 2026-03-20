@@ -61,7 +61,7 @@ import {
   CalendarIcon, ChevronLeft, Lock, Truck, Sparkles, Star, Users,
   Database, ChevronRight, Radar, CreditCard, ShieldCheck, BarChart3, Zap,
   Home, Building2, MoveVertical, ArrowUpDown, Scan, ChevronUp, ChevronDown, Camera, Globe,
-  Play, Pause, MapPinned, Calendar, Mail, MessageSquare, AlertTriangle, XCircle } from
+  Play, Pause, MapPinned, Calendar, Mail, MessageSquare, AlertTriangle, XCircle, Search } from
 "lucide-react";
 import { MOCK_CARRIERS } from "@/data/mockCarriers";
 
