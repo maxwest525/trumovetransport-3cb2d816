@@ -1685,11 +1685,11 @@ export default function Index() {
               {/* Two-column layout: headline left, SAFER card right */}
               <div className="flex flex-col lg:flex-row gap-10 items-center">
                 {/* Left column: headline + subheadline + CTA */}
-                <div className="lg:w-[340px] shrink-0">
-                  <h2 className="tru-ai-main-headline text-5xl md:text-6xl text-left">
+                <div className="lg:w-[340px] shrink-0 flex flex-col items-center lg:items-start text-center lg:text-left">
+                  <h2 className="tru-ai-main-headline text-5xl md:text-6xl">
                     Carrier <span className="tru-ai-headline-accent">Vetting.</span>
                   </h2>
-                  <p className="tru-ai-subheadline text-lg mt-3 text-left">Search any carrier. Red flags surfaced instantly.</p>
+                  <p className="tru-ai-subheadline text-lg mt-3">Search any carrier. Red flags surfaced instantly.</p>
                   <div className="pt-5">
                     <button onClick={() => navigate("/site/vetting")} className="tru-ai-cta-btn">
                       <Radar className="w-5 h-5 text-primary" />
