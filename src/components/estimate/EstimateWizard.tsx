@@ -510,8 +510,14 @@ export default function EstimateWizard({ onComplete, initialDetails }: EstimateW
           {/* Step 3: Contact Information (Final Step) */}
           {step === 3 && (
             <div className="tru-qb-step-content" key="step-3">
-              <h1 className="tru-qb-question">ALMOST DONE! HOW CAN WE <span className="text-primary">REACH YOU?</span></h1>
-              <p className="tru-qb-subtitle">We'll send your personalized quote</p>
+              <div className="tru-summary-header-large rounded-lg mb-4">
+                <div className="text-center flex-1">
+                  <h3 className="text-xl font-black uppercase tracking-wide">
+                    ALMOST DONE! HOW CAN WE <span className="text-primary">REACH YOU?</span>
+                  </h3>
+                  <p className="text-[10px] uppercase tracking-wide mt-1">We'll send your personalized quote</p>
+                </div>
+              </div>
 
               <div className="tru-qb-contact-fields">
                 <div className="tru-qb-input-wrap">
