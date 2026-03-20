@@ -513,7 +513,7 @@ export default function CarrierVetting() {
         <div className="min-h-[80vh] flex flex-col items-center justify-center px-6 py-6">
           <div className="w-full max-w-7xl mx-auto">
           {/* Hero Section - always visible */}
-          <div className="flex flex-col items-center justify-center text-center mb-6 max-w-3xl mx-auto">
+          <div className="flex flex-col items-center justify-center text-center mb-4 max-w-3xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-black tracking-tight text-foreground mb-4 whitespace-nowrap">
               FMCSA-Verified <span className="tru-qb-title-accent">Carrier Safety Records</span>
             </h2>
