@@ -513,11 +513,30 @@ export default function CarrierVetting() {
         <div className="min-h-[80vh] flex flex-col items-center justify-center px-6 py-12">
           <div className="w-full max-w-7xl mx-auto">
           {/* Hero Section - always visible */}
-          <div className="flex flex-col items-center justify-center text-center mb-10 max-w-2xl mx-auto">
+          <div className="flex flex-col items-center justify-center text-center mb-10 max-w-3xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-black tracking-tight text-foreground mb-3 whitespace-nowrap">
               FMCSA-Verified <span className="tru-qb-title-accent">Carrier Safety Records</span>
             </h2>
-            <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 text-xs text-muted-foreground mt-1">
+
+            {/* How It Works - 3 steps */}
+            <p className="text-sm font-semibold text-muted-foreground tracking-wide uppercase mb-4 mt-2">How It Works</p>
+            <div className="flex flex-col sm:flex-row items-start sm:items-start justify-center gap-8 sm:gap-12 mb-6">
+              {[
+                { num: 1, title: "Search by DOT or Name", desc: "Enter a carrier's DOT number or company name in the search above" },
+                { num: 2, title: "Review Safety Data", desc: "See instant FMCSA safety scores, insurance status, and red flags" },
+                { num: 3, title: "Compare Up to 4", desc: "Add multiple carriers to compare their safety records side-by-side" },
+              ].map((step) => (
+                <div key={step.num} className="flex flex-col items-center text-center max-w-[200px]">
+                  <div className="w-10 h-10 rounded-full bg-[hsl(var(--primary))] text-primary-foreground flex items-center justify-center text-sm font-bold mb-2.5">
+                    {step.num}
+                  </div>
+                  <h3 className="text-sm font-bold text-foreground mb-1">{step.title}</h3>
+                  <p className="text-xs text-muted-foreground leading-relaxed">{step.desc}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 text-xs text-muted-foreground">
               <span className="inline-flex items-center gap-1.5"><Database className="w-3.5 h-3.5 text-primary" />Real-time FMCSA data</span>
               <span className="inline-flex items-center gap-1.5"><AlertTriangle className="w-3.5 h-3.5 text-primary" />Red flag alerts</span>
               <span className="inline-flex items-center gap-1.5"><Search className="w-3.5 h-3.5 text-primary" />DOT lookup</span>
