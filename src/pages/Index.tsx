@@ -1737,6 +1737,9 @@ export default function Index() {
                     </div>
                   </div>
                 </div>
+              </div>
+            </div>
+          </section>
 
           <div className="py-8"><FeatureTrustStrip /></div>
 
