@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Phone, ArrowRight, Shield, CheckCircle, Truck, Package, Calendar } from "lucide-react";
 import SiteShell from "@/components/layout/SiteShell";
