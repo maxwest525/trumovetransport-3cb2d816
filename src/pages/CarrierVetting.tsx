@@ -530,7 +530,7 @@ export default function CarrierVetting() {
           </div>
 
           {/* FMCSA Terminal - Always Visible */}
-          <div className="fmcsa-terminal max-w-2xl mx-auto mb-6">
+          <div className="fmcsa-terminal max-w-2xl mx-auto mb-4">
             <div className="fmcsa-terminal-header">
               <div className="fmcsa-terminal-dots">
                 <span></span><span></span><span></span>
