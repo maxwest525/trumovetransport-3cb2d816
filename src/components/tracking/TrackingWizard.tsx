@@ -84,7 +84,7 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
       <div className="tru-floating-form-card tru-floating-form-compact overflow-hidden">
         <div className="tru-qb-form-header tru-qb-form-header-pill">
           <div className="tru-qb-form-title-group">
-            <span className="tru-qb-form-title tru-qb-form-title-large">WHERE ARE WE <span className="tru-qb-title-accent">MOVING?</span></span>
+            <span className="tru-qb-form-title tru-qb-form-title-large">WHERE ARE WE <span className="text-primary">MOVING?</span></span>
             <span className="tru-qb-form-subtitle-compact">GPS • Live Tracking • Weather • ETA</span>
           </div>
         </div>
