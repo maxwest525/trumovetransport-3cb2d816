@@ -44,7 +44,7 @@ export function ContactHub({
   };
 
   return (
-    <div className="flex flex-col items-center h-full p-8 relative">
+    <div className="flex flex-col items-center h-full p-4 sm:p-8 relative">
       {/* Logo - positioned at top */}
       <div className="pt-4">
         <img 
