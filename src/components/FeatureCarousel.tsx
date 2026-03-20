@@ -26,6 +26,15 @@ const TrudyAvatarIcon = () => (
   </div>
 );
 
+type Feature = {
+  title: string;
+  desc: string;
+  image?: string;
+  customIcon?: React.ReactNode;
+  route?: string;
+  action?: "openChat";
+};
+
 const features: Feature[] = [
   {
     title: "Inventory Builder",
@@ -66,7 +75,7 @@ const features: Feature[] = [
   {
     title: "Trudy AI Assistant",
     desc: "Chat with our AI to get instant answers about your move.",
-    customIcon: <TruckChatIcon />,
+    customIcon: <TrudyAvatarIcon />,
     action: "openChat",
   },
 ];
