@@ -1617,7 +1617,7 @@ export default function Index() {
           {/* SHIPMENT TRACKER - Mirrored Layout */}
           <ShipmentTrackerSection navigate={navigate} />
 
-          <FeatureTrustStrip />
+          <div className="py-8"><FeatureTrustStrip /></div>
 
           {/* TESTIMONIALS */}
           <section className="tru-ai-steps-section pt-16 pb-16">
