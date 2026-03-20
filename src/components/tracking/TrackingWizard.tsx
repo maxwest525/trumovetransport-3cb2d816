@@ -83,13 +83,6 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
     <div className="w-full max-w-md mx-auto">
       <div className="bg-card border border-border/60 rounded-2xl overflow-hidden shadow-[0_0_80px_-20px_hsl(var(--primary)/0.12)]">
         <div className="p-4 sm:p-6 space-y-5 animate-in fade-in slide-in-from-bottom-4 duration-300">
-          <div>
-            <p className="text-[10px] uppercase tracking-[0.25em] text-primary font-semibold mb-1">Shipment Tracking</p>
-            <h3 className="text-lg sm:text-xl font-bold text-foreground tracking-tight">
-              Track Your Shipment
-            </h3>
-            <p className="text-sm text-muted-foreground mt-1">GPS • Live Tracking • Weather • ETA</p>
-          </div>
 
           {/* Booking # */}
           <div className="flex items-center justify-center gap-2">
