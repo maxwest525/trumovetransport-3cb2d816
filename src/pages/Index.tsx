@@ -513,7 +513,7 @@ function ShipmentTrackerSection({ navigate }: {navigate: (path: string) => void;
   return (
     <section className="tru-ai-steps-section" style={{ paddingTop: '5rem', paddingBottom: '5rem' }}>
       <div className="tru-ai-steps-inner">
-        <div className="flex flex-col lg:flex-row items-end justify-center gap-10 lg:gap-16 w-full">
+        <div className="flex flex-col lg:flex-row items-center justify-center gap-10 lg:gap-16 w-full">
           {/* Lifestyle image - left */}
           <div className="hidden lg:flex items-end flex-shrink-0">
             <div className="rounded-xl overflow-hidden">
