@@ -358,8 +358,8 @@ export default function InventoryTable({ items, onUpdateItem, onRemoveItem, onCl
       {/* Header - Enlarged and Centered */}
       <div className="tru-summary-header-large border-b border-border/40">
         <div className="text-center flex-1">
-          <h3 className="text-lg font-black text-foreground">
-            Your Move <span className="tru-qb-title-accent">Inventory</span>
+          <h3 className="text-lg font-black uppercase tracking-wide">
+            YOUR MOVE <span className="text-primary">INVENTORY</span>
           </h3>
         </div>
       </div>

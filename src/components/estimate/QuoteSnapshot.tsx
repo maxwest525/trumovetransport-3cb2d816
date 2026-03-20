@@ -60,10 +60,10 @@ export default function QuoteSnapshot({ items, moveDetails, extendedDetails, onE
       {/* Header - Enlarged and Centered */}
       <div className="tru-summary-header-large">
         <div className="text-center flex-1">
-          <h3 className="text-lg font-black text-foreground">
-            Your Move <span className="tru-qb-title-accent">Summary</span>
+          <h3 className="text-lg font-black uppercase tracking-wide">
+            YOUR MOVE <span className="text-primary">SUMMARY</span>
           </h3>
-          <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Items by room</p>
+          <p className="text-[10px] uppercase tracking-wide">Items by room</p>
         </div>
         {onEdit && (
           <button 

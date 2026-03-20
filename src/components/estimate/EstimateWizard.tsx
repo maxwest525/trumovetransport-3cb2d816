@@ -251,9 +251,9 @@ export default function EstimateWizard({ onComplete, initialDetails }: EstimateW
           {/* Header - Matching homepage style */}
            <div className="tru-summary-header-large">
              <div className="text-center flex-1">
-               <h3 className="text-xl font-black text-foreground">
-                 Where are you <span className="tru-qb-title-accent">moving from?</span>
-               </h3>
+                <h3 className="text-xl font-black uppercase tracking-wide">
+                  WHERE ARE YOU <span className="text-primary">MOVING FROM?</span>
+                </h3>
              </div>
            </div>
 
@@ -374,7 +374,7 @@ export default function EstimateWizard({ onComplete, initialDetails }: EstimateW
           {/* Step 2: Moving TO Details + Parking */}
           {step === 2 && (
             <div className="tru-qb-step-content" key="step-2">
-              <h1 className="tru-qb-question">Where are you <span className="tru-qb-title-accent">moving to?</span></h1>
+              <h1 className="tru-qb-question">WHERE ARE YOU <span className="text-primary">MOVING TO?</span></h1>
 
               <div className="tru-qb-input-wrap tru-qb-zip-wrap">
                 <LocationAutocomplete
@@ -504,7 +504,7 @@ export default function EstimateWizard({ onComplete, initialDetails }: EstimateW
           {/* Step 3: Contact Information (Final Step) */}
           {step === 3 && (
             <div className="tru-qb-step-content" key="step-3">
-              <h1 className="tru-qb-question">Almost done! How can we reach you?</h1>
+              <h1 className="tru-qb-question">ALMOST DONE! HOW CAN WE <span className="text-primary">REACH YOU?</span></h1>
               <p className="tru-qb-subtitle">We'll send your personalized quote</p>
 
               <div className="tru-qb-contact-fields">
