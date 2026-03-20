@@ -1683,9 +1683,9 @@ export default function Index() {
           <section className="tru-ai-steps-section py-24">
             <div className="max-w-6xl mx-auto">
               {/* Two-column layout: headline left, SAFER card right */}
-              <div className="flex flex-col lg:flex-row gap-10 items-center">
+              <div className="flex flex-col lg:flex-row gap-10 items-center justify-center">
                 {/* Left column: headline + subheadline + CTA */}
-                <div className="lg:w-[340px] shrink-0 flex flex-col items-center lg:items-start text-center lg:text-left">
+                <div className="lg:w-[340px] shrink-0 flex flex-col items-center text-center">
                   <h2 className="tru-ai-main-headline text-5xl md:text-6xl">
                     Carrier <span className="tru-ai-headline-accent">Vetting.</span>
                   </h2>
