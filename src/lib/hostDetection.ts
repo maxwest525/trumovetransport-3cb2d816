@@ -1,28 +1,21 @@
 /**
- * Hostname-based routing detection.
+ * Hostname detection utilities.
+ * 
+ * Routing is no longer hostname-dependent:
+ *   /       → CRM portal (always)
+ *   /site/* → customer-facing website (always)
  *
- * Main domain  (trumoveinc.com / www.trumoveinc.com) → customer-facing website
- * CRM subdomain (crm.trumoveinc.com)                → internal CRM / portal
- *
- * During local dev or on Lovable preview URLs the CRM experience is default
- * (preserving current behaviour).
+ * These helpers are kept for any future hostname-specific logic
+ * (e.g. branding, analytics, custom domains).
  */
 
 const CRM_SUBDOMAIN = "crm";
 
 export function isCrmDomain(): boolean {
-  const host = window.location.hostname; // e.g. "crm.trumoveinc.com"
-
-  // Local / preview → treat as CRM so dev experience stays the same
-  if (
-    host === "localhost" ||
-    host === "127.0.0.1" ||
-    host.endsWith(".lovable.app")
-  ) {
+  const host = window.location.hostname;
+  if (host === "localhost" || host === "127.0.0.1" || host.endsWith(".lovable.app")) {
     return true;
   }
-
-  // Check for crm.* subdomain
   return host.startsWith(`${CRM_SUBDOMAIN}.`);
 }
 
