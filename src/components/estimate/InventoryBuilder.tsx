@@ -482,7 +482,7 @@ export default function InventoryBuilder({
     <div className="flex flex-col md:flex-row gap-4 min-h-[300px] md:min-h-[400px]">
       {/* Left Sidebar - Room Navigation (horizontal scroll on mobile, vertical on desktop) */}
       <div className="md:w-44 flex-shrink-0 space-y-0 md:space-y-1 flex md:flex-col overflow-x-auto md:overflow-x-visible gap-1.5 md:gap-0 pb-2 md:pb-0">
-        <div className="flex items-center justify-between mb-3 px-2">
+        <div className="hidden md:flex items-center justify-between mb-3 px-2">
           <div className="text-[10px] font-black tracking-[0.2em] uppercase text-muted-foreground">
             My Inventory
           </div>
