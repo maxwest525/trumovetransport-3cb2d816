@@ -699,8 +699,8 @@ export default function CarrierVetting() {
               </div>
               
               {/* How It Works Section */}
-              <div className="mt-10 max-w-3xl mx-auto">
-                <h3 className="text-center text-sm font-semibold text-foreground mb-6">How It Works</h3>
+                <div className="mt-6 max-w-3xl mx-auto">
+                  <h3 className="text-center text-sm font-semibold text-foreground mb-4">How It Works</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="text-center">
                     <div className="w-10 h-10 rounded-full bg-slate-900 dark:bg-slate-100 flex items-center justify-center mx-auto mb-3 shadow-md">
