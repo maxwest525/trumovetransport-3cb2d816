@@ -1,35 +1,31 @@
 
 
-## Plan: Add Estimate Mode Toggle (Manual vs. AI Scan)
+## Plan: Port TruMove Auto Transport Content
 
-### What
-Add a prominent toggle at the top of the Online Estimate page that lets the user choose between two modes:
-1. **Manual Builder** — the current inventory builder flow
-2. **AI Room Scan** — navigates to the `/site/scan-room` page
+### Overview
+Replace the current simple AutoTransport page with the full TruMove page from the other project. This includes a multi-step quote wizard, quote reveal with pricing, "How It Works" section, and a chat bubble -- all using the same premium design system.
 
-This replaces the buried "Scan Your Room" button inside the InventoryBuilder with a top-level, visually prominent mode selector.
+### Files to Create
+1. **`src/components/auto-transport/HowItWorks.tsx`** -- 5-step animated process section (Enter vehicle, Confirm route, See pricing, Reserve, Track)
+2. **`src/components/auto-transport/QuoteWizard.tsx`** -- 2-step wizard with vehicle selection (year/make/model), transport type, condition report, route planning with map visualization
+3. **`src/components/auto-transport/QuoteReveal.tsx`** -- Quote display with move summary, exclusive deals overlay, callback request form, trust perks
+4. **`src/components/auto-transport/ChatBubble.tsx`** -- Floating chat widget with Trudy bot for auto transport questions
+5. **`src/assets/us-map.png`** -- Copy the US map asset from the source project
 
-### Changes
+### Files to Modify
+1. **`src/pages/AutoTransport.tsx`** -- Replace current simple page with the TruMove page structure (HowItWorks + QuoteWizard + QuoteReveal + ChatBubble + sticky mobile CTA)
+2. **`src/hooks/useScrollAnimation.ts`** (new) -- ScrollFadeIn component and useScrollAnimation hook for scroll-triggered animations
+3. **`src/index.css`** -- Add `section-container` utility class (`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8`)
 
-**1. `src/pages/OnlineEstimate.tsx`**
-- Add a mode toggle strip above the main grid (below the page header area, around line 338)
-- Two-option toggle using styled buttons (not the radix ToggleGroup — simpler custom buttons matching the TruMove design)
-- Options: "Build Manually" (with Package icon) and "AI Room Scan" (with Scan icon)
-- Default selection: "Build Manually"
-- Clicking "AI Room Scan" navigates to `/site/scan-room`
-- Style: pill-shaped toggle group with the active option using the primary green accent, inactive option muted — similar to the existing TruMove design language
+### Adaptations
+- Wrap content in the existing `SiteShell` instead of the source project's `Navbar`
+- Remove the 3D model-viewer panel (requires `.glb` assets not available) -- keep form-only layout
+- Keep the existing project's button `premium` variant (already present)
+- Use existing footer from SiteShell rather than the inline footer from source
 
-**2. `src/components/estimate/InventoryBuilder.tsx`**
-- Remove or visually de-emphasize the existing "Scan Your Room" preview card (lines 534-562), since the toggle at the top now handles this. Keeping it as a smaller secondary link is optional.
-
-### Visual Design
-```text
-┌─────────────────────────────────────────────┐
-│  [ 📦 Build Manually ]  [ 📷 AI Room Scan ] │
-│       ↑ active/green        muted/outline    │
-└─────────────────────────────────────────────┘
-```
-- Centered above the grid
-- Clear iconography and labels
-- Active state uses primary color fill, inactive uses outline/ghost style
+### Technical Notes
+- All components use `framer-motion` (already installed)
+- `date-fns` already available for date formatting
+- The quote wizard uses hardcoded city-to-city distances and pricing -- no API calls needed
+- The ChatBubble is a self-contained keyword-matching bot, separate from the existing Trudy/ElevenLabs widget
 
