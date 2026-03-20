@@ -588,7 +588,7 @@ export default function CarrierVetting() {
 
           {/* Section Header - only show when carriers are loaded */}
           {carriers.length > 0 && (
-            <div className="mt-12 mb-10 text-center">
+              <div className="mt-6 mb-6 text-center">
               <div className="inline-flex items-center gap-3 mb-4">
                 <div className="w-8 h-px bg-border" />
                 <span className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
