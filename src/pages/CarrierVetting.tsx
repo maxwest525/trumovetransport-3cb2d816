@@ -538,16 +538,6 @@ export default function CarrierVetting() {
               </div>
             </div>
             <div className="fmcsa-terminal-body">
-              <div className="mb-5 text-center">
-                <h3 
-                  className="text-xl md:text-2xl font-bold tracking-wide text-slate-900 dark:text-white/80"
-                  style={{ 
-                    letterSpacing: '0.05em'
-                  }}
-                >
-                  FMCSA-Verified Carrier Safety Records
-                </h3>
-              </div>
               <CarrierSearch onSelect={handleAddCarrier} isLoading={isLoading} />
               <p className="text-xs text-slate-600 dark:text-white/60 leading-relaxed mt-4 text-center">
                 All carriers are filtered and continuously monitored per official FMCSA Safety Measurement System (SMS) criteria and federal compliance standards. Click any card for detailed report including Behavior Analysis and Safety Improvement Categories (BASICs), roadside inspection results, crash involvement, and safety fitness evaluation.
