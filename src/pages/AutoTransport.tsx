@@ -55,14 +55,14 @@ export default function AutoTransport() {
     <SiteShell hideTrustStrip>
       {/* How It Works */}
       <ScrollFadeIn>
-        <div className="pt-8">
+        <div className="pt-4">
           <HowItWorks />
         </div>
       </ScrollFadeIn>
 
       {/* Quote Wizard */}
       <ScrollFadeIn>
-        <section ref={quoteRef} className="py-10 md:py-20 relative overflow-hidden">
+        <section ref={quoteRef} className="py-6 md:py-10 relative overflow-hidden">
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full bg-primary/[0.06] blur-[120px]" />
             <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-primary/[0.05] blur-[100px]" />
@@ -77,7 +77,7 @@ export default function AutoTransport() {
             />
           </div>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div className="text-center mb-8 md:mb-12">
+            <div className="text-center mb-6 md:mb-8">
               <p className="text-[11px] uppercase tracking-[0.3em] text-primary font-semibold mb-3">Quote Builder</p>
               <div className="flex items-center justify-center gap-2 mb-4">
                 <span className="h-px w-8 bg-primary/40" />
@@ -108,7 +108,7 @@ export default function AutoTransport() {
       </ScrollFadeIn>
 
       {/* Final CTA */}
-      <section className="py-6 sm:py-10 md:py-20 bg-card/30">
+      <section className="py-6 sm:py-8 md:py-12 bg-card/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-2xl mx-auto text-center">
             <h2 className="text-xl sm:text-2xl md:text-4xl font-semibold text-foreground mb-2 sm:mb-3 md:mb-4">
