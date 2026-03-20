@@ -1,12 +1,11 @@
-import { useState } from "react";
-
 interface DailyVideoRoomProps {
   roomUrl?: string;
+  userName?: string;
   onLeave?: () => void;
   className?: string;
 }
 
-export function DailyVideoRoom({ roomUrl, onLeave, className }: DailyVideoRoomProps) {
+export function DailyVideoRoom({ roomUrl, userName, onLeave, className }: DailyVideoRoomProps) {
   return (
     <div className={className}>
       <div className="flex items-center justify-center h-full bg-muted rounded-xl p-8 text-center">
