@@ -521,11 +521,11 @@ export default function CarrierVetting() {
             {/* How It Works - simplified inline */}
             <div className="flex items-center gap-3 text-xs text-muted-foreground mb-2">
               <span className="font-semibold uppercase tracking-wider">How It Works:</span>
-              <span className="flex items-center gap-1.5"><span className="w-5 h-5 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-[10px] font-bold">1</span>Search</span>
+              <span className="flex items-center gap-1.5"><span className="w-5 h-5 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-[10px] font-bold">1</span>Search company name or DOT</span>
               <span className="text-border">→</span>
-              <span className="flex items-center gap-1.5"><span className="w-5 h-5 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-[10px] font-bold">2</span>Review</span>
+              <span className="flex items-center gap-1.5"><span className="w-5 h-5 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-[10px] font-bold">2</span>Review FMCSA Safety Data</span>
               <span className="text-border">→</span>
-              <span className="flex items-center gap-1.5"><span className="w-5 h-5 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-[10px] font-bold">3</span>Compare</span>
+              <span className="flex items-center gap-1.5"><span className="w-5 h-5 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-[10px] font-bold">3</span>Compare multiple carriers</span>
             </div>
           </div>
 
