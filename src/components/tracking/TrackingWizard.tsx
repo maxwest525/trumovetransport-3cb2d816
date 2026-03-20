@@ -81,22 +81,24 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
 
   return (
     <div className="w-full max-w-md mx-auto">
-      <div className="tru-floating-form-card tru-floating-form-compact overflow-hidden">
-        <div className="tru-qb-form-header tru-qb-form-header-pill">
-          <div className="tru-qb-form-title-group">
-            <span className="tru-qb-form-title tru-qb-form-title-large">TRACK YOUR <span className="text-primary">SHIPMENT</span></span>
-            <span className="tru-qb-form-subtitle-compact">GPS • Live Tracking • Weather • ETA</span>
+      <div className="bg-card border border-border/60 rounded-2xl overflow-hidden shadow-[0_0_80px_-20px_hsl(var(--primary)/0.12)]">
+        <div className="p-4 sm:p-6 space-y-5 animate-in fade-in slide-in-from-bottom-4 duration-300">
+          <div>
+            <p className="text-[10px] uppercase tracking-[0.25em] text-primary font-semibold mb-1">Shipment Tracking</p>
+            <h3 className="text-lg sm:text-xl font-bold text-foreground tracking-tight">
+              Track Your Shipment
+            </h3>
+            <p className="text-sm text-muted-foreground mt-1">GPS • Live Tracking • Weather • ETA</p>
           </div>
-        </div>
-        <div className="p-4 sm:p-6 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
-          {/* Booking # - centered */}
+
+          {/* Booking # */}
           <div className="flex items-center justify-center gap-2">
             <Search className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
             <Input
               value={bookingNumber}
               onChange={(e) => setBookingNumber(e.target.value)}
               placeholder="Booking # (optional)"
-              className="max-w-[180px] h-8 text-xs text-center"
+              className="max-w-[180px] h-8 text-xs text-center bg-secondary border-border/60"
               onKeyDown={(e) => e.key === 'Enter' && handleBookingLookup()}
             />
             <Button onClick={handleBookingLookup} disabled={!bookingNumber.trim() || isLookingUp} variant="ghost" size="sm" className="h-8 w-8 p-0 text-muted-foreground">
@@ -105,19 +107,17 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
           </div>
 
           {/* Origin Address */}
-          <div className="space-y-1.5">
-            <Label className="flex items-center gap-2 text-base font-black uppercase tracking-wide text-foreground">
-              <Navigation className="w-5 h-5 text-primary" />
-              Origin
-            </Label>
+          <div className="space-y-2">
+            <Label className="text-sm text-muted-foreground">Origin</Label>
             <div className="relative">
+              <Navigation className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary" />
               <LocationAutocomplete
                 value={originAddress}
                 onValueChange={setOriginAddress}
                 onLocationSelect={(displayAddr, zip, fullAddress) => setOriginAddress(fullAddress || displayAddr)}
                 placeholder="Enter pickup address..."
                 mode="address"
-                className="w-full h-9 text-sm pr-9"
+                className="w-full h-11 text-sm pl-9 pr-9 bg-secondary border-border/60"
               />
               <button
                 type="button"
@@ -132,26 +132,26 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
           </div>
 
           {/* Destination Address */}
-          <div className="space-y-1.5">
-            <Label className="flex items-center gap-2 text-base font-black uppercase tracking-wide text-foreground">
-              <MapPin className="w-5 h-5 text-destructive" />
-              Destination
-            </Label>
-            <LocationAutocomplete
-              value={destAddress}
-              onValueChange={setDestAddress}
-              onLocationSelect={(displayAddr, zip, fullAddress) => setDestAddress(fullAddress || displayAddr)}
-              placeholder="Enter delivery address..."
-              mode="address"
-              className="w-full h-9 text-sm"
-            />
+          <div className="space-y-2">
+            <Label className="text-sm text-muted-foreground">Destination</Label>
+            <div className="relative">
+              <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-destructive" />
+              <LocationAutocomplete
+                value={destAddress}
+                onValueChange={setDestAddress}
+                onLocationSelect={(displayAddr, zip, fullAddress) => setDestAddress(fullAddress || displayAddr)}
+                placeholder="Enter delivery address..."
+                mode="address"
+                className="w-full h-11 text-sm pl-9 bg-secondary border-border/60"
+              />
+            </div>
           </div>
 
           {/* View Route */}
-          <button type="button" className="tru-qb-continue mx-auto" disabled={!canSubmit} onClick={handleSubmit}>
+          <Button variant="premium" className="w-full h-12 text-sm" disabled={!canSubmit} onClick={handleSubmit}>
             <Play className="w-4 h-4" />
-            <span>View Route</span>
-          </button>
+            View Route
+          </Button>
           {onDemo && (
             <div className="text-center">
               <Button variant="ghost" size="sm" className="gap-1 text-xs text-muted-foreground h-7" onClick={onDemo}>
