@@ -149,6 +149,7 @@ const App = () => (
             <Route path="/kpi" element={<KpiDashboard />} />
             <Route path="/leaderboard" element={<Leaderboard />} />
             <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/set-password" element={<SetPassword />} />
             <Route path="/marketing/dashboard" element={<GrowthDashboard />} />
             <Route path="/marketing/campaigns" element={<GrowthCampaigns />} />
             <Route path="/marketing/integrations" element={<GrowthIntegrations />} />
