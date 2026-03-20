@@ -730,7 +730,7 @@ export default function CarrierVetting() {
 
           {/* Results Header - Only when carriers exist */}
           {carriers.length > 0 && (
-            <div className="mt-12 mb-10 text-center">
+            <div className="mt-6 mb-6 text-center">
               <div className="inline-block px-8 py-6 bg-gradient-to-b from-muted/50 to-transparent rounded-xl border border-border/50">
                 <div className="flex flex-wrap items-center justify-center gap-3 mb-4">
                   <h2 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">
