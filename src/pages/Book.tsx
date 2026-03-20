@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import Cal from "@calcom/embed-react";
 import { Link } from "react-router-dom";
 import { Phone, ArrowRight, Shield, CheckCircle, Truck, Package, Calendar } from "lucide-react";
 import SiteShell from "@/components/layout/SiteShell";
