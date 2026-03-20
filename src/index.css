@@ -13501,7 +13501,7 @@
 }
 
 .dark .header-main.header-floating.is-scrolled {
-  background: hsl(0 0% 30%);
+  background: hsl(0 0% 0%);
   box-shadow: 
     0 6px 16px hsl(0 0% 0% / 0.5),
     0 16px 40px hsl(0 0% 0% / 0.4);
