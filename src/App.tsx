@@ -38,6 +38,7 @@ import LeadsDashboard from "./pages/LeadsDashboard";
 import LeadsPerformance from "./pages/LeadsPerformance";
 import KpiDashboard from "./pages/KpiDashboard";
 import ResetPassword from "./pages/ResetPassword";
+import SetPassword from "./pages/SetPassword";
 import GrowthDashboard from "./pages/growth-engine/GrowthDashboard";
 import GrowthCampaigns from "./pages/growth-engine/GrowthCampaigns";
 import GrowthIntegrations from "./pages/growth-engine/GrowthIntegrations";
@@ -148,6 +149,7 @@ const App = () => (
             <Route path="/kpi" element={<KpiDashboard />} />
             <Route path="/leaderboard" element={<Leaderboard />} />
             <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/set-password" element={<SetPassword />} />
             <Route path="/marketing/dashboard" element={<GrowthDashboard />} />
             <Route path="/marketing/campaigns" element={<GrowthCampaigns />} />
             <Route path="/marketing/integrations" element={<GrowthIntegrations />} />
