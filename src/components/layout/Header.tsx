@@ -10,10 +10,10 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { href: "/site/online-estimate", label: "Virtual Inventory", icon: Calculator },
-  { href: "/site/track", label: "Shipment Tracking", icon: MapPin },
-  { href: "/site/vetting", label: "FMCSA Carrier Vetting", icon: Shield },
-  { href: "/site/book", label: "Contact Us", icon: Phone },
+  { href: "/online-estimate", label: "Virtual Inventory", icon: Calculator },
+  { href: "/track", label: "Shipment Tracking", icon: MapPin },
+  { href: "/vetting", label: "FMCSA Carrier Vetting", icon: Shield },
+  { href: "/book", label: "Contact Us", icon: Phone },
 ];
 
 export default function Header() {
@@ -31,10 +31,10 @@ export default function Header() {
 
   return (
     <>
-      <header className={`header-main header-floating ${isScrolled ? "is-scrolled" : ""} ${location.pathname === "/site" ? "header-home-glow" : ""}`}>
+      <header className={`header-main header-floating ${isScrolled ? "is-scrolled" : ""} ${location.pathname === "/" ? "header-home-glow" : ""}`}>
         <div className="header-inner">
           {/* Logo - left */}
-          <Link to="/site" className="header-logo shrink-0" aria-label="TruMove Home">
+          <Link to="/" className="header-logo shrink-0" aria-label="TruMove Home">
             <img 
               src={logo} 
               alt="TruMove" 

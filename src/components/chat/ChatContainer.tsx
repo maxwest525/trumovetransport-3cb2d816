@@ -299,9 +299,9 @@ export default function ChatContainer({ initialFromLocation, initialToLocation }
     if (intent === "specialist") {
       window.location.href = "tel:+18001234567";
     } else if (intent === "virtual") {
-      navigate("/site/book");
+      navigate("/book");
     } else if (intent === "builder") {
-      navigate("/site/online-estimate");
+      navigate("/online-estimate");
     }
   };
 

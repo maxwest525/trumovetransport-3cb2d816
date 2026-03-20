@@ -214,13 +214,13 @@ export default function About() {
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link
-              to="/site/online-estimate"
+              to="/online-estimate"
               className="inline-flex items-center gap-2 h-12 px-6 rounded-xl bg-foreground text-background text-sm font-bold tracking-wide uppercase transition-all hover:-translate-y-0.5 hover:shadow-lg"
             >
               Get an Estimate
             </Link>
             <Link
-              to="/site/book"
+              to="/book"
               className="inline-flex items-center gap-2 h-12 px-6 rounded-xl border border-border/60 bg-card text-foreground text-sm font-bold tracking-wide uppercase transition-all hover:bg-muted/50"
             >
               Book a Consult

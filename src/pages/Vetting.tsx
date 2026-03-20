@@ -80,11 +80,11 @@ export default function Vetting() {
             </div>
 
             <div className="tru-vetting-hero-cta">
-              <Link to="/site/carrier-vetting" className="tru-vetting-primary-btn">
+              <Link to="/carrier-vetting" className="tru-vetting-primary-btn">
                 Vet a Carrier
                 <Search className="w-4 h-4" />
               </Link>
-              <Link to="/site/online-estimate" className="tru-vetting-secondary-btn">
+              <Link to="/online-estimate" className="tru-vetting-secondary-btn">
                 Get Protected Quote
                 <ArrowRight className="w-4 h-4" />
               </Link>
@@ -178,7 +178,7 @@ export default function Vetting() {
             <p className="tru-vetting-cta-subtext">
               Get matched with verified carriers today.
             </p>
-            <Link to="/site/online-estimate" className="tru-vetting-cta-btn">
+            <Link to="/online-estimate" className="tru-vetting-cta-btn">
               Start Your Quote
               <ArrowRight className="w-5 h-5" />
             </Link>

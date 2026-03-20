@@ -35,7 +35,7 @@ const App = () => (
           <Routes>
             {/* ── Customer-facing website ─────────────── */}
             <Route path="/" element={<Index />} />
-            <Route path="/site" element={<Navigate to="/" replace />} />
+            <Route path="/" element={<Navigate to="/" replace />} />
             <Route path="/online-estimate" element={<OnlineEstimate />} />
             <Route path="/book" element={<Book />} />
             <Route path="/vetting" element={<CarrierVetting />} />
@@ -52,7 +52,7 @@ const App = () => (
             <Route path="/customer-service" element={<CustomerService />} />
 
             {/* Legacy /site/* redirects */}
-            <Route path="/site/*" element={<Navigate to="/" replace />} />
+            <Route path="/*" element={<Navigate to="/" replace />} />
 
             <Route path="*" element={<NotFound />} />
           </Routes>

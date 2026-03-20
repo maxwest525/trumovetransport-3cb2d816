@@ -7,7 +7,7 @@ const SITES = [
   {
     title: "TruMove Inc",
     description: "Primary company website — full branding, services, and lead capture.",
-    href: "/site",
+    href: "/",
     icon: Globe,
     accent: "from-emerald-500/20 to-green-500/10",
     iconColor: "text-emerald-500",

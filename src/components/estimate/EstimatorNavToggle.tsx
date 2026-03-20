@@ -2,8 +2,8 @@ import { Link, useLocation } from "react-router-dom";
 import { Scan, Package } from "lucide-react";
 
 const options = [
-  { href: "/site/online-estimate", label: "Build Manually", icon: Package },
-  { href: "/site/scan-room", label: "AI Room Scan", icon: Scan, badge: "Beta" },
+  { href: "/online-estimate", label: "Build Manually", icon: Package },
+  { href: "/scan-room", label: "AI Room Scan", icon: Scan, badge: "Beta" },
 ];
 
 export default function EstimatorNavToggle() {
