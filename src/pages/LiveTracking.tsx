@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect, useRef, useMemo } from "react";
-import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Calendar, Box, AlertTriangle, ChevronDown, ChevronRight, ChevronLeft, ChevronUp, Map, Layers, Globe, Navigation2, Sparkles, Scale, Route, Crosshair, ShieldCheck, Cloud, ArrowRight, Headphones, Shield, Satellite } from "lucide-react";
+import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Calendar, Box, AlertTriangle, ChevronDown, ChevronRight, ChevronLeft, ChevronUp, Map, Layers, Globe, Navigation2, Sparkles, Scale, Route, Crosshair, ShieldCheck, Cloud, ArrowRight, Headphones, Shield, Satellite, Phone } from "lucide-react";
 import { format } from "date-fns";
+import { ScrollFadeIn } from "@/hooks/useScrollFadeIn";
 import { TruckTrackingMap } from "@/components/tracking/TruckTrackingMap";
 // Google3DTrackingView removed - unreliable
 import { Google2DTrackingMap, type MapViewType } from "@/components/tracking/Google2DTrackingMap";
@@ -605,332 +606,372 @@ export default function LiveTracking() {
 
   return (
     <SiteShell hideTrustStrip>
-      
-      <div className="live-tracking-page">
-      
-      {/* Hero Section - Headline & Subheadline */}
-      <div className="tru-page-hero-section">
-        <h1 className="text-3xl md:text-4xl font-black tracking-tight text-foreground mb-3">
-          Track Your <span className="tru-qb-title-accent">Shipment</span>
-        </h1>
-        <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
-          Monitor your move in real-time with live GPS tracking, traffic updates, and estimated arrival times. Stay informed every step of the way.
-        </p>
-      </div>
+      {/* Hero Section */}
+      <ScrollFadeIn>
+        <section className="py-10 md:py-20 relative overflow-hidden">
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full bg-primary/[0.06] blur-[120px]" />
+            <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-primary/[0.05] blur-[100px]" />
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
+            <div
+              className="absolute inset-0 opacity-[0.035]"
+              style={{
+                backgroundImage: 'radial-gradient(circle, hsl(var(--foreground)) 1px, transparent 1px)',
+                backgroundSize: '24px 24px',
+              }}
+            />
+          </div>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div className="text-center mb-8 md:mb-12">
+              <p className="text-[11px] uppercase tracking-[0.3em] text-primary font-semibold mb-3">Shipment Tracking</p>
+              <div className="flex items-center justify-center gap-2 mb-4">
+                <span className="h-px w-8 bg-primary/40" />
+                <span className="w-1.5 h-1.5 rounded-full bg-primary/60" />
+                <span className="h-px w-8 bg-primary/40" />
+              </div>
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-4 md:mb-5 tracking-tight leading-[1.1]">
+                Track Your Shipment
+              </h1>
+              <p className="text-muted-foreground max-w-xl mx-auto text-base md:text-lg font-light leading-relaxed">
+                Monitor your move in real-time with live GPS tracking, traffic updates, and estimated arrival times.
+              </p>
+            </div>
 
-      {/* Inline Route Setup Wizard */}
-      {!routeConfigured && (
-        <div className="px-4 py-8">
-          <TrackingWizard
-            onSubmit={handleRouteModalSubmit}
-            onDemo={handleDemoClick}
-          />
-        </div>
-      )}
+            {/* Inline Route Setup Wizard */}
+            {!routeConfigured && (
+              <TrackingWizard
+                onSubmit={handleRouteModalSubmit}
+                onDemo={handleDemoClick}
+              />
+            )}
+          </div>
+        </section>
+      </ScrollFadeIn>
 
       {/* Main Content - 2 Column Layout (only show after route configured) */}
-      {routeConfigured && <div className="tracking-content tracking-content-2col">
-        {/* Left: Map Area */}
-        <div className="tracking-map-area">
-          {/* Map Container */}
-          <div className="tracking-map-container">
-            {/* Top Controls - Demo, Map View Toggle */}
-            <div className="absolute top-3 right-3 z-20 flex items-center gap-2">
-              {/* Map View Toggle */}
-              <div className="flex items-center bg-background/95 backdrop-blur-sm border-2 border-border rounded-lg shadow-lg overflow-hidden">
-                <Button
-                  onClick={() => setMapViewType('satellite')}
-                  variant="ghost"
-                  size="sm"
-                  className={cn(
-                    "h-9 px-3 gap-1.5 text-xs rounded-none border-r border-border transition-all",
-                    mapViewType === 'satellite' 
-                      ? "bg-foreground text-background font-bold" 
-                      : "hover:bg-muted"
-                  )}
-                >
-                  <Satellite className="w-3.5 h-3.5" />
-                  Satellite
-                </Button>
-                <Button
-                  onClick={() => setMapViewType('roadmap')}
-                  variant="ghost"
-                  size="sm"
-                  className={cn(
-                    "h-9 px-3 gap-1.5 text-xs rounded-none border-r border-border transition-all",
-                    mapViewType === 'roadmap' 
-                      ? "bg-foreground text-background font-bold" 
-                      : "hover:bg-muted"
-                  )}
-                >
-                  <Map className="w-3.5 h-3.5" />
-                  Roadmap
-                </Button>
-                <Button
-                  onClick={() => setMapViewType('truckview')}
-                  variant="ghost"
-                  size="sm"
-                  className={cn(
-                    "h-9 px-3 gap-1.5 text-xs rounded-none transition-all",
-                    mapViewType === 'truckview' 
-                      ? "bg-foreground text-background font-bold" 
-                      : "hover:bg-muted"
-                  )}
-                >
-                  <Truck className="w-3.5 h-3.5" />
-                  Truck View
-                </Button>
-              </div>
-              
-              {/* Demo Button */}
-              <Button
-                onClick={handleDemoClick}
-                variant="outline"
-                size="sm"
-                className="h-9 px-3 gap-1.5 text-xs bg-background/95 backdrop-blur-sm border-border shadow-lg"
-              >
-                <Sparkles className="w-3.5 h-3.5" />
-                Demo
-              </Button>
-            </div>
+      {routeConfigured && (
+        <ScrollFadeIn>
+          <div className="live-tracking-page">
+            <div className="tracking-content tracking-content-2col">
+              {/* Left: Map Area */}
+              <div className="tracking-map-area">
+                {/* Map Container */}
+                <div className="tracking-map-container">
+                  {/* Top Controls - Demo, Map View Toggle */}
+                  <div className="absolute top-3 right-3 z-20 flex items-center gap-2">
+                    {/* Map View Toggle */}
+                    <div className="flex items-center bg-background/95 backdrop-blur-sm border-2 border-border rounded-lg shadow-lg overflow-hidden">
+                      <Button
+                        onClick={() => setMapViewType('satellite')}
+                        variant="ghost"
+                        size="sm"
+                        className={cn(
+                          "h-9 px-3 gap-1.5 text-xs rounded-none border-r border-border transition-all",
+                          mapViewType === 'satellite' 
+                            ? "bg-foreground text-background font-bold" 
+                            : "hover:bg-muted"
+                        )}
+                      >
+                        <Satellite className="w-3.5 h-3.5" />
+                        Satellite
+                      </Button>
+                      <Button
+                        onClick={() => setMapViewType('roadmap')}
+                        variant="ghost"
+                        size="sm"
+                        className={cn(
+                          "h-9 px-3 gap-1.5 text-xs rounded-none border-r border-border transition-all",
+                          mapViewType === 'roadmap' 
+                            ? "bg-foreground text-background font-bold" 
+                            : "hover:bg-muted"
+                        )}
+                      >
+                        <Map className="w-3.5 h-3.5" />
+                        Roadmap
+                      </Button>
+                      <Button
+                        onClick={() => setMapViewType('truckview')}
+                        variant="ghost"
+                        size="sm"
+                        className={cn(
+                          "h-9 px-3 gap-1.5 text-xs rounded-none transition-all",
+                          mapViewType === 'truckview' 
+                            ? "bg-foreground text-background font-bold" 
+                            : "hover:bg-muted"
+                        )}
+                      >
+                        <Truck className="w-3.5 h-3.5" />
+                        Truck View
+                      </Button>
+                    </div>
+                    
+                    {/* Demo Button */}
+                    <Button
+                      onClick={handleDemoClick}
+                      variant="outline"
+                      size="sm"
+                      className="h-9 px-3 gap-1.5 text-xs bg-background/95 backdrop-blur-sm border-border shadow-lg"
+                    >
+                      <Sparkles className="w-3.5 h-3.5" />
+                      Demo
+                    </Button>
+                  </div>
 
-            {/* WebGL warning banner when using static fallback */}
-            {useStaticMap && webglDiagnostics && webglDiagnostics.warnings.length > 0 && (
-              <div className="absolute top-16 left-0 right-0 z-30 bg-destructive text-destructive-foreground px-4 py-2 text-xs font-medium flex items-center gap-2">
-                <AlertTriangle className="w-4 h-4 flex-shrink-0" />
-                <span>{webglDiagnostics.warnings[0]}</span>
-              </div>
-            )}
-            
-            {useStaticMap ? (
-              <GoogleStaticRouteMap
-                originCoords={originCoords}
-                destCoords={destCoords}
-                progress={progress}
-                isTracking={isTracking}
-                googleApiKey={GOOGLE_MAPS_API_KEY}
-                routePolyline={googleRouteData.polyline}
-                truckPosition={currentTruckPosition}
-                originName={originName}
-                destName={destName}
-              />
-            ) : mapViewType === 'truckview' ? (
-              <TruckViewPanel
-                routeCoordinates={routeCoordinates}
-                progress={progress}
-                isTracking={isTracking}
-                interactive={false}
-                originCoords={originCoords}
-                destCoords={destCoords}
-                onRouteCalculated={handleRouteCalculated}
-              />
-            ) : (
-              <Google2DTrackingMap
-                originCoords={originCoords}
-                destCoords={destCoords}
-                progress={progress}
-                isTracking={isTracking}
-                onRouteCalculated={handleRouteCalculated}
-                followMode={true}
-                onFollowModeChange={() => {}}
-                mapType={mapViewType}
-                googleApiKey={GOOGLE_MAPS_API_KEY}
-              />
-            )}
-            
-            {/* Map View Transition Overlay */}
-            <div 
-              className={cn(
-                "absolute inset-0 bg-background/80 backdrop-blur-sm pointer-events-none z-40 transition-opacity duration-300",
-                isViewTransitioning ? "opacity-100" : "opacity-0"
-              )}
-            >
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className={cn(
-                  "flex items-center gap-2 px-4 py-2 rounded-lg bg-background border border-border shadow-lg transition-all duration-300",
-                  isViewTransitioning ? "opacity-100 scale-100" : "opacity-0 scale-95"
-                )}>
-                  <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                  <span className="text-sm font-medium text-foreground">
-                    Switching to {mapViewType === 'truckview' ? 'Truck View' : mapViewType === 'roadmap' ? 'Roadmap' : 'Satellite'}...
-                  </span>
+                  {/* WebGL warning banner when using static fallback */}
+                  {useStaticMap && webglDiagnostics && webglDiagnostics.warnings.length > 0 && (
+                    <div className="absolute top-16 left-0 right-0 z-30 bg-destructive text-destructive-foreground px-4 py-2 text-xs font-medium flex items-center gap-2">
+                      <AlertTriangle className="w-4 h-4 flex-shrink-0" />
+                      <span>{webglDiagnostics.warnings[0]}</span>
+                    </div>
+                  )}
+                  
+                  {useStaticMap ? (
+                    <GoogleStaticRouteMap
+                      originCoords={originCoords}
+                      destCoords={destCoords}
+                      progress={progress}
+                      isTracking={isTracking}
+                      googleApiKey={GOOGLE_MAPS_API_KEY}
+                      routePolyline={googleRouteData.polyline}
+                      truckPosition={currentTruckPosition}
+                      originName={originName}
+                      destName={destName}
+                    />
+                  ) : mapViewType === 'truckview' ? (
+                    <TruckViewPanel
+                      routeCoordinates={routeCoordinates}
+                      progress={progress}
+                      isTracking={isTracking}
+                      interactive={false}
+                      originCoords={originCoords}
+                      destCoords={destCoords}
+                      onRouteCalculated={handleRouteCalculated}
+                    />
+                  ) : (
+                    <Google2DTrackingMap
+                      originCoords={originCoords}
+                      destCoords={destCoords}
+                      progress={progress}
+                      isTracking={isTracking}
+                      onRouteCalculated={handleRouteCalculated}
+                      followMode={true}
+                      onFollowModeChange={() => {}}
+                      mapType={mapViewType}
+                      googleApiKey={GOOGLE_MAPS_API_KEY}
+                    />
+                  )}
+                  
+                  {/* Map View Transition Overlay */}
+                  <div 
+                    className={cn(
+                      "absolute inset-0 bg-background/80 backdrop-blur-sm pointer-events-none z-40 transition-opacity duration-300",
+                      isViewTransitioning ? "opacity-100" : "opacity-0"
+                    )}
+                  >
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className={cn(
+                        "flex items-center gap-2 px-4 py-2 rounded-lg bg-background border border-border shadow-lg transition-all duration-300",
+                        isViewTransitioning ? "opacity-100 scale-100" : "opacity-0 scale-95"
+                      )}>
+                        <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                        <span className="text-sm font-medium text-foreground">
+                          Switching to {mapViewType === 'truckview' ? 'Truck View' : mapViewType === 'roadmap' ? 'Roadmap' : 'Satellite'}...
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Map Controls Strip - Go/Pause/Reset + Route Info Dropdowns */}
+                <div className="tracking-map-controls">
+                  <div className="tracking-map-controls-buttons">
+                    {!isTracking ? (
+                      <Button
+                        onClick={startTracking}
+                        disabled={!canTrack}
+                        className="tracking-map-go-btn"
+                      >
+                        <Play className="w-4 h-4" />
+                        Analyze Route
+                        <ArrowRight className="w-4 h-4" />
+                      </Button>
+                    ) : (
+                      <Button
+                        onClick={isPaused ? resumeTracking : pauseTracking}
+                        variant="secondary"
+                        className="tracking-map-pause-btn"
+                      >
+                        {isPaused ? <Play className="w-4 h-4" /> : <Pause className="w-4 h-4" />}
+                        {isPaused ? 'Resume' : 'Pause'}
+                      </Button>
+                    )}
+                    
+                    <Button
+                      onClick={resetTracking}
+                      variant="ghost"
+                      size="sm"
+                      disabled={progress === 0 && !isTracking}
+                      className="tracking-map-reset-btn"
+                    >
+                      <RotateCcw className="w-4 h-4" />
+                      Reset
+                    </Button>
+
+                    {/* Separator */}
+                    <div className="h-6 w-px bg-border mx-2" />
+
+                    {/* Weather Dropdown */}
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm" className="gap-1.5 relative">
+                          <Cloud className="w-4 h-4" />
+                          Weather
+                          {originCoords && destCoords && (
+                            <span className="w-2 h-2 rounded-full bg-primary absolute -top-0.5 -right-0.5" />
+                          )}
+                          <ChevronDown className="w-3 h-3" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="start" side="top" className="w-80 p-3 bg-popover border border-border shadow-xl z-50 max-h-[60vh] overflow-y-auto">
+                        <CompactRouteWeather
+                          originCoords={originCoords}
+                          destCoords={destCoords}
+                          originName={originName}
+                          destName={destName}
+                        />
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+
+                    {/* Alternate Routes Dropdown */}
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm" className="gap-1.5">
+                          <Route className="w-4 h-4" />
+                          Routes
+                          {googleRouteData.alternateRoutes && googleRouteData.alternateRoutes.length > 0 && (
+                            <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-primary/20 text-primary">
+                              {googleRouteData.alternateRoutes.length}
+                            </span>
+                          )}
+                          <ChevronDown className="w-3 h-3" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="start" side="top" className="w-72 p-3 bg-popover border border-border shadow-xl z-50 max-h-[60vh] overflow-y-auto">
+                        {googleRouteData.alternateRoutes && googleRouteData.alternateRoutes.length > 0 ? (
+                          <div className="space-y-2">
+                            {googleRouteData.alternateRoutes.slice(0, 3).map((alt: any, i: number) => (
+                              <div key={i} className="flex flex-col gap-1 p-3 rounded-lg bg-muted/50 border border-border hover:bg-muted transition-colors cursor-pointer">
+                                <span className="text-sm font-semibold text-foreground">{alt.description || `Route ${i + 1}`}</span>
+                                <span className="text-xs text-muted-foreground flex items-center gap-2">
+                                  {alt.distanceMiles} mi • {alt.durationFormatted}
+                                  {alt.isTollFree && <span className="text-primary font-semibold">No tolls</span>}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="text-center py-4 text-muted-foreground text-sm">
+                            Enter route to see alternatives
+                          </div>
+                        )}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+
+                    {/* Weigh Stations Dropdown */}
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm" className="gap-1.5">
+                          <Scale className="w-4 h-4" />
+                          Weigh
+                          {routeCoordinates.length > 0 && (
+                            <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-orange-500/20 text-orange-500">
+                              •
+                            </span>
+                          )}
+                          <ChevronDown className="w-3 h-3" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="start" side="top" className="w-80 p-3 bg-popover border border-border shadow-xl z-50 max-h-[60vh] overflow-y-auto">
+                        <WeighStationChecklist
+                          routeCoordinates={routeCoordinates}
+                          progress={progress}
+                          isTracking={isTracking}
+                        />
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
                 </div>
               </div>
+
+              {/* Right: Dashboard - Always Expanded */}
+              <div className="tracking-dashboard transition-all duration-300">
+                {/* Multi-Stop Summary Card - Show when multi-stop data present */}
+                {routeData && multiStopData && (
+                  <MultiStopSummaryCard
+                    stops={multiStopData.stops}
+                    currentStopIndex={multiStopData.currentStopIndex}
+                    totalDistance={multiStopData.totalDistance}
+                    remainingDuration={formatDuration(multiStopData.estimatedDuration * (1 - multiStopData.progress / 100))}
+                  />
+                )}
+
+                {/* Unified Stats Card - Always visible */}
+                <UnifiedStatsCard
+                  progress={progress}
+                  distanceTraveled={distanceTraveled}
+                  totalDistance={totalDistance}
+                  timeRemaining={formatDuration(remainingDuration)}
+                  adjustedETA={adjustedETA}
+                  adjustedDuration={adjustedDuration}
+                  remainingDistance={remainingDistance}
+                  trafficSeverity={routeInfo?.traffic?.severity || googleRouteData.trafficInfo?.severity || 'low'}
+                  trafficDelay={routeInfo?.traffic?.delayMinutes || googleRouteData.trafficInfo?.delayMinutes || 0}
+                  trafficTrend={trafficTrend}
+                  tollInfo={googleRouteData.tollInfo}
+                  isFuelEfficient={googleRouteData.isFuelEfficient}
+                  fuelCostEstimate={getQuickFuelEstimate(totalDistance)}
+                  lastUpdate={lastUpdate}
+                  isLoading={etaLoading}
+                  onRefresh={refreshNow}
+                  isEmpty={!routeData}
+                />
+
+                {/* Live Truck Street View */}
+                <TruckAerialView
+                  routeCoordinates={routeCoordinates}
+                  progress={progress}
+                  isTracking={isTracking}
+                  isPaused={isPaused}
+                  originCoords={originCoords}
+                  googleApiKey={GOOGLE_MAPS_API_KEY}
+                  expanded={streetViewExpanded}
+                  onToggleExpand={() => setStreetViewExpanded(!streetViewExpanded)}
+                  onRelocateTruck={() => setFollowMode(true)}
+                />
+              </div>
             </div>
           </div>
+        </ScrollFadeIn>
+      )}
 
-          {/* Map Controls Strip - Go/Pause/Reset + Route Info Dropdowns */}
-          <div className="tracking-map-controls">
-            <div className="tracking-map-controls-buttons">
-              {!isTracking ? (
-                <Button
-                  onClick={startTracking}
-                  disabled={!canTrack}
-                  className="tracking-map-go-btn"
-                >
-                  <Play className="w-4 h-4" />
-                  Analyze Route
-                  <ArrowRight className="w-4 h-4" />
-                </Button>
-              ) : (
-                <Button
-                  onClick={isPaused ? resumeTracking : pauseTracking}
-                  variant="secondary"
-                  className="tracking-map-pause-btn"
-                >
-                  {isPaused ? <Play className="w-4 h-4" /> : <Pause className="w-4 h-4" />}
-                  {isPaused ? 'Resume' : 'Pause'}
-                </Button>
-              )}
-              
-              <Button
-                onClick={resetTracking}
-                variant="ghost"
-                size="sm"
-                disabled={progress === 0 && !isTracking}
-                className="tracking-map-reset-btn"
-              >
-                <RotateCcw className="w-4 h-4" />
-                Reset
-              </Button>
-
-              {/* Separator */}
-              <div className="h-6 w-px bg-border mx-2" />
-
-              {/* Weather Dropdown */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="gap-1.5 relative">
-                    <Cloud className="w-4 h-4" />
-                    Weather
-                    {originCoords && destCoords && (
-                      <span className="w-2 h-2 rounded-full bg-primary absolute -top-0.5 -right-0.5" />
-                    )}
-                    <ChevronDown className="w-3 h-3" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" side="top" className="w-80 p-3 bg-popover border border-border shadow-xl z-50 max-h-[60vh] overflow-y-auto">
-                  <CompactRouteWeather
-                    originCoords={originCoords}
-                    destCoords={destCoords}
-                    originName={originName}
-                    destName={destName}
-                  />
-                </DropdownMenuContent>
-              </DropdownMenu>
-
-              {/* Alternate Routes Dropdown */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="gap-1.5">
-                    <Route className="w-4 h-4" />
-                    Routes
-                    {googleRouteData.alternateRoutes && googleRouteData.alternateRoutes.length > 0 && (
-                      <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-primary/20 text-primary">
-                        {googleRouteData.alternateRoutes.length}
-                      </span>
-                    )}
-                    <ChevronDown className="w-3 h-3" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" side="top" className="w-72 p-3 bg-popover border border-border shadow-xl z-50 max-h-[60vh] overflow-y-auto">
-                  {googleRouteData.alternateRoutes && googleRouteData.alternateRoutes.length > 0 ? (
-                    <div className="space-y-2">
-                      {googleRouteData.alternateRoutes.slice(0, 3).map((alt: any, i: number) => (
-                        <div key={i} className="flex flex-col gap-1 p-3 rounded-lg bg-muted/50 border border-border hover:bg-muted transition-colors cursor-pointer">
-                          <span className="text-sm font-semibold text-foreground">{alt.description || `Route ${i + 1}`}</span>
-                          <span className="text-xs text-muted-foreground flex items-center gap-2">
-                            {alt.distanceMiles} mi • {alt.durationFormatted}
-                            {alt.isTollFree && <span className="text-primary font-semibold">No tolls</span>}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-4 text-muted-foreground text-sm">
-                      Enter route to see alternatives
-                    </div>
-                  )}
-                </DropdownMenuContent>
-              </DropdownMenu>
-
-              {/* Weigh Stations Dropdown */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="gap-1.5">
-                    <Scale className="w-4 h-4" />
-                    Weigh
-                    {routeCoordinates.length > 0 && (
-                      <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-orange-500/20 text-orange-500">
-                        •
-                      </span>
-                    )}
-                    <ChevronDown className="w-3 h-3" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" side="top" className="w-80 p-3 bg-popover border border-border shadow-xl z-50 max-h-[60vh] overflow-y-auto">
-                  <WeighStationChecklist
-                    routeCoordinates={routeCoordinates}
-                    progress={progress}
-                    isTracking={isTracking}
-                  />
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
+      {/* Final CTA */}
+      <section className="py-6 sm:py-10 md:py-20 bg-card/30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-2xl mx-auto text-center">
+            <h2 className="text-xl sm:text-2xl md:text-4xl font-semibold text-foreground mb-2 sm:mb-3 md:mb-4">
+              Need help with your shipment?
+            </h2>
+            <p className="text-xs sm:text-sm md:text-base text-muted-foreground mb-4 sm:mb-5 md:mb-8">
+              Our team is available 24/7 to assist with tracking, updates, and any questions.
+            </p>
+            <Button variant="premium" size="lg">
+              <Phone className="mr-2 w-4 h-4" strokeWidth={1.5} />
+              Contact Support
+            </Button>
           </div>
         </div>
-
-        {/* Right: Dashboard - Always Expanded */}
-        <div className="tracking-dashboard transition-all duration-300">
-          {/* Multi-Stop Summary Card - Show when multi-stop data present */}
-          {routeData && multiStopData && (
-            <MultiStopSummaryCard
-              stops={multiStopData.stops}
-              currentStopIndex={multiStopData.currentStopIndex}
-              totalDistance={multiStopData.totalDistance}
-              remainingDuration={formatDuration(multiStopData.estimatedDuration * (1 - multiStopData.progress / 100))}
-            />
-          )}
-
-          {/* Unified Stats Card - Always visible */}
-          <UnifiedStatsCard
-            progress={progress}
-            distanceTraveled={distanceTraveled}
-            totalDistance={totalDistance}
-            timeRemaining={formatDuration(remainingDuration)}
-            adjustedETA={adjustedETA}
-            adjustedDuration={adjustedDuration}
-            remainingDistance={remainingDistance}
-            trafficSeverity={routeInfo?.traffic?.severity || googleRouteData.trafficInfo?.severity || 'low'}
-            trafficDelay={routeInfo?.traffic?.delayMinutes || googleRouteData.trafficInfo?.delayMinutes || 0}
-            trafficTrend={trafficTrend}
-            tollInfo={googleRouteData.tollInfo}
-            isFuelEfficient={googleRouteData.isFuelEfficient}
-            fuelCostEstimate={getQuickFuelEstimate(totalDistance)}
-            lastUpdate={lastUpdate}
-            isLoading={etaLoading}
-            onRefresh={refreshNow}
-            isEmpty={!routeData}
-          />
-
-          {/* Live Truck Street View */}
-          <TruckAerialView
-            routeCoordinates={routeCoordinates}
-            progress={progress}
-            isTracking={isTracking}
-            isPaused={isPaused}
-            originCoords={originCoords}
-            googleApiKey={GOOGLE_MAPS_API_KEY}
-            expanded={streetViewExpanded}
-            onToggleExpand={() => setStreetViewExpanded(!streetViewExpanded)}
-            onRelocateTruck={() => setFollowMode(true)}
-          />
-        </div>
-      </div>}
-      
-      
-      
-      </div>
+      </section>
     </SiteShell>
   );
 }
