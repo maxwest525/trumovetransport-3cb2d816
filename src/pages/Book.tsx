@@ -76,11 +76,9 @@ export default function Book() {
             </div>
 
             {/* Cal.com iframe */}
-            <div className="bg-card border border-t-0 border-border rounded-b-xl overflow-hidden">
+            <div className="cal-embed-container">
               <iframe
                 src="https://cal.com/trumove?embed=true&theme=dark&layout=month_view"
-                className="w-full border-0"
-                style={{ height: '700px', minHeight: '550px' }}
                 title="Schedule a consultation with TruMove"
                 loading="lazy"
               />
