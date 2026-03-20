@@ -83,20 +83,12 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
     <div className="w-full max-w-md mx-auto">
       <div className="bg-card border border-border/60 rounded-2xl overflow-hidden shadow-[0_0_80px_-20px_hsl(var(--primary)/0.12)]">
         <div className="p-4 sm:p-6 space-y-5 animate-in fade-in slide-in-from-bottom-4 duration-300">
-
-          {/* Booking # */}
-          <div className="flex items-center justify-center gap-2">
-            <Search className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
-            <Input
-              value={bookingNumber}
-              onChange={(e) => setBookingNumber(e.target.value)}
-              placeholder="Booking # (optional)"
-              className="max-w-[180px] h-8 text-xs text-center bg-secondary border-border/60"
-              onKeyDown={(e) => e.key === 'Enter' && handleBookingLookup()}
-            />
-            <Button onClick={handleBookingLookup} disabled={!bookingNumber.trim() || isLookingUp} variant="ghost" size="sm" className="h-8 w-8 p-0 text-muted-foreground">
-              {isLookingUp ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ArrowRight className="w-3.5 h-3.5" />}
-            </Button>
+          <div>
+            <p className="text-[10px] uppercase tracking-[0.25em] text-primary font-semibold mb-1">Route Setup</p>
+            <h3 className="text-lg sm:text-xl font-bold text-foreground tracking-tight">
+              Enter Your Route
+            </h3>
+            <p className="text-sm text-muted-foreground mt-1">Enter origin and destination to begin tracking.</p>
           </div>
 
           {/* Origin Address */}
