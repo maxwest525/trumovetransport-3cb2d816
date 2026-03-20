@@ -991,6 +991,7 @@ export default function CarrierVetting() {
         </div>
         </div>
       </div>
+      </ScrollFadeIn>
     </SiteShell>
   );
 }
