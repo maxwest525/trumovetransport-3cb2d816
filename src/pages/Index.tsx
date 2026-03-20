@@ -1642,6 +1642,10 @@ export default function Index() {
                       { name: "Marcus T.", location: "Houston → Atlanta", rating: 5, photo: testimonialMarcus, source: "Facebook", text: "From the first call to delivery day, everything was handled with care. Trudy even helped us prep our inventory list." },
                       { name: "Lisa W.", location: "Boston → San Francisco", rating: 5, photo: testimonialLisa, source: "MovingReviews.com", text: "We tracked our shipment in real time across the country. The transparency was unlike any other mover we've used." },
                       { name: "Carlos & Ana P.", location: "Phoenix → Dallas", rating: 5, photo: testimonialCarlosAna, source: "BBB", text: "Incredible value. The video consultation caught things we would have missed. Highly recommend TruMove to anyone." },
+                      { name: "Rachel S.", location: "Portland → Nashville", rating: 5, photo: testimonialSarah, source: "Google", text: "The carrier vetting gave us confidence we were hiring a safe, legit company. No hidden fees, no stress." },
+                      { name: "David L.", location: "Tampa → Charlotte", rating: 5, photo: testimonialJames, source: "Yelp", text: "Scheduling was a breeze. The whole process from quote to delivery was handled professionally and on time." },
+                      { name: "Nina & Tom H.", location: "Austin → San Diego", rating: 5, photo: testimonialEmilyDavid, source: "Facebook", text: "We moved with two kids and a dog — TruMove took all the stress off our plate. Would absolutely use them again." },
+                      { name: "Andre W.", location: "Detroit → Orlando", rating: 5, photo: testimonialMarcus, source: "Google", text: "The live tracking map was incredible. I could see exactly where our stuff was the whole trip. Top-notch service." },
                     ].map((review, i) => (
                       <div
                         key={`${dupeIdx}-${i}`}
