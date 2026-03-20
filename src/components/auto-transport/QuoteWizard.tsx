@@ -751,3 +751,27 @@ export function QuoteWizard({ onGetEstimate, quoteData, setQuoteData, variant = 
     </div>
   );
 }
+
+// TypeScript declaration for model-viewer web component
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      'model-viewer': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement> & {
+        src?: string;
+        alt?: string;
+        'camera-controls'?: boolean;
+        'auto-rotate'?: boolean;
+        'rotation-per-second'?: string;
+        'camera-orbit'?: string;
+        exposure?: string;
+        'shadow-intensity'?: string;
+        'shadow-softness'?: string;
+        'environment-image'?: string;
+        'skybox-image'?: string;
+        'tone-mapping'?: string;
+        loading?: string;
+        reveal?: string;
+      }, HTMLElement>;
+    }
+  }
+}
