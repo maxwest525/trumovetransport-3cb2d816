@@ -168,7 +168,7 @@ export default function ChatModal({
             className="chat-modal-link"
             onClick={() => {
               onClose();
-              navigate("/site/online-estimate");
+              navigate("/online-estimate");
             }}
           >
             Use the form instead →

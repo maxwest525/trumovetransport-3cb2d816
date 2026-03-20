@@ -1,5 +1,5 @@
 import { useLocation, Link } from "react-router-dom";
-import { Sparkles, Shield, MessageSquare, MapPin, Video, Headphones, User, LucideIcon } from "lucide-react";
+import { Sparkles, Shield, MessageSquare, MapPin, Video, Headphones, LucideIcon } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -17,17 +17,15 @@ interface NavItem {
   label: string;
   href: string | null;
   action?: string;
-  isAgentLogin?: boolean;
 }
 
 const navItems: NavItem[] = [
-  { icon: Video, label: "Video Consult", href: "/site/book" },
-  { icon: Shield, label: "Carrier Vetting", href: "/site/vetting" },
+  { icon: Video, label: "Video Consult", href: "/book" },
+  { icon: Shield, label: "Carrier Vetting", href: "/vetting" },
   { icon: MessageSquare, label: "AI Chat", href: null, action: "chat" },
-  { icon: MapPin, label: "Shipment Tracking", href: "/site/track" },
-  { icon: Sparkles, label: "AI Estimator", href: "/site/online-estimate" },
+  { icon: MapPin, label: "Shipment Tracking", href: "/track" },
+  { icon: Sparkles, label: "AI Estimator", href: "/online-estimate" },
   { icon: Headphones, label: "Call Us", href: "tel:+16097277647" },
-  { icon: User, label: "Portal", href: "/", isAgentLogin: true },
 ];
 
 export default function FloatingNav({ onChatOpen, iconsOnly = false }: FloatingNavProps) {
@@ -37,7 +35,7 @@ export default function FloatingNav({ onChatOpen, iconsOnly = false }: FloatingN
     const isActive = item.href && location.pathname === item.href;
     const Icon = item.icon;
     
-    const itemClasses = `tru-static-nav-item ${isActive ? 'is-active' : ''} ${item.isAgentLogin ? 'is-agent-login' : ''}`;
+    const itemClasses = `tru-static-nav-item ${isActive ? 'is-active' : ''}`;
 
     const content = (
       <>
@@ -80,7 +78,6 @@ export default function FloatingNav({ onChatOpen, iconsOnly = false }: FloatingN
       );
     }
 
-    // Wrap in tooltip when icons only mode
     if (iconsOnly) {
       return (
         <Tooltip key={item.label}>
@@ -102,10 +99,9 @@ export default function FloatingNav({ onChatOpen, iconsOnly = false }: FloatingN
 
   return (
     <nav className={`tru-static-nav-menu ${iconsOnly ? 'icons-only' : ''}`}>
-      {/* TruMove Logo at top */}
       <Tooltip>
         <TooltipTrigger asChild>
-          <Link to="/site" className="tru-static-nav-logo" aria-label="TruMove Home">
+          <Link to="/" className="tru-static-nav-logo" aria-label="TruMove Home">
             <img src={logoImg} alt="TruMove" />
           </Link>
         </TooltipTrigger>
@@ -117,7 +113,6 @@ export default function FloatingNav({ onChatOpen, iconsOnly = false }: FloatingN
         </TooltipContent>
       </Tooltip>
       
-      {/* Navigation items */}
       {navItems.map(renderNavItem)}
     </nav>
   );

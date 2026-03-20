@@ -13,16 +13,16 @@ export default function Footer() {
         </div>
 
         <nav className="footer-nav">
-          <Link className="footer-link" to="/site/about">
+          <Link className="footer-link" to="/about">
             About
           </Link>
-          <Link className="footer-link" to="/site/faq">
+          <Link className="footer-link" to="/faq">
             FAQ
           </Link>
-          <Link className="footer-link" to="/site/privacy">
+          <Link className="footer-link" to="/privacy">
             Privacy
           </Link>
-          <Link className="footer-link" to="/site/terms">
+          <Link className="footer-link" to="/terms">
             Terms
           </Link>
           <div className="ml-2">

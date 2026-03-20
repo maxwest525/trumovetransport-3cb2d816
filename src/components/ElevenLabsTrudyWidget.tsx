@@ -271,7 +271,7 @@ export default function ElevenLabsTrudyWidget() {
             <span className="text-[11px] font-medium text-foreground tracking-tight">(609) 727-7647</span>
           </a>
           <button
-            onClick={() => { closeOptions(); navigate('/site/book'); }}
+            onClick={() => { closeOptions(); navigate('/book'); }}
             className={`flex items-center gap-2 rounded-lg border border-border/60 bg-card/80 backdrop-blur-sm shadow-sm px-3.5 py-2 hover:bg-accent transition-all ${
               optionsClosing ? '' : 'animate-in fade-in slide-in-from-top-2 duration-200'
             }`}

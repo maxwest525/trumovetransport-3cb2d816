@@ -533,7 +533,7 @@ function ShipmentTrackerSection({ navigate }: {navigate: (path: string) => void;
               </p>
             </div>
             
-            <button onClick={() => navigate("/site/track")} className="tru-ai-cta-btn">
+            <button onClick={() => navigate("/track")} className="tru-ai-cta-btn">
               <MapPin className="w-4 h-4 text-[#49fe01]" />
               Track Shipment
               <ArrowRight className="w-4 h-4 text-[#48ff00]" />
@@ -622,7 +622,7 @@ function StepsCompactSection({ navigate }: {navigate: (path: string) => void;}) 
             key={step.num}
             className={`tru-steps-compact-card tru-steps-parallax-card ${isInView ? 'in-view' : ''}`}
             style={{ '--card-index': index } as React.CSSProperties}
-            onClick={() => navigate("/site/online-estimate")}>
+            onClick={() => navigate("/online-estimate")}>
             
               <div className="tru-steps-compact-num">{step.num}</div>
               <div className="tru-steps-compact-card-content">
@@ -1421,7 +1421,7 @@ export default function Index() {
                             className="tru-qb-method-card tru-qb-method-primary"
                             onClick={() => {
                               handleSubmit(new Event('submit') as any);
-                              navigate("/site/scan-room");
+                              navigate("/scan-room");
                             }}>
                             
                             <div className="tru-qb-method-icon-wrap tru-qb-method-icon-ai">
@@ -1444,7 +1444,7 @@ export default function Index() {
                             className="tru-qb-method-card"
                             onClick={() => {
                               handleSubmit(new Event('submit') as any);
-                              navigate("/site/online-estimate");
+                              navigate("/online-estimate");
                             }}>
                             
                             <div className="tru-qb-method-icon-wrap">
@@ -1463,7 +1463,7 @@ export default function Index() {
                             className="tru-qb-method-card"
                             onClick={() => {
                               handleSubmit(new Event('submit') as any);
-                              navigate("/site/book");
+                              navigate("/book");
                             }}>
                             
                             <div className="tru-qb-method-icon-wrap">
@@ -1507,7 +1507,7 @@ export default function Index() {
                           <button
                             type="button"
                             className="tru-qb-option-card"
-                            onClick={() => navigate("/site/scan-room")}>
+                            onClick={() => navigate("/scan-room")}>
                             
                             <Scan className="w-5 h-5" />
                             <div className="tru-qb-option-text">
@@ -1518,7 +1518,7 @@ export default function Index() {
                           <button
                             type="button"
                             className="tru-qb-option-card tru-qb-option-card-outline"
-                            onClick={() => navigate("/site/online-estimate")}>
+                            onClick={() => navigate("/online-estimate")}>
                             
                             <Boxes className="w-5 h-5" />
                             <div className="tru-qb-option-text">
@@ -1529,7 +1529,7 @@ export default function Index() {
                           <button
                             type="button"
                             className="tru-qb-option-card tru-qb-option-card-outline"
-                            onClick={() => navigate("/site/book")}>
+                            onClick={() => navigate("/book")}>
                             
                             <Video className="w-5 h-5" />
                             <div className="tru-qb-option-text">
@@ -1583,7 +1583,7 @@ export default function Index() {
                   
                   {/* CTA Button */}
                   <button
-                    onClick={() => navigate("/site/scan-room")}
+                    onClick={() => navigate("/scan-room")}
                     className="tru-ai-cta-btn animate-fade-scale-in opacity-0"
                     style={{ animationDelay: '350ms' }}>
                     
@@ -1694,7 +1694,7 @@ export default function Index() {
                   </h2>
                   <p className="tru-ai-subheadline text-lg mt-5">Search any carrier. Red flags surfaced instantly.</p>
                   <div className="pt-5">
-                    <button onClick={() => navigate("/site/vetting")} className="tru-ai-cta-btn">
+                    <button onClick={() => navigate("/vetting")} className="tru-ai-cta-btn">
                       <Radar className="w-5 h-5 text-primary" />
                       Try Carrier Vetting
                       <ArrowRight className="w-5 h-5 text-primary" />
@@ -1886,7 +1886,7 @@ export default function Index() {
                     </button>
 
                     <button
-                        onClick={() => navigate("/site/book")}
+                        onClick={() => navigate("/book")}
                         className="flex items-center justify-center gap-2 border border-foreground bg-background text-foreground px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-muted transition-colors">
                       <Video className="w-4 h-4 text-primary" />
                       Video Consult
