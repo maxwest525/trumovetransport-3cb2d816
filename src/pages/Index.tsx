@@ -61,8 +61,9 @@ import {
   CalendarIcon, ChevronLeft, Lock, Truck, Sparkles, Star, Users,
   Database, ChevronRight, Radar, CreditCard, ShieldCheck, BarChart3, Zap,
   Home, Building2, MoveVertical, ArrowUpDown, Scan, ChevronUp, ChevronDown, Camera, Globe,
-  Play, Pause, MapPinned, Calendar, Mail, MessageSquare } from
+  Play, Pause, MapPinned, Calendar, Mail, MessageSquare, AlertTriangle, XCircle } from
 "lucide-react";
+import { MOCK_CARRIERS } from "@/data/mockCarriers";
 
 
 // ZIP lookup
@@ -723,7 +724,7 @@ export default function Index() {
 
   // Why TruMove feature selection state
   const [activeFeature, setActiveFeature] = useState<number | null>(null);
-
+  const [carrierIdx, setCarrierIdx] = useState(0);
 
   // Why TruMove features data - Updated per plan
   const whyTruMoveFeatures = [
@@ -1681,77 +1682,114 @@ export default function Index() {
                 <h2 className="tru-ai-main-headline text-5xl md:text-6xl">
                   Carrier <span className="tru-ai-headline-accent">Vetting.</span>
                 </h2>
-                <p className="tru-ai-subheadline text-lg mt-3">Real-time FMCSA safety data. Red flags surfaced instantly.</p>
+                <p className="tru-ai-subheadline text-lg mt-3">Search any carrier. Red flags surfaced instantly.</p>
               </div>
 
-              {/* Mini demo card */}
-              <div className="max-w-2xl mx-auto rounded-2xl bg-card ring-1 ring-border p-6 space-y-5">
-                {/* Carrier header */}
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-lg font-bold text-foreground">Summit Express LLC</h3>
-                    <p className="text-xs text-muted-foreground">MC-892451 · DOT 3847291 · Atlanta, GA</p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="inline-flex items-center gap-1 bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold">
-                      <ShieldCheck className="w-3.5 h-3.5" /> Authorized
-                    </span>
-                  </div>
-                </div>
-
-                {/* Safety scores */}
+              {/* Carrier selector tabs */}
+              <div className="max-w-2xl mx-auto space-y-4">
                 <div className="grid grid-cols-3 gap-3">
-                  {[
-                    { label: "Vehicle OOS", value: "14.2%", avg: "22.3%", status: "pass" },
-                    { label: "Driver OOS", value: "3.1%", avg: "6.7%", status: "pass" },
-                    { label: "Hazmat OOS", value: "0.0%", avg: "4.4%", status: "pass" },
-                  ].map((metric) => (
-                    <div key={metric.label} className="rounded-xl bg-background border border-border p-3 text-center">
-                      <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide mb-1">{metric.label}</p>
-                      <p className={`text-xl font-black ${metric.status === "pass" ? "text-primary" : "text-destructive"}`}>{metric.value}</p>
-                      <p className="text-[10px] text-muted-foreground">Nat'l avg: {metric.avg}</p>
-                    </div>
-                  ))}
+                  {MOCK_CARRIERS.map((c, i) => {
+                    const isSafe = c.carrier.allowToOperate === 'Y' && c.carrier.outOfService === 'N' && c.oos.vehicleOosRate < c.oos.vehicleOosRateNationalAvg;
+                    const isBad = c.carrier.outOfService === 'Y' || c.authority.commonStatus === 'INACTIVE';
+                    const label = isBad ? 'Flagged' : isSafe ? 'Safe' : 'Mixed';
+                    const borderColor = isBad ? 'border-l-destructive' : isSafe ? 'border-l-primary' : 'border-l-amber-500';
+                    const LabelIcon = isBad ? XCircle : isSafe ? CheckCircle : AlertTriangle;
+                    const labelColor = isBad ? 'text-destructive' : isSafe ? 'text-primary' : 'text-amber-500';
+                    return (
+                      <button
+                        key={i}
+                        onClick={() => setCarrierIdx(i)}
+                        className={`text-left p-3 rounded-xl border-l-4 ${borderColor} bg-card border border-border transition-all ${carrierIdx === i ? 'ring-2 ring-primary/40 shadow-md' : 'hover:bg-accent/30'}`}
+                      >
+                        <p className="text-sm font-bold text-foreground truncate">{c.carrier.dbaName}</p>
+                        <p className={`text-xs font-semibold flex items-center gap-1 mt-1 ${labelColor}`}>
+                          <LabelIcon className="w-3 h-3" /> {label}
+                        </p>
+                      </button>
+                    );
+                  })}
                 </div>
 
-                {/* CSA BASIC bars */}
-                <div className="space-y-2">
-                  <p className="text-xs font-semibold text-foreground">CSA BASIC Scores</p>
-                  {[
-                    { label: "Unsafe Driving", score: 28, threshold: 65 },
-                    { label: "HOS Compliance", score: 42, threshold: 65 },
-                    { label: "Vehicle Maintenance", score: 55, threshold: 80 },
-                    { label: "Controlled Substances", score: 0, threshold: 80 },
-                    { label: "Driver Fitness", score: 12, threshold: 80 },
-                  ].map((basic) => (
-                    <div key={basic.label} className="flex items-center gap-3">
-                      <span className="text-[11px] text-muted-foreground w-36 shrink-0 text-right">{basic.label}</span>
-                      <div className="flex-1 h-2.5 rounded-full bg-muted overflow-hidden">
-                        <div
-                          className={`h-full rounded-full transition-all ${basic.score > basic.threshold ? "bg-destructive" : "bg-primary"}`}
-                          style={{ width: `${Math.max(basic.score, 2)}%` }}
-                        />
+                {/* Result card */}
+                {(() => {
+                  const c = MOCK_CARRIERS[carrierIdx];
+                  const authorized = c.carrier.allowToOperate === 'Y' && c.authority.commonStatus === 'ACTIVE';
+                  const vOosPass = c.oos.vehicleOosRate < c.oos.vehicleOosRateNationalAvg;
+                  const dOosPass = c.oos.driverOosRate < c.oos.driverOosRateNationalAvg;
+                  const redFlags: string[] = [];
+                  if (c.carrier.outOfService === 'Y') redFlags.push('Active OOS order');
+                  if (!authorized) redFlags.push('Authority not active');
+                  if (c.safety.rating === 'CONDITIONAL' || c.safety.rating === 'UNSATISFACTORY') redFlags.push('Poor safety rating');
+                  if (!vOosPass) redFlags.push('High vehicle OOS rate');
+                  if (!dOosPass) redFlags.push('High driver OOS rate');
+                  if (c.crashes.fatal > 0) redFlags.push('Fatal crashes on record');
+                  const verdict = redFlags.length === 0 ? 'pass' : redFlags.length <= 2 ? 'caution' : 'fail';
+
+                  return (
+                    <div className="rounded-2xl bg-card ring-1 ring-border p-5 space-y-4">
+                      {/* Header */}
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="min-w-0">
+                          <h3 className="text-base font-bold text-foreground truncate">{c.carrier.legalName}</h3>
+                          <p className="text-xs text-muted-foreground">{c.carrier.mcNumber} · DOT {c.carrier.dotNumber}</p>
+                        </div>
+                        <span className={`shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold ${authorized ? 'bg-primary/10 text-primary' : 'bg-destructive/10 text-destructive'}`}>
+                          {authorized ? <ShieldCheck className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
+                          {authorized ? 'Authorized' : 'Not Authorized'}
+                        </span>
                       </div>
-                      <span className={`text-xs font-bold w-8 ${basic.score > basic.threshold ? "text-destructive" : "text-foreground"}`}>{basic.score}</span>
-                    </div>
-                  ))}
-                </div>
 
-                {/* Red flags */}
-                <div className="flex flex-wrap gap-2">
-                  <span className="inline-flex items-center gap-1 bg-primary/10 text-primary px-2.5 py-1 rounded-full text-[11px] font-medium">
-                    <CheckCircle className="w-3 h-3" /> BOC-3 on file
-                  </span>
-                  <span className="inline-flex items-center gap-1 bg-primary/10 text-primary px-2.5 py-1 rounded-full text-[11px] font-medium">
-                    <CheckCircle className="w-3 h-3" /> Insurance active
-                  </span>
-                  <span className="inline-flex items-center gap-1 bg-primary/10 text-primary px-2.5 py-1 rounded-full text-[11px] font-medium">
-                    <Shield className="w-3 h-3" /> $1M liability
-                  </span>
-                  <span className="inline-flex items-center gap-1 bg-primary/10 text-primary px-2.5 py-1 rounded-full text-[11px] font-medium">
-                    <CheckCircle className="w-3 h-3" /> No active OOS orders
-                  </span>
-                </div>
+                      {/* 3 col stats */}
+                      <div className="grid grid-cols-3 gap-3">
+                        <div className="rounded-xl bg-background border border-border p-3 text-center">
+                          <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide mb-1">Vehicle OOS</p>
+                          <p className={`text-xl font-black ${vOosPass ? 'text-primary' : 'text-destructive'}`}>{c.oos.vehicleOosRate}%</p>
+                          <p className="text-[10px] text-muted-foreground">Avg: {c.oos.vehicleOosRateNationalAvg}%</p>
+                        </div>
+                        <div className="rounded-xl bg-background border border-border p-3 text-center">
+                          <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide mb-1">Driver OOS</p>
+                          <p className={`text-xl font-black ${dOosPass ? 'text-primary' : 'text-destructive'}`}>{c.oos.driverOosRate}%</p>
+                          <p className="text-[10px] text-muted-foreground">Avg: {c.oos.driverOosRateNationalAvg}%</p>
+                        </div>
+                        <div className="rounded-xl bg-background border border-border p-3 text-center">
+                          <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide mb-1">Crashes</p>
+                          <p className={`text-xl font-black ${c.crashes.fatal > 0 ? 'text-destructive' : 'text-foreground'}`}>{c.crashes.total}</p>
+                          <p className="text-[10px] text-muted-foreground">{c.crashes.fatal} fatal</p>
+                        </div>
+                      </div>
+
+                      {/* Compliance chips */}
+                      <div className="flex flex-wrap gap-2">
+                        {[
+                          { ok: authorized, label: 'Authority' },
+                          { ok: c.carrier.outOfService !== 'Y', label: 'No OOS Orders' },
+                          { ok: c.safety.rating !== 'CONDITIONAL' && c.safety.rating !== 'UNSATISFACTORY', label: 'Safety Rating' },
+                          { ok: c.authority.cargoInsurance !== 'N/A' && c.authority.cargoInsurance !== '$0', label: 'Insurance' },
+                        ].map((chip) => (
+                          <span
+                            key={chip.label}
+                            className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-medium ${chip.ok ? 'bg-primary/10 text-primary' : 'bg-destructive/10 text-destructive'}`}
+                          >
+                            {chip.ok ? <CheckCircle className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
+                            {chip.label}
+                          </span>
+                        ))}
+                      </div>
+
+                      {/* Verdict */}
+                      <div className={`rounded-xl px-4 py-2.5 flex items-center gap-2 text-sm font-bold ${
+                        verdict === 'pass' ? 'bg-primary/10 text-primary' :
+                        verdict === 'caution' ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400' :
+                        'bg-destructive/10 text-destructive'
+                      }`}>
+                        {verdict === 'pass' ? <CheckCircle className="w-4 h-4" /> :
+                         verdict === 'caution' ? <AlertTriangle className="w-4 h-4" /> :
+                         <XCircle className="w-4 h-4" />}
+                        {redFlags.length === 0 ? 'No red flags detected' : `${redFlags.length} red flag${redFlags.length > 1 ? 's' : ''} found`}
+                      </div>
+                    </div>
+                  );
+                })()}
 
                 {/* CTA */}
                 <div className="flex justify-center pt-2">
