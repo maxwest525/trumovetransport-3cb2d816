@@ -52,7 +52,7 @@ const App = () => (
             <Route path="/customer-service" element={<CustomerService />} />
 
             {/* Legacy /site/* redirects */}
-            <Route path="/*" element={<Navigate to="/" replace />} />
+            <Route path="/site/*" element={<Navigate to="/" replace />} />
 
             <Route path="*" element={<NotFound />} />
           </Routes>
