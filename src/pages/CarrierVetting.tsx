@@ -524,7 +524,7 @@ export default function CarrierVetting() {
               {[
                 { num: 1, title: "Search by DOT or Name", desc: "Enter a carrier's DOT number or company name in the search above" },
                 { num: 2, title: "Review Safety Data", desc: "See instant FMCSA safety scores, insurance status, and red flags" },
-                { num: 3, title: "Compare Up to 4", desc: "Add multiple carriers to compare their safety records side-by-side" },
+                { num: 3, title: "Compare Up to 3", desc: "Add multiple carriers to compare their safety records side-by-side" },
               ].map((step) => (
                 <div key={step.num} className="flex flex-col items-center text-center max-w-[200px]">
                   <div className="w-10 h-10 rounded-full bg-[hsl(var(--primary))] text-primary-foreground flex items-center justify-center text-sm font-bold mb-2.5">
