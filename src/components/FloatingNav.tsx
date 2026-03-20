@@ -5,7 +5,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import logoImg from "@/assets/trumove-logo.png";
+import logoImg from "@/assets/logo-navbar.png";
 
 interface FloatingNavProps {
   onChatOpen?: () => void;
