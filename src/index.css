@@ -13474,7 +13474,8 @@
   box-shadow: 
     0 4px 12px hsl(0 0% 0% / 0.3),
     0 12px 32px hsl(0 0% 0% / 0.25),
-    0 0 18px 2px hsl(0 0% 100% / 0.12);
+    0 0 24px 4px hsl(0 0% 100% / 0.15),
+    0 0 48px 8px hsl(0 0% 100% / 0.08);
   transition: box-shadow 300ms ease;
   z-index: 100;
   width: 100%;
