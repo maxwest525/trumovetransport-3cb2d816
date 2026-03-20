@@ -63,7 +63,7 @@ import {
   Home, Building2, MoveVertical, ArrowUpDown, Scan, ChevronUp, ChevronDown, Camera, Globe,
   Play, Pause, MapPinned, Calendar, Mail, MessageSquare, AlertTriangle, XCircle, Search } from
 "lucide-react";
-import { MOCK_CARRIERS } from "@/data/mockCarriers";
+
 
 
 // ZIP lookup
@@ -724,7 +724,7 @@ export default function Index() {
 
   // Why TruMove feature selection state
   const [activeFeature, setActiveFeature] = useState<number | null>(null);
-  const [carrierIdx, setCarrierIdx] = useState(0);
+  
 
   // Why TruMove features data - Updated per plan
   const whyTruMoveFeatures = [
@@ -1702,112 +1702,39 @@ export default function Index() {
                   </div>
                 </div>
 
-                {/* Right column: SAFER-style lookup UI */}
+                {/* Right column: Clean preview card */}
                 <div className="flex-1 min-w-0">
-                  {/* Window chrome */}
-                  <div className="bg-muted/60 rounded-t-xl px-3 py-2 flex items-center gap-3 border border-b-0 border-border">
-                    <div className="flex gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-destructive/60" />
-                      <span className="w-2 h-2 rounded-full bg-amber-400/60" />
-                      <span className="w-2 h-2 rounded-full bg-primary/60" />
+                  <div className="relative rounded-xl border border-border bg-card/50 backdrop-blur-sm shadow-2xl overflow-hidden group">
+                    {/* Window chrome */}
+                    <div className="flex items-center gap-2 px-4 py-3 border-b border-border bg-muted/30">
+                      <div className="flex gap-1.5">
+                        <div className="w-3 h-3 rounded-full bg-destructive/20" />
+                        <div className="w-3 h-3 rounded-full bg-amber-500/20" />
+                        <div className="w-3 h-3 rounded-full bg-primary/20" />
+                      </div>
+                      <span className="text-xs font-medium text-muted-foreground ml-2">FMCSA Carrier Lookup</span>
                     </div>
-                    <span className="text-[9px] font-mono text-muted-foreground tracking-wider uppercase">SAFER Database Query</span>
-                  </div>
-
-                  {/* Search bar area */}
-                  <div className="border border-border border-t-0 bg-card px-3 py-2 space-y-1.5">
-                    <div className="flex items-center gap-2">
-                      <div className="flex gap-1">
-                        {['Name', 'DOT#', 'MC#'].map((f, fi) => (
-                          <span key={f} className={`px-2 py-0.5 rounded-md text-[9px] font-semibold cursor-default ${fi === 0 ? 'bg-muted text-foreground' : 'bg-muted text-muted-foreground'}`}>{f}</span>
+                    {/* Preview image */}
+                    <div className="relative">
+                      <img 
+                        src={previewCarrierVetting} 
+                        alt="Carrier Vetting Dashboard Preview" 
+                        className="w-full h-auto opacity-90 group-hover:opacity-100 transition-opacity duration-300"
+                      />
+                      {/* Floating badges */}
+                      <div className="absolute bottom-4 left-4 right-4 flex flex-wrap gap-2">
+                        {[
+                          { icon: ShieldCheck, label: 'FMCSA Verified' },
+                          { icon: CheckCircle, label: 'Insurance Active' },
+                          { icon: Radar, label: 'Safety Scored' },
+                        ].map((badge) => (
+                          <span key={badge.label} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-background/90 backdrop-blur-sm border border-border text-xs font-semibold text-foreground shadow-sm">
+                            <badge.icon className="w-3.5 h-3.5 text-primary" />
+                            {badge.label}
+                          </span>
                         ))}
                       </div>
-                      <div className="flex-1 flex items-center gap-2 bg-background border border-border rounded-lg px-2.5 py-1">
-                        <Search className="w-3 h-3 text-muted-foreground shrink-0" />
-                        <span className="text-[11px] text-foreground font-medium truncate">{MOCK_CARRIERS[carrierIdx].carrier.dbaName}</span>
-                      </div>
                     </div>
-                    <p className="text-[8px] text-muted-foreground leading-tight">Carriers filtered per FMCSA Safety Measurement System (SMS) criteria.</p>
-                  </div>
-
-                  {/* Result cards */}
-                  <div className="border border-border border-t-0 rounded-b-xl bg-card divide-y divide-border overflow-hidden">
-                    {MOCK_CARRIERS.map((c, i) => {
-                      const authorized = c.carrier.allowToOperate === 'Y' && c.authority.commonStatus === 'ACTIVE';
-                      const vOosPass = c.oos.vehicleOosRate < c.oos.vehicleOosRateNationalAvg;
-                      const dOosPass = c.oos.driverOosRate < c.oos.driverOosRateNationalAvg;
-                      const redFlags: string[] = [];
-                      if (c.carrier.outOfService === 'Y') redFlags.push('OOS');
-                      if (!authorized) redFlags.push('Auth');
-                      if (c.safety.rating === 'CONDITIONAL' || c.safety.rating === 'UNSATISFACTORY') redFlags.push('Rating');
-                      if (!vOosPass) redFlags.push('Veh OOS');
-                      if (!dOosPass) redFlags.push('Drv OOS');
-                      if (c.crashes.fatal > 0) redFlags.push('Fatal');
-                      const verdict = redFlags.length === 0 ? 'pass' : redFlags.length <= 2 ? 'caution' : 'fail';
-                      const selected = carrierIdx === i;
-
-                      return (
-                        <button
-                          key={i}
-                          onClick={() => setCarrierIdx(i)}
-                          className={`w-full text-left px-3 py-2.5 transition-all ${selected ? 'bg-primary/5' : 'hover:bg-accent/30'}`}
-                        >
-                          {/* Row 1: Name + status */}
-                          <div className="flex items-center justify-between gap-3 mb-1.5">
-                            <div className="min-w-0 flex items-center gap-2">
-                              {selected && <div className="w-1 h-6 rounded-full bg-primary shrink-0" />}
-                              <div className="min-w-0">
-                                <p className="text-xs font-bold text-foreground truncate">{c.carrier.legalName}</p>
-                                <p className="text-[10px] text-muted-foreground">DOT {c.carrier.dotNumber} · {c.carrier.mcNumber}</p>
-                              </div>
-                            </div>
-                            <span className={`shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold ${authorized ? 'bg-muted text-foreground' : 'bg-destructive/10 text-foreground'}`}>
-                              {authorized ? <ShieldCheck className="w-2.5 h-2.5" /> : <XCircle className="w-2.5 h-2.5" />}
-                              {authorized ? 'Authorized' : 'Not Auth'}
-                            </span>
-                          </div>
-
-                          {/* Row 2: Inline metrics */}
-                          <div className="flex items-center gap-3 text-[10px] mb-1.5 ml-3">
-                            <span className="font-semibold text-foreground">
-                              Veh OOS: {c.oos.vehicleOosRate}% <span className="text-muted-foreground font-normal">/ {c.oos.vehicleOosRateNationalAvg}%</span>
-                            </span>
-                            <span className="text-border">|</span>
-                            <span className="font-semibold text-foreground">
-                              Drv OOS: {c.oos.driverOosRate}% <span className="text-muted-foreground font-normal">/ {c.oos.driverOosRateNationalAvg}%</span>
-                            </span>
-                            <span className="text-border">|</span>
-                            <span className="font-semibold text-foreground">
-                              {c.crashes.total} crashes <span className="text-muted-foreground font-normal">({c.crashes.fatal} fatal)</span>
-                            </span>
-                          </div>
-
-                          {/* Row 3: Chips + verdict */}
-                          <div className="flex items-center gap-1.5 ml-3 flex-wrap">
-                            {[
-                              { ok: authorized, label: 'Authority' },
-                              { ok: c.carrier.outOfService !== 'Y', label: 'OOS Clear' },
-                              { ok: c.safety.rating !== 'CONDITIONAL' && c.safety.rating !== 'UNSATISFACTORY', label: 'Safety' },
-                              { ok: c.authority.cargoInsurance !== 'N/A' && c.authority.cargoInsurance !== '$0', label: 'Insured' },
-                            ].map((chip) => (
-                              <span
-                                key={chip.label}
-                                className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] font-medium ${chip.ok ? 'bg-muted text-foreground' : 'bg-destructive/10 text-foreground'}`}
-                              >
-                                {chip.ok ? <CheckCircle className="w-2 h-2" /> : <XCircle className="w-2 h-2" />}
-                                {chip.label}
-                              </span>
-                            ))}
-                            <span className="ml-auto inline-flex items-center gap-1 text-[9px] font-bold text-foreground">
-                              {verdict === 'pass' ? <CheckCircle className="w-2.5 h-2.5" /> :
-                               verdict === 'caution' ? <AlertTriangle className="w-2.5 h-2.5" /> :
-                               <XCircle className="w-2.5 h-2.5" />}
-                              {verdict === 'pass' ? 'PASS' : verdict === 'caution' ? 'CAUTION' : 'FAIL'}
-                            </span>
-                          </div>
-                        </button>
-                      );
-                    })}
                   </div>
                 </div>
               </div>
