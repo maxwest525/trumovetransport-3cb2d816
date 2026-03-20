@@ -1652,7 +1652,7 @@ export default function Index() {
                     ].map((review, i) => (
                       <div
                         key={`${dupeIdx}-${i}`}
-                        className="w-[380px] shrink-0 rounded-2xl bg-card p-6 flex flex-col gap-4 ring-1 ring-border min-h-[220px]"
+                        className="w-[280px] sm:w-[380px] shrink-0 rounded-2xl bg-card p-4 sm:p-6 flex flex-col gap-3 sm:gap-4 ring-1 ring-border min-h-[200px] sm:min-h-[220px]"
                       >
                         <div className="flex items-center justify-between">
                           <div className="flex gap-0.5">

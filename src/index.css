@@ -32964,15 +32964,15 @@ html.dark .tru-summary-header-large,
   background: linear-gradient(to bottom, hsl(220 15% 6%), hsl(220 15% 4%));
   border-bottom: 1px solid hsl(0 0% 100% / 0.08);
   padding: 8px 24px;
-  overflow-x: auto;
+  overflow: hidden;
 }
 
 .feature-trust-strip-inner {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  flex-wrap: nowrap;
-  white-space: nowrap;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px 16px;
   max-width: 1480px;
   width: 100%;
   margin: 0 auto;

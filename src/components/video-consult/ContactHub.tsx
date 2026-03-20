@@ -44,7 +44,7 @@ export function ContactHub({
   };
 
   return (
-    <div className="flex flex-col items-center h-full p-8 relative">
+    <div className="flex flex-col items-center h-full p-4 sm:p-8 relative">
       {/* Logo - positioned at top */}
       <div className="pt-4">
         <img 
@@ -55,8 +55,8 @@ export function ContactHub({
       </div>
 
       {/* Header */}
-      <div className="mt-8 text-center">
-        <h3 className="text-3xl font-black text-white mb-2">
+      <div className="mt-4 sm:mt-8 text-center">
+        <h3 className="text-2xl sm:text-3xl font-black text-white mb-2">
           Ready to Connect
         </h3>
         <p className="text-white/70 text-base max-w-lg mx-auto leading-relaxed">
@@ -67,7 +67,7 @@ export function ContactHub({
 
       {/* Primary Action Buttons - Centered between header and booking input */}
       <div className="flex-1 flex items-center justify-center w-full">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-3xl">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 w-full max-w-3xl">
         {/* Video Call */}
         <button
           onClick={onStartVideoCall}

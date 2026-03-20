@@ -479,10 +479,10 @@ export default function InventoryBuilder({
   }, [itemQuantities]);
 
   return (
-    <div className="flex gap-4 min-h-[400px]">
-      {/* Left Sidebar - Room Navigation */}
-      <div className="w-44 flex-shrink-0 space-y-1">
-        <div className="flex items-center justify-between mb-3 px-2">
+    <div className="flex flex-col md:flex-row gap-4 min-h-[300px] md:min-h-[400px]">
+      {/* Left Sidebar - Room Navigation (horizontal scroll on mobile, vertical on desktop) */}
+      <div className="md:w-44 flex-shrink-0 space-y-0 md:space-y-1 flex md:flex-col overflow-x-auto md:overflow-x-visible gap-1.5 md:gap-0 pb-2 md:pb-0">
+        <div className="hidden md:flex items-center justify-between mb-3 px-2">
           <div className="text-[10px] font-black tracking-[0.2em] uppercase text-muted-foreground">
             My Inventory
           </div>
@@ -508,7 +508,7 @@ export default function InventoryBuilder({
               type="button"
               onClick={() => handleRoomChange(room.id)}
               className={cn(
-                "w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-left transition-all",
+                "flex items-center gap-2 px-3 py-2.5 rounded-lg text-left transition-all whitespace-nowrap md:whitespace-normal md:w-full flex-shrink-0",
                 isActive 
                   ? "border-2 border-primary bg-primary/5 text-foreground shadow-md" 
                   : "border-2 border-transparent hover:bg-muted/60 text-foreground/70 hover:text-foreground shadow-sm hover:shadow-md"
