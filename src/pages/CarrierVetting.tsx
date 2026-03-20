@@ -510,10 +510,10 @@ export default function CarrierVetting() {
       <div className="min-h-screen carrier-vetting-page">
         
 
-        <div className="min-h-[80vh] flex flex-col items-center justify-center px-6 py-12">
+        <div className="min-h-[80vh] flex flex-col items-center justify-center px-6 py-6">
           <div className="w-full max-w-7xl mx-auto">
           {/* Hero Section - always visible */}
-          <div className="flex flex-col items-center justify-center text-center mb-6 max-w-3xl mx-auto">
+          <div className="flex flex-col items-center justify-center text-center mb-4 max-w-3xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-black tracking-tight text-foreground mb-4 whitespace-nowrap">
               FMCSA-Verified <span className="tru-qb-title-accent">Carrier Safety Records</span>
             </h2>
@@ -530,7 +530,7 @@ export default function CarrierVetting() {
           </div>
 
           {/* FMCSA Terminal - Always Visible */}
-          <div className="fmcsa-terminal max-w-2xl mx-auto mb-6">
+          <div className="fmcsa-terminal max-w-2xl mx-auto mb-4">
             <div className="fmcsa-terminal-header">
               <div className="fmcsa-terminal-dots">
                 <span></span><span></span><span></span>
@@ -549,8 +549,8 @@ export default function CarrierVetting() {
           </div>
 
           {/* Search Results label + Trust strip below query box */}
-          <p className="text-lg font-bold uppercase tracking-widest text-muted-foreground text-center mt-8 mb-3">— Search Results —</p>
-          <div className="flex items-center justify-center gap-x-6 max-w-3xl mx-auto mt-0 mb-6 flex-nowrap">
+          <p className="text-lg font-bold uppercase tracking-widest text-muted-foreground text-center mt-4 mb-2">— Search Results —</p>
+          <div className="flex items-center justify-center gap-x-6 max-w-3xl mx-auto mt-0 mb-4 flex-nowrap">
             {[
               { icon: Radio, text: "Real-time FMCSA data", color: "text-emerald-500" },
               { icon: AlertTriangle, text: "Red flag alerts", color: "text-red-500" },
@@ -588,7 +588,7 @@ export default function CarrierVetting() {
 
           {/* Section Header - only show when carriers are loaded */}
           {carriers.length > 0 && (
-            <div className="mt-12 mb-10 text-center">
+              <div className="mt-6 mb-6 text-center">
               <div className="inline-flex items-center gap-3 mb-4">
                 <div className="w-8 h-px bg-border" />
                 <span className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
@@ -618,7 +618,7 @@ export default function CarrierVetting() {
 
           {/* Empty State Placeholder - Only show when no carriers */}
           {carriers.length === 0 && (
-            <div className="mb-8 animate-fade-in">
+            <div className="mb-6 animate-fade-in">
               {/* Placeholder Cards Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">
                 {[1, 2, 3].map((i) => (
@@ -660,7 +660,7 @@ export default function CarrierVetting() {
               </div>
 
               {/* Demo Carrier Buttons */}
-              <div className="mt-8 max-w-2xl mx-auto">
+              <div className="mt-5 max-w-2xl mx-auto">
                 <p className="text-center text-sm text-muted-foreground mb-4">
                   Try it out with sample carriers:
                 </p>
@@ -699,8 +699,8 @@ export default function CarrierVetting() {
               </div>
               
               {/* How It Works Section */}
-              <div className="mt-10 max-w-3xl mx-auto">
-                <h3 className="text-center text-sm font-semibold text-foreground mb-6">How It Works</h3>
+                <div className="mt-6 max-w-3xl mx-auto">
+                  <h3 className="text-center text-sm font-semibold text-foreground mb-4">How It Works</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="text-center">
                     <div className="w-10 h-10 rounded-full bg-slate-900 dark:bg-slate-100 flex items-center justify-center mx-auto mb-3 shadow-md">
@@ -730,7 +730,7 @@ export default function CarrierVetting() {
 
           {/* Results Header - Only when carriers exist */}
           {carriers.length > 0 && (
-            <div className="mt-12 mb-10 text-center">
+            <div className="mt-6 mb-6 text-center">
               <div className="inline-block px-8 py-6 bg-gradient-to-b from-muted/50 to-transparent rounded-xl border border-border/50">
                 <div className="flex flex-wrap items-center justify-center gap-3 mb-4">
                   <h2 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">
