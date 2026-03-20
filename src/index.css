@@ -35565,3 +35565,63 @@ gmp-map-3d-element .gmnoprint {
     overflow-x: hidden !important;
   }
 }
+
+/* =============================================
+   CAL.COM EMBED STYLING
+   Custom container styling for the Cal.com scheduling embed
+   ============================================= */
+.cal-embed-container {
+  position: relative;
+  border-radius: 0 0 12px 12px;
+  overflow: hidden;
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-top: none;
+}
+
+.cal-embed-container iframe {
+  width: 100%;
+  border: 0;
+  height: 700px;
+  min-height: 550px;
+  display: block;
+}
+
+/* Subtle inner glow at the top edge */
+.cal-embed-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: linear-gradient(to bottom, hsl(var(--primary) / 0.04), transparent);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Loading shimmer while iframe loads */
+.cal-embed-container::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    110deg,
+    transparent 25%,
+    hsl(var(--primary) / 0.03) 37%,
+    transparent 63%
+  );
+  background-size: 200% 100%;
+  animation: cal-shimmer 2s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.cal-embed-container iframe[data-loaded="true"] + .cal-embed-container::after {
+  display: none;
+}
+
+@keyframes cal-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
