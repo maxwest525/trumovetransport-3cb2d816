@@ -531,35 +531,6 @@ export default function InventoryBuilder({
 
       {/* Right Content - Item Grid */}
       <div className="flex-1 space-y-3">
-      {/* Scan Room Preview */}
-        <div>
-          <button
-            type="button"
-            onClick={() => navigate("/site/scan-room")}
-            className="relative flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-primary/5 to-primary/10 hover:from-primary/10 hover:to-primary/15 transition-all text-left cursor-pointer group overflow-hidden w-full"
-          >
-            {/* Preview thumbnail */}
-            <div className="relative w-20 h-16 rounded-lg overflow-hidden border border-primary/20 flex-shrink-0">
-              <img 
-                src={scanRoomPreview} 
-                alt="AI Room Scanner preview" 
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-              />
-              <div className="absolute inset-0 bg-primary/10 flex items-center justify-center">
-                <Camera className="w-5 h-5 text-primary drop-shadow-sm" />
-              </div>
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-1.5">
-                <span className="text-sm font-bold text-foreground">Scan Your Room</span>
-              </div>
-              <span className="text-[11px] text-muted-foreground block">Point your camera and auto-detect items instantly</span>
-              <span className="text-[10px] text-primary font-semibold mt-1 inline-flex items-center gap-1 group-hover:underline">
-                Try it now →
-              </span>
-            </div>
-          </button>
-        </div>
         
         {/* Search Bar & Special Handling Toggle */}
         <div className="flex flex-col sm:flex-row gap-3">
