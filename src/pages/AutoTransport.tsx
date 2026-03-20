@@ -9,6 +9,14 @@ import { ChatBubble } from "@/components/auto-transport/ChatBubble";
 import { ScrollFadeIn } from "@/hooks/useScrollFadeIn";
 import { Sparkles } from "lucide-react";
 
+// Load model-viewer web component script
+if (!document.querySelector('script[src*="model-viewer"]')) {
+  const modelViewerScript = document.createElement('script');
+  modelViewerScript.type = 'module';
+  modelViewerScript.src = 'https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js';
+  document.head.appendChild(modelViewerScript);
+}
+
 export default function AutoTransport() {
   const quoteRef = useRef<HTMLDivElement>(null);
   const quoteRevealRef = useRef<HTMLDivElement>(null);

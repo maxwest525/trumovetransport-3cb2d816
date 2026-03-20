@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from "react";
-import { Check, ChevronRight, ChevronLeft, ChevronDown, Scan, Route, ScanLine, MapPin, Car, Box, Phone, Mail, User, Sparkles, Pencil, CalendarIcon } from "lucide-react";
+import { Check, ChevronRight, ChevronLeft, ChevronDown, Scan, Route, ScanLine, MapPin, Car, Box, Phone, Mail, User, Sparkles, Pencil, CalendarIcon, Loader2, HandMetal } from "lucide-react";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -364,155 +364,207 @@ export function QuoteWizard({ onGetEstimate, quoteData, setQuoteData, variant = 
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: direction > 0 ? -40 : 40 }}
                   transition={{ duration: 0.3, ease: "easeInOut" }}
-                  className="p-3 sm:p-6 space-y-3 sm:space-y-4"
+                  className="grid grid-cols-1 lg:grid-cols-2"
                 >
-                  <div>
-                    <p className="text-[10px] uppercase tracking-[0.25em] text-primary font-semibold mb-1">Step 1 of {totalSteps} · Vehicle</p>
-                    <h3 className="text-lg sm:text-xl font-bold text-foreground tracking-tight">
-                      Select Your Vehicle
-                    </h3>
-                  </div>
+                  {/* Left: Form */}
+                  <div className="p-3 sm:p-6 space-y-3 sm:space-y-4">
+                    <div>
+                      <p className="text-[10px] uppercase tracking-[0.25em] text-primary font-semibold mb-1">Step 1 of {totalSteps} · Vehicle</p>
+                      <h3 className="text-lg sm:text-xl font-bold text-foreground tracking-tight">
+                        Select Your Vehicle
+                      </h3>
+                    </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <div className="space-y-2">
-                      <Label className="text-sm text-muted-foreground">Year</Label>
-                      <Select value={quoteData.year || undefined} onValueChange={(v) => setQuoteData(d => ({ ...d, year: v }))}>
-                        <SelectTrigger className="bg-secondary border-border/60"><SelectValue placeholder="Select year" /></SelectTrigger>
-                        <SelectContent className="bg-card border-border">
-                          {years.map(y => <SelectItem key={y} value={y}>{y}</SelectItem>)}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-sm text-muted-foreground">Make</Label>
-                      <Select value={quoteData.make || undefined} onValueChange={(v) => { const firstModel = modelsByMake[v][0]; setQuoteData(d => ({ ...d, make: v, model: firstModel, vehicleType: modelVehicleType[firstModel] || "Sedan" })); }}>
-                        <SelectTrigger className="bg-secondary border-border/60"><SelectValue placeholder="Select make" /></SelectTrigger>
-                        <SelectContent className="bg-card border-border">
-                          {makes.map(m => <SelectItem key={m} value={m}>{m}</SelectItem>)}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-sm text-muted-foreground">Model</Label>
-                      <Select value={quoteData.model || undefined} onValueChange={(v) => setQuoteData(d => ({ ...d, model: v, vehicleType: modelVehicleType[v] || "Sedan" }))}>
-                        <SelectTrigger className="bg-secondary border-border/60"><SelectValue placeholder="Select model" /></SelectTrigger>
-                        <SelectContent className="bg-card border-border">
-                          {modelsByMake[quoteData.make]?.map(m => <SelectItem key={m} value={m}>{m}</SelectItem>)}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-
-                  {/* Transport Type */}
-                  <div className="space-y-2">
-                    <Label className="text-sm text-muted-foreground">Transport Type</Label>
-                    <div className="grid grid-cols-2 gap-2">
-                      {["Open", "Enclosed"].map((type) => (
-                        <button
-                          key={type}
-                          onClick={() => setQuoteData(d => ({ ...d, transportType: type }))}
-                          className={cn(
-                            "flex items-center justify-center gap-2 p-3 rounded-xl border text-sm font-medium transition-all",
-                            quoteData.transportType === type
-                              ? "bg-foreground/[0.07] border-foreground/30 text-foreground"
-                              : "bg-secondary/40 border-border/30 text-muted-foreground hover:bg-secondary/60 hover:text-foreground"
-                          )}
-                        >
-                          {type === "Open" ? <Car className="w-4 h-4" strokeWidth={1.5} /> : <Box className="w-4 h-4" strokeWidth={1.5} />}
-                          {type}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Condition Report — collapsible */}
-                  <div className="rounded-xl border border-border/60 overflow-hidden">
-                    <button
-                      onClick={() => setShowConditionDetails(!showConditionDetails)}
-                      className="flex items-center justify-between w-full p-3 sm:p-4 bg-secondary/30 hover:bg-secondary/40 transition-colors"
-                    >
-                      <div className="flex items-center gap-2.5">
-                        <Scan className="w-4 h-4 text-muted-foreground" strokeWidth={1.5} />
-                        <span className="text-sm font-medium text-foreground">Condition Report</span>
-                        <span className="text-[10px] text-muted-foreground/60 uppercase tracking-wider">Optional</span>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      <div className="space-y-2">
+                        <Label className="text-sm text-muted-foreground">Year</Label>
+                        <Select value={quoteData.year || undefined} onValueChange={(v) => setQuoteData(d => ({ ...d, year: v }))}>
+                          <SelectTrigger className="bg-secondary border-border/60"><SelectValue placeholder="Select year" /></SelectTrigger>
+                          <SelectContent className="bg-card border-border">
+                            {years.map(y => <SelectItem key={y} value={y}>{y}</SelectItem>)}
+                          </SelectContent>
+                        </Select>
                       </div>
-                      <ChevronDown className={cn("w-4 h-4 text-muted-foreground transition-transform", showConditionDetails && "rotate-180")} strokeWidth={1.5} />
-                    </button>
+                      <div className="space-y-2">
+                        <Label className="text-sm text-muted-foreground">Make</Label>
+                        <Select value={quoteData.make || undefined} onValueChange={(v) => { const firstModel = modelsByMake[v][0]; setQuoteData(d => ({ ...d, make: v, model: firstModel, vehicleType: modelVehicleType[firstModel] || "Sedan" })); }}>
+                          <SelectTrigger className="bg-secondary border-border/60"><SelectValue placeholder="Select make" /></SelectTrigger>
+                          <SelectContent className="bg-card border-border">
+                            {makes.map(m => <SelectItem key={m} value={m}>{m}</SelectItem>)}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="text-sm text-muted-foreground">Model</Label>
+                        <Select value={quoteData.model || undefined} onValueChange={(v) => setQuoteData(d => ({ ...d, model: v, vehicleType: modelVehicleType[v] || "Sedan" }))}>
+                          <SelectTrigger className="bg-secondary border-border/60"><SelectValue placeholder="Select model" /></SelectTrigger>
+                          <SelectContent className="bg-card border-border">
+                            {modelsByMake[quoteData.make]?.map(m => <SelectItem key={m} value={m}>{m}</SelectItem>)}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
 
-                    <AnimatePresence>
-                      {showConditionDetails && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: "auto", opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.2 }}
-                          className="overflow-hidden"
-                        >
-                          <div className="p-3 sm:p-4 space-y-3 border-t border-border/40">
-                            <div className="space-y-2">
-                              <Label className="text-sm text-muted-foreground">Does it run?</Label>
-                              <Select value={quoteData.running || undefined} onValueChange={(v) => setQuoteData(d => ({ ...d, running: v }))}>
-                                <SelectTrigger className="bg-secondary border-border/60"><SelectValue placeholder="Select condition" /></SelectTrigger>
-                                <SelectContent className="bg-card border-border">
-                                  <SelectItem value="Runs">Runs & drives</SelectItem>
-                                  <SelectItem value="Doesn't Run">Doesn't run</SelectItem>
-                                </SelectContent>
-                              </Select>
+                    {/* Transport Type */}
+                    <div className="space-y-2">
+                      <Label className="text-sm text-muted-foreground">Transport Type</Label>
+                      <div className="grid grid-cols-2 gap-2">
+                        {["Open", "Enclosed"].map((type) => (
+                          <button
+                            key={type}
+                            onClick={() => setQuoteData(d => ({ ...d, transportType: type }))}
+                            className={cn(
+                              "flex items-center justify-center gap-2 p-3 rounded-xl border text-sm font-medium transition-all",
+                              quoteData.transportType === type
+                                ? "bg-foreground/[0.07] border-foreground/30 text-foreground"
+                                : "bg-secondary/40 border-border/30 text-muted-foreground hover:bg-secondary/60 hover:text-foreground"
+                            )}
+                          >
+                            {type === "Open" ? <Car className="w-4 h-4" strokeWidth={1.5} /> : <Box className="w-4 h-4" strokeWidth={1.5} />}
+                            {type}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Condition Report — collapsible */}
+                    <div className="rounded-xl border border-border/60 overflow-hidden">
+                      <button
+                        onClick={() => setShowConditionDetails(!showConditionDetails)}
+                        className="flex items-center justify-between w-full p-3 sm:p-4 bg-secondary/30 hover:bg-secondary/40 transition-colors"
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <Scan className="w-4 h-4 text-muted-foreground" strokeWidth={1.5} />
+                          <span className="text-sm font-medium text-foreground">Condition Report</span>
+                          <span className="text-[10px] text-muted-foreground/60 uppercase tracking-wider">Optional</span>
+                        </div>
+                        <ChevronDown className={cn("w-4 h-4 text-muted-foreground transition-transform", showConditionDetails && "rotate-180")} strokeWidth={1.5} />
+                      </button>
+
+                      <AnimatePresence>
+                        {showConditionDetails && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                            className="overflow-hidden"
+                          >
+                            <div className="p-3 sm:p-4 space-y-3 border-t border-border/40">
+                              <div className="space-y-2">
+                                <Label className="text-sm text-muted-foreground">Does it run?</Label>
+                                <Select value={quoteData.running || undefined} onValueChange={(v) => setQuoteData(d => ({ ...d, running: v }))}>
+                                  <SelectTrigger className="bg-secondary border-border/60"><SelectValue placeholder="Select condition" /></SelectTrigger>
+                                  <SelectContent className="bg-card border-border">
+                                    <SelectItem value="Runs">Runs & drives</SelectItem>
+                                    <SelectItem value="Doesn't Run">Doesn't run</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                {damageOptions.map(d => (
+                                  <label
+                                    key={d.id}
+                                    className="flex items-center gap-2.5 p-2.5 rounded-lg bg-secondary/40 border border-border/30 cursor-pointer hover:bg-secondary/60 transition-colors"
+                                  >
+                                    <Checkbox
+                                      checked={selectedDamage.includes(d.id)}
+                                      onCheckedChange={() => toggleDamage(d.id)}
+                                      className="border-border data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                                    />
+                                    <span className="text-xs sm:text-sm text-foreground">{d.label}</span>
+                                  </label>
+                                ))}
+                              </div>
+                              <Input
+                                value={damageNote}
+                                onChange={(e) => setDamageNote(e.target.value)}
+                                placeholder="Additional notes (optional)"
+                                className="bg-secondary/40 border-border/40 text-sm h-9"
+                              />
                             </div>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                              {damageOptions.map(d => (
-                                <label
-                                  key={d.id}
-                                  className="flex items-center gap-2.5 p-2.5 rounded-lg bg-secondary/40 border border-border/30 cursor-pointer hover:bg-secondary/60 transition-colors"
-                                >
-                                  <Checkbox
-                                    checked={selectedDamage.includes(d.id)}
-                                    onCheckedChange={() => toggleDamage(d.id)}
-                                    className="border-border data-[state=checked]:bg-primary data-[state=checked]:border-primary"
-                                  />
-                                  <span className="text-xs sm:text-sm text-foreground">{d.label}</span>
-                                </label>
-                              ))}
-                            </div>
-                            <Input
-                              value={damageNote}
-                              onChange={(e) => setDamageNote(e.target.value)}
-                              placeholder="Additional notes (optional)"
-                              className="bg-secondary/40 border-border/40 text-sm h-9"
-                            />
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+
+                    {quoteData.make && quoteData.model && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const yearTrigger = containerRef.current?.querySelector<HTMLElement>('[role="combobox"]');
+                          yearTrigger?.focus({ preventScroll: true });
+                          yearTrigger?.click();
+                        }}
+                        className="flex lg:hidden items-center gap-2.5 mt-1 px-3 py-2 rounded-xl bg-secondary/40 border border-border/30 hover:bg-secondary/60 transition-colors w-full text-left group"
+                      >
+                        <Car className="w-4 h-4 text-primary shrink-0" strokeWidth={1.5} />
+                        <div className="min-w-0 flex-1">
+                          <p className="text-xs font-semibold text-foreground truncate">{quoteData.year} {quoteData.make} {quoteData.model}</p>
+                          <p className="text-[10px] text-muted-foreground">{quoteData.vehicleType || "Vehicle"} · {quoteData.transportType || "Open"}</p>
+                        </div>
+                        <Pencil className="w-3 h-3 text-muted-foreground/50 group-hover:text-primary transition-colors shrink-0" strokeWidth={1.5} />
+                      </button>
+                    )}
+                    <Button
+                      variant="premium"
+                      onClick={goNext}
+                      disabled={!canAdvanceFromStep1}
+                      className="w-full h-11 text-sm mt-2"
+                    >
+                      Next Step
+                      <ChevronRight className="w-4 h-4 ml-1" strokeWidth={1.5} />
+                    </Button>
                   </div>
 
-                  {quoteData.make && quoteData.model && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const yearTrigger = containerRef.current?.querySelector<HTMLElement>('[role="combobox"]');
-                        yearTrigger?.focus({ preventScroll: true });
-                        yearTrigger?.click();
-                      }}
-                      className="flex lg:hidden items-center gap-2.5 mt-1 px-3 py-2 rounded-xl bg-secondary/40 border border-border/30 hover:bg-secondary/60 transition-colors w-full text-left group"
-                    >
-                      <Car className="w-4 h-4 text-primary shrink-0" strokeWidth={1.5} />
-                      <div className="min-w-0 flex-1">
-                        <p className="text-xs font-semibold text-foreground truncate">{quoteData.year} {quoteData.make} {quoteData.model}</p>
-                        <p className="text-[10px] text-muted-foreground">{quoteData.vehicleType || "Vehicle"} · {quoteData.transportType || "Open"}</p>
+                  {/* Right: 3D Vehicle Viewer — hidden on mobile */}
+                  <div className="hidden lg:flex flex-col relative bg-gradient-to-b from-secondary/40 via-card to-muted/30 dark:from-[hsl(155_8%_13%)] dark:via-card dark:to-[hsl(160_10%_8%)] border-l border-border/40 min-h-[400px]">
+                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_50%_55%,hsl(var(--primary)/0.05),transparent)]" />
+                    {/* @ts-ignore */}
+                    <model-viewer
+                      src="/models/car.glb"
+                      alt={`${quoteData.year} ${quoteData.make} ${quoteData.model} 3D preview`}
+                      camera-controls
+                      auto-rotate
+                      rotation-per-second="18deg"
+                      camera-orbit="30deg 68deg 105%"
+                      loading="eager"
+                      reveal="auto"
+                      environment-image="/models/studio.hdr"
+                      skybox-image=""
+                      shadow-intensity="1.8"
+                      shadow-softness="1"
+                      exposure="1.3"
+                      tone-mapping="commerce"
+                      style={{ width: '100%', height: '100%', backgroundColor: 'transparent', minHeight: '280px', flex: 1 }}
+                    />
+                    <div className="absolute bottom-3 left-3 bg-background/70 backdrop-blur-md rounded-lg px-3 py-1.5 border border-border/40">
+                      <p className="text-xs font-semibold text-foreground">{quoteData.year || "Year"} {quoteData.make || "Make"} {quoteData.model || "Model"}</p>
+                      <p className="text-[10px] text-muted-foreground">{quoteData.vehicleType || "Vehicle"} · {quoteData.transportType || "Transport"}</p>
+                    </div>
+
+                    {/* Spec panel at bottom */}
+                    <div className="grid grid-cols-3 gap-px bg-border/60 border-t border-border/60 text-xs">
+                      <div className="p-2.5 bg-card text-center">
+                        <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-0.5">Est. Weight</p>
+                        <p className="font-medium text-foreground text-xs">
+                          {quoteData.vehicleType === "Truck" ? "5,500 lbs" : quoteData.vehicleType === "SUV" ? "4,800 lbs" : quoteData.vehicleType === "Van" ? "4,200 lbs" : "3,600 lbs"}
+                        </p>
                       </div>
-                      <Pencil className="w-3 h-3 text-muted-foreground/50 group-hover:text-primary transition-colors shrink-0" strokeWidth={1.5} />
-                    </button>
-                  )}
-                  <Button
-                    variant="premium"
-                    onClick={goNext}
-                    disabled={!canAdvanceFromStep1}
-                    className="w-full h-11 text-sm mt-2"
-                  >
-                    Next Step
-                    <ChevronRight className="w-4 h-4 ml-1" strokeWidth={1.5} />
-                  </Button>
+                      <div className="p-2.5 bg-card text-center">
+                        <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-0.5">Dimensions</p>
+                        <p className="font-medium text-foreground text-xs">
+                          {quoteData.vehicleType === "Truck" ? "19.5' × 6.5'" : quoteData.vehicleType === "SUV" ? "16.5' × 6.2'" : quoteData.vehicleType === "Van" ? "17' × 6.3'" : "15.5' × 5.9'"}
+                        </p>
+                      </div>
+                      <div className="p-2.5 bg-card text-center">
+                        <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-0.5">Clearance</p>
+                        <p className="font-medium text-foreground text-xs">
+                          {quoteData.vehicleType === "Truck" ? "76 in" : quoteData.vehicleType === "SUV" ? "70 in" : quoteData.vehicleType === "Van" ? "72 in" : "57 in"}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 </motion.div>
               )}
 
@@ -698,4 +750,28 @@ export function QuoteWizard({ onGetEstimate, quoteData, setQuoteData, variant = 
       )}
     </div>
   );
+}
+
+// TypeScript declaration for model-viewer web component
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      'model-viewer': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement> & {
+        src?: string;
+        alt?: string;
+        'camera-controls'?: boolean;
+        'auto-rotate'?: boolean;
+        'rotation-per-second'?: string;
+        'camera-orbit'?: string;
+        exposure?: string;
+        'shadow-intensity'?: string;
+        'shadow-softness'?: string;
+        'environment-image'?: string;
+        'skybox-image'?: string;
+        'tone-mapping'?: string;
+        loading?: string;
+        reveal?: string;
+      }, HTMLElement>;
+    }
+  }
 }
