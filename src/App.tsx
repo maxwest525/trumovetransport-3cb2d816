@@ -50,6 +50,7 @@ const App = () => (
             <Route path="/scan-room" element={<ScanRoom />} />
             <Route path="/classic" element={<Classic />} />
             <Route path="/track" element={<LiveTracking />} />
+            <Route path="/auto-transport" element={<AutoTransport />} />
             <Route path="/customer-service" element={<CustomerService />} />
 
             {/* Legacy /site/* redirects */}
