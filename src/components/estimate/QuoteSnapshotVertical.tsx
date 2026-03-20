@@ -50,8 +50,8 @@ export default function QuoteSnapshotVertical({ items, moveDetails, extendedDeta
       {/* Header - Enlarged and Centered */}
       <div className="tru-summary-header-large">
         <div className="text-center flex-1">
-          <h3 className="text-xl font-black text-foreground">
-            Move <span className="tru-qb-title-accent">Summary</span>
+          <h3 className="text-xl font-black uppercase tracking-wide">
+            MOVE <span className="text-primary">SUMMARY</span>
           </h3>
         </div>
       </div>

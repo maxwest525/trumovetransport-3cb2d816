@@ -21761,14 +21761,30 @@
   background: hsl(220 20% 14%);
 }
 
-/* Large Header for Summary Cards - Enlarged and Centered */
 .tru-summary-header-large {
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
   padding: 14px 20px;
-  background: hsl(220 15% 96%);
+  background: hsl(var(--tm-ink));
+  border-bottom: 2px solid hsl(var(--primary));
+}
+
+.tru-summary-header-large h3 {
+  color: hsl(0 0% 100%) !important;
+}
+
+.tru-summary-header-large .tru-qb-title-accent,
+.tru-summary-header-large .text-primary {
+  color: hsl(var(--primary)) !important;
+  background: none !important;
+  -webkit-text-fill-color: hsl(var(--primary)) !important;
+}
+
+.tru-summary-header-large p,
+.tru-summary-header-large .text-muted-foreground {
+  color: hsl(0 0% 100% / 0.5) !important;
 }
 
 /* Dark mode header styles consolidated in the Build Your Move section below */
