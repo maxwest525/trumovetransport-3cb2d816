@@ -515,7 +515,7 @@ export default function CarrierVetting() {
           {/* Hero Section - always visible */}
           <div className="flex flex-col items-center justify-center text-center mb-10 max-w-2xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-black tracking-tight text-foreground mb-3 whitespace-nowrap">
-              Verify Any Carrier's <span className="tru-qb-title-accent">Trust & Safety</span>
+              FMCSA-Verified <span className="tru-qb-title-accent">Carrier Safety Records</span>
             </h2>
             <p className="text-sm text-muted-foreground leading-relaxed">
               Real-time FMCSA safety data • Insurance verification • DOT lookup
