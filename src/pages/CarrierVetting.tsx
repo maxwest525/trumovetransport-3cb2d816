@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
+import { ScrollFadeIn } from '@/hooks/useScrollFadeIn';
 
 
 // Scroll to top on mount
