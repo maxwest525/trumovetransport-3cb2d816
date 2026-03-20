@@ -108,7 +108,7 @@ export default function AutoTransport() {
       </ScrollFadeIn>
 
       {/* Final CTA */}
-      <section className="py-6 sm:py-10 md:py-20 bg-card/30">
+      <section className="py-6 sm:py-8 md:py-12 bg-card/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-2xl mx-auto text-center">
             <h2 className="text-xl sm:text-2xl md:text-4xl font-semibold text-foreground mb-2 sm:mb-3 md:mb-4">
