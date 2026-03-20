@@ -13469,7 +13469,7 @@
   position: relative;
   margin: 5px 16px 0;
   border-radius: 16px;
-  background: hsl(0 0% 30%);
+  background: hsl(0 0% 0%);
   border: none;
   box-shadow: 
     0 4px 12px hsl(0 0% 0% / 0.3),
