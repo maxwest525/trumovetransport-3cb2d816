@@ -13471,25 +13471,39 @@
   border-radius: 16px;
   background: hsl(0 0% 0%);
   border: none;
-  box-shadow: 
+  box-shadow:
     0 4px 12px hsl(0 0% 0% / 0.3),
     0 12px 32px hsl(0 0% 0% / 0.25);
   transition: box-shadow 300ms ease;
   z-index: 100;
   width: 100%;
   box-sizing: border-box;
+  overflow: visible;
 }
 
-/* White underglow only on homepage - high specificity to beat scroll/dark overrides */
+/* White underglow only on homepage */
+.header-main.header-floating.header-home-glow::after {
+  content: "";
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  bottom: -14px;
+  height: 28px;
+  border-radius: 999px;
+  background: hsl(0 0% 100% / 0.95);
+  filter: blur(18px);
+  opacity: 0.55;
+  pointer-events: none;
+  z-index: -1;
+}
+
 .header-main.header-floating.header-home-glow,
 .header-main.header-floating.header-home-glow.is-scrolled,
 .dark .header-main.header-floating.header-home-glow,
 .dark .header-main.header-floating.header-home-glow.is-scrolled {
-  box-shadow: 
+  box-shadow:
     0 4px 12px hsl(0 0% 0% / 0.3),
-    0 12px 32px hsl(0 0% 0% / 0.25),
-    0 0 28px 6px hsl(0 0% 100% / 0.2),
-    0 0 56px 12px hsl(0 0% 100% / 0.1) !important;
+    0 12px 32px hsl(0 0% 0% / 0.25);
 }
 
 .header-main.header-floating.is-scrolled {
