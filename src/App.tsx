@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
+import { isMainDomain } from "@/lib/hostDetection";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import OnlineEstimate from "./pages/OnlineEstimate";
@@ -75,6 +76,9 @@ import DispatchDashboard from "./pages/DispatchDashboard";
 
 const queryClient = new QueryClient();
 
+/** True when served from the main customer-facing domain (trumoveinc.com) */
+const mainDomain = isMainDomain();
+
 const App = () => (
   <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
     <QueryClientProvider client={queryClient}>
@@ -84,12 +88,21 @@ const App = () => (
         <BrowserRouter>
           <ScrollToTop />
           <Routes>
-            {/* Portal is the root */}
-            <Route path="/" element={<AgentLogin />} />
+            {/*
+              Hostname-aware root route:
+              • Main domain  (trumoveinc.com)      → marketing site
+              • CRM subdomain (crm.trumoveinc.com) → portal login
+              • localhost / preview                 → portal login (dev default)
+            */}
+            <Route path="/" element={mainDomain ? <Index /> : <AgentLogin />} />
+
             {/* Legacy route redirect */}
             <Route path="/agent-login" element={<Navigate to="/" replace />} />
 
-            {/* Public website — all nested under /site */}
+            {/* ── Public website ───────────────────────────────────────
+                 Always available under /site prefix.
+                 On the main domain they are ALSO mirrored at root level
+                 so visitors can use /about instead of /site/about.       */}
             <Route path="/site" element={<Index />} />
             <Route path="/site/online-estimate" element={<OnlineEstimate />} />
             <Route path="/site/book" element={<Book />} />
@@ -106,6 +119,19 @@ const App = () => (
             <Route path="/site/classic" element={<Classic />} />
             <Route path="/site/track" element={<LiveTracking />} />
             <Route path="/site/customer-service" element={<CustomerService />} />
+
+            {/* Main-domain shorthand routes (no /site prefix needed) */}
+            {mainDomain && <Route path="/online-estimate" element={<OnlineEstimate />} />}
+            {mainDomain && <Route path="/book" element={<Book />} />}
+            {mainDomain && <Route path="/faq" element={<FAQ />} />}
+            {mainDomain && <Route path="/about" element={<About />} />}
+            {mainDomain && <Route path="/privacy" element={<Privacy />} />}
+            {mainDomain && <Route path="/terms" element={<Terms />} />}
+            {mainDomain && <Route path="/scan-room" element={<ScanRoom />} />}
+            {mainDomain && <Route path="/track" element={<LiveTracking />} />}
+            {mainDomain && <Route path="/customer-service" element={<CustomerService />} />}
+
+            {/* ── CRM / Backend routes ─────────────────────────────── */}
             <Route path="/agent/dashboard" element={<AgentDashboard />} />
             <Route path="/admin/developer" element={<AdminDeveloper />} />
             <Route path="/admin/employee-requests" element={<AdminSupportTickets />} />
