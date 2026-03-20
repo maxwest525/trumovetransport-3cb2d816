@@ -586,9 +586,9 @@ export default function CarrierVetting() {
         </section>
       </ScrollFadeIn>
 
-      <div className="min-h-screen carrier-vetting-page">
-        <div className="px-6 py-4">
-          <div className="w-full max-w-7xl mx-auto">
+      <ScrollFadeIn>
+      <div className="carrier-vetting-page">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
 
           {/* API Error Alert */}
           {apiError && (
