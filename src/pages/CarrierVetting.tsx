@@ -660,7 +660,7 @@ export default function CarrierVetting() {
               </div>
 
               {/* Demo Carrier Buttons */}
-              <div className="mt-8 max-w-2xl mx-auto">
+              <div className="mt-5 max-w-2xl mx-auto">
                 <p className="text-center text-sm text-muted-foreground mb-4">
                   Try it out with sample carriers:
                 </p>
