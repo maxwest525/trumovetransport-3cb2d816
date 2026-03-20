@@ -274,40 +274,18 @@ export default function CustomerService() {
 
                 {/* Action row */}
                 <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3">
-                  {!isConnected ? (
-                    <button
-                      onClick={startCall}
-                      disabled={isConnecting}
-                      className="tru-modal-primary-btn !w-auto !px-8 !py-3 !text-sm"
-                    >
-                      {isConnecting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Mic className="h-4 w-4" />}
-                      {isConnecting ? 'Connecting…' : 'Talk to Trudy'}
-                    </button>
-                  ) : (
-                    <button
-                      onClick={endCall}
-                      className="flex items-center gap-2 rounded-full bg-destructive text-destructive-foreground px-6 py-3 text-sm font-semibold transition-all hover:opacity-90 active:scale-95"
-                    >
-                      <PhoneOff className="h-4 w-4" />
-                      End Call
-                    </button>
-                  )}
+                  <button
+                    onClick={scrollToChat}
+                    className="tru-modal-primary-btn !w-auto !px-8 !py-3 !text-sm"
+                  >
+                    <MessageCircle className="h-4 w-4" />
+                    Chat with Trudy
+                  </button>
                   <a href="tel:+16097277647" className="tru-secondary-action-btn !text-sm !py-2.5 !px-5">
                     <Phone className="h-4 w-4" />
                     (609) 727-7647
                   </a>
                 </div>
-
-                {/* Live status */}
-                {isConnected && (
-                  <div className="flex items-center justify-center lg:justify-start gap-2.5 text-xs text-foreground animate-in fade-in slide-in-from-bottom-2">
-                    <span className="relative flex h-2 w-2">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-foreground/60 opacity-75" />
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-foreground" />
-                    </span>
-                    {conversation.isSpeaking ? 'Trudy is speaking…' : 'Listening…'}
-                  </div>
-                )}
 
                 {/* Stats row */}
                 <div className="grid grid-cols-4 gap-4 max-w-sm mx-auto lg:mx-0 pt-2">
