@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Calculator, MapPin, Shield, MessageSquare, Mail, Phone, Video, Car } from "lucide-react";
+import { Menu, X, Calculator, MapPin, Shield, MessageSquare, Mail, Phone, Video, Car, Brain } from "lucide-react";
 import logo from "@/assets/logo-navbar.png";
 
 interface NavItem {
@@ -14,6 +14,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/auto-transport", label: "Auto Transport", icon: Car },
   { href: "/track", label: "Shipment Tracking", icon: MapPin },
   { href: "/vetting", label: "FMCSA Carrier Vetting", icon: Shield },
+  { href: "/customer-service", label: "Meet Trudy", icon: Brain },
   { href: "/book", label: "Contact Us", icon: Phone },
 ];
 
