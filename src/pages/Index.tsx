@@ -1201,8 +1201,8 @@ export default function Index() {
                   <div className="tru-qb-form-header tru-qb-form-header-pill">
                     
                     <div className="tru-qb-form-title-group">
-                      <h2 className="tru-qb-form-title tru-qb-form-title-large">Let's Get Moving</h2>
-                      <p className="tru-qb-form-subtitle-compact">FMCSA-vetted carriers, AI precision</p>
+                      <h2 className="tru-qb-form-title tru-qb-form-title-large">LET'S GET <span className="text-primary" style={{ WebkitTextFillColor: 'hsl(var(--primary))' }}>MOVING</span></h2>
+                      <p className="tru-qb-form-subtitle-compact">FMCSA-VETTED CARRIERS • AI PRECISION</p>
                     </div>
                   </div>
                   
