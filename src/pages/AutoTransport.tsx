@@ -55,14 +55,14 @@ export default function AutoTransport() {
     <SiteShell hideTrustStrip>
       {/* How It Works */}
       <ScrollFadeIn>
-        <div className="pt-8">
+        <div className="pt-4">
           <HowItWorks />
         </div>
       </ScrollFadeIn>
 
       {/* Quote Wizard */}
       <ScrollFadeIn>
-        <section ref={quoteRef} className="py-10 md:py-20 relative overflow-hidden">
+        <section ref={quoteRef} className="py-6 md:py-10 relative overflow-hidden">
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full bg-primary/[0.06] blur-[120px]" />
             <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-primary/[0.05] blur-[100px]" />
