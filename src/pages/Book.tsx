@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import Cal from "@calcom/embed-react";
 import { Link } from "react-router-dom";
 import { Phone, ArrowRight, Shield, CheckCircle, Truck, Package, Calendar } from "lucide-react";
 import SiteShell from "@/components/layout/SiteShell";
@@ -76,15 +75,14 @@ export default function Book() {
               </div>
             </div>
 
-            {/* Cal.com React embed */}
-            <div className="bg-card border border-t-0 border-border rounded-b-xl overflow-hidden" style={{ minHeight: '660px' }}>
-              <Cal
-                calLink="trumove"
-                config={{
-                  theme: "dark",
-                  layout: "month_view",
-                }}
-                style={{ width: "100%", height: "100%", minHeight: "660px", overflow: "auto" }}
+            {/* Cal.com iframe */}
+            <div className="bg-card border border-t-0 border-border rounded-b-xl overflow-hidden">
+              <iframe
+                src="https://cal.com/trumove?embed=true&theme=dark&layout=month_view"
+                className="w-full border-0"
+                style={{ height: '700px', minHeight: '550px' }}
+                title="Schedule a consultation with TruMove"
+                loading="lazy"
               />
             </div>
           </div>
