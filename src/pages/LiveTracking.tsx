@@ -623,6 +623,21 @@ export default function LiveTracking() {
             />
           </div>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div className="text-center mb-8 md:mb-12">
+              <p className="text-[11px] uppercase tracking-[0.3em] text-primary font-semibold mb-3">Shipment Tracking</p>
+              <div className="flex items-center justify-center gap-2 mb-4">
+                <span className="h-px w-8 bg-primary/40" />
+                <span className="w-1.5 h-1.5 rounded-full bg-primary/60" />
+                <span className="h-px w-8 bg-primary/40" />
+              </div>
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-4 md:mb-5 tracking-tight leading-[1.1]">
+                Track Your Shipment
+              </h1>
+              <p className="text-muted-foreground max-w-xl mx-auto text-base md:text-lg font-light leading-relaxed">
+                Monitor your move in real-time with live GPS tracking, traffic updates, and estimated arrival times.
+              </p>
+            </div>
+
             {/* Inline Route Setup Wizard */}
             {!routeConfigured && (
               <TrackingWizard
