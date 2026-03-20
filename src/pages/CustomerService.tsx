@@ -2,11 +2,12 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useConversation } from '@elevenlabs/react';
-import { Phone, PhoneOff, Send, Clock, Shield, Calculator, MapPin, Calendar, HelpCircle, Package, ScanLine, Video, Mic, Loader2, MessageSquare, FileText, Brain, Sparkles, MessageCircle } from 'lucide-react';
+import { Phone, PhoneOff, Send, Clock, Shield, Calculator, MapPin, Calendar, HelpCircle, Package, ScanLine, Video, Mic, Loader2, MessageSquare, FileText, Brain, Sparkles, MessageCircle, ArrowRight } from 'lucide-react';
 import TrudyChatBox from '@/components/TrudyChatBox';
 import AIChatContainer from '@/components/chat/AIChatContainer';
 import { getPageContext } from '@/components/chat/pageContextConfig';
 import SiteShell from '@/components/layout/SiteShell';
+import { ScrollFadeIn } from '@/hooks/useScrollFadeIn';
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Input } from '@/components/ui/input';
@@ -14,14 +15,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-
-const TRUDY_TRUST_ITEMS = [
-  { icon: Brain, text: 'AI VOICE AGENT' },
-  { icon: Sparkles, text: 'INSTANT QUOTES' },
-  { icon: MapPin, text: 'LIVE TRACKING' },
-  { icon: Calendar, text: 'SCHEDULING' },
-  { icon: Shield, text: 'CARRIER VETTING' },
-];
 
 const TRUDY_AGENT_ID = 'agent_0501khwa2t2pfj0s3echetmjhx4n';
 
@@ -68,7 +61,6 @@ function VoiceOrb({ isConnected, isSpeaking }: { isConnected: boolean; isSpeakin
     canvas.height = size * dpr;
     ctx.scale(dpr, dpr);
 
-    // Detect dark mode
     const checkDark = () => { isDarkRef.current = document.documentElement.classList.contains('dark'); };
     checkDark();
     const observer = new MutationObserver(checkDark);
@@ -95,21 +87,17 @@ function VoiceOrb({ isConnected, isSpeaking }: { isConnected: boolean; isSpeakin
       const cx = size / 2, cy = size / 2;
       const t = Date.now() / 1000;
 
-      // Smooth intensity interpolation
       const targetIntensity = isSpeaking ? 0.6 + Math.sin(t * 5) * 0.2 + Math.sin(t * 8.3) * 0.15 : isConnected ? 0.15 : 0;
       intensityRef.current += (targetIntensity - intensityRef.current) * 0.08;
       const intensity = intensityRef.current;
 
       const dark = isDarkRef.current;
-
-      // Color shift: dark mode uses brighter, more saturated tones
       const hueBase = isConnected ? (isSpeaking ? 20 + Math.sin(t * 3) * 20 : 200) : 0;
       const sat = isConnected ? (dark ? 20 + intensity * 45 : 8 + intensity * 30) : 0;
       const lum = dark
         ? (isConnected ? 55 + intensity * 20 : 50)
         : (isConnected ? 25 + intensity * 15 : 55);
 
-      // Dark mode outer glow
       if (dark && isConnected) {
         const glowR = 90 + intensity * 20;
         const glowGrad = ctx.createRadialGradient(cx, cy, 30, cx, cy, glowR);
@@ -124,7 +112,6 @@ function VoiceOrb({ isConnected, isSpeaking }: { isConnected: boolean; isSpeakin
         ctx.fill();
       }
 
-      // Concentric rings with color
       for (let i = 4; i >= 0; i--) {
         const r = 52 + i * 16 + (isConnected ? Math.sin(t * 1.5 + i * 0.8) * (2 + intensity * 4) : 0);
         ctx.beginPath();
@@ -137,14 +124,12 @@ function VoiceOrb({ isConnected, isSpeaking }: { isConnected: boolean; isSpeakin
         ctx.stroke();
       }
 
-      // Main circle
       const baseR = 46;
       const pulse = isSpeaking
         ? Math.sin(t * 6) * (3 + intensity * 5) + Math.sin(t * 9.5) * (2 + intensity * 3)
         : isConnected ? Math.sin(t * 2) * 1.5 : 0;
       const r = baseR + pulse;
 
-      // Gradient fill with hue shift
       const grad = ctx.createRadialGradient(cx - 8, cy - 8, 0, cx, cy, r);
       grad.addColorStop(0, `hsl(${hueBase} ${sat + 5}% ${lum + 10}% / ${0.04 + intensity * 0.06})`);
       grad.addColorStop(1, `hsl(${hueBase + 15} ${sat}% ${lum}% / ${0.02 + intensity * 0.03})`);
@@ -157,7 +142,6 @@ function VoiceOrb({ isConnected, isSpeaking }: { isConnected: boolean; isSpeakin
       ctx.lineWidth = 1.5;
       ctx.stroke();
 
-      // Inner waveform bars with color
       if (isConnected) {
         const bars = 20;
         for (let i = 0; i < bars; i++) {
@@ -184,7 +168,6 @@ function VoiceOrb({ isConnected, isSpeaking }: { isConnected: boolean; isSpeakin
         }
       }
 
-      // Spawn particles
       if (isConnected) {
         const spawnRate = isSpeaking ? 2 + Math.floor(intensity * 3) : 1;
         if (Math.random() < (isSpeaking ? 0.6 : 0.15)) {
@@ -192,12 +175,11 @@ function VoiceOrb({ isConnected, isSpeaking }: { isConnected: boolean; isSpeakin
         }
       }
 
-      // Update & draw particles
       const alive: Particle[] = [];
       for (const p of particlesRef.current) {
         p.x += p.vx;
         p.y += p.vy;
-        p.vy -= 0.005; // slight float up
+        p.vy -= 0.005;
         p.life += 1;
         const progress = p.life / p.maxLife;
         if (progress >= 1) continue;
@@ -232,7 +214,8 @@ export default function CustomerService() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
   const [activeTab, setActiveTab] = useState<'voice' | 'form'>('voice');
-  
+
+  useEffect(() => { window.scrollTo(0, 0); }, []);
 
   const conversation = useConversation({
     onConnect: () => console.log('Trudy: connected'),
@@ -286,26 +269,33 @@ export default function CustomerService() {
 
   return (
     <SiteShell hideTrustStrip>
-      
-      <main className="min-h-screen bg-background">
-        {/* ─── HERO ─── */}
-        <section className="relative pt-8 pb-6 px-6 md:px-10 lg:px-16 overflow-hidden">
-          {/* Background gradient layers */}
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.04] via-background to-primary/[0.03]" />
-          <div className="absolute top-[-100px] left-1/4 w-[900px] h-[600px] bg-primary/[0.05] rounded-full blur-[140px] pointer-events-none" />
-          <div className="absolute bottom-[-50px] right-[10%] w-[500px] h-[400px] bg-primary/[0.04] rounded-full blur-[120px] pointer-events-none" />
-          {/* Subtle dot texture */}
-          <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle, hsl(var(--foreground)) 0.5px, transparent 0.5px)', backgroundSize: '24px 24px' }} />
-          <div className="relative mx-auto max-w-7xl">
+      {/* ─── HERO ─── */}
+      <ScrollFadeIn>
+        <section className="py-10 md:py-16 relative overflow-hidden">
+          {/* Background decorations */}
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full bg-primary/[0.06] blur-[120px]" />
+            <div className="absolute bottom-0 left-0 w-[500px] h-[500px] rounded-full bg-primary/[0.04] blur-[100px]" />
+            <div className="absolute inset-0 opacity-[0.035]" style={{ backgroundImage: 'radial-gradient(circle, hsl(var(--foreground)) 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
+          </div>
+
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
               {/* Left — text content */}
               <div className="text-center lg:text-left space-y-6">
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary mb-3">AI-Powered Support</p>
-                  <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-foreground leading-[1.05]">
-                    Meet <span className="bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">Trudy</span>
+                  <p className="text-[11px] uppercase tracking-[0.3em] text-primary font-semibold mb-3">AI-Powered Support</p>
+                  <div className="flex items-center justify-center lg:justify-start gap-2 mb-4">
+                    <span className="h-px w-8 bg-primary/40" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-primary/60" />
+                    <span className="h-px w-8 bg-primary/40" />
+                  </div>
+                  <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-foreground leading-[1.05]">
+                    Meet <span className="text-primary">Trudy</span>
                   </h1>
-                  <p className="text-muted-foreground text-base mt-4 max-w-md mx-auto lg:mx-0 leading-relaxed">
+                  <p className="text-muted-foreground text-base md:text-lg mt-4 max-w-md mx-auto lg:mx-0 leading-relaxed font-light">
                     Your AI move coordinator — get instant quotes, real-time tracking, scheduling & 24/7 support by voice or chat.
                   </p>
                 </div>
@@ -378,17 +368,34 @@ export default function CustomerService() {
               </div>
             </div>
           </div>
-          {/* Bottom fade line */}
-          <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-foreground/10 to-transparent" />
         </section>
+      </ScrollFadeIn>
 
-        {/* ─── CAPABILITIES GRID ─── */}
-        <section className="pt-12 pb-8 px-4">
-          <div className="mx-auto max-w-6xl">
-            <div className="text-center mb-6">
-              <h2 className="text-base font-bold text-foreground uppercase tracking-wider">What Trudy Handles</h2>
-              <p className="text-xs text-muted-foreground mt-1">One AI assistant for your entire move</p>
+      {/* ─── CAPABILITIES GRID ─── */}
+      <ScrollFadeIn delay={0.1}>
+        <section className="py-8 md:py-14 relative overflow-hidden">
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] rounded-full bg-primary/[0.05] blur-[100px]" />
+            <div className="absolute inset-0 opacity-[0.035]" style={{ backgroundImage: 'radial-gradient(circle, hsl(var(--foreground)) 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
+          </div>
+
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div className="text-center mb-8">
+              <p className="text-[11px] uppercase tracking-[0.3em] text-primary font-semibold mb-3">Capabilities</p>
+              <div className="flex items-center justify-center gap-2 mb-4">
+                <span className="h-px w-8 bg-primary/40" />
+                <span className="w-1.5 h-1.5 rounded-full bg-primary/60" />
+                <span className="h-px w-8 bg-primary/40" />
+              </div>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground tracking-tight leading-[1.1]">
+                What Trudy <span className="text-primary">Handles</span>
+              </h2>
+              <p className="text-muted-foreground max-w-xl mx-auto text-base md:text-lg font-light leading-relaxed mt-3">
+                One AI assistant for your entire move
+              </p>
             </div>
+
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {capabilities.map((cap, i) => (
                 <motion.div
@@ -400,7 +407,7 @@ export default function CustomerService() {
                 >
                   <Link
                     to={cap.href}
-                    className="group relative block rounded-xl border border-border bg-card p-5 shadow-[0_2px_8px_-2px_hsl(var(--tm-ink)/0.08),0_4px_16px_-4px_hsl(var(--tm-ink)/0.06)] hover:shadow-[0_8px_24px_-4px_hsl(var(--tm-ink)/0.16),0_16px_40px_-8px_hsl(var(--tm-ink)/0.12)] hover:border-foreground/30 hover:-translate-y-1 hover:scale-[1.03] transition-all duration-200 no-underline h-full"
+                    className="group relative block rounded-xl border border-border bg-card p-5 shadow-[0_2px_8px_-2px_hsl(var(--foreground)/0.08)] hover:shadow-[0_8px_24px_-4px_hsl(var(--foreground)/0.16)] hover:border-foreground/30 hover:-translate-y-1 hover:scale-[1.03] transition-all duration-200 no-underline h-full"
                   >
                     {cap.tag && (
                       <span className="absolute top-2.5 right-2.5 text-[10px] font-bold uppercase tracking-wider text-foreground bg-muted px-2 py-0.5 rounded group-hover:bg-foreground group-hover:text-background transition-colors duration-200">
@@ -416,15 +423,33 @@ export default function CustomerService() {
             </div>
           </div>
         </section>
+      </ScrollFadeIn>
 
-        {/* ─── FAQ + CONTACT ─── */}
-        <section className="py-10 px-4 border-t border-border">
-          <div className="mx-auto max-w-6xl">
+      {/* ─── FAQ + CONTACT ─── */}
+      <ScrollFadeIn delay={0.15}>
+        <section className="py-8 md:py-14 relative overflow-hidden">
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] rounded-full bg-primary/[0.04] blur-[100px]" />
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
+          </div>
+
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div className="text-center mb-8">
+              <p className="text-[11px] uppercase tracking-[0.3em] text-primary font-semibold mb-3">Support</p>
+              <div className="flex items-center justify-center gap-2 mb-4">
+                <span className="h-px w-8 bg-primary/40" />
+                <span className="w-1.5 h-1.5 rounded-full bg-primary/60" />
+                <span className="h-px w-8 bg-primary/40" />
+              </div>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground tracking-tight leading-[1.1]">
+                FAQ & <span className="text-primary">Contact</span>
+              </h2>
+            </div>
+
             <div className="grid lg:grid-cols-2 gap-10">
-
               {/* FAQ */}
               <div>
-                <h2 className="text-sm font-bold text-foreground mb-4 uppercase tracking-wider">Common Questions</h2>
+                <h3 className="text-[11px] uppercase tracking-[0.2em] text-primary font-semibold mb-4">Common Questions</h3>
                 <Accordion type="single" collapsible className="space-y-1">
                   {faqItems.map((item, i) => (
                     <AccordionItem
@@ -446,10 +471,10 @@ export default function CustomerService() {
               {/* Contact */}
               <div>
                 <div className="flex items-center gap-2 mb-4">
-                  <h2 className="text-sm font-bold text-foreground uppercase tracking-wider">Contact a Human</h2>
+                  <h3 className="text-[11px] uppercase tracking-[0.2em] text-primary font-semibold">Contact a Human</h3>
                   <span className="text-[9px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded-full font-medium uppercase tracking-wider">Optional</span>
                 </div>
-                <p className="text-[11px] text-muted-foreground mb-4">Trudy handles 95% of requests. For the rest, we're here.</p>
+                <p className="text-xs text-muted-foreground mb-4">Trudy handles 95% of requests. For the rest, we're here.</p>
 
                 {/* Tab toggle */}
                 <div className="flex gap-0.5 rounded-lg border border-border p-0.5 mb-4 w-fit">
@@ -518,8 +543,32 @@ export default function CustomerService() {
             </div>
           </div>
         </section>
+      </ScrollFadeIn>
 
-      </main>
+      {/* ─── BOTTOM CTA ─── */}
+      <ScrollFadeIn delay={0.2}>
+        <section className="py-12 relative overflow-hidden">
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] rounded-full bg-primary/[0.06] blur-[120px]" />
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
+          </div>
+          <div className="max-w-2xl mx-auto px-4 text-center relative z-10">
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
+              Ready for a worry-free <span className="text-primary">move</span>?
+            </h2>
+            <p className="text-muted-foreground text-sm md:text-base font-light mb-6">
+              Get your instant estimate and let us handle the rest.
+            </p>
+            <Link
+              to="/online-estimate"
+              className="inline-flex items-center gap-2 h-11 px-8 rounded-lg bg-foreground text-background font-semibold text-sm hover:bg-foreground/85 transition-all duration-200 hover:shadow-[0_4px_12px_hsl(var(--foreground)/0.15)]"
+            >
+              Start Your Quote
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        </section>
+      </ScrollFadeIn>
     </SiteShell>
   );
 }
