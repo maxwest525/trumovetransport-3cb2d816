@@ -1216,6 +1216,7 @@ export default function Index() {
                          {/* First Name + Last Name Row */}
                          <div className="tru-qb-location-row">
                            <div className="tru-qb-location-col">
+                             <label className="text-xs font-medium text-muted-foreground mb-1 block">First Name</label>
                              <div className="tru-qb-input-wrap tru-qb-input-enhanced">
                                <input
                                 type="text"
@@ -1230,6 +1231,7 @@ export default function Index() {
                              </div>
                            </div>
                            <div className="tru-qb-location-col">
+                             <label className="text-xs font-medium text-muted-foreground mb-1 block">Last Name</label>
                              <div className="tru-qb-input-wrap tru-qb-input-enhanced">
                                <input
                                 type="text"
@@ -1244,38 +1246,40 @@ export default function Index() {
                          {/* Phone + Email Row */}
                          <div className="tru-qb-location-row" style={{ marginTop: '12px' }}>
                            <div className="tru-qb-location-col">
+                             <label className="text-xs font-medium text-muted-foreground mb-1 block">Phone</label>
                              <div className="tru-qb-input-wrap tru-qb-input-enhanced">
                                <input
                                 type="tel"
                                 value={contactPhone}
                                 onChange={(e) => setContactPhone(formatPhoneNumber(e.target.value))}
-                                placeholder="Phone"
+                                placeholder="(555) 555-5555"
                                 className="tru-qb-input" />
                              </div>
                            </div>
                            <div className="tru-qb-location-col">
+                             <label className="text-xs font-medium text-muted-foreground mb-1 block">Email</label>
                              <div className="tru-qb-input-wrap tru-qb-input-enhanced">
                                <input
                                 type="email"
                                 value={contactEmail}
                                 onChange={(e) => setContactEmail(e.target.value)}
-                                placeholder="Email"
+                                placeholder="you@email.com"
                                 className="tru-qb-input" />
                              </div>
                            </div>
                          </div>
 
                          <div style={{ marginTop: '12px' }}>
+                           <label className="text-xs font-medium text-muted-foreground mb-1 block">Move Date</label>
                            <Popover>
                              <PopoverTrigger asChild>
                                <button
                                 type="button"
                                 className="tru-qb-input"
                                 style={{ width: '100%', textAlign: 'left', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                
                                  <Calendar className="w-4 h-4 shrink-0 text-primary" />
                                  <span style={{ opacity: moveDate ? 1 : 0.5 }}>
-                                   {moveDate ? format(moveDate, 'MMM d, yyyy') : 'Move Date'}
+                                   {moveDate ? format(moveDate, 'MMM d, yyyy') : 'Select a date'}
                                  </span>
                                </button>
                              </PopoverTrigger>
@@ -1287,7 +1291,6 @@ export default function Index() {
                                 disabled={(date) => date < new Date()}
                                 initialFocus
                                 className="p-3 pointer-events-auto" />
-                              
                              </PopoverContent>
                            </Popover>
                          </div>
