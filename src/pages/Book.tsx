@@ -1892,7 +1892,7 @@ export default function Book() {
               </div>
 
               {/* Quick Tools - Premium dark button style - Always visible */}
-              <div className="flex items-center justify-center gap-6">
+              <div className="flex items-center justify-center gap-3 sm:gap-6 flex-wrap">
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <button
