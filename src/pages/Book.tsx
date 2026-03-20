@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Phone, ArrowRight, Shield, CheckCircle, Truck, Package, Calendar } from "lucide-react";
 import SiteShell from "@/components/layout/SiteShell";
@@ -12,6 +12,7 @@ const TRUST_ITEMS = [
 ];
 
 export default function Book() {
+  const [iframeLoaded, setIframeLoaded] = useState(false);
   useEffect(() => { window.scrollTo(0, 0); }, []);
 
   return (
@@ -76,11 +77,18 @@ export default function Book() {
             </div>
 
             {/* Cal.com iframe */}
-            <div className="cal-embed-container">
+            <div className="cal-embed-container relative">
+              {!iframeLoaded && (
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-background/80 z-10 rounded-b-xl">
+                  <div className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+                  <p className="text-sm text-muted-foreground">Loading calendar…</p>
+                </div>
+              )}
               <iframe
                 src="https://cal.com/trumove?embed=true&theme=dark&layout=month_view"
                 title="Schedule a consultation with TruMove"
                 loading="lazy"
+                onLoad={() => setIframeLoaded(true)}
               />
             </div>
           </div>
