@@ -1,35 +1,26 @@
 
 
-## Plan: Add Estimate Mode Toggle (Manual vs. AI Scan)
+## Simplify Carrier Vetting Section on Homepage
 
-### What
-Add a prominent toggle at the top of the Online Estimate page that lets the user choose between two modes:
-1. **Manual Builder** — the current inventory builder flow
-2. **AI Room Scan** — navigates to the `/site/scan-room` page
+**Current state**: The carrier vetting section (lines 1685-1815) has a two-column layout with a full mock SAFER database UI on the right — showing a search bar with Name/DOT/MC toggles, multiple carrier result rows with inline OOS metrics, crash data, authority/safety/insured chips, and pass/caution/fail verdicts. It's dense and visually heavy.
 
-This replaces the buried "Scan Your Room" button inside the InventoryBuilder with a top-level, visually prominent mode selector.
+**Proposed simplification**: Replace the detailed mock database UI with a minimal, clean preview that communicates the value without overwhelming the visitor.
 
-### Changes
+### What changes
 
-**1. `src/pages/OnlineEstimate.tsx`**
-- Add a mode toggle strip above the main grid (below the page header area, around line 338)
-- Two-option toggle using styled buttons (not the radix ToggleGroup — simpler custom buttons matching the TruMove design)
-- Options: "Build Manually" (with Package icon) and "AI Room Scan" (with Scan icon)
-- Default selection: "Build Manually"
-- Clicking "AI Room Scan" navigates to `/site/scan-room`
-- Style: pill-shaped toggle group with the active option using the primary green accent, inactive option muted — similar to the existing TruMove design language
+**File: `src/pages/Index.tsx` (lines ~1685-1815)**
 
-**2. `src/components/estimate/InventoryBuilder.tsx`**
-- Remove or visually de-emphasize the existing "Scan Your Room" preview card (lines 534-562), since the toggle at the top now handles this. Keeping it as a smaller secondary link is optional.
+Replace the entire carrier vetting section with a simpler layout:
 
-### Visual Design
-```text
-┌─────────────────────────────────────────────┐
-│  [ 📦 Build Manually ]  [ 📷 AI Room Scan ] │
-│       ↑ active/green        muted/outline    │
-└─────────────────────────────────────────────┘
-```
-- Centered above the grid
-- Clear iconography and labels
-- Active state uses primary color fill, inactive uses outline/ghost style
+1. **Keep**: Left column with headline ("Carrier Vetting."), subheadline, and CTA button — no changes needed.
+
+2. **Replace right column** (the full SAFER mock UI) with a single clean preview card:
+   - Window chrome bar (dots + "FMCSA Carrier Lookup" label)
+   - A static preview image (`previewCarrierVetting` — already imported) with a subtle overlay
+   - 3 small floating badges on the image: "FMCSA Verified", "Insurance Active", "Safety Scored"
+   - No interactive elements, no carrier rows, no OOS metrics, no chips
+
+3. **Remove**: The `carrierIdx` / `setCarrierIdx` state and `MOCK_CARRIERS` usage from this section (check if used elsewhere on the page first).
+
+This cuts the section from ~130 lines of dense carrier data to ~30 lines of a clean visual preview, making the homepage feel lighter while still conveying the feature.
 
