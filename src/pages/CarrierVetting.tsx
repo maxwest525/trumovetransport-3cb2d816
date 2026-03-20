@@ -517,9 +517,13 @@ export default function CarrierVetting() {
             <h2 className="text-3xl md:text-4xl font-black tracking-tight text-foreground mb-3 whitespace-nowrap">
               FMCSA-Verified <span className="tru-qb-title-accent">Carrier Safety Records</span>
             </h2>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              Real-time FMCSA safety data • Insurance verification • DOT lookup
-            </p>
+            <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 text-xs text-muted-foreground mt-1">
+              <span className="inline-flex items-center gap-1.5"><Database className="w-3.5 h-3.5 text-primary" />Real-time FMCSA data</span>
+              <span className="inline-flex items-center gap-1.5"><AlertTriangle className="w-3.5 h-3.5 text-primary" />Red flag alerts</span>
+              <span className="inline-flex items-center gap-1.5"><Search className="w-3.5 h-3.5 text-primary" />DOT lookup</span>
+              <span className="inline-flex items-center gap-1.5"><Activity className="w-3.5 h-3.5 text-primary" />Fleet intelligence</span>
+              <span className="inline-flex items-center gap-1.5"><Shield className="w-3.5 h-3.5 text-primary" />Insurance verification</span>
+            </div>
           </div>
 
           {/* FMCSA Terminal - Always Visible */}
