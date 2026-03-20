@@ -1,6 +1,6 @@
 import { useConversation } from '@elevenlabs/react';
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { PhoneOff, Loader2, X, Mic, Copy, Download, Check, Video, ChevronUp, Phone, GripVertical } from 'lucide-react';
+import { PhoneOff, Loader2, X, Mic, Copy, Download, Check, Video, ChevronUp, Phone } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { useNavigate, useLocation } from 'react-router-dom';
 import trudyAvatar from '@/assets/trudy-avatar.png';
@@ -28,41 +28,6 @@ export default function ElevenLabsTrudyWidget() {
   const idRef = useRef(0);
   const scrollRef = useRef<HTMLDivElement>(null);
   const transcriptRef = useRef<TranscriptEntry[]>([]);
-
-  // Draggable state
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [position, setPosition] = useState<{ x: number; y: number } | null>(null);
-  const dragState = useRef<{ dragging: boolean; startX: number; startY: number; origX: number; origY: number }>({ dragging: false, startX: 0, startY: 0, origX: 0, origY: 0 });
-
-  const getDefaultPosition = useCallback(() => {
-    return { x: window.innerWidth - 220, y: window.innerHeight - 100 };
-  }, []);
-
-  useEffect(() => {
-    if (!position) setPosition(getDefaultPosition());
-  }, [position, getDefaultPosition]);
-
-  const handlePointerDown = useCallback((e: React.PointerEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    const pos = position || getDefaultPosition();
-    dragState.current = { dragging: true, startX: e.clientX, startY: e.clientY, origX: pos.x, origY: pos.y };
-    (e.target as HTMLElement).setPointerCapture(e.pointerId);
-  }, [position, getDefaultPosition]);
-
-  const handlePointerMove = useCallback((e: React.PointerEvent) => {
-    if (!dragState.current.dragging) return;
-    const dx = e.clientX - dragState.current.startX;
-    const dy = e.clientY - dragState.current.startY;
-    setPosition({
-      x: Math.max(0, Math.min(window.innerWidth - 60, dragState.current.origX + dx)),
-      y: Math.max(0, Math.min(window.innerHeight - 60, dragState.current.origY + dy)),
-    });
-  }, []);
-
-  const handlePointerUp = useCallback(() => {
-    dragState.current.dragging = false;
-  }, []);
 
   const conversation = useConversation({
     onConnect: () => {
@@ -212,14 +177,8 @@ export default function ElevenLabsTrudyWidget() {
   const isPortal = portalPrefixes.some(p => location.pathname.startsWith(p)) || location.pathname === '/kpi';
   if (isPortal) return null;
 
-  const pos = position || getDefaultPosition();
-
   return (
-    <div
-      ref={containerRef}
-      className="fixed z-[9999] flex flex-col items-end gap-2"
-      style={{ left: pos.x, top: pos.y, transform: 'translate(-100%, -100%)' }}
-    >
+    <div className="fixed bottom-5 right-5 z-[9999] flex flex-col items-end gap-2 md:bottom-20">
       {/* Post-call */}
       {showPostCall && !isConnected && savedTranscript.length > 0 && (
         <div className={`${panelClasses} animate-in fade-in slide-in-from-bottom-2 duration-200`}>
@@ -257,17 +216,6 @@ export default function ElevenLabsTrudyWidget() {
 
       {/* FAB row */}
       <div className="flex items-center gap-1.5">
-        {/* Drag handle */}
-        <div
-          onPointerDown={handlePointerDown}
-          onPointerMove={handlePointerMove}
-          onPointerUp={handlePointerUp}
-          className="flex items-center justify-center w-8 h-8 rounded-lg cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors touch-none select-none"
-          aria-label="Drag to reposition"
-        >
-          <GripVertical className="h-4 w-4" />
-        </div>
-
         {!isConnected && !isConnecting && (
           <button
             onClick={toggleOptions}
@@ -281,29 +229,21 @@ export default function ElevenLabsTrudyWidget() {
           <button
             onClick={isConnected ? stopConversation : startConversation}
             disabled={isConnecting}
-            className={`relative flex items-center gap-2.5 rounded-xl shadow-lg transition-all duration-150 active:scale-[0.97] ${
+            className={`flex items-center gap-2.5 rounded-xl shadow-md transition-all duration-150 active:scale-[0.97] ${
               isConnected
-                ? 'bg-destructive text-destructive-foreground px-5 py-3 shadow-destructive/30'
+                ? 'bg-destructive text-destructive-foreground px-5 py-3'
                 : isConnecting
                 ? 'bg-muted text-muted-foreground px-5 py-3'
-                : 'bg-primary text-primary-foreground px-5 py-3 hover:bg-primary/90 shadow-primary/40 hover:shadow-primary/60 hover:shadow-xl'
+                : 'bg-foreground text-background px-5 py-3 hover:bg-foreground/90'
             }`}
             aria-label={isConnected ? 'End call' : 'Talk to Trudy'}
           >
-            {/* Pulse ring for idle state */}
-            {!isConnected && !isConnecting && (
-              <span className="absolute inset-0 rounded-xl animate-ping bg-primary/20 pointer-events-none" style={{ animationDuration: '2s' }} />
-            )}
             {isConnecting ? (
-              <><Loader2 className="h-[18px] w-[18px] animate-spin" /><span className="text-[13px] font-semibold tracking-tight">Connecting…</span></>
+              <><Loader2 className="h-[18px] w-[18px] animate-spin" /><span className="text-[13px] font-medium tracking-tight">Connecting…</span></>
             ) : isConnected ? (
-              <><PhoneOff className="h-[18px] w-[18px]" /><span className="text-[13px] font-semibold tracking-tight">End Call</span></>
+              <><PhoneOff className="h-[18px] w-[18px]" /><span className="text-[13px] font-medium tracking-tight">End Call</span></>
             ) : (
-              <>
-                <img src={trudyAvatar} alt="" className="h-6 w-6 rounded-full object-cover border border-primary-foreground/30" />
-                <span className="text-[13px] font-semibold tracking-tight">Talk to Trudy</span>
-                <Mic className="h-4 w-4 opacity-70" />
-              </>
+              <><Mic className="h-[18px] w-[18px]" /><span className="text-[13px] font-medium tracking-tight">Talk to Trudy</span></>
             )}
           </button>
           {/* Hover tooltip */}
