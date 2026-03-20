@@ -9,7 +9,7 @@ const useScrollToTop = () => {
   }, []);
 };
 import { useSearchParams } from 'react-router-dom';
-import { Shield, Database, Radio, AlertTriangle, Users, Scale, Zap, Search, Info, ChevronDown, ExternalLink, FileCheck, TrendingUp, Truck, CheckCircle2, AlertCircle, Printer, Lock, Activity, ClipboardCheck, Share2, FileDown, Copy, Check, BadgeCheck } from 'lucide-react';
+import { Shield, Database, Radio, AlertTriangle, Users, Scale, Zap, Search, Info, ChevronDown, ExternalLink, FileCheck, TrendingUp, Truck, CheckCircle2, AlertCircle, Printer, Lock, Activity, ClipboardCheck, Share2, FileDown, Copy, Check, BadgeCheck, ArrowRight } from 'lucide-react';
 import logoImg from '@/assets/logo.png';
 
 import SiteShell from '@/components/layout/SiteShell';
