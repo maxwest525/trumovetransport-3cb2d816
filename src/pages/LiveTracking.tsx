@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect, useRef, useMemo } from "react";
-import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Calendar, Box, AlertTriangle, ChevronDown, ChevronRight, ChevronLeft, ChevronUp, Map, Layers, Globe, Navigation2, Sparkles, Scale, Route, Crosshair, ShieldCheck, Cloud, ArrowRight, Headphones, Shield, Satellite } from "lucide-react";
+import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Calendar, Box, AlertTriangle, ChevronDown, ChevronRight, ChevronLeft, ChevronUp, Map, Layers, Globe, Navigation2, Sparkles, Scale, Route, Crosshair, ShieldCheck, Cloud, ArrowRight, Headphones, Shield, Satellite, Phone } from "lucide-react";
 import { format } from "date-fns";
+import { ScrollFadeIn } from "@/hooks/useScrollFadeIn";
 import { TruckTrackingMap } from "@/components/tracking/TruckTrackingMap";
 // Google3DTrackingView removed - unreliable
 import { Google2DTrackingMap, type MapViewType } from "@/components/tracking/Google2DTrackingMap";
