@@ -1,8 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { useConversation } from '@elevenlabs/react';
-import { Phone, PhoneOff, Send, Clock, Shield, Calculator, MapPin, Calendar, HelpCircle, Package, ScanLine, Video, Mic, Loader2, MessageSquare, FileText, Brain, Sparkles, MessageCircle, ArrowRight } from 'lucide-react';
+import { Phone, Send, Clock, Shield, Calculator, MapPin, Calendar, HelpCircle, Package, ScanLine, Video, Loader2, MessageSquare, FileText, Brain, Sparkles, MessageCircle, ArrowRight } from 'lucide-react';
 import TrudyChatBox from '@/components/TrudyChatBox';
 import AIChatContainer from '@/components/chat/AIChatContainer';
 import { getPageContext } from '@/components/chat/pageContextConfig';
@@ -15,8 +14,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-
-const TRUDY_AGENT_ID = 'agent_0501khwa2t2pfj0s3echetmjhx4n';
 
 const capabilities = [
   { icon: Calculator, label: 'Instant Quotes', desc: 'AI-powered estimates in seconds', tag: 'Most used', href: '/online-estimate' },
@@ -212,39 +209,14 @@ function VoiceOrb({ isConnected, isSpeaking }: { isConnected: boolean; isSpeakin
 export default function CustomerService() {
   const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isConnecting, setIsConnecting] = useState(false);
   const [activeTab, setActiveTab] = useState<'voice' | 'form'>('voice');
+  const chatRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => { window.scrollTo(0, 0); }, []);
 
-  const conversation = useConversation({
-    onConnect: () => console.log('Trudy: connected'),
-    onDisconnect: () => console.log('Trudy: disconnected'),
-    onError: () => {
-      toast({ variant: 'destructive', title: 'Connection Error', description: 'Could not connect. Try again.' });
-    },
-  });
-
-  const isConnected = conversation.status === 'connected';
-
-  const startCall = useCallback(async () => {
-    if (isConnecting) return;
-    setIsConnecting(true);
-    try {
-      await navigator.mediaDevices.getUserMedia({ audio: true });
-      await conversation.startSession({ agentId: TRUDY_AGENT_ID, connectionType: 'webrtc' });
-    } catch (err: any) {
-      if (err.name === 'NotAllowedError') {
-        toast({ variant: 'destructive', title: 'Microphone Required', description: 'Allow mic access to talk with Trudy.' });
-      }
-    } finally {
-      setIsConnecting(false);
-    }
-  }, [conversation, isConnecting]);
-
-  const endCall = useCallback(async () => {
-    await conversation.endSession();
-  }, [conversation]);
+  const scrollToChat = useCallback(() => {
+    chatRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, []);
 
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
@@ -302,40 +274,18 @@ export default function CustomerService() {
 
                 {/* Action row */}
                 <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3">
-                  {!isConnected ? (
-                    <button
-                      onClick={startCall}
-                      disabled={isConnecting}
-                      className="tru-modal-primary-btn !w-auto !px-8 !py-3 !text-sm"
-                    >
-                      {isConnecting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Mic className="h-4 w-4" />}
-                      {isConnecting ? 'Connecting…' : 'Talk to Trudy'}
-                    </button>
-                  ) : (
-                    <button
-                      onClick={endCall}
-                      className="flex items-center gap-2 rounded-full bg-destructive text-destructive-foreground px-6 py-3 text-sm font-semibold transition-all hover:opacity-90 active:scale-95"
-                    >
-                      <PhoneOff className="h-4 w-4" />
-                      End Call
-                    </button>
-                  )}
+                  <button
+                    onClick={scrollToChat}
+                    className="tru-modal-primary-btn !w-auto !px-8 !py-3 !text-sm"
+                  >
+                    <MessageCircle className="h-4 w-4" />
+                    Chat with Trudy
+                  </button>
                   <a href="tel:+16097277647" className="tru-secondary-action-btn !text-sm !py-2.5 !px-5">
                     <Phone className="h-4 w-4" />
                     (609) 727-7647
                   </a>
                 </div>
-
-                {/* Live status */}
-                {isConnected && (
-                  <div className="flex items-center justify-center lg:justify-start gap-2.5 text-xs text-foreground animate-in fade-in slide-in-from-bottom-2">
-                    <span className="relative flex h-2 w-2">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-foreground/60 opacity-75" />
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-foreground" />
-                    </span>
-                    {conversation.isSpeaking ? 'Trudy is speaking…' : 'Listening…'}
-                  </div>
-                )}
 
                 {/* Stats row */}
                 <div className="grid grid-cols-4 gap-4 max-w-sm mx-auto lg:mx-0 pt-2">
@@ -363,7 +313,7 @@ export default function CustomerService() {
               </div>
 
               {/* Right — chat box */}
-              <div className="w-full max-w-lg mx-auto lg:max-w-none">
+              <div ref={chatRef} className="w-full max-w-lg mx-auto lg:max-w-none">
                 <TrudyChatBox />
               </div>
             </div>

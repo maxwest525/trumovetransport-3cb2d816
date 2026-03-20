@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { Send, Sparkles, Bot, User, RefreshCw, Loader2 } from 'lucide-react';
-import { useConversation } from '@elevenlabs/react';
-import { supabase } from '@/integrations/supabase/client';
+import ReactMarkdown from 'react-markdown';
 
 interface Message {
   id: string;
@@ -25,6 +24,8 @@ const QUICK_PROMPTS = [
   'Schedule a move',
   'Carrier safety info',
 ];
+
+const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/trudy-chat`;
 
 function TypingIndicator() {
   return (
@@ -73,7 +74,13 @@ function MessageBubble({ message, isLast }: { message: Message; isLast: boolean 
             : 'bg-foreground text-background rounded-2xl rounded-br-md shadow-[0_2px_8px_-2px_hsl(var(--foreground)/0.25)]'
         }`}
       >
-        {message.content}
+        {isTrudy ? (
+          <div className="prose prose-sm dark:prose-invert max-w-none">
+            <ReactMarkdown>{message.content}</ReactMarkdown>
+          </div>
+        ) : (
+          message.content
+        )}
       </div>
     </div>
   );
@@ -81,71 +88,12 @@ function MessageBubble({ message, isLast }: { message: Message; isLast: boolean 
 
 export default function TrudyChatBox() {
   const [messages, setMessages] = useState<Message[]>(INITIAL_MESSAGES);
+  const [conversationHistory, setConversationHistory] = useState<{ role: "user" | "assistant"; content: string }[]>([]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const [connectionState, setConnectionState] = useState<'idle' | 'connecting' | 'connected' | 'error'>('idle');
+  const [isReady] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const conversation = useConversation({
-    textOnly: true,
-    onConnect: () => {
-      console.log('ElevenLabs conversation connected');
-      setConnectionState('connected');
-    },
-    onDisconnect: () => {
-      console.log('ElevenLabs conversation disconnected');
-      if (connectionState === 'connected') {
-        setConnectionState('idle');
-      }
-    },
-    onError: (error) => {
-      console.error('ElevenLabs conversation error:', error);
-      setConnectionState('error');
-      setIsTyping(false);
-    },
-    onMessage: (message: any) => {
-      console.log('ElevenLabs message:', message);
-
-      if (message?.source === 'ai' && message?.role === 'agent' && message?.message) {
-        setMessages(prev => [...prev, {
-          id: Date.now().toString(),
-          role: 'trudy',
-          content: message.message,
-          timestamp: new Date(),
-        }]);
-        setIsTyping(false);
-        return;
-      }
-
-      if (message?.type === 'agent_response') {
-        const agentText = message.agent_response_event?.agent_response;
-        if (agentText) {
-          setMessages(prev => [...prev, {
-            id: Date.now().toString(),
-            role: 'trudy',
-            content: agentText,
-            timestamp: new Date(),
-          }]);
-          setIsTyping(false);
-        }
-      } else if (message?.type === 'agent_response_correction') {
-        const corrected = message.agent_response_correction_event?.corrected_agent_response;
-        if (corrected) {
-          setMessages(prev => {
-            const updated = [...prev];
-            for (let i = updated.length - 1; i >= 0; i--) {
-              if (updated[i].role === 'trudy') {
-                updated[i] = { ...updated[i], content: corrected };
-                break;
-              }
-            }
-            return updated;
-          });
-          setIsTyping(false);
-        }
-      }
-    },
-  });
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -153,45 +101,8 @@ export default function TrudyChatBox() {
     }
   }, [messages, isTyping]);
 
-  const connectToAgent = useCallback(async () => {
-    setConnectionState('connecting');
-    try {
-      const { data, error } = await supabase.functions.invoke('elevenlabs-conversation-token');
-      
-      if (error || !data?.signed_url) {
-        console.error('Failed to get signed URL:', error);
-        const errorMsg = error?.message || "";
-        if (errorMsg.includes("401") || errorMsg.includes("missing_permissions")) {
-          console.warn("ElevenLabs API key missing permissions — showing graceful fallback");
-        }
-        setConnectionState('error');
-        return;
-      }
-
-      await conversation.startSession({
-        signedUrl: data.signed_url,
-      });
-    } catch (err) {
-      console.error('Failed to connect:', err);
-      setConnectionState('error');
-    }
-  }, [conversation]);
-
-  // Auto-connect on mount
-  useEffect(() => {
-    if (connectionState === 'idle') {
-      connectToAgent();
-    }
-    return () => {
-      if (conversation.status === 'connected') {
-        conversation.endSession();
-      }
-    };
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const handleSend = useCallback(() => {
-    const text = input.trim();
-    if (!text || isTyping || connectionState !== 'connected') return;
+  const sendMessage = useCallback(async (text: string) => {
+    if (!text.trim() || isTyping) return;
 
     const userMsg: Message = {
       id: Date.now().toString(),
@@ -202,53 +113,116 @@ export default function TrudyChatBox() {
     setMessages(prev => [...prev, userMsg]);
     setInput('');
     setIsTyping(true);
-    
-    conversation.sendUserMessage(text);
-  }, [input, isTyping, connectionState, conversation]);
+
+    const updatedHistory = [...conversationHistory, { role: "user" as const, content: text }];
+    setConversationHistory(updatedHistory);
+
+    let assistantSoFar = "";
+
+    try {
+      const resp = await fetch(CHAT_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+        body: JSON.stringify({
+          messages: updatedHistory,
+          pageContext: "User is on the Meet Trudy / Customer Service page. Help with moving questions, but direct pricing inquiries to a specialist.",
+        }),
+      });
+
+      if (!resp.ok) {
+        const errData = await resp.json().catch(() => ({ error: "Connection error" }));
+        throw new Error(errData.error || "Failed to connect");
+      }
+
+      if (!resp.body) throw new Error("No response stream");
+
+      const reader = resp.body.getReader();
+      const decoder = new TextDecoder();
+      let textBuffer = "";
+      let streamDone = false;
+
+      const upsertTrudy = (chunk: string) => {
+        assistantSoFar += chunk;
+        setMessages(prev => {
+          const last = prev[prev.length - 1];
+          if (last?.role === "trudy" && last.id.includes("-stream")) {
+            return prev.map((m, i) => (i === prev.length - 1 ? { ...m, content: assistantSoFar } : m));
+          }
+          return [...prev, { id: `${Date.now()}-stream`, role: "trudy", content: assistantSoFar, timestamp: new Date() }];
+        });
+      };
+
+      while (!streamDone) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        textBuffer += decoder.decode(value, { stream: true });
+
+        let newlineIndex: number;
+        while ((newlineIndex = textBuffer.indexOf("\n")) !== -1) {
+          let line = textBuffer.slice(0, newlineIndex);
+          textBuffer = textBuffer.slice(newlineIndex + 1);
+          if (line.endsWith("\r")) line = line.slice(0, -1);
+          if (line.startsWith(":") || line.trim() === "") continue;
+          if (!line.startsWith("data: ")) continue;
+          const jsonStr = line.slice(6).trim();
+          if (jsonStr === "[DONE]") { streamDone = true; break; }
+          try {
+            const parsed = JSON.parse(jsonStr);
+            const content = parsed.choices?.[0]?.delta?.content as string | undefined;
+            if (content) {
+              setIsTyping(false);
+              upsertTrudy(content);
+            }
+          } catch {
+            textBuffer = line + "\n" + textBuffer;
+            break;
+          }
+        }
+      }
+
+      // Final flush
+      if (textBuffer.trim()) {
+        for (let raw of textBuffer.split("\n")) {
+          if (!raw) continue;
+          if (raw.endsWith("\r")) raw = raw.slice(0, -1);
+          if (raw.startsWith(":") || raw.trim() === "") continue;
+          if (!raw.startsWith("data: ")) continue;
+          const jsonStr = raw.slice(6).trim();
+          if (jsonStr === "[DONE]") continue;
+          try {
+            const parsed = JSON.parse(jsonStr);
+            const content = parsed.choices?.[0]?.delta?.content as string | undefined;
+            if (content) upsertTrudy(content);
+          } catch { /* ignore */ }
+        }
+      }
+
+      if (assistantSoFar) {
+        setConversationHistory(prev => [...prev, { role: "assistant", content: assistantSoFar }]);
+      }
+    } catch (err) {
+      console.error("Trudy chat error:", err);
+      setMessages(prev => [...prev, {
+        id: `${Date.now()}-error`,
+        role: 'trudy',
+        content: "Sorry, I'm having trouble connecting right now. Please try again or call us at (609) 727-7647.",
+        timestamp: new Date(),
+      }]);
+    } finally {
+      setIsTyping(false);
+    }
+  }, [conversationHistory, isTyping]);
+
+  const handleSend = useCallback(() => {
+    sendMessage(input.trim());
+  }, [input, sendMessage]);
 
   const handleQuickPrompt = useCallback((prompt: string) => {
-    if (isTyping || connectionState !== 'connected') return;
-    const userMsg: Message = {
-      id: Date.now().toString(),
-      role: 'user',
-      content: prompt,
-      timestamp: new Date(),
-    };
-    setMessages(prev => [...prev, userMsg]);
-    setIsTyping(true);
-    conversation.sendUserMessage(prompt);
-  }, [isTyping, connectionState, conversation]);
-
-  const statusBadge = () => {
-    switch (connectionState) {
-      case 'connecting':
-        return (
-          <span className="flex items-center gap-1 text-[9px] text-muted-foreground bg-muted px-2 py-0.5 rounded-full font-medium">
-            <Loader2 className="w-2.5 h-2.5 animate-spin" />
-            Connecting
-          </span>
-        );
-      case 'connected':
-        return (
-          <span className="flex items-center gap-1 text-[9px] text-emerald-600 bg-emerald-500/10 px-2 py-0.5 rounded-full font-medium">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-            Live
-          </span>
-        );
-      case 'error':
-        return (
-          <button
-            onClick={connectToAgent}
-            className="flex items-center gap-1 text-[9px] text-destructive bg-destructive/10 hover:bg-destructive/20 px-2 py-0.5 rounded-full font-medium transition-colors"
-          >
-            <RefreshCw className="w-2.5 h-2.5" />
-            Retry
-          </button>
-        );
-      default:
-        return null;
-    }
-  };
+    sendMessage(prompt);
+  }, [sendMessage]);
 
   return (
     <div className="w-full max-w-lg mx-auto">
@@ -262,20 +236,19 @@ export default function TrudyChatBox() {
                 <div className="w-8 h-8 rounded-full bg-foreground/[0.06] border border-foreground/10 flex items-center justify-center">
                   <Sparkles className="w-4 h-4 text-foreground/70" />
                 </div>
-                <span className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-card ${
-                  connectionState === 'connected' ? 'bg-emerald-500' : 'bg-foreground/30'
-                }`} />
+                <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-card bg-emerald-500" />
               </div>
               <div>
                 <p className="text-[13px] font-semibold text-foreground leading-none">Trudy</p>
                 <p className="text-[11px] text-muted-foreground mt-0.5">
-                  AI Move Coordinator · {connectionState === 'connected' ? 'Online' : connectionState === 'connecting' ? 'Connecting…' : 'Offline'}
+                  AI Move Coordinator · Online
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-1.5">
-              {statusBadge()}
-            </div>
+            <span className="flex items-center gap-1 text-[9px] text-emerald-600 bg-emerald-500/10 px-2 py-0.5 rounded-full font-medium">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              Live
+            </span>
           </div>
         </div>
 
@@ -285,28 +258,6 @@ export default function TrudyChatBox() {
           className="px-4 py-4 space-y-4 overflow-y-auto"
           style={{ height: 340, scrollBehavior: 'smooth' }}
         >
-          {connectionState === 'error' && messages.length === 0 && (
-            <div className="flex flex-col items-center justify-center py-10 gap-3 text-center">
-              <div className="w-10 h-10 rounded-full bg-destructive/10 flex items-center justify-center">
-                <RefreshCw className="w-5 h-5 text-destructive" />
-              </div>
-              <p className="text-[13px] text-muted-foreground">Trudy is temporarily unavailable</p>
-              <button
-                onClick={connectToAgent}
-                className="px-4 py-2 text-[12px] font-medium bg-foreground text-background rounded-full hover:opacity-80 active:scale-95 transition-all"
-              >
-                Try Again
-              </button>
-            </div>
-          )}
-          {connectionState === 'connecting' && messages.length === 0 && (
-            <div className="flex items-center justify-center py-10">
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Loader2 className="w-4 h-4 animate-spin" />
-                <span className="text-[13px]">Connecting to Trudy…</span>
-              </div>
-            </div>
-          )}
           {messages.map((msg, i) => (
             <MessageBubble key={msg.id} message={msg} isLast={i === messages.length - 1} />
           ))}
@@ -314,7 +265,7 @@ export default function TrudyChatBox() {
         </div>
 
         {/* Quick prompts */}
-        {messages.length <= 1 && !isTyping && connectionState === 'connected' && (
+        {messages.length <= 1 && !isTyping && (
           <div className="px-4 pb-2 flex flex-wrap gap-1.5 animate-in fade-in duration-500">
             {QUICK_PROMPTS.map((prompt) => (
               <button
@@ -337,13 +288,13 @@ export default function TrudyChatBox() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-              placeholder={connectionState === 'connected' ? 'Ask Trudy anything…' : 'Connecting to Trudy…'}
-              disabled={isTyping || connectionState !== 'connected'}
+              placeholder="Ask Trudy anything…"
+              disabled={isTyping}
               className="flex-1 bg-transparent text-[13px] text-foreground placeholder:text-muted-foreground/60 outline-none disabled:opacity-50"
             />
             <button
               onClick={handleSend}
-              disabled={!input.trim() || isTyping || connectionState !== 'connected'}
+              disabled={!input.trim() || isTyping}
               className="w-7 h-7 rounded-full bg-foreground text-background flex items-center justify-center disabled:opacity-30 hover:opacity-80 active:scale-90 transition-all duration-150"
             >
               <Send className="w-3 h-3" />
