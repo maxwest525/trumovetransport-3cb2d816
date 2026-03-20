@@ -510,7 +510,7 @@ export default function CarrierVetting() {
       <div className="min-h-screen carrier-vetting-page">
         
 
-        <div className="min-h-[80vh] flex flex-col items-center justify-center px-6 py-12">
+        <div className="min-h-[80vh] flex flex-col items-center justify-center px-6 py-6">
           <div className="w-full max-w-7xl mx-auto">
           {/* Hero Section - always visible */}
           <div className="flex flex-col items-center justify-center text-center mb-6 max-w-3xl mx-auto">
