@@ -623,15 +623,6 @@ export default function LiveTracking() {
             />
           </div>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div className="tru-floating-form-card tru-floating-form-compact overflow-hidden max-w-md mx-auto mb-8 md:mb-12">
-              <div className="tru-qb-form-header tru-qb-form-header-pill">
-                <div className="tru-qb-form-title-group">
-                  <span className="tru-qb-form-title tru-qb-form-title-large">TRACK YOUR <span className="text-primary">SHIPMENT</span></span>
-                  <span className="tru-qb-form-subtitle-compact">GPS • Live Tracking • Weather • ETA</span>
-                </div>
-              </div>
-            </div>
-
             {/* Inline Route Setup Wizard */}
             {!routeConfigured && (
               <TrackingWizard
