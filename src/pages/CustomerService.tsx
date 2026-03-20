@@ -209,39 +209,14 @@ function VoiceOrb({ isConnected, isSpeaking }: { isConnected: boolean; isSpeakin
 export default function CustomerService() {
   const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isConnecting, setIsConnecting] = useState(false);
   const [activeTab, setActiveTab] = useState<'voice' | 'form'>('voice');
+  const chatRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => { window.scrollTo(0, 0); }, []);
 
-  const conversation = useConversation({
-    onConnect: () => console.log('Trudy: connected'),
-    onDisconnect: () => console.log('Trudy: disconnected'),
-    onError: () => {
-      toast({ variant: 'destructive', title: 'Connection Error', description: 'Could not connect. Try again.' });
-    },
-  });
-
-  const isConnected = conversation.status === 'connected';
-
-  const startCall = useCallback(async () => {
-    if (isConnecting) return;
-    setIsConnecting(true);
-    try {
-      await navigator.mediaDevices.getUserMedia({ audio: true });
-      await conversation.startSession({ agentId: TRUDY_AGENT_ID, connectionType: 'webrtc' });
-    } catch (err: any) {
-      if (err.name === 'NotAllowedError') {
-        toast({ variant: 'destructive', title: 'Microphone Required', description: 'Allow mic access to talk with Trudy.' });
-      }
-    } finally {
-      setIsConnecting(false);
-    }
-  }, [conversation, isConnecting]);
-
-  const endCall = useCallback(async () => {
-    await conversation.endSession();
-  }, [conversation]);
+  const scrollToChat = useCallback(() => {
+    chatRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, []);
 
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
