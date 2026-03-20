@@ -989,7 +989,6 @@ export default function CarrierVetting() {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        </div>
       </div>
       </ScrollFadeIn>
     </SiteShell>
