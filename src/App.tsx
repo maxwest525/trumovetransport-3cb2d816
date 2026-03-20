@@ -18,6 +18,7 @@ import PropertyLookup from "./pages/PropertyLookup";
 import ScanRoom from "./pages/ScanRoom";
 import Classic from "./pages/Classic";
 import LiveTracking from "./pages/LiveTracking";
+import AutoTransport from "./pages/AutoTransport";
 import CustomerService from "./pages/CustomerService";
 import ElevenLabsTrudyWidget from "./components/ElevenLabsTrudyWidget";
 import ScrollToTop from "./components/ScrollToTop";

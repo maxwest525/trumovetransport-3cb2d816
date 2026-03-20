@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Calculator, MapPin, Shield, MessageSquare, Mail, Phone, Video } from "lucide-react";
+import { Menu, X, Calculator, MapPin, Shield, MessageSquare, Mail, Phone, Video, Car } from "lucide-react";
 import logo from "@/assets/logo-navbar.png";
 
 interface NavItem {
