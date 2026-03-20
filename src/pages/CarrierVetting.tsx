@@ -723,31 +723,15 @@ export default function CarrierVetting() {
                 </div>
               </div>
               
-              {/* How It Works Section */}
-                <div className="mt-6 max-w-3xl mx-auto">
-                  <h3 className="text-center text-sm font-semibold text-foreground mb-4">How It Works</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="text-center">
-                    <div className="w-10 h-10 rounded-full bg-slate-900 dark:bg-slate-100 flex items-center justify-center mx-auto mb-3 shadow-md">
-                      <span className="text-sm font-bold text-white dark:text-slate-900">1</span>
-                    </div>
-                    <h4 className="text-sm font-medium text-foreground mb-1">Search by DOT or Name</h4>
-                    <p className="text-xs text-muted-foreground">Enter a carrier's DOT number or company name in the search above</p>
-                  </div>
-                  <div className="text-center">
-                    <div className="w-10 h-10 rounded-full bg-slate-900 dark:bg-slate-100 flex items-center justify-center mx-auto mb-3 shadow-md">
-                      <span className="text-sm font-bold text-white dark:text-slate-900">2</span>
-                    </div>
-                    <h4 className="text-sm font-medium text-foreground mb-1">Review Safety Data</h4>
-                    <p className="text-xs text-muted-foreground">See instant FMCSA safety scores, insurance status, and red flags</p>
-                  </div>
-                  <div className="text-center">
-                    <div className="w-10 h-10 rounded-full bg-slate-900 dark:bg-slate-100 flex items-center justify-center mx-auto mb-3 shadow-md">
-                      <span className="text-sm font-bold text-white dark:text-slate-900">3</span>
-                    </div>
-                    <h4 className="text-sm font-medium text-foreground mb-1">Compare Up to 4</h4>
-                    <p className="text-xs text-muted-foreground">Add multiple carriers to compare their safety records side-by-side</p>
-                  </div>
+              {/* CTA Section */}
+              <div className="mt-8 max-w-2xl mx-auto text-center">
+                <div className="rounded-2xl border border-border/50 bg-gradient-to-b from-muted/30 to-transparent p-8">
+                  <h3 className="text-xl md:text-2xl font-bold text-foreground mb-2">Need a verified carrier for your move?</h3>
+                  <p className="text-sm text-muted-foreground mb-6">Get matched with FMCSA-compliant, safety-rated carriers today.</p>
+                  <a href="/online-estimate" className="inline-flex items-center gap-2 h-11 px-8 rounded-lg bg-foreground text-background font-semibold text-sm hover:bg-foreground/85 transition-all duration-200 hover:shadow-[0_4px_12px_hsl(var(--foreground)/0.15)]">
+                    Get Your Quote
+                    <ArrowRight className="w-4 h-4" />
+                  </a>
                 </div>
               </div>
             </div>
