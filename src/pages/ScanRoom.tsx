@@ -37,6 +37,7 @@ const useScrollToTop = () => {
 import { useNavigate, Link } from "react-router-dom";
 import SiteShell from "@/components/layout/SiteShell";
 import ScanIntroModal from "@/components/estimate/ScanIntroModal";
+import EstimatorNavToggle from "@/components/estimate/EstimatorNavToggle";
 
 import logoImg from "@/assets/logo.png";
 import { 
@@ -402,8 +403,8 @@ export default function ScanRoom() {
             <p className="tru-scan-main-subheadline">
               Simply scan your rooms and our AI will identify, measure, and catalog every item automatically.
             </p>
-            
           </div>
+          <EstimatorNavToggle />
         </section>
 
         {/* Scan Intro Modal */}
