@@ -508,63 +508,87 @@ export default function CarrierVetting() {
 
   return (
     <SiteShell hideTrustStrip>
-      <div className="min-h-screen carrier-vetting-page">
-        
-
-        <div className="min-h-[80vh] flex flex-col items-center justify-center px-6 py-6">
-          <div className="w-full max-w-7xl mx-auto">
-          {/* Hero Section - always visible */}
-          <div className="flex flex-col items-center justify-center text-center mb-4 max-w-3xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-black tracking-tight text-foreground mb-4 whitespace-nowrap">
-              FMCSA-Verified <span className="tru-qb-title-accent">Carrier Safety Records</span>
-            </h2>
-
-            {/* How It Works - simplified inline */}
-            <div className="flex items-center gap-3 text-xs text-muted-foreground mb-2">
-              <span className="font-semibold uppercase tracking-wider">How It Works:</span>
-              <span className="flex items-center gap-1.5"><span className="w-5 h-5 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-[10px] font-bold">1</span>Search company name or DOT</span>
-              <span className="text-border">→</span>
-              <span className="flex items-center gap-1.5"><span className="w-5 h-5 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-[10px] font-bold">2</span>Review FMCSA Safety Data</span>
-              <span className="text-border">→</span>
-              <span className="flex items-center gap-1.5"><span className="w-5 h-5 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-[10px] font-bold">3</span>Compare multiple carriers</span>
-            </div>
+      <ScrollFadeIn>
+        <section className="py-6 md:py-10 relative overflow-hidden">
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full bg-primary/[0.06] blur-[120px]" />
+            <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-primary/[0.05] blur-[100px]" />
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
+            <div
+              className="absolute inset-0 opacity-[0.035]"
+              style={{
+                backgroundImage: 'radial-gradient(circle, hsl(var(--foreground)) 1px, transparent 1px)',
+                backgroundSize: '24px 24px',
+              }}
+            />
           </div>
-
-          {/* FMCSA Terminal - Always Visible */}
-          <div className="fmcsa-terminal max-w-2xl mx-auto mb-4">
-            <div className="fmcsa-terminal-header">
-              <div className="fmcsa-terminal-dots">
-                <span></span><span></span><span></span>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div className="text-center mb-6 md:mb-8">
+              <p className="text-[11px] uppercase tracking-[0.3em] text-primary font-semibold mb-3">Carrier Vetting</p>
+              <div className="flex items-center justify-center gap-2 mb-4">
+                <span className="h-px w-8 bg-primary/40" />
+                <span className="w-1.5 h-1.5 rounded-full bg-primary/60" />
+                <span className="h-px w-8 bg-primary/40" />
               </div>
-              <span className="fmcsa-terminal-title">SAFER DATABASE QUERY</span>
-              <div className="ml-auto flex items-center gap-2">
-                <img src="https://www.fmcsa.dot.gov/themes/custom/fmcsa/logo.svg" alt="FMCSA" className="h-5 brightness-0 invert opacity-70" />
-              </div>
-            </div>
-            <div className="fmcsa-terminal-body">
-              <CarrierSearch onSelect={handleAddCarrier} isLoading={isLoading} />
-              <p className="text-xs text-slate-600 dark:text-white/60 leading-relaxed mt-4 text-center">
-                All carriers are filtered and continuously monitored per official FMCSA Safety Measurement System (SMS) criteria and federal compliance standards. Click any card for detailed report including Behavior Analysis and Safety Improvement Categories (BASICs), roadside inspection results, crash involvement, and safety fitness evaluation.
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-4 md:mb-5 tracking-tight leading-[1.1]">
+                FMCSA Carrier Safety Records
+              </h1>
+              <p className="text-muted-foreground max-w-xl mx-auto text-base md:text-lg font-light leading-relaxed">
+                Search, review, and compare carrier safety data from the official FMCSA database.
               </p>
+
+              {/* How It Works - inline */}
+              <div className="flex items-center justify-center gap-3 text-xs text-muted-foreground mt-4">
+                <span className="flex items-center gap-1.5"><span className="w-5 h-5 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-[10px] font-bold">1</span>Search company name or DOT</span>
+                <span className="text-border">→</span>
+                <span className="flex items-center gap-1.5"><span className="w-5 h-5 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-[10px] font-bold">2</span>Review FMCSA Safety Data</span>
+                <span className="text-border">→</span>
+                <span className="flex items-center gap-1.5"><span className="w-5 h-5 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-[10px] font-bold">3</span>Compare multiple carriers</span>
+              </div>
+            </div>
+
+            {/* FMCSA Terminal */}
+            <div className="fmcsa-terminal max-w-2xl mx-auto mb-4">
+              <div className="fmcsa-terminal-header">
+                <div className="fmcsa-terminal-dots">
+                  <span></span><span></span><span></span>
+                </div>
+                <span className="fmcsa-terminal-title">SAFER DATABASE QUERY</span>
+                <div className="ml-auto flex items-center gap-2">
+                  <img src="https://www.fmcsa.dot.gov/themes/custom/fmcsa/logo.svg" alt="FMCSA" className="h-5 brightness-0 invert opacity-70" />
+                </div>
+              </div>
+              <div className="fmcsa-terminal-body">
+                <CarrierSearch onSelect={handleAddCarrier} isLoading={isLoading} />
+                <p className="text-xs text-muted-foreground leading-relaxed mt-4 text-center">
+                  All carriers are filtered and continuously monitored per official FMCSA Safety Measurement System (SMS) criteria and federal compliance standards.
+                </p>
+              </div>
+            </div>
+
+            {/* Trust strip */}
+            <div className="flex items-center justify-center gap-x-6 max-w-3xl mx-auto mb-4 flex-nowrap">
+              {[
+                { icon: Radio, text: "Real-time FMCSA data", color: "text-emerald-500" },
+                { icon: AlertTriangle, text: "Red flag alerts", color: "text-red-500" },
+                { icon: Database, text: "DOT lookup", color: "text-blue-500" },
+                { icon: Zap, text: "Fleet intelligence", color: "text-amber-500" },
+                { icon: Shield, text: "Insurance verification", color: "text-teal-500" },
+              ].map((item) => (
+                <div key={item.text} className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <item.icon className={cn("w-3.5 h-3.5", item.color)} />
+                  <span>{item.text}</span>
+                </div>
+              ))}
             </div>
           </div>
+        </section>
+      </ScrollFadeIn>
 
-          {/* Search Results label + Trust strip below query box */}
-          <p className="text-lg font-bold uppercase tracking-widest text-muted-foreground text-center mt-4 mb-2">— Search Results —</p>
-          <div className="flex items-center justify-center gap-x-6 max-w-3xl mx-auto mt-0 mb-4 flex-nowrap">
-            {[
-              { icon: Radio, text: "Real-time FMCSA data", color: "text-emerald-500" },
-              { icon: AlertTriangle, text: "Red flag alerts", color: "text-red-500" },
-              { icon: Database, text: "DOT lookup", color: "text-blue-500" },
-              { icon: Zap, text: "Fleet intelligence", color: "text-amber-500" },
-              { icon: Shield, text: "Insurance verification", color: "text-teal-500" },
-            ].map((item) => (
-              <div key={item.text} className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                <item.icon className={cn("w-3.5 h-3.5", item.color)} />
-                <span>{item.text}</span>
-              </div>
-            ))}
-          </div>
+      <div className="min-h-screen carrier-vetting-page">
+        <div className="px-6 py-4">
+          <div className="w-full max-w-7xl mx-auto">
 
           {/* API Error Alert */}
           {apiError && (
