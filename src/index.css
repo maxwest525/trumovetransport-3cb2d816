@@ -32271,26 +32271,21 @@ footer {
 
 /* Go button hover override removed - handled in main definition */
 
-/* Build Your Move header - match Move Summary styling EXACTLY */
+/* Build Your Move header - shared dark form header typography */
 .tru-summary-header-large h3,
 .tru-summary-header-large .text-lg {
   font-size: 20px !important;
   font-weight: 800 !important;
-  color: hsl(var(--foreground)) !important;
-}
-
-/* Build Your Move subheadline - lighter black underglow */
-.tru-summary-header-large p,
-.tru-summary-header-large .text-muted-foreground {
-  color: hsl(var(--muted-foreground));
-}
-
-.dark .tru-summary-header-large h3,
-.dark .tru-summary-header-large .text-lg {
   color: hsl(0 0% 100%) !important;
 }
 
-/* Build Your Move header - match Move Summary styling EXACTLY in dark mode */
+/* Build Your Move subheadline - muted but readable on dark header */
+.tru-summary-header-large p,
+.tru-summary-header-large .text-muted-foreground {
+  color: hsl(0 0% 100% / 0.5) !important;
+}
+
+/* Build Your Move header - keep dark surface consistent across themes */
 .dark .tru-summary-header-large,
 .dark .rounded-2xl .tru-summary-header-large,
 .dark .bg-card .tru-summary-header-large,
@@ -32309,12 +32304,6 @@ html.dark .tru-summary-header-large,
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
   background-clip: text !important;
-}
-
-/* Subtitle text - muted but visible in dark mode */
-.dark .tru-summary-header-large p,
-.dark .tru-summary-header-large .text-muted-foreground {
-  color: hsl(0 0% 100% / 0.5) !important;
 }
 
 /* ========================================
