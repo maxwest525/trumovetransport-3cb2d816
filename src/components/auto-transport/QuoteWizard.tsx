@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from "react";
-import { Check, ChevronRight, ChevronLeft, ChevronDown, Scan, Route, ScanLine, MapPin, Car, Box, Phone, Mail, User, Sparkles, Pencil, CalendarIcon } from "lucide-react";
+import { Check, ChevronRight, ChevronLeft, ChevronDown, Scan, Route, ScanLine, MapPin, Car, Box, Phone, Mail, User, Sparkles, Pencil, CalendarIcon, Loader2, HandMetal } from "lucide-react";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
