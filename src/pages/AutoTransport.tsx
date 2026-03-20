@@ -1,99 +1,146 @@
-import SiteShell from "@/components/layout/SiteShell";
-import { Car, Shield, MapPin, Clock, CheckCircle, Phone, ArrowRight } from "lucide-react";
+import { useRef, useState, useEffect } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
-
-const features = [
-  { icon: Shield, title: "Fully Insured", desc: "Every vehicle is covered with comprehensive transport insurance." },
-  { icon: MapPin, title: "Door-to-Door", desc: "We pick up and deliver your vehicle right to your location." },
-  { icon: Clock, title: "On-Time Delivery", desc: "Real-time tracking and guaranteed delivery windows." },
-  { icon: CheckCircle, title: "Vetted Carriers", desc: "All carriers are FMCSA-verified and safety-rated." },
-];
+import SiteShell from "@/components/layout/SiteShell";
+import { HowItWorks } from "@/components/auto-transport/HowItWorks";
+import { QuoteWizard } from "@/components/auto-transport/QuoteWizard";
+import { QuoteReveal } from "@/components/auto-transport/QuoteReveal";
+import { ChatBubble } from "@/components/auto-transport/ChatBubble";
+import { ScrollFadeIn } from "@/hooks/useScrollFadeIn";
+import { Sparkles } from "lucide-react";
 
 export default function AutoTransport() {
+  const quoteRef = useRef<HTMLDivElement>(null);
+  const quoteRevealRef = useRef<HTMLDivElement>(null);
+  const [showMobileCTA, setShowMobileCTA] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowMobileCTA(window.scrollY > 500);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const [quoteData, setQuoteData] = useState({
+    year: "",
+    make: "",
+    model: "",
+    vehicleType: "",
+    running: "",
+    size: "",
+    from: "",
+    to: "",
+    timeframe: "",
+    transportType: "",
+  });
+
+  const scrollToQuote = () => {
+    quoteRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const scrollToQuoteReveal = () => {
+    quoteRevealRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
     <SiteShell>
-      {/* Hero */}
-      <section className="relative py-20 md:py-28 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-background via-background to-primary/5" />
-        <div className="relative max-w-5xl mx-auto px-4 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-semibold mb-6">
-            <Car className="w-4 h-4" />
-            Auto Transport Services
-          </div>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-foreground mb-6">
-            Ship Your Vehicle <span className="text-primary">Anywhere</span>
-          </h1>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
-            Safe, reliable, and affordable auto transport across the country. Open and enclosed carriers available for cars, trucks, SUVs, and motorcycles.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link to="/online-estimate">
-              <Button size="lg" className="gap-2 text-base px-8">
-                Get a Free Quote <ArrowRight className="w-4 h-4" />
-              </Button>
-            </Link>
-            <a href="tel:+16097277647">
-              <Button size="lg" variant="outline" className="gap-2 text-base px-8">
-                <Phone className="w-4 h-4" /> Call Us
-              </Button>
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* Features */}
-      <section className="py-16 md:py-20 bg-muted/30">
-        <div className="max-w-5xl mx-auto px-4">
-          <h2 className="text-2xl md:text-3xl font-bold text-center text-foreground mb-12">Why Ship With TruMove?</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {features.map((f) => (
-              <div key={f.title} className="bg-card border border-border rounded-xl p-6 text-center shadow-sm">
-                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                  <f.icon className="w-6 h-6 text-primary" />
-                </div>
-                <h3 className="font-semibold text-foreground mb-2">{f.title}</h3>
-                <p className="text-sm text-muted-foreground">{f.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* How It Works */}
-      <section className="py-16 md:py-20">
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-12">How It Works</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              { step: "1", title: "Request a Quote", desc: "Tell us your pickup and delivery locations, vehicle details, and preferred dates." },
-              { step: "2", title: "We Match a Carrier", desc: "Our team finds the best vetted carrier for your route and vehicle type." },
-              { step: "3", title: "Track & Receive", desc: "Follow your shipment in real-time and receive your vehicle at the destination." },
-            ].map((s) => (
-              <div key={s.step} className="flex flex-col items-center">
-                <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground font-bold flex items-center justify-center mb-4 text-lg">
-                  {s.step}
-                </div>
-                <h3 className="font-semibold text-foreground mb-2">{s.title}</h3>
-                <p className="text-sm text-muted-foreground">{s.desc}</p>
+      <ScrollFadeIn>
+        <div className="pt-8">
+          <HowItWorks />
+        </div>
+      </ScrollFadeIn>
+
+      {/* Quote Wizard */}
+      <ScrollFadeIn>
+        <section ref={quoteRef} className="py-10 md:py-20 relative overflow-hidden">
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full bg-primary/[0.06] blur-[120px]" />
+            <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-primary/[0.05] blur-[100px]" />
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
+            <div
+              className="absolute inset-0 opacity-[0.035]"
+              style={{
+                backgroundImage: 'radial-gradient(circle, hsl(var(--foreground)) 1px, transparent 1px)',
+                backgroundSize: '24px 24px',
+              }}
+            />
+          </div>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div className="text-center mb-8 md:mb-12">
+              <p className="text-[11px] uppercase tracking-[0.3em] text-primary font-semibold mb-3">Quote Builder</p>
+              <div className="flex items-center justify-center gap-2 mb-4">
+                <span className="h-px w-8 bg-primary/40" />
+                <span className="w-1.5 h-1.5 rounded-full bg-primary/60" />
+                <span className="h-px w-8 bg-primary/40" />
               </div>
-            ))}
+              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-4 md:mb-5 tracking-tight leading-[1.1]">
+                Build Your Quote
+              </h2>
+              <p className="text-muted-foreground max-w-xl mx-auto text-base md:text-lg font-light leading-relaxed">
+                Enter your vehicle and route details for an instant estimate.
+              </p>
+            </div>
+
+            <QuoteWizard
+              quoteData={quoteData}
+              setQuoteData={setQuoteData}
+              variant="expanded"
+              onGetEstimate={scrollToQuoteReveal}
+            />
+          </div>
+        </section>
+      </ScrollFadeIn>
+
+      {/* Quote Reveal */}
+      <ScrollFadeIn>
+        <QuoteReveal ref={quoteRevealRef} quoteData={quoteData} />
+      </ScrollFadeIn>
+
+      {/* Final CTA */}
+      <section className="py-6 sm:py-10 md:py-20 bg-card/30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-2xl mx-auto text-center">
+            <h2 className="text-xl sm:text-2xl md:text-4xl font-semibold text-foreground mb-2 sm:mb-3 md:mb-4">
+              Auto transport should feel predictable.
+            </h2>
+            <p className="text-xs sm:text-sm sm:text-base text-muted-foreground mb-4 sm:mb-5 sm:mb-8">
+              TruMove makes shipping simple — from quote to delivery.
+            </p>
+            <Button variant="premium" size="lg" onClick={scrollToQuote}>
+              Get Instant Quote
+              <Sparkles className="ml-2 w-4 h-4" strokeWidth={1.5} />
+            </Button>
           </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-16 md:py-20 bg-primary/5">
-        <div className="max-w-3xl mx-auto px-4 text-center">
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">Ready to Ship Your Vehicle?</h2>
-          <p className="text-muted-foreground mb-8">Get a free, no-obligation quote in minutes.</p>
-          <Link to="/online-estimate">
-            <Button size="lg" className="gap-2 text-base px-10">
-              Get Started <ArrowRight className="w-4 h-4" />
-            </Button>
-          </Link>
-        </div>
-      </section>
+      {/* Sticky Mobile CTA */}
+      <AnimatePresence>
+        {showMobileCTA && (
+          <motion.div
+            initial={{ y: "100%", opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: "100%", opacity: 0 }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            className="fixed bottom-0 left-0 right-0 z-40 lg:hidden"
+          >
+            <div className="bg-background/95 backdrop-blur-xl border-t border-border/60 px-4 py-3 flex items-center gap-3">
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-foreground truncate">Get your free quote</p>
+                <p className="text-xs text-muted-foreground truncate">Instant estimate available</p>
+              </div>
+              <Button variant="premium" onClick={scrollToQuote} className="shrink-0 text-sm font-medium px-5 py-2.5">
+                Get Quote
+              </Button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <ChatBubble />
     </SiteShell>
   );
 }
