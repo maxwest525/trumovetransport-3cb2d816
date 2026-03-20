@@ -1545,7 +1545,8 @@
 
 .header-logo-glow {
   filter: drop-shadow(0 0 10px rgba(255,255,255,0.8)) drop-shadow(0 0 24px rgba(255,255,255,0.4));
-  max-height: 44px;
+  height: 52px;
+  max-height: 52px;
   width: auto;
 }
 
