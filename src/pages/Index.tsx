@@ -724,7 +724,7 @@ export default function Index() {
 
   // Why TruMove feature selection state
   const [activeFeature, setActiveFeature] = useState<number | null>(null);
-  const [carrierIdx, setCarrierIdx] = useState(0);
+  
 
   // Why TruMove features data - Updated per plan
   const whyTruMoveFeatures = [
