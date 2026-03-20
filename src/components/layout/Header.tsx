@@ -31,7 +31,7 @@ export default function Header() {
 
   return (
     <>
-      <header className={`header-main header-floating ${isScrolled ? "is-scrolled" : ""}`}>
+      <header className={`header-main header-floating ${isScrolled ? "is-scrolled" : ""} ${location.pathname === "/site" ? "header-home-glow" : ""}`}>
         <div className="header-inner">
           {/* Logo - left */}
           <Link to="/site" className="header-logo shrink-0" aria-label="TruMove Home">
