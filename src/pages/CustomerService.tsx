@@ -313,7 +313,7 @@ export default function CustomerService() {
               </div>
 
               {/* Right — chat box */}
-              <div className="w-full max-w-lg mx-auto lg:max-w-none">
+              <div ref={chatRef} className="w-full max-w-lg mx-auto lg:max-w-none">
                 <TrudyChatBox />
               </div>
             </div>
