@@ -504,7 +504,7 @@ export default function EstimateWizard({ onComplete, initialDetails }: EstimateW
           {/* Step 3: Contact Information (Final Step) */}
           {step === 3 && (
             <div className="tru-qb-step-content" key="step-3">
-              <h1 className="tru-qb-question">Almost done! How can we reach you?</h1>
+              <h1 className="tru-qb-question">ALMOST DONE! HOW CAN WE <span className="text-primary">REACH YOU?</span></h1>
               <p className="tru-qb-subtitle">We'll send your personalized quote</p>
 
               <div className="tru-qb-contact-fields">
