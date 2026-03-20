@@ -1678,132 +1678,130 @@ export default function Index() {
           {/* CARRIER VETTING PREVIEW */}
           <section className="tru-ai-steps-section">
             <div className="max-w-6xl mx-auto">
-              <div className="flex flex-col items-center text-center mb-8">
-                <h2 className="tru-ai-main-headline text-5xl md:text-6xl">
-                  Carrier <span className="tru-ai-headline-accent">Vetting.</span>
-                </h2>
-                <p className="tru-ai-subheadline text-lg mt-3">Search any carrier. Red flags surfaced instantly.</p>
-              </div>
-
-              {/* SAFER-style lookup UI */}
-              <div className="max-w-2xl mx-auto">
-                {/* Window chrome */}
-                <div className="bg-muted/60 rounded-t-xl px-4 py-2.5 flex items-center gap-3 border border-b-0 border-border">
-                  <div className="flex gap-1.5">
-                    <span className="w-2.5 h-2.5 rounded-full bg-destructive/60" />
-                    <span className="w-2.5 h-2.5 rounded-full bg-amber-400/60" />
-                    <span className="w-2.5 h-2.5 rounded-full bg-primary/60" />
+              {/* Two-column layout: headline left, SAFER card right */}
+              <div className="flex flex-col lg:flex-row gap-10 items-start">
+                {/* Left column: headline + subheadline + CTA */}
+                <div className="lg:w-[340px] shrink-0">
+                  <h2 className="tru-ai-main-headline text-5xl md:text-6xl text-left">
+                    Carrier <span className="tru-ai-headline-accent">Vetting.</span>
+                  </h2>
+                  <p className="tru-ai-subheadline text-lg mt-3 text-left">Search any carrier. Red flags surfaced instantly.</p>
+                  <div className="pt-5">
+                    <button onClick={() => navigate("/site/vetting")} className="tru-ai-cta-btn">
+                      <Radar className="w-5 h-5 text-primary" />
+                      Try Carrier Vetting
+                      <ArrowRight className="w-5 h-5 text-primary" />
+                    </button>
                   </div>
-                  <span className="text-[10px] font-mono text-muted-foreground tracking-wider uppercase">SAFER Database Query</span>
                 </div>
 
-                {/* Search bar area */}
-                <div className="border border-border border-t-0 bg-card px-4 py-3 space-y-2">
-                  <div className="flex items-center gap-2">
-                    <div className="flex gap-1">
-                      {['Name', 'DOT#', 'MC#'].map((f, i) => (
-                        <span key={f} className={`px-2.5 py-1 rounded-md text-[10px] font-semibold cursor-default ${i === 0 ? 'bg-primary/15 text-primary' : 'bg-muted text-muted-foreground'}`}>{f}</span>
-                      ))}
+                {/* Right column: SAFER-style lookup UI */}
+                <div className="flex-1 min-w-0">
+                  {/* Window chrome */}
+                  <div className="bg-muted/60 rounded-t-xl px-4 py-2.5 flex items-center gap-3 border border-b-0 border-border">
+                    <div className="flex gap-1.5">
+                      <span className="w-2.5 h-2.5 rounded-full bg-destructive/60" />
+                      <span className="w-2.5 h-2.5 rounded-full bg-amber-400/60" />
+                      <span className="w-2.5 h-2.5 rounded-full bg-primary/60" />
                     </div>
-                    <div className="flex-1 flex items-center gap-2 bg-background border border-border rounded-lg px-3 py-1.5">
-                      <Search className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-                      <span className="text-xs text-foreground font-medium truncate">{MOCK_CARRIERS[carrierIdx].carrier.dbaName}</span>
-                    </div>
+                    <span className="text-[10px] font-mono text-muted-foreground tracking-wider uppercase">SAFER Database Query</span>
                   </div>
-                  <p className="text-[9px] text-muted-foreground leading-tight">Carriers filtered per FMCSA Safety Measurement System (SMS) criteria. Click a result below.</p>
-                </div>
 
-                {/* Result cards */}
-                <div className="border border-border border-t-0 rounded-b-xl bg-card divide-y divide-border overflow-hidden">
-                  {MOCK_CARRIERS.map((c, i) => {
-                    const authorized = c.carrier.allowToOperate === 'Y' && c.authority.commonStatus === 'ACTIVE';
-                    const vOosPass = c.oos.vehicleOosRate < c.oos.vehicleOosRateNationalAvg;
-                    const dOosPass = c.oos.driverOosRate < c.oos.driverOosRateNationalAvg;
-                    const redFlags: string[] = [];
-                    if (c.carrier.outOfService === 'Y') redFlags.push('OOS');
-                    if (!authorized) redFlags.push('Auth');
-                    if (c.safety.rating === 'CONDITIONAL' || c.safety.rating === 'UNSATISFACTORY') redFlags.push('Rating');
-                    if (!vOosPass) redFlags.push('Veh OOS');
-                    if (!dOosPass) redFlags.push('Drv OOS');
-                    if (c.crashes.fatal > 0) redFlags.push('Fatal');
-                    const verdict = redFlags.length === 0 ? 'pass' : redFlags.length <= 2 ? 'caution' : 'fail';
-                    const selected = carrierIdx === i;
+                  {/* Search bar area */}
+                  <div className="border border-border border-t-0 bg-card px-4 py-3 space-y-2">
+                    <div className="flex items-center gap-2">
+                      <div className="flex gap-1">
+                        {['Name', 'DOT#', 'MC#'].map((f, fi) => (
+                          <span key={f} className={`px-2.5 py-1 rounded-md text-[10px] font-semibold cursor-default ${fi === 0 ? 'bg-primary/15 text-primary' : 'bg-muted text-muted-foreground'}`}>{f}</span>
+                        ))}
+                      </div>
+                      <div className="flex-1 flex items-center gap-2 bg-background border border-border rounded-lg px-3 py-1.5">
+                        <Search className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                        <span className="text-xs text-foreground font-medium truncate">{MOCK_CARRIERS[carrierIdx].carrier.dbaName}</span>
+                      </div>
+                    </div>
+                    <p className="text-[9px] text-muted-foreground leading-tight">Carriers filtered per FMCSA Safety Measurement System (SMS) criteria. Click a result below.</p>
+                  </div>
 
-                    return (
-                      <button
-                        key={i}
-                        onClick={() => setCarrierIdx(i)}
-                        className={`w-full text-left px-4 py-3.5 transition-all ${selected ? 'bg-primary/5' : 'hover:bg-accent/30'}`}
-                      >
-                        {/* Row 1: Name + status */}
-                        <div className="flex items-center justify-between gap-3 mb-2">
-                          <div className="min-w-0 flex items-center gap-2">
-                            {selected && <div className="w-1 h-8 rounded-full bg-primary shrink-0" />}
-                            <div className="min-w-0">
-                              <p className="text-sm font-bold text-foreground truncate">{c.carrier.legalName}</p>
-                              <p className="text-[11px] text-muted-foreground">DOT {c.carrier.dotNumber} · {c.carrier.mcNumber}</p>
+                  {/* Result cards */}
+                  <div className="border border-border border-t-0 rounded-b-xl bg-card divide-y divide-border overflow-hidden">
+                    {MOCK_CARRIERS.map((c, i) => {
+                      const authorized = c.carrier.allowToOperate === 'Y' && c.authority.commonStatus === 'ACTIVE';
+                      const vOosPass = c.oos.vehicleOosRate < c.oos.vehicleOosRateNationalAvg;
+                      const dOosPass = c.oos.driverOosRate < c.oos.driverOosRateNationalAvg;
+                      const redFlags: string[] = [];
+                      if (c.carrier.outOfService === 'Y') redFlags.push('OOS');
+                      if (!authorized) redFlags.push('Auth');
+                      if (c.safety.rating === 'CONDITIONAL' || c.safety.rating === 'UNSATISFACTORY') redFlags.push('Rating');
+                      if (!vOosPass) redFlags.push('Veh OOS');
+                      if (!dOosPass) redFlags.push('Drv OOS');
+                      if (c.crashes.fatal > 0) redFlags.push('Fatal');
+                      const verdict = redFlags.length === 0 ? 'pass' : redFlags.length <= 2 ? 'caution' : 'fail';
+                      const selected = carrierIdx === i;
+
+                      return (
+                        <button
+                          key={i}
+                          onClick={() => setCarrierIdx(i)}
+                          className={`w-full text-left px-4 py-3.5 transition-all ${selected ? 'bg-primary/5' : 'hover:bg-accent/30'}`}
+                        >
+                          {/* Row 1: Name + status */}
+                          <div className="flex items-center justify-between gap-3 mb-2">
+                            <div className="min-w-0 flex items-center gap-2">
+                              {selected && <div className="w-1 h-8 rounded-full bg-primary shrink-0" />}
+                              <div className="min-w-0">
+                                <p className="text-sm font-bold text-foreground truncate">{c.carrier.legalName}</p>
+                                <p className="text-[11px] text-muted-foreground">DOT {c.carrier.dotNumber} · {c.carrier.mcNumber}</p>
+                              </div>
                             </div>
-                          </div>
-                          <span className={`shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${authorized ? 'bg-primary/10 text-primary' : 'bg-destructive/10 text-destructive'}`}>
-                            {authorized ? <ShieldCheck className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
-                            {authorized ? 'Authorized' : 'Not Auth'}
-                          </span>
-                        </div>
-
-                        {/* Row 2: Inline metrics */}
-                        <div className="flex items-center gap-4 text-[11px] mb-2 ml-3">
-                          <span className={`font-semibold ${vOosPass ? 'text-primary' : 'text-destructive'}`}>
-                            Veh OOS: {c.oos.vehicleOosRate}% <span className="text-muted-foreground font-normal">/ {c.oos.vehicleOosRateNationalAvg}% avg</span>
-                          </span>
-                          <span className="text-border">|</span>
-                          <span className={`font-semibold ${dOosPass ? 'text-primary' : 'text-destructive'}`}>
-                            Drv OOS: {c.oos.driverOosRate}% <span className="text-muted-foreground font-normal">/ {c.oos.driverOosRateNationalAvg}% avg</span>
-                          </span>
-                          <span className="text-border">|</span>
-                          <span className={`font-semibold ${c.crashes.fatal > 0 ? 'text-destructive' : 'text-foreground'}`}>
-                            {c.crashes.total} crashes <span className="text-muted-foreground font-normal">({c.crashes.fatal} fatal)</span>
-                          </span>
-                        </div>
-
-                        {/* Row 3: Chips + verdict */}
-                        <div className="flex items-center gap-2 ml-3 flex-wrap">
-                          {[
-                            { ok: authorized, label: 'Authority' },
-                            { ok: c.carrier.outOfService !== 'Y', label: 'OOS Clear' },
-                            { ok: c.safety.rating !== 'CONDITIONAL' && c.safety.rating !== 'UNSATISFACTORY', label: 'Safety' },
-                            { ok: c.authority.cargoInsurance !== 'N/A' && c.authority.cargoInsurance !== '$0', label: 'Insured' },
-                          ].map((chip) => (
-                            <span
-                              key={chip.label}
-                              className={`inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] font-medium ${chip.ok ? 'bg-primary/10 text-primary' : 'bg-destructive/10 text-destructive'}`}
-                            >
-                              {chip.ok ? <CheckCircle className="w-2.5 h-2.5" /> : <XCircle className="w-2.5 h-2.5" />}
-                              {chip.label}
+                            <span className={`shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${authorized ? 'bg-primary/10 text-primary' : 'bg-destructive/10 text-destructive'}`}>
+                              {authorized ? <ShieldCheck className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
+                              {authorized ? 'Authorized' : 'Not Auth'}
                             </span>
-                          ))}
-                          <span className={`ml-auto inline-flex items-center gap-1 text-[10px] font-bold ${
-                            verdict === 'pass' ? 'text-primary' :
-                            verdict === 'caution' ? 'text-amber-500' :
-                            'text-destructive'
-                          }`}>
-                            {verdict === 'pass' ? <CheckCircle className="w-3 h-3" /> :
-                             verdict === 'caution' ? <AlertTriangle className="w-3 h-3" /> :
-                             <XCircle className="w-3 h-3" />}
-                            {verdict === 'pass' ? 'PASS' : verdict === 'caution' ? 'CAUTION' : 'FAIL'}
-                          </span>
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
+                          </div>
 
-                {/* CTA */}
-                <div className="flex justify-center pt-6">
-                  <button onClick={() => navigate("/site/vetting")} className="tru-ai-cta-btn">
-                    <Radar className="w-5 h-5 text-primary" />
-                    Try Carrier Vetting
-                    <ArrowRight className="w-5 h-5 text-primary" />
-                  </button>
+                          {/* Row 2: Inline metrics */}
+                          <div className="flex items-center gap-4 text-[11px] mb-2 ml-3">
+                            <span className="font-semibold text-foreground">
+                              Veh OOS: {c.oos.vehicleOosRate}% <span className="text-muted-foreground font-normal">/ {c.oos.vehicleOosRateNationalAvg}% avg</span>
+                            </span>
+                            <span className="text-border">|</span>
+                            <span className="font-semibold text-foreground">
+                              Drv OOS: {c.oos.driverOosRate}% <span className="text-muted-foreground font-normal">/ {c.oos.driverOosRateNationalAvg}% avg</span>
+                            </span>
+                            <span className="text-border">|</span>
+                            <span className="font-semibold text-foreground">
+                              {c.crashes.total} crashes <span className="text-muted-foreground font-normal">({c.crashes.fatal} fatal)</span>
+                            </span>
+                          </div>
+
+                          {/* Row 3: Chips + verdict */}
+                          <div className="flex items-center gap-2 ml-3 flex-wrap">
+                            {[
+                              { ok: authorized, label: 'Authority' },
+                              { ok: c.carrier.outOfService !== 'Y', label: 'OOS Clear' },
+                              { ok: c.safety.rating !== 'CONDITIONAL' && c.safety.rating !== 'UNSATISFACTORY', label: 'Safety' },
+                              { ok: c.authority.cargoInsurance !== 'N/A' && c.authority.cargoInsurance !== '$0', label: 'Insured' },
+                            ].map((chip) => (
+                              <span
+                                key={chip.label}
+                                className={`inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] font-medium ${chip.ok ? 'bg-primary/10 text-foreground' : 'bg-destructive/10 text-foreground'}`}
+                              >
+                                {chip.ok ? <CheckCircle className="w-2.5 h-2.5" /> : <XCircle className="w-2.5 h-2.5" />}
+                                {chip.label}
+                              </span>
+                            ))}
+                            <span className={`ml-auto inline-flex items-center gap-1 text-[10px] font-bold text-foreground`}>
+                              {verdict === 'pass' ? <CheckCircle className="w-3 h-3" /> :
+                               verdict === 'caution' ? <AlertTriangle className="w-3 h-3" /> :
+                               <XCircle className="w-3 h-3" />}
+                              {verdict === 'pass' ? 'PASS' : verdict === 'caution' ? 'CAUTION' : 'FAIL'}
+                            </span>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             </div>
