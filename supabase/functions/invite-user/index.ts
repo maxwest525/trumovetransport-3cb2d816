@@ -67,7 +67,7 @@ Deno.serve(async (req) => {
         });
       }
 
-      const validRoles = ["owner", "admin", "manager", "agent"];
+      const validRoles = ["owner", "admin", "manager", "agent", "marketing", "accounting"];
       if (!validRoles.includes(role)) {
         return new Response(JSON.stringify({ error: "Invalid role" }), {
           status: 400,
@@ -84,9 +84,10 @@ Deno.serve(async (req) => {
         });
       }
 
-      // Invite user via admin API
+      // Invite user via admin API — redirects to /set-password so they must create credentials
       const { data: inviteData, error: inviteError } = await adminClient.auth.admin.inviteUserByEmail(email, {
         data: { display_name: display_name || email.split("@")[0] },
+        redirectTo: `${req.headers.get("origin") || "https://trumoveinc.lovable.app"}/set-password`,
       });
 
       if (inviteError) {
