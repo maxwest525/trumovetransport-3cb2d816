@@ -1811,7 +1811,7 @@ export default function Index() {
             </div>
           </section>
 
-          <FeatureTrustStrip />
+          <div className="py-8"><FeatureTrustStrip /></div>
 
           {/* GET IN TOUCH */}
           <section className="tru-ai-steps-section">
