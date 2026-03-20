@@ -1,8 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { useConversation } from '@elevenlabs/react';
-import { Phone, PhoneOff, Send, Clock, Shield, Calculator, MapPin, Calendar, HelpCircle, Package, ScanLine, Video, Mic, Loader2, MessageSquare, FileText, Brain, Sparkles, MessageCircle, ArrowRight } from 'lucide-react';
+import { Phone, Send, Clock, Shield, Calculator, MapPin, Calendar, HelpCircle, Package, ScanLine, Video, Loader2, MessageSquare, FileText, Brain, Sparkles, MessageCircle, ArrowRight } from 'lucide-react';
 import TrudyChatBox from '@/components/TrudyChatBox';
 import AIChatContainer from '@/components/chat/AIChatContainer';
 import { getPageContext } from '@/components/chat/pageContextConfig';
@@ -15,8 +14,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-
-const TRUDY_AGENT_ID = 'agent_0501khwa2t2pfj0s3echetmjhx4n';
 
 const capabilities = [
   { icon: Calculator, label: 'Instant Quotes', desc: 'AI-powered estimates in seconds', tag: 'Most used', href: '/online-estimate' },
