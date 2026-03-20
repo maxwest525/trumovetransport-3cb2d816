@@ -1,14 +1,11 @@
 import { useRef, useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { useConversation } from "@elevenlabs/react";
 import ReactMarkdown from "react-markdown";
 import { RefreshCw, Bot } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import ChatInput from "./ChatInput";
 import TypingIndicator from "./TypingIndicator";
 import { PageContext, QuickAction, detectKeywordContext } from "./pageContextConfig";
 import { cn } from "@/lib/utils";
-import trudyAvatar from "@/assets/trudy-avatar.png";
 
 interface Message {
   id: string;
@@ -23,106 +20,27 @@ interface AIChatContainerProps {
   pageContext?: PageContext;
 }
 
-// Default context fallback
 const defaultContext: PageContext = {
   key: 'general',
-  firstMessage: "Hi! I'm your TruMove AI assistant. I can help you with moving quotes, answer questions about our services, or connect you with a specialist. What can I help you with today?",
+  firstMessage: "Hi! I'm Trudy, your TruMove AI assistant. I can help you with moving questions, explain our services, or connect you with a specialist. What can I help you with today?",
   quickActions: [],
   agentContext: "General moving assistance.",
 };
+
+const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/trudy-chat`;
 
 export default function AIChatContainer({ agentId, onSwitchToQuickQuote, pageContext = defaultContext }: AIChatContainerProps) {
   const navigate = useNavigate();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [isConnecting, setIsConnecting] = useState(false);
-  const [isConnected, setIsConnected] = useState(false);
+  const [conversationHistory, setConversationHistory] = useState<{ role: "user" | "assistant"; content: string }[]>([]);
+  const [isReady, setIsReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isThinking, setIsThinking] = useState(false);
   const [contextualActions, setContextualActions] = useState<QuickAction[]>([]);
-  const hasConnected = useRef(false);
-  const pageContextRef = useRef(pageContext);
+  const hasInitialized = useRef(false);
 
-  // Store pageContext in ref to use in callbacks
-  useEffect(() => {
-    pageContextRef.current = pageContext;
-  }, [pageContext]);
-
-  // ElevenLabs Conversational AI hook
-  const conversation = useConversation({
-    textOnly: true,
-    onConnect: () => {
-      console.log("Connected to ElevenLabs agent");
-      setIsConnected(true);
-      setIsConnecting(false);
-      setError(null);
-      // Add page-specific welcome message
-      addAssistantMessage(pageContextRef.current.firstMessage);
-      // Send contextual update to agent about which page user is on
-      if (pageContextRef.current.agentContext) {
-        conversation.sendContextualUpdate?.(pageContextRef.current.agentContext);
-      }
-    },
-    onDisconnect: () => {
-      console.log("Disconnected from ElevenLabs agent");
-      setIsConnected(false);
-    },
-    onMessage: (message: unknown) => {
-      console.log("Message received:", message);
-      
-      // Type guard for message object - supports both text-only and WebRTC formats
-      const msg = message as { 
-        type?: string; 
-        source?: string;
-        role?: string;
-        message?: string;
-        agent_response_event?: { agent_response?: string }; 
-        agent_response_correction_event?: { corrected_agent_response?: string } 
-      };
-      
-      // Handle text-only agent messages (simpler format)
-      if (msg.source === "ai" && msg.role === "agent" && msg.message) {
-        setIsThinking(false);
-        addAssistantMessage(msg.message);
-        return;
-      }
-      
-      // Handle WebRTC agent responses (original format)
-      if (msg.type === "agent_response") {
-        setIsThinking(false);
-        const agentText = msg.agent_response_event?.agent_response;
-        if (agentText) {
-          addAssistantMessage(agentText);
-        }
-      }
-      
-      // Handle corrected responses (when user interrupts)
-      if (msg.type === "agent_response_correction") {
-        const correctedText = msg.agent_response_correction_event?.corrected_agent_response;
-        if (correctedText) {
-          // Update the last assistant message with corrected content
-          setMessages(prev => {
-            const updated = [...prev];
-            for (let i = updated.length - 1; i >= 0; i--) {
-              if (updated[i].role === "assistant") {
-                updated[i] = { ...updated[i], content: correctedText };
-                break;
-              }
-            }
-            return updated;
-          });
-        }
-      }
-    },
-    onError: (error) => {
-      console.error("ElevenLabs error:", error);
-      setIsConnecting(false);
-      setError("Connection error. Please try again.");
-      setIsThinking(false);
-    },
-  });
-
-  // Auto-scroll to bottom
+  // Auto-scroll
   useEffect(() => {
     const container = messagesEndRef.current?.closest('.chat-messages');
     if (container) {
@@ -130,85 +48,147 @@ export default function AIChatContainer({ agentId, onSwitchToQuickQuote, pageCon
     }
   }, [messages, isThinking]);
 
-  // Connect to ElevenLabs on mount
+  // Initialize with welcome message
   useEffect(() => {
-    if (!hasConnected.current) {
-      hasConnected.current = true;
-      connectToAgent();
+    if (!hasInitialized.current) {
+      hasInitialized.current = true;
+      const welcomeMsg: Message = {
+        id: `msg-${Date.now()}`,
+        role: "assistant",
+        content: pageContext.firstMessage,
+        timestamp: new Date(),
+      };
+      setMessages([welcomeMsg]);
+      setIsReady(true);
     }
-  }, []);
+  }, [pageContext.firstMessage]);
 
-  const connectToAgent = async () => {
-    setIsConnecting(true);
-    setError(null);
+  const handleSend = useCallback(async (text: string) => {
+    if (!text.trim() || isThinking) return;
 
-    try {
-      // Fetch conversation token from edge function
-      const { data, error: fetchError } = await supabase.functions.invoke(
-        "elevenlabs-conversation-token",
-        { body: agentId ? { agentId } : {} }
-      );
-
-      if (fetchError) {
-        console.error("Token fetch error:", fetchError);
-        const errorMsg = fetchError.message || "";
-        if (errorMsg.includes("401") || errorMsg.includes("missing_permissions")) {
-          throw new Error("Trudy is temporarily unavailable. Please try again later.");
-        }
-        throw new Error("Could not connect to Trudy. Please try again.");
-      }
-
-      if (!data?.signed_url) {
-        throw new Error("Could not connect to Trudy. Please try again.");
-      }
-
-      // Start the conversation session with WebSocket (for text-only agents)
-      await conversation.startSession({
-        signedUrl: data.signed_url,
-      });
-    } catch (err) {
-      console.error("Connection error:", err);
-      setIsConnecting(false);
-      setError(err instanceof Error ? err.message : "Failed to connect");
-    }
-  };
-
-  const addAssistantMessage = useCallback((content: string) => {
-    setMessages(prev => [...prev, {
-      id: `msg-${Date.now()}-${Math.random()}`,
-      role: "assistant",
-      content,
-      timestamp: new Date(),
-    }]);
-  }, []);
-
-  const handleSend = useCallback((text: string) => {
-    if (!isConnected || !text.trim()) return;
-
-    // Add user message
-    setMessages(prev => [...prev, {
-      id: `msg-${Date.now()}-${Math.random()}`,
+    // Add user message to UI
+    const userMsg: Message = {
+      id: `msg-${Date.now()}-user`,
       role: "user",
       content: text,
       timestamp: new Date(),
-    }]);
+    };
+    setMessages(prev => [...prev, userMsg]);
 
-    // Detect keywords and update contextual actions
+    // Detect keywords for contextual actions
     const keywordContext = detectKeywordContext(text);
     if (keywordContext) {
       setContextualActions(keywordContext.quickReplies);
-      // Send contextual hint to agent
-      conversation.sendContextualUpdate?.(keywordContext.agentHint);
     } else {
       setContextualActions([]);
     }
 
-    // Show thinking indicator
+    // Build conversation history for API
+    const updatedHistory = [...conversationHistory, { role: "user" as const, content: text }];
+    setConversationHistory(updatedHistory);
     setIsThinking(true);
+    setError(null);
 
-    // Send to ElevenLabs
-    conversation.sendUserMessage(text);
-  }, [isConnected, conversation]);
+    let assistantSoFar = "";
+
+    try {
+      const resp = await fetch(CHAT_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+        body: JSON.stringify({
+          messages: updatedHistory,
+          pageContext: pageContext.agentContext,
+        }),
+      });
+
+      if (!resp.ok) {
+        const errData = await resp.json().catch(() => ({ error: "Connection error" }));
+        throw new Error(errData.error || "Failed to connect");
+      }
+
+      if (!resp.body) throw new Error("No response stream");
+
+      const reader = resp.body.getReader();
+      const decoder = new TextDecoder();
+      let textBuffer = "";
+      let streamDone = false;
+
+      const upsertAssistant = (nextChunk: string) => {
+        assistantSoFar += nextChunk;
+        setMessages(prev => {
+          const last = prev[prev.length - 1];
+          if (last?.role === "assistant" && last.id.includes("-stream")) {
+            return prev.map((m, i) => (i === prev.length - 1 ? { ...m, content: assistantSoFar } : m));
+          }
+          return [...prev, { id: `msg-${Date.now()}-stream`, role: "assistant", content: assistantSoFar, timestamp: new Date() }];
+        });
+      };
+
+      while (!streamDone) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        textBuffer += decoder.decode(value, { stream: true });
+
+        let newlineIndex: number;
+        while ((newlineIndex = textBuffer.indexOf("\n")) !== -1) {
+          let line = textBuffer.slice(0, newlineIndex);
+          textBuffer = textBuffer.slice(newlineIndex + 1);
+
+          if (line.endsWith("\r")) line = line.slice(0, -1);
+          if (line.startsWith(":") || line.trim() === "") continue;
+          if (!line.startsWith("data: ")) continue;
+
+          const jsonStr = line.slice(6).trim();
+          if (jsonStr === "[DONE]") {
+            streamDone = true;
+            break;
+          }
+
+          try {
+            const parsed = JSON.parse(jsonStr);
+            const content = parsed.choices?.[0]?.delta?.content as string | undefined;
+            if (content) {
+              setIsThinking(false);
+              upsertAssistant(content);
+            }
+          } catch {
+            textBuffer = line + "\n" + textBuffer;
+            break;
+          }
+        }
+      }
+
+      // Final flush
+      if (textBuffer.trim()) {
+        for (let raw of textBuffer.split("\n")) {
+          if (!raw) continue;
+          if (raw.endsWith("\r")) raw = raw.slice(0, -1);
+          if (raw.startsWith(":") || raw.trim() === "") continue;
+          if (!raw.startsWith("data: ")) continue;
+          const jsonStr = raw.slice(6).trim();
+          if (jsonStr === "[DONE]") continue;
+          try {
+            const parsed = JSON.parse(jsonStr);
+            const content = parsed.choices?.[0]?.delta?.content as string | undefined;
+            if (content) upsertAssistant(content);
+          } catch { /* ignore */ }
+        }
+      }
+
+      // Save assistant response to conversation history
+      if (assistantSoFar) {
+        setConversationHistory(prev => [...prev, { role: "assistant", content: assistantSoFar }]);
+      }
+    } catch (err) {
+      console.error("Trudy chat error:", err);
+      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+    } finally {
+      setIsThinking(false);
+    }
+  }, [conversationHistory, isThinking, pageContext.agentContext]);
 
   const handleQuickAction = useCallback((quickAction: QuickAction) => {
     switch (quickAction.action) {
@@ -216,17 +196,13 @@ export default function AIChatContainer({ agentId, onSwitchToQuickQuote, pageCon
         onSwitchToQuickQuote?.();
         break;
       case 'navigate':
-        if (quickAction.target) {
-          navigate(quickAction.target);
-        }
+        if (quickAction.target) navigate(quickAction.target);
         break;
       case 'call':
         window.location.href = "tel:+18001234567";
         break;
       case 'message':
-        if (quickAction.message) {
-          handleSend(quickAction.message);
-        }
+        if (quickAction.message) handleSend(quickAction.message);
         break;
     }
   }, [navigate, onSwitchToQuickQuote, handleSend]);
@@ -242,8 +218,8 @@ export default function AIChatContainer({ agentId, onSwitchToQuickQuote, pageCon
           <div className="chat-header-info">
             <span className="chat-header-name">Trudy with TruMove</span>
             <span className="chat-header-status">
-              <span className={cn("chat-status-dot", isConnected && "bg-sky-500")}></span>
-              {isConnecting ? "Connecting..." : isConnected ? "Online" : "Offline"}
+              <span className={cn("chat-status-dot", isReady && "bg-sky-500")}></span>
+              {isReady ? "Online" : "Starting..."}
             </span>
           </div>
         </div>
@@ -251,25 +227,15 @@ export default function AIChatContainer({ agentId, onSwitchToQuickQuote, pageCon
 
       {/* Messages */}
       <div className="chat-messages">
-        {/* Connection State */}
-        {isConnecting && messages.length === 0 && (
-          <div className="flex items-center justify-center py-8">
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <RefreshCw className="w-4 h-4 animate-spin" />
-              <span>Connecting to AI assistant...</span>
-            </div>
-          </div>
-        )}
-
         {/* Error State */}
         {error && (
-          <div className="flex flex-col items-center justify-center py-8 gap-3">
-            <p className="text-destructive text-sm">{error}</p>
+          <div className="flex flex-col items-center justify-center py-4 gap-2 px-4">
+            <p className="text-destructive text-sm text-center">{error}</p>
             <button
-              onClick={connectToAgent}
+              onClick={() => setError(null)}
               className="px-4 py-2 text-sm bg-foreground text-background rounded-lg hover:bg-foreground/90 transition-colors"
             >
-              Try Again
+              Dismiss
             </button>
           </div>
         )}
@@ -296,10 +262,9 @@ export default function AIChatContainer({ agentId, onSwitchToQuickQuote, pageCon
         {/* Thinking Indicator */}
         {isThinking && <TypingIndicator />}
 
-        {/* Quick Actions - shown after initial connection OR based on user message keywords */}
-        {isConnected && !isThinking && (
+        {/* Quick Actions */}
+        {isReady && !isThinking && (
           <>
-            {/* Initial page-context actions (only after first message) */}
             {messages.length === 1 && pageContext.quickActions.length > 0 && contextualActions.length === 0 && (
               <div className="flex flex-wrap gap-2 px-4 py-3">
                 {pageContext.quickActions.map((action, index) => {
@@ -310,8 +275,8 @@ export default function AIChatContainer({ agentId, onSwitchToQuickQuote, pageCon
                       onClick={() => handleQuickAction(action)}
                       className={cn(
                         "inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full transition-colors",
-                        index === 0 
-                          ? "bg-foreground/10 text-foreground hover:bg-foreground/20" 
+                        index === 0
+                          ? "bg-foreground/10 text-foreground hover:bg-foreground/20"
                           : "bg-muted text-muted-foreground hover:bg-accent"
                       )}
                     >
@@ -322,8 +287,7 @@ export default function AIChatContainer({ agentId, onSwitchToQuickQuote, pageCon
                 })}
               </div>
             )}
-            
-            {/* Contextual actions based on detected keywords */}
+
             {contextualActions.length > 0 && (
               <div className="flex flex-wrap gap-2 px-4 py-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
                 <span className="text-[10px] text-muted-foreground uppercase tracking-wider w-full mb-1">Suggested for you</span>
@@ -334,12 +298,12 @@ export default function AIChatContainer({ agentId, onSwitchToQuickQuote, pageCon
                       key={action.id}
                       onClick={() => {
                         handleQuickAction(action);
-                        setContextualActions([]); // Clear after selection
+                        setContextualActions([]);
                       }}
                       className={cn(
                         "inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full transition-colors",
-                        index === 0 
-                          ? "bg-foreground/10 text-foreground hover:bg-foreground/20 ring-1 ring-foreground/20" 
+                        index === 0
+                          ? "bg-foreground/10 text-foreground hover:bg-foreground/20 ring-1 ring-foreground/20"
                           : "bg-muted text-muted-foreground hover:bg-accent"
                       )}
                     >
@@ -356,13 +320,12 @@ export default function AIChatContainer({ agentId, onSwitchToQuickQuote, pageCon
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input Area */}
+      {/* Input */}
       <ChatInput
-        placeholder={isConnected ? "Ask me anything about your move..." : "Connecting..."}
+        placeholder="Ask me anything about your move..."
         onSend={handleSend}
-        disabled={!isConnected || isThinking}
+        disabled={isThinking}
       />
-
     </div>
   );
 }
