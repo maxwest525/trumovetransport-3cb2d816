@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Truck, Sparkles, Hand, ChevronRight, ChevronLeft } from 'lucide-react';
+import { Sparkles, Hand, ChevronRight, ChevronLeft } from 'lucide-react';
 import ChatModal from './chat/ChatModal';
 import { useIsMobile } from '@/hooks/use-mobile';
+import trudyAvatar from '@/assets/trudy-avatar.png';
 
 interface FloatingTruckChatProps {
   className?: string;
@@ -111,9 +112,11 @@ export default function FloatingTruckChat({ className = '' }: FloatingTruckChatP
         `}
         aria-label="Trudy AI Moving Helper"
       >
-        <div className="relative flex items-center justify-center w-10 h-10 rounded-full bg-background/20 border border-background/30">
-          <Truck className="w-5 h-5 text-background animate-truck-bounce" />
-          <Sparkles className="absolute -top-1 -right-1 w-3.5 h-3.5 text-background animate-pulse" />
+        <div className="relative flex items-center justify-center w-10 h-10 rounded-full overflow-hidden border border-background/30 bg-background/20">
+          <img src={trudyAvatar} alt="Trudy" className="h-full w-full object-cover" />
+          <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary ring-2 ring-foreground">
+            <Sparkles className="h-2.5 w-2.5 text-primary-foreground" />
+          </span>
         </div>
         
         <div className="flex flex-col items-start">
