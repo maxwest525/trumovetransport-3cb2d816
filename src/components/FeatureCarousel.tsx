@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from "@/components/ui/carousel";
 import { Dialog, DialogContent, DialogClose, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { X, Sparkles } from "lucide-react";
+import { X, Truck, MessageCircle, Sparkles } from "lucide-react";
 
 // Preview images
 import previewAiScanner from "@/assets/preview-ai-scanner.jpg";
@@ -13,19 +13,6 @@ import sampleRoomLiving from "@/assets/sample-room-living.jpg";
 import scanRoomPreview from "@/assets/scan-room-preview.jpg";
 import trudyAvatar from "@/assets/trudy-avatar.png";
 
-const TrudyAvatarIcon = () => (
-  <div className="relative w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-primary/5 rounded-lg">
-    <div className="relative">
-      <div className="h-16 w-16 rounded-2xl overflow-hidden ring-4 ring-primary/10">
-        <img src={trudyAvatar} alt="Trudy AI" className="h-full w-full object-cover" />
-      </div>
-      <div className="absolute -top-1 -right-1 bg-primary text-primary-foreground p-1.5 rounded-lg shadow-lg">
-        <Sparkles className="h-4 w-4" />
-      </div>
-    </div>
-  </div>
-);
-
 type Feature = {
   title: string;
   desc: string;
@@ -34,6 +21,20 @@ type Feature = {
   route?: string;
   action?: "openChat";
 };
+
+// Truck with chat bubbles icon for Trudy AI card
+const TruckChatIcon = () => (
+  <div className="relative w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-primary/5 rounded-lg">
+    <div className="relative">
+      <Truck className="w-16 h-16 text-foreground" />
+      <div className="absolute -top-3 -right-3 flex gap-1">
+        <MessageCircle className="w-6 h-6 text-primary fill-primary/20" />
+        <Sparkles className="w-4 h-4 text-primary animate-pulse" />
+      </div>
+    </div>
+  </div>
+);
+
 
 const features: Feature[] = [
   {
@@ -75,7 +76,7 @@ const features: Feature[] = [
   {
     title: "Trudy AI Assistant",
     desc: "Chat with our AI to get instant answers about your move.",
-    customIcon: <TrudyAvatarIcon />,
+    customIcon: <TruckChatIcon />,
     action: "openChat",
   },
 ];
