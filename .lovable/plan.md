@@ -1,31 +1,56 @@
 
 
-## Contact Section Redesign
+## Carrier Vetting Section Redesign
 
-### Problem
-The "Contact Us" section has excessive whitespace and inconsistent styling compared to the other homepage sections (Shipment Tracking, Scan/Estimate). The "Call Now" CTA uses a different style than the `tru-ai-cta-btn` pattern used elsewhere.
+Replace the current static stats dump with an interactive mini FMCSA lookup demo. Users pick from 3 sample carriers and see a tight, scannable result card.
 
-### Plan
+### Layout
 
-**1. Match section structure to other homepage sections**
-- Use the same `tru-ai-steps-section` wrapper with consistent padding
-- Use `tru-ai-main-headline` and `tru-ai-headline-accent` classes for the heading (same as "Real-Time Shipment Tracking" and "Scan. Add. Estimate.")
-- Reduce `mb-10` gap between headline and content to `mb-6`
+```text
+┌─────────────────────────────────────────────────┐
+│  Carrier Vetting.                               │
+│  Search any carrier. Red flags surfaced instant. │
+│                                                  │
+│  ┌──────────┐ ┌──────────┐ ┌──────────┐        │
+│  │ Sunrise  │ │ Fast &   │ │ Regional │        │
+│  │ Movers ✓ │ │ Cheap ✗  │ │ Van Lines│        │
+│  │ Safe     │ │ Flagged  │ │ Mixed    │        │
+│  └──────────┘ └──────────┘ └──────────┘        │
+│                                                  │
+│  ┌─ Selected Carrier Result Card ─────────────┐ │
+│  │ Name / DOT / MC / Status badge             │ │
+│  │                                             │ │
+│  │ 3-col: Vehicle OOS | Driver OOS | Crashes  │ │
+│  │                                             │ │
+│  │ Pass/Fail chips: Insurance, BOC-3, OOS     │ │
+│  │                                             │ │
+│  │ Overall verdict: PASS / CAUTION / FAIL     │ │
+│  └─────────────────────────────────────────────┘ │
+│                                                  │
+│  [ Try Carrier Vetting → ]                      │
+└─────────────────────────────────────────────────┘
+```
 
-**2. Restyle "Call Now" CTA to match `tru-ai-cta-btn`**
-- Replace the custom rounded-full black button with the `tru-ai-cta-btn` class
-- Green Phone icon on left, green ArrowRight on right — same pattern as "Track Shipment" and "Start Scanning"
+### What changes
 
-**3. Make it special — add a subtle differentiator**
-- Give the contact card a soft green gradient border glow (using the brand green) to make it feel like a premium, inviting section distinct from the feature sections
-- Add a subtle pulsing green dot next to the headline text reading "We're Online" to signal availability and urgency
-- Keep the agent photo but add a subtle fade-in animation
+**File: `src/pages/Index.tsx` (lines 1677-1766)**
 
-**4. Tighten internal spacing**
-- Reduce card padding from `p-6` to `p-5`
-- Reduce form textarea `min-h` from 120px to 100px
-- Tighten gaps between contact option buttons
+1. **Three clickable carrier selector cards** at the top — uses data from `mockCarriers.ts` (good, bad, mixed). Each card shows the carrier name, a short status label (e.g., "Safe", "Flagged", "Mixed"), and a color-coded left border (green/red/amber). Selected card gets a highlighted ring.
 
-### Files to edit
-- `src/pages/Index.tsx` — section structure, classes, CTA button, spacing, online indicator
+2. **Result card below** — rendered based on which carrier is selected (default: the good one). Drastically simplified from current version:
+   - **Header row**: Legal name, DOT/MC numbers, authority status badge (green "Authorized" or red "Not Authorized")
+   - **3-column stat row**: Vehicle OOS rate vs national avg, Driver OOS rate vs national avg, Total crashes — each with a simple pass/fail color
+   - **Compliance chips row**: 3-4 badges for key checks (Insurance, BOC-3, OOS orders, Safety rating) — green check or red X per item
+   - **Overall verdict banner**: A single-line summary like "No red flags detected" (green) or "3 red flags found" (red) with appropriate icon
+
+3. **Remove** the CSA BASIC progress bars — too dense for a homepage preview. Keep it to the 6-8 most impactful data points only.
+
+4. **Add `useState`** to track selected carrier index, defaulting to 0 (good carrier).
+
+### Technical details
+
+- Import `MOCK_CARRIERS` from `@/data/mockCarriers` — already has good/bad/mixed carrier data with OOS rates, crash counts, authority status, etc.
+- Derive pass/fail from existing data: `vehicleOosRate < vehicleOosRateNationalAvg`, `allowToOperate === 'Y'`, crash fatalities, etc.
+- Red flag count computed from: OOS status, inactive authority, conditional/unsatisfactory rating, high OOS rates, fatal crashes, low insurance.
+- Keep the "Try Carrier Vetting" CTA at the bottom.
 
