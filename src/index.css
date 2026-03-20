@@ -6521,7 +6521,7 @@
   align-items: center;
   justify-content: center;
   padding: 14px 20px;
-  background: hsl(var(--tm-ink));
+  background: hsl(0 0% 0%);
   border-bottom: 2px solid hsl(var(--primary));
   position: relative;
 }
