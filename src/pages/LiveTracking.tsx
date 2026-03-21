@@ -346,85 +346,12 @@ export default function LiveTracking() {
     localStorage.removeItem('trumove_last_tracking');
   };
 
-  // Fetch Google Routes data for traffic & toll info
+  // Reset legacy route metadata when the route is cleared.
   useEffect(() => {
     if (!originCoords || !destCoords) {
       setGoogleRouteData({ trafficInfo: null, tollInfo: null, etaFormatted: null });
-      return;
     }
-
-    const fetchGoogleRoutes = async () => {
-      try {
-        const { data, error } = await supabase.functions.invoke('google-routes', {
-          body: {
-            origin: { lat: originCoords[1], lng: originCoords[0] },
-            destination: { lat: destCoords[1], lng: destCoords[0] },
-            departureTime: new Date().toISOString(),
-            computeAlternatives: true,
-          },
-        });
-
-        if (error || data?.fallback) {
-          console.log('Google Routes fallback mode');
-          // Still set basic routeData for static map fallback
-          if (useStaticMap && !routeData) {
-            // Calculate approximate distance and duration
-            const latDiff = destCoords[1] - originCoords[1];
-            const lngDiff = destCoords[0] - originCoords[0];
-            const approxDistanceMiles = Math.sqrt(latDiff * latDiff + lngDiff * lngDiff) * 69;
-            const approxDurationSeconds = approxDistanceMiles * 60; // ~1 min per mile
-            
-            setRouteData({
-              coordinates: [originCoords, destCoords],
-              distance: approxDistanceMiles,
-              duration: approxDurationSeconds,
-            });
-            setRouteCoordinates([originCoords, destCoords]);
-          }
-          return;
-        }
-
-        if (data?.success && data?.route) {
-          setGoogleRouteData({
-            trafficInfo: data.route.traffic,
-            tollInfo: data.route.tolls,
-            etaFormatted: data.route.etaFormatted,
-            alternateRoutes: data.alternateRoutes || [],
-            isFuelEfficient: data.route.isFuelEfficient || false,
-          });
-          
-          // Also set routeData for static map mode
-          if (useStaticMap && !routeData && data.route.distanceMeters && data.route.durationSeconds) {
-            setRouteData({
-              coordinates: [originCoords, destCoords],
-              distance: data.route.distanceMeters / 1609.34, // meters to miles
-              duration: data.route.durationSeconds,
-            });
-            setRouteCoordinates([originCoords, destCoords]);
-          }
-        }
-      } catch (err) {
-        console.error('Failed to fetch Google Routes:', err);
-        
-        // Fallback for static map mode
-        if (useStaticMap && !routeData) {
-          const latDiff = destCoords[1] - originCoords[1];
-          const lngDiff = destCoords[0] - originCoords[0];
-          const approxDistanceMiles = Math.sqrt(latDiff * latDiff + lngDiff * lngDiff) * 69;
-          const approxDurationSeconds = approxDistanceMiles * 60;
-          
-          setRouteData({
-            coordinates: [originCoords, destCoords],
-            distance: approxDistanceMiles,
-            duration: approxDurationSeconds,
-          });
-          setRouteCoordinates([originCoords, destCoords]);
-        }
-      }
-    };
-
-    fetchGoogleRoutes();
-  }, [originCoords, destCoords, useStaticMap, routeData]);
+  }, [originCoords, destCoords]);
 
   // Set animation speed - ALWAYS real-time based on actual route duration
   useEffect(() => {
