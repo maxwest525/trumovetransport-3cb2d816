@@ -337,14 +337,6 @@ export function TruckTrackingMap({
 
       <TrafficLegend isVisible={isTracking} />
 
-      {isTracking && (
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-[1000]">
-          <div className="px-6 py-3 bg-black/80 backdrop-blur-md border border-white/10 rounded-full flex items-center gap-3">
-            {internalFollowMode && <Navigation className="w-4 h-4 text-primary animate-pulse" />}
-            <span className="text-sm font-semibold text-white">{Math.round(progress)}% Complete</span>
-          </div>
-        </div>
-      )}
 
       {currentTruckPosition && (
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[1001] pointer-events-none">
