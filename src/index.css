@@ -32474,15 +32474,15 @@ gmp-map-3d-element .gmnoprint {
 .cal-embed-container iframe {
   width: 100%;
   border: 0;
-  height: 700px;
-  min-height: 600px;
+  height: 520px;
+  min-height: 460px;
   display: block;
 }
 
 @media (min-width: 768px) {
   .cal-embed-container iframe {
-    height: 920px;
-    min-height: 850px;
+    height: 660px;
+    min-height: 600px;
   }
 }
 
