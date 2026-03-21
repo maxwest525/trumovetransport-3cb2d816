@@ -15,7 +15,7 @@ import HeroParticles from "@/components/HeroParticles";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import LeadCaptureModal from "@/components/LeadCaptureModal";
 // Static Street View preview used instead of interactive component
-import StatsStrip from "@/components/StatsStrip";
+// StatsStrip removed — trust items inlined in hero
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 
 import logoImg from "@/assets/logo.png";
