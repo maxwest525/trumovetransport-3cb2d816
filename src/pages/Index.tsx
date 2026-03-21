@@ -1392,8 +1392,8 @@ export default function Index() {
                 </div>
               </div>
             </div>
-          </div>
-        </section>
+          </section>
+        </div> {/* End tru-hero-wrapper */}
 
           {/* START YOUR AI INVENTORY ANALYSIS - Enhanced with Preview */}
            <section className="py-10 md:py-16 relative overflow-hidden">
