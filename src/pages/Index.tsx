@@ -18,8 +18,6 @@ import LocationAutocomplete from "@/components/LocationAutocomplete";
 import LeadCaptureModal from "@/components/LeadCaptureModal";
 import RouteAnalysisSection from "@/components/RouteAnalysisSection";
 // Static Street View preview used instead of interactive component
-import FeatureCarousel from "@/components/FeatureCarousel";
-import FeatureTrustStrip from "@/components/FeatureTrustStrip";
 import StatsStrip from "@/components/StatsStrip";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 
