@@ -1166,7 +1166,7 @@ export default function Index() {
                             value={contactPhone}
                             onChange={(e) => setContactPhone(formatPhoneNumber(e.target.value))}
                             placeholder="Phone"
-                            className="w-full rounded-lg border border-border bg-background pl-9 pr-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
+                            className="w-full rounded-lg border border-border bg-background pl-9 pr-3 py-2.5 text-sm text-foreground text-center placeholder:text-muted-foreground placeholder:text-center focus:outline-none focus:ring-1 focus:ring-primary" />
                           </div>
                           <div className="relative">
                             <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary" />
