@@ -22800,8 +22800,8 @@
 }
 
 .tru-vetting-secondary-btn:hover {
-  border-color: hsl(var(--tm-ink) / 0.25);
-  box-shadow: 0 0 8px hsl(var(--tm-ink) / 0.06);
+  border-color: hsl(var(--foreground) / 0.25);
+  box-shadow: 0 0 8px hsl(var(--foreground) / 0.06);
   transform: translateY(-1px);
 }
 
