@@ -1552,7 +1552,7 @@ export default function Index() {
             </div>
           </section>
 
-          
+                  </div>
 
           {/* GET IN TOUCH */}
           <section className="py-14 md:py-20 relative overflow-hidden">
