@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useRef, useMemo } from "react";
-import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Calendar, Box, AlertTriangle, ChevronDown, ChevronRight, ChevronLeft, ChevronUp, Map, Layers, Globe, Navigation2, Sparkles, Scale, Route, Crosshair, ShieldCheck, Cloud, ArrowRight, Headphones, Shield, Satellite, Phone } from "lucide-react";
+import { MapPin, Play, Pause, RotateCcw, ChevronDown, Sparkles, Scale, Cloud, ArrowRight, ShieldCheck, Truck, Headphones, Shield, Phone } from "lucide-react";
 import { format } from "date-fns";
 import { ScrollFadeIn } from "@/hooks/useScrollFadeIn";
 import { TruckTrackingMap } from "@/components/tracking/TruckTrackingMap";
