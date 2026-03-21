@@ -3494,7 +3494,7 @@
 
 .tru-ai-live-inventory {
   background: hsl(var(--card));
-  border: 2px solid hsl(0 0% 0%);
+  border: 1px solid hsl(var(--border));
   border-radius: 12px;
   padding: 12px;
   display: flex;
@@ -3504,9 +3504,8 @@
   min-height: var(--demo-panel-height);
   max-height: var(--demo-panel-height);
   box-shadow:
-    0 4px 20px hsl(0 0% 0% / 0.5),
-    0 8px 40px hsl(0 0% 0% / 0.3),
-    inset 0 2px 8px hsl(0 0% 0% / 0.15);
+    0 4px 20px hsl(0 0% 0% / 0.15),
+    0 8px 40px hsl(0 0% 0% / 0.08);
 }
 
 .tru-ai-live-header {
