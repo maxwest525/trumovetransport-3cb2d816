@@ -5,7 +5,7 @@ import SiteShell from "@/components/layout/SiteShell";
 export default function Terms() {
   useEffect(() => { window.scrollTo(0, 0); }, []);
   return (
-    <SiteShell>
+    <SiteShell hideTrustStrip>
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full bg-primary/[0.06] blur-[120px]" />
