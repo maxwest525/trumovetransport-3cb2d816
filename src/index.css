@@ -23178,12 +23178,12 @@
 .tru-vetting-testimonial-name {
   font-size: 14px;
   font-weight: 700;
-  color: hsl(var(--tm-ink));
+  color: hsl(var(--foreground));
 }
 
 .tru-vetting-testimonial-location {
   font-size: 12px;
-  color: hsl(var(--tm-ink) / 0.5);
+  color: hsl(var(--muted-foreground));
 }
 
 /* CTA Section */
