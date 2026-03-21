@@ -51,38 +51,66 @@ function TypingIndicator() {
   );
 }
 
-function MessageBubble({ message, isLast }: { message: Message; isLast: boolean }) {
+function getSuggestions(content: string): string[] {
+  const lower = content.toLowerCase();
+  if (lower.includes('quote') || lower.includes('estimate') || lower.includes('price'))
+    return ['How much for a local move?', 'What affects the price?'];
+  if (lower.includes('track') || lower.includes('shipment') || lower.includes('status'))
+    return ['When will it arrive?', 'Can I get updates via text?'];
+  if (lower.includes('schedule') || lower.includes('book') || lower.includes('date'))
+    return ['What dates are available?', 'Can I reschedule?'];
+  if (lower.includes('carrier') || lower.includes('safety') || lower.includes('insurance'))
+    return ['How do you vet carriers?', 'Is my stuff insured?'];
+  return ['Get a moving quote', 'How does it work?'];
+}
+
+function MessageBubble({ message, isLast, onSuggestionClick }: { message: Message; isLast: boolean; onSuggestionClick?: (s: string) => void }) {
   const isTrudy = message.role === 'trudy';
   return (
-    <div
-      className={`flex items-end gap-2.5 ${isTrudy ? '' : 'flex-row-reverse'} ${
-        isLast ? 'animate-in fade-in slide-in-from-bottom-3 duration-300' : ''
-      }`}
-    >
-      {isTrudy ? (
-        <div className="w-7 h-7 rounded-full bg-foreground/[0.06] border border-foreground/10 flex items-center justify-center flex-shrink-0">
-          <Bot className="w-3.5 h-3.5 text-foreground/60" />
-        </div>
-      ) : (
-        <div className="w-7 h-7 rounded-full bg-foreground text-background flex items-center justify-center flex-shrink-0">
-          <User className="w-3.5 h-3.5" />
-        </div>
-      )}
+    <div className="space-y-2">
       <div
-        className={`max-w-[75%] px-3.5 py-2.5 text-[13px] leading-relaxed ${
-          isTrudy
-            ? 'bg-muted/60 border border-border/60 text-foreground rounded-2xl rounded-bl-md'
-            : 'bg-foreground text-background rounded-2xl rounded-br-md shadow-[0_2px_8px_-2px_hsl(var(--foreground)/0.25)]'
+        className={`flex items-end gap-2.5 ${isTrudy ? '' : 'flex-row-reverse'} ${
+          isLast ? 'animate-in fade-in slide-in-from-bottom-3 duration-300' : ''
         }`}
       >
         {isTrudy ? (
-          <div className="prose prose-sm dark:prose-invert max-w-none">
-            <ReactMarkdown>{message.content}</ReactMarkdown>
+          <div className="w-7 h-7 rounded-full bg-foreground/[0.06] border border-foreground/10 flex items-center justify-center flex-shrink-0">
+            <Bot className="w-3.5 h-3.5 text-foreground/60" />
           </div>
         ) : (
-          message.content
+          <div className="w-7 h-7 rounded-full bg-foreground text-background flex items-center justify-center flex-shrink-0">
+            <User className="w-3.5 h-3.5" />
+          </div>
         )}
+        <div
+          className={`max-w-[75%] px-3.5 py-2.5 text-[13px] leading-relaxed ${
+            isTrudy
+              ? 'bg-muted/60 border border-border/60 text-foreground rounded-2xl rounded-bl-md'
+              : 'bg-foreground text-background rounded-2xl rounded-br-md shadow-[0_2px_8px_-2px_hsl(var(--foreground)/0.25)]'
+          }`}
+        >
+          {isTrudy ? (
+            <div className="prose prose-sm dark:prose-invert max-w-none">
+              <ReactMarkdown>{message.content}</ReactMarkdown>
+            </div>
+          ) : (
+            message.content
+          )}
+        </div>
       </div>
+      {isTrudy && isLast && message.suggestions && message.suggestions.length > 0 && (
+        <div className="ml-9 flex flex-wrap gap-1.5 animate-in fade-in duration-500 delay-300">
+          {message.suggestions.map((s) => (
+            <button
+              key={s}
+              onClick={() => onSuggestionClick?.(s)}
+              className="text-[11px] font-medium text-foreground/70 bg-muted/60 hover:bg-foreground hover:text-background border border-border/60 hover:border-foreground px-2.5 py-1.5 rounded-full transition-all duration-200"
+            >
+              {s}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
