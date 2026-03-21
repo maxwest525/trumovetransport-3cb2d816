@@ -2911,144 +2911,12 @@
   border: 1px solid hsl(var(--tm-ink) / 0.15);
 }
 
-.tru-ai-main-headline {
-  font-size: 2.75rem;
-  font-weight: 900;
-  line-height: 1.1;
-  letter-spacing: -0.03em;
-  color: hsl(var(--foreground));
-  margin: 0;
-  text-align: center;
-}
-
-.tru-ai-headline-accent {
-  color: hsl(var(--foreground));
-  position: relative;
-}
-
-.tru-ai-subheadline {
-  font-size: 15px;
-  line-height: 1.6;
-  color: hsl(var(--muted-foreground));
-  max-width: 340px;
-  margin: 0;
-  text-align: center;
-}
-
-/* Compact Step Pills Row */
-.tru-ai-step-pills {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.tru-ai-step-pill {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 14px;
-  background: hsl(var(--muted) / 0.6);
-  border: 1px solid hsl(var(--border));
-  border-radius: 8px;
-  transition: all 0.2s ease;
-}
-
-.tru-ai-step-pill:hover {
-  border-color: hsl(var(--tm-ink) / 0.2);
-  background: hsl(var(--tm-ink) / 0.04);
-}
-
-.tru-ai-step-num {
-  font-size: 11px;
-  font-weight: 800;
-  color: hsl(var(--tm-ink));
-  font-family: monospace;
-}
-
-.tru-ai-step-label {
-  font-size: 12px;
-  font-weight: 600;
-  color: hsl(var(--foreground));
-}
-
-/* Trust Stats Row */
-.tru-ai-trust-row {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 16px 0;
-  border-top: 1px solid hsl(var(--border) / 0.5);
-  border-bottom: 1px solid hsl(var(--border) / 0.5);
-}
-
-.tru-ai-stat {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.tru-ai-stat-value {
-  font-size: 20px;
-  font-weight: 800;
-  color: hsl(var(--foreground));
-  letter-spacing: -0.02em;
-}
-
-.tru-ai-stat-label {
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: hsl(var(--muted-foreground));
-}
-
-.tru-ai-stat-divider {
-  width: 1px;
-  height: 32px;
-  background: hsl(var(--border));
-}
-
-/* CTA Button - Premium dark, white text/icons, NO green text on hover */
-.tru-ai-cta-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 12px 24px;
-  background: hsl(var(--foreground));
-  color: hsl(var(--background));
-  font-size: 14px;
-  font-weight: 700;
-  border-radius: 10px;
-  border: 2px solid transparent;
-  cursor: pointer;
-  width: auto;
-  text-align: center;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 12px hsl(var(--tm-ink) / 0.15);
-}
-
-.tru-ai-cta-btn:hover {
-  background: hsl(var(--foreground));
-  color: hsl(var(--background));
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px hsl(var(--tm-ink) / 0.2);
-  border-color: hsl(var(--tm-ink) / 0.15);
-}
-
-.tru-ai-cta-btn svg {
-  color: hsl(142 71% 45%);
-}
 
 /* Responsive adjustments for new design */
 @media (max-width: 1400px) {
   .tru-ai-content-left,
   .tru-ai-steps-left {
     width: 18.75rem; /* 300px in rem */
-  }
-  .tru-ai-main-headline {
-    font-size: 2rem;
   }
   .tru-ai-header-previews .tru-ai-live-scanner {
     width: 21.25rem; /* 340px in rem */
@@ -3094,10 +2962,6 @@
   }
   .tru-ai-headline-block {
     align-items: center;
-  }
-  .tru-ai-subheadline {
-    text-align: center;
-    max-width: 26.25rem; /* 420px */
   }
   .tru-ai-step-pills {
     justify-content: center;
@@ -34982,18 +34846,11 @@ gmp-map-3d-element .gmnoprint {
   }
 
   /* --- Proportional headers — responsive sizing --- */
-  .tru-ai-main-headline {
-    font-size: clamp(22px, 6vw, 32px) !important;
-    word-break: break-word !important;
-  }
 
   .tru-ai-section-title {
     font-size: 12px !important;
   }
 
-  .tru-ai-subheadline {
-    font-size: 13px !important;
-  }
 
   .tru-qb-question {
     font-size: 14px !important;
@@ -35518,22 +35375,6 @@ gmp-map-3d-element .gmnoprint {
     padding: 40px 16px !important;
   }
 
-  .tru-ai-headline-block,
-  .tru-ai-subheadline,
-  .tru-ai-main-headline {
-    text-align: center !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-  }
-
-  .tru-ai-main-headline {
-    font-size: clamp(2rem, 8vw, 2.6rem) !important;
-    line-height: 1.05 !important;
-  }
-
-  .tru-ai-subheadline {
-    max-width: 32rem !important;
-  }
 
   .tru-trust-compact,
   .tru-steps-compact {
