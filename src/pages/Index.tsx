@@ -997,19 +997,10 @@ export default function Index() {
       <div className="tru-page-frame">
         <div className="tru-page-inner">
         {/* HERO */}
-        <section className="relative overflow-hidden py-16 md:py-24 lg:py-28">
-          {/* Hero background image with dark overlay */}
-           <div className="absolute inset-0 pointer-events-none">
-            <img src={heroFamilyMove} alt="" className="absolute inset-0 w-full h-full object-cover opacity-20" />
-            <div className="absolute inset-0 bg-background/80" />
-          </div>
-          {/* Textured background */}
-          <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute top-[-100px] right-[-100px] w-[600px] h-[600px] rounded-full bg-primary/[0.06] blur-[120px]" />
-            <div className="absolute bottom-[-50px] left-[-80px] w-[500px] h-[500px] rounded-full bg-primary/[0.04] blur-[100px]" />
-            <div className="absolute inset-0 opacity-[0.025]" style={{ backgroundImage: 'radial-gradient(circle, hsl(var(--foreground)) 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
-            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
-            <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
+        <div className="tru-hero-wrapper">
+          <div className="tru-hero-bg">
+            <img src={heroFamilyMove} alt="" className="tru-hero-bg-image" />
+            <div className="tru-hero-bg-overlay" />
           </div>
 
           <HeroParticles />
@@ -1087,39 +1078,34 @@ export default function Index() {
             </div>
           }
 
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-              {/* LEFT: Headline */}
-              <div className="flex flex-col items-center text-center lg:items-start lg:text-left gap-4" ref={heroContentRef}>
-                <img src={logoImg} alt="TruMove" className="h-16 md:h-20 lg:h-24 w-auto object-contain" />
-                <p className="text-[11px] uppercase tracking-[0.3em] text-primary font-semibold">Premium Moving Brokerage</p>
-                <div className="flex items-center gap-2">
-                  <span className="h-px w-8 bg-primary/40" />
-                  <span className="w-1.5 h-1.5 rounded-full bg-primary/60" />
-                  <span className="h-px w-8 bg-primary/40" />
-                </div>
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground tracking-tight leading-[1.1]">
-                  The Smarter Way To <span className="text-primary">Move.</span>
-                </h1>
-                <ul className="space-y-2.5 mt-2 text-muted-foreground text-sm md:text-base font-light leading-relaxed max-w-lg">
-                  <li className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-primary mt-0.5 shrink-0" />Scan, document, and build your own inventory — your items stay private and secure</li>
-                  <li className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-primary mt-0.5 shrink-0" />Meet your broker virtually, face to face, from anywhere</li>
-                  <li className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-primary mt-0.5 shrink-0" />Track your most valuable belongings every step of the way</li>
-                  <li className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-primary mt-0.5 shrink-0" />See the full history and performance record of your movers</li>
-                </ul>
+          <section className="tru-hero tru-hero-split" ref={heroContentRef}>
 
-                {/* Inline trust strip */}
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-4 text-[10px] uppercase tracking-[0.15em] text-muted-foreground font-medium">
-                  <span className="flex items-center gap-1"><Shield className="w-3 h-3" /> USDOT Compliant</span>
-                  <span className="text-border">•</span>
-                  <span className="flex items-center gap-1"><Star className="w-3 h-3" /> 4.9★ Rating</span>
-                  <span className="text-border">•</span>
-                  <span className="flex items-center gap-1"><Headphones className="w-3 h-3" /> 24/7 Support</span>
-                </div>
+            {/* LEFT COLUMN: Text Content */}
+            <div className="tru-hero-left-column">
+              <img src={logoImg} alt="TruMove" className="tru-hero-logo" />
+              <p className="tru-hero-premium-label">Premium Moving Brokerage</p>
+              <h1 className="tru-hero-headline">
+                The Smarter Way To <span className="tru-hero-accent">Move</span>
+              </h1>
+              <ul className="tru-hero-bullets">
+                <li>Scan, document, and build your own inventory — your items stay private and secure</li>
+                <li>Meet your broker virtually, face to face, from anywhere</li>
+                <li>Track your most valuable belongings every step of the way</li>
+                <li>See the full history and performance record of your movers</li>
+              </ul>
+
+              {/* Inline trust strip */}
+              <div className="tru-hero-trust-strip">
+                <span><Shield className="w-3 h-3" /> USDOT Compliant</span>
+                <span className="tru-hero-trust-dot">•</span>
+                <span><Star className="w-3 h-3" /> 4.9★ Rating</span>
+                <span className="tru-hero-trust-dot">•</span>
+                <span><Headphones className="w-3 h-3" /> 24/7 Support</span>
               </div>
+            </div>
 
-              {/* RIGHT: Form Card */}
-              <div ref={quoteBuilderRef}>
+            {/* RIGHT COLUMN: Form */}
+            <div className="tru-hero-right-column" ref={quoteBuilderRef}>
                 <div className="rounded-2xl ring-1 ring-border bg-card overflow-hidden">
                   {/* Form Header */}
                   <div className="bg-foreground px-6 py-4 text-center">
@@ -1403,11 +1389,10 @@ export default function Index() {
                     <span>•</span>
                     <span className="flex items-center gap-1"><Database className="w-3 h-3" /> First-Party Data</span>
                   </div>
-                </div>
               </div>
             </div>
-          </div>
-        </section>
+          </section>
+        </div> {/* End tru-hero-wrapper */}
 
           {/* START YOUR AI INVENTORY ANALYSIS - Enhanced with Preview */}
            <section className="py-10 md:py-16 relative overflow-hidden">
