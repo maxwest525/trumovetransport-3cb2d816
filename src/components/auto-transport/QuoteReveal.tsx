@@ -278,7 +278,7 @@ export const QuoteReveal = forwardRef<HTMLDivElement, QuoteRevealProps>(
       </section>
 
       {/* Contact section */}
-      <section className="py-4 sm:py-10 md:py-20 relative overflow-hidden">
+      <section id="personalized-rate" className="py-4 sm:py-10 md:py-20 relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
           <div className="absolute bottom-1/3 right-0 w-[400px] h-[400px] rounded-full bg-primary/[0.03] blur-[100px]" />
