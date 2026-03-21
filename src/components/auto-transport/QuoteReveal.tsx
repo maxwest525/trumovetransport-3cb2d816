@@ -321,7 +321,7 @@ export const QuoteReveal = forwardRef<HTMLDivElement, QuoteRevealProps>(
               <div className="rounded-xl border border-border/30 bg-card/50 backdrop-blur-sm p-4 sm:p-6 flex flex-col justify-center relative overflow-hidden">
                 {/* Priority Route Rate ribbon */}
                 <div className="absolute top-0 right-0 z-10 overflow-hidden w-[180px] h-[180px] pointer-events-none">
-                  <div className="absolute top-[28px] right-[-50px] w-[240px] rotate-45 bg-foreground text-background text-[9px] font-bold uppercase tracking-[0.12em] text-center py-1.5 shadow-[0_2px_8px_rgba(0,0,0,0.3)]">
+                  <div className="absolute top-[28px] right-[-50px] w-[240px] rotate-45 bg-foreground text-background text-[9px] font-bold uppercase tracking-[0.12em] text-center py-1.5 shadow-[0_2px_8px_rgba(0,0,0,0.3)] animate-[pulse_2s_cubic-bezier(0.4,0,0.6,1)_infinite]">
                     ⚡ Priority Route Rate
                   </div>
                 </div>
