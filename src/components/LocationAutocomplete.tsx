@@ -279,61 +279,9 @@ async function validateWithGoogle(address: string): Promise<{
   }
 }
 
-// Retrieve full verified address from Mapbox with retry (fallback)
-async function retrieveMapboxAddress(mapboxId: string): Promise<{ address: LocationSuggestion | null; failed: boolean }> {
-  const { result, failed } = await withRetry(async () => {
-    const res = await fetch(
-      `https://api.mapbox.com/search/searchbox/v1/retrieve/${mapboxId}?session_token=${mapboxSessionToken}&access_token=${MAPBOX_TOKEN}`,
-      { headers: { 'Accept': 'application/json' } }
-    );
-    
-    if (!res.ok) {
-      throw new Error(`Mapbox retrieve error: ${res.status}`);
-    }
-    
-    // Generate a new session token after retrieve (billing best practice)
-    mapboxSessionToken = generateSessionToken();
-    
-    return res.json();
-  });
-  
-  if (failed || !result) {
-    return { address: null, failed: true };
-  }
-  
-  const feature = result.features?.[0];
-  if (!feature) {
-    return { address: null, failed: false };
-  }
-  
-  const props = feature.properties;
-  const context = props.context || {};
-  
-  // Build the verified full address
-  const streetAddress = props.name || '';
-  const city = context.place?.name || '';
-  const state = context.region?.region_code || '';
-  const zip = context.postcode?.name || '';
-  const fullAddr = props.full_address || `${streetAddress}, ${city}, ${state} ${zip}`;
-  const displayAddr = fullAddr.replace(', United States', '');
-  
-  // Street-level verification requires an actual street address
-  const hasStreet = streetAddress && !streetAddress.match(/^\d{5}$/) && streetAddress !== city;
-  
-  return {
-    address: {
-      streetAddress,
-      city,
-      state,
-      zip,
-      display: displayAddr, // Full verified address
-      fullAddress: fullAddr,
-      isVerified: hasStreet,
-      validationLevel: hasStreet ? 'verified' : 'partial',
-      mapboxId,
-    },
-    failed: false
-  };
+// Retrieve is no longer needed with MapTiler — return null for compatibility
+async function retrieveMapboxAddress(_mapboxId: string): Promise<{ address: LocationSuggestion | null; failed: boolean }> {
+  return { address: null, failed: true };
 }
 
 // Photon API for city-only search (mode="city") - CORS-friendly, fallback
