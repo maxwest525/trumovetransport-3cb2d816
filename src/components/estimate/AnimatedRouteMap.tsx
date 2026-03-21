@@ -130,10 +130,10 @@ const AnimatedRouteMap: React.FC<AnimatedRouteMapProps> = ({
       scrollWheelZoom={false}
       doubleClickZoom={false}
       touchZoom={false}
-      whenReady={() => onMapReady?.()}
     >
       <TileLayer url={TILE_LAYERS.dark.url} attribution={TILE_LAYERS.dark.attribution} />
       <FitBounds bounds={bounds} />
+      <MapReadyHandler onReady={onMapReady} />
 
       {/* Background route (faint) */}
       {fullRouteLatLng.length >= 2 && (
