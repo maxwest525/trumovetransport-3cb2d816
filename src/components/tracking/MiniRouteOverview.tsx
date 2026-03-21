@@ -53,7 +53,7 @@ export function MiniRouteOverview({
     else if (maxDiff < 6) zoom = 5;
     else zoom = 4;
 
-    const url = `https://api.maptiler.com/maps/satellite/static/auto/${width}x${height}@2x.jpg?key=${MAPTILER_KEY}&markers=${originCoords[0]},${originCoords[1]}|${destCoords[0]},${destCoords[1]}${truckPosition ? `|${truckPosition[0]},${truckPosition[1]}` : ''}&padding=30`;
+    const url = `https://api.maptiler.com/maps/satellite/static/${centerLng},${centerLat},${zoom}/360x240@2x.jpg?key=${MAPTILER_KEY}`;
     
     setImageUrl(url);
   }, [originCoords, destCoords, truckPosition]);
