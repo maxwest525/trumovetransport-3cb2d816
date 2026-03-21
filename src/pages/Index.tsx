@@ -644,6 +644,11 @@ export default function Index() {
   const [activeFeature, setActiveFeature] = useState<number | null>(null);
   const [carrierIdx, setCarrierIdx] = useState(0);
   const [contactMode, setContactMode] = useState<"trudy" | "form">("trudy");
+  const [contactFormName, setContactFormName] = useState("");
+  const [contactFormEmail, setContactFormEmail] = useState("");
+  const [contactFormMessage, setContactFormMessage] = useState("");
+  const [contactFormSending, setContactFormSending] = useState(false);
+  const [contactFormSent, setContactFormSent] = useState(false);
 
   // Why TruMove features data - Updated per plan
   const whyTruMoveFeatures = [
@@ -1727,19 +1732,50 @@ export default function Index() {
                       <div className="flex-1 rounded-xl border border-border overflow-hidden" style={{ height: 320 }}>
                         <AIChatContainer />
                       </div>
+                    ) : contactFormSent ? (
+                      <div className="flex-1 flex flex-col items-center justify-center text-center gap-3 py-8">
+                        <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                          <CheckCircle className="h-6 w-6 text-primary" />
+                        </div>
+                        <h3 className="text-base font-semibold text-foreground">Message Sent!</h3>
+                        <p className="text-xs text-muted-foreground">We'll get back to you within a few hours.</p>
+                        <button onClick={() => { setContactFormSent(false); setContactFormName(""); setContactFormEmail(""); setContactFormMessage(""); }} className="text-xs text-primary underline underline-offset-2 hover:text-primary/80">Send another</button>
+                      </div>
                     ) : (
                       <>
                         <div className="flex flex-col items-center text-center mb-3">
                           <p className="text-xs text-muted-foreground">We'll get back to you within a few hours.</p>
                         </div>
-                        <form className="flex-1 flex flex-col space-y-2.5" onSubmit={(e) => e.preventDefault()}>
+                        <form className="flex-1 flex flex-col space-y-2.5" onSubmit={async (e) => {
+                          e.preventDefault();
+                          if (contactFormSending) return;
+                          setContactFormSending(true);
+                          try {
+                            // Insert into support_tickets
+                            const { supabase } = await import("@/integrations/supabase/client");
+                            await supabase.from("support_tickets").insert({
+                              name: contactFormName,
+                              email: contactFormEmail,
+                              message: contactFormMessage,
+                            });
+                            // Notify via edge function
+                            await supabase.functions.invoke("notify-support-ticket", {
+                              body: { name: contactFormName, email: contactFormEmail, message: contactFormMessage },
+                            });
+                            setContactFormSent(true);
+                          } catch (err) {
+                            console.error("Contact form error:", err);
+                          } finally {
+                            setContactFormSending(false);
+                          }
+                        }}>
                           <div className="grid grid-cols-2 gap-2.5">
-                            <input type="text" required placeholder="Your name" className="w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary text-sm" />
-                            <input type="email" required className="w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary text-sm" placeholder="Email" />
+                            <input type="text" required placeholder="Your name" value={contactFormName} onChange={(e) => setContactFormName(e.target.value)} className="w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary text-sm" />
+                            <input type="email" required placeholder="Email" value={contactFormEmail} onChange={(e) => setContactFormEmail(e.target.value)} className="w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary text-sm" />
                           </div>
-                          <textarea required placeholder="How can we help?" className="w-full flex-1 min-h-[100px] rounded-lg border border-border bg-background px-3 py-2 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary resize-none text-sm" />
-                          <button type="submit" className="w-full bg-foreground text-background py-2.5 rounded-lg text-sm font-semibold hover:bg-foreground/90 transition-colors">
-                            Send Message
+                          <textarea required placeholder="How can we help?" value={contactFormMessage} onChange={(e) => setContactFormMessage(e.target.value)} className="w-full flex-1 min-h-[100px] rounded-lg border border-border bg-background px-3 py-2 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary resize-none text-sm" />
+                          <button type="submit" disabled={contactFormSending} className="w-full bg-foreground text-background py-2.5 rounded-lg text-sm font-semibold hover:bg-foreground/90 transition-colors disabled:opacity-50">
+                            {contactFormSending ? "Sending..." : "Send Message"}
                           </button>
                         </form>
                         <p className="text-center text-[11px] text-muted-foreground mt-2">
