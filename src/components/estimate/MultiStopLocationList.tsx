@@ -18,8 +18,10 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { GripVertical, X, Check, MapPin } from "lucide-react";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
-import { MAPTILER_KEY } from '@/lib/maptilerConfig';
 import { cn } from "@/lib/utils";
+
+// Geoapify API key (publishable)
+const GEOAPIFY_KEY = '196cdbf659334d408ece5c98682f2106';
 
 export interface StopLocation {
   id: string;
