@@ -643,7 +643,7 @@ export default function Index() {
   // Why TruMove feature selection state
   const [activeFeature, setActiveFeature] = useState<number | null>(null);
   const [carrierIdx, setCarrierIdx] = useState(0);
-  // contactMode removed - form only now
+  const [contactMode, setContactMode] = useState<"trudy" | "form">("form");
   const [contactFormName, setContactFormName] = useState("");
   const [contactFormEmail, setContactFormEmail] = useState("");
   const [contactFormMessage, setContactFormMessage] = useState("");
