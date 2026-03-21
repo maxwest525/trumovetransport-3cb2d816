@@ -22952,7 +22952,7 @@
 
 .tru-vetting-float-meta {
   font-size: 10px;
-  color: hsl(var(--tm-ink) / 0.5);
+  color: hsl(var(--muted-foreground));
 }
 
 /* Score Badge */
