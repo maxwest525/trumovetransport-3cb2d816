@@ -920,7 +920,7 @@ export default function Index() {
   // Step 3: Choose estimate method (AI or Manual)
   const canContinue = () => {
     switch (step) {
-      case 1:return fromZip.length === 5 && fromCity && toZip.length === 5 && toCity && moveDate !== null;
+      case 1:return (fromCity || fromZip.length === 5) && (toCity || toZip.length === 5) && moveDate !== null;
       case 2:return name.trim().length >= 2 && email.includes("@") && isValidPhoneNumber(phone);
       case 3:return true; // Always can proceed from method selection
       default:return false;
