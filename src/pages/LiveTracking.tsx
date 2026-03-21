@@ -158,10 +158,7 @@ export default function LiveTracking() {
   // Fallback state
   const [useStaticMap, setUseStaticMap] = useState(false);
   
-  
-  // Route comparison state
-  const [selectedRouteIndex, setSelectedRouteIndex] = useState(0);
-  const [routeComparisonExpanded, setRouteComparisonExpanded] = useState(true);
+   
   
   // Current truck bearing for 3D view
   const [truckBearing, setTruckBearing] = useState(0);
