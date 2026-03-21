@@ -310,7 +310,7 @@ export function TruckTrackingMap({
       <div ref={mapRef} className="w-full h-full" />
 
       {isTracking && (
-        <div className="absolute top-4 left-4 z-[1000] flex gap-2">
+        <div className="absolute top-[70px] left-4 z-[1000] flex gap-2">
           <span className="tracking-status-chip live">
             <span className="w-2 h-2 rounded-full bg-destructive animate-pulse" />
             LIVE
