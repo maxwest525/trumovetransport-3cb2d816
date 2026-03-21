@@ -144,9 +144,7 @@ export default function LiveTracking() {
     isFuelEfficient?: boolean;
     polyline?: string;
   }>({ trafficInfo: null, tollInfo: null, etaFormatted: null });
-  
-  // Street View expanded state (replaces Check My Truck modal)
-  const [streetViewExpanded, setStreetViewExpanded] = useState(false);
+   
   
   // Multi-stop tracking state
   const [multiStopData, setMultiStopData] = useState<MultiStopTruckStatus | null>(null);
