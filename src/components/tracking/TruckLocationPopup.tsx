@@ -1,7 +1,9 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Truck, Video, Globe, MapPin, Loader2, X, Maximize2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { getCachedAerialView, setCachedAerialView } from "@/lib/aerialViewCache";
+// Aerial view cache removed - inline no-op stubs
+const getCachedAerialView = (_key: string): any => null;
+const setCachedAerialView = (_key: string, _data: any): void => {};
 import { cn } from "@/lib/utils";
 
 interface AerialViewData {
