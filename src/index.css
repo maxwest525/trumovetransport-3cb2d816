@@ -21240,7 +21240,7 @@
   gap: 12px;
   padding: 48px 24px;
   text-align: center;
-  color: hsl(var(--tm-ink) / 0.4);
+  color: hsl(var(--muted-foreground));
 }
 
 .tru-scan-table-empty svg {
