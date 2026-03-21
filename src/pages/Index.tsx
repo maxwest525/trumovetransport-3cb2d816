@@ -578,7 +578,7 @@ function ShipmentTrackerSection({ navigate }: {navigate: (path: string) => void;
   };
 
   return (
-    <section className="py-10 md:py-20 relative overflow-hidden my-[5px]">
+    <section className="py-10 md:py-20 relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-0 w-[500px] h-[500px] rounded-full bg-primary/[0.05] blur-[120px]" />
         <div className="absolute bottom-0 right-0 w-[400px] h-[400px] rounded-full bg-primary/[0.04] blur-[100px]" />
