@@ -211,28 +211,26 @@ async function lookupZip(zip: string): Promise<LocationSuggestion | null> {
   return null;
 }
 
-// Reverse geocode coordinates to address using MapTiler
+// Reverse geocode coordinates to address using Geoapify
 async function reverseGeocode(lat: number, lng: number): Promise<LocationSuggestion | null> {
   try {
     const res = await fetch(
-      `https://api.maptiler.com/geocoding/${lng},${lat}.json?key=${MAPTILER_KEY}&language=en`,
+      `https://api.geoapify.com/v1/geocode/reverse?lat=${lat}&lon=${lng}&format=json&apiKey=${GEOAPIFY_KEY}`,
       { headers: { 'Accept': 'application/json' } }
     );
     if (!res.ok) return null;
     
     const data = await res.json();
-    const feature = data.features?.[0];
-    if (!feature) return null;
+    const r = data.results?.[0];
+    if (!r) return null;
     
-    const context = feature.context || [];
-    const streetAddress = feature.text || '';
-    const city = context.find((c: any) => c.id?.startsWith('place'))?.text || '';
-    const state = context.find((c: any) => c.id?.startsWith('region'))?.short_code?.replace('US-', '') || '';
-    const zip = context.find((c: any) => c.id?.startsWith('postcode'))?.text || '';
-    const fullAddr = feature.place_name || `${streetAddress}, ${city}, ${state} ${zip}`;
-    const displayAddr = fullAddr.replace(', United States', '');
-    
-    const hasStreet = streetAddress && !streetAddress.match(/^\d{5}$/) && streetAddress !== city;
+    const streetAddress = r.housenumber && r.street ? `${r.housenumber} ${r.street}` : r.street || '';
+    const city = r.city || '';
+    const state = r.state_code || r.state || '';
+    const zip = r.postcode || '';
+    const formatted = r.formatted || '';
+    const displayAddr = formatted.replace(/, United States of America$/i, '');
+    const hasStreet = !!streetAddress && streetAddress !== city;
     
     return {
       streetAddress,
@@ -240,7 +238,7 @@ async function reverseGeocode(lat: number, lng: number): Promise<LocationSuggest
       state,
       zip,
       display: displayAddr,
-      fullAddress: fullAddr,
+      fullAddress: formatted,
       isVerified: hasStreet,
       validationLevel: hasStreet ? 'verified' : 'partial',
     };
