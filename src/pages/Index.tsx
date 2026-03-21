@@ -620,11 +620,22 @@ function StepsCompactSection({ navigate }: {navigate: (path: string) => void;}) 
 
 
   return (
-    <section className="tru-steps-compact" ref={sectionRef}>
-      <div className="tru-steps-compact-inner">
-        <div className="tru-steps-compact-header">
-          <span className="tru-steps-compact-badge">How It Works</span>
-          <h2 className="tru-steps-compact-title">Get matched with the right mover.</h2>
+    <section className="py-16 md:py-20 relative overflow-hidden" ref={sectionRef}>
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
+      </div>
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="text-center mb-8">
+          <p className="text-[11px] uppercase tracking-[0.3em] text-primary font-semibold mb-3">How It Works</p>
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <span className="h-px w-8 bg-primary/40" />
+            <span className="w-1.5 h-1.5 rounded-full bg-primary/60" />
+            <span className="h-px w-8 bg-primary/40" />
+          </div>
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight leading-[1.1]">
+            Get matched with the right <span className="text-primary">mover.</span>
+          </h2>
         </div>
         <div className="tru-steps-compact-grid">
           {steps.map((step, index) =>
