@@ -997,19 +997,10 @@ export default function Index() {
       <div className="tru-page-frame">
         <div className="tru-page-inner">
         {/* HERO */}
-        <section className="relative overflow-hidden py-16 md:py-24 lg:py-28">
-          {/* Hero background image with dark overlay */}
-           <div className="absolute inset-0 pointer-events-none">
-            <img src={heroFamilyMove} alt="" className="absolute inset-0 w-full h-full object-cover opacity-20" />
-            <div className="absolute inset-0 bg-background/80" />
-          </div>
-          {/* Textured background */}
-          <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute top-[-100px] right-[-100px] w-[600px] h-[600px] rounded-full bg-primary/[0.06] blur-[120px]" />
-            <div className="absolute bottom-[-50px] left-[-80px] w-[500px] h-[500px] rounded-full bg-primary/[0.04] blur-[100px]" />
-            <div className="absolute inset-0 opacity-[0.025]" style={{ backgroundImage: 'radial-gradient(circle, hsl(var(--foreground)) 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
-            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
-            <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
+        <div className="tru-hero-wrapper">
+          <div className="tru-hero-bg">
+            <img src={heroFamilyMove} alt="" className="tru-hero-bg-image" />
+            <div className="tru-hero-bg-overlay" />
           </div>
 
           <HeroParticles />
