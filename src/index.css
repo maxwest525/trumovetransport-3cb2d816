@@ -21220,14 +21220,15 @@
 
 .tru-scan-table-header {
   padding: 16px 24px;
-  border-bottom: 1px solid hsl(var(--tm-ink) / 0.06);
+  border-bottom: 1px solid hsl(var(--border));
   text-align: center;
+  background: hsl(var(--foreground));
 }
 
 .tru-scan-table-header h3 {
   font-size: 18px;
   font-weight: 800;
-  color: hsl(var(--tm-ink));
+  color: hsl(var(--background));
   margin: 0;
 }
 
