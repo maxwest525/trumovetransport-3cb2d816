@@ -64,7 +64,7 @@ export default function Book() {
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] rounded-full bg-primary/[0.05] blur-[100px]" />
           </div>
 
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             {/* Dark header bar */}
             <div className="bg-foreground text-background rounded-t-xl px-6 py-4 flex items-center gap-3">
               <Calendar className="w-5 h-5 text-primary" />
