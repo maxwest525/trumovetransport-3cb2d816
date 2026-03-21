@@ -32257,16 +32257,9 @@ gmp-map-3d-element .gmnoprint {
   }
 }
 
-/* ElevenLabs widget mobile sizing */
-@media (max-width: 480px) {
-  elevenlabs-convai {
-    --widget-max-width: 280px;
-    --widget-max-height: 360px;
-  }
-  elevenlabs-convai::part(widget) {
-    max-width: 280px !important;
-    max-height: 360px !important;
-  }
+/* Hide default ElevenLabs widget — we use custom FloatingTruckChat instead */
+elevenlabs-convai {
+  display: none !important;
 }
 
 /* ===== Brand Override Scope =====
