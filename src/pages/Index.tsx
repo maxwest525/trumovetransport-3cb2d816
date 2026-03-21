@@ -139,9 +139,8 @@ async function geocodeLocation(location: string): Promise<[number, number] | nul
 
 function getStaticMapUrl(coords: [number, number] | null): string {
   if (!coords) return "";
-
   const [lng, lat] = coords;
-  return `https://staticmap.openstreetmap.de/staticmap.php?center=${lat},${lng}&zoom=13&size=720x440&markers=${lat},${lng},lightblue1`;
+  return `https://api.maptiler.com/maps/streets-v2/static/${lng},${lat},13/720x440@2x.png?key=X6zFH8Vcg9bMuUCrXFWU`;
 }
 
 function encodePolyline(points: [number, number][]): string {
