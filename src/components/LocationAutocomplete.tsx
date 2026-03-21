@@ -30,7 +30,6 @@ interface LocationSuggestion {
   fullAddress: string;
   isVerified?: boolean;
   validationLevel?: ValidationLevel;
-  mapboxId?: string;
 }
 
 interface LocationAutocompleteProps {
@@ -46,17 +45,7 @@ interface LocationAutocompleteProps {
   showGeolocation?: boolean; // Show "Use my location" button
 }
 
-// Generate a unique session token for API billing optimization
-function generateSessionToken(): string {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    const r = Math.random() * 16 | 0;
-    const v = c === 'x' ? r : (r & 0x3 | 0x8);
-    return v.toString(16);
-  });
-}
 
-// Session tokens for APIs - persists for the component lifecycle
-let mapboxSessionToken = generateSessionToken();
 
 // Normalize address for comparison (remove punctuation, extra spaces, lowercase)
 function normalizeAddress(addr: string): string {
@@ -149,7 +138,6 @@ async function searchMapTilerAddresses(query: string): Promise<{ suggestions: Lo
       fullAddress: placeName,
       isVerified: hasStreet,
       validationLevel: hasStreet ? 'verified' as ValidationLevel : 'partial' as ValidationLevel,
-      mapboxId: undefined,
     };
   });
   
@@ -246,7 +234,6 @@ async function reverseGeocode(lat: number, lng: number): Promise<LocationSuggest
       fullAddress: fullAddr,
       isVerified: hasStreet,
       validationLevel: hasStreet ? 'verified' : 'partial',
-      mapboxId: undefined,
     };
   } catch {
     return null;
@@ -725,7 +712,7 @@ export default function LocationAutocomplete({
                 {/* Hint banner removed for cleaner UI */}
                 {suggestions.map((suggestion, idx) => (
                   <div
-                    key={`${suggestion.mapboxId || suggestion.zip}-${idx}`}
+                    key={`${suggestion.zip}-${idx}`}
                     className={cn(
                       "flex items-start gap-3 px-4 py-2.5 cursor-pointer transition-colors",
                       idx === selectedIndex ? "bg-slate-100" : "hover:bg-slate-50"
