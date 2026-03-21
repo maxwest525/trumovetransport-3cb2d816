@@ -1705,7 +1705,7 @@ export default function Index() {
                     <div className="flex items-stretch rounded-lg border border-border overflow-hidden mb-4">
                       <button
                         onClick={() => setContactMode("trudy")}
-                        className={`flex-1 flex items-center justify-center gap-1.5 px-4 py-2 text-xs font-semibold transition-all ${
+                        className={`flex-1 flex items-center justify-center gap-1.5 px-4 py-4 text-xs font-semibold transition-all ${
                           contactMode === "trudy"
                             ? "bg-foreground text-background"
                             : "bg-background text-muted-foreground hover:text-foreground hover:bg-muted"
