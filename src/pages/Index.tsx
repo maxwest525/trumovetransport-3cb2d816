@@ -914,17 +914,10 @@ export default function Index() {
     navigate(leadCaptureTarget === "ai" ? "/scan-room" : "/online-estimate");
   };
 
-  // Step validation - Updated flow:
-  // Step 1: From/To addresses + move date
-  // Step 2: Contact info (name, email, SMS)
-  // Step 3: Choose estimate method (AI or Manual)
+  // Step validation - single step flow
+  // Step 1: All contact + location + date info
   const canContinue = () => {
-    switch (step) {
-      case 1:return (fromCity || fromZip.length === 5) && (toCity || toZip.length === 5) && moveDate !== null;
-      case 2:return name.trim().length >= 2 && email.includes("@") && isValidPhoneNumber(phone);
-      case 3:return true; // Always can proceed from method selection
-      default:return false;
-    }
+    return contactFirstName.trim().length >= 1 && contactLastName.trim().length >= 1 && isValidPhoneNumber(contactPhone) && contactEmail.includes("@") && contactEmail.includes(".") && (fromCity || fromZip.length === 5) && (toCity || toZip.length === 5) && moveDate !== null;
   };
 
   const goNext = async () => {
