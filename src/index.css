@@ -21250,7 +21250,7 @@
 .tru-scan-table-empty p {
   font-size: 14px;
   font-weight: 600;
-  color: hsl(var(--tm-ink) / 0.6);
+  color: hsl(var(--muted-foreground));
   margin: 0;
 }
 
