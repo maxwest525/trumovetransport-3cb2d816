@@ -1,5 +1,5 @@
 import { forwardRef, useState, useEffect } from "react";
-import { Lock, Phone, Mail, CircleCheck, ShieldCheck, BadgePercent, Clock, Sparkles, Activity, Zap, Fingerprint, ScanLine, Cpu, Layers, Car, MapPin, ArrowRightLeft } from "lucide-react";
+import { Lock, Phone, Mail, CircleCheck, ShieldCheck, BadgePercent, Clock, Sparkles, Activity, Zap, Fingerprint, ScanLine, Cpu, Layers, Car, MapPin, ArrowRightLeft, BadgeCheck, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
