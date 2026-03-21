@@ -30,7 +30,6 @@ interface LocationSuggestion {
   fullAddress: string;
   isVerified?: boolean;
   validationLevel?: ValidationLevel;
-  mapboxId?: string;
 }
 
 interface LocationAutocompleteProps {
