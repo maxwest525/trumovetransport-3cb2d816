@@ -21310,7 +21310,7 @@
   align-items: center;
   gap: 12px;
   font-weight: 600;
-  color: hsl(var(--tm-ink)) !important;
+  color: hsl(var(--foreground)) !important;
 }
 
 .tru-scan-table-item img {
