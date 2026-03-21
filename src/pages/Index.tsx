@@ -1410,7 +1410,7 @@ export default function Index() {
         </section>
 
           {/* START YOUR AI INVENTORY ANALYSIS - Enhanced with Preview */}
-          <section className="py-14 md:py-20 relative overflow-hidden">
+           <section className="py-10 md:py-16 relative overflow-hidden">
             <div className="absolute inset-0 pointer-events-none">
               <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full bg-primary/[0.06] blur-[120px]" />
               <div className="absolute bottom-0 left-0 w-[500px] h-[500px] rounded-full bg-primary/[0.04] blur-[100px]" />
@@ -1419,10 +1419,9 @@ export default function Index() {
               <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
             </div>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-              {/* Header row: info on left, previews on right */}
-              <div className="tru-ai-header-row border-0 rounded-none shadow-none" ref={scanPreviewRef}>
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center" ref={scanPreviewRef}>
                 {/* LEFT: Description content */}
-                <div className="flex flex-col items-center text-center lg:items-start lg:text-left" style={{ justifyContent: 'center' }}>
+                <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
                   <div>
                     <p className="text-[11px] uppercase tracking-[0.3em] text-primary font-semibold mb-3 text-center lg:text-left">AI-Powered Inventory</p>
                     <div className="flex items-center justify-center lg:justify-start gap-2 mb-4">
@@ -1439,7 +1438,6 @@ export default function Index() {
                     </p>
                   </div>
                   
-                  {/* CTA Button */}
                   <button
                     onClick={() => navigate("/scan-room")}
                     className="inline-flex items-center gap-2 mt-6 h-11 px-8 rounded-lg bg-foreground text-background font-semibold text-sm hover:bg-foreground/85 transition-all duration-200 hover:shadow-[0_4px_12px_hsl(var(--foreground)/0.15)]">
@@ -1450,7 +1448,7 @@ export default function Index() {
                 </div>
                 
                 {/* CENTER: Room Scanner Demo */}
-                <div className={`tru-ai-scanner-center ${scanDemoRunning ? 'is-running' : ''}`}>
+                <div className={scanDemoRunning ? 'is-running' : ''}>
                   <ScannerPreview
                     isRunning={scanDemoRunning}
                     visibleCount={scanVisibleCount}
@@ -1460,11 +1458,10 @@ export default function Index() {
                         scanPreviewRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
                       }, 100);
                     }} />
-                  
                 </div>
                 
                 {/* RIGHT: Detection List */}
-                <div className="tru-ai-detection-right">
+                <div>
                   <DetectionList visibleCount={scanVisibleCount} />
                 </div>
               </div>
