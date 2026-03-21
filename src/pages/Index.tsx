@@ -87,10 +87,28 @@ async function lookupZip(zip: string): Promise<string | null> {
 
 // Geocode a location string to coordinates for static map images
 async function geocodeLocation(location: string): Promise<[number, number] | null> {
+  const trimmedLocation = location.trim();
+  if (!trimmedLocation) return null;
+
+  const zipMatch = trimmedLocation.match(/\b\d{5}\b/);
+
+  if (zipMatch) {
+    try {
+      const zipRes = await fetch(`https://api.zippopotam.us/us/${zipMatch[0]}`);
+      if (zipRes.ok) {
+        const zipData = await zipRes.json();
+        const place = zipData?.places?.[0];
+        if (place?.longitude && place?.latitude) {
+          return [Number(place.longitude), Number(place.latitude)];
+        }
+      }
+    } catch {}
+  }
+
   try {
     const token = 'pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g';
     const res = await fetch(
-      `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(location)}.json?country=us&limit=1&access_token=${token}`
+      `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(trimmedLocation)}.json?country=us&limit=1&access_token=${token}`
     );
     if (res.ok) {
       const data = await res.json();
@@ -100,7 +118,34 @@ async function geocodeLocation(location: string): Promise<[number, number] | nul
       }
     }
   } catch {}
+
+  try {
+    const nominatimRes = await fetch(
+      `https://nominatim.openstreetmap.org/search?format=jsonv2&countrycodes=us&limit=1&q=${encodeURIComponent(trimmedLocation)}`,
+      {
+        headers: {
+          Accept: 'application/json',
+        },
+      }
+    );
+
+    if (nominatimRes.ok) {
+      const nominatimData = await nominatimRes.json();
+      const match = nominatimData?.[0];
+      if (match?.lon && match?.lat) {
+        return [Number(match.lon), Number(match.lat)];
+      }
+    }
+  } catch {}
+
   return null;
+}
+
+function getStaticMapUrl(coords: [number, number] | null): string {
+  if (!coords) return "";
+
+  const [lng, lat] = coords;
+  return `https://staticmap.openstreetmap.de/staticmap.php?center=${lat},${lng}&zoom=13&size=720x440&markers=${lat},${lng},lightblue1`;
 }
 
 function encodePolyline(points: [number, number][]): string {
@@ -1089,12 +1134,12 @@ export default function Index() {
                     <div className="tru-analyze-strip-frame">
                       <div className="tru-analyze-strip-shimmer" />
                       <img
-                        src={fromCoords ? `https://maps.googleapis.com/maps/api/streetview?size=720x440&location=${fromCoords[1]},${fromCoords[0]}&fov=90&heading=0&pitch=5&key=AIzaSyCWDpAPlxVRXnl1w5rz0Df5S3vGsHY6Xoo` : ''}
+                        src={getStaticMapUrl(fromCoords)}
                         alt="Origin location"
                         className="tru-analyze-strip-img"
                         onLoad={(e) => e.currentTarget.classList.add('is-loaded')}
                         onError={(e) => {
-                          e.currentTarget.src = `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${fromCoords?.[0]},${fromCoords?.[1]},16,0/720x440@2x?access_token=pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g`;
+                          e.currentTarget.style.display = 'none';
                         }} />
                       <div className="tru-analyze-strip-city">{fromCity}</div>
                     </div>
@@ -1125,12 +1170,12 @@ export default function Index() {
                     <div className="tru-analyze-strip-frame">
                       <div className="tru-analyze-strip-shimmer" />
                       <img
-                        src={toCoords ? `https://maps.googleapis.com/maps/api/streetview?size=720x440&location=${toCoords[1]},${toCoords[0]}&fov=90&heading=0&pitch=5&key=AIzaSyCWDpAPlxVRXnl1w5rz0Df5S3vGsHY6Xoo` : ''}
+                        src={getStaticMapUrl(toCoords)}
                         alt="Destination location"
                         className="tru-analyze-strip-img"
                         onLoad={(e) => e.currentTarget.classList.add('is-loaded')}
                         onError={(e) => {
-                          e.currentTarget.src = `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${toCoords?.[0]},${toCoords?.[1]},16,0/720x440@2x?access_token=pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g`;
+                          e.currentTarget.style.display = 'none';
                         }} />
                       <div className="tru-analyze-strip-city">{toCity}</div>
                     </div>
