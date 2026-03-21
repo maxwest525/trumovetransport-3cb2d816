@@ -1,9 +1,6 @@
 import { useRef, useEffect, useState, useCallback } from "react";
-import { MapContainer, TileLayer, Polyline, Marker, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { TILE_LAYERS, US_CENTER, US_ZOOM } from "@/lib/leafletConfig";
-// Using OSRM for free routing
 import { Loader2, Navigation, Box } from "lucide-react";
 import { TruckLocationPopup } from "./TruckLocationPopup";
 import { TrafficLegend } from "./TrafficLegend";
@@ -50,7 +47,6 @@ function findCitiesOnRoute(routeCoords: [number, number][], maxDistanceMiles: nu
   const degreeThreshold = maxDistanceMiles / 69;
   for (const city of MAJOR_CITIES) {
     for (const coord of routeCoords) {
-      // routeCoords are [lng, lat] from Mapbox Directions
       const dist = Math.sqrt(Math.pow(coord[0] - city.lon, 2) + Math.pow(coord[1] - city.lat, 2));
       if (dist < degreeThreshold) {
         citiesOnRoute.push(city);
@@ -72,78 +68,6 @@ interface TruckTrackingMapProps {
   googleApiKey?: string;
 }
 
-// Custom Leaflet icons
-function createCircleIcon(color: string, size = 14): L.DivIcon {
-  return L.divIcon({
-    className: '',
-    html: `<div style="width:${size}px;height:${size}px;border-radius:50%;background:${color};border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.4);"></div>`,
-    iconSize: [size, size],
-    iconAnchor: [size / 2, size / 2],
-  });
-}
-
-function createTruckIcon(): L.DivIcon {
-  return L.divIcon({
-    className: 'tracking-truck-marker',
-    html: `
-      <div class="tracking-truck-glow"></div>
-      <div class="tracking-truck-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/>
-          <path d="M15 18H9"/>
-          <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/>
-          <circle cx="17" cy="18" r="2"/>
-          <circle cx="7" cy="18" r="2"/>
-        </svg>
-      </div>
-    `,
-    iconSize: [36, 36],
-    iconAnchor: [18, 18],
-  });
-}
-
-function createCityIcon(name: string): L.DivIcon {
-  return L.divIcon({
-    className: 'tracking-waypoint-marker city-waypoint',
-    html: `<div class="city-waypoint-dot"></div><div class="city-waypoint-label">${name}</div>`,
-    iconSize: [80, 20],
-    iconAnchor: [40, 10],
-  });
-}
-
-function MapReadyNotifier({ onReady }: { onReady: () => void }) {
-  const map = useMap();
-  useEffect(() => { if (map) onReady(); }, [map, onReady]);
-  return null;
-}
-
-// Component to control map view
-function MapViewController({ 
-  center, 
-  zoom, 
-  bounds,
-  followMode,
-  truckPos 
-}: { 
-  center?: [number, number]; 
-  zoom?: number; 
-  bounds?: L.LatLngBoundsExpression;
-  followMode: boolean;
-  truckPos: [number, number] | null;
-}) {
-  const map = useMap();
-  
-  useEffect(() => {
-    if (followMode && truckPos) {
-      map.flyTo(truckPos, 10, { duration: 0.5 });
-    } else if (bounds) {
-      map.fitBounds(bounds, { padding: [80, 80], maxZoom: 8 });
-    }
-  }, [followMode, truckPos, bounds, map]);
-
-  return null;
-}
-
 export function TruckTrackingMap({
   originCoords,
   destCoords,
@@ -153,6 +77,10 @@ export function TruckTrackingMap({
   followMode = false,
   onFollowModeChange,
 }: TruckTrackingMapProps) {
+  const mapRef = useRef<HTMLDivElement>(null);
+  const mapInstance = useRef<L.Map | null>(null);
+  const layersRef = useRef<L.Layer[]>([]);
+
   const [routeCoords, setRouteCoords] = useState<[number, number][]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
   const [mapError, setMapError] = useState<string | null>(null);
@@ -160,7 +88,6 @@ export function TruckTrackingMap({
   const [currentTruckPosition, setCurrentTruckPosition] = useState<[number, number] | null>(null);
   const [currentLocationName, setCurrentLocationName] = useState<string>("");
   const [internalFollowMode, setInternalFollowMode] = useState(followMode);
-  const [routeBounds, setRouteBounds] = useState<L.LatLngBoundsExpression | undefined>();
   const [citiesOnRoute, setCitiesOnRoute] = useState<CityWaypoint[]>([]);
   const [weighStations, setWeighStations] = useState<{ station: WeighStation; routeIndex: number }[]>([]);
 
@@ -172,7 +99,31 @@ export function TruckTrackingMap({
     onFollowModeChange?.(newMode);
   }, [internalFollowMode, onFollowModeChange]);
 
-  // Fetch route from OSRM (free, no API key)
+  // Initialize map
+  useEffect(() => {
+    if (!mapRef.current || mapInstance.current) return;
+
+    const map = L.map(mapRef.current, {
+      zoomControl: true,
+      attributionControl: true,
+      center: [39.8283, -98.5795],
+      zoom: 4,
+    });
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    }).addTo(map);
+
+    mapInstance.current = map;
+    setIsLoaded(true);
+
+    return () => {
+      map.remove();
+      mapInstance.current = null;
+    };
+  }, []);
+
+  // Fetch route from OSRM
   const fetchRoute = useCallback(async (origin: [number, number], dest: [number, number]) => {
     try {
       const response = await fetch(
@@ -183,7 +134,7 @@ export function TruckTrackingMap({
         const route = data.routes[0];
         const coords = route.geometry.coordinates as [number, number][];
         setRouteCoords(coords);
-        
+
         const congestion = route.legs?.[0]?.annotation?.congestion || [];
         onRouteCalculated?.({
           coordinates: coords,
@@ -192,15 +143,6 @@ export function TruckTrackingMap({
           congestionLevels: congestion,
         });
 
-        // Set bounds (convert [lng,lat] to [lat,lng] for Leaflet)
-        const lats = coords.map(c => c[1]);
-        const lngs = coords.map(c => c[0]);
-        setRouteBounds([
-          [Math.min(...lats), Math.min(...lngs)],
-          [Math.max(...lats), Math.max(...lngs)],
-        ]);
-
-        // Find cities and weigh stations
         setCitiesOnRoute(findCitiesOnRoute(coords, 20));
         setWeighStations(findWeighStationsOnRoute(coords, 8));
       }
@@ -228,24 +170,113 @@ export function TruckTrackingMap({
     const upperPoint = routeCoords[upperIndex];
     const currentLng = lowerPoint[0] + (upperPoint[0] - lowerPoint[0]) * fraction;
     const currentLat = lowerPoint[1] + (upperPoint[1] - lowerPoint[1]) * fraction;
-    // Store as [lat, lng] for Leaflet
     setCurrentTruckPosition([currentLat, currentLng]);
     setCurrentLocationName(`${currentLat.toFixed(4)}°N, ${Math.abs(currentLng).toFixed(4)}°W`);
   }, [progress, routeCoords]);
 
-  // Convert [lng,lat] coords to [lat,lng] for Leaflet polylines
-  const routeLatLngs = routeCoords.map(([lng, lat]) => [lat, lng] as [number, number]);
-  
-  // Traveled portion
-  const traveledIndex = Math.floor((progress / 100) * (routeCoords.length - 1));
-  const traveledLatLngs = routeLatLngs.slice(0, traveledIndex + 1);
-  if (currentTruckPosition && traveledLatLngs.length > 0) {
-    traveledLatLngs.push(currentTruckPosition);
-  }
+  // Update map layers
+  useEffect(() => {
+    const map = mapInstance.current;
+    if (!map || routeCoords.length === 0) return;
 
-  // Origin/dest in [lat,lng]
-  const originLatLng = originCoords ? [originCoords[1], originCoords[0]] as [number, number] : null;
-  const destLatLng = destCoords ? [destCoords[1], destCoords[0]] as [number, number] : null;
+    // Clear old layers
+    layersRef.current.forEach(l => map.removeLayer(l));
+    layersRef.current = [];
+
+    const routeLatLngs = routeCoords.map(([lng, lat]) => [lat, lng] as [number, number]);
+    const traveledIndex = Math.floor((progress / 100) * (routeCoords.length - 1));
+    const traveledLatLngs = routeLatLngs.slice(0, traveledIndex + 1);
+    if (currentTruckPosition && traveledLatLngs.length > 0) {
+      traveledLatLngs.push(currentTruckPosition);
+    }
+
+    const originLatLng = originCoords ? [originCoords[1], originCoords[0]] as [number, number] : null;
+    const destLatLng = destCoords ? [destCoords[1], destCoords[0]] as [number, number] : null;
+
+    // Full route
+    if (routeLatLngs.length >= 2) {
+      const bg = L.polyline(routeLatLngs, { color: '#000000', weight: 8, opacity: 0.3 }).addTo(map);
+      const fg = L.polyline(routeLatLngs, { color: '#00e5a0', weight: 4, opacity: 0.3 }).addTo(map);
+      layersRef.current.push(bg, fg);
+    }
+
+    // Traveled portion
+    if (traveledLatLngs.length >= 2) {
+      const traveled = L.polyline(traveledLatLngs, { color: '#00e5a0', weight: 5, opacity: 1 }).addTo(map);
+      layersRef.current.push(traveled);
+    }
+
+    // Origin marker
+    if (originLatLng) {
+      const m = L.marker(originLatLng, {
+        icon: L.divIcon({
+          className: '',
+          html: `<div style="width:16px;height:16px;border-radius:50%;background:#22c55e;border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.4);"></div>`,
+          iconSize: [16, 16], iconAnchor: [8, 8],
+        }),
+      }).addTo(map);
+      layersRef.current.push(m);
+    }
+
+    // Destination marker
+    if (destLatLng) {
+      const m = L.marker(destLatLng, {
+        icon: L.divIcon({
+          className: '',
+          html: `<div style="width:16px;height:16px;border-radius:50%;background:#ef4444;border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.4);"></div>`,
+          iconSize: [16, 16], iconAnchor: [8, 8],
+        }),
+      }).addTo(map);
+      layersRef.current.push(m);
+    }
+
+    // Truck marker
+    if (currentTruckPosition) {
+      const m = L.marker(currentTruckPosition, {
+        icon: L.divIcon({
+          className: 'tracking-truck-marker',
+          html: `
+            <div class="tracking-truck-glow"></div>
+            <div class="tracking-truck-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/>
+                <path d="M15 18H9"/>
+                <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/>
+                <circle cx="17" cy="18" r="2"/>
+                <circle cx="7" cy="18" r="2"/>
+              </svg>
+            </div>`,
+          iconSize: [36, 36], iconAnchor: [18, 18],
+        }),
+      }).addTo(map);
+      layersRef.current.push(m);
+    }
+
+    // City waypoints
+    citiesOnRoute.forEach(city => {
+      const m = L.marker([city.lat, city.lon], {
+        icon: L.divIcon({
+          className: 'tracking-waypoint-marker city-waypoint',
+          html: `<div class="city-waypoint-dot"></div><div class="city-waypoint-label">${city.name}</div>`,
+          iconSize: [80, 20], iconAnchor: [40, 10],
+        }),
+      }).addTo(map);
+      layersRef.current.push(m);
+    });
+
+    // Fit bounds
+    if (!internalFollowMode || !isTracking) {
+      const lats = routeCoords.map(c => c[1]);
+      const lngs = routeCoords.map(c => c[0]);
+      const bounds = L.latLngBounds(
+        [Math.min(...lats), Math.min(...lngs)],
+        [Math.max(...lats), Math.max(...lngs)]
+      );
+      map.fitBounds(bounds, { padding: [80, 80], maxZoom: 8 });
+    } else if (currentTruckPosition) {
+      map.flyTo(currentTruckPosition, 10, { duration: 0.5 });
+    }
+  }, [routeCoords, progress, currentTruckPosition, originCoords, destCoords, citiesOnRoute, internalFollowMode, isTracking]);
 
   if (mapError) {
     return (
@@ -266,55 +297,7 @@ export function TruckTrackingMap({
 
   return (
     <div className="relative w-full h-full rounded-2xl overflow-hidden border border-white/10">
-      <MapContainer
-        center={US_CENTER}
-        zoom={US_ZOOM}
-        className="w-full h-full"
-        zoomControl={true}
-        attributionControl={false}
-      >
-        <TileLayer url={TILE_LAYERS.dark.url} attribution={TILE_LAYERS.dark.attribution} />
-        <MapReadyNotifier onReady={() => setIsLoaded(true)} />
-        
-        <MapViewController
-          bounds={routeBounds}
-          followMode={internalFollowMode && isTracking}
-          truckPos={currentTruckPosition}
-        />
-
-        {/* Full route line */}
-        {routeLatLngs.length >= 2 && (
-          <>
-            <Polyline positions={routeLatLngs} pathOptions={{ color: '#00e5a0', weight: 4, opacity: 0.3 }} />
-            <Polyline positions={routeLatLngs} pathOptions={{ color: '#000000', weight: 8, opacity: 0.3 }} />
-          </>
-        )}
-
-        {/* Traveled portion */}
-        {traveledLatLngs.length >= 2 && (
-          <Polyline positions={traveledLatLngs} pathOptions={{ color: '#00e5a0', weight: 5, opacity: 1 }} />
-        )}
-
-        {/* Origin marker */}
-        {originLatLng && (
-          <Marker position={originLatLng} icon={createCircleIcon('#22c55e', 16)} />
-        )}
-
-        {/* Destination marker */}
-        {destLatLng && (
-          <Marker position={destLatLng} icon={createCircleIcon('#ef4444', 16)} />
-        )}
-
-        {/* Truck marker */}
-        {currentTruckPosition && (
-          <Marker position={currentTruckPosition} icon={createTruckIcon()} />
-        )}
-
-        {/* City waypoints */}
-        {citiesOnRoute.map(city => (
-          <Marker key={city.name} position={[city.lat, city.lon]} icon={createCityIcon(city.name)} />
-        ))}
-      </MapContainer>
+      <div ref={mapRef} className="w-full h-full" />
 
       {/* Status chips */}
       {isTracking && (
