@@ -1646,12 +1646,8 @@ export default function Index() {
             </div>
           </section>
 
-          <FeatureTrustStrip />
-
           {/* SHIPMENT TRACKER - Mirrored Layout */}
           <ShipmentTrackerSection navigate={navigate} />
-
-          <div className="py-8"><FeatureTrustStrip /></div>
 
           {/* TESTIMONIALS */}
           <section className="py-20 md:py-28 relative overflow-hidden">
