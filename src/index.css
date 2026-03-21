@@ -4901,17 +4901,6 @@
 }
 
 /* RIGHT PANEL: Form - single column now */
-.tru-hero-form-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  align-items: stretch;
-}
-
-.tru-hero-form-panel .tru-floating-form-card {
-  flex: 1 1 auto;
-  width: 100%;
-}
 
 /* =============================================
    STATIC SIDEBAR - Icon Strip + Expanded Menu
