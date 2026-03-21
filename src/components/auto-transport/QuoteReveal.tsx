@@ -182,11 +182,18 @@ export const QuoteReveal = forwardRef<HTMLDivElement, QuoteRevealProps>(
               <span className="h-px w-8 bg-primary/40" />
             </div>
             <h2 className="text-xl sm:text-3xl md:text-5xl lg:text-6xl font-bold text-foreground tracking-tight leading-[1.1]">
-              Finish Your Transport
+              Special Rates Available
             </h2>
             <p className="text-muted-foreground text-xs sm:text-sm md:text-base mt-1.5 sm:mt-3 max-w-md mx-auto leading-relaxed">
-              Review your details below — then connect with an agent to unlock route-specific deals and finalize at the best rate.
+              Special rates available now based on your route — lock in pricing before availability shifts.
             </p>
+            <button
+              onClick={onScrollToContact}
+              className="mt-4 inline-flex items-center gap-2 px-6 py-3 rounded-full bg-primary text-primary-foreground font-bold text-sm tracking-wide hover:bg-primary/90 hover:scale-[1.03] active:scale-[0.98] transition-all duration-200 shadow-[0_0_25px_-6px_hsl(var(--primary)/0.5)]"
+            >
+              <Tag className="w-4 h-4" strokeWidth={2} />
+              Get Special Rates
+            </button>
           </div>
 
           <div className="max-w-5xl mx-auto">
