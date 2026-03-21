@@ -31461,21 +31461,7 @@ gmp-map-3d-element .gmnoprint {
   }
 
 
-  /* --- 1. AI Scanner 3-column grid → vertical stack --- */
-  .tru-ai-header-row {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 16px !important;
-  }
-
-  .tru-ai-content-left,
-  .tru-ai-scanner-center,
-  .tru-ai-detection-right {
-    width: 100% !important;
-    max-width: 100% !important;
-    min-width: 0 !important;
-    flex-shrink: 1 !important;
-  }
+  /* AI Scanner responsive — now handled by Tailwind grid */
 
   .tru-ai-live-scanner {
     width: 100% !important;
