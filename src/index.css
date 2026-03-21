@@ -21211,10 +21211,10 @@
 
 .tru-scan-table-panel {
   margin-top: 32px;
-  background: white;
+  background: hsl(var(--card));
   border-radius: 16px;
-  border: 1px solid hsl(var(--tm-ink) / 0.08);
-  box-shadow: 0 4px 24px hsl(var(--tm-ink) / 0.06);
+  border: 1px solid hsl(var(--border));
+  box-shadow: 0 4px 24px hsl(var(--foreground) / 0.06);
   overflow: hidden;
 }
 
