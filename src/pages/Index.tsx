@@ -1154,7 +1154,7 @@ export default function Index() {
                             value={contactLastName}
                             onChange={(e) => setContactLastName(e.target.value)}
                             placeholder="Last Name"
-                            className="w-full rounded-lg border border-border bg-background pl-9 pr-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
+                            className="w-full rounded-lg border border-border bg-background pl-9 pr-3 py-2.5 text-sm text-foreground text-center placeholder:text-muted-foreground placeholder:text-center focus:outline-none focus:ring-1 focus:ring-primary" />
                           </div>
                         </div>
 
