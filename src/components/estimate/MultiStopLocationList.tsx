@@ -18,7 +18,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { GripVertical, X, Check, MapPin } from "lucide-react";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
-import { MAPBOX_TOKEN } from '@/lib/mapboxToken';
+import { MAPTILER_KEY } from '@/lib/maptilerConfig';
 import { cn } from "@/lib/utils";
 
 export interface StopLocation {
