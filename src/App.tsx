@@ -59,7 +59,6 @@ const App = () => (
             <Route path="*" element={<NotFound />} />
           </Routes>
           <FloatingTruckChat />
-          <ElevenLabsTrudyWidget />
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
