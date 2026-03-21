@@ -106,9 +106,9 @@ export default function FloatingTruckChat({ className = '' }: FloatingTruckChatP
         `}
         aria-label="Chat with Trudy"
       >
-        {/* Truck icon circle */}
+        {/* Icon circle */}
         <div className="relative flex items-center justify-center w-9 h-9 rounded-full bg-foreground border border-foreground/80">
-          <Truck className="w-4 h-4 text-background" />
+          <MessageCircle className="w-4 h-4 text-background" />
         </div>
 
         {/* Text */}
