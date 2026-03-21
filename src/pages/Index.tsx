@@ -1135,7 +1135,7 @@ export default function Index() {
                     <div key="step-1" className="space-y-3">
                         <div className="grid grid-cols-2 gap-3">
                           <div>
-                            <label className="text-xs font-medium text-muted-foreground mb-1 block">First Name</label>
+                            <label className="text-xs font-medium text-muted-foreground mb-1 block text-center">First Name</label>
                             <input
                             type="text"
                             value={contactFirstName}
@@ -1144,7 +1144,7 @@ export default function Index() {
                               if (e.target.value.length > 0 && !isEngaged) setIsEngaged(true);
                             }}
                             placeholder="First Name"
-                            className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                            className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground text-center placeholder:text-muted-foreground placeholder:text-center focus:outline-none focus:ring-1 focus:ring-primary"
                             autoFocus />
                           </div>
                           <div>
