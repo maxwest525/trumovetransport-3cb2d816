@@ -216,7 +216,8 @@ export default function HeroParticles({ className = "", density = "dramatic" }: 
   return (
     <canvas
       ref={canvasRef}
-      className={`tru-hero-particles ${className}`}
+      className={`absolute inset-0 w-full h-full pointer-events-none ${className}`}
+      style={{ position: 'absolute' }}
       aria-hidden="true"
     />
   );
