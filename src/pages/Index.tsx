@@ -1629,14 +1629,7 @@ export default function Index() {
                             </span>
                           </div>
 
-                          {/* Row 2: Inline metrics */}
-                          <div className="flex items-center gap-3 text-[10px] mb-1.5 ml-3">
-                            <span className="font-semibold text-foreground">
-                              {c.crashes.total} crashes <span className="text-muted-foreground font-normal">({c.crashes.fatal} fatal)</span>
-                            </span>
-                          </div>
-
-                          {/* Row 3: Chips + verdict */}
+                          {/* Row 2: Chips + crash + verdict */}
                           <div className="flex items-center gap-1.5 ml-3 flex-wrap">
                             {[
                             { ok: authorized, label: 'Authority' },
@@ -1652,6 +1645,9 @@ export default function Index() {
                                 {chip.label}
                               </span>
                             )}
+                            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-muted text-foreground">
+                              {c.crashes.total} crashes ({c.crashes.fatal} fatal)
+                            </span>
                             <span className="ml-auto inline-flex items-center gap-1 text-[9px] font-bold text-foreground">
                               {verdict === 'pass' ? <CheckCircle className="w-2.5 h-2.5" /> :
                               verdict === 'caution' ? <AlertTriangle className="w-2.5 h-2.5" /> :
