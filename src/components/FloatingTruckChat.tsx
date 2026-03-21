@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Truck, Sparkles, Hand, ChevronRight, ChevronLeft } from 'lucide-react';
+import { Truck, Hand, ChevronLeft } from 'lucide-react';
 import ChatModal from './chat/ChatModal';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -12,8 +12,7 @@ export default function FloatingTruckChat({ className = '' }: FloatingTruckChatP
   const location = useLocation();
   const isMobile = useIsMobile();
   const [isOpen, setIsOpen] = useState(false);
-  const [showButton] = useState(true);
-  
+
   const [isMinimized, setIsMinimized] = useState(() => {
     return localStorage.getItem('tm_ai_helper_minimized') === 'true';
   });
@@ -23,17 +22,13 @@ export default function FloatingTruckChat({ className = '' }: FloatingTruckChatP
 
   useEffect(() => {
     if (!isMobile || isMinimized || isScrollMinimized) return;
-    const timer = setTimeout(() => {
-      setIsScrollMinimized(true);
-    }, 3000);
+    const timer = setTimeout(() => setIsScrollMinimized(true), 3000);
     return () => clearTimeout(timer);
   }, [isMobile, isMinimized, isScrollMinimized]);
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 100 && !isScrollMinimized) {
-        setIsScrollMinimized(true);
-      }
+      if (window.scrollY > 100 && !isScrollMinimized) setIsScrollMinimized(true);
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
@@ -62,28 +57,27 @@ export default function FloatingTruckChat({ className = '' }: FloatingTruckChatP
     localStorage.removeItem('tm_ai_helper_minimized');
   };
 
+  /* ─── Minimized: vertical tab on right edge ─── */
   if (isCurrentlyMinimized) {
     return (
       <>
         <button
           onClick={handleReopen}
-          className="fixed bottom-24 right-0 z-50 
-            px-2 py-4 
-            bg-foreground text-background 
+          className="fixed bottom-24 right-0 z-50
+            px-2 py-4
+            bg-card/95 backdrop-blur-md
             rounded-l-xl
-            border-2 border-r-0 border-foreground/30
-            shadow-lg 
-            flex flex-col items-center gap-2
-            transition-all duration-300 
-            hover:px-3 hover:shadow-xl
+            border border-r-0 border-border/60
+            shadow-lg
+            flex flex-col items-center gap-2.5
+            transition-all duration-300
+            hover:px-3 hover:shadow-xl hover:border-primary/40
             group"
-          aria-label="Open AI Helper"
+          aria-label="Open Trudy chat"
         >
-          <div className="p-1 rounded-full border border-background/50">
-            <ChevronLeft className="w-4 h-4 text-background/70 group-hover:text-background transition-colors" />
-          </div>
-          <div className="p-1 rounded-full border border-background/50">
-            <Hand className="w-5 h-5 text-background animate-wave" />
+          <ChevronLeft className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+          <div className="p-1.5 rounded-full bg-foreground/10 border border-border/60 group-hover:border-primary/40 transition-colors">
+            <Hand className="w-4 h-4 text-muted-foreground group-hover:text-foreground animate-wave" />
           </div>
         </button>
         <ChatModal isOpen={isOpen} onClose={() => setIsOpen(false)} pagePath={location.pathname} />
@@ -91,45 +85,50 @@ export default function FloatingTruckChat({ className = '' }: FloatingTruckChatP
     );
   }
 
+  /* ─── Expanded: pill button ─── */
   return (
     <>
       <button
         onClick={() => setIsOpen(true)}
         className={`
           fixed bottom-24 right-6 z-50
-          px-5 py-3.5 rounded-full
-          bg-foreground text-background
-          border-2 border-foreground/30
-          shadow-[0_8px_32px_-4px_hsl(var(--tm-ink)/0.35),0_4px_16px_-2px_hsl(var(--tm-ink)/0.25)]
+          pl-4 pr-5 py-3 rounded-full
+          bg-card/95 backdrop-blur-md
+          border border-border/60
+          shadow-[0_4px_24px_-4px_hsl(var(--primary)/0.15),0_0_0_1px_hsl(var(--primary)/0.08)]
           flex items-center gap-3
           transition-all duration-300 ease-out
-          hover:shadow-[0_12px_40px_-4px_hsl(var(--tm-ink)/0.45),0_6px_20px_-2px_hsl(var(--tm-ink)/0.3)]
-          hover:scale-[1.03] hover:-translate-y-1
-          focus:outline-none focus:ring-2 focus:ring-foreground/30 focus:ring-offset-2
-          ${!showButton ? 'opacity-0 pointer-events-none translate-y-4' : 'opacity-100 translate-y-0'}
+          hover:shadow-[0_8px_32px_-4px_hsl(var(--primary)/0.25),0_0_0_1px_hsl(var(--primary)/0.15)]
+          hover:scale-[1.03] hover:-translate-y-0.5
+          hover:border-primary/40
+          focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-2
           ${className}
         `}
-        aria-label="Trudy AI Moving Helper"
+        aria-label="Chat with Trudy"
       >
-        <div className="relative flex items-center justify-center w-10 h-10 rounded-full bg-background/20 border border-background/30">
-          <Truck className="w-5 h-5 text-background animate-truck-bounce" />
-          <Sparkles className="absolute -top-1 -right-1 w-3.5 h-3.5 text-background animate-pulse" />
+        {/* Truck icon circle */}
+        <div className="relative flex items-center justify-center w-9 h-9 rounded-full bg-foreground border border-foreground/80">
+          <Truck className="w-4 h-4 text-background" />
         </div>
-        
+
+        {/* Text */}
         <div className="flex flex-col items-start">
-          <span className="text-sm font-bold leading-tight text-background">Chat with Trudy</span>
-          <span className="text-xs leading-tight text-background/70 font-semibold">Let's Plan Your Move</span>
+          <span className="text-sm font-bold leading-tight text-foreground">Chat with Trudy</span>
+          <span className="text-[11px] leading-tight text-primary font-semibold">Let's Plan Your Move</span>
         </div>
-        
-        <span className="w-2 h-2 rounded-full bg-background/60 ml-1" />
-        
+
+        {/* Minimize / hand button */}
         <button
           onClick={handleMinimize}
-          className="absolute -top-1.5 -right-1.5 w-7 h-7 rounded-full bg-muted border border-border flex items-center justify-center gap-0.5 hover:bg-accent hover:border-foreground/30 transition-colors group"
-          aria-label="Minimize AI Helper"
+          className="absolute -top-2 -right-2 w-7 h-7 rounded-full
+            bg-card border border-border/60
+            flex items-center justify-center
+            hover:bg-accent hover:border-primary/40
+            transition-colors group/min
+            shadow-sm"
+          aria-label="Minimize"
         >
-          <Hand className="w-3 h-3 text-muted-foreground group-hover:text-foreground group-hover:animate-wave" />
-          <ChevronRight className="w-2.5 h-2.5 text-muted-foreground group-hover:text-foreground" />
+          <Hand className="w-3.5 h-3.5 text-muted-foreground group-hover/min:text-foreground group-hover/min:animate-wave" />
         </button>
       </button>
 
