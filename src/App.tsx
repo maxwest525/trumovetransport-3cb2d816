@@ -19,6 +19,7 @@ import ScanRoom from "./pages/ScanRoom";
 import Classic from "./pages/Classic";
 import LiveTracking from "./pages/LiveTracking";
 import AutoTransport from "./pages/AutoTransport";
+import ThankYou from "./pages/ThankYou";
 import CustomerService from "./pages/CustomerService";
 import FloatingTruckChat from "./components/FloatingTruckChat";
 import ScrollToTop from "./components/ScrollToTop";
