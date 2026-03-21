@@ -10,13 +10,10 @@ const useScrollToTop = () => {
 import { useNavigate, Link } from "react-router-dom";
 import { format } from "date-fns";
 import SiteShell from "@/components/layout/SiteShell";
-import MapboxMoveMap from "@/components/MapboxMoveMap";
 import AnimatedRouteMap from "@/components/estimate/AnimatedRouteMap";
-import FloatingNav from "@/components/FloatingNav";
 import HeroParticles from "@/components/HeroParticles";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import LeadCaptureModal from "@/components/LeadCaptureModal";
-import RouteAnalysisSection from "@/components/RouteAnalysisSection";
 // Static Street View preview used instead of interactive component
 import StatsStrip from "@/components/StatsStrip";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
