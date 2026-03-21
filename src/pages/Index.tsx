@@ -1505,7 +1505,13 @@ export default function Index() {
                   { name: "Rachel S.", location: "Portland → Nashville", rating: 5, photo: testimonialSarah, source: "Google", text: "The carrier vetting gave us confidence we were hiring a safe, legit company. No hidden fees, no stress." },
                   { name: "David L.", location: "Tampa → Charlotte", rating: 5, photo: testimonialJames, source: "Yelp", text: "Scheduling was a breeze. The whole process from quote to delivery was handled professionally and on time." },
                   { name: "Nina & Tom H.", location: "Austin → San Diego", rating: 5, photo: testimonialEmilyDavid, source: "Facebook", text: "We moved with two kids and a dog — TruMove took all the stress off our plate. Would absolutely use them again." },
-                  { name: "Andre W.", location: "Detroit → Orlando", rating: 5, photo: testimonialMarcus, source: "Google", text: "The live tracking map was incredible. I could see exactly where our stuff was the whole trip. Top-notch service." }].
+                  { name: "Andre W.", location: "Detroit → Orlando", rating: 5, photo: testimonialMarcus, source: "Google", text: "The live tracking map was incredible. I could see exactly where our stuff was the whole trip. Top-notch service." },
+                  { name: "Jennifer K.", location: "Philadelphia → Raleigh", rating: 5, photo: testimonialLisa, source: "Google", text: "From the instant quote to delivery, everything was transparent. I always knew where my belongings were. Five stars!" },
+                  { name: "Mike & Sara B.", location: "Minneapolis → Phoenix", rating: 5, photo: testimonialCarlosAna, source: "Yelp", text: "TruMove's video consultation helped us plan everything in advance. The movers showed up on time and treated our stuff like their own." },
+                  { name: "Aisha T.", location: "Washington DC → Columbus", rating: 5, photo: testimonialSarah, source: "SiteJabber", text: "I was nervous about a long-distance move but Trudy walked me through the whole process. Couldn't be happier with the result." },
+                  { name: "Robert C.", location: "Las Vegas → Salt Lake City", rating: 5, photo: testimonialJames, source: "BBB", text: "The price was fair and the service was premium. No bait-and-switch, no hidden charges. Exactly what was promised." },
+                  { name: "Priya & Raj M.", location: "San Jose → Denver", rating: 5, photo: testimonialEmilyDavid, source: "Google", text: "We compared five moving brokers. TruMove was the only one with real FMCSA carrier vetting. That's what sealed it for us." },
+                  { name: "Tom D.", location: "Jacksonville → Memphis", rating: 5, photo: testimonialMarcus, source: "Facebook", text: "The AI inventory scan was a game changer. Pointed my phone around the room and had a full list in minutes. So easy." }].
                   map((review, i) =>
                   <div
                     key={`${dupeIdx}-${i}`}
