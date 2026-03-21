@@ -643,6 +643,7 @@ export default function Index() {
   // Why TruMove feature selection state
   const [activeFeature, setActiveFeature] = useState<number | null>(null);
   const [carrierIdx, setCarrierIdx] = useState(0);
+  const [contactMode, setContactMode] = useState<"trudy" | "form">("trudy");
 
   // Why TruMove features data - Updated per plan
   const whyTruMoveFeatures = [
