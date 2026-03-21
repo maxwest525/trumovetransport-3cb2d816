@@ -133,7 +133,7 @@ export function generateRedFlags(data: CarrierData, scraped?: ScrapedData): RedF
     flags.push({ message: `Out of Service order${dateStr}`, severity: 'critical' });
   }
 
-  // Authority status checks — for brokers, check broker authority instead
+  // Authority status checks - for brokers, check broker authority instead
   if (isBrokerOnly) {
     if (data.authority.brokerStatus === 'INACTIVE' || data.authority.brokerStatus === 'REVOKED') {
       flags.push({ message: `Broker Authority ${data.authority.brokerStatus}`, severity: 'critical' });

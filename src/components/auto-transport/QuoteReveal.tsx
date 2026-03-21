@@ -73,7 +73,7 @@ function ExclusiveDealsOverlay({ from, to, onUnlock }: { from: string; to: strin
         <span className="text-primary">Right Now</span>
       </h3>
       <p className="text-xs text-muted-foreground max-w-[300px] text-center leading-relaxed mb-5">
-        Active carriers on the <span className="font-medium text-foreground">{fromCity}–{toCity}</span> corridor are offering competitive rates — availability shifts fast
+        Active carriers on the <span className="font-medium text-foreground">{fromCity}–{toCity}</span> corridor are offering competitive rates - availability shifts fast
       </p>
 
       <div className="flex flex-wrap items-center justify-center gap-2 mb-7">

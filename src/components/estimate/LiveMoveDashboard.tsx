@@ -94,13 +94,13 @@ export default function LiveMoveDashboard({
           <div className="live-dashboard-row">
             <span className="live-dashboard-label">From</span>
             <span className="live-dashboard-value">
-              {fromCity || fromZip || <span className="text-muted-foreground/50">—</span>}
+              {fromCity || fromZip || <span className="text-muted-foreground/50">-</span>}
             </span>
           </div>
           <div className="live-dashboard-row">
             <span className="live-dashboard-label">To</span>
             <span className="live-dashboard-value">
-              {toCity || toZip || <span className="text-muted-foreground/50">—</span>}
+              {toCity || toZip || <span className="text-muted-foreground/50">-</span>}
             </span>
           </div>
           {distance > 0 && (
@@ -130,13 +130,13 @@ export default function LiveMoveDashboard({
           <div className="live-dashboard-row">
             <span className="live-dashboard-label">Date</span>
             <span className="live-dashboard-value">
-              {moveDate ? moveDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : <span className="text-muted-foreground/50">—</span>}
+              {moveDate ? moveDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : <span className="text-muted-foreground/50">-</span>}
             </span>
           </div>
           <div className="live-dashboard-row">
             <span className="live-dashboard-label">Size</span>
             <span className="live-dashboard-value">
-              {moveSize || <span className="text-muted-foreground/50">—</span>}
+              {moveSize || <span className="text-muted-foreground/50">-</span>}
             </span>
           </div>
           {hasCar && (

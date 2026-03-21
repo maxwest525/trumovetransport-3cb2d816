@@ -463,7 +463,7 @@ export function QuoteWizard({ onGetEstimate, quoteData, setQuoteData, variant = 
                       </div>
                     </div>
 
-                    {/* Condition Report — collapsible */}
+                    {/* Condition Report - collapsible */}
                     <div className="rounded-xl border border-border/60 overflow-hidden">
                       <button
                         onClick={() => setShowConditionDetails(!showConditionDetails)}
@@ -553,7 +553,7 @@ export function QuoteWizard({ onGetEstimate, quoteData, setQuoteData, variant = 
                     </Button>
                   </div>
 
-                  {/* Right: 3D Vehicle Viewer — hidden on mobile */}
+                  {/* Right: 3D Vehicle Viewer - hidden on mobile */}
                   <div className="hidden lg:flex flex-col relative bg-gradient-to-b from-secondary/40 via-card to-muted/30 dark:from-[hsl(155_8%_13%)] dark:via-card dark:to-[hsl(160_10%_8%)] border-l border-border/40 min-h-[400px]">
                     <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_50%_55%,hsl(var(--primary)/0.05),transparent)]" />
                     <div className="flex-1 relative z-10">
@@ -755,7 +755,7 @@ export function QuoteWizard({ onGetEstimate, quoteData, setQuoteData, variant = 
                       </h3>
                       {quoteData.from && quoteData.to && (
                         <p className="text-xs text-muted-foreground max-w-[280px] leading-relaxed mb-5">
-                          Active carriers on the <span className="font-medium text-foreground">{quoteData.from.split(' ')[0]}–{quoteData.to.split(' ')[0]}</span> corridor are offering competitive rates — availability shifts fast
+                          Active carriers on the <span className="font-medium text-foreground">{quoteData.from.split(' ')[0]}–{quoteData.to.split(' ')[0]}</span> corridor are offering competitive rates - availability shifts fast
                         </p>
                       )}
                       {!quoteData.from || !quoteData.to ? (

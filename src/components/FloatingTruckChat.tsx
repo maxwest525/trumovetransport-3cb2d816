@@ -322,7 +322,7 @@ export default function FloatingTruckChat() {
           </div>
         </button>
 
-        {/* Minimize / hand button — only when idle */}
+        {/* Minimize / hand button - only when idle */}
         {!isConnected && !isConnecting && (
           <button
             onClick={handleMinimize}

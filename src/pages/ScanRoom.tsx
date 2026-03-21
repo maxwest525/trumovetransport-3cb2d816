@@ -316,7 +316,7 @@ export default function ScanRoom() {
       head: [['#', '', 'Item', 'Room', 'Qty', 'Weight', 'Cu Ft', 'Total Wt', 'Total Cu Ft']],
       body: tableData,
       foot: [[
-        '', '', '', '', 'Totals:', '—', '—', 
+        '', '', '', '', 'Totals:', '-', '-', 
         `${totalWeight.toLocaleString()} lbs`, 
         `${totalCuFt} cu ft`
       ]],
@@ -574,10 +574,10 @@ export default function ScanRoom() {
                 {isDemoActive && (
                   <p className="text-[10px] font-semibold uppercase tracking-wider text-primary/70">
                     Step {demoStep} of {DEMO_TOTAL_STEPS}
-                    {demoStep === 1 && " — Photo added to library"}
-                    {demoStep === 2 && " — Scanning started"}
-                    {demoStep > 2 && demoStep < DEMO_TOTAL_STEPS && " — Detecting items"}
-                    {demoStep === DEMO_TOTAL_STEPS && " — Complete!"}
+                    {demoStep === 1 && " - Photo added to library"}
+                    {demoStep === 2 && " - Scanning started"}
+                    {demoStep > 2 && demoStep < DEMO_TOTAL_STEPS && " - Detecting items"}
+                    {demoStep === DEMO_TOTAL_STEPS && " - Complete!"}
                   </p>
                 )}
 
@@ -826,7 +826,7 @@ export default function ScanRoom() {
                         <tr>
                           <td colSpan={5}></td>
                           <td className="tru-scan-table-footer-label">Totals:</td>
-                          <td>—</td>
+                          <td>-</td>
                           <td className="tru-scan-table-footer-value">{totalWeight.toLocaleString()} lbs</td>
                           <td className="tru-scan-table-footer-value">{totalCuFt} cu ft</td>
                         </tr>

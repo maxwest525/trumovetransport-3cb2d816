@@ -605,7 +605,7 @@ function CarrierSnapshotCardInner({ data, onRemove, className }: CarrierSnapshot
           {data.carrier.outOfService === 'Y' && (
             <Badge variant="destructive" className="gap-1 text-xs">
               <Ban className="w-3 h-3" />
-              Out of Service{data.carrier.outOfServiceDate ? ` — ${data.carrier.outOfServiceDate}` : ''}
+              Out of Service{data.carrier.outOfServiceDate ? ` - ${data.carrier.outOfServiceDate}` : ''}
             </Badge>
           )}
           {data.carrier.allowToOperate === 'N' && (
@@ -803,7 +803,7 @@ function CarrierSnapshotCardInner({ data, onRemove, className }: CarrierSnapshot
               </div>
             </div>
 
-            {/* OOS Rates vs National Average — from API data directly */}
+            {/* OOS Rates vs National Average - from API data directly */}
             {(data.oos.vehicleOosRate > 0 || data.oos.driverOosRate > 0 || (data.oos.hazmatOosRate ?? 0) > 0) && (
               <>
                 <Separator className="bg-border/60" />
@@ -842,7 +842,7 @@ function CarrierSnapshotCardInner({ data, onRemove, className }: CarrierSnapshot
               </>
             )}
 
-            {/* Roadside Inspection Breakdown — from API data directly */}
+            {/* Roadside Inspection Breakdown - from API data directly */}
             {((data.oos.vehicleInspections ?? 0) > 0 || (data.oos.driverInspections ?? 0) > 0) && (
               <>
                 <Separator className="bg-border/60" />
@@ -1044,7 +1044,7 @@ function CarrierSnapshotCardInner({ data, onRemove, className }: CarrierSnapshot
                             <div key={type} className="flex items-center justify-between text-sm">
                               <span className="text-muted-foreground">{label}</span>
                               <span className={cn('font-medium text-xs', info.authorized ? 'text-green-600' : 'text-muted-foreground')}>
-                                {info.authorized ? '✓ Yes' : '—'}
+                                {info.authorized ? '✓ Yes' : '-'}
                                 {info.mcNumber && <span className="ml-1 text-muted-foreground font-mono">({info.mcNumber})</span>}
                               </span>
                             </div>

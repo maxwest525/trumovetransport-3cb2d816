@@ -269,7 +269,7 @@ export default function InventoryTable({ items, onUpdateItem, onRemoveItem, onCl
       head: [['#', '', 'Item', 'Room', 'Qty', 'Weight', 'Cu Ft', 'Total Wt', 'Total Cu Ft']],
       body: tableData,
       foot: [[
-        '', '', '', '', 'Totals:', '—', '—', 
+        '', '', '', '', 'Totals:', '-', '-', 
         `${totalWeight.toLocaleString()} lbs`, 
         `${totalCubicFeet} cu ft`
       ]],
@@ -412,8 +412,8 @@ export default function InventoryTable({ items, onUpdateItem, onRemoveItem, onCl
                 <tr className="border-t border-border/40 bg-muted/20 font-bold">
                   <td className="print-hide"></td>
                   <td colSpan={3} className="px-4 py-3 text-right text-sm text-muted-foreground">Totals:</td>
-                  <td className="px-4 py-3 text-center text-sm">—</td>
-                  <td className="px-4 py-3 text-center text-sm">—</td>
+                  <td className="px-4 py-3 text-center text-sm">-</td>
+                  <td className="px-4 py-3 text-center text-sm">-</td>
                   <td className="px-4 py-3 text-center text-sm text-foreground">{totalWeight.toLocaleString()} lbs</td>
                   <td className="px-4 py-3 text-center text-sm text-foreground">{totalCubicFeet} cu ft</td>
                   <td className="print-hide"></td>

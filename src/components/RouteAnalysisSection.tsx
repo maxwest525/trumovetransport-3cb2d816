@@ -63,7 +63,7 @@ export default function RouteAnalysisSection({
           <div className={`tru-route-analysis-distance-badge ${distance > 0 ? 'has-value' : ''}`}>
             <Route className="w-4 h-4" />
             <span className="tru-route-distance-value">
-              {distance > 0 ? `${distance.toLocaleString()} mi` : "— mi"}
+              {distance > 0 ? `${distance.toLocaleString()} mi` : "- mi"}
             </span>
           </div>
 

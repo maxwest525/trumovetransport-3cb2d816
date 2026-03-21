@@ -189,30 +189,30 @@ export default function UnifiedDock({
             <div className="unified-dock-summary-grid">
               <div className={`unified-dock-row ${updatedFields.has('from') ? 'is-updated' : ''}`}>
                 <span className="unified-dock-label">From</span>
-                <span className="unified-dock-value">{fromCity || "—"}</span>
+                <span className="unified-dock-value">{fromCity || "-"}</span>
               </div>
               <div className={`unified-dock-row ${updatedFields.has('to') ? 'is-updated' : ''}`}>
                 <span className="unified-dock-label">To</span>
-                <span className="unified-dock-value">{toCity || "—"}</span>
+                <span className="unified-dock-value">{toCity || "-"}</span>
               </div>
               <div className={`unified-dock-row ${updatedFields.has('distance') ? 'is-updated' : ''}`}>
                 <span className="unified-dock-label">Distance</span>
-                <span className="unified-dock-value">{distance > 0 ? `${distance.toLocaleString()} mi` : "—"}</span>
+                <span className="unified-dock-value">{distance > 0 ? `${distance.toLocaleString()} mi` : "-"}</span>
               </div>
               <div className={`unified-dock-row ${updatedFields.has('date') ? 'is-updated' : ''}`}>
                 <span className="unified-dock-label">Date</span>
-                <span className="unified-dock-value">{moveDate ? format(moveDate, "MMM d, yyyy") : "—"}</span>
+                <span className="unified-dock-value">{moveDate ? format(moveDate, "MMM d, yyyy") : "-"}</span>
               </div>
               <div className={`unified-dock-row ${updatedFields.has('size') ? 'is-updated' : ''}`}>
                 <span className="unified-dock-label">Size</span>
-                <span className="unified-dock-value">{size || "—"}</span>
+                <span className="unified-dock-value">{size || "-"}</span>
               </div>
               <div className={`unified-dock-row ${updatedFields.has('propertyType') ? 'is-updated' : ''}`}>
                 <span className="unified-dock-label">Property</span>
                 <span className="unified-dock-value">
                   {propertyType 
                     ? `${propertyType === 'house' ? 'House' : 'Apt'}${propertyType === 'apartment' ? ` F${floor}` : ''}`
-                    : "—"}
+                    : "-"}
                 </span>
               </div>
             </div>

@@ -255,7 +255,7 @@ export default function CustomerService() {
 
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
-              {/* Left — text content */}
+              {/* Left - text content */}
               <div className="text-center lg:text-left space-y-6">
                 <div>
                   <p className="text-[11px] uppercase tracking-[0.3em] text-primary font-semibold mb-3">AI-Powered Support</p>
@@ -268,7 +268,7 @@ export default function CustomerService() {
                     Meet <span className="text-primary">Trudy</span>
                   </h1>
                   <p className="text-muted-foreground text-base md:text-lg mt-4 max-w-md mx-auto lg:mx-0 leading-relaxed font-light">
-                    Your AI move coordinator — get instant quotes, real-time tracking, scheduling & 24/7 support by voice or chat.
+                    Your AI move coordinator - get instant quotes, real-time tracking, scheduling & 24/7 support by voice or chat.
                   </p>
                 </div>
 
@@ -312,7 +312,7 @@ export default function CustomerService() {
                 </div>
               </div>
 
-              {/* Right — chat box */}
+              {/* Right - chat box */}
               <div ref={chatRef} className="w-full max-w-lg mx-auto lg:max-w-none">
                 <TrudyChatBox />
               </div>

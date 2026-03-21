@@ -387,7 +387,7 @@ export function getZipCoordinates(zip: string): { x: number; y: number } | null 
  * Format distance with appropriate units
  */
 export function formatDistance(miles: number): string {
-  if (miles === 0) return '—';
+  if (miles === 0) return '-';
   if (miles < 50) return `${miles} mi (local)`;
   return `${miles.toLocaleString()} mi`;
 }
