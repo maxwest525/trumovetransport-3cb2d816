@@ -80,6 +80,16 @@ function FitBounds({ bounds }: { bounds: L.LatLngBoundsExpression }) {
   return null;
 }
 
+function MapReadyHandler({ onReady }: { onReady?: () => void }) {
+  const map = useMap();
+  useEffect(() => {
+    if (map && onReady) {
+      onReady();
+    }
+  }, [map, onReady]);
+  return null;
+}
+
 const AnimatedRouteMap: React.FC<AnimatedRouteMapProps> = ({
   fromCoords,
   toCoords,
