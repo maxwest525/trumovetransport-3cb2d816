@@ -85,7 +85,7 @@ export default function Book() {
                 </div>
               )}
               <iframe
-                src="https://cal.com/trumove?embed=true&theme=dark&layout=month_view"
+                src="https://cal.com/trumove?embed=true&theme=dark&layout=week_view"
                 title="Schedule a consultation with TruMove"
                 loading="lazy"
                 onLoad={() => setIframeLoaded(true)}
