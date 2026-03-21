@@ -19,15 +19,15 @@ interface MoveWeatherForecastProps {
   moveDate: Date | null;
 }
 
-const MAPBOX_TOKEN = "pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g";
+const MAPTILER_KEY = "X6zFH8Vcg9bMuUCrXFWU";
 
-// Geocode address to coordinates using Mapbox
+// Geocode address to coordinates using MapTiler
 async function geocodeAddress(address: string): Promise<[number, number] | null> {
   if (!address || address.length < 3) return null;
   
   try {
     const response = await fetch(
-      `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json?access_token=${MAPBOX_TOKEN}&country=US&types=address,place&limit=1`
+      `https://api.maptiler.com/geocoding/${encodeURIComponent(address)}.json?key=${MAPTILER_KEY}&country=us&limit=1&language=en`
     );
     const data = await response.json();
     

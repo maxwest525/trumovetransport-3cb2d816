@@ -166,11 +166,11 @@ export function TruckTrackingMap({
     onFollowModeChange?.(newMode);
   }, [internalFollowMode, onFollowModeChange]);
 
-  // Fetch route from Mapbox Directions (free tier, keeps working)
+  // Fetch route from OSRM (free, no API key)
   const fetchRoute = useCallback(async (origin: [number, number], dest: [number, number]) => {
     try {
       const response = await fetch(
-        `https://api.mapbox.com/directions/v5/mapbox/driving-traffic/${origin[0]},${origin[1]};${dest[0]},${dest[1]}?geometries=geojson&overview=full&annotations=congestion&access_token=${MAPBOX_TOKEN}`
+        `https://router.project-osrm.org/route/v1/driving/${origin[0]},${origin[1]};${dest[0]},${dest[1]}?geometries=geojson&overview=full`
       );
       const data = await response.json();
       if (data.routes?.[0]) {

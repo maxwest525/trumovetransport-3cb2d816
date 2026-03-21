@@ -95,10 +95,10 @@ function getLocationName(zip: string): string {
   return ZIP_NAMES[zip.substring(0, 3)] || '';
 }
 
-// Fetch driving route from Mapbox Directions
+// Fetch driving route from OSRM (free, no API key)
 async function fetchDrivingRoute(from: [number, number], to: [number, number]): Promise<[number, number][] | null> {
   try {
-    const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${from[0]},${from[1]};${to[0]},${to[1]}?geometries=geojson&overview=full&access_token=${MAPBOX_TOKEN}`;
+    const url = `https://router.project-osrm.org/route/v1/driving/${from[0]},${from[1]};${to[0]},${to[1]}?geometries=geojson&overview=full`;
     const response = await fetch(url);
     if (!response.ok) return null;
     const data = await response.json();

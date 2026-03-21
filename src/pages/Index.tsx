@@ -490,7 +490,7 @@ const SAMPLE_ROUTE = {
   weather: "58°F Clear"
 };
 
-const MAPBOX_TOKEN = 'pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g';
+const MAPTILER_STATIC_KEY = 'X6zFH8Vcg9bMuUCrXFWU';
 
 // Supabase URL for edge function proxying
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://nhoagucgcqjfbtifykha.supabase.co';
