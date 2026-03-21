@@ -53,7 +53,7 @@ export function MiniRouteOverview({
     else if (maxDiff < 6) zoom = 5;
     else zoom = 4;
 
-    const url = `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${originMarker},${destMarker}${truckMarker}/auto/180x120@2x?access_token=${MAPBOX_TOKEN}&padding=30`;
+    const url = `https://api.maptiler.com/maps/satellite/static/auto/${width}x${height}@2x.jpg?key=${MAPTILER_KEY}&markers=${originCoords[0]},${originCoords[1]}|${destCoords[0]},${destCoords[1]}${truckPosition ? `|${truckPosition[0]},${truckPosition[1]}` : ''}&padding=30`;
     
     setImageUrl(url);
   }, [originCoords, destCoords, truckPosition]);
