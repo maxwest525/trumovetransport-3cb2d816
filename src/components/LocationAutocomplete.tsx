@@ -8,6 +8,9 @@ import {
   TooltipProvider,
 } from "@/components/ui/tooltip";
 import { MAPTILER_KEY } from '@/lib/maptilerConfig';
+
+// Geoapify API key (publishable, safe in client code)
+const GEOAPIFY_KEY = '196cdbf659334d408ece5c98682f2106';
 import { toast } from "@/hooks/use-toast";
 
 
