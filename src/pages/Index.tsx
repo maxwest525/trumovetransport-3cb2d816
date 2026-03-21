@@ -506,7 +506,7 @@ function ShipmentTrackerSection({ navigate }: {navigate: (path: string) => void;
   };
 
   return (
-    <section className="py-20 md:py-28 relative overflow-hidden">
+    <section className="py-14 md:py-20 relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-0 w-[500px] h-[500px] rounded-full bg-primary/[0.05] blur-[120px]" />
         <div className="absolute bottom-0 right-0 w-[400px] h-[400px] rounded-full bg-primary/[0.04] blur-[100px]" />
@@ -1481,7 +1481,7 @@ export default function Index() {
         <StatsStrip />
 
           {/* START YOUR AI INVENTORY ANALYSIS - Enhanced with Preview */}
-          <section className="py-20 md:py-28 relative overflow-hidden">
+          <section className="py-14 md:py-20 relative overflow-hidden">
             <div className="absolute inset-0 pointer-events-none">
               <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full bg-primary/[0.06] blur-[120px]" />
               <div className="absolute bottom-0 left-0 w-[500px] h-[500px] rounded-full bg-primary/[0.04] blur-[100px]" />
@@ -1546,7 +1546,7 @@ export default function Index() {
           <ShipmentTrackerSection navigate={navigate} />
 
           {/* TESTIMONIALS */}
-          <section className="py-20 md:py-28 relative overflow-hidden">
+          <section className="py-14 md:py-20 relative overflow-hidden">
             <div className="absolute inset-0 pointer-events-none">
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] rounded-full bg-primary/[0.04] blur-[120px]" />
               <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
@@ -1616,7 +1616,7 @@ export default function Index() {
 
 
           {/* CARRIER VETTING PREVIEW */}
-          <section className="py-20 md:py-28 relative overflow-hidden">
+          <section className="py-14 md:py-20 relative overflow-hidden">
             <div className="absolute inset-0 pointer-events-none">
               <div className="absolute top-0 left-0 w-[500px] h-[500px] rounded-full bg-primary/[0.05] blur-[120px]" />
               <div className="absolute bottom-0 right-0 w-[600px] h-[600px] rounded-full bg-primary/[0.04] blur-[100px]" />
@@ -1763,7 +1763,7 @@ export default function Index() {
           
 
           {/* GET IN TOUCH */}
-          <section className="py-20 md:py-28 relative overflow-hidden">
+          <section className="py-14 md:py-20 relative overflow-hidden">
             <div className="absolute inset-0 pointer-events-none">
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] rounded-full bg-primary/[0.06] blur-[120px]" />
               <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />

@@ -2820,9 +2820,8 @@
   width: 100%;
   max-width: 1600px;
   margin: 0 auto;
-  gap: 0;
-  padding: 32px 48px;
-  /* Total height = panel (424px) + padding (64px) = 488px */
+  gap: 1.5rem;
+  padding: 0;
 }
 
 /* Steps left container - center-relative positioning for consistent gap */
@@ -2842,7 +2841,7 @@
   width: auto;
   max-width: 24rem;
   z-index: 5;
-  background: hsl(var(--card));
+  background: transparent;
   border: none;
   border-radius: 12px;
   padding: 2rem 1.5rem;
@@ -3336,11 +3335,10 @@
   min-height: var(--demo-panel-height);
   max-height: var(--demo-panel-height);
   width: 420px;
-  border: 2px solid hsl(0 0% 0%);
+  border: 1px solid hsl(var(--border));
   box-shadow:
-    0 4px 20px hsl(0 0% 0% / 0.5),
-    0 8px 40px hsl(0 0% 0% / 0.3),
-    inset 0 2px 8px hsl(0 0% 0% / 0.4);
+    0 4px 20px hsl(0 0% 0% / 0.15),
+    0 8px 40px hsl(0 0% 0% / 0.08);
 }
 
 .tru-ai-live-scanner img {
@@ -3494,7 +3492,7 @@
 
 .tru-ai-live-inventory {
   background: hsl(var(--card));
-  border: 2px solid hsl(0 0% 0%);
+  border: 1px solid hsl(var(--border));
   border-radius: 12px;
   padding: 12px;
   display: flex;
@@ -3504,9 +3502,8 @@
   min-height: var(--demo-panel-height);
   max-height: var(--demo-panel-height);
   box-shadow:
-    0 4px 20px hsl(0 0% 0% / 0.5),
-    0 8px 40px hsl(0 0% 0% / 0.3),
-    inset 0 2px 8px hsl(0 0% 0% / 0.15);
+    0 4px 20px hsl(0 0% 0% / 0.15),
+    0 8px 40px hsl(0 0% 0% / 0.08);
 }
 
 .tru-ai-live-header {
