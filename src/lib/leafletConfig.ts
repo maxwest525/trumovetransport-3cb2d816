@@ -1,32 +1,26 @@
 // Centralized Leaflet tile layer configuration
-// Uses MapTiler raster XYZ tiles — free tier with API key
-import { MAPTILER_KEY, MAPTILER_CUSTOM_MAP } from './maptilerConfig';
+// Uses free OpenStreetMap tiles — no API key required
 
 export const TILE_LAYERS = {
-  // Custom branded map (default for most maps)
   light: {
-    url: `https://api.maptiler.com/maps/${MAPTILER_CUSTOM_MAP}/256/{z}/{x}/{y}.png?key=${MAPTILER_KEY}`,
-    attribution: '&copy; <a href="https://www.maptiler.com/">MapTiler</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
   },
-  // Dark theme (tracking, dashboards)
   dark: {
-    url: `https://api.maptiler.com/maps/toner-v2/256/{z}/{x}/{y}.png?key=${MAPTILER_KEY}`,
-    attribution: '&copy; <a href="https://www.maptiler.com/">MapTiler</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
   },
-  // Voyager (clean, detailed — good for route views)
   voyager: {
-    url: `https://api.maptiler.com/maps/${MAPTILER_CUSTOM_MAP}/256/{z}/{x}/{y}.png?key=${MAPTILER_KEY}`,
-    attribution: '&copy; <a href="https://www.maptiler.com/">MapTiler</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
   },
-  // Satellite imagery
   satellite: {
-    url: `https://api.maptiler.com/maps/satellite/256/{z}/{x}/{y}.jpg?key=${MAPTILER_KEY}`,
-    attribution: '&copy; <a href="https://www.maptiler.com/">MapTiler</a>',
+    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
   },
-  // Standard OSM fallback
   osm: {
     url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
   },
 } as const;
 
