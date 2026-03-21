@@ -102,69 +102,7 @@ async function withRetry<T>(
   return { result: null, failed: true, retryCount: maxRetries + 1 };
 }
 
-// Google Places Autocomplete API - PRIMARY source for address suggestions
-// Uses retry logic to handle transient 503 boot errors gracefully
-async function searchGooglePlaces(query: string): Promise<{ suggestions: LocationSuggestion[]; failed: boolean }> {
-  const makeRequest = async (): Promise<{ suggestions: LocationSuggestion[]; failed: boolean }> => {
-    const { data, error } = await supabase.functions.invoke('google-places-autocomplete', {
-      body: { 
-        query,
-        sessionToken: googleSessionToken,
-        types: ['address']
-      }
-    });
-
-    // Throw on transient errors (503, etc.) to trigger retry
-    if (error) {
-      const errorMessage = error.message || String(error);
-      if (errorMessage.includes('503') || errorMessage.includes('BOOT_ERROR')) {
-        throw new Error(`Transient error: ${errorMessage}`);
-      }
-      console.error('Google Places error:', error);
-      return { suggestions: [], failed: true };
-    }
-
-    // Check if we should fallback
-    if (data?.fallback || data?.error) {
-      // If it's a transient error, throw to retry
-      if (data?.code === 'BOOT_ERROR' || data?.code === 'EXCEPTION') {
-        throw new Error(`Transient API error: ${data.code}`);
-      }
-      console.log('Google Places unavailable, will fallback to Mapbox');
-      return { suggestions: [], failed: true };
-    }
-
-    // Generate new session token after successful use
-    googleSessionToken = generateSessionToken();
-
-    const suggestions: LocationSuggestion[] = (data?.suggestions || []).map((s: any) => ({
-      streetAddress: s.streetAddress || s.mainText || '',
-      city: s.city || '',
-      state: s.state || '',
-      zip: s.zip || '',
-      display: s.description || s.mainText,
-      fullAddress: s.description,
-      isVerified: false, // Will be verified after selection
-      validationLevel: null,
-      mapboxId: undefined,
-      googlePlaceId: s.placeId,
-    }));
-
-    return { suggestions, failed: false };
-  };
-
-  // Use retry logic for transient 503/boot errors
-  const { result, failed } = await withRetry(makeRequest, MAX_RETRIES, RETRY_DELAY);
-  
-  if (failed || !result) {
-    console.log('Google Places failed after retries, falling back to Mapbox');
-    return { suggestions: [], failed: true };
-  }
-  
-  return result;
-}
-
-// MapTiler Geocoding API - FALLBACK source for address suggestions
+// MapTiler Geocoding API - PRIMARY source for address suggestions
 async function searchMapTilerAddresses(query: string): Promise<{ suggestions: LocationSuggestion[]; failed: boolean }> {
   const { result, failed } = await withRetry(async () => {
     const res = await fetch(
@@ -209,78 +147,13 @@ async function searchMapTilerAddresses(query: string): Promise<{ suggestions: Lo
       zip,
       display: displayAddr,
       fullAddress: placeName,
-      isVerified: false,
-      validationLevel: hasStreet ? null : 'partial' as ValidationLevel,
+      isVerified: hasStreet,
+      validationLevel: hasStreet ? 'verified' as ValidationLevel : 'partial' as ValidationLevel,
       mapboxId: undefined,
     };
   });
   
   return { suggestions, failed: false };
-}
-
-// Google Address Validation API for verified street addresses
-async function validateWithGoogle(address: string): Promise<{ 
-  address: LocationSuggestion | null; 
-  failed: boolean;
-  errorCode?: string;
-  fallbackToMapbox?: boolean;
-}> {
-  try {
-    const { data, error } = await supabase.functions.invoke('google-address-validation', {
-      body: { address }
-    });
-
-    if (error) {
-      console.error('Google Address Validation error:', error);
-      return { address: null, failed: true, errorCode: 'INVOKE_ERROR', fallbackToMapbox: true };
-    }
-
-    // Check if we should fallback to Mapbox
-    if (data?.fallbackToMapbox || data?.code === 'API_ERROR') {
-      console.log('Google API not available, falling back to Mapbox');
-      return { address: null, failed: false, errorCode: data?.code, fallbackToMapbox: true };
-    }
-
-    if (data?.error || !data?.valid) {
-      console.warn('Google validation failed:', data?.error || 'Invalid address');
-      return { address: null, failed: false, errorCode: data?.code };
-    }
-
-    const { components, formattedAddress, validationLevel: googleLevel } = data;
-    
-    // Map Google validation levels to our system
-    let validationLevel: ValidationLevel;
-    if (googleLevel === 'verified') {
-      validationLevel = 'verified';
-    } else if (googleLevel === 'partial') {
-      validationLevel = 'partial';
-    } else {
-      validationLevel = 'unverifiable';
-    }
-
-    return {
-      address: {
-        streetAddress: components.streetAddress || '',
-        city: components.city || '',
-        state: components.state || '',
-        zip: components.zip || '',
-        display: formattedAddress?.replace(', USA', '').replace(', United States', '') || '',
-        fullAddress: formattedAddress || '',
-        isVerified: validationLevel === 'verified',
-        validationLevel,
-        mapboxId: undefined, // Not from Mapbox
-      },
-      failed: false
-    };
-  } catch (error) {
-    console.error('Google Address Validation exception:', error);
-    return { address: null, failed: true, errorCode: 'EXCEPTION', fallbackToMapbox: true };
-  }
-}
-
-// Retrieve is no longer needed with MapTiler — return null for compatibility
-async function retrieveMapboxAddress(_mapboxId: string): Promise<{ address: LocationSuggestion | null; failed: boolean }> {
-  return { address: null, failed: true };
 }
 
 // Photon API for city-only search (mode="city") - CORS-friendly, fallback
