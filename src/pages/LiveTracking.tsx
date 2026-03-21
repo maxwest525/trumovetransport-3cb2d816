@@ -663,40 +663,6 @@ export default function LiveTracking() {
                       </DropdownMenuContent>
                     </DropdownMenu>
 
-                    {/* Alternate Routes Dropdown */}
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="sm" className="gap-1.5">
-                          <Route className="w-4 h-4" />
-                          Routes
-                          {googleRouteData.alternateRoutes && googleRouteData.alternateRoutes.length > 0 && (
-                            <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-primary/20 text-primary">
-                              {googleRouteData.alternateRoutes.length}
-                            </span>
-                          )}
-                          <ChevronDown className="w-3 h-3" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="start" side="top" className="w-72 p-3 bg-popover border border-border shadow-xl z-50 max-h-[60vh] overflow-y-auto">
-                        {googleRouteData.alternateRoutes && googleRouteData.alternateRoutes.length > 0 ? (
-                          <div className="space-y-2">
-                            {googleRouteData.alternateRoutes.slice(0, 3).map((alt: any, i: number) => (
-                              <div key={i} className="flex flex-col gap-1 p-3 rounded-lg bg-muted/50 border border-border hover:bg-muted transition-colors cursor-pointer">
-                                <span className="text-sm font-semibold text-foreground">{alt.description || `Route ${i + 1}`}</span>
-                                <span className="text-xs text-muted-foreground flex items-center gap-2">
-                                  {alt.distanceMiles} mi • {alt.durationFormatted}
-                                  {alt.isTollFree && <span className="text-primary font-semibold">No tolls</span>}
-                                </span>
-                              </div>
-                            ))}
-                          </div>
-                        ) : (
-                          <div className="text-center py-4 text-muted-foreground text-sm">
-                            Enter route to see alternatives
-                          </div>
-                        )}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
 
                     {/* Weigh Stations Dropdown */}
                     <DropdownMenu>
