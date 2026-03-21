@@ -111,6 +111,12 @@ function createCityIcon(name: string): L.DivIcon {
   });
 }
 
+function MapReadyNotifier({ onReady }: { onReady: () => void }) {
+  const map = useMap();
+  useEffect(() => { if (map) onReady(); }, [map, onReady]);
+  return null;
+}
+
 // Component to control map view
 function MapViewController({ 
   center, 
