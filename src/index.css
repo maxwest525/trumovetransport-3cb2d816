@@ -23052,7 +23052,7 @@
   font-size: clamp(26px, 4vw, 36px);
   font-weight: 800;
   letter-spacing: -0.02em;
-  color: hsl(var(--tm-ink));
+  color: hsl(var(--foreground));
   margin-bottom: 12px;
 }
 
