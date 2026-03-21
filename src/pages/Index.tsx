@@ -1252,8 +1252,8 @@ export default function Index() {
                           goNext();
                         }}
                         className="w-full flex items-center justify-center gap-2 h-11 rounded-lg bg-foreground text-background font-semibold text-sm hover:bg-foreground/85 transition-all duration-200 hover:shadow-[0_4px_12px_hsl(var(--foreground)/0.15)]">
-                          <span>Talk to a Specialist</span>
-                          <ArrowRight className="w-4 h-4 text-primary" />
+                          <span>Get Quote Now</span>
+                          <ArrowRight className="w-4 h-4" />
                         </button>
 
                         <p className="text-center text-[9px] leading-tight text-muted-foreground/70 max-w-xs mx-auto">By clicking above, you consent to receive calls, texts, and emails at the number/email provided, including via automated technology. Consent is not a condition of purchase. Msg & data rates may apply.</p>
