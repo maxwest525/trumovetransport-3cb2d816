@@ -1118,7 +1118,7 @@ export default function Index() {
 
             {/* RIGHT COLUMN: Form */}
             <div className="tru-hero-right-column" ref={quoteBuilderRef}>
-                <div className="rounded-2xl ring-1 ring-border bg-card overflow-hidden">
+                <div className="rounded-2xl ring-1 ring-border bg-card overflow-hidden border-0">
                   {/* Form Header */}
                   <div className="bg-foreground px-6 py-4 text-center">
                     <h2 className="text-lg md:text-xl font-bold text-background tracking-wide uppercase">
@@ -1706,11 +1706,11 @@ export default function Index() {
                       <button
                         onClick={() => setContactMode("trudy")}
                         className={`flex-1 flex items-center justify-center gap-1.5 px-4 py-4 text-xs font-semibold transition-all ${
-                          contactMode === "trudy"
-                            ? "bg-foreground text-background"
-                            : "bg-background text-muted-foreground hover:text-foreground hover:bg-muted"
-                        }`}
-                      >
+                        contactMode === "trudy" ?
+                        "bg-foreground text-background" :
+                        "bg-background text-muted-foreground hover:text-foreground hover:bg-muted"}`
+                        }>
+                        
                         <Sparkles className="w-3 h-3" />
                         Talk to Trudy
                       </button>
@@ -1718,58 +1718,58 @@ export default function Index() {
                       <button
                         onClick={() => setContactMode("form")}
                         className={`flex-1 flex items-center justify-center gap-1.5 px-4 py-4 text-xs font-semibold transition-all ${
-                          contactMode === "form"
-                            ? "bg-foreground text-background"
-                            : "bg-background text-muted-foreground hover:text-foreground hover:bg-muted"
-                        }`}
-                      >
+                        contactMode === "form" ?
+                        "bg-foreground text-background" :
+                        "bg-background text-muted-foreground hover:text-foreground hover:bg-muted"}`
+                        }>
+                        
                         <MessageSquare className="w-3 h-3" />
                         Send a Message
                       </button>
                     </div>
 
                     {/* Content */}
-                    {contactMode === "trudy" ? (
-                      <div className="flex-1 rounded-xl border border-border overflow-hidden" style={{ height: 320 }}>
+                    {contactMode === "trudy" ?
+                    <div className="flex-1 rounded-xl border border-border overflow-hidden" style={{ height: 320 }}>
                         <AIChatContainer />
-                      </div>
-                    ) : contactFormSent ? (
-                      <div className="flex-1 flex flex-col items-center justify-center text-center gap-3 py-8">
+                      </div> :
+                    contactFormSent ?
+                    <div className="flex-1 flex flex-col items-center justify-center text-center gap-3 py-8">
                         <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
                           <CheckCircle className="h-6 w-6 text-primary" />
                         </div>
                         <h3 className="text-base font-semibold text-foreground">Message Sent!</h3>
                         <p className="text-xs text-muted-foreground">We'll get back to you within a few hours.</p>
-                        <button onClick={() => { setContactFormSent(false); setContactFormName(""); setContactFormEmail(""); setContactFormMessage(""); }} className="text-xs text-primary underline underline-offset-2 hover:text-primary/80">Send another</button>
-                      </div>
-                    ) : (
-                      <>
+                        <button onClick={() => {setContactFormSent(false);setContactFormName("");setContactFormEmail("");setContactFormMessage("");}} className="text-xs text-primary underline underline-offset-2 hover:text-primary/80">Send another</button>
+                      </div> :
+
+                    <>
                         <div className="flex flex-col items-center text-center mb-3">
                           <p className="text-xs text-muted-foreground">We'll get back to you within a few hours.</p>
                         </div>
                         <form className="flex-1 flex flex-col space-y-2.5" onSubmit={async (e) => {
-                          e.preventDefault();
-                          if (contactFormSending) return;
-                          setContactFormSending(true);
-                          try {
-                            // Insert into support_tickets
-                            const { supabase } = await import("@/integrations/supabase/client");
-                            await supabase.from("support_tickets").insert({
-                              name: contactFormName,
-                              email: contactFormEmail,
-                              message: contactFormMessage,
-                            });
-                            // Notify via edge function
-                            await supabase.functions.invoke("notify-support-ticket", {
-                              body: { name: contactFormName, email: contactFormEmail, message: contactFormMessage },
-                            });
-                            setContactFormSent(true);
-                          } catch (err) {
-                            console.error("Contact form error:", err);
-                          } finally {
-                            setContactFormSending(false);
-                          }
-                        }}>
+                        e.preventDefault();
+                        if (contactFormSending) return;
+                        setContactFormSending(true);
+                        try {
+                          // Insert into support_tickets
+                          const { supabase } = await import("@/integrations/supabase/client");
+                          await supabase.from("support_tickets").insert({
+                            name: contactFormName,
+                            email: contactFormEmail,
+                            message: contactFormMessage
+                          });
+                          // Notify via edge function
+                          await supabase.functions.invoke("notify-support-ticket", {
+                            body: { name: contactFormName, email: contactFormEmail, message: contactFormMessage }
+                          });
+                          setContactFormSent(true);
+                        } catch (err) {
+                          console.error("Contact form error:", err);
+                        } finally {
+                          setContactFormSending(false);
+                        }
+                      }}>
                           <div className="grid grid-cols-2 gap-2.5">
                             <input type="text" required placeholder="Your name" value={contactFormName} onChange={(e) => setContactFormName(e.target.value)} className="w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary text-sm" />
                             <input type="email" required placeholder="Email" value={contactFormEmail} onChange={(e) => setContactFormEmail(e.target.value)} className="w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary text-sm" />
@@ -1783,7 +1783,7 @@ export default function Index() {
                           or email <a href="mailto:support@trumove.com" className="text-primary underline underline-offset-2 hover:text-primary/80">support@trumove.com</a>
                         </p>
                       </>
-                    )}
+                    }
                   </div>
 
                   {/* Divider */}
