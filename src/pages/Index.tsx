@@ -511,8 +511,15 @@ function ShipmentTrackerSection({ navigate }: {navigate: (path: string) => void;
   };
 
   return (
-    <section className="tru-ai-steps-section" style={{ paddingTop: '5rem', paddingBottom: '5rem' }}>
-      <div className="tru-ai-steps-inner">
+    <section className="py-20 md:py-28 relative overflow-hidden">
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-0 left-0 w-[500px] h-[500px] rounded-full bg-primary/[0.05] blur-[120px]" />
+        <div className="absolute bottom-0 right-0 w-[400px] h-[400px] rounded-full bg-primary/[0.04] blur-[100px]" />
+        <div className="absolute inset-0 opacity-[0.025]" style={{ backgroundImage: 'radial-gradient(circle, hsl(var(--foreground)) 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
+      </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="flex flex-col lg:flex-row items-center justify-center gap-10 lg:gap-16 w-full">
           {/* Lifestyle image - left */}
           <div className="flex items-center justify-center flex-shrink-0">
@@ -522,26 +529,29 @@ function ShipmentTrackerSection({ navigate }: {navigate: (path: string) => void;
           </div>
 
           {/* Headline + CTA - center */}
-          <div className="flex flex-col items-center text-center gap-4 bg-card p-8 border-0 shadow-none rounded-none">
-            <div className="tru-ai-headline-block">
-              <h2 className="tru-ai-main-headline text-5xl md:text-6xl">
+          <div className="flex flex-col items-center text-center gap-4">
+            <div>
+              <p className="text-[11px] uppercase tracking-[0.3em] text-primary font-semibold mb-3">Live GPS Tracking</p>
+              <div className="flex items-center justify-center gap-2 mb-4">
+                <span className="h-px w-8 bg-primary/40" />
+                <span className="w-1.5 h-1.5 rounded-full bg-primary/60" />
+                <span className="h-px w-8 bg-primary/40" />
+              </div>
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground tracking-tight leading-[1.1]">
                 Real-Time<br />
-                <span className="tru-ai-headline-accent">Shipment Tracking.</span>
+                <span className="text-primary">Shipment Tracking.</span>
               </h2>
-              <p className="tru-ai-subheadline text-lg">
+              <p className="text-muted-foreground max-w-xl mx-auto text-base md:text-lg font-light leading-relaxed mt-4">
                 Stay up to date and track your belongings across the country with real-time GPS tracking of your goods.
               </p>
             </div>
             
-            <button onClick={() => navigate("/track")} className="tru-ai-cta-btn">
-              <MapPin className="w-4 h-4 text-[#49fe01]" />
+            <button onClick={() => navigate("/track")} className="inline-flex items-center gap-2 h-11 px-8 rounded-lg bg-foreground text-background font-semibold text-sm hover:bg-foreground/85 transition-all duration-200 hover:shadow-[0_4px_12px_hsl(var(--foreground)/0.15)]">
+              <MapPin className="w-4 h-4 text-primary" />
               Track Shipment
-              <ArrowRight className="w-4 h-4 text-[#48ff00]" />
+              <ArrowRight className="w-4 h-4 text-primary" />
             </button>
           </div>
-
-
-
         </div>
       </div>
     </section>);
@@ -610,11 +620,22 @@ function StepsCompactSection({ navigate }: {navigate: (path: string) => void;}) 
 
 
   return (
-    <section className="tru-steps-compact" ref={sectionRef}>
-      <div className="tru-steps-compact-inner">
-        <div className="tru-steps-compact-header">
-          <span className="tru-steps-compact-badge">How It Works</span>
-          <h2 className="tru-steps-compact-title">Get matched with the right mover.</h2>
+    <section className="py-16 md:py-20 relative overflow-hidden" ref={sectionRef}>
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
+      </div>
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="text-center mb-8">
+          <p className="text-[11px] uppercase tracking-[0.3em] text-primary font-semibold mb-3">How It Works</p>
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <span className="h-px w-8 bg-primary/40" />
+            <span className="w-1.5 h-1.5 rounded-full bg-primary/60" />
+            <span className="h-px w-8 bg-primary/40" />
+          </div>
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight leading-[1.1]">
+            Get matched with the right <span className="text-primary">mover.</span>
+          </h2>
         </div>
         <div className="tru-steps-compact-grid">
           {steps.map((step, index) =>
@@ -1181,7 +1202,7 @@ export default function Index() {
             <div className="tru-hero-left-column">
               <img src={logoImg} alt="TruMove" className="tru-hero-logo" />
               <h1 className="tru-hero-headline">
-                The Smarter Way To <span className="tru-hero-accent">Move</span>
+                The Smarter Way To <span className="text-primary">Move</span>
               </h1>
               <ul className="tru-hero-bullets">
                 <li>Scan, document, and build your own inventory — your items stay private and secure</li>
@@ -1564,19 +1585,31 @@ export default function Index() {
         <StatsStrip />
 
           {/* START YOUR AI INVENTORY ANALYSIS - Enhanced with Preview */}
-          <section className="tru-ai-steps-section">
-            <div className="tru-ai-steps-inner">
+          <section className="py-20 md:py-28 relative overflow-hidden">
+            <div className="absolute inset-0 pointer-events-none">
+              <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full bg-primary/[0.06] blur-[120px]" />
+              <div className="absolute bottom-0 left-0 w-[500px] h-[500px] rounded-full bg-primary/[0.04] blur-[100px]" />
+              <div className="absolute inset-0 opacity-[0.025]" style={{ backgroundImage: 'radial-gradient(circle, hsl(var(--foreground)) 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
+              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
+            </div>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
               {/* Header row: info on left, previews on right */}
               <div className="tru-ai-header-row border-0 rounded-none shadow-none" ref={scanPreviewRef}>
                 {/* LEFT: Description content */}
                 <div className="tru-ai-content-left border-0 rounded-none shadow-none border-primary-foreground" style={{ justifyContent: 'center' }}>
-                  {/* Premium headline block */}
-                  <div className="tru-ai-headline-block animate-fade-scale-in opacity-0" style={{ animationDelay: '0ms' }}>
-                    <h2 className="tru-ai-main-headline text-5xl md:text-6xl">
+                  <div>
+                    <p className="text-[11px] uppercase tracking-[0.3em] text-primary font-semibold mb-3">AI-Powered Inventory</p>
+                    <div className="flex items-center gap-2 mb-4">
+                      <span className="h-px w-8 bg-primary/40" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary/60" />
+                      <span className="h-px w-8 bg-primary/40" />
+                    </div>
+                    <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground tracking-tight leading-[1.1]">
                       Scan. Add.<br />
-                      <span className="tru-ai-headline-accent">Estimate.</span>
+                      <span className="text-primary">Estimate.</span>
                     </h2>
-                    <p className="tru-ai-subheadline text-lg">
+                    <p className="text-muted-foreground max-w-md text-base md:text-lg font-light leading-relaxed mt-4">
                       Point your camera at any room. Our AI identifies every item and calculates your move in seconds—not hours.
                     </p>
                   </div>
@@ -1584,12 +1617,10 @@ export default function Index() {
                   {/* CTA Button */}
                   <button
                     onClick={() => navigate("/scan-room")}
-                    className="tru-ai-cta-btn animate-fade-scale-in opacity-0"
-                    style={{ animationDelay: '350ms' }}>
-                    
-                    <Home className="w-4 h-4 text-[#00ff00]" />
+                    className="inline-flex items-center gap-2 mt-6 h-11 px-8 rounded-lg bg-foreground text-background font-semibold text-sm hover:bg-foreground/85 transition-all duration-200 hover:shadow-[0_4px_12px_hsl(var(--foreground)/0.15)]">
+                    <Home className="w-4 h-4 text-primary" />
                     Scan Your Home
-                    <ArrowRight className="w-4 h-4 text-[#4cff05]" />
+                    <ArrowRight className="w-4 h-4 text-primary" />
                   </button>
                 </div>
                 
@@ -1623,13 +1654,24 @@ export default function Index() {
           <div className="py-8"><FeatureTrustStrip /></div>
 
           {/* TESTIMONIALS */}
-          <section className="tru-ai-steps-section pt-16 pb-16">
-            <div className="max-w-[90rem] mx-auto">
+          <section className="py-20 md:py-28 relative overflow-hidden">
+            <div className="absolute inset-0 pointer-events-none">
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] rounded-full bg-primary/[0.04] blur-[120px]" />
+              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
+            </div>
+            <div className="max-w-[90rem] mx-auto relative z-10">
               <div className="flex flex-col items-center text-center mb-10">
-                <h2 className="tru-ai-main-headline text-5xl md:text-6xl">
-                  What Our Customers <span className="tru-ai-headline-accent">Say.</span>
+                <p className="text-[11px] uppercase tracking-[0.3em] text-primary font-semibold mb-3">Testimonials</p>
+                <div className="flex items-center justify-center gap-2 mb-4">
+                  <span className="h-px w-8 bg-primary/40" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary/60" />
+                  <span className="h-px w-8 bg-primary/40" />
+                </div>
+                <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground tracking-tight leading-[1.1]">
+                  What Our Customers <span className="text-primary">Say.</span>
                 </h2>
-                <p className="tru-ai-subheadline text-lg mt-3">Real stories from real moves across the country.</p>
+                <p className="text-muted-foreground max-w-xl mx-auto text-base md:text-lg font-light leading-relaxed mt-4">Real stories from real moves across the country.</p>
               </div>
 
               {/* Infinite marquee carousel */}
@@ -1683,18 +1725,31 @@ export default function Index() {
           <div className="py-8"><FeatureTrustStrip /></div>
 
           {/* CARRIER VETTING PREVIEW */}
-          <section className="tru-ai-steps-section py-24">
-            <div className="max-w-6xl mx-auto">
+          <section className="py-20 md:py-28 relative overflow-hidden">
+            <div className="absolute inset-0 pointer-events-none">
+              <div className="absolute top-0 left-0 w-[500px] h-[500px] rounded-full bg-primary/[0.05] blur-[120px]" />
+              <div className="absolute bottom-0 right-0 w-[600px] h-[600px] rounded-full bg-primary/[0.04] blur-[100px]" />
+              <div className="absolute inset-0 opacity-[0.025]" style={{ backgroundImage: 'radial-gradient(circle, hsl(var(--foreground)) 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
+              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
+            </div>
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
               {/* Two-column layout: headline left, SAFER card right */}
               <div className="flex flex-col lg:flex-row gap-10 items-center justify-center">
                 {/* Left column: headline + subheadline + CTA */}
                 <div className="lg:w-[340px] shrink-0 flex flex-col items-center text-center">
-                  <h2 className="tru-ai-main-headline text-5xl md:text-6xl">
-                    Carrier <span className="tru-ai-headline-accent">Vetting.</span>
+                  <p className="text-[11px] uppercase tracking-[0.3em] text-primary font-semibold mb-3">FMCSA Safety Data</p>
+                  <div className="flex items-center justify-center gap-2 mb-4">
+                    <span className="h-px w-8 bg-primary/40" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-primary/60" />
+                    <span className="h-px w-8 bg-primary/40" />
+                  </div>
+                  <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground tracking-tight leading-[1.1]">
+                    Carrier <span className="text-primary">Vetting.</span>
                   </h2>
-                  <p className="tru-ai-subheadline text-lg mt-5">Search any carrier. Red flags surfaced instantly.</p>
+                  <p className="text-muted-foreground text-base md:text-lg font-light leading-relaxed mt-4">Search any carrier. Red flags surfaced instantly.</p>
                   <div className="pt-5">
-                    <button onClick={() => navigate("/vetting")} className="tru-ai-cta-btn">
+                    <button onClick={() => navigate("/vetting")} className="inline-flex items-center gap-2 h-11 px-8 rounded-lg bg-foreground text-background font-semibold text-sm hover:bg-foreground/85 transition-all duration-200 hover:shadow-[0_4px_12px_hsl(var(--foreground)/0.15)]">
                       <Radar className="w-5 h-5 text-primary" />
                       Try Carrier Vetting
                       <ArrowRight className="w-5 h-5 text-primary" />
@@ -1817,14 +1872,24 @@ export default function Index() {
           <div className="py-8"><FeatureTrustStrip /></div>
 
           {/* GET IN TOUCH */}
-          <section className="tru-ai-steps-section">
-            <div className="max-w-6xl mx-auto">
+          <section className="py-20 md:py-28 relative overflow-hidden">
+            <div className="absolute inset-0 pointer-events-none">
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] rounded-full bg-primary/[0.06] blur-[120px]" />
+              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
+            </div>
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
               {/* Online indicator + Headline */}
-              <div className="flex flex-col items-center text-center mb-6">
-                <h2 className="tru-ai-main-headline text-5xl md:text-6xl">
-                  Contact <span className="tru-ai-headline-accent">Us.</span>
+              <div className="flex flex-col items-center text-center mb-8">
+                <p className="text-[11px] uppercase tracking-[0.3em] text-primary font-semibold mb-3">Get In Touch</p>
+                <div className="flex items-center justify-center gap-2 mb-4">
+                  <span className="h-px w-8 bg-primary/40" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary/60" />
+                  <span className="h-px w-8 bg-primary/40" />
+                </div>
+                <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground tracking-tight leading-[1.1]">
+                  Contact <span className="text-primary">Us.</span>
                 </h2>
-                <p className="tru-ai-subheadline text-lg mt-3">Our team is standing by. Voice, video, text, or email.</p>
+                <p className="text-muted-foreground max-w-xl mx-auto text-base md:text-lg font-light leading-relaxed mt-4">Our team is standing by. Voice, video, text, or email.</p>
               </div>
 
               <div className="flex flex-col md:flex-row gap-5 items-stretch">
