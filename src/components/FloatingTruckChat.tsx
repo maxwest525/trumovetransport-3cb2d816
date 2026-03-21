@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useConversation } from '@elevenlabs/react';
-import { Hand, ChevronLeft, Mic, PhoneOff, Loader2, X, Copy, Download, Check, Phone, Video } from 'lucide-react';
+import { Hand, ChevronLeft, Mic, PhoneOff, Loader2, X, Copy, Download, Check, MessageCircle } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { toast } from '@/hooks/use-toast';
 import VoiceWaveform from './VoiceWaveform';
