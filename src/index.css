@@ -23125,17 +23125,17 @@
 /* Testimonial Section */
 .tru-vetting-testimonial {
   padding: 60px 40px;
-  background: linear-gradient(180deg, hsl(220 20% 97%) 0%, hsl(var(--background)) 100%);
+  background: hsl(var(--background));
 }
 
 .tru-vetting-testimonial-card {
   max-width: 680px;
   margin: 0 auto;
   padding: 40px;
-  background: white;
+  background: hsl(var(--card));
   border-radius: 24px;
-  border: 1px solid hsl(var(--tm-ink) / 0.06);
-  box-shadow: 0 8px 40px hsl(var(--tm-ink) / 0.06);
+  border: 1px solid hsl(var(--border));
+  box-shadow: 0 8px 40px hsl(var(--foreground) / 0.04);
   text-align: center;
 }
 
