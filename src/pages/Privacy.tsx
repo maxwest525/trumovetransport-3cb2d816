@@ -6,8 +6,14 @@ export default function Privacy() {
   useEffect(() => { window.scrollTo(0, 0); }, []);
   return (
     <SiteShell>
-      
-      <div className="max-w-[900px] mx-auto px-4 sm:px-6 py-8 sm:py-12">
+      <div className="relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full bg-primary/[0.06] blur-[120px]" />
+          <div className="absolute bottom-0 left-0 w-[500px] h-[500px] rounded-full bg-primary/[0.04] blur-[100px]" />
+          <div className="absolute inset-0 opacity-[0.025]" style={{ backgroundImage: 'radial-gradient(circle, hsl(var(--foreground)) 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
+          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
+        </div>
+      <div className="max-w-[900px] mx-auto px-4 sm:px-6 py-8 sm:py-12 relative z-10">
         <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-foreground mb-2">
           TruMove Inc. Privacy Policy
         </h1>
