@@ -105,7 +105,7 @@ export function TruckTrackingMap({
 
     const map = L.map(mapRef.current, {
       zoomControl: true,
-      attributionControl: true,
+      attributionControl: false,
       center: [39.8283, -98.5795],
       zoom: 4,
     });
