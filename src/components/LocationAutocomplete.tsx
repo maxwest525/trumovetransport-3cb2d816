@@ -712,7 +712,7 @@ export default function LocationAutocomplete({
                 {/* Hint banner removed for cleaner UI */}
                 {suggestions.map((suggestion, idx) => (
                   <div
-                    key={`${suggestion.mapboxId || suggestion.zip}-${idx}`}
+                    key={`${suggestion.zip}-${idx}`}
                     className={cn(
                       "flex items-start gap-3 px-4 py-2.5 cursor-pointer transition-colors",
                       idx === selectedIndex ? "bg-slate-100" : "hover:bg-slate-50"
