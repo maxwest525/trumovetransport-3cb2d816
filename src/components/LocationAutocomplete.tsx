@@ -442,7 +442,7 @@ export default function LocationAutocomplete({
   const handleSelect = async (suggestion: LocationSuggestion) => {
     const finalSuggestion = suggestion;
     
-    const displayText = finalSuggestion.fullAddress?.replace(', United States', '') || 
+    const displayText = finalSuggestion.fullAddress?.replace(/, United States( of America)?$/i, '') || 
       (finalSuggestion.streetAddress 
         ? `${finalSuggestion.streetAddress}, ${finalSuggestion.city}, ${finalSuggestion.state} ${finalSuggestion.zip}`.trim()
         : `${finalSuggestion.display}${finalSuggestion.zip ? ` ${finalSuggestion.zip}` : ''}`);
