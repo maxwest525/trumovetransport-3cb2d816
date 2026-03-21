@@ -202,7 +202,7 @@ function VoiceOrb({ isConnected, isSpeaking }: { isConnected: boolean; isSpeakin
     };
   }, [isConnected, isSpeaking]);
 
-  return <canvas ref={canvasRef} className="w-[240px] h-[240px]" style={{ imageRendering: 'auto' }} />;
+  return <canvas ref={canvasRef} className="w-[180px] h-[180px] sm:w-[240px] sm:h-[240px]" style={{ imageRendering: 'auto' }} />;
 }
 
 /* ─── Main Page ─── */
