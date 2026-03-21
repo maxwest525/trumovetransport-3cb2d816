@@ -346,85 +346,12 @@ export default function LiveTracking() {
     localStorage.removeItem('trumove_last_tracking');
   };
 
-  // Fetch Google Routes data for traffic & toll info
+  // Reset legacy route metadata when the route is cleared.
   useEffect(() => {
     if (!originCoords || !destCoords) {
       setGoogleRouteData({ trafficInfo: null, tollInfo: null, etaFormatted: null });
-      return;
     }
-
-    const fetchGoogleRoutes = async () => {
-      try {
-        const { data, error } = await supabase.functions.invoke('google-routes', {
-          body: {
-            origin: { lat: originCoords[1], lng: originCoords[0] },
-            destination: { lat: destCoords[1], lng: destCoords[0] },
-            departureTime: new Date().toISOString(),
-            computeAlternatives: true,
-          },
-        });
-
-        if (error || data?.fallback) {
-          console.log('Google Routes fallback mode');
-          // Still set basic routeData for static map fallback
-          if (useStaticMap && !routeData) {
-            // Calculate approximate distance and duration
-            const latDiff = destCoords[1] - originCoords[1];
-            const lngDiff = destCoords[0] - originCoords[0];
-            const approxDistanceMiles = Math.sqrt(latDiff * latDiff + lngDiff * lngDiff) * 69;
-            const approxDurationSeconds = approxDistanceMiles * 60; // ~1 min per mile
-            
-            setRouteData({
-              coordinates: [originCoords, destCoords],
-              distance: approxDistanceMiles,
-              duration: approxDurationSeconds,
-            });
-            setRouteCoordinates([originCoords, destCoords]);
-          }
-          return;
-        }
-
-        if (data?.success && data?.route) {
-          setGoogleRouteData({
-            trafficInfo: data.route.traffic,
-            tollInfo: data.route.tolls,
-            etaFormatted: data.route.etaFormatted,
-            alternateRoutes: data.alternateRoutes || [],
-            isFuelEfficient: data.route.isFuelEfficient || false,
-          });
-          
-          // Also set routeData for static map mode
-          if (useStaticMap && !routeData && data.route.distanceMeters && data.route.durationSeconds) {
-            setRouteData({
-              coordinates: [originCoords, destCoords],
-              distance: data.route.distanceMeters / 1609.34, // meters to miles
-              duration: data.route.durationSeconds,
-            });
-            setRouteCoordinates([originCoords, destCoords]);
-          }
-        }
-      } catch (err) {
-        console.error('Failed to fetch Google Routes:', err);
-        
-        // Fallback for static map mode
-        if (useStaticMap && !routeData) {
-          const latDiff = destCoords[1] - originCoords[1];
-          const lngDiff = destCoords[0] - originCoords[0];
-          const approxDistanceMiles = Math.sqrt(latDiff * latDiff + lngDiff * lngDiff) * 69;
-          const approxDurationSeconds = approxDistanceMiles * 60;
-          
-          setRouteData({
-            coordinates: [originCoords, destCoords],
-            distance: approxDistanceMiles,
-            duration: approxDurationSeconds,
-          });
-          setRouteCoordinates([originCoords, destCoords]);
-        }
-      }
-    };
-
-    fetchGoogleRoutes();
-  }, [originCoords, destCoords, useStaticMap, routeData]);
+  }, [originCoords, destCoords]);
 
   // Set animation speed - ALWAYS real-time based on actual route duration
   useEffect(() => {
@@ -678,55 +605,8 @@ export default function LiveTracking() {
               <div className="tracking-map-area">
                 {/* Map Container */}
                 <div className="tracking-map-container">
-                  {/* Top Controls - Demo, Map View Toggle */}
+                  {/* Top Controls */}
                   <div className="absolute top-3 right-3 z-20 flex items-center gap-2">
-                    {/* Map View Toggle */}
-                    <div className="flex items-center bg-background/95 backdrop-blur-sm border-2 border-border rounded-lg shadow-lg overflow-hidden">
-                      <Button
-                        onClick={() => setMapViewType('satellite')}
-                        variant="ghost"
-                        size="sm"
-                        className={cn(
-                          "h-9 px-3 gap-1.5 text-xs rounded-none border-r border-border transition-all",
-                          mapViewType === 'satellite' 
-                            ? "bg-foreground text-background font-bold" 
-                            : "hover:bg-muted"
-                        )}
-                      >
-                        <Satellite className="w-3.5 h-3.5" />
-                        Satellite
-                      </Button>
-                      <Button
-                        onClick={() => setMapViewType('roadmap')}
-                        variant="ghost"
-                        size="sm"
-                        className={cn(
-                          "h-9 px-3 gap-1.5 text-xs rounded-none border-r border-border transition-all",
-                          mapViewType === 'roadmap' 
-                            ? "bg-foreground text-background font-bold" 
-                            : "hover:bg-muted"
-                        )}
-                      >
-                        <Map className="w-3.5 h-3.5" />
-                        Roadmap
-                      </Button>
-                      <Button
-                        onClick={() => setMapViewType('truckview')}
-                        variant="ghost"
-                        size="sm"
-                        className={cn(
-                          "h-9 px-3 gap-1.5 text-xs rounded-none transition-all",
-                          mapViewType === 'truckview' 
-                            ? "bg-foreground text-background font-bold" 
-                            : "hover:bg-muted"
-                        )}
-                      >
-                        <Truck className="w-3.5 h-3.5" />
-                        Truck View
-                      </Button>
-                    </div>
-                    
-                    {/* Demo Button */}
                     <Button
                       onClick={handleDemoClick}
                       variant="outline"
@@ -738,69 +618,15 @@ export default function LiveTracking() {
                     </Button>
                   </div>
 
-                  {/* WebGL warning banner when using static fallback */}
-                  {useStaticMap && webglDiagnostics && webglDiagnostics.warnings.length > 0 && (
-                    <div className="absolute top-16 left-0 right-0 z-30 bg-destructive text-destructive-foreground px-4 py-2 text-xs font-medium flex items-center gap-2">
-                      <AlertTriangle className="w-4 h-4 flex-shrink-0" />
-                      <span>{webglDiagnostics.warnings[0]}</span>
-                    </div>
-                  )}
-                  
-                  {useStaticMap ? (
-                    <GoogleStaticRouteMap
-                      originCoords={originCoords}
-                      destCoords={destCoords}
-                      progress={progress}
-                      isTracking={isTracking}
-                      googleApiKey={GOOGLE_MAPS_API_KEY}
-                      routePolyline={googleRouteData.polyline}
-                      truckPosition={currentTruckPosition}
-                      originName={originName}
-                      destName={destName}
-                    />
-                  ) : mapViewType === 'truckview' ? (
-                    <TruckViewPanel
-                      routeCoordinates={routeCoordinates}
-                      progress={progress}
-                      isTracking={isTracking}
-                      interactive={false}
-                      originCoords={originCoords}
-                      destCoords={destCoords}
-                      onRouteCalculated={handleRouteCalculated}
-                    />
-                  ) : (
-                    <Google2DTrackingMap
-                      originCoords={originCoords}
-                      destCoords={destCoords}
-                      progress={progress}
-                      isTracking={isTracking}
-                      onRouteCalculated={handleRouteCalculated}
-                      followMode={true}
-                      onFollowModeChange={() => {}}
-                      mapType={mapViewType}
-                      googleApiKey={GOOGLE_MAPS_API_KEY}
-                    />
-                  )}
-                  
-                  {/* Map View Transition Overlay */}
-                  <div 
-                    className={cn(
-                      "absolute inset-0 bg-background/80 backdrop-blur-sm pointer-events-none z-40 transition-opacity duration-300",
-                      isViewTransitioning ? "opacity-100" : "opacity-0"
-                    )}
-                  >
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className={cn(
-                        "flex items-center gap-2 px-4 py-2 rounded-lg bg-background border border-border shadow-lg transition-all duration-300",
-                        isViewTransitioning ? "opacity-100 scale-100" : "opacity-0 scale-95"
-                      )}>
-                        <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                        <span className="text-sm font-medium text-foreground">
-                          Switching to {mapViewType === 'truckview' ? 'Truck View' : mapViewType === 'roadmap' ? 'Roadmap' : 'Satellite'}...
-                        </span>
-                      </div>
-                    </div>
-                  </div>
+                  <TruckTrackingMap
+                    originCoords={originCoords}
+                    destCoords={destCoords}
+                    progress={progress}
+                    isTracking={isTracking}
+                    onRouteCalculated={handleRouteCalculated}
+                    followMode={followMode}
+                    onFollowModeChange={setFollowMode}
+                  />
                 </div>
 
                 {/* Map Controls Strip - Go/Pause/Reset + Route Info Dropdowns */}
@@ -957,18 +783,46 @@ export default function LiveTracking() {
                   isEmpty={!routeData}
                 />
 
-                {/* Live Truck Street View */}
-                <TruckAerialView
-                  routeCoordinates={routeCoordinates}
-                  progress={progress}
-                  isTracking={isTracking}
-                  isPaused={isPaused}
-                  originCoords={originCoords}
-                  googleApiKey={GOOGLE_MAPS_API_KEY}
-                  expanded={streetViewExpanded}
-                  onToggleExpand={() => setStreetViewExpanded(!streetViewExpanded)}
-                  onRelocateTruck={() => setFollowMode(true)}
-                />
+                <div className="tracking-info-card">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-6 h-6 rounded-md bg-primary/20 flex items-center justify-center">
+                      <MapPin className="w-3.5 h-3.5 text-primary" />
+                    </div>
+                    <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-muted-foreground">
+                      Shipment Location
+                    </span>
+                  </div>
+
+                  {currentTruckPosition ? (
+                    <div className="space-y-3">
+                      <div className="rounded-lg border border-border bg-muted/30 p-3">
+                        <div className="text-xs uppercase tracking-wider text-muted-foreground mb-1">Current position</div>
+                        <div className="text-sm font-semibold text-foreground">
+                          {currentTruckPosition[1].toFixed(4)}, {currentTruckPosition[0].toFixed(4)}
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2 text-xs">
+                        <div className="rounded-lg border border-border bg-muted/20 p-3">
+                          <div className="text-muted-foreground uppercase tracking-wider mb-1">Origin</div>
+                          <div className="font-medium text-foreground truncate">{originName || 'Awaiting route'}</div>
+                        </div>
+                        <div className="rounded-lg border border-border bg-muted/20 p-3">
+                          <div className="text-muted-foreground uppercase tracking-wider mb-1">Destination</div>
+                          <div className="font-medium text-foreground truncate">{destName || 'Awaiting route'}</div>
+                        </div>
+                      </div>
+                      <div className="rounded-lg border border-border bg-primary/5 p-3 text-xs text-muted-foreground">
+                        {isTracking
+                          ? 'Live truck progress is now running on the free OpenStreetMap tracker.'
+                          : 'Click Analyze Route to start the live shipment simulation.'}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="rounded-lg border border-dashed border-border bg-muted/20 p-4 text-sm text-muted-foreground">
+                      Route details will appear here after the map finishes loading.
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
