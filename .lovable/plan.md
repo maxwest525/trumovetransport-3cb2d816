@@ -1,59 +1,66 @@
 
 
-## Replace Mapbox with Leaflet for Maps
+## Integrate MapTiler as Primary Map Provider
 
 ### Summary
-Yes, Leaflet is a great free alternative. It's open-source, has no API key requirements for basic tile layers (using OpenStreetMap tiles), and handles interactive maps, markers, polylines, and route visualization well. However, there are tradeoffs to consider.
+Replace CartoDB/OSM tile layers with MapTiler tiles across all Leaflet maps, and replace Mapbox static images + geocoding with MapTiler equivalents. MapTiler provides free raster tiles, geocoding, and static maps — all with your API key.
 
-### What Mapbox is Currently Used For
+### What Changes
 
-| Usage | Files | Leaflet Replacement |
-|-------|-------|-------------------|
-| **Autocomplete/Geocoding** | `LocationAutocomplete.tsx`, `CityZipInput.tsx` | Leaflet does NOT provide geocoding. Need a separate free geocoder (Nominatim/OpenStreetMap) |
-| **Interactive tracking map** | `TruckTrackingMap.tsx` | Leaflet with OSM tiles ✅ |
-| **Animated route map** | `AnimatedRouteMap.tsx` | Leaflet polylines + markers ✅ |
-| **Multi-stop route preview** | `MultiStopRoutePreview.tsx` | Leaflet with markers + lines ✅ |
-| **Static satellite images** | `AerialViewPreview.tsx`, `RouteAnalysisSection.tsx`, `MiniRouteOverview.tsx` | No free satellite tiles equivalent ❌ |
-| **Mapbox Search JS React** | `@mapbox/search-js-react` package | Would need Nominatim or similar free geocoder |
+| Current Provider | Usage | MapTiler Replacement |
+|---|---|---|
+| CartoDB tiles (via Leaflet) | Interactive maps (6 components) | MapTiler raster XYZ tiles |
+| Mapbox Static API | Satellite preview images (5 components) | MapTiler static maps API |
+| Mapbox Geocoding | Address autocomplete + reverse geocode | MapTiler geocoding API (`@maptiler/client`) |
+| Mapbox Directions | Route geometry | Keep as-is OR use free OSRM |
 
-### Tradeoffs
+### Files to Modify
 
-**Leaflet wins:**
-- Completely free, no API key, no usage limits on map rendering
-- Lighter bundle (~42KB vs ~230KB for mapbox-gl)
-- Simpler API
+**1. Core config — `src/lib/leafletConfig.ts`**
+- Replace CartoDB/OSM tile URLs with MapTiler raster tiles:
+  - Light: `https://api.maptiler.com/maps/streets-v2/256/{z}/{x}/{y}.png?key=KEY`
+  - Dark: `https://api.maptiler.com/maps/toner-v2/256/{z}/{x}/{y}.png?key=KEY`
+  - Voyager: `https://api.maptiler.com/maps/streets-v2/256/{z}/{x}/{y}.png?key=KEY`
+  - Satellite: `https://api.maptiler.com/maps/satellite/256/{z}/{x}/{y}.jpg?key=KEY`
 
-**Leaflet loses:**
-- No satellite/aerial imagery (free OSM tiles are street-map only)
-- No built-in geocoding/autocomplete (need Nominatim which has usage limits)
-- No vector tiles or 3D support
-- Less polished visual style compared to Mapbox
+**2. New file — `src/lib/maptilerConfig.ts`**
+- Store MapTiler API key centrally
+- Helper for static map URLs
+- Helper for geocoding (forward + reverse)
 
-### Recommended Approach
+**3. Replace Mapbox static images (5 files)**
+- `src/pages/Index.tsx` — hero analysis satellite cards
+- `src/components/RouteAnalysisSection.tsx` — route location thumbnails
+- `src/components/tracking/MiniRouteOverview.tsx` — mini route static image
+- `src/components/tracking/AerialViewPreview.tsx` — aerial satellite view
+- `src/components/tracking/SatellitePreview.tsx` — satellite preview
+- Use MapTiler static maps: `https://api.maptiler.com/maps/satellite/static/{lng},{lat},{zoom}/400x300.jpg?key=KEY`
 
-**Hybrid strategy** — replace interactive maps with Leaflet but keep Mapbox for:
-1. Satellite imagery (aerial views, static previews)
-2. Geocoding/autocomplete (LocationAutocomplete already works well)
+**4. Replace Mapbox geocoding (3 files)**
+- `src/components/LocationAutocomplete.tsx` — main autocomplete
+- `src/components/tracking/RouteSetupModal.tsx` — route geocoding
+- `src/components/estimate/MoveWeatherForecast.tsx` — weather geocoding
+- Use MapTiler geocoding: `https://api.maptiler.com/geocoding/{query}.json?key=KEY`
 
-**Phase 1: Replace interactive maps with Leaflet**
-- Install `leaflet` and `react-leaflet` packages
-- Replace `TruckTrackingMap.tsx` — use Leaflet `TileLayer` with OSM tiles, `Marker`, `Polyline`
-- Replace `AnimatedRouteMap.tsx` — use Leaflet polylines for route animation, custom markers for truck
-- Replace `MultiStopRoutePreview.tsx` — use Leaflet markers and polylines
-- Remove `mapbox-gl` dependency (if fully replaced)
+**5. Replace Mapbox directions (2 files)**
+- `src/components/tracking/TruckViewPanel.tsx`
+- `src/components/tracking/TruckTrackingMap.tsx`
+- Option: Use free OSRM (`https://router.project-osrm.org/route/v1/driving/...`) or keep Mapbox for now
 
-**Phase 2: Replace geocoding (optional)**
-- Swap Mapbox geocoding in `LocationAutocomplete.tsx` with Nominatim (free OpenStreetMap geocoder)
-- Note: Nominatim has a 1 req/sec rate limit for free usage
+**6. Remove `mapbox-gl` dependency if TruckViewPanel can be converted to Leaflet**
+- `src/components/tracking/TruckViewPanel.tsx` uses `mapbox-gl` directly — convert to Leaflet or keep as fallback
 
-**What stays on Mapbox:**
-- Satellite/aerial static images (`AerialViewPreview`, `RouteAnalysisSection`, `MiniRouteOverview`) — no free equivalent
-- OR accept street-map style instead of satellite
+### Dependencies
+- Install `@maptiler/client` for geocoding/static maps SDK
+- API key `sKYOSfDoKHOwlfsP94LH` stored as public constant (it's a publishable key)
 
-### Technical Details
+### What Stays
+- `react-leaflet` + `leaflet` — unchanged, just different tile URLs
+- All marker/polyline/routing logic — unchanged
 
-- Use `https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png` as the free tile source
-- For better-looking tiles, can use CartoDB: `https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png`
-- Leaflet uses `[lat, lng]` order (opposite of Mapbox's `[lng, lat]`) — coordinate swaps needed
-- `react-leaflet` provides React components: `<MapContainer>`, `<TileLayer>`, `<Marker>`, `<Polyline>`
+### Technical Notes
+- MapTiler raster tiles work as drop-in replacements for Leaflet `TileLayer` — just swap the URL
+- MapTiler geocoding returns GeoJSON with `[lng, lat]` coordinates, similar to Mapbox
+- Static maps URL pattern: `https://api.maptiler.com/maps/{style}/static/{lng},{lat},{zoom}/{width}x{height}.png?key=KEY`
+- Free tier: 100K tile loads/month, unlimited geocoding calls
 
