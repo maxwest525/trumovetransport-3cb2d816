@@ -228,21 +228,11 @@ export default function LiveTracking() {
     setRouteCoordinates(route.coordinates);
   }, []);
 
-  // Check WebGL capabilities on mount and set appropriate view mode
+  // Set map mode on mount
   useEffect(() => {
     const diagnostics = getWebGLDiagnostics();
-    setWebglDiagnostics(diagnostics);
-    
     if (!diagnostics.supported || diagnostics.recommendation === 'static') {
-      // WebGL not available or software rendering - use static map
       setUseStaticMap(true);
-      setShow3DView(false);
-      console.log('WebGL diagnostics: Using static map fallback', diagnostics);
-    } else {
-      // WebGL supported - default to 2D satellite view (3D is unreliable)
-      setShow3DView(false);
-      setFollowMode(true);
-      console.log('WebGL diagnostics: 2D satellite view enabled by default', diagnostics);
     }
   }, []);
 
