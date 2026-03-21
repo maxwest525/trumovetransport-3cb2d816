@@ -1,6 +1,7 @@
 // Centralized MapTiler configuration
 // Publishable API key — safe to store in code
-export const MAPTILER_KEY = 'X6zFH8Vcg9bMuUCrXFWU';
+export const MAPTILER_KEY = 'rZ45qsBwuhTDqwdTQGgi';
+export const MAPTILER_CUSTOM_MAP = '019d1053-cde4-7f0a-8d20-2c8f00144c4a';
 
 // Static map URL generator
 export function getStaticMapUrl(
