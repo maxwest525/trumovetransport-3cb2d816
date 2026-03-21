@@ -4,7 +4,7 @@ import "leaflet/dist/leaflet.css";
 import { Loader2, Navigation, Box } from "lucide-react";
 import { TruckLocationPopup } from "./TruckLocationPopup";
 import { TrafficLegend } from "./TrafficLegend";
-import { MiniRouteOverview } from "./MiniRouteOverview";
+
 import { findWeighStationsOnRoute, type WeighStation } from "@/data/weighStations";
 import { cn } from "@/lib/utils";
 
