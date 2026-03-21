@@ -1717,7 +1717,7 @@ export default function Index() {
                       <div className="w-px bg-border" />
                       <button
                         onClick={() => setContactMode("form")}
-                        className={`flex-1 flex items-center justify-center gap-1.5 px-4 py-2 text-xs font-semibold transition-all ${
+                        className={`flex-1 flex items-center justify-center gap-1.5 px-4 py-4 text-xs font-semibold transition-all ${
                           contactMode === "form"
                             ? "bg-foreground text-background"
                             : "bg-background text-muted-foreground hover:text-foreground hover:bg-muted"
