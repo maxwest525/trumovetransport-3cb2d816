@@ -1,10 +1,8 @@
-import { useEffect, useState, useCallback, useMemo } from 'react';
-import { MapContainer, TileLayer, Polyline, Marker, useMap } from 'react-leaflet';
+import { useEffect, useState, useCallback, useMemo, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { TILE_LAYERS, US_CENTER, US_ZOOM } from '@/lib/leafletConfig';
-// Using OSRM for free routing
-import { Maximize2, Minimize2, MapPin, Loader2 } from 'lucide-react';
+import { US_CENTER, US_ZOOM } from '@/lib/leafletConfig';
+import { Maximize2, Minimize2, Loader2 } from 'lucide-react';
 
 interface MapboxMoveMapProps {
   fromZip?: string;
@@ -12,9 +10,7 @@ interface MapboxMoveMapProps {
   visible?: boolean;
 }
 
-// Comprehensive ZIP coordinate lookup table
 const ZIP_COORDS: Record<string, [number, number]> = {
-  // Format: [longitude, latitude]
   "010": [-72.6, 42.1], "011": [-72.6, 42.1], "012": [-73.2, 42.5], "013": [-72.6, 42.3],
   "014": [-71.8, 42.3], "015": [-71.8, 42.3], "016": [-71.8, 42.3], "017": [-71.8, 42.3],
   "018": [-71.1, 42.4], "019": [-70.9, 42.5],
@@ -78,7 +74,6 @@ function getZipCoords(zip: string): [number, number] | null {
   return null;
 }
 
-// Get city name from ZIP
 const ZIP_NAMES: Record<string, string> = {
   "320": "Jacksonville, FL", "321": "Orlando, FL", "327": "Orlando, FL",
   "330": "Miami, FL", "331": "Miami, FL", "333": "Fort Lauderdale, FL",
@@ -95,7 +90,6 @@ function getLocationName(zip: string): string {
   return ZIP_NAMES[zip.substring(0, 3)] || '';
 }
 
-// Fetch driving route from OSRM (free, no API key)
 async function fetchDrivingRoute(from: [number, number], to: [number, number]): Promise<[number, number][] | null> {
   try {
     const url = `https://router.project-osrm.org/route/v1/driving/${from[0]},${from[1]};${to[0]},${to[1]}?geometries=geojson&overview=full`;
@@ -121,58 +115,10 @@ function createArcLine(start: [number, number], end: [number, number], steps: nu
   return coords;
 }
 
-function createLabelIcon(name: string): L.DivIcon {
-  return L.divIcon({
-    className: 'mapbox-marker-label-only',
-    html: `<div class="mapbox-marker-label">${name}</div>`,
-    iconSize: [100, 20],
-    iconAnchor: [50, 10],
-  });
-}
-
-function createOriginIcon(name: string): L.DivIcon {
-  return L.divIcon({
-    className: 'mapbox-origin-marker-container',
-    html: `
-      <div class="mapbox-origin-marker"></div>
-      ${name ? `<div class="mapbox-origin-label">${name}</div>` : ''}
-      <div class="mapbox-waiting-label">Enter destination...</div>
-    `,
-    iconSize: [120, 40],
-    iconAnchor: [60, 20],
-  });
-}
-
-// Controller component to handle view changes
-function MapViewManager({ fromCoords, toCoords, routeCoords }: { 
-  fromCoords: [number, number] | null; 
-  toCoords: [number, number] | null;
-  routeCoords: [number, number][];
-}) {
-  const map = useMap();
-
-  useEffect(() => {
-    if (fromCoords && !toCoords) {
-      // Origin only — zoom to it
-      map.flyTo([fromCoords[1], fromCoords[0]], 10, { duration: 1.5 });
-    } else if (fromCoords && toCoords && routeCoords.length >= 2) {
-      // Both — fit route bounds
-      const lats = routeCoords.map(c => c[1]);
-      const lngs = routeCoords.map(c => c[0]);
-      const bounds = L.latLngBounds(
-        [Math.min(...lats), Math.min(...lngs)],
-        [Math.max(...lats), Math.max(...lngs)]
-      );
-      map.fitBounds(bounds, { padding: [80, 80], maxZoom: 10 });
-    } else if (!fromCoords && !toCoords) {
-      map.flyTo(US_CENTER, US_ZOOM, { duration: 1 });
-    }
-  }, [fromCoords, toCoords, routeCoords, map]);
-
-  return null;
-}
-
 export default function MapboxMoveMap({ fromZip = '', toZip = '', visible = true }: MapboxMoveMapProps) {
+  const mapRef = useRef<HTMLDivElement>(null);
+  const mapInstance = useRef<L.Map | null>(null);
+  const layersRef = useRef<L.Layer[]>([]);
   const [routeCoords, setRouteCoords] = useState<[number, number][]>([]);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -182,12 +128,25 @@ export default function MapboxMoveMap({ fromZip = '', toZip = '', visible = true
   const fromName = useMemo(() => getLocationName(fromZip), [fromZip]);
   const toName = useMemo(() => getLocationName(toZip), [toZip]);
 
-  // Fetch route when both coords are available
+  // Initialize map
   useEffect(() => {
-    if (!fromCoords || !toCoords) {
-      setRouteCoords([]);
-      return;
-    }
+    if (!mapRef.current || mapInstance.current) return;
+    const map = L.map(mapRef.current, {
+      zoomControl: false,
+      attributionControl: false,
+      center: US_CENTER,
+      zoom: US_ZOOM,
+    });
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap',
+    }).addTo(map);
+    mapInstance.current = map;
+    return () => { map.remove(); mapInstance.current = null; };
+  }, []);
+
+  // Fetch route
+  useEffect(() => {
+    if (!fromCoords || !toCoords) { setRouteCoords([]); return; }
     setIsLoading(true);
     fetchDrivingRoute(fromCoords, toCoords).then(coords => {
       setRouteCoords(coords || createArcLine(fromCoords, toCoords, 100));
@@ -195,8 +154,51 @@ export default function MapboxMoveMap({ fromZip = '', toZip = '', visible = true
     });
   }, [fromCoords, toCoords]);
 
-  // Convert route [lng,lat] to [lat,lng] for Leaflet
-  const routeLatLngs = useMemo(() => routeCoords.map(([lng, lat]) => [lat, lng] as [number, number]), [routeCoords]);
+  // Update map layers
+  useEffect(() => {
+    const map = mapInstance.current;
+    if (!map) return;
+
+    layersRef.current.forEach(l => map.removeLayer(l));
+    layersRef.current = [];
+
+    if (fromCoords && !toCoords) {
+      map.flyTo([fromCoords[1], fromCoords[0]], 10, { duration: 1.5 });
+      const m = L.marker([fromCoords[1], fromCoords[0]], {
+        icon: L.divIcon({
+          className: 'mapbox-origin-marker-container',
+          html: `<div class="mapbox-origin-marker"></div>${fromName ? `<div class="mapbox-origin-label">${fromName}</div>` : ''}<div class="mapbox-waiting-label">Enter destination...</div>`,
+          iconSize: [120, 40], iconAnchor: [60, 20],
+        }),
+      }).addTo(map);
+      layersRef.current.push(m);
+    } else if (fromCoords && toCoords && routeCoords.length >= 2) {
+      const routeLatLngs = routeCoords.map(([lng, lat]) => [lat, lng] as [number, number]);
+      
+      const bg = L.polyline(routeLatLngs, { color: '#000000', weight: 8, opacity: 0.7 }).addTo(map);
+      const fg = L.polyline(routeLatLngs, { color: '#00e5a0', weight: 4, opacity: 1 }).addTo(map);
+      layersRef.current.push(bg, fg);
+
+      if (fromName) {
+        const m = L.marker([fromCoords[1], fromCoords[0]], {
+          icon: L.divIcon({ className: 'mapbox-marker-label-only', html: `<div class="mapbox-marker-label">${fromName}</div>`, iconSize: [100, 20], iconAnchor: [50, 10] }),
+        }).addTo(map);
+        layersRef.current.push(m);
+      }
+      if (toName) {
+        const m = L.marker([toCoords[1], toCoords[0]], {
+          icon: L.divIcon({ className: 'mapbox-marker-label-only', html: `<div class="mapbox-marker-label">${toName}</div>`, iconSize: [100, 20], iconAnchor: [50, 10] }),
+        }).addTo(map);
+        layersRef.current.push(m);
+      }
+
+      const lats = routeCoords.map(c => c[1]);
+      const lngs = routeCoords.map(c => c[0]);
+      map.fitBounds(L.latLngBounds([Math.min(...lats), Math.min(...lngs)], [Math.max(...lats), Math.max(...lngs)]), { padding: [80, 80], maxZoom: 10 });
+    } else if (!fromCoords && !toCoords) {
+      map.flyTo(US_CENTER, US_ZOOM, { duration: 1 });
+    }
+  }, [fromCoords, toCoords, routeCoords, fromName, toName]);
 
   const handleExpandClick = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
@@ -210,40 +212,7 @@ export default function MapboxMoveMap({ fromZip = '', toZip = '', visible = true
           <Loader2 className="w-6 h-6 animate-spin text-primary" />
         </div>
       )}
-
-      <MapContainer
-        center={US_CENTER}
-        zoom={US_ZOOM}
-        className="mapbox-move-map"
-        zoomControl={false}
-        attributionControl={false}
-      >
-        <TileLayer url={TILE_LAYERS.dark.url} attribution={TILE_LAYERS.dark.attribution} />
-        <MapViewManager fromCoords={fromCoords} toCoords={toCoords} routeCoords={routeCoords} />
-
-        {/* Route line */}
-        {routeLatLngs.length >= 2 && (
-          <>
-            <Polyline positions={routeLatLngs} pathOptions={{ color: '#000000', weight: 8, opacity: 0.7 }} />
-            <Polyline positions={routeLatLngs} pathOptions={{ color: '#00e5a0', weight: 4, opacity: 1 }} />
-          </>
-        )}
-
-        {/* Origin-only marker */}
-        {fromCoords && !toCoords && (
-          <Marker position={[fromCoords[1], fromCoords[0]]} icon={createOriginIcon(fromName)} />
-        )}
-
-        {/* Labels when route is shown */}
-        {fromCoords && toCoords && fromName && (
-          <Marker position={[fromCoords[1], fromCoords[0]]} icon={createLabelIcon(fromName)} />
-        )}
-        {fromCoords && toCoords && toName && (
-          <Marker position={[toCoords[1], toCoords[0]]} icon={createLabelIcon(toName)} />
-        )}
-      </MapContainer>
-
-      {/* Expand/Collapse button */}
+      <div ref={mapRef} className="mapbox-move-map w-full h-full" />
       {fromCoords && toCoords && (
         <button onClick={handleExpandClick} className="map-expand-button">
           {isExpanded ? (
