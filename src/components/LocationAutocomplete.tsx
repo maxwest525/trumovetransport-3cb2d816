@@ -394,11 +394,11 @@ async function lookupZip(zip: string): Promise<LocationSuggestion | null> {
   return null;
 }
 
-// Reverse geocode coordinates to address using Mapbox
+// Reverse geocode coordinates to address using MapTiler
 async function reverseGeocode(lat: number, lng: number): Promise<LocationSuggestion | null> {
   try {
     const res = await fetch(
-      `https://api.mapbox.com/search/geocode/v6/reverse?longitude=${lng}&latitude=${lat}&types=address&access_token=${MAPBOX_TOKEN}`,
+      `https://api.maptiler.com/geocoding/${lng},${lat}.json?key=${MAPTILER_KEY}&language=en`,
       { headers: { 'Accept': 'application/json' } }
     );
     if (!res.ok) return null;
@@ -407,14 +407,12 @@ async function reverseGeocode(lat: number, lng: number): Promise<LocationSuggest
     const feature = data.features?.[0];
     if (!feature) return null;
     
-    const props = feature.properties;
-    const context = props.context || {};
-    
-    const streetAddress = props.name || '';
-    const city = context.place?.name || '';
-    const state = context.region?.region_code || '';
-    const zip = context.postcode?.name || '';
-    const fullAddr = props.full_address || `${streetAddress}, ${city}, ${state} ${zip}`;
+    const context = feature.context || [];
+    const streetAddress = feature.text || '';
+    const city = context.find((c: any) => c.id?.startsWith('place'))?.text || '';
+    const state = context.find((c: any) => c.id?.startsWith('region'))?.short_code?.replace('US-', '') || '';
+    const zip = context.find((c: any) => c.id?.startsWith('postcode'))?.text || '';
+    const fullAddr = feature.place_name || `${streetAddress}, ${city}, ${state} ${zip}`;
     const displayAddr = fullAddr.replace(', United States', '');
     
     const hasStreet = streetAddress && !streetAddress.match(/^\d{5}$/) && streetAddress !== city;
@@ -428,7 +426,7 @@ async function reverseGeocode(lat: number, lng: number): Promise<LocationSuggest
       fullAddress: fullAddr,
       isVerified: hasStreet,
       validationLevel: hasStreet ? 'verified' : 'partial',
-      mapboxId: feature.id,
+      mapboxId: undefined,
     };
   } catch {
     return null;
