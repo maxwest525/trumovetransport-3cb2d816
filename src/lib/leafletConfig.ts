@@ -1,11 +1,11 @@
 // Centralized Leaflet tile layer configuration
 // Uses MapTiler raster XYZ tiles — free tier with API key
-import { MAPTILER_KEY } from './maptilerConfig';
+import { MAPTILER_KEY, MAPTILER_CUSTOM_MAP } from './maptilerConfig';
 
 export const TILE_LAYERS = {
-  // Light theme (default for most maps)
+  // Custom branded map (default for most maps)
   light: {
-    url: `https://api.maptiler.com/maps/streets-v2/256/{z}/{x}/{y}.png?key=${MAPTILER_KEY}`,
+    url: `https://api.maptiler.com/maps/${MAPTILER_CUSTOM_MAP}/256/{z}/{x}/{y}.png?key=${MAPTILER_KEY}`,
     attribution: '&copy; <a href="https://www.maptiler.com/">MapTiler</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
   },
   // Dark theme (tracking, dashboards)
@@ -15,7 +15,7 @@ export const TILE_LAYERS = {
   },
   // Voyager (clean, detailed — good for route views)
   voyager: {
-    url: `https://api.maptiler.com/maps/streets-v2/256/{z}/{x}/{y}.png?key=${MAPTILER_KEY}`,
+    url: `https://api.maptiler.com/maps/${MAPTILER_CUSTOM_MAP}/256/{z}/{x}/{y}.png?key=${MAPTILER_KEY}`,
     attribution: '&copy; <a href="https://www.maptiler.com/">MapTiler</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
   },
   // Satellite imagery
