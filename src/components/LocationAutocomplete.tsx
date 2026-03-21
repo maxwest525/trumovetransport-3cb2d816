@@ -318,49 +318,30 @@ export default function LocationAutocomplete({
     const normalizedQuery = normalizeAddress(query);
 
     if (mode === 'address') {
-      // For address mode, try Google Places first, fallback to Mapbox
-      const { suggestions: googleSuggestions, failed: googleFailed } = await searchGooglePlaces(query);
+      // For address mode, use MapTiler geocoding
+      const { suggestions: maptilerSuggestions, failed: maptilerFailed } = await searchMapTilerAddresses(query);
       
-      if (!googleFailed && googleSuggestions.length > 0) {
-        // Use Google Places results
-        const filtered = googleSuggestions.filter(s => {
+      if (!maptilerFailed && maptilerSuggestions.length > 0) {
+        const filtered = maptilerSuggestions.filter(s => {
           const normalizedSuggestion = normalizeAddress(s.fullAddress || s.display);
           return normalizedSuggestion !== normalizedQuery;
         });
         setSuggestions(filtered);
-      } else {
-        // Fallback to MapTiler
-        console.log('Using MapTiler fallback for address suggestions');
-        const { suggestions: mapboxSuggestions, failed: mapboxFailed } = await searchMapTilerAddresses(query);
-        
-        if (mapboxFailed) {
-          setSuggestions([]);
-        } else if (mapboxSuggestions.length > 0) {
-          // Filter out suggestions that are identical to what's already entered
-          const filtered = mapboxSuggestions.filter(s => {
-            const normalizedSuggestion = normalizeAddress(s.fullAddress || s.display);
-            return normalizedSuggestion !== normalizedQuery;
-          });
-          setSuggestions(filtered);
-        } else if (isCompleteZip) {
-          // Fallback: if both return nothing for a ZIP, show city-level with a prompt
-          const zipResult = await lookupZip(query.trim());
-          if (zipResult) {
-            // Mark as partial - needs street address
-            zipResult.validationLevel = 'partial';
-            // Only show if different from current input
-            const normalizedResult = normalizeAddress(zipResult.fullAddress || zipResult.display);
-            if (normalizedResult !== normalizedQuery) {
-              setSuggestions([zipResult]);
-            } else {
-              setSuggestions([]);
-            }
+      } else if (isCompleteZip) {
+        const zipResult = await lookupZip(query.trim());
+        if (zipResult) {
+          zipResult.validationLevel = 'partial';
+          const normalizedResult = normalizeAddress(zipResult.fullAddress || zipResult.display);
+          if (normalizedResult !== normalizedQuery) {
+            setSuggestions([zipResult]);
           } else {
             setSuggestions([]);
           }
         } else {
           setSuggestions([]);
         }
+      } else {
+        setSuggestions([]);
       }
     } else {
       // City mode: use existing logic
