@@ -238,15 +238,7 @@ export default function EstimateWizard({ onComplete, initialDetails }: EstimateW
         </div>
       ) : (
         <div className="tru-floating-form-card">
-          {/* Progress Bar - no accent stripe */}
-          
-          {/* Progress Bar */}
-          <div className="tru-form-progress-bar">
-            <div 
-              className="tru-form-progress-fill" 
-              style={{ width: `${(step / 3) * 100}%` }}
-            />
-          </div>
+          {/* Progress bar removed */}
           
           {/* Header - Matching homepage style */}
            <div className="tru-summary-header-large">
