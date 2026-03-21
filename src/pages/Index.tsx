@@ -1564,19 +1564,31 @@ export default function Index() {
         <StatsStrip />
 
           {/* START YOUR AI INVENTORY ANALYSIS - Enhanced with Preview */}
-          <section className="tru-ai-steps-section">
-            <div className="tru-ai-steps-inner">
+          <section className="py-20 md:py-28 relative overflow-hidden">
+            <div className="absolute inset-0 pointer-events-none">
+              <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full bg-primary/[0.06] blur-[120px]" />
+              <div className="absolute bottom-0 left-0 w-[500px] h-[500px] rounded-full bg-primary/[0.04] blur-[100px]" />
+              <div className="absolute inset-0 opacity-[0.025]" style={{ backgroundImage: 'radial-gradient(circle, hsl(var(--foreground)) 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
+              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
+            </div>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
               {/* Header row: info on left, previews on right */}
               <div className="tru-ai-header-row border-0 rounded-none shadow-none" ref={scanPreviewRef}>
                 {/* LEFT: Description content */}
                 <div className="tru-ai-content-left border-0 rounded-none shadow-none border-primary-foreground" style={{ justifyContent: 'center' }}>
-                  {/* Premium headline block */}
-                  <div className="tru-ai-headline-block animate-fade-scale-in opacity-0" style={{ animationDelay: '0ms' }}>
-                    <h2 className="tru-ai-main-headline text-5xl md:text-6xl">
+                  <div>
+                    <p className="text-[11px] uppercase tracking-[0.3em] text-primary font-semibold mb-3">AI-Powered Inventory</p>
+                    <div className="flex items-center gap-2 mb-4">
+                      <span className="h-px w-8 bg-primary/40" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary/60" />
+                      <span className="h-px w-8 bg-primary/40" />
+                    </div>
+                    <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground tracking-tight leading-[1.1]">
                       Scan. Add.<br />
-                      <span className="tru-ai-headline-accent">Estimate.</span>
+                      <span className="text-primary">Estimate.</span>
                     </h2>
-                    <p className="tru-ai-subheadline text-lg">
+                    <p className="text-muted-foreground max-w-md text-base md:text-lg font-light leading-relaxed mt-4">
                       Point your camera at any room. Our AI identifies every item and calculates your move in seconds—not hours.
                     </p>
                   </div>
@@ -1584,12 +1596,10 @@ export default function Index() {
                   {/* CTA Button */}
                   <button
                     onClick={() => navigate("/scan-room")}
-                    className="tru-ai-cta-btn animate-fade-scale-in opacity-0"
-                    style={{ animationDelay: '350ms' }}>
-                    
-                    <Home className="w-4 h-4 text-[#00ff00]" />
+                    className="inline-flex items-center gap-2 mt-6 h-11 px-8 rounded-lg bg-foreground text-background font-semibold text-sm hover:bg-foreground/85 transition-all duration-200 hover:shadow-[0_4px_12px_hsl(var(--foreground)/0.15)]">
+                    <Home className="w-4 h-4 text-primary" />
                     Scan Your Home
-                    <ArrowRight className="w-4 h-4 text-[#4cff05]" />
+                    <ArrowRight className="w-4 h-4 text-primary" />
                   </button>
                 </div>
                 
