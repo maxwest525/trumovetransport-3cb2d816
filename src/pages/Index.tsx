@@ -10,16 +10,11 @@ const useScrollToTop = () => {
 import { useNavigate, Link } from "react-router-dom";
 import { format } from "date-fns";
 import SiteShell from "@/components/layout/SiteShell";
-import MapboxMoveMap from "@/components/MapboxMoveMap";
 import AnimatedRouteMap from "@/components/estimate/AnimatedRouteMap";
-import FloatingNav from "@/components/FloatingNav";
 import HeroParticles from "@/components/HeroParticles";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import LeadCaptureModal from "@/components/LeadCaptureModal";
-import RouteAnalysisSection from "@/components/RouteAnalysisSection";
 // Static Street View preview used instead of interactive component
-import FeatureCarousel from "@/components/FeatureCarousel";
-import FeatureTrustStrip from "@/components/FeatureTrustStrip";
 import StatsStrip from "@/components/StatsStrip";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 
@@ -558,106 +553,7 @@ function ShipmentTrackerSection({ navigate }: {navigate: (path: string) => void;
 
 }
 
-// Trust Compact Section with scroll-triggered staggered reveal
-function TrustCompactSection() {
-  const [sectionRef, isInView] = useScrollAnimation<HTMLElement>({
-    threshold: 0.2,
-    rootMargin: "0px",
-    triggerOnce: true
-  });
 
-  const stats = [
-  { icon: Database, label: "Federal SAFER Data" },
-  { icon: CreditCard, label: "Secure Payments" },
-  { icon: ShieldCheck, label: "Vetted Movers" }];
-
-
-  const badges = ["FMCSA Authorized", "USDOT Compliant", "Insured & Bonded"];
-
-  return (
-    <section className="tru-trust-compact" ref={sectionRef}>
-      <div className="tru-trust-compact-inner">
-        <div className="tru-trust-compact-stats">
-          {stats.map((stat, index) =>
-          <div
-            key={stat.label}
-            className={`tru-trust-compact-stat ${isInView ? 'in-view' : ''}`}
-            style={{ '--stagger-index': index } as React.CSSProperties}>
-            
-              <stat.icon className="w-5 h-5" />
-              <span>{stat.label}</span>
-            </div>
-          )}
-        </div>
-        <div className="tru-trust-compact-badges">
-          {badges.map((badge, index) =>
-          <span
-            key={badge}
-            className={`tru-trust-compact-badge ${isInView ? 'in-view' : ''}`}
-            style={{ '--stagger-index': index + 3 } as React.CSSProperties}>
-            
-              {badge}
-            </span>
-          )}
-        </div>
-      </div>
-    </section>);
-
-}
-
-// Steps Compact Section with parallax effect
-function StepsCompactSection({ navigate }: {navigate: (path: string) => void;}) {
-  const [sectionRef, isInView] = useScrollAnimation<HTMLElement>({
-    threshold: 0.1,
-    rootMargin: "0px",
-    triggerOnce: true
-  });
-
-  const steps = [
-  { num: 1, title: "Build Your Inventory", desc: "AI-powered tools calculate weight and volume from real data." },
-  { num: 2, title: "Get Carrier Matches", desc: "We analyze SAFER Web data to find the best fit." },
-  { num: 3, title: "Book with Confidence", desc: "Secure payment. Licensed, vetted movers only." }];
-
-
-  return (
-    <section className="py-16 md:py-20 relative overflow-hidden" ref={sectionRef}>
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
-      </div>
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="text-center mb-8">
-          <p className="text-[11px] uppercase tracking-[0.3em] text-primary font-semibold mb-3">How It Works</p>
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <span className="h-px w-8 bg-primary/40" />
-            <span className="w-1.5 h-1.5 rounded-full bg-primary/60" />
-            <span className="h-px w-8 bg-primary/40" />
-          </div>
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight leading-[1.1]">
-            Get matched with the right <span className="text-primary">mover.</span>
-          </h2>
-        </div>
-        <div className="tru-steps-compact-grid">
-          {steps.map((step, index) =>
-          <div
-            key={step.num}
-            className={`tru-steps-compact-card tru-steps-parallax-card ${isInView ? 'in-view' : ''}`}
-            style={{ '--card-index': index } as React.CSSProperties}
-            onClick={() => navigate("/online-estimate")}>
-            
-              <div className="tru-steps-compact-num">{step.num}</div>
-              <div className="tru-steps-compact-card-content">
-                <h3>{step.title}</h3>
-                <p>{step.desc}</p>
-              </div>
-              <ArrowRight className="w-4 h-4 tru-steps-compact-arrow" />
-            </div>
-          )}
-        </div>
-      </div>
-    </section>);
-
-}
 
 export default function Index() {
   useScrollToTop();
@@ -1646,12 +1542,8 @@ export default function Index() {
             </div>
           </section>
 
-          <FeatureTrustStrip />
-
           {/* SHIPMENT TRACKER - Mirrored Layout */}
           <ShipmentTrackerSection navigate={navigate} />
-
-          <div className="py-8"><FeatureTrustStrip /></div>
 
           {/* TESTIMONIALS */}
           <section className="py-20 md:py-28 relative overflow-hidden">
@@ -1722,7 +1614,6 @@ export default function Index() {
             </div>
           </section>
 
-          <div className="py-8"><FeatureTrustStrip /></div>
 
           {/* CARRIER VETTING PREVIEW */}
           <section className="py-20 md:py-28 relative overflow-hidden">
@@ -1869,7 +1760,7 @@ export default function Index() {
             </div>
           </section>
 
-          <div className="py-8"><FeatureTrustStrip /></div>
+          
 
           {/* GET IN TOUCH */}
           <section className="py-20 md:py-28 relative overflow-hidden">
