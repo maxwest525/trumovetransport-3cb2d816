@@ -998,80 +998,24 @@ export default function Index() {
 
   const goNext = async () => {
     if (canContinue() && step < 3) {
-      // If on step 1, trigger analyzing transition
       if (step === 1) {
-        const fromQuery = fromLocationDisplay || [fromCity, fromZip].filter(Boolean).join(" ");
-        const toQuery = toLocationDisplay || [toCity, toZip].filter(Boolean).join(" ");
-
-        const [resolvedFromCoords, resolvedToCoords] = await Promise.all([
-          fromCoords ?? resolveLocationCoords(fromQuery),
-          toCoords ?? resolveLocationCoords(toQuery),
-        ]);
-
-        if (resolvedFromCoords) setFromCoords(resolvedFromCoords);
-        if (resolvedToCoords) setToCoords(resolvedToCoords);
-
-        setIsAnalyzing(true);
-        setAnalyzePhase(0);
-
-        // Fetch route geometry for the third map
-        if (resolvedFromCoords && resolvedToCoords) {
-          try {
-            const res = await fetch(
-              `https://router.project-osrm.org/route/v1/driving/${resolvedFromCoords[0]},${resolvedFromCoords[1]};${resolvedToCoords[0]},${resolvedToCoords[1]}?geometries=polyline&overview=full`
-            );
-            if (res.ok) {
-              const data = await res.json();
-              if (data.routes && data.routes[0]) {
-                setRouteGeometry(data.routes[0].geometry);
-              } else {
-                setRouteGeometry(encodePolyline([resolvedFromCoords, resolvedToCoords]));
-              }
-            } else {
-              setRouteGeometry(encodePolyline([resolvedFromCoords, resolvedToCoords]));
-            }
-          } catch (e) {
-            console.error('Failed to fetch route:', e);
-            setRouteGeometry(encodePolyline([resolvedFromCoords, resolvedToCoords]));
-          }
-        }
-
-        // Slower timing for popup modal experience
-        // Phase 0: Show origin (0-2s)
-        setTimeout(() => setAnalyzePhase(1), 2000);
-        // Phase 1: Show destination (2-4s)
-        setTimeout(() => {
-          setAnalyzePhase(2);
-          // Start route progress animation
-          setRouteProgress(0);
-          let progress = 0;
-          const progressInterval = setInterval(() => {
-            progress += 2;
-            if (progress >= 100) {
-              progress = 100;
-              clearInterval(progressInterval);
-              // Wait a moment at 100% before transitioning
-              setTimeout(() => {
-                // Save lead data and navigate to thank you page
-                const fullName = `${contactFirstName.trim()} ${contactLastName.trim()}`;
-                localStorage.setItem("tm_lead", JSON.stringify({
-                  name: fullName, fromZip, toZip, fromCity, toCity,
-                  fromLocationDisplay: fromLocationDisplay || `${fromCity} ${fromZip}`,
-                  toLocationDisplay: toLocationDisplay || `${toCity} ${toZip}`,
-                  moveDate: moveDate?.toISOString(),
-                  email: contactEmail, phone: contactPhone, ts: Date.now()
-                }));
-                localStorage.setItem("tm_lead_contact", JSON.stringify({
-                  name: fullName, email: contactEmail, phone: contactPhone,
-                  fromCity, toCity, fromZip, toZip,
-                  moveDate: moveDate?.toISOString(), ts: Date.now()
-                }));
-                navigate("/thank-you");
-              }, 500);
-            }
-            setRouteProgress(progress);
-          }, 50);
-        }, 4000);
+        // Save lead data and navigate directly to thank-you page
+        const fullName = `${contactFirstName.trim()} ${contactLastName.trim()}`;
+        localStorage.setItem("tm_lead", JSON.stringify({
+          name: fullName, fromZip, toZip, fromCity, toCity,
+          fromLocationDisplay: fromLocationDisplay || `${fromCity} ${fromZip}`,
+          toLocationDisplay: toLocationDisplay || `${toCity} ${toZip}`,
+          moveDate: moveDate?.toISOString(),
+          email: contactEmail, phone: contactPhone, ts: Date.now()
+        }));
+        localStorage.setItem("tm_lead_contact", JSON.stringify({
+          name: fullName, email: contactEmail, phone: contactPhone,
+          fromCity, toCity, fromZip, toZip,
+          moveDate: moveDate?.toISOString(), ts: Date.now()
+        }));
+        navigate("/thank-you");
+      } else {
+        setStep(step + 1);
       }
     }
   };
