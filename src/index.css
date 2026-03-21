@@ -21456,7 +21456,7 @@
 }
 
 .tru-scan-headline-accent {
-  color: hsl(var(--foreground));
+  color: hsl(var(--primary));
 }
 
 .tru-scan-subheadline {
