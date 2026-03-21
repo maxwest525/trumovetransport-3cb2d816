@@ -231,6 +231,9 @@ export default function TrudyChatBox() {
 
       if (assistantSoFar) {
         setConversationHistory(prev => [...prev, { role: "assistant", content: assistantSoFar }]);
+        // Attach follow-up suggestions to the last Trudy message
+        const suggestions = getSuggestions(assistantSoFar);
+        setMessages(prev => prev.map((m, i) => i === prev.length - 1 && m.role === 'trudy' ? { ...m, suggestions } : m));
       }
     } catch (err) {
       console.error("Trudy chat error:", err);
