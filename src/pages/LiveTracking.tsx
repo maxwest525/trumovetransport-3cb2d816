@@ -3,14 +3,7 @@ import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Calendar, Box, Alert
 import { format } from "date-fns";
 import { ScrollFadeIn } from "@/hooks/useScrollFadeIn";
 import { TruckTrackingMap } from "@/components/tracking/TruckTrackingMap";
-// Google3DTrackingView removed - unreliable
-import { Google2DTrackingMap, type MapViewType } from "@/components/tracking/Google2DTrackingMap";
-import TruckViewPanel from "@/components/tracking/TruckViewPanel";
-import { GoogleStaticRouteMap } from "@/components/tracking/GoogleStaticRouteMap";
-import { RouteComparisonPanel, type RouteOption } from "@/components/tracking/RouteComparisonPanel";
 import { UnifiedStatsCard } from "@/components/tracking/UnifiedStatsCard";
-import { StreetViewPreview } from "@/components/tracking/StreetViewPreview";
-import { TruckAerialView } from "@/components/tracking/TruckAerialView";
 import { RouteWeather } from "@/components/tracking/RouteWeather";
 import { CompactRouteWeather } from "@/components/tracking/CompactRouteWeather";
 import { WeighStationChecklist } from "@/components/tracking/WeighStationChecklist";
@@ -161,14 +154,10 @@ export default function LiveTracking() {
   // Follow mode state - default to true for better UX
   const [followMode, setFollowMode] = useState(true);
   
-  // 3D view mode toggle - default to false (2D satellite is primary, 3D is unreliable)
-  const [show3DView, setShow3DView] = useState(false);
+  // Map view type
+  const [mapViewType, setMapViewType] = useState<string>('roadmap');
   
-  // Map view type for 2D maps (satellite, hybrid, roadmap, truckview)
-  const [mapViewType, setMapViewType] = useState<MapViewType>('satellite');
-  
-  // WebGL diagnostics and fallback state
-  const [webglDiagnostics, setWebglDiagnostics] = useState<WebGLDiagnostics | null>(null);
+  // Fallback state
   const [useStaticMap, setUseStaticMap] = useState(false);
   
   
@@ -184,7 +173,7 @@ export default function LiveTracking() {
   
   // Map view transition state
   const [isViewTransitioning, setIsViewTransitioning] = useState(false);
-  const prevMapViewType = useRef<MapViewType>(mapViewType);
+  const prevMapViewType = useRef<string>(mapViewType);
   
   // Checkpoint notifications tracking
   const passedCheckpoints = useRef<Set<number>>(new Set());
@@ -239,21 +228,11 @@ export default function LiveTracking() {
     setRouteCoordinates(route.coordinates);
   }, []);
 
-  // Check WebGL capabilities on mount and set appropriate view mode
+  // Set map mode on mount
   useEffect(() => {
     const diagnostics = getWebGLDiagnostics();
-    setWebglDiagnostics(diagnostics);
-    
     if (!diagnostics.supported || diagnostics.recommendation === 'static') {
-      // WebGL not available or software rendering - use static map
       setUseStaticMap(true);
-      setShow3DView(false);
-      console.log('WebGL diagnostics: Using static map fallback', diagnostics);
-    } else {
-      // WebGL supported - default to 2D satellite view (3D is unreliable)
-      setShow3DView(false);
-      setFollowMode(true);
-      console.log('WebGL diagnostics: 2D satellite view enabled by default', diagnostics);
     }
   }, []);
 
