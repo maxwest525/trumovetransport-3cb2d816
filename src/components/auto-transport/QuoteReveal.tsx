@@ -273,6 +273,7 @@ export const QuoteReveal = forwardRef<HTMLDivElement, QuoteRevealProps>(
         </div>
       </section>
       </>
+    );
   }
 );
 
