@@ -1256,7 +1256,7 @@ export default function Index() {
                           <ArrowRight className="w-4 h-4 text-primary" />
                         </button>
 
-                        <p className="text-center text-xs text-muted-foreground">A moving specialist will call you shortly.</p>
+                        <p className="text-center text-[9px] leading-tight text-muted-foreground/70 max-w-xs mx-auto">By clicking above, you consent to receive calls, texts, and emails at the number/email provided, including via automated technology. Consent is not a condition of purchase. Msg & data rates may apply.</p>
                       </div>
                     }
 
