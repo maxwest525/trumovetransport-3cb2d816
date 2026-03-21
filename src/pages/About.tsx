@@ -232,10 +232,9 @@ export default function About() {
             >
               Book a Consult
             </Link>
-      </div>
-      </div>
+          </div>
         </section>
       </div>
-    </SiteShell>
+      </div>
   );
 }
