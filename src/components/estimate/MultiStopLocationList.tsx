@@ -87,12 +87,11 @@ function SortableItem({ location, index, onRemove, onAddressChange, onLocationSe
           value={location.address}
           onValueChange={(val) => onAddressChange(location.id, val)}
           onLocationSelect={async (displayAddr, zip, fullAddress) => {
-            // Geocode to get coordinates using MapTiler
+            // Geocode to get coordinates using Geoapify
             const addr = fullAddress || displayAddr;
             try {
               const response = await fetch(
-                `https://api.maptiler.com/geocoding/${encodeURIComponent(addr)}.json?` +
-                `key=${MAPTILER_KEY}&country=us&limit=1`
+                `https://api.geoapify.com/v1/geocode/search?text=${encodeURIComponent(addr)}&filter=countrycode:us&format=json&limit=1&apiKey=${GEOAPIFY_KEY}`
               );
               const data = await response.json();
               if (data.features?.[0]?.center) {
