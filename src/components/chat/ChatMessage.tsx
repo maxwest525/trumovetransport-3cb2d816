@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import trudyAvatar from "@/assets/trudy-avatar.png";
+import { MessageCircle } from "lucide-react";
 
 interface ChatMessageProps {
   sender: 'bot' | 'user';
@@ -11,8 +11,8 @@ export default function ChatMessage({ sender, content, timestamp }: ChatMessageP
   return (
     <div className={cn("chat-message", sender === 'bot' ? "is-bot" : "is-user")}>
       {sender === 'bot' && (
-        <div className="chat-avatar">
-          <img src={trudyAvatar} alt="Trudy" className="w-8 h-8 rounded-full object-cover" />
+        <div className="chat-avatar bg-foreground rounded-full flex items-center justify-center w-8 h-8">
+          <MessageCircle className="w-4 h-4 text-background" />
         </div>
       )}
       <div className="chat-bubble">
