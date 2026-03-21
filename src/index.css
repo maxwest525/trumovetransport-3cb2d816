@@ -4017,58 +4017,6 @@
   background: hsl(var(--tm-ink) / 0.08);
 }
 
-/* Old value prop styles - kept for compatibility */
-.tru-hero-value-prop {
-  display: flex;
-  align-items: flex-start;
-  gap: 16px;
-  padding: 16px 20px;
-  background: hsl(0 0% 100%);
-  border: 1px solid hsl(var(--tm-ink) / 0.08);
-  border-radius: 16px;
-  transition: all 0.2s ease;
-}
-
-.tru-hero-value-prop:hover {
-  border-color: hsl(var(--tm-ink) / 0.15);
-  box-shadow: 0 4px 20px hsl(var(--tm-ink) / 0.1);
-  transform: translateX(4px);
-}
-
-.tru-hero-value-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  background: hsl(var(--tm-ink) / 0.08);
-  border-radius: 12px;
-  flex-shrink: 0;
-}
-
-.tru-hero-value-icon svg {
-  color: hsl(var(--tm-ink));
-}
-
-.tru-hero-value-text {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.tru-hero-value-title {
-  font-size: 15px;
-  font-weight: 700;
-  color: hsl(var(--tm-ink));
-}
-
-.tru-hero-value-desc {
-  font-size: 13px;
-  color: hsl(var(--tm-ink) / 0.6);
-  line-height: 1.4;
-}
-
-/* RIGHT PANEL: Form - single column now */
 
 /* =============================================
    STATIC SIDEBAR - Icon Strip + Expanded Menu
