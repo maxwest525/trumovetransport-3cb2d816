@@ -1091,6 +1091,7 @@ export default function Index() {
             <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
               {/* LEFT: Headline */}
               <div className="flex flex-col items-center text-center lg:items-start lg:text-left gap-4" ref={heroContentRef}>
+                <img src={logoImg} alt="TruMove" className="h-16 md:h-20 lg:h-24 w-auto object-contain" />
                 <p className="text-[11px] uppercase tracking-[0.3em] text-primary font-semibold">Premium Moving Brokerage</p>
                 <div className="flex items-center gap-2">
                   <span className="h-px w-8 bg-primary/40" />
