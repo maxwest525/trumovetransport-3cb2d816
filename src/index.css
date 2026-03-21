@@ -22708,7 +22708,7 @@
   font-weight: 800;
   line-height: 1.05;
   letter-spacing: -0.03em;
-  color: hsl(var(--tm-ink));
+  color: hsl(var(--foreground));
   display: flex;
   flex-direction: column;
   gap: 4px;
