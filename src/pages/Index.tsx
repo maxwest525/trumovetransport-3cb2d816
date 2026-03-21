@@ -15,7 +15,7 @@ import HeroParticles from "@/components/HeroParticles";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import LeadCaptureModal from "@/components/LeadCaptureModal";
 // Static Street View preview used instead of interactive component
-// AIChatContainer removed from contact section
+import AIChatContainer from "@/components/chat/AIChatContainer";
 // StatsStrip removed - trust items inlined in hero
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 
@@ -643,7 +643,7 @@ export default function Index() {
   // Why TruMove feature selection state
   const [activeFeature, setActiveFeature] = useState<number | null>(null);
   const [carrierIdx, setCarrierIdx] = useState(0);
-  // contactMode removed - form only now
+  const [contactMode, setContactMode] = useState<"trudy" | "form">("form");
   const [contactFormName, setContactFormName] = useState("");
   const [contactFormEmail, setContactFormEmail] = useState("");
   const [contactFormMessage, setContactFormMessage] = useState("");
@@ -1705,9 +1705,37 @@ export default function Index() {
                 {/* Single card with green gradient glow */}
                 <div className="flex-1 min-w-0 rounded-2xl bg-card p-4 sm:p-5 flex flex-col md:flex-row gap-4 sm:gap-5 transition-all duration-200 ring-1 ring-border overflow-hidden">
 
-                  {/* Form */}
+                  {/* Toggle: Talk to Trudy / Send a Message */}
                   <div className="flex-1 flex flex-col">
-                    {contactFormSent ?
+                    <div className="flex items-stretch rounded-lg border border-border overflow-hidden mb-4">
+                      <button
+                        onClick={() => setContactMode("trudy")}
+                        className={`flex-1 flex items-center justify-center gap-1.5 px-4 py-4 text-xs font-semibold transition-all ${
+                        contactMode === "trudy" ?
+                        "bg-foreground text-background" :
+                        "bg-background text-muted-foreground hover:text-foreground hover:bg-muted"}`
+                        }>
+                        <Sparkles className="w-3 h-3" />
+                        Talk to Trudy
+                      </button>
+                      <div className="w-px bg-border" />
+                      <button
+                        onClick={() => setContactMode("form")}
+                        className={`flex-1 flex items-center justify-center gap-1.5 px-4 py-4 text-xs font-semibold transition-all ${
+                        contactMode === "form" ?
+                        "bg-foreground text-background" :
+                        "bg-background text-muted-foreground hover:text-foreground hover:bg-muted"}`
+                        }>
+                        <MessageSquare className="w-3 h-3" />
+                        Send a Message
+                      </button>
+                    </div>
+
+                    {contactMode === "trudy" ?
+                    <div className="flex-1 rounded-xl border border-border overflow-hidden" style={{ height: 320 }}>
+                        <AIChatContainer />
+                      </div> :
+                    contactFormSent ?
                     <div className="flex-1 flex flex-col items-center justify-center text-center gap-3 py-8">
                         <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
                           <CheckCircle className="h-6 w-6 text-primary" />
@@ -1719,7 +1747,6 @@ export default function Index() {
 
                     <>
                         <div className="flex flex-col items-center text-center mb-3">
-                          <p className="text-sm font-semibold text-foreground mb-1">Send a Message</p>
                           <p className="text-xs text-muted-foreground">We'll get back to you within a few hours.</p>
                         </div>
                         <form className="flex-1 flex flex-col space-y-2.5" onSubmit={async (e) => {
@@ -1780,13 +1807,6 @@ export default function Index() {
                       <ArrowRight className="w-4 h-4 text-primary" />
                     </a>
 
-                    <button
-                      onClick={() => window.dispatchEvent(new CustomEvent('trudy-start'))}
-                      className="flex items-center justify-center gap-2 border border-foreground bg-background text-foreground px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-muted transition-colors">
-                      <Mic className="w-4 h-4 text-primary" />
-                      Talk to Trudy
-                      <ArrowRight className="w-4 h-4 text-primary" />
-                    </button>
 
                     <button
                       onClick={() => navigate("/book")}
