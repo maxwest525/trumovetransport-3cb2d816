@@ -1440,12 +1440,12 @@
 }
 
 .tru-hero-accent {
-  color: hsl(142 71% 45%);
-  -webkit-text-fill-color: hsl(142 71% 45%);
+  color: hsl(90 100% 50%);
+  -webkit-text-fill-color: hsl(90 100% 50%);
   filter: 
-    drop-shadow(0 0 8px hsl(142 71% 45% / 0.5))
-    drop-shadow(0 0 20px hsl(142 71% 45% / 0.3))
-    drop-shadow(0 2px 6px hsl(142 71% 45% / 0.25));
+    drop-shadow(0 0 8px hsl(90 100% 50% / 0.5))
+    drop-shadow(0 0 20px hsl(90 100% 50% / 0.3))
+    drop-shadow(0 2px 6px hsl(90 100% 50% / 0.25));
 }
 
 .tru-hero-bullets {
