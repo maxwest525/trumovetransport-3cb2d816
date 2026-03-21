@@ -998,9 +998,10 @@ export default function Index() {
         <div className="tru-page-inner">
         {/* HERO */}
         <section className="relative overflow-hidden py-16 md:py-24 lg:py-28">
-          {/* Hero background image */}
+          {/* Hero background image with dark overlay */}
           <div className="absolute inset-0 pointer-events-none">
-            <img src={heroFamilyMove} alt="" className="absolute inset-0 w-full h-full object-cover opacity-[0.07]" />
+            <img src={heroFamilyMove} alt="" className="absolute inset-0 w-full h-full object-cover opacity-20" />
+            <div className="absolute inset-0 bg-background/80" />
           </div>
           {/* Textured background */}
           <div className="absolute inset-0 pointer-events-none">
