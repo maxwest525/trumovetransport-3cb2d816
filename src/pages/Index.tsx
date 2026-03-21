@@ -506,7 +506,7 @@ function ShipmentTrackerSection({ navigate }: {navigate: (path: string) => void;
   };
 
   return (
-    <section className="py-14 md:py-20 relative overflow-hidden">
+    <section className="py-14 md:py-20 relative overflow-hidden my-[5px]">
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-0 w-[500px] h-[500px] rounded-full bg-primary/[0.05] blur-[120px]" />
         <div className="absolute bottom-0 right-0 w-[400px] h-[400px] rounded-full bg-primary/[0.04] blur-[100px]" />
@@ -1076,7 +1076,7 @@ export default function Index() {
                 </div>
               </div>
             </div>
-          }
+            }
 
           <section className="tru-hero tru-hero-split" ref={heroContentRef}>
 
@@ -1125,29 +1125,29 @@ export default function Index() {
 
                     {/* Step 1: Contact + Date */}
                     {step === 1 &&
-                      <div key="step-1" className="space-y-3">
+                    <div key="step-1" className="space-y-3">
                         <div className="grid grid-cols-2 gap-3">
                           <div>
                             <label className="text-xs font-medium text-muted-foreground mb-1 block">First Name</label>
                             <input
-                              type="text"
-                              value={contactFirstName}
-                              onChange={(e) => {
-                                setContactFirstName(e.target.value);
-                                if (e.target.value.length > 0 && !isEngaged) setIsEngaged(true);
-                              }}
-                              placeholder="First Name"
-                              className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-                              autoFocus />
+                            type="text"
+                            value={contactFirstName}
+                            onChange={(e) => {
+                              setContactFirstName(e.target.value);
+                              if (e.target.value.length > 0 && !isEngaged) setIsEngaged(true);
+                            }}
+                            placeholder="First Name"
+                            className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                            autoFocus />
                           </div>
                           <div>
                             <label className="text-xs font-medium text-muted-foreground mb-1 block">Last Name</label>
                             <input
-                              type="text"
-                              value={contactLastName}
-                              onChange={(e) => setContactLastName(e.target.value)}
-                              placeholder="Last Name"
-                              className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
+                            type="text"
+                            value={contactLastName}
+                            onChange={(e) => setContactLastName(e.target.value)}
+                            placeholder="Last Name"
+                            className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
                           </div>
                         </div>
 
@@ -1155,20 +1155,20 @@ export default function Index() {
                           <div>
                             <label className="text-xs font-medium text-muted-foreground mb-1 block">Phone</label>
                             <input
-                              type="tel"
-                              value={contactPhone}
-                              onChange={(e) => setContactPhone(formatPhoneNumber(e.target.value))}
-                              placeholder="(555) 555-5555"
-                              className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
+                            type="tel"
+                            value={contactPhone}
+                            onChange={(e) => setContactPhone(formatPhoneNumber(e.target.value))}
+                            placeholder="(555) 555-5555"
+                            className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
                           </div>
                           <div>
                             <label className="text-xs font-medium text-muted-foreground mb-1 block">Email</label>
                             <input
-                              type="email"
-                              value={contactEmail}
-                              onChange={(e) => setContactEmail(e.target.value)}
-                              placeholder="you@email.com"
-                              className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
+                            type="email"
+                            value={contactEmail}
+                            onChange={(e) => setContactEmail(e.target.value)}
+                            placeholder="you@email.com"
+                            className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
                           </div>
                         </div>
 
@@ -1177,8 +1177,8 @@ export default function Index() {
                           <Popover>
                             <PopoverTrigger asChild>
                               <button
-                                type="button"
-                                className="w-full flex items-center gap-2 rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground hover:border-primary/40 transition-colors">
+                              type="button"
+                              className="w-full flex items-center gap-2 rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground hover:border-primary/40 transition-colors">
                                 <Calendar className="w-4 h-4 shrink-0 text-primary" />
                                 <span className={moveDate ? '' : 'text-muted-foreground'}>
                                   {moveDate ? format(moveDate, 'MMM d, yyyy') : 'Select a date'}
@@ -1187,36 +1187,36 @@ export default function Index() {
                             </PopoverTrigger>
                             <PopoverContent className="w-auto p-0" align="center" side="top">
                               <CalendarComponent
-                                mode="single"
-                                selected={moveDate ?? undefined}
-                                onSelect={(date) => setMoveDate(date ?? null)}
-                                disabled={(date) => date < new Date()}
-                                initialFocus
-                                className="p-3 pointer-events-auto" />
+                              mode="single"
+                              selected={moveDate ?? undefined}
+                              onSelect={(date) => setMoveDate(date ?? null)}
+                              disabled={(date) => date < new Date()}
+                              initialFocus
+                              className="p-3 pointer-events-auto" />
                             </PopoverContent>
                           </Popover>
                         </div>
 
                         {formError &&
-                          <p className="text-destructive text-xs text-center">{formError}</p>
-                        }
+                      <p className="text-destructive text-xs text-center">{formError}</p>
+                      }
 
                         <button
-                          type="button"
-                          onClick={() => {
-                            const first = contactFirstName.trim();
-                            const last = contactLastName.trim();
-                            const em = contactEmail.trim();
-                            const ph = contactPhone.trim();
-                            if (!first) {setFormError('Please enter your first name.');return;}
-                            if (!last) {setFormError('Please enter your last name.');return;}
-                            if (!isValidPhoneNumber(ph)) {setFormError('Please enter a valid 10-digit phone number.');return;}
-                            if (!em || !em.includes('@') || !em.includes('.')) {setFormError('Please enter a valid email.');return;}
-                            if (!moveDate) {setFormError('Please select a move date.');return;}
-                            setFormError('');
-                            goNext();
-                          }}
-                          className="w-full flex items-center justify-center gap-2 h-11 rounded-lg bg-foreground text-background font-semibold text-sm hover:bg-foreground/85 transition-all duration-200 hover:shadow-[0_4px_12px_hsl(var(--foreground)/0.15)]">
+                        type="button"
+                        onClick={() => {
+                          const first = contactFirstName.trim();
+                          const last = contactLastName.trim();
+                          const em = contactEmail.trim();
+                          const ph = contactPhone.trim();
+                          if (!first) {setFormError('Please enter your first name.');return;}
+                          if (!last) {setFormError('Please enter your last name.');return;}
+                          if (!isValidPhoneNumber(ph)) {setFormError('Please enter a valid 10-digit phone number.');return;}
+                          if (!em || !em.includes('@') || !em.includes('.')) {setFormError('Please enter a valid email.');return;}
+                          if (!moveDate) {setFormError('Please select a move date.');return;}
+                          setFormError('');
+                          goNext();
+                        }}
+                        className="w-full flex items-center justify-center gap-2 h-11 rounded-lg bg-foreground text-background font-semibold text-sm hover:bg-foreground/85 transition-all duration-200 hover:shadow-[0_4px_12px_hsl(var(--foreground)/0.15)]">
                           <span>Talk to Support</span>
                           <ArrowRight className="w-4 h-4 text-primary" />
                         </button>
@@ -1227,57 +1227,57 @@ export default function Index() {
 
                     {/* Step 2: Contact Information */}
                     {step === 2 &&
-                      <div key="step-2" className="space-y-3">
+                    <div key="step-2" className="space-y-3">
                         <h3 className="text-lg font-bold text-foreground text-center">How can we reach you?</h3>
                         <p className="text-xs text-muted-foreground text-center">We'll save your progress and send updates</p>
 
                         <input
-                          type="text"
-                          className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-                          placeholder="Your full name"
-                          value={name}
-                          onChange={(e) => {setName(e.target.value);setFormError("");}}
-                          autoFocus />
+                        type="text"
+                        className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                        placeholder="Your full name"
+                        value={name}
+                        onChange={(e) => {setName(e.target.value);setFormError("");}}
+                        autoFocus />
                         <input
-                          type="email"
-                          className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-                          placeholder="Email address"
-                          value={email}
-                          onChange={(e) => {setEmail(e.target.value);setFormError("");}}
-                          onKeyDown={handleKeyDown} />
+                        type="email"
+                        className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                        placeholder="Email address"
+                        value={email}
+                        onChange={(e) => {setEmail(e.target.value);setFormError("");}}
+                        onKeyDown={handleKeyDown} />
                         <input
-                          type="tel"
-                          className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-                          placeholder="(555) 123-4567"
-                          value={phone}
-                          onChange={(e) => {
-                            setPhoneNum(formatPhoneNumber(e.target.value));
-                            setFormError("");
-                          }}
-                          onKeyDown={handleKeyDown} />
+                        type="tel"
+                        className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                        placeholder="(555) 123-4567"
+                        value={phone}
+                        onChange={(e) => {
+                          setPhoneNum(formatPhoneNumber(e.target.value));
+                          setFormError("");
+                        }}
+                        onKeyDown={handleKeyDown} />
 
                         {formError &&
-                          <p className="text-destructive text-xs text-center">{formError}</p>
-                        }
+                      <p className="text-destructive text-xs text-center">{formError}</p>
+                      }
 
                         <button
-                          type="button"
-                          className="w-full flex items-center justify-center gap-2 h-11 rounded-lg bg-foreground text-background font-semibold text-sm hover:bg-foreground/85 transition-all duration-200"
-                          disabled={!canContinue()}
-                          onClick={() => {
-                            if (canContinue()) {
-                              localStorage.setItem("tm_lead_contact", JSON.stringify({
-                                name, email, phone,
-                                fromCity, toCity, fromZip, toZip,
-                                moveDate: moveDate?.toISOString(),
-                                ts: Date.now()
-                              }));
-                              setHasProvidedContactInfo(true);
-                              setStep(3);
-                            } else {
-                              setFormError("Please enter your name, a valid email, and phone number.");
-                            }
-                          }}>
+                        type="button"
+                        className="w-full flex items-center justify-center gap-2 h-11 rounded-lg bg-foreground text-background font-semibold text-sm hover:bg-foreground/85 transition-all duration-200"
+                        disabled={!canContinue()}
+                        onClick={() => {
+                          if (canContinue()) {
+                            localStorage.setItem("tm_lead_contact", JSON.stringify({
+                              name, email, phone,
+                              fromCity, toCity, fromZip, toZip,
+                              moveDate: moveDate?.toISOString(),
+                              ts: Date.now()
+                            }));
+                            setHasProvidedContactInfo(true);
+                            setStep(3);
+                          } else {
+                            setFormError("Please enter your name, a valid email, and phone number.");
+                          }
+                        }}>
                           <span>Continue</span>
                           <ArrowRight className="w-4 h-4 text-primary" />
                         </button>
@@ -1295,18 +1295,18 @@ export default function Index() {
 
                     {/* Step 3: Choose Estimate Method */}
                     {step === 3 && !submitted &&
-                      <div key="step-3" className="space-y-3">
+                    <div key="step-3" className="space-y-3">
                         <h3 className="text-lg font-bold text-foreground text-center">How would you like to build your inventory?</h3>
                         <p className="text-xs text-muted-foreground text-center">Choose the method that works best for you</p>
 
                         <div className="space-y-2">
                           <button
-                            type="button"
-                            className="w-full flex items-center gap-3 p-3 rounded-xl ring-1 ring-primary/30 bg-primary/5 hover:bg-primary/10 transition-colors text-left"
-                            onClick={() => {
-                              handleSubmit(new Event('submit') as any);
-                              navigate("/scan-room");
-                            }}>
+                          type="button"
+                          className="w-full flex items-center gap-3 p-3 rounded-xl ring-1 ring-primary/30 bg-primary/5 hover:bg-primary/10 transition-colors text-left"
+                          onClick={() => {
+                            handleSubmit(new Event('submit') as any);
+                            navigate("/scan-room");
+                          }}>
                             <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
                               <Scan className="w-5 h-5 text-primary" />
                             </div>
@@ -1319,12 +1319,12 @@ export default function Index() {
                           </button>
 
                           <button
-                            type="button"
-                            className="w-full flex items-center gap-3 p-3 rounded-xl ring-1 ring-border hover:ring-primary/30 hover:bg-accent/30 transition-colors text-left"
-                            onClick={() => {
-                              handleSubmit(new Event('submit') as any);
-                              navigate("/online-estimate");
-                            }}>
+                          type="button"
+                          className="w-full flex items-center gap-3 p-3 rounded-xl ring-1 ring-border hover:ring-primary/30 hover:bg-accent/30 transition-colors text-left"
+                          onClick={() => {
+                            handleSubmit(new Event('submit') as any);
+                            navigate("/online-estimate");
+                          }}>
                             <div className="h-10 w-10 rounded-lg bg-muted flex items-center justify-center shrink-0">
                               <Boxes className="w-5 h-5 text-foreground" />
                             </div>
@@ -1336,12 +1336,12 @@ export default function Index() {
                           </button>
 
                           <button
-                            type="button"
-                            className="w-full flex items-center gap-3 p-3 rounded-xl ring-1 ring-border hover:ring-primary/30 hover:bg-accent/30 transition-colors text-left"
-                            onClick={() => {
-                              handleSubmit(new Event('submit') as any);
-                              navigate("/book");
-                            }}>
+                          type="button"
+                          className="w-full flex items-center gap-3 p-3 rounded-xl ring-1 ring-border hover:ring-primary/30 hover:bg-accent/30 transition-colors text-left"
+                          onClick={() => {
+                            handleSubmit(new Event('submit') as any);
+                            navigate("/book");
+                          }}>
                             <div className="h-10 w-10 rounded-lg bg-muted flex items-center justify-center shrink-0">
                               <Video className="w-5 h-5 text-foreground" />
                             </div>
@@ -1363,7 +1363,7 @@ export default function Index() {
 
                     {/* Post-Submission Confirmation */}
                     {submitted &&
-                      <div key="step-confirmed" className="space-y-4 text-center py-4">
+                    <div key="step-confirmed" className="space-y-4 text-center py-4">
                         <CheckCircle className="w-12 h-12 text-primary mx-auto" />
                         <h3 className="text-lg font-bold text-foreground">You're all set!</h3>
                         <p className="text-sm text-muted-foreground">We've saved your move details. Continue building your inventory or speak with a specialist.</p>
@@ -1400,7 +1400,7 @@ export default function Index() {
         </div> {/* End tru-hero-wrapper */}
 
           {/* START YOUR AI INVENTORY ANALYSIS - Enhanced with Preview */}
-           <section className="py-10 md:py-16 relative overflow-hidden -mt-[50px]">
+           <section className="py-10 relative overflow-hidden -mt-[50px] md:py-[100px] my-[5px]">
             <div className="absolute inset-0 pointer-events-none">
               <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full bg-primary/[0.06] blur-[120px]" />
               <div className="absolute bottom-0 left-0 w-[500px] h-[500px] rounded-full bg-primary/[0.04] blur-[100px]" />
@@ -1488,29 +1488,29 @@ export default function Index() {
 
                 <div className="flex animate-marquee gap-5 w-max hover:[animation-play-state:paused]">
                   {[...Array(2)].map((_, dupeIdx) =>
-                    [
-                      { name: "Sarah M.", location: "New York → Miami", rating: 5, photo: testimonialSarah, source: "Google", text: "TruMove made our cross-country move seamless. Real-time tracking gave us total peace of mind the entire way." },
-                      { name: "James R.", location: "Chicago → Denver", rating: 5, photo: testimonialJames, source: "Yelp", text: "The AI inventory scanner saved us hours of manual cataloging. Our estimate was spot-on — no surprise charges." },
-                      { name: "Emily & David K.", location: "Los Angeles → Seattle", rating: 5, photo: testimonialEmilyDavid, source: "SiteJabber", text: "Best moving experience we've ever had. The team was professional, on time, and the video consult made planning easy." },
-                      { name: "Marcus T.", location: "Houston → Atlanta", rating: 5, photo: testimonialMarcus, source: "Facebook", text: "From the first call to delivery day, everything was handled with care. Trudy even helped us prep our inventory list." },
-                      { name: "Lisa W.", location: "Boston → San Francisco", rating: 5, photo: testimonialLisa, source: "MovingReviews.com", text: "We tracked our shipment in real time across the country. The transparency was unlike any other mover we've used." },
-                      { name: "Carlos & Ana P.", location: "Phoenix → Dallas", rating: 5, photo: testimonialCarlosAna, source: "BBB", text: "Incredible value. The video consultation caught things we would have missed. Highly recommend TruMove to anyone." },
-                      { name: "Rachel S.", location: "Portland → Nashville", rating: 5, photo: testimonialSarah, source: "Google", text: "The carrier vetting gave us confidence we were hiring a safe, legit company. No hidden fees, no stress." },
-                      { name: "David L.", location: "Tampa → Charlotte", rating: 5, photo: testimonialJames, source: "Yelp", text: "Scheduling was a breeze. The whole process from quote to delivery was handled professionally and on time." },
-                      { name: "Nina & Tom H.", location: "Austin → San Diego", rating: 5, photo: testimonialEmilyDavid, source: "Facebook", text: "We moved with two kids and a dog — TruMove took all the stress off our plate. Would absolutely use them again." },
-                      { name: "Andre W.", location: "Detroit → Orlando", rating: 5, photo: testimonialMarcus, source: "Google", text: "The live tracking map was incredible. I could see exactly where our stuff was the whole trip. Top-notch service." },
-                    ].map((review, i) => (
-                      <div
-                        key={`${dupeIdx}-${i}`}
-                        className="w-[280px] sm:w-[380px] shrink-0 rounded-2xl bg-card p-4 sm:p-6 flex flex-col gap-3 sm:gap-4 ring-1 ring-border min-h-[200px] sm:min-h-[220px]"
-                      >
+                  [
+                  { name: "Sarah M.", location: "New York → Miami", rating: 5, photo: testimonialSarah, source: "Google", text: "TruMove made our cross-country move seamless. Real-time tracking gave us total peace of mind the entire way." },
+                  { name: "James R.", location: "Chicago → Denver", rating: 5, photo: testimonialJames, source: "Yelp", text: "The AI inventory scanner saved us hours of manual cataloging. Our estimate was spot-on — no surprise charges." },
+                  { name: "Emily & David K.", location: "Los Angeles → Seattle", rating: 5, photo: testimonialEmilyDavid, source: "SiteJabber", text: "Best moving experience we've ever had. The team was professional, on time, and the video consult made planning easy." },
+                  { name: "Marcus T.", location: "Houston → Atlanta", rating: 5, photo: testimonialMarcus, source: "Facebook", text: "From the first call to delivery day, everything was handled with care. Trudy even helped us prep our inventory list." },
+                  { name: "Lisa W.", location: "Boston → San Francisco", rating: 5, photo: testimonialLisa, source: "MovingReviews.com", text: "We tracked our shipment in real time across the country. The transparency was unlike any other mover we've used." },
+                  { name: "Carlos & Ana P.", location: "Phoenix → Dallas", rating: 5, photo: testimonialCarlosAna, source: "BBB", text: "Incredible value. The video consultation caught things we would have missed. Highly recommend TruMove to anyone." },
+                  { name: "Rachel S.", location: "Portland → Nashville", rating: 5, photo: testimonialSarah, source: "Google", text: "The carrier vetting gave us confidence we were hiring a safe, legit company. No hidden fees, no stress." },
+                  { name: "David L.", location: "Tampa → Charlotte", rating: 5, photo: testimonialJames, source: "Yelp", text: "Scheduling was a breeze. The whole process from quote to delivery was handled professionally and on time." },
+                  { name: "Nina & Tom H.", location: "Austin → San Diego", rating: 5, photo: testimonialEmilyDavid, source: "Facebook", text: "We moved with two kids and a dog — TruMove took all the stress off our plate. Would absolutely use them again." },
+                  { name: "Andre W.", location: "Detroit → Orlando", rating: 5, photo: testimonialMarcus, source: "Google", text: "The live tracking map was incredible. I could see exactly where our stuff was the whole trip. Top-notch service." }].
+                  map((review, i) =>
+                  <div
+                    key={`${dupeIdx}-${i}`}
+                    className="w-[280px] sm:w-[380px] shrink-0 rounded-2xl bg-card p-4 sm:p-6 flex flex-col gap-3 sm:gap-4 ring-1 ring-border min-h-[200px] sm:min-h-[220px]">
+                    
                         <div className="flex items-center justify-between">
                           <div className="flex gap-0.5">
-                            {Array.from({ length: review.rating }).map((_, s) => (
-                              <svg key={s} className="w-4 h-4 text-primary fill-primary" viewBox="0 0 20 20">
+                            {Array.from({ length: review.rating }).map((_, s) =>
+                        <svg key={s} className="w-4 h-4 text-primary fill-primary" viewBox="0 0 20 20">
                                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                               </svg>
-                            ))}
+                        )}
                           </div>
                           <span className="text-[10px] font-medium text-muted-foreground bg-muted px-2 py-0.5 rounded-full">via {review.source}</span>
                         </div>
@@ -1523,7 +1523,7 @@ export default function Index() {
                           </div>
                         </div>
                       </div>
-                    ))
+                  )
                   )}
                 </div>
               </div>
@@ -1580,9 +1580,9 @@ export default function Index() {
                   <div className="border border-border border-t-0 bg-card px-3 py-2 space-y-1.5">
                     <div className="flex items-center gap-2">
                       <div className="flex gap-1">
-                        {['Name', 'DOT#', 'MC#'].map((f, fi) => (
-                          <span key={f} className={`px-2 py-0.5 rounded-md text-[9px] font-semibold cursor-default ${fi === 0 ? 'bg-muted text-foreground' : 'bg-muted text-muted-foreground'}`}>{f}</span>
-                        ))}
+                        {['Name', 'DOT#', 'MC#'].map((f, fi) =>
+                        <span key={f} className={`px-2 py-0.5 rounded-md text-[9px] font-semibold cursor-default ${fi === 0 ? 'bg-muted text-foreground' : 'bg-muted text-muted-foreground'}`}>{f}</span>
+                        )}
                       </div>
                       <div className="flex-1 flex items-center gap-2 bg-background border border-border rounded-lg px-2.5 py-1">
                         <Search className="w-3 h-3 text-muted-foreground shrink-0" />
@@ -1612,8 +1612,8 @@ export default function Index() {
                         <button
                           key={i}
                           onClick={() => setCarrierIdx(i)}
-                          className={`w-full text-left px-3 py-2.5 transition-all ${selected ? 'bg-primary/5' : 'hover:bg-accent/30'}`}
-                        >
+                          className={`w-full text-left px-3 py-2.5 transition-all ${selected ? 'bg-primary/5' : 'hover:bg-accent/30'}`}>
+                          
                           {/* Row 1: Name + status */}
                           <div className="flex items-center justify-between gap-3 mb-1.5">
                             <div className="min-w-0 flex items-center gap-2">
@@ -1647,28 +1647,28 @@ export default function Index() {
                           {/* Row 3: Chips + verdict */}
                           <div className="flex items-center gap-1.5 ml-3 flex-wrap">
                             {[
-                              { ok: authorized, label: 'Authority' },
-                              { ok: c.carrier.outOfService !== 'Y', label: 'OOS Clear' },
-                              { ok: c.safety.rating !== 'CONDITIONAL' && c.safety.rating !== 'UNSATISFACTORY', label: 'Safety' },
-                              { ok: c.authority.cargoInsurance !== 'N/A' && c.authority.cargoInsurance !== '$0', label: 'Insured' },
-                            ].map((chip) => (
-                              <span
-                                key={chip.label}
-                                className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] font-medium ${chip.ok ? 'bg-muted text-foreground' : 'bg-destructive/10 text-foreground'}`}
-                              >
+                            { ok: authorized, label: 'Authority' },
+                            { ok: c.carrier.outOfService !== 'Y', label: 'OOS Clear' },
+                            { ok: c.safety.rating !== 'CONDITIONAL' && c.safety.rating !== 'UNSATISFACTORY', label: 'Safety' },
+                            { ok: c.authority.cargoInsurance !== 'N/A' && c.authority.cargoInsurance !== '$0', label: 'Insured' }].
+                            map((chip) =>
+                            <span
+                              key={chip.label}
+                              className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] font-medium ${chip.ok ? 'bg-muted text-foreground' : 'bg-destructive/10 text-foreground'}`}>
+                              
                                 {chip.ok ? <CheckCircle className="w-2 h-2" /> : <XCircle className="w-2 h-2" />}
                                 {chip.label}
                               </span>
-                            ))}
+                            )}
                             <span className="ml-auto inline-flex items-center gap-1 text-[9px] font-bold text-foreground">
                               {verdict === 'pass' ? <CheckCircle className="w-2.5 h-2.5" /> :
-                               verdict === 'caution' ? <AlertTriangle className="w-2.5 h-2.5" /> :
-                               <XCircle className="w-2.5 h-2.5" />}
+                              verdict === 'caution' ? <AlertTriangle className="w-2.5 h-2.5" /> :
+                              <XCircle className="w-2.5 h-2.5" />}
                               {verdict === 'pass' ? 'PASS' : verdict === 'caution' ? 'CAUTION' : 'FAIL'}
                             </span>
                           </div>
-                        </button>
-                      );
+                        </button>);
+
                     })}
                   </div>
                 </div>
@@ -1734,32 +1734,32 @@ export default function Index() {
                   {/* Contact options */}
                   <div className="flex flex-col gap-2 md:w-48 shrink-0 justify-center">
                     <a
-                        href="tel:+16097277647"
-                        className="flex items-center justify-center gap-2 border border-foreground bg-background text-foreground px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-muted transition-colors">
+                      href="tel:+16097277647"
+                      className="flex items-center justify-center gap-2 border border-foreground bg-background text-foreground px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-muted transition-colors">
                       <Phone className="w-4 h-4 text-primary" />
                       Call Us
                       <ArrowRight className="w-4 h-4 text-primary" />
                     </a>
 
                     <a
-                        href="sms:+16097277647"
-                        className="flex items-center justify-center gap-2 border border-foreground bg-background text-foreground px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-muted transition-colors">
+                      href="sms:+16097277647"
+                      className="flex items-center justify-center gap-2 border border-foreground bg-background text-foreground px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-muted transition-colors">
                       <MessageSquare className="w-4 h-4 text-primary" />
                       Text Support
                       <ArrowRight className="w-4 h-4 text-primary" />
                     </a>
 
                     <button
-                        onClick={() => window.dispatchEvent(new CustomEvent('trudy-start'))}
-                        className="flex items-center justify-center gap-2 border border-foreground bg-background text-foreground px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-muted transition-colors">
+                      onClick={() => window.dispatchEvent(new CustomEvent('trudy-start'))}
+                      className="flex items-center justify-center gap-2 border border-foreground bg-background text-foreground px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-muted transition-colors">
                       <Mic className="w-4 h-4 text-primary" />
                       Talk to Trudy
                       <ArrowRight className="w-4 h-4 text-primary" />
                     </button>
 
                     <button
-                        onClick={() => navigate("/book")}
-                        className="flex items-center justify-center gap-2 border border-foreground bg-background text-foreground px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-muted transition-colors">
+                      onClick={() => navigate("/book")}
+                      className="flex items-center justify-center gap-2 border border-foreground bg-background text-foreground px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-muted transition-colors">
                       <Video className="w-4 h-4 text-primary" />
                       Video Consult
                       <ArrowRight className="w-4 h-4 text-primary" />
