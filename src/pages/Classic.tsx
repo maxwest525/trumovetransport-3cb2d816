@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Phone, Mail, MapPin, Clock, Shield, Truck, Users, Star, ChevronDown, ChevronUp, CheckCircle2, Award, Home, Building, Package, ArrowRight, Heart, BadgeCheck } from 'lucide-react';
+import CityZipInput from '@/components/CityZipInput';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -557,24 +558,26 @@ Variant: classic
                   <label className="block text-sm font-bold text-[#1a365d] mb-2 uppercase tracking-wide">
                     Moving From
                   </label>
-                  <Input
-                    type="text"
+                  <CityZipInput
                     value={formData.movingFrom}
-                    onChange={(e) => setFormData({ ...formData, movingFrom: e.target.value })}
+                    onValueChange={(val) => setFormData({ ...formData, movingFrom: val })}
+                    onLocationSelect={(city, zip, fullAddress) => setFormData({ ...formData, movingFrom: fullAddress || `${city}, ${zip}` })}
                     placeholder="City, State or ZIP Code"
-                    className="h-12 text-base border-gray-300 focus:border-amber-500 focus:ring-amber-500"
+                    icon={<Home className="w-4 h-4 text-amber-500" />}
+                    className="h-12 text-base"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-[#1a365d] mb-2 uppercase tracking-wide">
                     Moving To
                   </label>
-                  <Input
-                    type="text"
+                  <CityZipInput
                     value={formData.movingTo}
-                    onChange={(e) => setFormData({ ...formData, movingTo: e.target.value })}
+                    onValueChange={(val) => setFormData({ ...formData, movingTo: val })}
+                    onLocationSelect={(city, zip, fullAddress) => setFormData({ ...formData, movingTo: fullAddress || `${city}, ${zip}` })}
                     placeholder="City, State or ZIP Code"
-                    className="h-12 text-base border-gray-300 focus:border-amber-500 focus:ring-amber-500"
+                    icon={<MapPin className="w-4 h-4 text-amber-500" />}
+                    className="h-12 text-base"
                   />
                 </div>
               </div>
