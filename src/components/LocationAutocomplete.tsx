@@ -234,7 +234,6 @@ async function reverseGeocode(lat: number, lng: number): Promise<LocationSuggest
       fullAddress: fullAddr,
       isVerified: hasStreet,
       validationLevel: hasStreet ? 'verified' : 'partial',
-      mapboxId: undefined,
     };
   } catch {
     return null;
