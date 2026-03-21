@@ -2963,10 +2963,6 @@
   .tru-ai-headline-block {
     align-items: center;
   }
-  .tru-ai-subheadline {
-    text-align: center;
-    max-width: 26.25rem; /* 420px */
-  }
   .tru-ai-step-pills {
     justify-content: center;
   }
