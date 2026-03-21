@@ -236,5 +236,6 @@ export default function About() {
         </section>
       </div>
       </div>
+    </SiteShell>
   );
 }
