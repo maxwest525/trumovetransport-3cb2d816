@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Truck, Hand, ChevronLeft } from 'lucide-react';
+import { MessageCircle, Hand, ChevronLeft } from 'lucide-react';
 import ChatModal from './chat/ChatModal';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -106,9 +106,9 @@ export default function FloatingTruckChat({ className = '' }: FloatingTruckChatP
         `}
         aria-label="Chat with Trudy"
       >
-        {/* Truck icon circle */}
+        {/* Icon circle */}
         <div className="relative flex items-center justify-center w-9 h-9 rounded-full bg-foreground border border-foreground/80">
-          <Truck className="w-4 h-4 text-background" />
+          <MessageCircle className="w-4 h-4 text-background" />
         </div>
 
         {/* Text */}
