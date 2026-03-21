@@ -1420,9 +1420,9 @@ export default function Index() {
               {/* Header row: info on left, previews on right */}
               <div className="tru-ai-header-row border-0 rounded-none shadow-none" ref={scanPreviewRef}>
                 {/* LEFT: Description content */}
-                <div className="tru-ai-content-left border-0 rounded-none shadow-none border-primary-foreground" style={{ justifyContent: 'center' }}>
+                <div className="flex flex-col items-center text-center lg:items-start lg:text-left" style={{ justifyContent: 'center' }}>
                   <div>
-                    <p className="text-[11px] uppercase tracking-[0.3em] text-primary font-semibold mb-3">AI-Powered Inventory</p>
+                    <p className="text-[11px] uppercase tracking-[0.3em] text-primary font-semibold mb-3 text-center lg:text-left">AI-Powered Inventory</p>
                     <div className="flex items-center justify-center lg:justify-start gap-2 mb-4">
                       <span className="h-px w-8 bg-primary/40" />
                       <span className="w-1.5 h-1.5 rounded-full bg-primary/60" />
