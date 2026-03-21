@@ -557,10 +557,8 @@ export function QuoteWizard({ onGetEstimate, quoteData, setQuoteData, variant = 
                   {/* Right: 3D Vehicle Viewer — hidden on mobile */}
                   <div className="hidden lg:flex flex-col relative bg-gradient-to-b from-secondary/40 via-card to-muted/30 dark:from-[hsl(155_8%_13%)] dark:via-card dark:to-[hsl(160_10%_8%)] border-l border-border/40 min-h-[400px]">
                     <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_50%_55%,hsl(var(--primary)/0.05),transparent)]" />
-                    <div className="flex-1 relative z-10">
-                      <Suspense fallback={<div className="h-full flex items-center justify-center"><div className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin" /></div>}>
-                        <Vehicle3DViewer vehicleType={quoteData.vehicleType || "Sedan"} className="h-full border-0 rounded-none bg-transparent" />
-                      </Suspense>
+                    <div className="flex-1 relative z-10 flex items-center justify-center p-6">
+                      <img src={lamboHeroImg} alt="Vehicle preview" className="w-full max-w-[380px] h-auto object-contain drop-shadow-2xl" />
                     </div>
                     <div className="absolute bottom-[52px] left-3 bg-background/70 backdrop-blur-md rounded-lg px-3 py-1.5 border border-border/40 z-20">
                       <p className="text-xs font-semibold text-foreground">{quoteData.year || "Year"} {quoteData.make || "Make"} {quoteData.model || "Model"}</p>
