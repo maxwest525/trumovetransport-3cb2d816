@@ -266,9 +266,9 @@ export function TruckTrackingMap({
         className="w-full h-full"
         zoomControl={true}
         attributionControl={false}
-        whenReady={() => setIsLoaded(true)}
       >
         <TileLayer url={TILE_LAYERS.dark.url} attribution={TILE_LAYERS.dark.attribution} />
+        <MapReadyNotifier onReady={() => setIsLoaded(true)} />
         
         <MapViewController
           bounds={routeBounds}
