@@ -23,7 +23,7 @@ export function SatellitePreview({
   const [hasError, setHasError] = useState(false);
 
   const satelliteUrl = coordinates
-    ? `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${coordinates[0]},${coordinates[1]},15,0/300x180@2x?access_token=${MAPBOX_TOKEN}`
+    ? getStaticMapUrl(coordinates[0], coordinates[1], 15, 300, 180, 'satellite')
     : null;
 
   const Icon = variant === "origin" ? Navigation : MapPin;

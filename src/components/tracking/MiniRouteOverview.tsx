@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { MAPBOX_TOKEN } from "@/lib/mapboxToken";
+import { MAPTILER_KEY } from "@/lib/maptilerConfig";
 import { Map, Maximize2, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
