@@ -319,10 +319,11 @@ export const QuoteReveal = forwardRef<HTMLDivElement, QuoteRevealProps>(
 
               {/* Form */}
               <div className="rounded-xl border border-border/30 bg-card/50 backdrop-blur-sm p-4 sm:p-6 flex flex-col justify-center relative overflow-hidden">
-                {/* Priority Route Rate stamp */}
-                <div className="absolute top-3 right-3 z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-foreground/5 border border-foreground/30">
-                  <BadgeCheck className="w-3.5 h-3.5 text-foreground shrink-0" strokeWidth={2} />
-                  <span className="text-[10px] font-bold uppercase tracking-[0.08em] text-foreground whitespace-nowrap">Priority Route Rate Available</span>
+                {/* Priority Route Rate ribbon */}
+                <div className="absolute top-0 right-0 z-10 overflow-hidden w-[180px] h-[180px] pointer-events-none">
+                  <div className="absolute top-[28px] right-[-50px] w-[240px] rotate-45 bg-foreground text-background text-[9px] font-bold uppercase tracking-[0.12em] text-center py-1.5 shadow-[0_2px_8px_rgba(0,0,0,0.3)]">
+                    ⚡ Priority Route Rate
+                  </div>
                 </div>
                 <p className="text-[10px] uppercase tracking-[0.2em] text-primary/70 font-semibold mb-1 mt-6">Connect With Us</p>
                 <h3 className="text-lg sm:text-xl font-bold text-foreground tracking-tight mb-4">Request a Callback</h3>
