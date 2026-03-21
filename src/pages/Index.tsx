@@ -1078,36 +1078,31 @@ export default function Index() {
             </div>
           }
 
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-              {/* LEFT: Headline */}
-              <div className="flex flex-col items-center text-center lg:items-start lg:text-left gap-4" ref={heroContentRef}>
-                <img src={logoImg} alt="TruMove" className="h-16 md:h-20 lg:h-24 w-auto object-contain" />
-                <p className="text-[11px] uppercase tracking-[0.3em] text-primary font-semibold">Premium Moving Brokerage</p>
-                <div className="flex items-center gap-2">
-                  <span className="h-px w-8 bg-primary/40" />
-                  <span className="w-1.5 h-1.5 rounded-full bg-primary/60" />
-                  <span className="h-px w-8 bg-primary/40" />
-                </div>
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground tracking-tight leading-[1.1]">
-                  The Smarter Way To <span className="text-primary">Move.</span>
-                </h1>
-                <ul className="space-y-2.5 mt-2 text-muted-foreground text-sm md:text-base font-light leading-relaxed max-w-lg">
-                  <li className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-primary mt-0.5 shrink-0" />Scan, document, and build your own inventory — your items stay private and secure</li>
-                  <li className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-primary mt-0.5 shrink-0" />Meet your broker virtually, face to face, from anywhere</li>
-                  <li className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-primary mt-0.5 shrink-0" />Track your most valuable belongings every step of the way</li>
-                  <li className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-primary mt-0.5 shrink-0" />See the full history and performance record of your movers</li>
-                </ul>
+          <section className="tru-hero tru-hero-split" ref={heroContentRef}>
 
-                {/* Inline trust strip */}
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-4 text-[10px] uppercase tracking-[0.15em] text-muted-foreground font-medium">
-                  <span className="flex items-center gap-1"><Shield className="w-3 h-3" /> USDOT Compliant</span>
-                  <span className="text-border">•</span>
-                  <span className="flex items-center gap-1"><Star className="w-3 h-3" /> 4.9★ Rating</span>
-                  <span className="text-border">•</span>
-                  <span className="flex items-center gap-1"><Headphones className="w-3 h-3" /> 24/7 Support</span>
-                </div>
+            {/* LEFT COLUMN: Text Content */}
+            <div className="tru-hero-left-column">
+              <img src={logoImg} alt="TruMove" className="tru-hero-logo" />
+              <p className="tru-hero-premium-label">Premium Moving Brokerage</p>
+              <h1 className="tru-hero-headline">
+                The Smarter Way To <span className="tru-hero-accent">Move</span>
+              </h1>
+              <ul className="tru-hero-bullets">
+                <li>Scan, document, and build your own inventory — your items stay private and secure</li>
+                <li>Meet your broker virtually, face to face, from anywhere</li>
+                <li>Track your most valuable belongings every step of the way</li>
+                <li>See the full history and performance record of your movers</li>
+              </ul>
+
+              {/* Inline trust strip */}
+              <div className="tru-hero-trust-strip">
+                <span><Shield className="w-3 h-3" /> USDOT Compliant</span>
+                <span className="tru-hero-trust-dot">•</span>
+                <span><Star className="w-3 h-3" /> 4.9★ Rating</span>
+                <span className="tru-hero-trust-dot">•</span>
+                <span><Headphones className="w-3 h-3" /> 24/7 Support</span>
               </div>
+            </div>
 
               {/* RIGHT: Form Card */}
               <div ref={quoteBuilderRef}>
