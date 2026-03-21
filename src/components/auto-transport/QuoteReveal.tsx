@@ -164,42 +164,31 @@ export const QuoteReveal = forwardRef<HTMLDivElement, QuoteRevealProps>(
 
     return (
       <>
-      <section ref={ref} className="py-4 sm:py-10 md:py-20 bg-card/30 relative overflow-hidden">
+      {/* Contact section */}
+      <section ref={ref} id="personalized-rate" className="py-4 sm:py-10 md:py-20 relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/3 left-0 w-[500px] h-[500px] rounded-full bg-primary/[0.08] blur-[100px]" />
-          <div className="absolute bottom-0 right-1/4 w-[300px] h-[300px] rounded-full bg-primary/[0.06] blur-[80px]" />
-          <div className="absolute left-1/2 top-2/3 -translate-x-1/2 w-[500px] h-[500px] rounded-full bg-primary/[0.14] blur-[120px]" />
           <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
-          <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
+          <div className="absolute bottom-1/3 right-0 w-[400px] h-[400px] rounded-full bg-primary/[0.03] blur-[100px]" />
         </div>
-
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center mb-3 sm:mb-8 md:mb-10">
-            <p className="text-[11px] uppercase tracking-[0.3em] text-primary font-semibold mb-1 sm:mb-3">Your Estimate</p>
+          <div className="text-center mb-3 sm:mb-8 md:mb-12">
+            <p className="text-[11px] uppercase tracking-[0.3em] text-primary font-semibold mb-1 sm:mb-3">Talk To An Agent</p>
             <div className="flex items-center justify-center gap-2 mb-2 sm:mb-4">
               <span className="h-px w-8 bg-primary/40" />
               <span className="w-1.5 h-1.5 rounded-full bg-primary/60" />
               <span className="h-px w-8 bg-primary/40" />
             </div>
             <h2 className="text-xl sm:text-3xl md:text-5xl lg:text-6xl font-bold text-foreground tracking-tight leading-[1.1]">
-              Special Rates Available
+              Get Your Personalized Rate
             </h2>
             <p className="text-muted-foreground text-xs sm:text-sm md:text-base mt-1.5 sm:mt-3 max-w-md mx-auto leading-relaxed">
-              Special rates available now based on your route — lock in pricing before availability shifts.
+              Route-specific savings & expert guidance
             </p>
-            <button
-              onClick={onScrollToContact}
-              className="mt-4 inline-flex items-center gap-2 px-6 py-3 rounded-full bg-primary text-primary-foreground font-bold text-sm tracking-wide hover:bg-primary/90 hover:scale-[1.03] active:scale-[0.98] transition-all duration-200 shadow-[0_0_25px_-6px_hsl(var(--primary)/0.5)]"
-            >
-              <Tag className="w-4 h-4" strokeWidth={2} />
-              Get Special Rates
-            </button>
           </div>
 
-          <div className="max-w-5xl mx-auto">
-            {!hideSummary && (
-            <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-4 mb-6">
-              {/* Move Summary */}
+          <div className="max-w-4xl mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.5fr] gap-4">
+              {/* Move Summary (replaces Why TruMove) */}
               <div className="rounded-xl border border-border/30 bg-card/50 backdrop-blur-sm overflow-hidden relative flex flex-col min-h-[420px]">
                 <div className="absolute inset-0 overflow-hidden">
                   <div className="absolute inset-0 bg-secondary/30" />
@@ -244,82 +233,9 @@ export const QuoteReveal = forwardRef<HTMLDivElement, QuoteRevealProps>(
                 </div>
               </div>
 
-              {/* Map + Deals Overlay */}
-              <div className="rounded-xl border border-border/30 bg-card/50 backdrop-blur-sm overflow-hidden relative min-h-[420px]">
-                <div className={`absolute inset-0 overflow-hidden bg-secondary/20 transition-all duration-700 ${!dealsUnlocked ? 'blur-[8px] scale-110' : 'blur-0 scale-100'}`}>
-                  <img src={usMapImg} alt="" className="absolute inset-0 w-full h-full object-cover opacity-25" />
-                </div>
-
-                {!dealsUnlocked ? (
-                  <ExclusiveDealsOverlay
-                    from={quoteData.from}
-                    to={quoteData.to}
-                    onUnlock={() => setDealsUnlocked(true)}
-                  />
-                ) : (
-                  <div className="absolute inset-0 z-10 flex flex-col items-center justify-center animate-fade-in pointer-events-none">
-                    <div className="pointer-events-auto flex flex-col items-center text-center bg-background/70 backdrop-blur-sm rounded-xl px-6 py-5 border border-border/20">
-                      <div className="w-10 h-10 rounded-full bg-primary/15 border border-primary/25 flex items-center justify-center mb-3 shadow-[0_0_20px_-4px_hsl(var(--primary)/0.4)]">
-                        <CircleCheck className="w-5 h-5 text-primary drop-shadow-[0_0_6px_hsl(var(--primary)/0.5)]" strokeWidth={1.5} />
-                      </div>
-                      <p className="text-sm font-semibold text-foreground mb-1">Deals Unlocked!</p>
-                      <p className="text-xs text-muted-foreground max-w-[260px] leading-relaxed">
-                        An agent will reach out with exclusive pricing for{" "}
-                        <span className="font-medium text-foreground">{quoteData.from}</span> → <span className="font-medium text-foreground">{quoteData.to}</span>
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* Contact section */}
-      <section id="personalized-rate" className="py-4 sm:py-10 md:py-20 relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
-          <div className="absolute bottom-1/3 right-0 w-[400px] h-[400px] rounded-full bg-primary/[0.03] blur-[100px]" />
-        </div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center mb-3 sm:mb-8 md:mb-12">
-            <p className="text-[11px] uppercase tracking-[0.3em] text-primary font-semibold mb-1 sm:mb-3">Talk To An Agent</p>
-            <div className="flex items-center justify-center gap-2 mb-2 sm:mb-4">
-              <span className="h-px w-8 bg-primary/40" />
-              <span className="w-1.5 h-1.5 rounded-full bg-primary/60" />
-              <span className="h-px w-8 bg-primary/40" />
-            </div>
-            <h2 className="text-xl sm:text-3xl md:text-5xl lg:text-6xl font-bold text-foreground tracking-tight leading-[1.1]">
-              Get Your Personalized Rate
-            </h2>
-            <p className="text-muted-foreground text-xs sm:text-sm md:text-base mt-1.5 sm:mt-3 max-w-md mx-auto leading-relaxed">
-              Route-specific savings & expert guidance
-            </p>
-          </div>
-
-          <div className="max-w-4xl mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.5fr] gap-4">
-              {/* Trust perks */}
-              <div className="rounded-xl border border-border/30 bg-card/50 backdrop-blur-sm p-5 flex flex-col gap-3">
-                <p className="text-[10px] uppercase tracking-[0.2em] text-primary/70 font-semibold mb-1">Why TruMove</p>
-                {perks.map((perk) => (
-                  <div key={perk.label} className="flex items-start gap-3 p-3 rounded-lg bg-background/40 border border-border/10">
-                    <div className="w-8 h-8 flex items-center justify-center shrink-0 mt-0.5">
-                      <perk.icon className="w-5 h-5 text-primary" strokeWidth={1.5} />
-                    </div>
-                    <div>
-                      <p className="text-xs font-semibold text-foreground leading-tight">{perk.label}</p>
-                      <p className="text-[10px] text-muted-foreground leading-relaxed mt-0.5">{perk.description}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
               {/* Form */}
               <div className="rounded-xl border border-border/30 bg-card/50 backdrop-blur-sm p-4 sm:p-6 flex flex-col justify-center relative overflow-hidden">
-                <p className="text-[10px] uppercase tracking-[0.2em] text-primary/70 font-semibold mb-1 mt-6">Connect With Us</p>
+                <p className="text-[10px] uppercase tracking-[0.2em] text-primary/70 font-semibold mb-1">Connect With Us</p>
                 <h3 className="text-lg sm:text-xl font-bold text-foreground tracking-tight mb-4">Request a Callback</h3>
                 {!submitted ? (
                   <div className="space-y-3">
@@ -357,7 +273,6 @@ export const QuoteReveal = forwardRef<HTMLDivElement, QuoteRevealProps>(
         </div>
       </section>
       </>
-    );
   }
 );
 
