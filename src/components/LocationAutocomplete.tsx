@@ -7,7 +7,7 @@ import {
   TooltipTrigger,
   TooltipProvider,
 } from "@/components/ui/tooltip";
-import { MAPBOX_TOKEN } from '@/lib/mapboxToken';
+import { MAPTILER_KEY } from '@/lib/maptilerConfig';
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
