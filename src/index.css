@@ -202,21 +202,6 @@
   }
 }
 
-/* Stacked hero header layout - logo on top, page-centered */
-.tru-hero-header-stacked {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  top: -22px;
-  width: 100%;
-  max-width: 800px;
-  z-index: 10;
-}
-
 
 /* =============================================
    MOVE SUMMARY MODAL - Hero Right Side
@@ -507,25 +492,6 @@
   }
 }
 
-/* Hero Top Section - Full Width Centered */
-.tru-hero-top-section {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding-bottom: 48px;
-}
-
-/* Hero Container */
-.tru-hero-content {
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-}
-
 
 /* Secondary Action Button - Used for secondary CTAs like phone/video consult */
 .tru-secondary-action-btn {
@@ -612,15 +578,6 @@
 /* Ensure secondary button icons inherit text color */
 .tru-modal-secondary-btn svg,
 .tru-secondary-action-btn svg,
-.tru-hero-btn-secondary svg,
-.tru-contact-secondary-btn svg,
-.tru-btn-secondary-lg svg,
-.tru-qb-cta-secondary svg,
-.tru-scan-secondary-btn svg,
-.tru-scan-header-btn-secondary svg,
-.tru-vetting-secondary-btn svg {
-  color: currentColor;
-}
 
 /* Scan Progress Indicator */
 .tru-scan-progress-container {
@@ -1386,13 +1343,6 @@
   }
 }
 
-.tru-hero-headline-group {
-  display: none;
-}
-
-.tru-hero-tagline {
-  display: none;
-}
 
 /* =============================================
    COMPANY INFO CARD
@@ -4022,29 +3972,6 @@
    STATIC SIDEBAR - Icon Strip + Expanded Menu
    ============================================= */
 
-/* Sidebar container - horizontal layout for pills */
-.tru-hero-sidebar {
-  display: flex;
-  flex-direction: row;
-  gap: 8px;
-  align-self: stretch;
-}
-
-/* Summary Pill - narrow vertical bar with single icon + text */
-.tru-sidebar-summary-pill {
-  width: 40px;
-  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-  border: 1px solid hsl(var(--tm-ink) / 0.1);
-  border-radius: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 14px 8px;
-  gap: 8px;
-  box-shadow: 
-    0 1px 2px hsl(var(--tm-ink) / 0.03),
-    0 4px 8px hsl(var(--tm-ink) / 0.04);
-}
 
 .tru-sidebar-summary-icon {
   width: 32px;
@@ -4075,33 +4002,7 @@
    V2 SUMMARY PILL - Expandable on Hover
    Matches reference design with smooth animations
    ============================================= */
-.tru-sidebar-summary-pill-v2 {
-  width: 48px;
-  height: 100%;
-  min-height: 320px;
-  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-  border: 1px solid hsl(var(--tm-ink) / 0.08);
-  border-radius: 24px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  overflow: hidden;
-  box-shadow: 
-    0 2px 4px hsl(var(--tm-ink) / 0.04),
-    0 8px 16px hsl(var(--tm-ink) / 0.06);
-  transition: 
-    width 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow 0.3s ease;
-  cursor: pointer;
-  position: relative;
-}
 
-.tru-sidebar-summary-pill-v2:hover {
-  width: 180px;
-  box-shadow: 
-    0 4px 12px hsl(var(--tm-ink) / 0.08),
-    0 16px 32px hsl(var(--tm-ink) / 0.1);
-}
 
 /* Collapsed state - icon + vertical label */
 .tru-summary-pill-collapsed {
@@ -4115,11 +4016,6 @@
   transition: opacity 0.2s ease;
 }
 
-.tru-sidebar-summary-pill-v2:hover .tru-summary-pill-collapsed {
-  opacity: 0;
-  pointer-events: none;
-  position: absolute;
-}
 
 .tru-summary-pill-icon-wrap {
   width: 36px;
@@ -4164,10 +4060,6 @@
   bottom: 0;
 }
 
-.tru-sidebar-summary-pill-v2:hover .tru-summary-pill-expanded {
-  opacity: 1;
-  transform: scale(1);
-}
 
 .tru-summary-pill-header {
   padding: 14px 16px;
@@ -4230,37 +4122,6 @@
   color: hsl(var(--tm-ink));
 }
 
-/* Nav Icons Pill V2 - with tooltips */
-.tru-sidebar-nav-pill-v2 {
-  width: 48px;
-  height: 100%;
-  min-height: 320px;
-  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-  border: 1px solid hsl(var(--tm-ink) / 0.08);
-  border-radius: 24px;
-  padding: 12px 8px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  box-shadow: 
-    0 2px 4px hsl(var(--tm-ink) / 0.04),
-    0 8px 16px hsl(var(--tm-ink) / 0.06);
-}
-
-/* Nav Icons Pill - icons only */
-.tru-sidebar-nav-pill {
-  width: 48px;
-  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-  border: 1px solid hsl(var(--tm-ink) / 0.1);
-  border-radius: 20px;
-  padding: 12px 8px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  box-shadow: 
-    0 1px 2px hsl(var(--tm-ink) / 0.03),
-    0 4px 8px hsl(var(--tm-ink) / 0.04);
-}
 
 /* Static Nav Menu */
 .tru-static-nav-menu {
@@ -4621,119 +4482,6 @@
   color: hsl(var(--tm-ink));
 }
 
-/* Old top row - deprecated but kept for compatibility */
-.tru-hero-sidebar-top {
-  display: flex;
-  flex-direction: row;
-  gap: 16px;
-  align-items: stretch;
-  height: 320px;
-  flex-shrink: 0;
-}
-
-/* Map row: grows to fill remaining space and align with form bottom */
-.tru-hero-map-row {
-  flex: 1 1 auto;
-  min-height: 0;
-  opacity: 0;
-  overflow: hidden;
-  pointer-events: none;
-  transition: opacity 0.3s ease, flex 0.4s ease;
-}
-
-.tru-hero-map-row.is-visible {
-  opacity: 1;
-  min-height: 120px;
-  pointer-events: auto;
-}
-
-.tru-hero-map-row .tru-hero-map-card {
-  height: 100%;
-  min-height: 120px;
-  border-radius: 16px;
-  overflow: hidden;
-}
-
-/* Compact Summary Card - matches nav height */
-.tru-floating-summary-card.tru-floating-summary-card-compact {
-  flex: 1 1 auto;
-  width: auto;
-  min-width: 180px;
-  max-width: 200px;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.tru-floating-summary-card-compact .tru-summary-card-header {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 12px 16px;
-  background: hsl(220 15% 96%);
-  border-bottom: 1px solid hsl(var(--tm-ink) / 0.06);
-  flex-shrink: 0;
-}
-
-.tru-floating-summary-card-compact .tru-summary-card-header .tru-summary-card-title {
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: hsl(var(--tm-ink));
-  text-align: center;
-}
-
-.tru-floating-summary-card-compact .tru-summary-card-title {
-  color: hsl(var(--tm-ink));
-}
-
-.tru-floating-summary-card-compact .tru-summary-card-body {
-  padding: 0 12px;
-  gap: 0;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-}
-
-.tru-floating-summary-card-compact .tru-summary-info-grid {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 100%;
-  gap: 0;
-}
-
-.tru-floating-summary-card-compact .tru-summary-row {
-  flex: 1;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 0;
-  border-bottom: 1px solid hsl(var(--tm-ink) / 0.04);
-}
-
-.tru-floating-summary-card-compact .tru-summary-row:last-child {
-  border-bottom: none;
-}
-
-.tru-floating-summary-card-compact .tru-summary-label {
-  font-size: 13px;
-  font-weight: 500;
-  color: hsl(var(--tm-ink) / 0.6);
-}
-
-.tru-floating-summary-card-compact .tru-summary-value {
-  font-size: 14px;
-  font-weight: 600;
-  color: hsl(var(--tm-ink));
-}
-
-.tru-floating-summary-card-compact .tru-summary-card-title {
-  font-size: 12px;
-}
 
 /* Summary Card Footer */
 .tru-summary-card-footer {
@@ -4813,43 +4561,8 @@
   font-weight: 700 !important;
 }
 
-/* Map Row - spans full sidebar width */
-.tru-hero-map-row {
-  width: 100%;
-  flex: 1 1 auto;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.tru-hero-map-card {
-  background: transparent;
-  border: 2px solid hsl(var(--tm-ink) / 0.1);
-  border-radius: 16px;
-  box-shadow: 
-    0 1px 2px hsl(var(--tm-ink) / 0.03),
-    0 4px 8px hsl(var(--tm-ink) / 0.04),
-    0 12px 24px hsl(var(--tm-ink) / 0.06);
-  overflow: hidden;
-  flex: 1 1 auto;
-  min-height: 120px;
-  display: flex;
-  flex-direction: column;
-}
-
-.tru-hero-map-card > div:first-child {
-  flex: 1 1 auto;
-  min-height: 100px;
-}
-
-.tru-hero-map-card .tru-summary-map-stats {
-  border-radius: 0;
-}
 
 @media (max-width: 1200px) {
-  .tru-floating-summary-card.tru-floating-summary-card-compact {
-    width: 180px;
-  }
 }
 
 
@@ -5496,17 +5209,6 @@
   color: hsl(var(--tm-ink) / 0.7);
 }
 
-.tru-floating-summary-card-compact .tru-summary-card-header {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-}
-
-.tru-floating-summary-card-compact .tru-summary-card-header .tru-summary-card-title {
-  text-align: center;
-  width: 100%;
-}
 
 /* Confirmation Screen Styles */
 .tru-qb-confirmation {
@@ -6625,9 +6327,6 @@
 
 /* Responsive: Stack on mobile */
 @media (max-width: 900px) {
-  .tru-hero-dual-cards {
-    flex-direction: column;
-  }
   
   .tru-floating-form-card,
   .tru-floating-summary-card {
@@ -6637,119 +6336,21 @@
   
 }
 
-/* Tools Section Below Form */
-.tru-hero-tools {
-  width: 100%;
-  max-width: 900px;
-  margin-top: 40px;
-}
-
-.tru-hero-tools-label {
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: hsl(var(--tm-ink) / 0.5);
-  margin-bottom: 16px;
-}
-
-.tru-hero-tools-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-}
-
-.tru-hero-tool-card {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px 16px;
-  background: white;
-  border: 1px solid hsl(var(--tm-ink) / 0.08);
-  border-radius: 12px;
-  text-decoration: none;
-  transition: all 0.2s ease;
-}
-
-.tru-hero-tool-card:hover {
-  border-color: hsl(var(--tm-ink) / 0.2);
-  box-shadow: 0 4px 16px hsl(var(--tm-ink) / 0.1);
-  transform: translateY(-2px);
-}
-
-.tru-hero-tool-icon {
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: hsl(var(--primary) / 0.1);
-  border-radius: 10px;
-  color: hsl(var(--primary));
-  flex-shrink: 0;
-}
-
-.tru-hero-tool-info {
-  display: flex;
-  flex-direction: column;
-  text-align: left;
-}
-
-.tru-hero-tool-title {
-  font-size: 13px;
-  font-weight: 700;
-  color: hsl(var(--tm-ink));
-}
-
-.tru-hero-tool-desc {
-  font-size: 11px;
-  color: hsl(var(--tm-ink) / 0.55);
-  line-height: 1.3;
-}
 
 @media (max-width: 900px) {
-  .tru-hero-tools-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
 }
 
 @media (max-width: 500px) {
-  .tru-hero-tools-grid {
-    grid-template-columns: 1fr;
-  }
   
-  .tru-hero-tool-card {
-    padding: 12px 14px;
-  }
 }
 
-.tru-hero-grid {
-  display: grid;
-  grid-template-columns: 1fr 1.4fr;
-  gap: 64px;
-  align-items: start;
-}
-
-.tru-hero-grid > div:first-child {
-  max-width: none;
-}
 
 @media (max-width: 1024px) {
-  .tru-hero-grid {
-    grid-template-columns: 1fr;
-    gap: 40px;
-  }
 }
 
 /* =============================================
    REDESIGNED HERO LEFT COLUMN - Rich & Informative
    ============================================= */
-.tru-hero-content {
-  display: flex;
-  flex-direction: column;
-  gap: 28px;
-  align-self: start;
-}
 
 /* Hero Kicker */
 .tru-hero-kicker {
@@ -6886,112 +6487,10 @@
   line-height: 1.4;
 }
 
-/* Section 3: Feature Cards - Enticing */
-.tru-hero-features-section {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.tru-hero-features-label {
-  font-size: 12px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: hsl(var(--tm-ink) / 0.5);
-}
-
-.tru-hero-feature-cards {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
 
 @media (max-width: 600px) {
-  .tru-hero-feature-cards {
-    grid-template-columns: 1fr;
-  }
 }
 
-.tru-hero-feature-card {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 16px 18px;
-  background: white;
-  border: 1px solid hsl(var(--tm-ink) / 0.1);
-  border-radius: 14px;
-  text-decoration: none;
-  transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
-  cursor: pointer;
-}
-
-.tru-hero-feature-card:hover {
-  border-color: hsl(var(--tm-ink) / 0.25);
-  background: linear-gradient(135deg, hsl(var(--tm-ink) / 0.04), hsl(var(--tm-ink) / 0.02));
-  transform: translateY(-4px);
-  box-shadow: 0 16px 40px hsl(var(--tm-ink) / 0.15);
-}
-
-.tru-hero-feature-icon-wrap {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 42px;
-  height: 42px;
-  background: linear-gradient(135deg, hsl(var(--primary) / 0.15), hsl(var(--primary) / 0.08));
-  border-radius: 12px;
-  flex-shrink: 0;
-  transition: all 250ms ease;
-}
-
-.tru-hero-feature-card:hover .tru-hero-feature-icon-wrap {
-  background: hsl(var(--primary));
-  transform: scale(1.05);
-}
-
-.tru-hero-feature-icon-wrap svg {
-  color: hsl(var(--primary));
-  transition: color 250ms ease;
-}
-
-.tru-hero-feature-card:hover .tru-hero-feature-icon-wrap svg {
-  color: hsl(var(--tm-ink));
-}
-
-.tru-hero-feature-info {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  flex: 1;
-  min-width: 0;
-}
-
-.tru-hero-feature-title {
-  font-size: 14px;
-  font-weight: 700;
-  color: hsl(var(--tm-ink));
-}
-
-.tru-hero-feature-desc {
-  font-size: 12px;
-  font-weight: 500;
-  color: hsl(var(--tm-ink) / 0.55);
-  line-height: 1.4;
-}
-
-.tru-hero-feature-arrow {
-  width: 20px;
-  height: 20px;
-  color: hsl(var(--tm-ink) / 0.2);
-  flex-shrink: 0;
-  transition: all 250ms ease;
-}
-
-.tru-hero-feature-card:hover .tru-hero-feature-arrow {
-  color: hsl(var(--primary));
-  transform: translateX(6px);
-}
 
 /* Plan-Compare-Book Workflow */
 .tru-hero-workflow {
@@ -7099,19 +6598,6 @@
   padding-top: 8px;
 }
 
-.tru-hero-trust-item {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 13px;
-  font-weight: 600;
-  color: hsl(var(--tm-ink) / 0.6);
-}
-
-.tru-hero-trust-item svg {
-  color: hsl(var(--primary));
-  flex-shrink: 0;
-}
 
 /* Section 4: Stats & Social Proof */
 .tru-hero-proof {
@@ -7253,43 +6739,6 @@
   margin-bottom: 20px;
 }
 
-.tru-hero-btn-secondary {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  height: 48px;
-  padding: 0 20px;
-  border-radius: 14px;
-  border: 1px solid hsl(var(--border));
-  background: transparent;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: hsl(var(--foreground));
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.tru-hero-btn-secondary:hover {
-  border-color: hsl(var(--tm-ink) / 0.25);
-  box-shadow: 0 0 8px hsl(var(--tm-ink) / 0.08);
-  transform: translateY(-1px);
-}
-
-.tru-hero-btn-secondary:focus-visible {
-  outline: 2px solid hsl(var(--tm-ink) / 0.2);
-  outline-offset: 2px;
-}
-
-.tru-hero-btn-secondary .chevron {
-  font-size: 16px;
-  transition: transform 150ms ease;
-}
-
-.tru-hero-btn-secondary:hover .chevron {
-  transform: translateX(3px);
-}
 
 .tru-hero-note {
   margin-top: 16px;
@@ -7304,48 +6753,7 @@
 /* =============================================
    HERO FEATURES LIST
    ============================================= */
-.tru-hero-features {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  margin-bottom: 28px;
-}
 
-.tru-hero-feature {
-  display: flex;
-  align-items: flex-start;
-  gap: 14px;
-}
-
-.tru-hero-feature-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  background: hsl(var(--primary) / 0.1);
-  border-radius: 12px;
-  color: hsl(var(--primary));
-  flex-shrink: 0;
-}
-
-.tru-hero-feature-text {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.tru-hero-feature-title {
-  font-size: 14px;
-  font-weight: 700;
-  color: hsl(var(--tm-ink));
-}
-
-.tru-hero-feature-desc {
-  font-size: 13px;
-  font-weight: 500;
-  color: hsl(var(--tm-ink) / 0.6);
-}
 
 /* =============================================
    HERO SOCIAL PROOF
@@ -14794,16 +14202,6 @@
   display: block;
 }
 
-.tru-hero-content-panel .tru-hero-headline-main {
-  text-align: left;
-  justify-content: flex-start;
-}
-
-.tru-hero-content-panel .tru-hero-subheadline {
-  text-align: left;
-  margin-left: 0;
-  margin-right: 0;
-}
 
 /* Form Footer */
 .tru-qb-footer {
@@ -19535,13 +18933,6 @@
 /* ========================================
    FLOATING NAVIGATION BAR
    ======================================== */
-/* Wrapper to maintain fixed flex space while nav expands */
-.tru-hero-sidebar-top .tru-floating-nav-wrapper {
-  flex: 0 0 52px;
-  width: 52px;
-  position: relative;
-  align-self: stretch;
-}
 
 .tru-floating-nav-wrapper {
   flex: 0 0 52px;
@@ -26309,20 +25700,6 @@
 .tru-animate-on-scroll.is-in-view .tru-stagger-4 { transition-delay: 0.4s; }
 .tru-animate-on-scroll.is-in-view .tru-stagger-5 { transition-delay: 0.5s; }
 
-/* Hero section relative positioning for particles */
-.tru-hero.tru-hero-split {
-  position: relative;
-  /* Allow logo glow to extend beyond bounds - particles contained via their own clipping */
-  overflow: visible;
-}
-
-/* Ensure hero content stays above particles AND header backdrop */
-.tru-hero-top-section,
-.tru-hero-content-panel,
-.tru-hero-right-half {
-  position: relative;
-  z-index: 15;
-}
 
 /* Subtle gradient overlay for better text readability */
 .tru-hero-particles-overlay {
@@ -28265,11 +27642,6 @@
   margin-bottom: 8px;
 }
 
-.tru-hero-subheadline-compact {
-  font-size: clamp(0.875rem, 2vw, 1rem) !important;
-  color: hsl(var(--tm-ink) / 0.65);
-  max-width: 540px;
-}
 
 /* =============================================
    POLISHED WHY TRUMOVE CARD
@@ -28767,31 +28139,6 @@
   margin: 0 auto;
 }
 
-/* Refined headline - visible and prominent */
-.tru-hero-header-refined .tru-hero-headline-main {
-  font-size: clamp(36px, 5.5vw, 64px);
-  line-height: 1.1;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  margin-bottom: 0;
-  display: block;
-  text-align: center;
-}
-
-.tru-hero-subheadline-refined {
-  font-size: clamp(18px, 2.5vw, 26px);
-  line-height: 1.5;
-  color: hsl(0 0% 100%);
-  max-width: 600px;
-  margin: 0 auto 0;
-  font-weight: 600;
-  text-shadow: 
-    0 4px 12px hsl(0 0% 0% / 0.75),
-    0 8px 36px hsl(0 0% 0% / 0.55),
-    0 16px 80px hsl(0 0% 0% / 0.4);
-  letter-spacing: 0.02em;
-  text-align: center;
-}
 
 /* Eye-catching headline - white text with intense black underglow */
 .tru-headline-animated {
@@ -28827,21 +28174,7 @@
 /* =============================================
    HERO HEADLINE & SUBHEADLINE - REFINED
    ============================================= */
-.tru-hero-headline-main.tru-hero-headline-refined {
-  font-size: clamp(1.75rem, 5vw, 2.75rem);
-  line-height: 1.15;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  margin-bottom: 8px;
-}
 
-.tru-hero-subheadline-short.tru-hero-subheadline-refined {
-  font-size: clamp(0.875rem, 2vw, 1rem);
-  line-height: 1.5;
-  font-weight: 500;
-  color: hsl(var(--tm-ink) / 0.65);
-  max-width: 480px;
-}
 
 /* =============================================
    FORM HEADER - CLEAN BRAND STYLE
@@ -29561,28 +28894,11 @@
   border-radius: 24px;
 }
 
-/* Fully opaque hero form card — no backdrop-filter to prevent green bleed */
-.tru-hero-form-panel .tru-floating-form-card {
-  background: hsl(var(--background));
-}
 
 /* =============================================
    HERO CONTAINER TRANSPARENCY FIXES
    ============================================= */
-.tru-hero-content-panel {
-  position: relative;
-  background: transparent !important;
-}
 
-.tru-hero-form-panel {
-  position: relative;
-  background: transparent !important;
-}
-
-.tru-hero-right-half,
-.tru-hero-right-stacked {
-  background: transparent !important;
-}
 
 .tru-hero-stacked-cards {
   background: transparent !important;
@@ -30070,12 +29386,6 @@
     0 8px 32px hsl(var(--primary) / 0.1);
 }
 
-.dark .tru-hero-value-cards-open .tru-value-card-open {
-  box-shadow: 
-    0 2px 8px hsl(var(--tm-ink) / 0.2),
-    0 4px 16px hsl(var(--primary) / 0.08),
-    0 0 1px hsl(var(--primary) / 0.15);
-}
 
 .dark .tru-floating-form-card {
   background: linear-gradient(145deg, 
@@ -30193,14 +29503,6 @@
   color: hsl(var(--primary) / 0.6);
 }
 
-/* Hero header dark mode - no backdrop */
-.dark .tru-hero-subheadline-refined {
-  color: hsl(0 0% 100% / 0.7);
-}
-
-.dark .tru-hero-subheadline-refined {
-  color: hsl(0 0% 100% / 0.7);
-}
 
 /* =============================================
    SATELLITE THUMBNAIL ANIMATION
@@ -30815,10 +30117,6 @@ html.dark .tru-summary-header-large,
   opacity: 1;
 }
 
-/* Dark mode logo visibility - invert black portions on dark backgrounds */
-.dark .tru-hero-inline-logo {
-  filter: brightness(0) invert(1);
-}
 
 .dark .tru-qb-form-header-logo {
   filter: brightness(0) invert(1);
@@ -32541,24 +31839,6 @@ gmp-map-3d-element .gmnoprint {
     justify-content: center;
   }
 
-  /* --- Hero section mobile optimization --- */
-  .tru-hero-headline-main {
-    font-size: clamp(1.75rem, 8vw, 2.5rem) !important;
-  }
-
-  .tru-hero-subheadline {
-    font-size: 0.9375rem;
-    padding: 0 4px;
-  }
-
-  .tru-hero-trust-inline {
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-
-  .tru-hero-trust-item {
-    font-size: 10px;
-  }
 
   /* --- Quote Builder on mobile --- */
   .tru-qb-body {
@@ -32632,10 +31912,6 @@ gmp-map-3d-element .gmnoprint {
     padding: 24px 20px !important;
   }
 
-  /* --- Feature Carousel: full-width cards --- */
-  .tru-value-card-open {
-    min-width: 85vw !important;
-  }
 
   /* --- Stats Strip mobile --- */
   .stats-strip {
@@ -32959,11 +32235,6 @@ gmp-map-3d-element .gmnoprint {
     height: auto !important;
   }
 
-  .tru-hero.tru-hero-split {
-    padding: 24px 16px 20px !important;
-    min-height: auto !important;
-    gap: 20px !important;
-  }
 
   .tru-hero-right-column {
     max-width: 100% !important;
@@ -33327,20 +32598,6 @@ gmp-map-3d-element .gmnoprint {
     overflow: visible !important;
   }
 
-  .tru-hero.tru-hero-split {
-    padding: 20px 12px 32px !important;
-    min-height: auto !important;
-    gap: 20px !important;
-  }
-
-  .tru-hero-headline-main {
-    font-size: clamp(22px, 6.5vw, 36px) !important;
-    word-break: break-word !important;
-  }
-
-  .tru-hero-logo-stacked {
-    height: 48px !important;
-  }
 
   .tru-floating-form-content {
     padding: 10px 14px 8px !important;
@@ -33621,9 +32878,6 @@ gmp-map-3d-element .gmnoprint {
     gap: 12px !important;
   }
 
-  .tru-hero-headline-main {
-    font-size: clamp(20px, 5.5vw, 28px) !important;
-  }
 }
 
 /* ---- SMALL MOBILE (< 375px) ---- */
@@ -33645,9 +32899,6 @@ gmp-map-3d-element .gmnoprint {
     font-size: 8px;
   }
 
-  .tru-hero-headline-main {
-    font-size: 22px !important;
-  }
 
   .tru-floating-form-card input,
   .tru-floating-form-card select {
@@ -33698,10 +32949,6 @@ gmp-map-3d-element .gmnoprint {
 }
 
 .brand-override-active .tru-hero-headline-compact,
-.brand-override-active .tru-hero-subheadline-compact,
-.brand-override-active .tru-hero-headline-main {
-  font-size: unset !important;
-}
 
 @media (max-width: 768px) {
   .brand-override-active h1 {
@@ -33768,18 +33015,6 @@ gmp-map-3d-element .gmnoprint {
     font-size: 14px !important;
   }
 
-  .tru-hero-wrapper {
-    min-height: auto !important;
-    margin-top: 0 !important;
-  }
-
-  .tru-hero.tru-hero-split {
-    grid-template-columns: 1fr !important;
-    gap: 24px !important;
-    padding: 24px 16px 40px !important;
-    min-height: auto !important;
-    align-items: start !important;
-  }
 
   .tru-hero-bg-image {
     object-position: center center !important;
@@ -33819,12 +33054,6 @@ gmp-map-3d-element .gmnoprint {
   }
 
   .tru-hero-right-column,
-  .tru-hero-form-panel,
-  .tru-hero-form-panel .tru-floating-form-card {
-    width: 100% !important;
-    max-width: 100% !important;
-    margin-left: 0 !important;
-  }
 
   .tru-floating-form-card {
     border-radius: 20px !important;
