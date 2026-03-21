@@ -120,14 +120,26 @@ async function searchMapTilerAddresses(query: string): Promise<{ suggestions: Lo
     const cityCtx = context.find((c: any) => c.id?.startsWith('place'));
     const stateCtx = context.find((c: any) => c.id?.startsWith('region'));
     const zipCtx = context.find((c: any) => c.id?.startsWith('postcode'));
+    const addressCtx = context.find((c: any) => c.id?.startsWith('address'));
     
-    const streetAddress = placeType === 'address' ? text : '';
+    // Build street address: for 'address' type, text contains house number + street
+    // For other types, check if there's an address in context
+    let streetAddress = '';
+    if (placeType === 'address') {
+      // address field — f.address is house number, f.text is street name
+      streetAddress = f.address ? `${f.address} ${text}` : text;
+    }
+    
+    // City: from context, or if this IS a place/city result, use text
     const city = cityCtx?.text || (placeType === 'place' ? text : '');
     const state = stateCtx?.short_code?.replace('US-', '') || stateCtx?.text || '';
     const zip = zipCtx?.text || (placeType === 'postcode' ? text : '');
     
+    // Use place_name as display — it's always the best formatted full address
     const displayAddr = placeName.replace(', United States', '');
-    const hasStreet = placeType === 'address' && text && !text.match(/^\d{5}$/);
+    
+    // Determine if this is a verified street-level address
+    const hasStreet = placeType === 'address' && streetAddress.length > 0 && !streetAddress.match(/^\d{5}$/);
     
     return {
       streetAddress,
