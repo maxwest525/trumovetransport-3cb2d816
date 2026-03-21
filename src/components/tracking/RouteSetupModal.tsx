@@ -27,13 +27,13 @@ interface RouteSetupModalProps {
 // Booking lookup - will query DB in future
 const MOCK_BOOKINGS: Record<string, { origin: string; destination: string; date: Date }> = {};
 
-// Geocode address to coordinates
+// Geocode address to coordinates using MapTiler
 async function geocodeAddress(address: string): Promise<[number, number] | null> {
   if (!address || address.length < 5) return null;
   
   try {
     const response = await fetch(
-      `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json?access_token=${MAPBOX_TOKEN}&country=US&types=address,place&limit=1`
+      `https://api.maptiler.com/geocoding/${encodeURIComponent(address)}.json?key=${MAPTILER_KEY}&country=us&limit=1&language=en`
     );
     const data = await response.json();
     
