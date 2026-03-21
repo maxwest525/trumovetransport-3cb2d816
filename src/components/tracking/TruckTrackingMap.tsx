@@ -58,8 +58,8 @@ function findCitiesOnRoute(routeCoords: [number, number][], maxDistanceMiles: nu
 }
 
 interface TruckTrackingMapProps {
-  originCoords: [number, number] | null; // [lng, lat]
-  destCoords: [number, number] | null;   // [lng, lat]
+  originCoords: [number, number] | null;
+  destCoords: [number, number] | null;
   progress: number;
   isTracking: boolean;
   onRouteCalculated?: (route: RouteData) => void;
@@ -79,7 +79,11 @@ export function TruckTrackingMap({
 }: TruckTrackingMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<L.Map | null>(null);
-  const layersRef = useRef<L.Layer[]>([]);
+
+  // Persistent layer refs — updated in place, never destroyed on progress tick
+  const staticLayersRef = useRef<L.Layer[]>([]);
+  const traveledLineRef = useRef<L.Polyline | null>(null);
+  const truckMarkerRef = useRef<L.Marker | null>(null);
 
   const [routeCoords, setRouteCoords] = useState<[number, number][]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -102,25 +106,18 @@ export function TruckTrackingMap({
   // Initialize map
   useEffect(() => {
     if (!mapRef.current || mapInstance.current) return;
-
     const map = L.map(mapRef.current, {
       zoomControl: true,
       attributionControl: false,
       center: [39.8283, -98.5795],
       zoom: 4,
     });
-
     L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png', {
       attribution: '',
     }).addTo(map);
-
     mapInstance.current = map;
     setIsLoaded(true);
-
-    return () => {
-      map.remove();
-      mapInstance.current = null;
-    };
+    return () => { map.remove(); mapInstance.current = null; };
   }, []);
 
   // Fetch route from OSRM
@@ -134,7 +131,6 @@ export function TruckTrackingMap({
         const route = data.routes[0];
         const coords = route.geometry.coordinates as [number, number][];
         setRouteCoords(coords);
-
         const congestion = route.legs?.[0]?.annotation?.congestion || [];
         onRouteCalculated?.({
           coordinates: coords,
@@ -142,7 +138,6 @@ export function TruckTrackingMap({
           duration: route.duration,
           congestionLevels: congestion,
         });
-
         setCitiesOnRoute(findCitiesOnRoute(coords, 20));
         setWeighStations(findWeighStationsOnRoute(coords, 8));
       }
@@ -153,10 +148,77 @@ export function TruckTrackingMap({
   }, [onRouteCalculated]);
 
   useEffect(() => {
-    if (originCoords && destCoords) {
-      fetchRoute(originCoords, destCoords);
-    }
+    if (originCoords && destCoords) fetchRoute(originCoords, destCoords);
   }, [originCoords, destCoords, fetchRoute]);
+
+  // Draw STATIC layers (route line, markers, cities) — only when route changes
+  useEffect(() => {
+    const map = mapInstance.current;
+    if (!map || routeCoords.length === 0) return;
+
+    // Clear previous static layers
+    staticLayersRef.current.forEach(l => map.removeLayer(l));
+    staticLayersRef.current = [];
+    // Also remove dynamic layers so they get re-created fresh
+    if (traveledLineRef.current) { map.removeLayer(traveledLineRef.current); traveledLineRef.current = null; }
+    if (truckMarkerRef.current) { map.removeLayer(truckMarkerRef.current); truckMarkerRef.current = null; }
+
+    const routeLatLngs = routeCoords.map(([lng, lat]) => [lat, lng] as [number, number]);
+    const originLatLng = originCoords ? [originCoords[1], originCoords[0]] as [number, number] : null;
+    const destLatLng = destCoords ? [destCoords[1], destCoords[0]] as [number, number] : null;
+
+    // Full route (faint background)
+    if (routeLatLngs.length >= 2) {
+      const bg = L.polyline(routeLatLngs, { color: '#000000', weight: 8, opacity: 0.3 }).addTo(map);
+      const fg = L.polyline(routeLatLngs, { color: '#00e5a0', weight: 4, opacity: 0.3 }).addTo(map);
+      staticLayersRef.current.push(bg, fg);
+    }
+
+    // Origin marker
+    if (originLatLng) {
+      const m = L.marker(originLatLng, {
+        icon: L.divIcon({
+          className: '',
+          html: `<div style="width:16px;height:16px;border-radius:50%;background:#22c55e;border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.4);"></div>`,
+          iconSize: [16, 16], iconAnchor: [8, 8],
+        }),
+      }).addTo(map);
+      staticLayersRef.current.push(m);
+    }
+
+    // Destination marker
+    if (destLatLng) {
+      const m = L.marker(destLatLng, {
+        icon: L.divIcon({
+          className: '',
+          html: `<div style="width:16px;height:16px;border-radius:50%;background:#ef4444;border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.4);"></div>`,
+          iconSize: [16, 16], iconAnchor: [8, 8],
+        }),
+      }).addTo(map);
+      staticLayersRef.current.push(m);
+    }
+
+    // City waypoints
+    citiesOnRoute.forEach(city => {
+      const m = L.marker([city.lat, city.lon], {
+        icon: L.divIcon({
+          className: 'tracking-waypoint-marker city-waypoint',
+          html: `<div class="city-waypoint-dot"></div><div class="city-waypoint-label">${city.name}</div>`,
+          iconSize: [80, 20], iconAnchor: [40, 10],
+        }),
+      }).addTo(map);
+      staticLayersRef.current.push(m);
+    });
+
+    // Initial fit bounds
+    const lats = routeCoords.map(c => c[1]);
+    const lngs = routeCoords.map(c => c[0]);
+    const bounds = L.latLngBounds(
+      [Math.min(...lats), Math.min(...lngs)],
+      [Math.max(...lats), Math.max(...lngs)]
+    );
+    map.fitBounds(bounds, { padding: [80, 80], maxZoom: 8 });
+  }, [routeCoords, originCoords, destCoords, citiesOnRoute]);
 
   // Compute truck position from progress
   useEffect(() => {
@@ -174,65 +236,28 @@ export function TruckTrackingMap({
     setCurrentLocationName(`${currentLat.toFixed(4)}°N, ${Math.abs(currentLng).toFixed(4)}°W`);
   }, [progress, routeCoords]);
 
-  // Update map layers
+  // UPDATE dynamic layers in place (truck + traveled line) — no destroy/recreate
   useEffect(() => {
     const map = mapInstance.current;
-    if (!map || routeCoords.length === 0) return;
-
-    // Clear old layers
-    layersRef.current.forEach(l => map.removeLayer(l));
-    layersRef.current = [];
+    if (!map || routeCoords.length === 0 || !currentTruckPosition) return;
 
     const routeLatLngs = routeCoords.map(([lng, lat]) => [lat, lng] as [number, number]);
     const traveledIndex = Math.floor((progress / 100) * (routeCoords.length - 1));
     const traveledLatLngs = routeLatLngs.slice(0, traveledIndex + 1);
-    if (currentTruckPosition && traveledLatLngs.length > 0) {
-      traveledLatLngs.push(currentTruckPosition);
+    traveledLatLngs.push(currentTruckPosition);
+
+    // Update traveled line in place
+    if (traveledLineRef.current) {
+      traveledLineRef.current.setLatLngs(traveledLatLngs);
+    } else if (traveledLatLngs.length >= 2) {
+      traveledLineRef.current = L.polyline(traveledLatLngs, { color: '#00e5a0', weight: 5, opacity: 1 }).addTo(map);
     }
 
-    const originLatLng = originCoords ? [originCoords[1], originCoords[0]] as [number, number] : null;
-    const destLatLng = destCoords ? [destCoords[1], destCoords[0]] as [number, number] : null;
-
-    // Full route
-    if (routeLatLngs.length >= 2) {
-      const bg = L.polyline(routeLatLngs, { color: '#000000', weight: 8, opacity: 0.3 }).addTo(map);
-      const fg = L.polyline(routeLatLngs, { color: '#00e5a0', weight: 4, opacity: 0.3 }).addTo(map);
-      layersRef.current.push(bg, fg);
-    }
-
-    // Traveled portion
-    if (traveledLatLngs.length >= 2) {
-      const traveled = L.polyline(traveledLatLngs, { color: '#00e5a0', weight: 5, opacity: 1 }).addTo(map);
-      layersRef.current.push(traveled);
-    }
-
-    // Origin marker
-    if (originLatLng) {
-      const m = L.marker(originLatLng, {
-        icon: L.divIcon({
-          className: '',
-          html: `<div style="width:16px;height:16px;border-radius:50%;background:#22c55e;border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.4);"></div>`,
-          iconSize: [16, 16], iconAnchor: [8, 8],
-        }),
-      }).addTo(map);
-      layersRef.current.push(m);
-    }
-
-    // Destination marker
-    if (destLatLng) {
-      const m = L.marker(destLatLng, {
-        icon: L.divIcon({
-          className: '',
-          html: `<div style="width:16px;height:16px;border-radius:50%;background:#ef4444;border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.4);"></div>`,
-          iconSize: [16, 16], iconAnchor: [8, 8],
-        }),
-      }).addTo(map);
-      layersRef.current.push(m);
-    }
-
-    // Truck marker
-    if (currentTruckPosition) {
-      const m = L.marker(currentTruckPosition, {
+    // Update truck marker in place
+    if (truckMarkerRef.current) {
+      truckMarkerRef.current.setLatLng(currentTruckPosition);
+    } else {
+      truckMarkerRef.current = L.marker(currentTruckPosition, {
         icon: L.divIcon({
           className: 'tracking-truck-marker',
           html: `
@@ -248,36 +273,20 @@ export function TruckTrackingMap({
             </div>`,
           iconSize: [36, 36], iconAnchor: [18, 18],
         }),
+        zIndexOffset: 1000,
       }).addTo(map);
-      layersRef.current.push(m);
     }
 
-    // City waypoints
-    citiesOnRoute.forEach(city => {
-      const m = L.marker([city.lat, city.lon], {
-        icon: L.divIcon({
-          className: 'tracking-waypoint-marker city-waypoint',
-          html: `<div class="city-waypoint-dot"></div><div class="city-waypoint-label">${city.name}</div>`,
-          iconSize: [80, 20], iconAnchor: [40, 10],
-        }),
-      }).addTo(map);
-      layersRef.current.push(m);
-    });
-
-    // Fit bounds or follow truck
-    if (isTracking && currentTruckPosition) {
-      // Always zoom tight on the truck during active tracking
-      map.flyTo(currentTruckPosition, internalFollowMode ? 18 : 16, { duration: 0.8 });
-    } else if (routeLatLngs.length >= 2) {
-      const lats = routeCoords.map(c => c[1]);
-      const lngs = routeCoords.map(c => c[0]);
-      const bounds = L.latLngBounds(
-        [Math.min(...lats), Math.min(...lngs)],
-        [Math.max(...lats), Math.max(...lngs)]
-      );
-      map.fitBounds(bounds, { padding: [80, 80], maxZoom: 8 });
+    // Pan to truck smoothly — use panTo (no zoom animation) to avoid jitter
+    if (isTracking) {
+      const targetZoom = internalFollowMode ? 18 : 16;
+      const currentZoom = map.getZoom();
+      if (currentZoom !== targetZoom) {
+        map.setZoom(targetZoom, { animate: false });
+      }
+      map.panTo(currentTruckPosition, { animate: true, duration: 0.5, easeLinearity: 0.5 });
     }
-  }, [routeCoords, progress, currentTruckPosition, originCoords, destCoords, citiesOnRoute, internalFollowMode, isTracking]);
+  }, [progress, currentTruckPosition, routeCoords, isTracking, internalFollowMode]);
 
   if (mapError) {
     return (
@@ -300,7 +309,6 @@ export function TruckTrackingMap({
     <div className="relative w-full h-full rounded-2xl overflow-hidden border border-white/10">
       <div ref={mapRef} className="w-full h-full" />
 
-      {/* Status chips */}
       {isTracking && (
         <div className="absolute top-4 left-4 z-[1000] flex gap-2">
           <span className="tracking-status-chip live">
@@ -312,7 +320,6 @@ export function TruckTrackingMap({
         </div>
       )}
 
-      {/* Follow Mode Toggle */}
       <button
         onClick={toggleFollowMode}
         className={cn(
@@ -328,10 +335,8 @@ export function TruckTrackingMap({
         </span>
       </button>
 
-      {/* Traffic Legend */}
       <TrafficLegend isVisible={isTracking} />
 
-      {/* Progress overlay */}
       {isTracking && (
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-[1000]">
           <div className="px-6 py-3 bg-black/80 backdrop-blur-md border border-white/10 rounded-full flex items-center gap-3">
@@ -341,7 +346,6 @@ export function TruckTrackingMap({
         </div>
       )}
 
-      {/* Truck Location Popup */}
       {currentTruckPosition && (
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[1001] pointer-events-none">
           <div className="pointer-events-auto">
@@ -355,7 +359,6 @@ export function TruckTrackingMap({
         </div>
       )}
 
-      {/* Mini Route Overview */}
       <MiniRouteOverview
         originCoords={originCoords}
         destCoords={destCoords}
