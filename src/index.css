@@ -22591,7 +22591,7 @@
 
 .tru-scan-bottom-text {
   font-size: 13px;
-  color: hsl(var(--tm-ink) / 0.5);
+  color: hsl(var(--muted-foreground));
   margin-bottom: 16px;
 }
 
