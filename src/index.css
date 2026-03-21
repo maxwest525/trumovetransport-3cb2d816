@@ -1798,49 +1798,6 @@
 }
 
 /* Legacy AI section classes removed — now using inline Tailwind */
-  .tru-ai-headline-block {
-    align-items: center;
-  }
-  .tru-ai-step-pills {
-    justify-content: center;
-  }
-  .tru-ai-trust-row {
-    justify-content: center;
-  }
-  .tru-ai-header-previews {
-    position: relative;
-    right: auto;
-    top: auto;
-    bottom: auto;
-    width: 100%;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-  .tru-ai-header-previews .tru-ai-live-scanner,
-  .tru-ai-header-previews .tru-ai-live-inventory {
-    width: 100%;
-    max-width: 25rem; /* 400px */
-    height: 21.875rem !important; /* 350px */
-    min-height: 21.875rem !important;
-  }
-}
-
-/* Responsive: mobile */
-@media (max-width: 640px) {
-  .tru-ai-steps-section {
-    padding: var(--spacing-md);
-  }
-  .tru-ai-header-previews {
-    flex-direction: column;
-    gap: var(--spacing-sm);
-  }
-  .tru-ai-header-previews .tru-ai-live-scanner,
-  .tru-ai-header-previews .tru-ai-live-inventory {
-    max-width: 100%;
-    height: 18.75rem !important; /* 300px */
-    min-height: 18.75rem !important;
-  }
-}
 
 /* Centered title container - truly centered */
 .tru-ai-header-center {

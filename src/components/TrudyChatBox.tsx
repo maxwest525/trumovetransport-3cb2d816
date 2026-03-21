@@ -7,6 +7,7 @@ interface Message {
   role: 'user' | 'trudy';
   content: string;
   timestamp: Date;
+  suggestions?: string[];
 }
 
 const INITIAL_MESSAGES: Message[] = [
