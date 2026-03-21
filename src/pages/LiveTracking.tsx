@@ -22,7 +22,7 @@ import LocationAutocomplete from "@/components/LocationAutocomplete";
 import SiteShell from "@/components/layout/SiteShell";
 
 import Footer from "@/components/layout/Footer";
-import { MAPBOX_TOKEN } from "@/lib/mapboxToken";
+import { MAPTILER_KEY } from "@/lib/maptilerConfig";
 import { getWebGLDiagnostics, type WebGLDiagnostics } from "@/lib/webglDiagnostics";
 import { Button } from "@/components/ui/button";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";

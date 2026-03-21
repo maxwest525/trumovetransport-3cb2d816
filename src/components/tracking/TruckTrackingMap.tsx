@@ -3,7 +3,7 @@ import { MapContainer, TileLayer, Polyline, Marker, useMap } from "react-leaflet
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { TILE_LAYERS, US_CENTER, US_ZOOM } from "@/lib/leafletConfig";
-import { MAPBOX_TOKEN } from "@/lib/mapboxToken";
+// Using OSRM for free routing
 import { Loader2, Navigation, Box } from "lucide-react";
 import { TruckLocationPopup } from "./TruckLocationPopup";
 import { TrafficLegend } from "./TrafficLegend";
@@ -166,11 +166,11 @@ export function TruckTrackingMap({
     onFollowModeChange?.(newMode);
   }, [internalFollowMode, onFollowModeChange]);
 
-  // Fetch route from Mapbox Directions (free tier, keeps working)
+  // Fetch route from OSRM (free, no API key)
   const fetchRoute = useCallback(async (origin: [number, number], dest: [number, number]) => {
     try {
       const response = await fetch(
-        `https://api.mapbox.com/directions/v5/mapbox/driving-traffic/${origin[0]},${origin[1]};${dest[0]},${dest[1]}?geometries=geojson&overview=full&annotations=congestion&access_token=${MAPBOX_TOKEN}`
+        `https://router.project-osrm.org/route/v1/driving/${origin[0]},${origin[1]};${dest[0]},${dest[1]}?geometries=geojson&overview=full`
       );
       const data = await response.json();
       if (data.routes?.[0]) {

@@ -8,7 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { MapPin, Navigation, Truck, Search, Loader2, Globe, Eye, ArrowRight, Play, Sparkles } from "lucide-react";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import { cn } from "@/lib/utils";
-import { MAPBOX_TOKEN } from "@/lib/mapboxToken";
+import { MAPTILER_KEY } from "@/lib/maptilerConfig";
 
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "AIzaSyD8aMj_HlkLUWuYbZRU7I6oFGTavx2zKOc";
 
@@ -27,13 +27,13 @@ interface RouteSetupModalProps {
 // Booking lookup - will query DB in future
 const MOCK_BOOKINGS: Record<string, { origin: string; destination: string; date: Date }> = {};
 
-// Geocode address to coordinates
+// Geocode address to coordinates using MapTiler
 async function geocodeAddress(address: string): Promise<[number, number] | null> {
   if (!address || address.length < 5) return null;
   
   try {
     const response = await fetch(
-      `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json?access_token=${MAPBOX_TOKEN}&country=US&types=address,place&limit=1`
+      `https://api.maptiler.com/geocoding/${encodeURIComponent(address)}.json?key=${MAPTILER_KEY}&country=us&limit=1&language=en`
     );
     const data = await response.json();
     

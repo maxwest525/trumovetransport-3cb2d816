@@ -128,8 +128,8 @@ export function CheckMyTruckModal({
   // View mode: 'street' (default) or 'hybrid'
   const [viewMode, setViewMode] = useState<'street' | 'hybrid'>('street');
 
-  // Mapbox token for satellite fallback
-  const mapboxToken = "pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g";
+  // MapTiler key for satellite fallback
+  const maptilerKey = "X6zFH8Vcg9bMuUCrXFWU";
   
   // Calculate live truck position from parent's route coordinates and progress
   const livePosition = useMemo(() => {

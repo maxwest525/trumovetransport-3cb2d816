@@ -105,10 +105,10 @@ async function geocodeLocation(location: string): Promise<[number, number] | nul
     } catch {}
   }
 
+  // Use MapTiler geocoding
   try {
-    const token = 'pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g';
     const res = await fetch(
-      `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(trimmedLocation)}.json?country=us&limit=1&access_token=${token}`
+      `https://api.maptiler.com/geocoding/${encodeURIComponent(trimmedLocation)}.json?key=X6zFH8Vcg9bMuUCrXFWU&country=us&limit=1&language=en`
     );
     if (res.ok) {
       const data = await res.json();
@@ -119,16 +119,12 @@ async function geocodeLocation(location: string): Promise<[number, number] | nul
     }
   } catch {}
 
+  // Nominatim fallback
   try {
     const nominatimRes = await fetch(
       `https://nominatim.openstreetmap.org/search?format=jsonv2&countrycodes=us&limit=1&q=${encodeURIComponent(trimmedLocation)}`,
-      {
-        headers: {
-          Accept: 'application/json',
-        },
-      }
+      { headers: { Accept: 'application/json' } }
     );
-
     if (nominatimRes.ok) {
       const nominatimData = await nominatimRes.json();
       const match = nominatimData?.[0];
@@ -143,9 +139,8 @@ async function geocodeLocation(location: string): Promise<[number, number] | nul
 
 function getStaticMapUrl(coords: [number, number] | null): string {
   if (!coords) return "";
-
   const [lng, lat] = coords;
-  return `https://staticmap.openstreetmap.de/staticmap.php?center=${lat},${lng}&zoom=13&size=720x440&markers=${lat},${lng},lightblue1`;
+  return `https://api.maptiler.com/maps/streets-v2/static/${lng},${lat},13/720x440@2x.png?key=X6zFH8Vcg9bMuUCrXFWU`;
 }
 
 function encodePolyline(points: [number, number][]): string {
@@ -261,7 +256,7 @@ const MoveSummaryModal = React.forwardRef<HTMLDivElement, MoveSummaryModalProps>
   const hasData = fromCity || toCity;
   if (!hasData) return null;
 
-  const MAPBOX_TOKEN = 'pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g';
+  const MAPTILER_KEY = 'X6zFH8Vcg9bMuUCrXFWU';
 
   return (
     <div className="tru-move-summary-modal" ref={ref}>
@@ -293,7 +288,7 @@ const MoveSummaryModal = React.forwardRef<HTMLDivElement, MoveSummaryModalProps>
           <div className="tru-move-summary-map tru-move-summary-map-lg">
             {fromCoords ?
             <img
-              src={`https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${fromCoords[0]},${fromCoords[1]},14,0/280x280@2x?access_token=${MAPBOX_TOKEN}`}
+              src={`https://api.maptiler.com/maps/satellite/static/${fromCoords[0]},${fromCoords[1]},14/280x280@2x.jpg?key=${MAPTILER_KEY}`}
               alt="Origin satellite view" /> :
 
 
@@ -321,7 +316,7 @@ const MoveSummaryModal = React.forwardRef<HTMLDivElement, MoveSummaryModalProps>
           <div className="tru-move-summary-map tru-move-summary-map-lg">
             {toCoords ?
             <img
-              src={`https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${toCoords[0]},${toCoords[1]},14,0/280x280@2x?access_token=${MAPBOX_TOKEN}`}
+              src={`https://api.maptiler.com/maps/satellite/static/${toCoords[0]},${toCoords[1]},14/280x280@2x.jpg?key=${MAPTILER_KEY}`}
               alt="Destination satellite view" /> :
 
 
@@ -495,7 +490,7 @@ const SAMPLE_ROUTE = {
   weather: "58°F Clear"
 };
 
-const MAPBOX_TOKEN = 'pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g';
+const MAPTILER_STATIC_KEY = 'X6zFH8Vcg9bMuUCrXFWU';
 
 // Supabase URL for edge function proxying
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://nhoagucgcqjfbtifykha.supabase.co';
@@ -1022,9 +1017,8 @@ export default function Index() {
         // Fetch route geometry for the third map
         if (resolvedFromCoords && resolvedToCoords) {
           try {
-            const token = 'pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g';
             const res = await fetch(
-              `https://api.mapbox.com/directions/v5/mapbox/driving/${resolvedFromCoords[0]},${resolvedFromCoords[1]};${resolvedToCoords[0]},${resolvedToCoords[1]}?geometries=polyline&overview=full&access_token=${token}`
+              `https://router.project-osrm.org/route/v1/driving/${resolvedFromCoords[0]},${resolvedFromCoords[1]};${resolvedToCoords[0]},${resolvedToCoords[1]}?geometries=polyline&overview=full`
             );
             if (res.ok) {
               const data = await res.json();

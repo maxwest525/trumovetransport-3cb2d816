@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { MAPBOX_TOKEN } from "@/lib/mapboxToken";
+import { MAPTILER_KEY } from "@/lib/maptilerConfig";
 import { Map, Maximize2, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -53,7 +53,7 @@ export function MiniRouteOverview({
     else if (maxDiff < 6) zoom = 5;
     else zoom = 4;
 
-    const url = `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${originMarker},${destMarker}${truckMarker}/auto/180x120@2x?access_token=${MAPBOX_TOKEN}&padding=30`;
+    const url = `https://api.maptiler.com/maps/satellite/static/${centerLng},${centerLat},${zoom}/360x240@2x.jpg?key=${MAPTILER_KEY}`;
     
     setImageUrl(url);
   }, [originCoords, destCoords, truckPosition]);

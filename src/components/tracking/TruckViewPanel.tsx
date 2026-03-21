@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import mapboxgl from 'mapbox-gl';
-import { MAPBOX_TOKEN } from '@/lib/mapboxToken';
+const MAPBOX_TOKEN = 'pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g';
 import { Truck, AlertTriangle } from 'lucide-react';
 
 interface TruckViewPanelProps {
@@ -97,14 +97,14 @@ function getPartialRoute(coords: [number, number][], progress: number): [number,
   return partialCoords;
 }
 
-// Fetch road-snapped route from Mapbox Directions API (matches homepage pattern)
+// Fetch road-snapped route from OSRM (free)
 async function fetchRoadSnappedRoute(
   origin: [number, number],
   dest: [number, number]
 ): Promise<{ coordinates: [number, number][]; distance: number; duration: number } | null> {
   try {
     const response = await fetch(
-      `https://api.mapbox.com/directions/v5/mapbox/driving/${origin[0]},${origin[1]};${dest[0]},${dest[1]}?geometries=geojson&overview=full&access_token=${MAPBOX_TOKEN}`
+      `https://router.project-osrm.org/route/v1/driving/${origin[0]},${origin[1]};${dest[0]},${dest[1]}?geometries=geojson&overview=full`
     );
     const data = await response.json();
     

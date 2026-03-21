@@ -7,7 +7,7 @@ import {
   TooltipTrigger,
   TooltipProvider,
 } from "@/components/ui/tooltip";
-import { MAPBOX_TOKEN } from '@/lib/mapboxToken';
+import { MAPTILER_KEY } from '@/lib/maptilerConfig';
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -165,17 +165,16 @@ async function searchGooglePlaces(query: string): Promise<{ suggestions: Locatio
   return result;
 }
 
-// Mapbox Address Autofill API - FALLBACK source for address suggestions
-// Now includes 'place' and 'postcode' types for better ZIP/city coverage
-async function searchMapboxAddresses(query: string): Promise<{ suggestions: LocationSuggestion[]; failed: boolean }> {
+// MapTiler Geocoding API - FALLBACK source for address suggestions
+async function searchMapTilerAddresses(query: string): Promise<{ suggestions: LocationSuggestion[]; failed: boolean }> {
   const { result, failed } = await withRetry(async () => {
     const res = await fetch(
-      `https://api.mapbox.com/search/searchbox/v1/suggest?q=${encodeURIComponent(query)}&types=address,place,postcode&country=us&language=en&limit=5&session_token=${mapboxSessionToken}&access_token=${MAPBOX_TOKEN}`,
+      `https://api.maptiler.com/geocoding/${encodeURIComponent(query)}.json?key=${MAPTILER_KEY}&country=us&language=en&limit=5`,
       { headers: { 'Accept': 'application/json' } }
     );
     
     if (!res.ok) {
-      throw new Error(`Mapbox API error: ${res.status}`);
+      throw new Error(`MapTiler API error: ${res.status}`);
     }
     
     return res.json();
@@ -185,39 +184,35 @@ async function searchMapboxAddresses(query: string): Promise<{ suggestions: Loca
     return { suggestions: [], failed: true };
   }
   
-  const suggestions = (result.suggestions || []).map((s: any) => {
-    // Mapbox suggest returns: name (street), full_address (complete), place_formatted (city, state, country)
-    const streetName = s.name || ''; // e.g., "123 Main Street"
-    const fullAddr = s.full_address || ''; // e.g., "123 Main Street, New York, NY 10001, United States"
-    const featureType = s.feature_type || 'address';
+  const suggestions = (result.features || []).map((f: any) => {
+    const placeName = f.place_name || '';
+    const text = f.text || '';
+    const placeType = f.place_type?.[0] || '';
     
-    // Parse from full_address: "123 Main St, New York, NY 10001, United States"
-    const parts = fullAddr.split(', ');
-    const streetAddress = featureType === 'address' ? (parts[0] || streetName) : '';
-    const city = featureType === 'place' ? streetName : (parts.length >= 3 ? parts[1] : '');
+    // Extract components from context
+    const context = f.context || [];
+    const cityCtx = context.find((c: any) => c.id?.startsWith('place'));
+    const stateCtx = context.find((c: any) => c.id?.startsWith('region'));
+    const zipCtx = context.find((c: any) => c.id?.startsWith('postcode'));
     
-    // Extract state and zip from "NY 10001" pattern
-    const stateZipPart = parts.length >= 3 ? parts[parts.length - 2] : '';
-    const stateZipMatch = stateZipPart.match(/^([A-Z]{2})\s*(\d{5})?$/);
-    const state = stateZipMatch?.[1] || '';
-    const zip = stateZipMatch?.[2] || (featureType === 'postcode' ? streetName : '');
+    const streetAddress = placeType === 'address' ? text : '';
+    const city = cityCtx?.text || (placeType === 'place' ? text : '');
+    const state = stateCtx?.short_code?.replace('US-', '') || stateCtx?.text || '';
+    const zip = zipCtx?.text || (placeType === 'postcode' ? text : '');
     
-    // Display the full address without "United States"
-    const displayAddr = fullAddr.replace(', United States', '');
-    
-    // Check if this has a street address component (not just city/state)
-    const hasStreet = featureType === 'address' && streetName && !streetName.match(/^\d{5}$/) && streetName !== city;
+    const displayAddr = placeName.replace(', United States', '');
+    const hasStreet = placeType === 'address' && text && !text.match(/^\d{5}$/);
     
     return {
       streetAddress,
       city,
       state,
       zip,
-      display: displayAddr, // Show full street address in dropdown
-      fullAddress: fullAddr,
-      isVerified: false, // Will be verified after retrieve
+      display: displayAddr,
+      fullAddress: placeName,
+      isVerified: false,
       validationLevel: hasStreet ? null : 'partial' as ValidationLevel,
-      mapboxId: s.mapbox_id,
+      mapboxId: undefined,
     };
   });
   
@@ -284,61 +279,9 @@ async function validateWithGoogle(address: string): Promise<{
   }
 }
 
-// Retrieve full verified address from Mapbox with retry (fallback)
-async function retrieveMapboxAddress(mapboxId: string): Promise<{ address: LocationSuggestion | null; failed: boolean }> {
-  const { result, failed } = await withRetry(async () => {
-    const res = await fetch(
-      `https://api.mapbox.com/search/searchbox/v1/retrieve/${mapboxId}?session_token=${mapboxSessionToken}&access_token=${MAPBOX_TOKEN}`,
-      { headers: { 'Accept': 'application/json' } }
-    );
-    
-    if (!res.ok) {
-      throw new Error(`Mapbox retrieve error: ${res.status}`);
-    }
-    
-    // Generate a new session token after retrieve (billing best practice)
-    mapboxSessionToken = generateSessionToken();
-    
-    return res.json();
-  });
-  
-  if (failed || !result) {
-    return { address: null, failed: true };
-  }
-  
-  const feature = result.features?.[0];
-  if (!feature) {
-    return { address: null, failed: false };
-  }
-  
-  const props = feature.properties;
-  const context = props.context || {};
-  
-  // Build the verified full address
-  const streetAddress = props.name || '';
-  const city = context.place?.name || '';
-  const state = context.region?.region_code || '';
-  const zip = context.postcode?.name || '';
-  const fullAddr = props.full_address || `${streetAddress}, ${city}, ${state} ${zip}`;
-  const displayAddr = fullAddr.replace(', United States', '');
-  
-  // Street-level verification requires an actual street address
-  const hasStreet = streetAddress && !streetAddress.match(/^\d{5}$/) && streetAddress !== city;
-  
-  return {
-    address: {
-      streetAddress,
-      city,
-      state,
-      zip,
-      display: displayAddr, // Full verified address
-      fullAddress: fullAddr,
-      isVerified: hasStreet,
-      validationLevel: hasStreet ? 'verified' : 'partial',
-      mapboxId,
-    },
-    failed: false
-  };
+// Retrieve is no longer needed with MapTiler — return null for compatibility
+async function retrieveMapboxAddress(_mapboxId: string): Promise<{ address: LocationSuggestion | null; failed: boolean }> {
+  return { address: null, failed: true };
 }
 
 // Photon API for city-only search (mode="city") - CORS-friendly, fallback
@@ -399,11 +342,11 @@ async function lookupZip(zip: string): Promise<LocationSuggestion | null> {
   return null;
 }
 
-// Reverse geocode coordinates to address using Mapbox
+// Reverse geocode coordinates to address using MapTiler
 async function reverseGeocode(lat: number, lng: number): Promise<LocationSuggestion | null> {
   try {
     const res = await fetch(
-      `https://api.mapbox.com/search/geocode/v6/reverse?longitude=${lng}&latitude=${lat}&types=address&access_token=${MAPBOX_TOKEN}`,
+      `https://api.maptiler.com/geocoding/${lng},${lat}.json?key=${MAPTILER_KEY}&language=en`,
       { headers: { 'Accept': 'application/json' } }
     );
     if (!res.ok) return null;
@@ -412,14 +355,12 @@ async function reverseGeocode(lat: number, lng: number): Promise<LocationSuggest
     const feature = data.features?.[0];
     if (!feature) return null;
     
-    const props = feature.properties;
-    const context = props.context || {};
-    
-    const streetAddress = props.name || '';
-    const city = context.place?.name || '';
-    const state = context.region?.region_code || '';
-    const zip = context.postcode?.name || '';
-    const fullAddr = props.full_address || `${streetAddress}, ${city}, ${state} ${zip}`;
+    const context = feature.context || [];
+    const streetAddress = feature.text || '';
+    const city = context.find((c: any) => c.id?.startsWith('place'))?.text || '';
+    const state = context.find((c: any) => c.id?.startsWith('region'))?.short_code?.replace('US-', '') || '';
+    const zip = context.find((c: any) => c.id?.startsWith('postcode'))?.text || '';
+    const fullAddr = feature.place_name || `${streetAddress}, ${city}, ${state} ${zip}`;
     const displayAddr = fullAddr.replace(', United States', '');
     
     const hasStreet = streetAddress && !streetAddress.match(/^\d{5}$/) && streetAddress !== city;
@@ -433,7 +374,7 @@ async function reverseGeocode(lat: number, lng: number): Promise<LocationSuggest
       fullAddress: fullAddr,
       isVerified: hasStreet,
       validationLevel: hasStreet ? 'verified' : 'partial',
-      mapboxId: feature.id,
+      mapboxId: undefined,
     };
   } catch {
     return null;
@@ -516,9 +457,9 @@ export default function LocationAutocomplete({
         });
         setSuggestions(filtered);
       } else {
-        // Fallback to Mapbox
-        console.log('Using Mapbox fallback for address suggestions');
-        const { suggestions: mapboxSuggestions, failed: mapboxFailed } = await searchMapboxAddresses(query);
+        // Fallback to MapTiler
+        console.log('Using MapTiler fallback for address suggestions');
+        const { suggestions: mapboxSuggestions, failed: mapboxFailed } = await searchMapTilerAddresses(query);
         
         if (mapboxFailed) {
           setSuggestions([]);

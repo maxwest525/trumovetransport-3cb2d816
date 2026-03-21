@@ -18,7 +18,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { GripVertical, X, Check, MapPin } from "lucide-react";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
-import { MAPBOX_TOKEN } from '@/lib/mapboxToken';
+import { MAPTILER_KEY } from '@/lib/maptilerConfig';
 import { cn } from "@/lib/utils";
 
 export interface StopLocation {
@@ -85,12 +85,12 @@ function SortableItem({ location, index, onRemove, onAddressChange, onLocationSe
           value={location.address}
           onValueChange={(val) => onAddressChange(location.id, val)}
           onLocationSelect={async (displayAddr, zip, fullAddress) => {
-            // Geocode to get coordinates using Mapbox
+            // Geocode to get coordinates using MapTiler
             const addr = fullAddress || displayAddr;
             try {
               const response = await fetch(
-                `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(addr)}.json?` +
-                `access_token=${MAPBOX_TOKEN}&country=us&limit=1`
+                `https://api.maptiler.com/geocoding/${encodeURIComponent(addr)}.json?` +
+                `key=${MAPTILER_KEY}&country=us&limit=1`
               );
               const data = await response.json();
               if (data.features?.[0]?.center) {

@@ -26,10 +26,9 @@ export function AerialViewPreview({
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 
-  // Use Mapbox satellite with high zoom for aerial-like view
-  // We could also use Google Static Maps API with satellite maptype
+  // Use MapTiler satellite for aerial-like view
   const aerialUrl = coordinates
-    ? `https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/${coordinates[0]},${coordinates[1]},${zoom},${heading}/400x300@2x?access_token=pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g`
+    ? `https://api.maptiler.com/maps/satellite/static/${coordinates[0]},${coordinates[1]},${zoom}/${400}x${300}@2x.jpg?key=X6zFH8Vcg9bMuUCrXFWU`
     : null;
 
   const handleError = () => {
