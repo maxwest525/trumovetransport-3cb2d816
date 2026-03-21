@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from "react";
-import { Check, ChevronRight, ChevronLeft, ChevronDown, Scan, Route, ScanLine, MapPin, Car, Box, Phone, Mail, User, Sparkles, Pencil, CalendarIcon, Loader2, HandMetal } from "lucide-react";
+import { Check, ChevronRight, ChevronLeft, ChevronDown, Scan, Route, ScanLine, MapPin, Car, Box, Phone, Mail, User, Sparkles, Pencil, CalendarIcon, Loader2, HandMetal, Activity, Zap, Clock, Lock } from "lucide-react";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -698,39 +698,59 @@ export function QuoteWizard({ onGetEstimate, quoteData, setQuoteData, variant = 
                     </div>
                   </div>
 
-                  {/* Right: Map */}
-                  <div className="hidden lg:flex relative border-l border-border/40 bg-secondary/20 items-center justify-center p-4">
-                    <div className="relative w-full max-w-md">
-                      <img src={usMapImg} alt="US Route Map" className="w-full opacity-30" />
-                      {fromPos && toPos && (() => {
-                        const dx = toPos.x - fromPos.x;
-                        const dy = toPos.y - fromPos.y;
-                        const length = Math.sqrt(dx * dx + dy * dy);
-                        return (
-                          <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-                            <line x1={fromPos.x} y1={fromPos.y} x2={toPos.x} y2={toPos.y} stroke="hsl(var(--primary) / 0.15)" strokeWidth="0.8" />
-                            <line x1={fromPos.x} y1={fromPos.y} x2={toPos.x} y2={toPos.y} stroke="hsl(var(--primary))" strokeWidth="0.5" strokeDasharray={length} strokeDashoffset={length} strokeLinecap="round">
-                              <animate attributeName="stroke-dashoffset" from={length} to="0" dur="2s" fill="freeze" begin="0.3s" calcMode="spline" keySplines="0.25 0.1 0.25 1" keyTimes="0;1" />
-                            </line>
-                            <circle r="1" fill="hsl(var(--primary))" opacity="0">
-                              <animate attributeName="opacity" from="0" to="1" dur="0.01s" fill="freeze" begin="0.3s" />
-                              <animateMotion dur="2s" fill="freeze" begin="0.3s" calcMode="spline" keySplines="0.25 0.1 0.25 1" keyTimes="0;1" path={`M${fromPos.x},${fromPos.y} L${toPos.x},${toPos.y}`} />
-                              <animate attributeName="opacity" from="1" to="0" dur="0.3s" fill="freeze" begin="2.3s" />
-                            </circle>
-                          </svg>
-                        );
-                      })()}
-                      {fromPos && (
-                        <div className="absolute w-3 h-3 -translate-x-1/2 -translate-y-1/2" style={{ left: `${fromPos.x}%`, top: `${fromPos.y}%` }}>
-                          <div className="w-3 h-3 rounded-full bg-primary border-2 border-background shadow-lg" />
-                          <div className="absolute inset-0 w-3 h-3 rounded-full bg-primary/40 animate-ping" />
-                        </div>
+                  {/* Right: Route Rates Card */}
+                  <div className="hidden lg:flex relative border-l border-border/40 bg-secondary/20 items-center justify-center p-6">
+                    <div className="flex flex-col items-center text-center max-w-sm">
+                      <div className="flex items-center gap-2 mb-5">
+                        <span className="relative flex h-2 w-2">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
+                          <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
+                        </span>
+                        <p className="text-[10px] uppercase tracking-[0.2em] text-primary font-semibold">
+                          Live · {quoteData.from && quoteData.to ? `${miles.toLocaleString()} mi corridor` : "Select route"}
+                        </p>
+                      </div>
+
+                      <h3 className="text-2xl sm:text-3xl font-bold text-foreground mb-1 tracking-tight leading-tight">
+                        Route Rates Available
+                        <br />
+                        <span className="text-primary">Right Now</span>
+                      </h3>
+                      {quoteData.from && quoteData.to && (
+                        <p className="text-xs text-muted-foreground max-w-[280px] leading-relaxed mb-5">
+                          Active carriers on the <span className="font-medium text-foreground">{quoteData.from.split(' ')[0]}–{quoteData.to.split(' ')[0]}</span> corridor are offering competitive rates — availability shifts fast
+                        </p>
                       )}
-                      {toPos && (
-                        <div className="absolute w-3 h-3 -translate-x-1/2 -translate-y-1/2" style={{ left: `${toPos.x}%`, top: `${toPos.y}%` }}>
-                          <div className="w-3 h-3 rounded-full bg-foreground border-2 border-background shadow-lg" />
-                        </div>
-                      )}
+                      {!quoteData.from || !quoteData.to ? (
+                        <p className="text-xs text-muted-foreground max-w-[280px] leading-relaxed mb-5">
+                          Select your origin and destination to see live carrier availability and route-specific pricing.
+                        </p>
+                      ) : null}
+
+                      <div className="flex flex-wrap items-center justify-center gap-2 mb-6">
+                        {[
+                          { icon: Activity, text: "Carriers active" },
+                          { icon: Zap, text: "Same-week pickup" },
+                          { icon: Clock, text: "Rates held 24hrs" },
+                        ].map((deal) => (
+                          <span key={deal.text} className="flex items-center gap-1.5 text-[10px] font-medium text-foreground/80 px-3 py-1.5 rounded-full border border-primary/20 bg-primary/[0.06]">
+                            <deal.icon className="w-3 h-3 text-primary" strokeWidth={1.5} />
+                            {deal.text}
+                          </span>
+                        ))}
+                      </div>
+
+                      <button
+                        onClick={onGetEstimate}
+                        disabled={!quoteData.from || !quoteData.to}
+                        className="group relative px-8 py-3.5 rounded-full border-2 border-primary text-primary font-bold text-sm tracking-wide hover:bg-primary hover:text-primary-foreground shadow-[0_0_25px_-6px_hsl(var(--primary)/0.4)] hover:shadow-[0_0_40px_-4px_hsl(var(--primary)/0.6)] hover:scale-[1.03] active:scale-[0.98] transition-all duration-300 disabled:opacity-40 disabled:pointer-events-none"
+                      >
+                        <span className="flex items-center gap-2">
+                          <Lock className="w-3.5 h-3.5 transition-transform duration-300 group-hover:scale-110" strokeWidth={2} />
+                          See My Route Rates
+                        </span>
+                      </button>
+                      <p className="text-[10px] text-muted-foreground/50 mt-3">No commitment · Instant access</p>
                     </div>
                   </div>
                 </motion.div>
