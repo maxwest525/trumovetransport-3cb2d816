@@ -23112,13 +23112,13 @@
 .tru-vetting-process-title {
   font-size: 15px;
   font-weight: 700;
-  color: hsl(var(--tm-ink));
+  color: hsl(var(--foreground));
   margin-bottom: 8px;
 }
 
 .tru-vetting-process-desc {
   font-size: 13px;
-  color: hsl(var(--tm-ink) / 0.6);
+  color: hsl(var(--muted-foreground));
   line-height: 1.6;
 }
 
