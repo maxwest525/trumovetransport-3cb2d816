@@ -644,6 +644,11 @@ export default function Index() {
   const [activeFeature, setActiveFeature] = useState<number | null>(null);
   const [carrierIdx, setCarrierIdx] = useState(0);
   const [contactMode, setContactMode] = useState<"trudy" | "form">("trudy");
+  const [contactFormName, setContactFormName] = useState("");
+  const [contactFormEmail, setContactFormEmail] = useState("");
+  const [contactFormMessage, setContactFormMessage] = useState("");
+  const [contactFormSending, setContactFormSending] = useState(false);
+  const [contactFormSent, setContactFormSent] = useState(false);
 
   // Why TruMove features data - Updated per plan
   const whyTruMoveFeatures = [
