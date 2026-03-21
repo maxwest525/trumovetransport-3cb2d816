@@ -47,7 +47,14 @@ export default function Vetting() {
   useEffect(() => { window.scrollTo(0, 0); }, []);
   return (
     <SiteShell hideTrustStrip>
-      <div className="tru-vetting-page">
+      <div className="tru-vetting-page relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none z-0">
+          <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full bg-primary/[0.06] blur-[120px]" />
+          <div className="absolute bottom-0 left-0 w-[500px] h-[500px] rounded-full bg-primary/[0.04] blur-[100px]" />
+          <div className="absolute top-1/2 left-1/3 w-[400px] h-[400px] rounded-full bg-primary/[0.03] blur-[100px]" />
+          <div className="absolute inset-0 opacity-[0.025]" style={{ backgroundImage: 'radial-gradient(circle, hsl(var(--foreground)) 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
+          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
+        </div>
         
 
         {/* Hero Section */}
