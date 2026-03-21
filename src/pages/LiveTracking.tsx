@@ -154,14 +154,10 @@ export default function LiveTracking() {
   // Follow mode state - default to true for better UX
   const [followMode, setFollowMode] = useState(true);
   
-  // 3D view mode toggle - default to false (2D satellite is primary, 3D is unreliable)
-  const [show3DView, setShow3DView] = useState(false);
+  // Map view type
+  const [mapViewType, setMapViewType] = useState<string>('roadmap');
   
-  // Map view type for 2D maps (satellite, hybrid, roadmap, truckview)
-  const [mapViewType, setMapViewType] = useState<MapViewType>('satellite');
-  
-  // WebGL diagnostics and fallback state
-  const [webglDiagnostics, setWebglDiagnostics] = useState<WebGLDiagnostics | null>(null);
+  // Fallback state
   const [useStaticMap, setUseStaticMap] = useState(false);
   
   
