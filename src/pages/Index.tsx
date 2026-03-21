@@ -1050,78 +1050,8 @@ export default function Index() {
 
           <HeroParticles />
 
-          {/* Full-Page Analyzing Overlay */}
-          {isAnalyzing &&
-            <div className="tru-analyze-fullpage-overlay">
-              <div className="tru-analyze-popup-modal">
-                <div className="tru-analyze-popup-header">
-                  <Radar className="w-6 h-6 tru-analyzing-icon" />
-                  <span className="tru-analyze-popup-title">
-                    {analyzePhase === 0 && "Locating origin..."}
-                    {analyzePhase === 1 && "Locating destination..."}
-                    {analyzePhase === 2 && "Analyzing route..."}
-                  </span>
-                </div>
-                
-                <div className="tru-analyze-strip">
-                  <div className={`tru-analyze-strip-panel ${analyzePhase >= 0 ? 'is-active' : ''}`}>
-                    <div className="tru-analyze-strip-label">
-                      <MapPin className="w-3.5 h-3.5" />
-                      <span>Origin</span>
-                    </div>
-                    <div className="tru-analyze-strip-frame">
-                      <div className="tru-analyze-strip-shimmer" />
-                      <img
-                        src={getStaticMapUrl(fromCoords)}
-                        alt="Origin location"
-                        className="tru-analyze-strip-img"
-                        onLoad={(e) => e.currentTarget.classList.add('is-loaded')}
-                        onError={(e) => {
-                          e.currentTarget.style.display = 'none';
-                        }} />
-                      <div className="tru-analyze-strip-city">{fromCity}</div>
-                    </div>
-                  </div>
-                  
-                  <div className={`tru-analyze-strip-panel tru-analyze-strip-route ${analyzePhase >= 2 ? 'is-active' : ''}`}>
-                    <div className="tru-analyze-strip-label">
-                      <Truck className="w-3.5 h-3.5" />
-                      <span>Your Route</span>
-                    </div>
-                    <div className="tru-analyze-strip-frame tru-analyze-strip-route-frame">
-                      <div className="tru-analyze-strip-shimmer" />
-                      {fromCoords && toCoords && routeGeometry &&
-                      <AnimatedRouteMap
-                        fromCoords={fromCoords}
-                        toCoords={toCoords}
-                        routeGeometry={routeGeometry}
-                        progress={routeProgress} />
-                      }
-                    </div>
-                  </div>
-                  
-                  <div className={`tru-analyze-strip-panel ${analyzePhase >= 1 ? 'is-active' : ''}`}>
-                    <div className="tru-analyze-strip-label">
-                      <MapPin className="w-3.5 h-3.5" />
-                      <span>Destination</span>
-                    </div>
-                    <div className="tru-analyze-strip-frame">
-                      <div className="tru-analyze-strip-shimmer" />
-                      <img
-                        src={getStaticMapUrl(toCoords)}
-                        alt="Destination location"
-                        className="tru-analyze-strip-img"
-                        onLoad={(e) => e.currentTarget.classList.add('is-loaded')}
-                        onError={(e) => {
-                          e.currentTarget.style.display = 'none';
-                        }} />
-                      <div className="tru-analyze-strip-city">{toCity}</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            }
+
+
 
           <section className="tru-hero tru-hero-split" ref={heroContentRef}>
 
