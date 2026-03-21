@@ -52,7 +52,7 @@ export default function AutoTransport() {
   };
 
   const scrollToContact = () => {
-    contactRef.current?.scrollIntoView({ behavior: "smooth" });
+    document.getElementById('personalized-rate')?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
