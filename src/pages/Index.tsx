@@ -1864,7 +1864,7 @@ export default function Index() {
             </div>
           </section>
 
-          <div className="py-8"><FeatureTrustStrip /></div>
+          
 
           {/* GET IN TOUCH */}
           <section className="py-20 md:py-28 relative overflow-hidden">
