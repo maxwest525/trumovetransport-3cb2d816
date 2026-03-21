@@ -1694,28 +1694,59 @@ export default function Index() {
                 {/* Single card with green gradient glow */}
                 <div className="flex-1 min-w-0 rounded-2xl bg-card p-5 flex flex-col md:flex-row gap-5 transition-all duration-200 ring-1 ring-border">
 
-                  {/* Send a Message form */}
+                  {/* Toggle: Talk to Trudy / Send a Message */}
                   <div className="flex-1 flex flex-col">
-                    <div className="flex flex-col items-center text-center mb-4">
-                      <div className="h-10 w-10 rounded-full bg-primary/10 border border-border flex items-center justify-center mb-3">
-                        <MessageSquare className="h-4 w-4 text-primary" />
-                      </div>
-                      <h3 className="text-base font-semibold text-foreground mb-0.5">Send a Message</h3>
-                      <p className="text-xs text-muted-foreground">We'll get back to you within a few hours.</p>
-                    </div>
-                    <form className="flex-1 flex flex-col space-y-2.5" onSubmit={(e) => e.preventDefault()}>
-                      <div className="grid grid-cols-2 gap-2.5">
-                        <input type="text" required placeholder="Your name" className="w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary text-sm" />
-                        <input type="email" required className="w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary text-sm" placeholder="Email" />
-                      </div>
-                      <textarea required placeholder="How can we help?" className="w-full flex-1 min-h-[100px] rounded-lg border border-border bg-background px-3 py-2 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary resize-none text-sm" />
-                      <button type="submit" className="w-full bg-foreground text-background py-2.5 rounded-lg text-sm font-semibold hover:bg-foreground/90 transition-colors">
-                        Send Message
+                    {/* Pill toggle */}
+                    <div className="flex items-center justify-center gap-1 p-1 rounded-lg bg-muted mb-4">
+                      <button
+                        onClick={() => setContactMode("trudy")}
+                        className={`flex items-center gap-1.5 px-4 py-1.5 rounded-md text-xs font-medium transition-all ${
+                          contactMode === "trudy"
+                            ? "bg-background text-foreground shadow-sm"
+                            : "text-muted-foreground hover:text-foreground"
+                        }`}
+                      >
+                        <Sparkles className="w-3 h-3" />
+                        Talk to Trudy
                       </button>
-                    </form>
-                    <p className="text-center text-[11px] text-muted-foreground mt-2">
-                      or email <a href="mailto:support@trumove.com" className="text-primary underline underline-offset-2 hover:text-primary/80">support@trumove.com</a>
-                    </p>
+                      <button
+                        onClick={() => setContactMode("form")}
+                        className={`flex items-center gap-1.5 px-4 py-1.5 rounded-md text-xs font-medium transition-all ${
+                          contactMode === "form"
+                            ? "bg-background text-foreground shadow-sm"
+                            : "text-muted-foreground hover:text-foreground"
+                        }`}
+                      >
+                        <MessageSquare className="w-3 h-3" />
+                        Send a Message
+                      </button>
+                    </div>
+
+                    {/* Content */}
+                    {contactMode === "trudy" ? (
+                      <div className="flex-1 rounded-xl border border-border overflow-hidden" style={{ height: 320 }}>
+                        <AIChatContainer />
+                      </div>
+                    ) : (
+                      <>
+                        <div className="flex flex-col items-center text-center mb-3">
+                          <p className="text-xs text-muted-foreground">We'll get back to you within a few hours.</p>
+                        </div>
+                        <form className="flex-1 flex flex-col space-y-2.5" onSubmit={(e) => e.preventDefault()}>
+                          <div className="grid grid-cols-2 gap-2.5">
+                            <input type="text" required placeholder="Your name" className="w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary text-sm" />
+                            <input type="email" required className="w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary text-sm" placeholder="Email" />
+                          </div>
+                          <textarea required placeholder="How can we help?" className="w-full flex-1 min-h-[100px] rounded-lg border border-border bg-background px-3 py-2 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary resize-none text-sm" />
+                          <button type="submit" className="w-full bg-foreground text-background py-2.5 rounded-lg text-sm font-semibold hover:bg-foreground/90 transition-colors">
+                            Send Message
+                          </button>
+                        </form>
+                        <p className="text-center text-[11px] text-muted-foreground mt-2">
+                          or email <a href="mailto:support@trumove.com" className="text-primary underline underline-offset-2 hover:text-primary/80">support@trumove.com</a>
+                        </p>
+                      </>
+                    )}
                   </div>
 
                   {/* Divider */}
