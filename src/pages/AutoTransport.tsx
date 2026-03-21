@@ -159,7 +159,7 @@ export default function AutoTransport() {
         )}
       </AnimatePresence>
 
-      <ChatBubble />
+      
     </SiteShell>
   );
 }
