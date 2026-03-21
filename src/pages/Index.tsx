@@ -507,7 +507,7 @@ function ShipmentTrackerSection({ navigate }: {navigate: (path: string) => void;
   };
 
   return (
-    <section className="py-14 md:py-20 relative overflow-hidden my-[5px]">
+    <section className="py-10 md:py-20 relative overflow-hidden my-[5px]">
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-0 w-[500px] h-[500px] rounded-full bg-primary/[0.05] blur-[120px]" />
         <div className="absolute bottom-0 right-0 w-[400px] h-[400px] rounded-full bg-primary/[0.04] blur-[100px]" />
@@ -516,11 +516,11 @@ function ShipmentTrackerSection({ navigate }: {navigate: (path: string) => void;
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
       </div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="flex flex-col lg:flex-row items-center justify-center gap-10 lg:gap-16 w-full">
+        <div className="flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-16 w-full">
           {/* Lifestyle image - left */}
-          <div className="flex items-center justify-center flex-shrink-0">
-            <div className="rounded-xl overflow-hidden">
-              <img src={trackingLifestyleImg} alt="Customer tracking their move in real-time" className="h-auto block w-full max-w-xs lg:max-w-none" style={{ maxHeight: '340px', objectFit: 'cover' }} />
+          <div className="flex items-center justify-center flex-shrink-0 w-full lg:w-auto">
+            <div className="rounded-xl overflow-hidden w-full max-w-sm lg:max-w-none">
+              <img src={trackingLifestyleImg} alt="Customer tracking their move in real-time" className="h-auto block w-full" style={{ maxHeight: '340px', objectFit: 'cover' }} />
             </div>
           </div>
 
@@ -533,11 +533,11 @@ function ShipmentTrackerSection({ navigate }: {navigate: (path: string) => void;
                 <span className="w-1.5 h-1.5 rounded-full bg-primary/60" />
                 <span className="h-px w-8 bg-primary/40" />
               </div>
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground tracking-tight leading-[1.1]">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground tracking-tight leading-[1.1]">
                 Real-Time<br />
                 <span className="text-primary">Shipment Tracking.</span>
               </h2>
-              <p className="text-muted-foreground max-w-xl mx-auto text-base md:text-lg font-light leading-relaxed mt-4">
+              <p className="text-muted-foreground max-w-xl mx-auto text-sm sm:text-base md:text-lg font-light leading-relaxed mt-4">
                 Stay up to date and track your belongings across the country with real-time GPS tracking of your goods.
               </p>
             </div>
