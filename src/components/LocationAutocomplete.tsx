@@ -138,7 +138,6 @@ async function searchMapTilerAddresses(query: string): Promise<{ suggestions: Lo
       fullAddress: placeName,
       isVerified: hasStreet,
       validationLevel: hasStreet ? 'verified' as ValidationLevel : 'partial' as ValidationLevel,
-      mapboxId: undefined,
     };
   });
   
