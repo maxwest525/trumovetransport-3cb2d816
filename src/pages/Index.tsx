@@ -1643,13 +1643,24 @@ export default function Index() {
           <div className="py-8"><FeatureTrustStrip /></div>
 
           {/* TESTIMONIALS */}
-          <section className="tru-ai-steps-section pt-16 pb-16">
-            <div className="max-w-[90rem] mx-auto">
+          <section className="py-20 md:py-28 relative overflow-hidden">
+            <div className="absolute inset-0 pointer-events-none">
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] rounded-full bg-primary/[0.04] blur-[120px]" />
+              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
+            </div>
+            <div className="max-w-[90rem] mx-auto relative z-10">
               <div className="flex flex-col items-center text-center mb-10">
-                <h2 className="tru-ai-main-headline text-5xl md:text-6xl">
-                  What Our Customers <span className="tru-ai-headline-accent">Say.</span>
+                <p className="text-[11px] uppercase tracking-[0.3em] text-primary font-semibold mb-3">Testimonials</p>
+                <div className="flex items-center justify-center gap-2 mb-4">
+                  <span className="h-px w-8 bg-primary/40" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary/60" />
+                  <span className="h-px w-8 bg-primary/40" />
+                </div>
+                <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground tracking-tight leading-[1.1]">
+                  What Our Customers <span className="text-primary">Say.</span>
                 </h2>
-                <p className="tru-ai-subheadline text-lg mt-3">Real stories from real moves across the country.</p>
+                <p className="text-muted-foreground max-w-xl mx-auto text-base md:text-lg font-light leading-relaxed mt-4">Real stories from real moves across the country.</p>
               </div>
 
               {/* Infinite marquee carousel */}
