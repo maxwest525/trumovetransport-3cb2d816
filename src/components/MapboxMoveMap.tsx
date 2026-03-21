@@ -137,8 +137,8 @@ export default function MapboxMoveMap({ fromZip = '', toZip = '', visible = true
       center: US_CENTER,
       zoom: US_ZOOM,
     });
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap',
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png', {
+      attribution: '',
     }).addTo(map);
     mapInstance.current = map;
     return () => { map.remove(); mapInstance.current = null; };

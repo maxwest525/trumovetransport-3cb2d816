@@ -105,13 +105,13 @@ export function TruckTrackingMap({
 
     const map = L.map(mapRef.current, {
       zoomControl: true,
-      attributionControl: true,
+      attributionControl: false,
       center: [39.8283, -98.5795],
       zoom: 4,
     });
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png', {
+      attribution: '',
     }).addTo(map);
 
     mapInstance.current = map;
