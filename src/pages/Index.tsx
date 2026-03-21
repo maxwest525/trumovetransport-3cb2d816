@@ -1104,8 +1104,8 @@ export default function Index() {
               </div>
             </div>
 
-              {/* RIGHT: Form Card */}
-              <div ref={quoteBuilderRef}>
+            {/* RIGHT COLUMN: Form */}
+            <div className="tru-hero-right-column" ref={quoteBuilderRef}>
                 <div className="rounded-2xl ring-1 ring-border bg-card overflow-hidden">
                   {/* Form Header */}
                   <div className="bg-foreground px-6 py-4 text-center">
