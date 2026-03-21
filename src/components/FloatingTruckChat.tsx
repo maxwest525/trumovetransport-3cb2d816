@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Truck, Hand, ChevronLeft } from 'lucide-react';
+import { MessageCircle, Hand, ChevronLeft } from 'lucide-react';
 import ChatModal from './chat/ChatModal';
 import { useIsMobile } from '@/hooks/use-mobile';
 
