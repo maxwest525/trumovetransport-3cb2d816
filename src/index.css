@@ -751,8 +751,8 @@
 }
 
 .tru-scan-upload-dropzone:hover {
-  border-color: hsl(var(--tm-ink) / 0.4);
-  background: hsl(var(--tm-ink) / 0.03);
+  border-color: hsl(var(--primary) / 0.4);
+  background: hsl(var(--primary) / 0.03);
 }
 
 .tru-scan-upload-icon {
