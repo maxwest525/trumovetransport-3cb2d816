@@ -964,14 +964,30 @@ export default function Index() {
                 setIsAnalyzing(false);
                 setAnalyzePhase(0);
                 setRouteProgress(0);
-                setStep(2);
+                // Save lead data and show confirmation directly
+                const fullName = `${contactFirstName.trim()} ${contactLastName.trim()}`;
+                setName(fullName);
+                setEmail(contactEmail);
+                setPhoneNum(contactPhone);
+                localStorage.setItem("tm_lead", JSON.stringify({
+                  name: fullName, fromZip, toZip, fromCity, toCity,
+                  fromLocationDisplay: fromLocationDisplay || `${fromCity} ${fromZip}`,
+                  toLocationDisplay: toLocationDisplay || `${toCity} ${toZip}`,
+                  moveDate: moveDate?.toISOString(),
+                  email: contactEmail, phone: contactPhone, ts: Date.now()
+                }));
+                localStorage.setItem("tm_lead_contact", JSON.stringify({
+                  name: fullName, email: contactEmail, phone: contactPhone,
+                  fromCity, toCity, fromZip, toZip,
+                  moveDate: moveDate?.toISOString(), ts: Date.now()
+                }));
+                setHasProvidedContactInfo(true);
+                setSubmitted(true);
               }, 500);
             }
             setRouteProgress(progress);
           }, 50);
         }, 4000);
-      } else {
-        setStep(step + 1);
       }
     }
   };
