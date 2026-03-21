@@ -1089,8 +1089,8 @@ export default function Index() {
                 <span className="w-1.5 h-1.5 rounded-full bg-primary/60" />
                 <span className="h-px w-8 bg-white/20" />
               </div>
-              <h1 className="tru-hero-headline">
-                The Smarter Way To <span className="tru-hero-accent">Move</span>
+              <h1 className="tru-hero-headline tru-hero-accent">
+                The Smarter Way To <span>Move</span>
               </h1>
               <ul className="tru-hero-bullets">
                 <li>Scan, document, and build your own inventory — your items stay private and secure</li>
