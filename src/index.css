@@ -22762,8 +22762,8 @@
   align-items: center;
   gap: 10px;
   padding: 16px 32px;
-  background: hsl(var(--tm-ink));
-  color: white;
+  background: hsl(var(--foreground));
+  color: hsl(var(--background));
   font-size: 14px;
   font-weight: 600;
   border-radius: 14px;
@@ -22775,11 +22775,11 @@
 }
 
 .tru-vetting-primary-btn:hover {
-  background: white;
-  color: hsl(var(--tm-ink));
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
   box-shadow: 
     0 8px 30px hsl(var(--primary) / 0.35),
-    0 0 0 1px hsl(var(--tm-ink) / 0.1);
+    0 0 0 1px hsl(var(--primary) / 0.2);
   transform: translateY(-2px);
 }
 
