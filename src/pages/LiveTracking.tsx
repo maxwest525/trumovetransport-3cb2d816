@@ -3,14 +3,7 @@ import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Calendar, Box, Alert
 import { format } from "date-fns";
 import { ScrollFadeIn } from "@/hooks/useScrollFadeIn";
 import { TruckTrackingMap } from "@/components/tracking/TruckTrackingMap";
-// Google3DTrackingView removed - unreliable
-import { Google2DTrackingMap, type MapViewType } from "@/components/tracking/Google2DTrackingMap";
-import TruckViewPanel from "@/components/tracking/TruckViewPanel";
-import { GoogleStaticRouteMap } from "@/components/tracking/GoogleStaticRouteMap";
-import { RouteComparisonPanel, type RouteOption } from "@/components/tracking/RouteComparisonPanel";
 import { UnifiedStatsCard } from "@/components/tracking/UnifiedStatsCard";
-import { StreetViewPreview } from "@/components/tracking/StreetViewPreview";
-import { TruckAerialView } from "@/components/tracking/TruckAerialView";
 import { RouteWeather } from "@/components/tracking/RouteWeather";
 import { CompactRouteWeather } from "@/components/tracking/CompactRouteWeather";
 import { WeighStationChecklist } from "@/components/tracking/WeighStationChecklist";
