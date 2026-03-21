@@ -312,11 +312,11 @@ export default function LocationAutocomplete({
     const normalizedQuery = normalizeAddress(query);
 
     if (mode === 'address') {
-      // For address mode, use MapTiler geocoding
-      const { suggestions: maptilerSuggestions, failed: maptilerFailed } = await searchMapTilerAddresses(query);
+      // For address mode, use Geoapify autocomplete
+      const { suggestions: geoapifySuggestions, failed: geoapifyFailed } = await searchGeoapifyAddresses(query, 'address');
       
-      if (!maptilerFailed && maptilerSuggestions.length > 0) {
-        const filtered = maptilerSuggestions.filter(s => {
+      if (!geoapifyFailed && geoapifySuggestions.length > 0) {
+        const filtered = geoapifySuggestions.filter(s => {
           const normalizedSuggestion = normalizeAddress(s.fullAddress || s.display);
           return normalizedSuggestion !== normalizedQuery;
         });
@@ -338,7 +338,7 @@ export default function LocationAutocomplete({
         setSuggestions([]);
       }
     } else {
-      // City mode: use existing logic
+      // City mode: use Geoapify with city type, fallback to Photon/ZIP
       let results: LocationSuggestion[] = [];
       
       if (isCompleteZip) {
@@ -347,7 +347,14 @@ export default function LocationAutocomplete({
           results = [result];
         }
       } else {
-        results = await searchPhotonCities(query);
+        // Try Geoapify first for city suggestions
+        const { suggestions: geoapifyCities, failed } = await searchGeoapifyAddresses(query, 'city');
+        if (!failed && geoapifyCities.length > 0) {
+          results = geoapifyCities;
+        } else {
+          // Fallback to Photon
+          results = await searchPhotonCities(query);
+        }
       }
       
       // Filter out suggestions that match what's already entered
