@@ -1416,7 +1416,7 @@ export default function Index() {
               <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
             </div>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-12 items-center" ref={scanPreviewRef}>
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-16 items-center" ref={scanPreviewRef}>
                 {/* LEFT: Description content */}
                 <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
                   <div>
