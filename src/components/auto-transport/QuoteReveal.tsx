@@ -320,9 +320,9 @@ export const QuoteReveal = forwardRef<HTMLDivElement, QuoteRevealProps>(
               {/* Form */}
               <div className="rounded-xl border border-border/30 bg-card/50 backdrop-blur-sm p-4 sm:p-6 flex flex-col justify-center relative overflow-hidden">
                 {/* Priority Route Rate stamp */}
-                <div className="absolute top-3 right-3 z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 border border-primary/30 rotate-0">
-                  <BadgeCheck className="w-3.5 h-3.5 text-primary shrink-0" strokeWidth={2} />
-                  <span className="text-[10px] font-bold uppercase tracking-[0.08em] text-primary whitespace-nowrap">Priority Route Rate Available</span>
+                <div className="absolute top-3 right-3 z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-foreground/5 border border-foreground/30">
+                  <BadgeCheck className="w-3.5 h-3.5 text-foreground shrink-0" strokeWidth={2} />
+                  <span className="text-[10px] font-bold uppercase tracking-[0.08em] text-foreground whitespace-nowrap">Priority Route Rate Available</span>
                 </div>
                 <p className="text-[10px] uppercase tracking-[0.2em] text-primary/70 font-semibold mb-1 mt-6">Connect With Us</p>
                 <h3 className="text-lg sm:text-xl font-bold text-foreground tracking-tight mb-4">Request a Callback</h3>
