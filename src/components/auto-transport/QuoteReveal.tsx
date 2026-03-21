@@ -104,7 +104,7 @@ function ExclusiveDealsOverlay({ from, to, onUnlock }: { from: string; to: strin
 }
 
 export const QuoteReveal = forwardRef<HTMLDivElement, QuoteRevealProps>(
-  ({ quoteData, hideSummary = false }, ref) => {
+  ({ quoteData, hideSummary = false, onScrollToContact }, ref) => {
     const [callbackName, setCallbackName] = useState("");
     const [callbackPhone, setCallbackPhone] = useState("");
     const [callbackEmail, setCallbackEmail] = useState("");
