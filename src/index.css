@@ -1328,7 +1328,6 @@
 .tru-hero-wrapper {
   position: relative;
   width: 100%;
-  min-height: 64rem;
   overflow-x: hidden;
   margin-top: -90px;
 }
@@ -1378,7 +1377,7 @@
   padding: 176px 64px 180px;
   max-width: 1480px;
   margin: 0 auto;
-  min-height: 68rem;
+  
 }
 
 .tru-hero-left-column {
