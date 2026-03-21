@@ -21301,7 +21301,7 @@
 }
 
 .tru-scan-table-order {
-  color: hsl(var(--tm-ink) / 0.4) !important;
+  color: hsl(var(--muted-foreground)) !important;
   font-weight: 500;
 }
 
