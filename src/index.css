@@ -32505,3 +32505,315 @@ gmp-map-3d-element .gmnoprint {
   0% { background-position: 200% 0; }
   100% { background-position: -200% 0; }
 }
+
+/* =============================================
+   COMPREHENSIVE MOBILE OPTIMIZATION
+   ============================================= */
+
+/* ─── Small phones (≤480px) ─── */
+@media (max-width: 480px) {
+  /* Hero headline */
+  .tru-hero-headline {
+    font-size: 32px !important;
+    line-height: 1.08;
+    margin-bottom: 12px;
+  }
+
+  .tru-hero-logo {
+    height: 56px;
+  }
+
+  .tru-hero-premium-label {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+  }
+
+  .tru-hero-bullets li {
+    font-size: 13px;
+    line-height: 1.45;
+    padding-left: 16px;
+  }
+
+  .tru-hero-trust-strip {
+    font-size: 8px;
+    gap: 8px;
+  }
+
+  /* Hero split layout - tighter on small screens */
+  .tru-hero.tru-hero-split {
+    padding: 110px 16px 60px !important;
+    gap: 24px !important;
+  }
+
+  /* Form inside hero */
+  .tru-hero-right-column .rounded-2xl {
+    border-radius: 16px;
+  }
+
+  .tru-hero-right-column .p-5 {
+    padding: 14px !important;
+  }
+
+  .tru-hero-right-column .bg-foreground.px-6 {
+    padding-left: 14px;
+    padding-right: 14px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+
+  .tru-hero-right-column .bg-foreground h2 {
+    font-size: 15px !important;
+  }
+
+  /* Section headings globally */
+  h2.text-4xl,
+  h2.text-3xl {
+    font-size: 26px !important;
+  }
+
+  h2.text-5xl,
+  h2.text-6xl {
+    font-size: 30px !important;
+  }
+
+  /* AI Scan section */
+  .tru-ai-live-scanner img {
+    max-height: 200px;
+    object-fit: cover;
+  }
+
+  .tru-ai-live-inventory {
+    font-size: 12px;
+  }
+
+  /* Footer */
+  .footer-inner {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 12px;
+    padding: 20px 16px 90px;
+  }
+
+  .footer-brand {
+    align-items: center;
+  }
+
+  .footer-nav {
+    justify-content: center;
+  }
+
+  .footer-tagline {
+    font-size: 12px;
+    text-align: center;
+  }
+
+  /* Floating Trudy widget - avoid overlap with sticky CTAs */
+  .fixed.bottom-5.right-5 {
+    bottom: 80px !important;
+    right: 12px !important;
+  }
+
+  /* Cards and sections */
+  .ring-1.ring-border.rounded-2xl {
+    border-radius: 14px;
+  }
+
+  /* Carrier vetting section cards */
+  .tru-card-frame {
+    border-radius: 12px;
+  }
+
+  /* Testimonial cards */
+  .w-\\[280px\\] {
+    width: 250px !important;
+  }
+
+  /* Unified dock - smaller on phone */
+  .unified-dock-nav {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 4px;
+  }
+
+  .unified-dock-nav-label {
+    font-size: 8px;
+  }
+
+  .unified-dock-nav-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* ─── All mobile (≤768px) ─── */
+@media (max-width: 768px) {
+  /* Global section padding reduction */
+  .py-14 { padding-top: 2.5rem; padding-bottom: 2.5rem; }
+  .py-20 { padding-top: 3rem; padding-bottom: 3rem; }
+  .md\\:py-20 { padding-top: 3rem; padding-bottom: 3rem; }
+
+  /* Global heading sizes - ensure readability without overwhelming */
+  .text-6xl { font-size: 2rem !important; }
+  .lg\\:text-6xl { font-size: 2rem !important; }
+  .md\\:text-5xl { font-size: 1.75rem !important; }
+  
+  /* Hero */
+  .tru-hero-headline {
+    font-size: 36px !important;
+  }
+
+  .tru-hero.tru-hero-split {
+    padding: 120px 20px 70px !important;
+  }
+
+  /* Header mobile menu - full-screen overlay for better UX */
+  .header-mobile-menu {
+    padding: 16px 20px 24px;
+  }
+
+  .header-mobile-link {
+    padding: 14px 16px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  /* Header logo smaller on mobile */
+  .header-logo-glow {
+    height: 40px;
+    max-height: 40px;
+  }
+
+  /* Floating header spacing */
+  .header-main.header-floating {
+    margin: 6px 12px 0;
+  }
+
+  /* Section paragraph text */
+  .text-base.md\\:text-lg {
+    font-size: 14px !important;
+    line-height: 1.6;
+  }
+
+  /* Grid sections - force single column */
+  .grid.lg\\:grid-cols-3 {
+    grid-template-columns: 1fr !important;
+    gap: 20px;
+  }
+
+  /* AI scan section layout */
+  .grid.grid-cols-1.lg\\:grid-cols-3 {
+    gap: 24px;
+  }
+
+  /* Carrier vetting cards - stack chips better */
+  .flex.items-center.gap-1\\.5.ml-3.flex-wrap {
+    gap: 4px;
+  }
+
+  /* Contact section stacking */
+  .flex.flex-col.md\\:flex-row {
+    gap: 16px;
+  }
+
+  /* Touch targets - ensure minimum 44px */
+  button, a, [role="button"] {
+    min-height: 40px;
+  }
+  
+  /* Exception for inline text links and tiny indicators */
+  .text-\\[9px\\],
+  .text-\\[10px\\],
+  .text-\\[11px\\],
+  span.inline-flex {
+    min-height: auto;
+  }
+
+  /* Footer */
+  .footer-inner {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 12px;
+  }
+
+  .footer-brand {
+    align-items: center;
+  }
+
+  .footer-nav {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  /* Analyzing overlay - tighter on mobile */
+  .tru-analyze-strip {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .tru-analyze-popup-modal {
+    max-width: calc(100vw - 32px);
+    margin: 0 16px;
+  }
+
+  /* Move summary modal - responsive */
+  .tru-move-summary-modal {
+    max-width: calc(100vw - 32px);
+  }
+}
+
+/* ─── Tablet (481-1023px) ─── */
+@media (min-width: 481px) and (max-width: 1023px) {
+  .tru-hero-headline {
+    font-size: 42px !important;
+  }
+
+  .tru-hero.tru-hero-split {
+    padding: 130px 32px 80px !important;
+  }
+
+  /* Two column grids on tablet */
+  .grid.lg\\:grid-cols-3 {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .grid.lg\\:grid-cols-4 {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+/* ─── Landscape phones ─── */
+@media (max-height: 500px) and (orientation: landscape) {
+  .tru-hero.tru-hero-split {
+    padding-top: 80px !important;
+    padding-bottom: 40px !important;
+  }
+
+  .tru-hero-headline {
+    font-size: 28px !important;
+  }
+
+  .tru-hero-logo {
+    height: 48px;
+  }
+}
+
+/* ─── Safe area insets for notched phones ─── */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .footer-inner {
+    padding-bottom: calc(80px + env(safe-area-inset-bottom));
+  }
+
+  @media (min-width: 768px) {
+    .footer-inner {
+      padding-bottom: calc(24px + env(safe-area-inset-bottom));
+    }
+  }
+
+  /* Sticky mobile CTA */
+  .fixed.bottom-0.left-0.right-0.z-40 > div {
+    padding-bottom: calc(12px + env(safe-area-inset-bottom));
+  }
+}
