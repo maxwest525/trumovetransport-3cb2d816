@@ -22947,7 +22947,7 @@
 .tru-vetting-float-title {
   font-size: 12px;
   font-weight: 700;
-  color: hsl(var(--tm-ink));
+  color: hsl(var(--foreground));
 }
 
 .tru-vetting-float-meta {
