@@ -6,8 +6,8 @@ import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 // Aerial view cache removed - inline no-op stubs
-const getCachedAerialView = (_key: string): any => null;
-const setCachedAerialView = (_key: string, _data: any): void => {};
+const getCachedAerialView = (..._args: any[]): any => null;
+const setCachedAerialView = (..._args: any[]): void => {};
 
 interface AerialViewData {
   type: "video" | "processing" | "not_found" | "fallback" | "error";
