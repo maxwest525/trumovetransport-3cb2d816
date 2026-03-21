@@ -35375,22 +35375,6 @@ gmp-map-3d-element .gmnoprint {
     padding: 40px 16px !important;
   }
 
-  .tru-ai-headline-block,
-  .tru-ai-subheadline,
-  .tru-ai-main-headline {
-    text-align: center !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-  }
-
-  .tru-ai-main-headline {
-    font-size: clamp(2rem, 8vw, 2.6rem) !important;
-    line-height: 1.05 !important;
-  }
-
-  .tru-ai-subheadline {
-    max-width: 32rem !important;
-  }
 
   .tru-trust-compact,
   .tru-steps-compact {
