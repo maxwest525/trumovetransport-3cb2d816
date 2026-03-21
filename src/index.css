@@ -4632,15 +4632,17 @@
 
 /* Online Estimate / Build Your Move page card frames */
 .tru-estimate-card-frame {
-  border: 0.5px solid hsl(var(--tm-ink) / 0.07) !important;
+  border: 0.5px solid hsl(var(--border)) !important;
   border-radius: 16px;
+  background: hsl(var(--card));
   box-shadow: 
-    0 4px 16px hsl(var(--tm-ink) / 0.12),
-    0 8px 32px hsl(var(--tm-ink) / 0.08) !important;
+    0 4px 16px hsl(var(--foreground) / 0.06),
+    0 8px 32px hsl(var(--foreground) / 0.04) !important;
 }
 
 .dark .tru-estimate-card-frame {
-  border-color: hsl(0 0% 100% / 0.15) !important;
+  border-color: hsl(var(--border)) !important;
+  background: hsl(var(--card));
   box-shadow: 
     0 4px 16px hsl(0 0% 0% / 0.3),
     0 8px 32px hsl(0 0% 0% / 0.2) !important;
