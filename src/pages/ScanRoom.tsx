@@ -392,19 +392,49 @@ export default function ScanRoom() {
   return (
     <SiteShell hideTrustStrip>
       <div className="tru-scan-page">
-        
 
-        {/* Centered Header Section */}
-        <section className="tru-scan-header-section">
-          <div className="container max-w-4xl mx-auto px-4 text-center">
-            <h1 className="tru-scan-main-headline">
-              AI Room <span className="tru-scan-headline-accent">Inventory Scan</span>
-            </h1>
-            <p className="tru-scan-main-subheadline">
-              Simply scan your rooms and our AI will identify, measure, and catalog every item automatically.
-            </p>
+        {/* Hero */}
+        <section className="py-10 md:py-14 relative overflow-hidden">
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full bg-primary/[0.06] blur-[120px]" />
+            <div className="absolute bottom-0 left-0 w-[500px] h-[500px] rounded-full bg-primary/[0.04] blur-[100px]" />
+            <div className="absolute inset-0 opacity-[0.035]" style={{ backgroundImage: 'radial-gradient(circle, hsl(var(--foreground)) 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
           </div>
-          <EstimatorNavToggle />
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div className="text-center mb-6">
+              <p className="text-[11px] uppercase tracking-[0.3em] text-primary font-semibold mb-3">AI-Powered</p>
+              <div className="flex items-center justify-center gap-2 mb-4">
+                <span className="h-px w-8 bg-primary/40" />
+                <span className="w-1.5 h-1.5 rounded-full bg-primary/60" />
+                <span className="h-px w-8 bg-primary/40" />
+              </div>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground tracking-tight leading-[1.1]">
+                AI Room <span className="text-primary">Scan</span>
+              </h1>
+              <p className="text-muted-foreground max-w-xl mx-auto text-base md:text-lg font-light leading-relaxed mt-4">
+                Simply scan your rooms and our AI will identify, measure, and catalog every item automatically.
+              </p>
+            </div>
+
+            <EstimatorNavToggle />
+
+            {/* Trust strip */}
+            <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6 mt-6">
+              {[
+                { icon: Camera, label: "Photo & Video Upload" },
+                { icon: Sparkles, label: "AI Detection" },
+                { icon: Layers, label: "Auto Inventory" },
+                { icon: Shield, label: "Instant Quote" },
+              ].map((item) => (
+                <div key={item.label} className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+                  <item.icon className="w-3.5 h-3.5 text-primary" />
+                  <span className="font-medium">{item.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
         </section>
 
         {/* Scan Intro Modal */}
@@ -413,30 +443,6 @@ export default function ScanRoom() {
           onClose={() => setShowIntroModal(false)}
           onStartScan={startDemo}
         />
-
-        {/* How It Works - Compact Inline Steps with scroll animation */}
-        <section className="container max-w-4xl mx-auto px-4 py-2">
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-0">
-            {[
-              { num: "1", title: "Upload Photos or Videos", desc: "Capture each room showing all furniture and items" },
-              { num: "2", title: "AI Detects & Measures", desc: "Our AI identifies items and calculates weight & volume" },
-              { num: "3", title: "Review & Get Quote", desc: "Verify your inventory and receive an instant estimate" },
-            ].map((step, i) => (
-              <ScrollFadeIn key={step.num} delay={i * 0.15}>
-                <div className="flex items-center gap-3 px-5 py-3">
-                  <span className="w-8 h-8 rounded-full bg-foreground text-background flex items-center justify-center text-xs font-bold flex-shrink-0">
-                    {step.num}
-                  </span>
-                  <div className="flex flex-col">
-                    <span className="text-sm font-semibold text-foreground leading-tight">{step.title}</span>
-                    <span className="text-xs text-muted-foreground/60 leading-tight">{step.desc}</span>
-                  </div>
-                  {i < 2 && <span className="hidden sm:block text-muted-foreground/30 ml-4 mr-1">→</span>}
-                </div>
-              </ScrollFadeIn>
-            ))}
-          </div>
-        </section>
 
         {/* Room Inventory Analysis Section */}
         <section className="tru-scan-split-demo">
