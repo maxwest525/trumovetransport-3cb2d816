@@ -1179,7 +1179,35 @@ export default function Index() {
                           </div>
                         </div>
 
-                        <div>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="relative">
+                            <Home className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary" />
+                            <input
+                            type="text"
+                            value={fromZip}
+                            onChange={(e) => {
+                              const val = e.target.value.replace(/\D/g, '').slice(0, 5);
+                              setFromZip(val);
+                              if (val.length === 5) lookupZip(val).then(c => { if (c) setFromCity(c); });
+                            }}
+                            placeholder="Current City / ZIP"
+                            className="w-full rounded-lg border border-border bg-background pl-9 pr-3 py-2.5 text-sm text-foreground text-center placeholder:text-muted-foreground placeholder:text-center focus:outline-none focus:ring-1 focus:ring-primary" />
+                          </div>
+                          <div className="relative">
+                            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary" />
+                            <input
+                            type="text"
+                            value={toZip}
+                            onChange={(e) => {
+                              const val = e.target.value.replace(/\D/g, '').slice(0, 5);
+                              setToZip(val);
+                              if (val.length === 5) lookupZip(val).then(c => { if (c) setToCity(c); });
+                            }}
+                            placeholder="Moving to City / ZIP"
+                            className="w-full rounded-lg border border-border bg-background pl-9 pr-3 py-2.5 text-sm text-foreground text-center placeholder:text-muted-foreground placeholder:text-center focus:outline-none focus:ring-1 focus:ring-primary" />
+                          </div>
+                        </div>
+
                           <Popover>
                             <PopoverTrigger asChild>
                               <button
