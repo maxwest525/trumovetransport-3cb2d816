@@ -1160,13 +1160,13 @@ export default function Index() {
 
                         <div className="grid grid-cols-2 gap-3">
                           <div>
-                            <label className="text-xs font-medium text-muted-foreground mb-1 block">Phone</label>
+                            <label className="text-xs font-medium text-muted-foreground mb-1 block text-center">Phone</label>
                             <input
                             type="tel"
                             value={contactPhone}
                             onChange={(e) => setContactPhone(formatPhoneNumber(e.target.value))}
-                            placeholder="(555) 555-5555"
-                            className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
+                            placeholder="Phone"
+                            className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground text-center placeholder:text-muted-foreground placeholder:text-center focus:outline-none focus:ring-1 focus:ring-primary" />
                           </div>
                           <div>
                             <label className="text-xs font-medium text-muted-foreground mb-1 block">Email</label>
