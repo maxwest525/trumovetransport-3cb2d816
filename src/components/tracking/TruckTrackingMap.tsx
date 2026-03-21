@@ -3,7 +3,7 @@ import { MapContainer, TileLayer, Polyline, Marker, useMap } from "react-leaflet
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { TILE_LAYERS, US_CENTER, US_ZOOM } from "@/lib/leafletConfig";
-import { MAPBOX_TOKEN } from "@/lib/mapboxToken";
+// Using OSRM for free routing
 import { Loader2, Navigation, Box } from "lucide-react";
 import { TruckLocationPopup } from "./TruckLocationPopup";
 import { TrafficLegend } from "./TrafficLegend";
