@@ -22740,13 +22740,13 @@
   align-items: center;
   gap: 6px;
   padding: 8px 14px;
-  background: white;
-  border: 1px solid hsl(var(--tm-ink) / 0.08);
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
   border-radius: 100px;
   font-size: 12px;
   font-weight: 600;
-  color: hsl(var(--tm-ink));
-  box-shadow: 0 2px 8px hsl(var(--tm-ink) / 0.04);
+  color: hsl(var(--foreground));
+  box-shadow: 0 2px 8px hsl(var(--foreground) / 0.04);
 }
 
 .tru-vetting-pill svg {
