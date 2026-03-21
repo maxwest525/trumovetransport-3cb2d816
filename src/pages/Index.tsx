@@ -1701,25 +1701,26 @@ export default function Index() {
 
                   {/* Toggle: Talk to Trudy / Send a Message */}
                   <div className="flex-1 flex flex-col">
-                    {/* Pill toggle */}
-                    <div className="flex items-center justify-center gap-1 p-1 rounded-lg bg-muted mb-4">
+                    {/* Split toggle */}
+                    <div className="flex items-stretch rounded-lg border border-border overflow-hidden mb-4">
                       <button
                         onClick={() => setContactMode("trudy")}
-                        className={`flex items-center gap-1.5 px-4 py-1.5 rounded-md text-xs font-medium transition-all ${
+                        className={`flex-1 flex items-center justify-center gap-1.5 px-4 py-2 text-xs font-semibold transition-all ${
                           contactMode === "trudy"
-                            ? "bg-background text-foreground shadow-sm"
-                            : "text-muted-foreground hover:text-foreground"
+                            ? "bg-foreground text-background"
+                            : "bg-background text-muted-foreground hover:text-foreground hover:bg-muted"
                         }`}
                       >
                         <Sparkles className="w-3 h-3" />
                         Talk to Trudy
                       </button>
+                      <div className="w-px bg-border" />
                       <button
                         onClick={() => setContactMode("form")}
-                        className={`flex items-center gap-1.5 px-4 py-1.5 rounded-md text-xs font-medium transition-all ${
+                        className={`flex-1 flex items-center justify-center gap-1.5 px-4 py-2 text-xs font-semibold transition-all ${
                           contactMode === "form"
-                            ? "bg-background text-foreground shadow-sm"
-                            : "text-muted-foreground hover:text-foreground"
+                            ? "bg-foreground text-background"
+                            : "bg-background text-muted-foreground hover:text-foreground hover:bg-muted"
                         }`}
                       >
                         <MessageSquare className="w-3 h-3" />
