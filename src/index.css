@@ -20647,8 +20647,8 @@
   gap: 6px;
   margin-left: 12px;
   padding: 8px 16px;
-  background: hsl(var(--tm-ink));
-  color: white;
+  background: hsl(var(--foreground));
+  color: hsl(var(--background));
   font-size: 13px;
   font-weight: 600;
   border-radius: 100px;
@@ -20658,7 +20658,7 @@
 
 .tru-scan-floating-bar-btn:hover {
   transform: scale(1.03);
-  box-shadow: 0 4px 12px hsl(var(--tm-ink) / 0.15);
+  box-shadow: 0 4px 12px hsl(var(--foreground) / 0.15);
 }
 
 /* Detection Pills - Matching reference design */
