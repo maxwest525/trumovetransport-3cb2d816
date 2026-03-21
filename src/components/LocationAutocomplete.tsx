@@ -57,7 +57,6 @@ function generateSessionToken(): string {
 
 // Session tokens for APIs - persists for the component lifecycle
 let mapboxSessionToken = generateSessionToken();
-let googleSessionToken = generateSessionToken();
 
 // Normalize address for comparison (remove punctuation, extra spaces, lowercase)
 function normalizeAddress(addr: string): string {
