@@ -751,8 +751,8 @@
 }
 
 .tru-scan-upload-dropzone:hover {
-  border-color: hsl(var(--tm-ink) / 0.4);
-  background: hsl(var(--tm-ink) / 0.03);
+  border-color: hsl(var(--primary) / 0.4);
+  background: hsl(var(--primary) / 0.03);
 }
 
 .tru-scan-upload-icon {
@@ -19835,7 +19835,7 @@
 
 .tru-scan-page {
   min-height: 100vh;
-  background: linear-gradient(180deg, hsl(var(--background)) 0%, hsl(220 20% 97%) 100%);
+  background: hsl(var(--background));
 }
 
 /* =============================================
@@ -19850,14 +19850,14 @@
   font-weight: 800;
   line-height: 1.1;
   letter-spacing: -0.02em;
-  color: hsl(var(--tm-ink));
+  color: hsl(var(--foreground));
   margin-bottom: 12px;
 }
 
 .tru-scan-main-subheadline {
   font-size: 15px;
   line-height: 1.6;
-  color: hsl(var(--tm-ink) / 0.6);
+  color: hsl(var(--muted-foreground));
   max-width: 600px;
   margin: 0 auto 28px;
 }
@@ -20611,7 +20611,7 @@
   background: hsl(var(--card));
   border: 1px solid hsl(var(--border));
   border-radius: 100px;
-  box-shadow: 0 4px 16px hsl(var(--tm-ink) / 0.08);
+  box-shadow: 0 4px 16px hsl(var(--foreground) / 0.08);
   width: fit-content;
   margin-left: auto;
   margin-right: auto;
@@ -20647,8 +20647,8 @@
   gap: 6px;
   margin-left: 12px;
   padding: 8px 16px;
-  background: hsl(var(--tm-ink));
-  color: white;
+  background: hsl(var(--foreground));
+  color: hsl(var(--background));
   font-size: 13px;
   font-weight: 600;
   border-radius: 100px;
@@ -20658,7 +20658,7 @@
 
 .tru-scan-floating-bar-btn:hover {
   transform: scale(1.03);
-  box-shadow: 0 4px 12px hsl(var(--tm-ink) / 0.15);
+  box-shadow: 0 4px 12px hsl(var(--foreground) / 0.15);
 }
 
 /* Detection Pills - Matching reference design */
@@ -21211,23 +21211,24 @@
 
 .tru-scan-table-panel {
   margin-top: 32px;
-  background: white;
+  background: hsl(var(--card));
   border-radius: 16px;
-  border: 1px solid hsl(var(--tm-ink) / 0.08);
-  box-shadow: 0 4px 24px hsl(var(--tm-ink) / 0.06);
+  border: 1px solid hsl(var(--border));
+  box-shadow: 0 4px 24px hsl(var(--foreground) / 0.06);
   overflow: hidden;
 }
 
 .tru-scan-table-header {
   padding: 16px 24px;
-  border-bottom: 1px solid hsl(var(--tm-ink) / 0.06);
+  border-bottom: 1px solid hsl(var(--border));
   text-align: center;
+  background: hsl(var(--foreground));
 }
 
 .tru-scan-table-header h3 {
   font-size: 18px;
   font-weight: 800;
-  color: hsl(var(--tm-ink));
+  color: hsl(var(--background));
   margin: 0;
 }
 
@@ -21239,7 +21240,7 @@
   gap: 12px;
   padding: 48px 24px;
   text-align: center;
-  color: hsl(var(--tm-ink) / 0.4);
+  color: hsl(var(--muted-foreground));
 }
 
 .tru-scan-table-empty svg {
@@ -21249,7 +21250,7 @@
 .tru-scan-table-empty p {
   font-size: 14px;
   font-weight: 600;
-  color: hsl(var(--tm-ink) / 0.6);
+  color: hsl(var(--muted-foreground));
   margin: 0;
 }
 
@@ -21272,9 +21273,9 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: hsl(var(--tm-ink) / 0.5);
+  color: hsl(var(--muted-foreground));
   text-align: left;
-  border-bottom: 1px solid hsl(var(--tm-ink) / 0.08);
+  border-bottom: 1px solid hsl(var(--border));
   white-space: nowrap;
 }
 
@@ -21284,23 +21285,23 @@
 }
 
 .tru-scan-table tbody tr:nth-child(even) {
-  background: hsl(var(--tm-ink) / 0.015);
+  background: hsl(var(--muted) / 0.3);
 }
 
 .tru-scan-table tbody tr:hover {
-  background: hsl(var(--primary) / 0.03);
+  background: hsl(var(--primary) / 0.05);
 }
 
 .tru-scan-table tbody td {
   padding: 12px 16px;
   font-size: 13px;
-  color: hsl(var(--tm-ink) / 0.7);
-  border-bottom: 1px solid hsl(var(--tm-ink) / 0.04);
+  color: hsl(var(--muted-foreground));
+  border-bottom: 1px solid hsl(var(--border) / 0.5);
   vertical-align: middle;
 }
 
 .tru-scan-table-order {
-  color: hsl(var(--tm-ink) / 0.4) !important;
+  color: hsl(var(--muted-foreground)) !important;
   font-weight: 500;
 }
 
@@ -21309,7 +21310,7 @@
   align-items: center;
   gap: 12px;
   font-weight: 600;
-  color: hsl(var(--tm-ink)) !important;
+  color: hsl(var(--foreground)) !important;
 }
 
 .tru-scan-table-item img {
@@ -21317,30 +21318,30 @@
   height: 36px;
   object-fit: contain;
   border-radius: 6px;
-  background: white;
+  background: hsl(var(--muted));
 }
 
 .tru-scan-table-total {
   font-weight: 700;
-  color: hsl(var(--tm-ink)) !important;
+  color: hsl(var(--foreground)) !important;
 }
 
 .tru-scan-table tfoot td {
   padding: 14px 16px;
   font-size: 13px;
-  border-top: 1px solid hsl(var(--tm-ink) / 0.08);
-  background: hsl(var(--tm-ink) / 0.02);
+  border-top: 1px solid hsl(var(--border));
+  background: hsl(var(--muted) / 0.5);
 }
 
 .tru-scan-table-footer-label {
   text-align: right;
   font-weight: 600;
-  color: hsl(var(--tm-ink) / 0.5);
+  color: hsl(var(--muted-foreground));
 }
 
 .tru-scan-table-footer-value {
   font-weight: 700;
-  color: hsl(var(--tm-ink));
+  color: hsl(var(--foreground));
 }
 
 .tru-scan-table-actions {
@@ -21349,7 +21350,7 @@
   flex-wrap: wrap;
   gap: 12px;
   padding: 16px 24px;
-  border-top: 1px solid hsl(var(--tm-ink) / 0.06);
+  border-top: 1px solid hsl(var(--border));
 }
 
 .tru-scan-action-btn {
@@ -21429,14 +21430,14 @@
   gap: 8px;
   padding: 8px 16px;
   width: fit-content;
-  background: hsl(var(--tm-ink));
-  border: 1px solid hsl(var(--tm-ink));
+  background: hsl(var(--foreground));
+  border: 1px solid hsl(var(--foreground));
   border-radius: 100px;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: hsl(0 0% 100%);
+  color: hsl(var(--background));
 }
 
 .tru-scan-badge svg {
@@ -21448,20 +21449,20 @@
   font-weight: 800;
   line-height: 1.05;
   letter-spacing: -0.03em;
-  color: hsl(var(--tm-ink));
+  color: hsl(var(--foreground));
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
 .tru-scan-headline-accent {
-  color: hsl(var(--foreground));
+  color: hsl(var(--primary));
 }
 
 .tru-scan-subheadline {
   font-size: 16px;
   line-height: 1.65;
-  color: hsl(var(--tm-ink) / 0.65);
+  color: hsl(var(--muted-foreground));
   max-width: 460px;
 }
 
@@ -22590,7 +22591,7 @@
 
 .tru-scan-bottom-text {
   font-size: 13px;
-  color: hsl(var(--tm-ink) / 0.5);
+  color: hsl(var(--muted-foreground));
   margin-bottom: 16px;
 }
 
@@ -22599,21 +22600,21 @@
   align-items: center;
   gap: 10px;
   padding: 14px 24px;
-  background: white;
-  color: hsl(var(--tm-ink));
+  background: hsl(var(--card));
+  color: hsl(var(--foreground));
   font-size: 14px;
   font-weight: 600;
   border-radius: 14px;
-  border: 1.5px solid hsl(var(--tm-ink) / 0.12);
+  border: 1.5px solid hsl(var(--border));
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 2px 12px hsl(var(--tm-ink) / 0.06);
+  box-shadow: 0 2px 12px hsl(var(--foreground) / 0.06);
 }
 
 .tru-scan-alt-btn:hover {
   border-color: hsl(var(--primary) / 0.4);
   background: hsl(var(--primary) / 0.04);
-  box-shadow: 0 4px 20px hsl(var(--tm-ink) / 0.08);
+  box-shadow: 0 4px 20px hsl(var(--foreground) / 0.08);
 }
 
 .tru-scan-alt-btn svg:first-child {
