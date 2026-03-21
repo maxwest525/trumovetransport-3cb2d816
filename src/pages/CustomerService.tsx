@@ -302,14 +302,6 @@ export default function CustomerService() {
                   ))}
                 </div>
 
-                {/* Feature pills */}
-                <div className="flex flex-wrap justify-center lg:justify-start gap-2 pt-1">
-                  {['Instant Quotes', 'Live Tracking', 'Smart Scheduling', 'Carrier Vetting'].map((f) => (
-                    <span key={f} className="inline-flex items-center rounded-full border border-border/60 bg-muted/40 px-3 py-1 text-[11px] font-medium text-muted-foreground">
-                      {f}
-                    </span>
-                  ))}
-                </div>
               </div>
 
               {/* Right - chat box */}
