@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/tooltip";
 import { MAPTILER_KEY } from '@/lib/maptilerConfig';
 import { toast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+
 
 // Retry configuration
 const MAX_RETRIES = 2;
