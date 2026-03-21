@@ -8,7 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { MapPin, Navigation, Truck, Search, Loader2, Globe, Eye, ArrowRight, Play, Sparkles } from "lucide-react";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import { cn } from "@/lib/utils";
-import { MAPBOX_TOKEN } from "@/lib/mapboxToken";
+import { MAPTILER_KEY } from "@/lib/maptilerConfig";
 
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "AIzaSyD8aMj_HlkLUWuYbZRU7I6oFGTavx2zKOc";
 
