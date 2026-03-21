@@ -20,7 +20,6 @@ if (!document.querySelector('script[src*="model-viewer"]')) {
 export default function AutoTransport() {
   const quoteRef = useRef<HTMLDivElement>(null);
   const quoteRevealRef = useRef<HTMLDivElement>(null);
-  const contactRef = useRef<HTMLDivElement>(null);
   const [showMobileCTA, setShowMobileCTA] = useState(false);
 
   useEffect(() => {
