@@ -20611,7 +20611,7 @@
   background: hsl(var(--card));
   border: 1px solid hsl(var(--border));
   border-radius: 100px;
-  box-shadow: 0 4px 16px hsl(var(--tm-ink) / 0.08);
+  box-shadow: 0 4px 16px hsl(var(--foreground) / 0.08);
   width: fit-content;
   margin-left: auto;
   margin-right: auto;
