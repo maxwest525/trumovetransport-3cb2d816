@@ -1084,6 +1084,11 @@ export default function Index() {
             <div className="tru-hero-left-column">
               <img src={logoImg} alt="TruMove" className="tru-hero-logo" />
               <p className="tru-hero-premium-label">Premium Moving Brokerage</p>
+              <div className="flex items-center gap-2">
+                <span className="h-px w-8 bg-white/20" />
+                <span className="w-1.5 h-1.5 rounded-full bg-primary/60" />
+                <span className="h-px w-8 bg-white/20" />
+              </div>
               <h1 className="tru-hero-headline">
                 The Smarter Way To <span className="tru-hero-accent">Move</span>
               </h1>
