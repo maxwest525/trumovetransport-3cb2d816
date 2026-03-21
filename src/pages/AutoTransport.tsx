@@ -52,6 +52,10 @@ export default function AutoTransport() {
     quoteRevealRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const scrollToContact = () => {
+    contactRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
     <SiteShell hideTrustStrip>
       {/* How It Works */}
