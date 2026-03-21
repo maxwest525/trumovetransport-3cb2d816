@@ -19,7 +19,7 @@ export default function Book() {
     <SiteShell hideTrustStrip>
       {/* Hero */}
       <ScrollFadeIn>
-        <section className="py-10 md:py-14 relative overflow-hidden">
+        <section className="py-6 md:py-8 relative overflow-hidden">
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full bg-primary/[0.06] blur-[120px]" />
             <div className="absolute bottom-0 left-0 w-[500px] h-[500px] rounded-full bg-primary/[0.04] blur-[100px]" />
@@ -59,7 +59,7 @@ export default function Book() {
 
       {/* Cal.com Embed */}
       <ScrollFadeIn delay={0.1}>
-        <section className="py-6 md:py-10 relative overflow-hidden">
+        <section className="py-2 md:py-4 relative overflow-hidden">
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] rounded-full bg-primary/[0.05] blur-[100px]" />
           </div>
