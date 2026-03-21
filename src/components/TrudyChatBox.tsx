@@ -213,6 +213,8 @@ export default function TrudyChatBox() {
       }]);
     } finally {
       setIsTyping(false);
+      // Re-focus input so user can keep typing without clicking back in
+      setTimeout(() => inputRef.current?.focus(), 50);
     }
   }, [conversationHistory, isTyping]);
 
