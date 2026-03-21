@@ -1704,8 +1704,7 @@ export default function Index() {
 
         </div>
       </div>
-
-
+                  </div>
 
       {/* Lead Capture Modal */}
       <LeadCaptureModal
