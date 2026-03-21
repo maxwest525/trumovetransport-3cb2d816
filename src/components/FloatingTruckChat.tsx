@@ -339,18 +339,6 @@ export default function FloatingTruckChat() {
         )}
       </div>
 
-      {/* Quick action links below pill when idle */}
-      {!isConnected && !isConnecting && (
-        <div className="flex items-center gap-1.5">
-          <button
-            onClick={() => navigate('/customer-service')}
-            className="flex items-center gap-1.5 rounded-lg border border-border/40 bg-card/80 backdrop-blur-sm shadow-sm px-3 py-1.5 hover:bg-accent transition-all text-[11px] font-medium text-muted-foreground hover:text-foreground"
-          >
-            <MessageCircle className="h-3 w-3" />
-            Chat
-          </button>
-        </div>
-      )}
     </div>
   );
 }
