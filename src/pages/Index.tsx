@@ -1180,12 +1180,12 @@ export default function Index() {
                         </div>
 
                         <div>
-                          <label className="text-xs font-medium text-muted-foreground mb-1 block">Move Date</label>
+                          <label className="text-xs font-medium text-muted-foreground mb-1 block text-center">Move Date</label>
                           <Popover>
                             <PopoverTrigger asChild>
                               <button
                               type="button"
-                              className="w-full flex items-center gap-2 rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground hover:border-primary/40 transition-colors">
+                              className="w-full flex items-center justify-center gap-2 rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground hover:border-primary/40 transition-colors">
                                 <Calendar className="w-4 h-4 shrink-0 text-primary" />
                                 <span className={moveDate ? '' : 'text-muted-foreground'}>
                                   {moveDate ? format(moveDate, 'MMM d, yyyy') : 'Select a date'}
