@@ -509,9 +509,9 @@ export default function LocationAutocomplete({
         });
         setSuggestions(filtered);
       } else {
-        // Fallback to Mapbox
-        console.log('Using Mapbox fallback for address suggestions');
-        const { suggestions: mapboxSuggestions, failed: mapboxFailed } = await searchMapboxAddresses(query);
+        // Fallback to MapTiler
+        console.log('Using MapTiler fallback for address suggestions');
+        const { suggestions: mapboxSuggestions, failed: mapboxFailed } = await searchMapTilerAddresses(query);
         
         if (mapboxFailed) {
           setSuggestions([]);
