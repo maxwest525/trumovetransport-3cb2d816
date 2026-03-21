@@ -1017,9 +1017,8 @@ export default function Index() {
         // Fetch route geometry for the third map
         if (resolvedFromCoords && resolvedToCoords) {
           try {
-            const token = 'pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g';
             const res = await fetch(
-              `https://api.mapbox.com/directions/v5/mapbox/driving/${resolvedFromCoords[0]},${resolvedFromCoords[1]};${resolvedToCoords[0]},${resolvedToCoords[1]}?geometries=polyline&overview=full&access_token=${token}`
+              `https://router.project-osrm.org/route/v1/driving/${resolvedFromCoords[0]},${resolvedFromCoords[1]};${resolvedToCoords[0]},${resolvedToCoords[1]}?geometries=polyline&overview=full`
             );
             if (res.ok) {
               const data = await res.json();

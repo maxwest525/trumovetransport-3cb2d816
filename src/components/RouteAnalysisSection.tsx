@@ -72,7 +72,7 @@ export default function RouteAnalysisSection({
             <div className="tru-route-location-thumb">
               {toCoords ? (
                 <img 
-                  src={`https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${toCoords[0]},${toCoords[1]},14,0/100x100@2x?access_token=pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g`}
+                  src={`https://api.maptiler.com/maps/satellite/static/${toCoords[0]},${toCoords[1]},14/100x100@2x.jpg?key=X6zFH8Vcg9bMuUCrXFWU`}
                   alt="Destination"
                   className="tru-route-location-map"
                 />
