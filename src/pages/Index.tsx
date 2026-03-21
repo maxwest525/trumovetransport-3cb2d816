@@ -1266,7 +1266,7 @@ export default function Index() {
                         <p className="text-center text-[9px] leading-tight text-muted-foreground/70 max-w-xs mx-auto">By clicking above, you consent to receive calls, texts, and emails at the number/email provided, including via automated technology. Consent is not a condition of purchase. Msg & data rates may apply.</p>
                       </div>
                     }
-
+                  </div>
 
                   {/* Footer trust strip */}
                   <div className="border-t border-border px-4 py-2.5 flex items-center justify-center gap-3 text-[9px] uppercase tracking-[0.15em] text-muted-foreground">
