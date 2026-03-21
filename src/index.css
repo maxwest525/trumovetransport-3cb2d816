@@ -23246,17 +23246,17 @@
   align-items: center;
   gap: 16px;
   padding: 10px 20px;
-  background: hsl(var(--tm-ink) / 0.85);
+  background: hsl(var(--foreground) / 0.85);
   backdrop-filter: blur(12px);
   border-radius: 100px;
-  border: 1px solid hsl(0 0% 100% / 0.1);
+  border: 1px solid hsl(var(--background) / 0.1);
 }
 
 .tru-vetting-stat {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: white;
+  color: hsl(var(--background));
   font-size: 12px;
   font-weight: 600;
 }
@@ -23268,7 +23268,7 @@
 .tru-vetting-stat-divider {
   width: 1px;
   height: 16px;
-  background: hsl(0 0% 100% / 0.2);
+  background: hsl(var(--background) / 0.2);
 }
 
 /* Section Styles */
