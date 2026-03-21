@@ -80,6 +80,16 @@ function FitBounds({ bounds }: { bounds: L.LatLngBoundsExpression }) {
   return null;
 }
 
+function MapReadyHandler({ onReady }: { onReady?: () => void }) {
+  const map = useMap();
+  useEffect(() => {
+    if (map && onReady) {
+      onReady();
+    }
+  }, [map, onReady]);
+  return null;
+}
+
 const AnimatedRouteMap: React.FC<AnimatedRouteMapProps> = ({
   fromCoords,
   toCoords,
@@ -120,10 +130,10 @@ const AnimatedRouteMap: React.FC<AnimatedRouteMapProps> = ({
       scrollWheelZoom={false}
       doubleClickZoom={false}
       touchZoom={false}
-      whenReady={() => onMapReady?.()}
     >
       <TileLayer url={TILE_LAYERS.dark.url} attribution={TILE_LAYERS.dark.attribution} />
       <FitBounds bounds={bounds} />
+      <MapReadyHandler onReady={onMapReady} />
 
       {/* Background route (faint) */}
       {fullRouteLatLng.length >= 2 && (
