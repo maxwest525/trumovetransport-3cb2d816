@@ -351,17 +351,6 @@ export function TruckTrackingMap({
         </div>
       )}
 
-      <MiniRouteOverview
-        originCoords={originCoords}
-        destCoords={destCoords}
-        truckPosition={currentTruckPosition ? [currentTruckPosition[1], currentTruckPosition[0]] : null}
-        progress={progress}
-        isVisible={isTracking && internalFollowMode}
-        onExpand={() => {
-          setInternalFollowMode(false);
-          onFollowModeChange?.(false);
-        }}
-      />
     </div>
   );
 }
