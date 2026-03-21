@@ -578,13 +578,12 @@ function ShipmentTrackerSection({ navigate }: {navigate: (path: string) => void;
   };
 
   return (
-    <section className="py-10 md:py-20 relative overflow-hidden my-[5px]">
+    <section className="py-10 md:py-20 relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-0 w-[500px] h-[500px] rounded-full bg-primary/[0.05] blur-[120px]" />
         <div className="absolute bottom-0 right-0 w-[400px] h-[400px] rounded-full bg-primary/[0.04] blur-[100px]" />
         <div className="absolute inset-0 opacity-[0.025]" style={{ backgroundImage: 'radial-gradient(circle, hsl(var(--foreground)) 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
       </div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-16 w-full">
@@ -1257,13 +1256,12 @@ export default function Index() {
         </div> {/* End tru-hero-wrapper */}
 
           {/* START YOUR AI INVENTORY ANALYSIS - Enhanced with Preview */}
-           <section className="py-10 relative overflow-hidden -mt-[50px] md:py-[100px] my-[45px]">
+           <section className="py-10 md:py-20 relative overflow-hidden">
             <div className="absolute inset-0 pointer-events-none">
               <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full bg-primary/[0.06] blur-[120px]" />
               <div className="absolute bottom-0 left-0 w-[500px] h-[500px] rounded-full bg-primary/[0.04] blur-[100px]" />
               <div className="absolute inset-0 opacity-[0.025]" style={{ backgroundImage: 'radial-gradient(circle, hsl(var(--foreground)) 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
               <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
             </div>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-16 items-center" ref={scanPreviewRef}>
@@ -1323,7 +1321,6 @@ export default function Index() {
             <div className="absolute inset-0 pointer-events-none">
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] rounded-full bg-primary/[0.04] blur-[120px]" />
               <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
             </div>
             <div className="max-w-[90rem] mx-auto relative z-10">
               <div className="flex flex-col items-center text-center mb-10">
@@ -1401,7 +1398,6 @@ export default function Index() {
               <div className="absolute bottom-0 right-0 w-[600px] h-[600px] rounded-full bg-primary/[0.04] blur-[100px]" />
               <div className="absolute inset-0 opacity-[0.025]" style={{ backgroundImage: 'radial-gradient(circle, hsl(var(--foreground)) 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
               <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
             </div>
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
               {/* Two-column layout: headline left, SAFER card right */}
