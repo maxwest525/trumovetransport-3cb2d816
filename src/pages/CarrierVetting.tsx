@@ -22,13 +22,6 @@ import { useToast } from '@/hooks/use-toast';
 import { MOCK_CARRIERS, MOCK_CARRIER_GOOD, MOCK_CARRIER_BAD, MOCK_CARRIER_MIXED, type MockCarrierData } from '@/data/mockCarriers';
 import { cn } from '@/lib/utils';
 import { generateCarrierComparisonPdf } from '@/lib/carrierPdfExport';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  DropdownMenuSeparator,
-} from '@/components/ui/dropdown-menu';
 
 interface CarrierData {
   carrier: {
@@ -931,48 +924,6 @@ export default function CarrierVetting() {
           )}
         </div>
 
-        {/* Demo Dropdown - Fixed position */}
-        <div className="fixed bottom-6 right-6 z-50">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button 
-                variant="outline" 
-                size="sm"
-                className="bg-background shadow-lg border-border"
-              >
-                <Truck className="w-4 h-4 mr-2" />
-                Demo
-                <ChevronDown className="w-3 h-3 ml-2" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuItem onClick={() => loadDemoCarrier(MOCK_CARRIER_GOOD)}>
-                <div className="flex items-center gap-2">
-                  <span className="w-6 h-5 flex items-center justify-center rounded bg-green-500/10 text-green-600 text-xs font-bold">A+</span>
-                  <span>Sunrise Moving (Good)</span>
-                </div>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => loadDemoCarrier(MOCK_CARRIER_BAD)}>
-                <div className="flex items-center gap-2">
-                  <span className="w-6 h-5 flex items-center justify-center rounded bg-red-500/10 text-red-600 text-xs font-bold">F</span>
-                  <span>Fast & Cheap (Bad)</span>
-                </div>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => loadDemoCarrier(MOCK_CARRIER_MIXED)}>
-                <div className="flex items-center gap-2">
-                  <span className="w-6 h-5 flex items-center justify-center rounded bg-amber-500/10 text-amber-600 text-xs font-bold">C</span>
-                  <span>Regional Van Lines (Mixed)</span>
-                </div>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => {
-                MOCK_CARRIERS.forEach(c => loadDemoCarrier(c));
-              }}>
-                <span className="text-muted-foreground">Load All Demo Carriers</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
       </div>
       </ScrollFadeIn>
     </SiteShell>
