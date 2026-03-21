@@ -103,6 +103,36 @@ async function geocodeLocation(location: string): Promise<[number, number] | nul
   return null;
 }
 
+function encodePolyline(points: [number, number][]): string {
+  let lastLat = 0;
+  let lastLng = 0;
+
+  const encodeValue = (value: number) => {
+    let encoded = "";
+    let v = value < 0 ? ~(value << 1) : value << 1;
+
+    while (v >= 0x20) {
+      encoded += String.fromCharCode((0x20 | (v & 0x1f)) + 63);
+      v >>= 5;
+    }
+
+    encoded += String.fromCharCode(v + 63);
+    return encoded;
+  };
+
+  return points
+    .map(([lng, lat]) => {
+      const latE5 = Math.round(lat * 1e5);
+      const lngE5 = Math.round(lng * 1e5);
+      const encodedLat = encodeValue(latE5 - lastLat);
+      const encodedLng = encodeValue(lngE5 - lastLng);
+      lastLat = latE5;
+      lastLng = lngE5;
+      return `${encodedLat}${encodedLng}`;
+    })
+    .join("");
+}
+
 const MOVE_SIZES = [
 { label: "Studio", value: "Studio" },
 { label: "1 Bed", value: "1 Bedroom" },
@@ -868,6 +898,12 @@ export default function Index() {
   const [fromLocationDisplay, setFromLocationDisplay] = useState("");
   const [toLocationDisplay, setToLocationDisplay] = useState("");
 
+  const resolveLocationCoords = useCallback(async (location: string) => {
+    const cleanLocation = location.trim();
+    if (!cleanLocation) return null;
+    return geocodeLocation(cleanLocation);
+  }, []);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -924,24 +960,40 @@ export default function Index() {
     if (canContinue() && step < 3) {
       // If on step 1, trigger analyzing transition
       if (step === 1) {
+        const fromQuery = fromLocationDisplay || [fromCity, fromZip].filter(Boolean).join(" ");
+        const toQuery = toLocationDisplay || [toCity, toZip].filter(Boolean).join(" ");
+
+        const [resolvedFromCoords, resolvedToCoords] = await Promise.all([
+          fromCoords ?? resolveLocationCoords(fromQuery),
+          toCoords ?? resolveLocationCoords(toQuery),
+        ]);
+
+        if (resolvedFromCoords) setFromCoords(resolvedFromCoords);
+        if (resolvedToCoords) setToCoords(resolvedToCoords);
+
         setIsAnalyzing(true);
         setAnalyzePhase(0);
 
         // Fetch route geometry for the third map
-        if (fromCoords && toCoords) {
+        if (resolvedFromCoords && resolvedToCoords) {
           try {
             const token = 'pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g';
             const res = await fetch(
-              `https://api.mapbox.com/directions/v5/mapbox/driving/${fromCoords[0]},${fromCoords[1]};${toCoords[0]},${toCoords[1]}?geometries=polyline&overview=full&access_token=${token}`
+              `https://api.mapbox.com/directions/v5/mapbox/driving/${resolvedFromCoords[0]},${resolvedFromCoords[1]};${resolvedToCoords[0]},${resolvedToCoords[1]}?geometries=polyline&overview=full&access_token=${token}`
             );
             if (res.ok) {
               const data = await res.json();
               if (data.routes && data.routes[0]) {
                 setRouteGeometry(data.routes[0].geometry);
+              } else {
+                setRouteGeometry(encodePolyline([resolvedFromCoords, resolvedToCoords]));
               }
+            } else {
+              setRouteGeometry(encodePolyline([resolvedFromCoords, resolvedToCoords]));
             }
           } catch (e) {
             console.error('Failed to fetch route:', e);
+            setRouteGeometry(encodePolyline([resolvedFromCoords, resolvedToCoords]));
           }
         }
 
@@ -1192,7 +1244,12 @@ export default function Index() {
                             onLocationSelect={(city, zip, fullAddress) => {
                               setFromCity(city);
                               setFromZip(zip);
-                              setFromLocationDisplay(fullAddress || `${city}${zip ? `, ${zip}` : ''}`);
+                              const nextLocation = fullAddress || `${city}${zip ? `, ${zip}` : ''}`;
+                              setFromLocationDisplay(nextLocation);
+                              void (async () => {
+                                const coords = await resolveLocationCoords(nextLocation);
+                                if (coords) setFromCoords(coords);
+                              })();
                             }}
                             placeholder="Current City / ZIP"
                             icon={<Home className="w-4 h-4 text-primary" />}
@@ -1207,7 +1264,12 @@ export default function Index() {
                             onLocationSelect={(city, zip, fullAddress) => {
                               setToCity(city);
                               setToZip(zip);
-                              setToLocationDisplay(fullAddress || `${city}${zip ? `, ${zip}` : ''}`);
+                              const nextLocation = fullAddress || `${city}${zip ? `, ${zip}` : ''}`;
+                              setToLocationDisplay(nextLocation);
+                              void (async () => {
+                                const coords = await resolveLocationCoords(nextLocation);
+                                if (coords) setToCoords(coords);
+                              })();
                             }}
                             placeholder="Moving to City / ZIP"
                             icon={<MapPin className="w-4 h-4 text-primary" />}
