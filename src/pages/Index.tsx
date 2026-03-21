@@ -1700,7 +1700,7 @@ export default function Index() {
                 <p className="text-muted-foreground max-w-xl mx-auto text-base md:text-lg font-light leading-relaxed mt-4">Our team is standing by. Voice, video, text, or email.</p>
               </div>
 
-              <div className="flex flex-col md:flex-row gap-5 items-stretch">
+              <div className="flex flex-col gap-5 items-stretch">
 
                 {/* Single card with green gradient glow */}
                 <div className="flex-1 min-w-0 rounded-2xl bg-card p-5 flex flex-col md:flex-row gap-5 transition-all duration-200 ring-1 ring-border">
