@@ -173,7 +173,7 @@ export default function LiveTracking() {
   
   // Map view transition state
   const [isViewTransitioning, setIsViewTransitioning] = useState(false);
-  const prevMapViewType = useRef<MapViewType>(mapViewType);
+  const prevMapViewType = useRef<string>(mapViewType);
   
   // Checkpoint notifications tracking
   const passedCheckpoints = useRef<Set<number>>(new Set());
