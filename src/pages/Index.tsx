@@ -961,14 +961,8 @@ export default function Index() {
               clearInterval(progressInterval);
               // Wait a moment at 100% before transitioning
               setTimeout(() => {
-                setIsAnalyzing(false);
-                setAnalyzePhase(0);
-                setRouteProgress(0);
-                // Save lead data and show confirmation directly
+                // Save lead data and navigate to thank you page
                 const fullName = `${contactFirstName.trim()} ${contactLastName.trim()}`;
-                setName(fullName);
-                setEmail(contactEmail);
-                setPhoneNum(contactPhone);
                 localStorage.setItem("tm_lead", JSON.stringify({
                   name: fullName, fromZip, toZip, fromCity, toCity,
                   fromLocationDisplay: fromLocationDisplay || `${fromCity} ${fromZip}`,
@@ -981,8 +975,7 @@ export default function Index() {
                   fromCity, toCity, fromZip, toZip,
                   moveDate: moveDate?.toISOString(), ts: Date.now()
                 }));
-                setHasProvidedContactInfo(true);
-                setSubmitted(true);
+                navigate("/thank-you");
               }, 500);
             }
             setRouteProgress(progress);

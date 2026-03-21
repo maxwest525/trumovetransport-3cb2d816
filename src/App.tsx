@@ -53,6 +53,7 @@ const App = () => (
             <Route path="/track" element={<LiveTracking />} />
             <Route path="/auto-transport" element={<AutoTransport />} />
             <Route path="/customer-service" element={<CustomerService />} />
+            <Route path="/thank-you" element={<ThankYou />} />
 
             {/* Legacy /site/* redirects */}
             <Route path="/site/*" element={<Navigate to="/" replace />} />
