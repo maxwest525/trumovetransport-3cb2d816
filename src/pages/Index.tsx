@@ -256,7 +256,7 @@ const MoveSummaryModal = React.forwardRef<HTMLDivElement, MoveSummaryModalProps>
   const hasData = fromCity || toCity;
   if (!hasData) return null;
 
-  const MAPBOX_TOKEN = 'pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g';
+  const MAPTILER_KEY = 'X6zFH8Vcg9bMuUCrXFWU';
 
   return (
     <div className="tru-move-summary-modal" ref={ref}>
