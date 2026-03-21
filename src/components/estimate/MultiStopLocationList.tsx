@@ -21,7 +21,7 @@ import LocationAutocomplete from "@/components/LocationAutocomplete";
 import { cn } from "@/lib/utils";
 
 // Geoapify API key (publishable)
-const GEOAPIFY_KEY = '196cdbf659334d408ece5c98682f2106';
+const GEOAPIFY_KEY = '6a8a5dfb3b144c7a98f9a7614bd6fbbf';
 
 export interface StopLocation {
   id: string;

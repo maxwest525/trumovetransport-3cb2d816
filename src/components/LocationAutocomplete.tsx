@@ -10,7 +10,7 @@ import {
 import { MAPTILER_KEY } from '@/lib/maptilerConfig';
 
 // Geoapify API key (publishable, safe in client code)
-const GEOAPIFY_KEY = '196cdbf659334d408ece5c98682f2106';
+const GEOAPIFY_KEY = '6a8a5dfb3b144c7a98f9a7614bd6fbbf';
 import { toast } from "@/hooks/use-toast";
 
 
