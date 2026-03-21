@@ -22724,7 +22724,7 @@
 .tru-vetting-subheadline {
   font-size: 16px;
   line-height: 1.65;
-  color: hsl(var(--tm-ink) / 0.65);
+  color: hsl(var(--muted-foreground));
   max-width: 480px;
 }
 
