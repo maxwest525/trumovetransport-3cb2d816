@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Phone, MessageSquare } from "lucide-react";
+import { Phone, MessageSquare, User, Mail, PenLine } from "lucide-react";
 
 export default function ContactHumanTabs() {
   const [tab, setTab] = useState<"call" | "form">("call");
@@ -33,7 +33,7 @@ export default function ContactHumanTabs() {
         {tab === "call" ? (
           <div className="space-y-3">
             <p className="text-sm font-semibold text-foreground">Speak with our team directly</p>
-            <p className="text-xs text-muted-foreground">Mon–Sat, 8 AM – 8 PM EST</p>
+            <p className="text-xs text-muted-foreground">Mon-Sat, 8 AM - 8 PM EST</p>
             <a
               href="tel:+16097277647"
               className="inline-flex items-center gap-2 bg-foreground text-background px-6 py-2.5 rounded-full text-sm font-semibold hover:opacity-90 transition-opacity"
@@ -53,33 +53,32 @@ export default function ContactHumanTabs() {
             className="space-y-3 text-left max-w-sm mx-auto"
             onSubmit={(e) => {
               e.preventDefault();
-              // Could wire to support_tickets table
             }}
           >
-            <div>
-              <label className="text-[11px] font-medium text-muted-foreground">Name</label>
+            <div className="relative">
+              <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <input
                 type="text"
                 required
-                className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                className="w-full rounded-lg border border-border bg-background pl-9 pr-3 py-2.5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
                 placeholder="Your name"
               />
             </div>
-            <div>
-              <label className="text-[11px] font-medium text-muted-foreground">Email</label>
+            <div className="relative">
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <input
                 type="email"
                 required
-                className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                className="w-full rounded-lg border border-border bg-background pl-9 pr-3 py-2.5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
                 placeholder="you@email.com"
               />
             </div>
-            <div>
-              <label className="text-[11px] font-medium text-muted-foreground">Message</label>
+            <div className="relative">
+              <PenLine className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
               <textarea
                 required
                 rows={3}
-                className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary resize-none"
+                className="w-full rounded-lg border border-border bg-background pl-9 pr-3 py-2.5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary resize-none"
                 placeholder="How can we help?"
               />
             </div>
