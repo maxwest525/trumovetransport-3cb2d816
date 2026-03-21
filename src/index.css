@@ -14365,9 +14365,22 @@
 .animated-route-map-container {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
+  width: 100% !important;
+  height: 100% !important;
   z-index: 2;
+}
+
+.animated-route-map-container .leaflet-container {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Ensure Leaflet tiles render in analyze strip */
+.tru-analyze-strip-route-frame .leaflet-container,
+.tru-analyze-strip-frame .leaflet-container {
+  width: 100% !important;
+  height: 100% !important;
+  background: hsl(var(--muted));
 }
 
 /* Truck marker on the animated route map */

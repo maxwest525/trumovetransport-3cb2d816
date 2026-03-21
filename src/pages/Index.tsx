@@ -961,14 +961,8 @@ export default function Index() {
               clearInterval(progressInterval);
               // Wait a moment at 100% before transitioning
               setTimeout(() => {
-                setIsAnalyzing(false);
-                setAnalyzePhase(0);
-                setRouteProgress(0);
-                // Save lead data and show confirmation directly
+                // Save lead data and navigate to thank you page
                 const fullName = `${contactFirstName.trim()} ${contactLastName.trim()}`;
-                setName(fullName);
-                setEmail(contactEmail);
-                setPhoneNum(contactPhone);
                 localStorage.setItem("tm_lead", JSON.stringify({
                   name: fullName, fromZip, toZip, fromCity, toCity,
                   fromLocationDisplay: fromLocationDisplay || `${fromCity} ${fromZip}`,
@@ -981,8 +975,7 @@ export default function Index() {
                   fromCity, toCity, fromZip, toZip,
                   moveDate: moveDate?.toISOString(), ts: Date.now()
                 }));
-                setHasProvidedContactInfo(true);
-                setSubmitted(true);
+                navigate("/thank-you");
               }, 500);
             }
             setRouteProgress(progress);
@@ -1273,63 +1266,6 @@ export default function Index() {
                         <p className="text-center text-[9px] leading-tight text-muted-foreground/70 max-w-xs mx-auto">By clicking above, you consent to receive calls, texts, and emails at the number/email provided, including via automated technology. Consent is not a condition of purchase. Msg & data rates may apply.</p>
                       </div>
                     }
-
-                    {/* Post-Submission: Thank You */}
-                    {submitted &&
-                    <div key="step-confirmed" className="space-y-5 text-center py-4">
-                        <CheckCircle className="w-14 h-14 text-primary mx-auto" />
-                        <div>
-                          <h3 className="text-xl font-bold text-foreground">Thank You!</h3>
-                          <p className="text-sm text-muted-foreground mt-1">A moving specialist will be in contact with you shortly.</p>
-                        </div>
-
-                        <div className="text-left space-y-2 pt-2">
-                          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider text-center">While you wait, you can:</p>
-
-                          <button
-                          type="button"
-                          className="w-full flex items-center gap-3 p-3 rounded-xl ring-1 ring-primary/30 bg-primary/5 hover:bg-primary/10 transition-colors text-left"
-                          onClick={() => navigate("/scan-room")}>
-                            <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                              <Scan className="w-5 h-5 text-primary" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <span className="text-sm font-semibold text-foreground block">Build Your Inventory</span>
-                              <span className="text-xs text-muted-foreground">AI scan or manual item builder</span>
-                            </div>
-                            <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0" />
-                          </button>
-
-                          <button
-                          type="button"
-                          className="w-full flex items-center gap-3 p-3 rounded-xl ring-1 ring-border hover:ring-primary/30 hover:bg-accent/30 transition-colors text-left"
-                          onClick={() => window.location.href = 'tel:+18001234567'}>
-                            <div className="h-10 w-10 rounded-lg bg-muted flex items-center justify-center shrink-0">
-                              <Phone className="w-5 h-5 text-foreground" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <span className="text-sm font-semibold text-foreground block">Call Us Now</span>
-                              <span className="text-xs text-muted-foreground">Speak with a specialist right away</span>
-                            </div>
-                            <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0" />
-                          </button>
-
-                          <button
-                          type="button"
-                          className="w-full flex items-center gap-3 p-3 rounded-xl ring-1 ring-border hover:ring-primary/30 hover:bg-accent/30 transition-colors text-left"
-                          onClick={() => navigate("/book")}>
-                            <div className="h-10 w-10 rounded-lg bg-muted flex items-center justify-center shrink-0">
-                              <Video className="w-5 h-5 text-foreground" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <span className="text-sm font-semibold text-foreground block">Video Consult</span>
-                              <span className="text-xs text-muted-foreground">Live walkthrough with a specialist</span>
-                            </div>
-                            <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0" />
-                          </button>
-                        </div>
-                      </div>
-                    }
                   </div>
 
                   {/* Footer trust strip */}
@@ -1616,7 +1552,7 @@ export default function Index() {
             </div>
           </section>
 
-          
+                  </div>
 
           {/* GET IN TOUCH */}
           <section className="py-14 md:py-20 relative overflow-hidden">
@@ -1767,9 +1703,6 @@ export default function Index() {
           </section>
 
         </div>
-      </div>
-
-
 
       {/* Lead Capture Modal */}
       <LeadCaptureModal

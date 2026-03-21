@@ -19,6 +19,7 @@ import ScanRoom from "./pages/ScanRoom";
 import Classic from "./pages/Classic";
 import LiveTracking from "./pages/LiveTracking";
 import AutoTransport from "./pages/AutoTransport";
+import ThankYou from "./pages/ThankYou";
 import CustomerService from "./pages/CustomerService";
 import FloatingTruckChat from "./components/FloatingTruckChat";
 import ScrollToTop from "./components/ScrollToTop";
@@ -52,6 +53,7 @@ const App = () => (
             <Route path="/track" element={<LiveTracking />} />
             <Route path="/auto-transport" element={<AutoTransport />} />
             <Route path="/customer-service" element={<CustomerService />} />
+            <Route path="/thank-you" element={<ThankYou />} />
 
             {/* Legacy /site/* redirects */}
             <Route path="/site/*" element={<Navigate to="/" replace />} />
