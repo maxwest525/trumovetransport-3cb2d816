@@ -5,7 +5,7 @@ import SiteShell from "@/components/layout/SiteShell";
 import { HowItWorks } from "@/components/auto-transport/HowItWorks";
 import { QuoteWizard } from "@/components/auto-transport/QuoteWizard";
 import { QuoteReveal } from "@/components/auto-transport/QuoteReveal";
-import { ChatBubble } from "@/components/auto-transport/ChatBubble";
+
 import { ScrollFadeIn } from "@/hooks/useScrollFadeIn";
 import { Sparkles } from "lucide-react";
 
@@ -159,7 +159,7 @@ export default function AutoTransport() {
         )}
       </AnimatePresence>
 
-      <ChatBubble />
+      
     </SiteShell>
   );
 }
