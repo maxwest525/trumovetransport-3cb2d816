@@ -1257,7 +1257,7 @@ export default function Index() {
         </div> {/* End tru-hero-wrapper */}
 
           {/* START YOUR AI INVENTORY ANALYSIS - Enhanced with Preview */}
-           <section className="py-10 relative overflow-hidden -mt-[50px] md:py-[100px] my-[45px]">
+           <section className="py-10 md:py-20 relative overflow-hidden">
             <div className="absolute inset-0 pointer-events-none">
               <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full bg-primary/[0.06] blur-[120px]" />
               <div className="absolute bottom-0 left-0 w-[500px] h-[500px] rounded-full bg-primary/[0.04] blur-[100px]" />
