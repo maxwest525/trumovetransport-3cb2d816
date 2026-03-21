@@ -78,7 +78,7 @@ serve(async (req) => {
 2. Total weight in pounds  
 3. Recommended price per cubic foot
 
-COMPANY BASE RATE: $${baseRate}/cu ft — use this as your anchor, adjust based on conditions.
+COMPANY BASE RATE: $${baseRate}/cu ft - use this as your anchor, adjust based on conditions.
 
 DISTANCE PRICING TIERS:
 - Local (≤${distanceTiers.local_max_miles || 50} mi): ${distanceTiers.local_multiplier || 1}x

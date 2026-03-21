@@ -37,7 +37,7 @@ ${(activities || []).slice(0, 5).map((a: any) => `- [${a.type}] ${a.subject || "
     let userPrompt: string;
 
     if (action === "draft_email") {
-      systemPrompt = `You are a professional moving company sales agent. Draft a follow-up email for a customer based on their deal context. Write ONLY the email body text (no subject line, no "Subject:" prefix). Be warm, professional, and specific to their move details. Keep it under 200 words. Do not use markdown — write plain text suitable for an email.`;
+      systemPrompt = `You are a professional moving company sales agent. Draft a follow-up email for a customer based on their deal context. Write ONLY the email body text (no subject line, no "Subject:" prefix). Be warm, professional, and specific to their move details. Keep it under 200 words. Do not use markdown - write plain text suitable for an email.`;
       userPrompt = `Draft a follow-up email for this customer:\n${dealContext}`;
     } else {
       systemPrompt = `You are a sales assistant for a moving company CRM. Given a deal's context (customer info, move details, stage, activity history), provide:

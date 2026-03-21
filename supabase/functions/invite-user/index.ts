@@ -84,7 +84,7 @@ Deno.serve(async (req) => {
         });
       }
 
-      // Invite user via admin API — redirects to /set-password so they must create credentials
+      // Invite user via admin API - redirects to /set-password so they must create credentials
       const { data: inviteData, error: inviteError } = await adminClient.auth.admin.inviteUserByEmail(email, {
         data: { display_name: display_name || email.split("@")[0] },
         redirectTo: `${req.headers.get("origin") || "https://trumoveinc.lovable.app"}/set-password`,
