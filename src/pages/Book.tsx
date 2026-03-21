@@ -59,7 +59,7 @@ export default function Book() {
 
       {/* Cal.com Embed */}
       <ScrollFadeIn delay={0.1}>
-        <section className="py-6 md:py-10 relative overflow-hidden">
+        <section className="py-2 md:py-4 relative overflow-hidden">
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] rounded-full bg-primary/[0.05] blur-[100px]" />
           </div>
