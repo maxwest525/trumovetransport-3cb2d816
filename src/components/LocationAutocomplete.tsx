@@ -165,17 +165,16 @@ async function searchGooglePlaces(query: string): Promise<{ suggestions: Locatio
   return result;
 }
 
-// Mapbox Address Autofill API - FALLBACK source for address suggestions
-// Now includes 'place' and 'postcode' types for better ZIP/city coverage
-async function searchMapboxAddresses(query: string): Promise<{ suggestions: LocationSuggestion[]; failed: boolean }> {
+// MapTiler Geocoding API - FALLBACK source for address suggestions
+async function searchMapTilerAddresses(query: string): Promise<{ suggestions: LocationSuggestion[]; failed: boolean }> {
   const { result, failed } = await withRetry(async () => {
     const res = await fetch(
-      `https://api.mapbox.com/search/searchbox/v1/suggest?q=${encodeURIComponent(query)}&types=address,place,postcode&country=us&language=en&limit=5&session_token=${mapboxSessionToken}&access_token=${MAPBOX_TOKEN}`,
+      `https://api.maptiler.com/geocoding/${encodeURIComponent(query)}.json?key=${MAPTILER_KEY}&country=us&language=en&limit=5`,
       { headers: { 'Accept': 'application/json' } }
     );
     
     if (!res.ok) {
-      throw new Error(`Mapbox API error: ${res.status}`);
+      throw new Error(`MapTiler API error: ${res.status}`);
     }
     
     return res.json();
@@ -185,39 +184,35 @@ async function searchMapboxAddresses(query: string): Promise<{ suggestions: Loca
     return { suggestions: [], failed: true };
   }
   
-  const suggestions = (result.suggestions || []).map((s: any) => {
-    // Mapbox suggest returns: name (street), full_address (complete), place_formatted (city, state, country)
-    const streetName = s.name || ''; // e.g., "123 Main Street"
-    const fullAddr = s.full_address || ''; // e.g., "123 Main Street, New York, NY 10001, United States"
-    const featureType = s.feature_type || 'address';
+  const suggestions = (result.features || []).map((f: any) => {
+    const placeName = f.place_name || '';
+    const text = f.text || '';
+    const placeType = f.place_type?.[0] || '';
     
-    // Parse from full_address: "123 Main St, New York, NY 10001, United States"
-    const parts = fullAddr.split(', ');
-    const streetAddress = featureType === 'address' ? (parts[0] || streetName) : '';
-    const city = featureType === 'place' ? streetName : (parts.length >= 3 ? parts[1] : '');
+    // Extract components from context
+    const context = f.context || [];
+    const cityCtx = context.find((c: any) => c.id?.startsWith('place'));
+    const stateCtx = context.find((c: any) => c.id?.startsWith('region'));
+    const zipCtx = context.find((c: any) => c.id?.startsWith('postcode'));
     
-    // Extract state and zip from "NY 10001" pattern
-    const stateZipPart = parts.length >= 3 ? parts[parts.length - 2] : '';
-    const stateZipMatch = stateZipPart.match(/^([A-Z]{2})\s*(\d{5})?$/);
-    const state = stateZipMatch?.[1] || '';
-    const zip = stateZipMatch?.[2] || (featureType === 'postcode' ? streetName : '');
+    const streetAddress = placeType === 'address' ? text : '';
+    const city = cityCtx?.text || (placeType === 'place' ? text : '');
+    const state = stateCtx?.short_code?.replace('US-', '') || stateCtx?.text || '';
+    const zip = zipCtx?.text || (placeType === 'postcode' ? text : '');
     
-    // Display the full address without "United States"
-    const displayAddr = fullAddr.replace(', United States', '');
-    
-    // Check if this has a street address component (not just city/state)
-    const hasStreet = featureType === 'address' && streetName && !streetName.match(/^\d{5}$/) && streetName !== city;
+    const displayAddr = placeName.replace(', United States', '');
+    const hasStreet = placeType === 'address' && text && !text.match(/^\d{5}$/);
     
     return {
       streetAddress,
       city,
       state,
       zip,
-      display: displayAddr, // Show full street address in dropdown
-      fullAddress: fullAddr,
-      isVerified: false, // Will be verified after retrieve
+      display: displayAddr,
+      fullAddress: placeName,
+      isVerified: false,
       validationLevel: hasStreet ? null : 'partial' as ValidationLevel,
-      mapboxId: s.mapbox_id,
+      mapboxId: undefined,
     };
   });
   
