@@ -993,310 +993,282 @@ export default function Index() {
 
   return (
     <SiteShell centered hideTrustStrip>
-      
 
       <div className="tru-page-frame">
         <div className="tru-page-inner">
-        {/* HERO - Full Width Background Wrapper */}
-        <div className="tru-hero-wrapper">
-          {/* Full-width background image with parallax */}
-          <div className="tru-hero-bg">
-            <img
-                src={heroFamilyMove}
-                alt="Happy family moving into their new home"
-                className="tru-hero-bg-image" />
-              
-            <div className="tru-hero-bg-overlay" />
+        {/* HERO */}
+        <section className="relative overflow-hidden py-16 md:py-24 lg:py-28">
+          {/* Textured background */}
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="absolute top-[-100px] right-[-100px] w-[600px] h-[600px] rounded-full bg-primary/[0.06] blur-[120px]" />
+            <div className="absolute bottom-[-50px] left-[-80px] w-[500px] h-[500px] rounded-full bg-primary/[0.04] blur-[100px]" />
+            <div className="absolute inset-0 opacity-[0.025]" style={{ backgroundImage: 'radial-gradient(circle, hsl(var(--foreground)) 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
           </div>
-          
-          <section className="tru-hero tru-hero-split" ref={heroSectionRef}>
-            {/* Particle Background Effect */}
-            <HeroParticles />
-            <div className="tru-hero-particles-overlay" />
-            
-            
-            {/* Full-Page Analyzing Overlay */}
-            {isAnalyzing &&
-              <div className="tru-analyze-fullpage-overlay">
-                <div className="tru-analyze-popup-modal">
-                  <div className="tru-analyze-popup-header">
-                    <Radar className="w-6 h-6 tru-analyzing-icon" />
-                    <span className="tru-analyze-popup-title">
-                      {analyzePhase === 0 && "Locating origin..."}
-                      {analyzePhase === 1 && "Locating destination..."}
-                      {analyzePhase === 2 && "Analyzing route..."}
-                    </span>
+
+          <HeroParticles />
+
+          {/* Full-Page Analyzing Overlay */}
+          {isAnalyzing &&
+            <div className="tru-analyze-fullpage-overlay">
+              <div className="tru-analyze-popup-modal">
+                <div className="tru-analyze-popup-header">
+                  <Radar className="w-6 h-6 tru-analyzing-icon" />
+                  <span className="tru-analyze-popup-title">
+                    {analyzePhase === 0 && "Locating origin..."}
+                    {analyzePhase === 1 && "Locating destination..."}
+                    {analyzePhase === 2 && "Analyzing route..."}
+                  </span>
+                </div>
+                
+                <div className="tru-analyze-strip">
+                  <div className={`tru-analyze-strip-panel ${analyzePhase >= 0 ? 'is-active' : ''}`}>
+                    <div className="tru-analyze-strip-label">
+                      <MapPin className="w-3.5 h-3.5" />
+                      <span>Origin</span>
+                    </div>
+                    <div className="tru-analyze-strip-frame">
+                      <div className="tru-analyze-strip-shimmer" />
+                      <img
+                        src={fromCoords ? `https://maps.googleapis.com/maps/api/streetview?size=720x440&location=${fromCoords[1]},${fromCoords[0]}&fov=90&heading=0&pitch=5&key=AIzaSyCWDpAPlxVRXnl1w5rz0Df5S3vGsHY6Xoo` : ''}
+                        alt="Origin location"
+                        className="tru-analyze-strip-img"
+                        onLoad={(e) => e.currentTarget.classList.add('is-loaded')}
+                        onError={(e) => {
+                          e.currentTarget.src = `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${fromCoords?.[0]},${fromCoords?.[1]},16,0/720x440@2x?access_token=pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g`;
+                        }} />
+                      <div className="tru-analyze-strip-city">{fromCity}</div>
+                    </div>
                   </div>
                   
-                  <div className="tru-analyze-strip">
-                    {/* Origin Satellite */}
-                    <div className={`tru-analyze-strip-panel ${analyzePhase >= 0 ? 'is-active' : ''}`}>
-                      <div className="tru-analyze-strip-label">
-                        <MapPin className="w-3.5 h-3.5" />
-                        <span>Origin</span>
-                      </div>
-                      <div className="tru-analyze-strip-frame">
-                        <div className="tru-analyze-strip-shimmer" />
-                        <img
-                          src={fromCoords ? `https://maps.googleapis.com/maps/api/streetview?size=720x440&location=${fromCoords[1]},${fromCoords[0]}&fov=90&heading=0&pitch=5&key=AIzaSyCWDpAPlxVRXnl1w5rz0Df5S3vGsHY6Xoo` : ''}
-                          alt="Origin location"
-                          className="tru-analyze-strip-img"
-                          onLoad={(e) => e.currentTarget.classList.add('is-loaded')}
-                          onError={(e) => {
-                            e.currentTarget.src = `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${fromCoords?.[0]},${fromCoords?.[1]},16,0/720x440@2x?access_token=pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g`;
-                          }} />
-                        
-                        <div className="tru-analyze-strip-city">{fromCity}</div>
-                      </div>
+                  <div className={`tru-analyze-strip-panel tru-analyze-strip-route ${analyzePhase >= 2 ? 'is-active' : ''}`}>
+                    <div className="tru-analyze-strip-label">
+                      <Truck className="w-3.5 h-3.5" />
+                      <span>Your Route</span>
                     </div>
-                    
-                    {/* Route Map - Center */}
-                    <div className={`tru-analyze-strip-panel tru-analyze-strip-route ${analyzePhase >= 2 ? 'is-active' : ''}`}>
-                      <div className="tru-analyze-strip-label">
-                        <Truck className="w-3.5 h-3.5" />
-                        <span>Your Route</span>
-                      </div>
-                      <div className="tru-analyze-strip-frame tru-analyze-strip-route-frame">
-                        <div className="tru-analyze-strip-shimmer" />
-                        {fromCoords && toCoords && routeGeometry &&
-                        <AnimatedRouteMap
-                          fromCoords={fromCoords}
-                          toCoords={toCoords}
-                          routeGeometry={routeGeometry}
-                          progress={routeProgress} />
-
-                        }
-                      </div>
+                    <div className="tru-analyze-strip-frame tru-analyze-strip-route-frame">
+                      <div className="tru-analyze-strip-shimmer" />
+                      {fromCoords && toCoords && routeGeometry &&
+                      <AnimatedRouteMap
+                        fromCoords={fromCoords}
+                        toCoords={toCoords}
+                        routeGeometry={routeGeometry}
+                        progress={routeProgress} />
+                      }
                     </div>
-                    
-                    {/* Destination Satellite */}
-                    <div className={`tru-analyze-strip-panel ${analyzePhase >= 1 ? 'is-active' : ''}`}>
-                      <div className="tru-analyze-strip-label">
-                        <MapPin className="w-3.5 h-3.5" />
-                        <span>Destination</span>
-                      </div>
-                      <div className="tru-analyze-strip-frame">
-                        <div className="tru-analyze-strip-shimmer" />
-                        <img
-                          src={toCoords ? `https://maps.googleapis.com/maps/api/streetview?size=720x440&location=${toCoords[1]},${toCoords[0]}&fov=90&heading=0&pitch=5&key=AIzaSyCWDpAPlxVRXnl1w5rz0Df5S3vGsHY6Xoo` : ''}
-                          alt="Destination location"
-                          className="tru-analyze-strip-img"
-                          onLoad={(e) => e.currentTarget.classList.add('is-loaded')}
-                          onError={(e) => {
-                            e.currentTarget.src = `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${toCoords?.[0]},${toCoords?.[1]},16,0/720x440@2x?access_token=pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g`;
-                          }} />
-                        
-                        <div className="tru-analyze-strip-city">{toCity}</div>
-                      </div>
+                  </div>
+                  
+                  <div className={`tru-analyze-strip-panel ${analyzePhase >= 1 ? 'is-active' : ''}`}>
+                    <div className="tru-analyze-strip-label">
+                      <MapPin className="w-3.5 h-3.5" />
+                      <span>Destination</span>
+                    </div>
+                    <div className="tru-analyze-strip-frame">
+                      <div className="tru-analyze-strip-shimmer" />
+                      <img
+                        src={toCoords ? `https://maps.googleapis.com/maps/api/streetview?size=720x440&location=${toCoords[1]},${toCoords[0]}&fov=90&heading=0&pitch=5&key=AIzaSyCWDpAPlxVRXnl1w5rz0Df5S3vGsHY6Xoo` : ''}
+                        alt="Destination location"
+                        className="tru-analyze-strip-img"
+                        onLoad={(e) => e.currentTarget.classList.add('is-loaded')}
+                        onError={(e) => {
+                          e.currentTarget.src = `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${toCoords?.[0]},${toCoords?.[1]},16,0/720x440@2x?access_token=pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g`;
+                        }} />
+                      <div className="tru-analyze-strip-city">{toCity}</div>
                     </div>
                   </div>
                 </div>
               </div>
-              }
-
-            {/* LEFT COLUMN: Text Content */}
-            <div className="tru-hero-left-column">
-              <img src={logoImg} alt="TruMove" className="tru-hero-logo" />
-              <h1 className="tru-hero-headline">
-                The Smarter Way To <span className="text-primary">Move</span>
-              </h1>
-              <ul className="tru-hero-bullets">
-                <li>Scan, document, and build your own inventory — your items stay private and secure</li>
-                <li>Meet your broker virtually, face to face, from anywhere</li>
-                <li>Track your most valuable belongings every step of the way</li>
-                <li>See the full history and performance record of your movers</li>
-              </ul>
             </div>
+          }
 
-            {/* RIGHT COLUMN: Form + CTAs */}
-            <div className="tru-hero-right-column">
-                
-              <div className="tru-hero-form-panel" ref={quoteBuilderRef}>
-                {/* TOP ROW: Form Card */}
-                <div className="tru-floating-form-card rounded-3xl shadow-2xl">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+              {/* LEFT: Headline */}
+              <div className="flex flex-col items-center text-center lg:items-start lg:text-left gap-4" ref={heroContentRef}>
+                <p className="text-[11px] uppercase tracking-[0.3em] text-primary font-semibold">Premium Moving Brokerage</p>
+                <div className="flex items-center gap-2">
+                  <span className="h-px w-8 bg-primary/40" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary/60" />
+                  <span className="h-px w-8 bg-primary/40" />
+                </div>
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground tracking-tight leading-[1.1]">
+                  The Smarter Way To <span className="text-primary">Move.</span>
+                </h1>
+                <ul className="space-y-2.5 mt-2 text-muted-foreground text-sm md:text-base font-light leading-relaxed max-w-lg">
+                  <li className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-primary mt-0.5 shrink-0" />Scan, document, and build your own inventory — your items stay private and secure</li>
+                  <li className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-primary mt-0.5 shrink-0" />Meet your broker virtually, face to face, from anywhere</li>
+                  <li className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-primary mt-0.5 shrink-0" />Track your most valuable belongings every step of the way</li>
+                  <li className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-primary mt-0.5 shrink-0" />See the full history and performance record of your movers</li>
+                </ul>
+
+                {/* Inline trust strip */}
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-4 text-[10px] uppercase tracking-[0.15em] text-muted-foreground font-medium">
+                  <span className="flex items-center gap-1"><Shield className="w-3 h-3" /> USDOT Compliant</span>
+                  <span className="text-border">•</span>
+                  <span className="flex items-center gap-1"><Star className="w-3 h-3" /> 4.9★ Rating</span>
+                  <span className="text-border">•</span>
+                  <span className="flex items-center gap-1"><Headphones className="w-3 h-3" /> 24/7 Support</span>
+                </div>
+              </div>
+
+              {/* RIGHT: Form Card */}
+              <div ref={quoteBuilderRef}>
+                <div className="rounded-2xl ring-1 ring-border bg-card overflow-hidden">
                   {/* Form Header */}
-                  <div className="tru-qb-form-header tru-qb-form-header-pill">
-                    
-                    <div className="tru-qb-form-title-group">
-                      <h2 className="tru-qb-form-title tru-qb-form-title-large">LET'S GET <span className="text-primary" style={{ WebkitTextFillColor: 'hsl(var(--primary))' }}>MOVING</span></h2>
-                      <p className="tru-qb-form-subtitle-compact">FMCSA-VETTED CARRIERS • AI PRECISION</p>
-                    </div>
+                  <div className="bg-foreground px-6 py-4 text-center">
+                    <h2 className="text-lg md:text-xl font-bold text-background tracking-wide uppercase">
+                      LET'S GET <span className="text-primary">MOVING</span>
+                    </h2>
+                    <p className="text-[10px] uppercase tracking-[0.2em] text-background/60 mt-0.5">FMCSA-Vetted Carriers • AI Precision</p>
                   </div>
                   
                   {/* Form Content */}
-                  <div className="tru-floating-form-content shadow-lg">
+                  <div className="p-5 space-y-4">
 
-                    {/* Step 1: Contact + Route */}
+                    {/* Step 1: Contact + Date */}
                     {step === 1 &&
-                      <div className="tru-qb-step-content" key="step-1">
-                        
-                         {/* First Name + Last Name Row */}
-                         <div className="tru-qb-location-row">
-                           <div className="tru-qb-location-col">
-                             <label className="text-xs font-medium text-muted-foreground mb-1 block">First Name</label>
-                             <div className="tru-qb-input-wrap tru-qb-input-enhanced">
-                               <input
-                                type="text"
-                                value={contactFirstName}
-                                onChange={(e) => {
-                                  setContactFirstName(e.target.value);
-                                  if (e.target.value.length > 0 && !isEngaged) setIsEngaged(true);
-                                }}
-                                placeholder="First Name"
-                                className="tru-qb-input"
-                                autoFocus />
-                             </div>
-                           </div>
-                           <div className="tru-qb-location-col">
-                             <label className="text-xs font-medium text-muted-foreground mb-1 block">Last Name</label>
-                             <div className="tru-qb-input-wrap tru-qb-input-enhanced">
-                               <input
-                                type="text"
-                                value={contactLastName}
-                                onChange={(e) => setContactLastName(e.target.value)}
-                                placeholder="Last Name"
-                                className="tru-qb-input" />
-                             </div>
-                           </div>
-                         </div>
+                      <div key="step-1" className="space-y-3">
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <label className="text-xs font-medium text-muted-foreground mb-1 block">First Name</label>
+                            <input
+                              type="text"
+                              value={contactFirstName}
+                              onChange={(e) => {
+                                setContactFirstName(e.target.value);
+                                if (e.target.value.length > 0 && !isEngaged) setIsEngaged(true);
+                              }}
+                              placeholder="First Name"
+                              className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                              autoFocus />
+                          </div>
+                          <div>
+                            <label className="text-xs font-medium text-muted-foreground mb-1 block">Last Name</label>
+                            <input
+                              type="text"
+                              value={contactLastName}
+                              onChange={(e) => setContactLastName(e.target.value)}
+                              placeholder="Last Name"
+                              className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
+                          </div>
+                        </div>
 
-                         {/* Phone + Email Row */}
-                         <div className="tru-qb-location-row" style={{ marginTop: '12px' }}>
-                           <div className="tru-qb-location-col">
-                             <label className="text-xs font-medium text-muted-foreground mb-1 block">Phone</label>
-                             <div className="tru-qb-input-wrap tru-qb-input-enhanced">
-                               <input
-                                type="tel"
-                                value={contactPhone}
-                                onChange={(e) => setContactPhone(formatPhoneNumber(e.target.value))}
-                                placeholder="(555) 555-5555"
-                                className="tru-qb-input" />
-                             </div>
-                           </div>
-                           <div className="tru-qb-location-col">
-                             <label className="text-xs font-medium text-muted-foreground mb-1 block">Email</label>
-                             <div className="tru-qb-input-wrap tru-qb-input-enhanced">
-                               <input
-                                type="email"
-                                value={contactEmail}
-                                onChange={(e) => setContactEmail(e.target.value)}
-                                placeholder="you@email.com"
-                                className="tru-qb-input" />
-                             </div>
-                           </div>
-                         </div>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <label className="text-xs font-medium text-muted-foreground mb-1 block">Phone</label>
+                            <input
+                              type="tel"
+                              value={contactPhone}
+                              onChange={(e) => setContactPhone(formatPhoneNumber(e.target.value))}
+                              placeholder="(555) 555-5555"
+                              className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
+                          </div>
+                          <div>
+                            <label className="text-xs font-medium text-muted-foreground mb-1 block">Email</label>
+                            <input
+                              type="email"
+                              value={contactEmail}
+                              onChange={(e) => setContactEmail(e.target.value)}
+                              placeholder="you@email.com"
+                              className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
+                          </div>
+                        </div>
 
-                         <div style={{ marginTop: '12px' }}>
-                           <label className="text-xs font-medium text-muted-foreground mb-1 block">Move Date</label>
-                           <Popover>
-                             <PopoverTrigger asChild>
-                               <button
+                        <div>
+                          <label className="text-xs font-medium text-muted-foreground mb-1 block">Move Date</label>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <button
                                 type="button"
-                                className="tru-qb-input"
-                                style={{ width: '100%', textAlign: 'left', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                 <Calendar className="w-4 h-4 shrink-0 text-primary" />
-                                 <span style={{ opacity: moveDate ? 1 : 0.5 }}>
-                                   {moveDate ? format(moveDate, 'MMM d, yyyy') : 'Select a date'}
-                                 </span>
-                               </button>
-                             </PopoverTrigger>
-                             <PopoverContent className="w-auto p-0" align="center" side="top">
-                               <CalendarComponent
+                                className="w-full flex items-center gap-2 rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground hover:border-primary/40 transition-colors">
+                                <Calendar className="w-4 h-4 shrink-0 text-primary" />
+                                <span className={moveDate ? '' : 'text-muted-foreground'}>
+                                  {moveDate ? format(moveDate, 'MMM d, yyyy') : 'Select a date'}
+                                </span>
+                              </button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="center" side="top">
+                              <CalendarComponent
                                 mode="single"
                                 selected={moveDate ?? undefined}
                                 onSelect={(date) => setMoveDate(date ?? null)}
                                 disabled={(date) => date < new Date()}
                                 initialFocus
                                 className="p-3 pointer-events-auto" />
-                             </PopoverContent>
-                           </Popover>
-                         </div>
-
-                         {formError &&
-                        <p style={{ color: 'hsl(0 70% 55%)', fontSize: '13px', textAlign: 'center', margin: '4px 0 0' }}>{formError}</p>
-                        }
-                         <button
-                          type="button"
-                          className="tru-qb-continue tru-engine-btn"
-                          onClick={() => {
-                            const first = contactFirstName.trim();
-                            const last = contactLastName.trim();
-                            const email = contactEmail.trim();
-                            const phone = contactPhone.trim();
-                            if (!first) {setFormError('Please enter your first name.');return;}
-                            if (!last) {setFormError('Please enter your last name.');return;}
-                            if (!isValidPhoneNumber(phone)) {setFormError('Please enter a valid 10-digit phone number.');return;}
-                            if (!email || !email.includes('@') || !email.includes('.')) {setFormError('Please enter a valid email.');return;}
-                            if (!moveDate) {setFormError('Please select a move date.');return;}
-                            setFormError('');
-                            goNext();
-                          }}
-                          style={{ marginTop: '16px' }}>
-                           
-                           <span>Talk to Support</span>
-                           <ArrowRight className="w-5 h-5 tru-btn-arrow text-[#00ff00]" />
-                         </button>
-                         
-                         <p className="tru-qb-microcopy">A moving specialist will call you shortly.</p>
-                       </div>
-                      }
-
-
-                    {/* Step 2: Contact Information (moved from step 3) */}
-                    {step === 2 &&
-                      <div className="tru-qb-step-content tru-qb-step-compact" key="step-2">
-                        <h1 className="tru-qb-question">How can we reach you?</h1>
-                        <p className="tru-qb-subtitle">We'll save your progress and send updates</p>
-                        
-                        <div className="tru-qb-contact-fields">
-                          <div className="tru-qb-input-wrap tru-qb-glow-always">
-                            <input
-                              type="text"
-                              className={`tru-qb-input ${formError && !name.trim() ? 'has-error' : ''}`}
-                              placeholder="Your full name"
-                              value={name}
-                              onChange={(e) => {setName(e.target.value);setFormError("");}}
-                              autoFocus />
-                            
-                          </div>
-                          
-                          <div className="tru-qb-input-wrap">
-                            <input
-                              type="email"
-                              className={`tru-qb-input ${formError && !email.includes('@') ? 'has-error' : ''}`}
-                              placeholder="Email address"
-                              value={email}
-                              onChange={(e) => {setEmail(e.target.value);setFormError("");}}
-                              onKeyDown={handleKeyDown} />
-                            
-                          </div>
-                          
-                          <div className="tru-qb-input-wrap">
-                            <input
-                              type="tel"
-                              className={`tru-qb-input ${formError && !isValidPhoneNumber(phone) ? 'has-error' : ''}`}
-                              placeholder="(555) 123-4567"
-                              value={phone}
-                              onChange={(e) => {
-                                setPhoneNum(formatPhoneNumber(e.target.value));
-                                setFormError("");
-                              }}
-                              onKeyDown={handleKeyDown} />
-                            
-                          </div>
+                            </PopoverContent>
+                          </Popover>
                         </div>
 
                         {formError &&
-                        <p className="tru-qb-error">{formError}</p>
+                          <p className="text-destructive text-xs text-center">{formError}</p>
                         }
 
                         <button
                           type="button"
-                          className="tru-qb-continue tru-engine-btn"
+                          onClick={() => {
+                            const first = contactFirstName.trim();
+                            const last = contactLastName.trim();
+                            const em = contactEmail.trim();
+                            const ph = contactPhone.trim();
+                            if (!first) {setFormError('Please enter your first name.');return;}
+                            if (!last) {setFormError('Please enter your last name.');return;}
+                            if (!isValidPhoneNumber(ph)) {setFormError('Please enter a valid 10-digit phone number.');return;}
+                            if (!em || !em.includes('@') || !em.includes('.')) {setFormError('Please enter a valid email.');return;}
+                            if (!moveDate) {setFormError('Please select a move date.');return;}
+                            setFormError('');
+                            goNext();
+                          }}
+                          className="w-full flex items-center justify-center gap-2 h-11 rounded-lg bg-foreground text-background font-semibold text-sm hover:bg-foreground/85 transition-all duration-200 hover:shadow-[0_4px_12px_hsl(var(--foreground)/0.15)]">
+                          <span>Talk to Support</span>
+                          <ArrowRight className="w-4 h-4 text-primary" />
+                        </button>
+
+                        <p className="text-center text-xs text-muted-foreground">A moving specialist will call you shortly.</p>
+                      </div>
+                    }
+
+                    {/* Step 2: Contact Information */}
+                    {step === 2 &&
+                      <div key="step-2" className="space-y-3">
+                        <h3 className="text-lg font-bold text-foreground text-center">How can we reach you?</h3>
+                        <p className="text-xs text-muted-foreground text-center">We'll save your progress and send updates</p>
+
+                        <input
+                          type="text"
+                          className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                          placeholder="Your full name"
+                          value={name}
+                          onChange={(e) => {setName(e.target.value);setFormError("");}}
+                          autoFocus />
+                        <input
+                          type="email"
+                          className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                          placeholder="Email address"
+                          value={email}
+                          onChange={(e) => {setEmail(e.target.value);setFormError("");}}
+                          onKeyDown={handleKeyDown} />
+                        <input
+                          type="tel"
+                          className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                          placeholder="(555) 123-4567"
+                          value={phone}
+                          onChange={(e) => {
+                            setPhoneNum(formatPhoneNumber(e.target.value));
+                            setFormError("");
+                          }}
+                          onKeyDown={handleKeyDown} />
+
+                        {formError &&
+                          <p className="text-destructive text-xs text-center">{formError}</p>
+                        }
+
+                        <button
+                          type="button"
+                          className="w-full flex items-center justify-center gap-2 h-11 rounded-lg bg-foreground text-background font-semibold text-sm hover:bg-foreground/85 transition-all duration-200"
                           disabled={!canContinue()}
                           onClick={() => {
                             if (canContinue()) {
-                              // Store lead data
                               localStorage.setItem("tm_lead_contact", JSON.stringify({
                                 name, email, phone,
                                 fromCity, toCity, fromZip, toZip,
@@ -1309,176 +1281,127 @@ export default function Index() {
                               setFormError("Please enter your name, a valid email, and phone number.");
                             }
                           }}>
-                          
                           <span>Continue</span>
-                          <ArrowRight className="w-5 h-5 tru-btn-arrow text-[hsl(142,71%,45%)]" />
+                          <ArrowRight className="w-4 h-4 text-primary" />
                         </button>
 
-                        <button type="button" className="tru-qb-back" onClick={goBack}>
-                          <ChevronLeft className="w-4 h-4" />
+                        <button type="button" className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground mx-auto" onClick={goBack}>
+                          <ChevronLeft className="w-3.5 h-3.5" />
                           <span>Back</span>
                         </button>
-                        
-                        <p className="tru-qb-disclaimer-bottom">
+
+                        <p className="text-center text-[11px] text-muted-foreground">
                           <Lock className="w-3 h-3 inline" /> Your info is secure & never sold.
                         </p>
                       </div>
-                      }
+                    }
 
                     {/* Step 3: Choose Estimate Method */}
                     {step === 3 && !submitted &&
-                      <div className="tru-qb-step-content" key="step-3">
-                        <h1 className="tru-qb-question">How would you like to build your inventory?</h1>
-                        <p className="tru-qb-subtitle">Choose the method that works best for you</p>
-                        
-                        <div className="tru-qb-method-options">
-                          {/* AI Estimate Option */}
+                      <div key="step-3" className="space-y-3">
+                        <h3 className="text-lg font-bold text-foreground text-center">How would you like to build your inventory?</h3>
+                        <p className="text-xs text-muted-foreground text-center">Choose the method that works best for you</p>
+
+                        <div className="space-y-2">
                           <button
                             type="button"
-                            className="tru-qb-method-card tru-qb-method-primary"
+                            className="w-full flex items-center gap-3 p-3 rounded-xl ring-1 ring-primary/30 bg-primary/5 hover:bg-primary/10 transition-colors text-left"
                             onClick={() => {
                               handleSubmit(new Event('submit') as any);
                               navigate("/scan-room");
                             }}>
-                            
-                            <div className="tru-qb-method-icon-wrap tru-qb-method-icon-ai">
-                              <Scan className="w-6 h-6" />
+                            <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                              <Scan className="w-5 h-5 text-primary" />
                             </div>
-                            <div className="tru-qb-method-content">
-                              <span className="tru-qb-method-title">AI Estimate</span>
-                              <span className="tru-qb-method-desc">Upload photos or video of your rooms</span>
-                              <span className="tru-qb-method-badge">
-                                <Camera className="w-3 h-3" />
-                                Fastest
-                              </span>
+                            <div className="flex-1 min-w-0">
+                              <span className="text-sm font-semibold text-foreground block">AI Estimate</span>
+                              <span className="text-xs text-muted-foreground">Upload photos or video of your rooms</span>
                             </div>
-                            <ArrowRight className="w-5 h-5 tru-qb-method-arrow" />
+                            <span className="text-[9px] font-bold uppercase tracking-wider text-primary bg-primary/10 px-2 py-0.5 rounded-full flex items-center gap-1"><Camera className="w-3 h-3" />Fastest</span>
+                            <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0" />
                           </button>
-                          
-                          {/* Manual Inventory Option */}
+
                           <button
                             type="button"
-                            className="tru-qb-method-card"
+                            className="w-full flex items-center gap-3 p-3 rounded-xl ring-1 ring-border hover:ring-primary/30 hover:bg-accent/30 transition-colors text-left"
                             onClick={() => {
                               handleSubmit(new Event('submit') as any);
                               navigate("/online-estimate");
                             }}>
-                            
-                            <div className="tru-qb-method-icon-wrap">
-                              <Boxes className="w-6 h-6" />
+                            <div className="h-10 w-10 rounded-lg bg-muted flex items-center justify-center shrink-0">
+                              <Boxes className="w-5 h-5 text-foreground" />
                             </div>
-                            <div className="tru-qb-method-content">
-                              <span className="tru-qb-method-title">Manual Builder</span>
-                              <span className="tru-qb-method-desc">Select items room-by-room</span>
+                            <div className="flex-1 min-w-0">
+                              <span className="text-sm font-semibold text-foreground block">Manual Builder</span>
+                              <span className="text-xs text-muted-foreground">Select items room-by-room</span>
                             </div>
-                            <ArrowRight className="w-5 h-5 tru-qb-method-arrow" />
+                            <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0" />
                           </button>
-                          
-                          {/* Video Consult Option */}
+
                           <button
                             type="button"
-                            className="tru-qb-method-card"
+                            className="w-full flex items-center gap-3 p-3 rounded-xl ring-1 ring-border hover:ring-primary/30 hover:bg-accent/30 transition-colors text-left"
                             onClick={() => {
                               handleSubmit(new Event('submit') as any);
                               navigate("/book");
                             }}>
-                            
-                            <div className="tru-qb-method-icon-wrap">
-                              <Video className="w-6 h-6" />
+                            <div className="h-10 w-10 rounded-lg bg-muted flex items-center justify-center shrink-0">
+                              <Video className="w-5 h-5 text-foreground" />
                             </div>
-                            <div className="tru-qb-method-content">
-                              <span className="tru-qb-method-title">Video Consult</span>
-                              <span className="tru-qb-method-desc">Live walkthrough with a specialist</span>
-                              <span className="tru-qb-method-badge tru-qb-method-badge-alt">
-                                <Headphones className="w-3 h-3" />
-                                Personal
-                              </span>
+                            <div className="flex-1 min-w-0">
+                              <span className="text-sm font-semibold text-foreground block">Video Consult</span>
+                              <span className="text-xs text-muted-foreground">Live walkthrough with a specialist</span>
                             </div>
-                            <ArrowRight className="w-5 h-5 tru-qb-method-arrow" />
+                            <span className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground bg-muted px-2 py-0.5 rounded-full flex items-center gap-1"><Headphones className="w-3 h-3" />Personal</span>
+                            <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0" />
                           </button>
                         </div>
 
-                        <button type="button" className="tru-qb-back" onClick={goBack}>
-                          <ChevronLeft className="w-4 h-4" />
+                        <button type="button" className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground mx-auto" onClick={goBack}>
+                          <ChevronLeft className="w-3.5 h-3.5" />
                           <span>Back</span>
                         </button>
                       </div>
-                      }
+                    }
 
-                    {/* Post-Submission Confirmation - shown after selecting a method */}
+                    {/* Post-Submission Confirmation */}
                     {submitted &&
-                      <div className="tru-qb-step-content tru-qb-confirmation" key="step-confirmed">
-                        <div className="tru-qb-confirmation-icon">
-                          <CheckCircle className="w-12 h-12" />
-                        </div>
-                        <h1 className="tru-qb-question">You're all set!</h1>
-                        <p className="tru-qb-subtitle tru-qb-subtitle-bold">
-                          <strong>We've saved your move details.</strong> You can continue building your inventory or speak with a specialist.
-                        </p>
-                        
-                        <div className="tru-qb-confirmation-divider">
-                          <span>Continue with:</span>
-                        </div>
-                        
-                        <div className="tru-qb-options-stack-full">
-                          <button
-                            type="button"
-                            className="tru-qb-option-card"
-                            onClick={() => navigate("/scan-room")}>
-                            
-                            <Scan className="w-5 h-5" />
-                            <div className="tru-qb-option-text">
-                              <span className="tru-qb-option-title">AI Inventory</span>
-                              <span className="tru-qb-option-desc">Upload photos or video</span>
-                            </div>
+                      <div key="step-confirmed" className="space-y-4 text-center py-4">
+                        <CheckCircle className="w-12 h-12 text-primary mx-auto" />
+                        <h3 className="text-lg font-bold text-foreground">You're all set!</h3>
+                        <p className="text-sm text-muted-foreground">We've saved your move details. Continue building your inventory or speak with a specialist.</p>
+
+                        <div className="space-y-2">
+                          <button type="button" onClick={() => navigate("/scan-room")} className="w-full flex items-center justify-center gap-2 h-10 rounded-lg bg-foreground text-background font-semibold text-sm hover:bg-foreground/85 transition-colors">
+                            <Scan className="w-4 h-4 text-primary" />
+                            AI Inventory
                           </button>
-                          <button
-                            type="button"
-                            className="tru-qb-option-card tru-qb-option-card-outline"
-                            onClick={() => navigate("/online-estimate")}>
-                            
-                            <Boxes className="w-5 h-5" />
-                            <div className="tru-qb-option-text">
-                              <span className="tru-qb-option-title">Manual Builder</span>
-                              <span className="tru-qb-option-desc">Select items room-by-room</span>
-                            </div>
+                          <button type="button" onClick={() => navigate("/online-estimate")} className="w-full flex items-center justify-center gap-2 h-10 rounded-lg ring-1 ring-border text-foreground font-semibold text-sm hover:bg-accent/30 transition-colors">
+                            <Boxes className="w-4 h-4" />
+                            Manual Builder
                           </button>
-                          <button
-                            type="button"
-                            className="tru-qb-option-card tru-qb-option-card-outline"
-                            onClick={() => navigate("/book")}>
-                            
-                            <Video className="w-5 h-5" />
-                            <div className="tru-qb-option-text">
-                              <span className="tru-qb-option-title">Video Consult</span>
-                              <span className="tru-qb-option-desc py-[6px]">Schedule a walkthrough</span>
-                            </div>
+                          <button type="button" onClick={() => navigate("/book")} className="w-full flex items-center justify-center gap-2 h-10 rounded-lg ring-1 ring-border text-foreground font-semibold text-sm hover:bg-accent/30 transition-colors">
+                            <Video className="w-4 h-4" />
+                            Video Consult
                           </button>
                         </div>
                       </div>
-                      }
+                    }
                   </div>
-                  
-                  {/* Footer inside form card - with trust indicators */}
-                  <div className="tru-floating-form-footer tru-form-footer-trust">
-                    <div className="tru-form-trust-items">
-                      <span className="tru-form-trust-item"><Lock className="w-3 h-3" /> TLS 1.3 ENCRYPTED</span>
-                      <span className="tru-form-trust-divider">•</span>
-                      <span className="tru-form-trust-item"><Shield className="w-3 h-3" /> FMCSA LICENSE VERIFIED</span>
-                      <span className="tru-form-trust-divider">•</span>
-                      <span className="tru-form-trust-item"><Database className="w-3 h-3" /> FIRST-PARTY DATA ONLY</span>
-                    </div>
+
+                  {/* Footer trust strip */}
+                  <div className="border-t border-border px-4 py-2.5 flex items-center justify-center gap-3 text-[9px] uppercase tracking-[0.15em] text-muted-foreground">
+                    <span className="flex items-center gap-1"><Lock className="w-3 h-3" /> TLS 1.3</span>
+                    <span>•</span>
+                    <span className="flex items-center gap-1"><Shield className="w-3 h-3" /> FMCSA Verified</span>
+                    <span>•</span>
+                    <span className="flex items-center gap-1"><Database className="w-3 h-3" /> First-Party Data</span>
                   </div>
                 </div>
-
               </div>
-
             </div>
-          </section>
-        </div> {/* End tru-hero-wrapper */}
-
-        {/* BLACK STATS STRIP - Section Divider */}
-        <StatsStrip />
+          </div>
+        </section>
 
           {/* START YOUR AI INVENTORY ANALYSIS - Enhanced with Preview */}
           <section className="py-14 md:py-20 relative overflow-hidden">
