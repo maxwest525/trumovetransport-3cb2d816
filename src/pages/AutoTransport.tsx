@@ -51,6 +51,10 @@ export default function AutoTransport() {
     quoteRevealRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const scrollToContact = () => {
+    document.getElementById('personalized-rate')?.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
     <SiteShell hideTrustStrip>
       {/* How It Works */}
@@ -104,7 +108,7 @@ export default function AutoTransport() {
 
       {/* Quote Reveal */}
       <ScrollFadeIn>
-        <QuoteReveal ref={quoteRevealRef} quoteData={quoteData} />
+        <QuoteReveal ref={quoteRevealRef} quoteData={quoteData} onScrollToContact={scrollToContact} />
       </ScrollFadeIn>
 
       {/* Final CTA */}

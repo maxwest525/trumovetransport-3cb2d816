@@ -1,5 +1,5 @@
 import { forwardRef, useState, useEffect } from "react";
-import { Lock, Phone, Mail, CircleCheck, ShieldCheck, BadgePercent, Clock, Sparkles, Activity, Zap, Fingerprint, ScanLine, Cpu, Layers, Car, MapPin, ArrowRightLeft } from "lucide-react";
+import { Lock, Phone, Mail, CircleCheck, ShieldCheck, BadgePercent, Clock, Sparkles, Activity, Zap, Fingerprint, ScanLine, Cpu, Layers, Car, MapPin, ArrowRightLeft, BadgeCheck, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
@@ -19,6 +19,7 @@ interface QuoteRevealProps {
     transportType: string;
   };
   hideSummary?: boolean;
+  onScrollToContact?: () => void;
 }
 
 const perks = [
@@ -103,7 +104,7 @@ function ExclusiveDealsOverlay({ from, to, onUnlock }: { from: string; to: strin
 }
 
 export const QuoteReveal = forwardRef<HTMLDivElement, QuoteRevealProps>(
-  ({ quoteData, hideSummary = false }, ref) => {
+  ({ quoteData, hideSummary = false, onScrollToContact }, ref) => {
     const [callbackName, setCallbackName] = useState("");
     const [callbackPhone, setCallbackPhone] = useState("");
     const [callbackEmail, setCallbackEmail] = useState("");
@@ -181,11 +182,18 @@ export const QuoteReveal = forwardRef<HTMLDivElement, QuoteRevealProps>(
               <span className="h-px w-8 bg-primary/40" />
             </div>
             <h2 className="text-xl sm:text-3xl md:text-5xl lg:text-6xl font-bold text-foreground tracking-tight leading-[1.1]">
-              Finish Your Transport
+              Special Rates Available
             </h2>
             <p className="text-muted-foreground text-xs sm:text-sm md:text-base mt-1.5 sm:mt-3 max-w-md mx-auto leading-relaxed">
-              Review your details below — then connect with an agent to unlock route-specific deals and finalize at the best rate.
+              Special rates available now based on your route — lock in pricing before availability shifts.
             </p>
+            <button
+              onClick={onScrollToContact}
+              className="mt-4 inline-flex items-center gap-2 px-6 py-3 rounded-full bg-primary text-primary-foreground font-bold text-sm tracking-wide hover:bg-primary/90 hover:scale-[1.03] active:scale-[0.98] transition-all duration-200 shadow-[0_0_25px_-6px_hsl(var(--primary)/0.5)]"
+            >
+              <Tag className="w-4 h-4" strokeWidth={2} />
+              Get Special Rates
+            </button>
           </div>
 
           <div className="max-w-5xl mx-auto">
@@ -270,7 +278,7 @@ export const QuoteReveal = forwardRef<HTMLDivElement, QuoteRevealProps>(
       </section>
 
       {/* Contact section */}
-      <section className="py-4 sm:py-10 md:py-20 relative overflow-hidden">
+      <section id="personalized-rate" className="py-4 sm:py-10 md:py-20 relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
           <div className="absolute bottom-1/3 right-0 w-[400px] h-[400px] rounded-full bg-primary/[0.03] blur-[100px]" />
@@ -310,8 +318,13 @@ export const QuoteReveal = forwardRef<HTMLDivElement, QuoteRevealProps>(
               </div>
 
               {/* Form */}
-              <div className="rounded-xl border border-border/30 bg-card/50 backdrop-blur-sm p-4 sm:p-6 flex flex-col justify-center">
-                <p className="text-[10px] uppercase tracking-[0.2em] text-primary/70 font-semibold mb-1">Connect With Us</p>
+              <div className="rounded-xl border border-border/30 bg-card/50 backdrop-blur-sm p-4 sm:p-6 flex flex-col justify-center relative overflow-hidden">
+                {/* Priority Route Rate stamp */}
+                <div className="absolute top-3 right-3 z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 border border-primary/30 rotate-0">
+                  <BadgeCheck className="w-3.5 h-3.5 text-primary shrink-0" strokeWidth={2} />
+                  <span className="text-[10px] font-bold uppercase tracking-[0.08em] text-primary whitespace-nowrap">Priority Route Rate Available</span>
+                </div>
+                <p className="text-[10px] uppercase tracking-[0.2em] text-primary/70 font-semibold mb-1 mt-6">Connect With Us</p>
                 <h3 className="text-lg sm:text-xl font-bold text-foreground tracking-tight mb-4">Request a Callback</h3>
                 {!submitted ? (
                   <div className="space-y-3">
