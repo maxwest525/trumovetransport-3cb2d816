@@ -20,7 +20,6 @@ import Classic from "./pages/Classic";
 import LiveTracking from "./pages/LiveTracking";
 import AutoTransport from "./pages/AutoTransport";
 import CustomerService from "./pages/CustomerService";
-import ElevenLabsTrudyWidget from "./components/ElevenLabsTrudyWidget";
 import FloatingTruckChat from "./components/FloatingTruckChat";
 import ScrollToTop from "./components/ScrollToTop";
 
