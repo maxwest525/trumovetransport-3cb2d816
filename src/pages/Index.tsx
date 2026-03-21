@@ -1861,14 +1861,24 @@ export default function Index() {
           <div className="py-8"><FeatureTrustStrip /></div>
 
           {/* GET IN TOUCH */}
-          <section className="tru-ai-steps-section">
-            <div className="max-w-6xl mx-auto">
+          <section className="py-20 md:py-28 relative overflow-hidden">
+            <div className="absolute inset-0 pointer-events-none">
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] rounded-full bg-primary/[0.06] blur-[120px]" />
+              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
+            </div>
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
               {/* Online indicator + Headline */}
-              <div className="flex flex-col items-center text-center mb-6">
-                <h2 className="tru-ai-main-headline text-5xl md:text-6xl">
-                  Contact <span className="tru-ai-headline-accent">Us.</span>
+              <div className="flex flex-col items-center text-center mb-8">
+                <p className="text-[11px] uppercase tracking-[0.3em] text-primary font-semibold mb-3">Get In Touch</p>
+                <div className="flex items-center justify-center gap-2 mb-4">
+                  <span className="h-px w-8 bg-primary/40" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary/60" />
+                  <span className="h-px w-8 bg-primary/40" />
+                </div>
+                <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground tracking-tight leading-[1.1]">
+                  Contact <span className="text-primary">Us.</span>
                 </h2>
-                <p className="tru-ai-subheadline text-lg mt-3">Our team is standing by. Voice, video, text, or email.</p>
+                <p className="text-muted-foreground max-w-xl mx-auto text-base md:text-lg font-light leading-relaxed mt-4">Our team is standing by. Voice, video, text, or email.</p>
               </div>
 
               <div className="flex flex-col md:flex-row gap-5 items-stretch">
