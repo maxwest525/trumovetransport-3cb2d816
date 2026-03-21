@@ -507,7 +507,7 @@ function ShipmentTrackerSection({ navigate }: {navigate: (path: string) => void;
   };
 
   return (
-    <section className="py-14 md:py-20 relative overflow-hidden my-[5px]">
+    <section className="py-10 md:py-20 relative overflow-hidden my-[5px]">
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-0 w-[500px] h-[500px] rounded-full bg-primary/[0.05] blur-[120px]" />
         <div className="absolute bottom-0 right-0 w-[400px] h-[400px] rounded-full bg-primary/[0.04] blur-[100px]" />
@@ -516,11 +516,11 @@ function ShipmentTrackerSection({ navigate }: {navigate: (path: string) => void;
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
       </div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="flex flex-col lg:flex-row items-center justify-center gap-10 lg:gap-16 w-full">
+        <div className="flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-16 w-full">
           {/* Lifestyle image - left */}
-          <div className="flex items-center justify-center flex-shrink-0">
-            <div className="rounded-xl overflow-hidden">
-              <img src={trackingLifestyleImg} alt="Customer tracking their move in real-time" className="h-auto block w-full max-w-xs lg:max-w-none" style={{ maxHeight: '340px', objectFit: 'cover' }} />
+          <div className="flex items-center justify-center flex-shrink-0 w-full lg:w-auto">
+            <div className="rounded-xl overflow-hidden w-full max-w-sm lg:max-w-none">
+              <img src={trackingLifestyleImg} alt="Customer tracking their move in real-time" className="h-auto block w-full" style={{ maxHeight: '340px', objectFit: 'cover' }} />
             </div>
           </div>
 
@@ -533,11 +533,11 @@ function ShipmentTrackerSection({ navigate }: {navigate: (path: string) => void;
                 <span className="w-1.5 h-1.5 rounded-full bg-primary/60" />
                 <span className="h-px w-8 bg-primary/40" />
               </div>
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground tracking-tight leading-[1.1]">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground tracking-tight leading-[1.1]">
                 Real-Time<br />
                 <span className="text-primary">Shipment Tracking.</span>
               </h2>
-              <p className="text-muted-foreground max-w-xl mx-auto text-base md:text-lg font-light leading-relaxed mt-4">
+              <p className="text-muted-foreground max-w-xl mx-auto text-sm sm:text-base md:text-lg font-light leading-relaxed mt-4">
                 Stay up to date and track your belongings across the country with real-time GPS tracking of your goods.
               </p>
             </div>
@@ -1515,7 +1515,7 @@ export default function Index() {
                   map((review, i) =>
                   <div
                     key={`${dupeIdx}-${i}`}
-                    className="w-[280px] sm:w-[380px] shrink-0 rounded-2xl bg-card p-4 sm:p-6 flex flex-col gap-3 sm:gap-4 ring-1 ring-border min-h-[200px] sm:min-h-[220px]">
+                    className="w-[300px] sm:w-[380px] shrink-0 rounded-2xl bg-card p-4 sm:p-6 flex flex-col gap-3 sm:gap-4 ring-1 ring-border min-h-[200px] sm:min-h-[220px]">
                     
                         <div className="flex items-center justify-between">
                           <div className="flex gap-0.5">
@@ -1703,7 +1703,7 @@ export default function Index() {
               <div className="flex flex-col gap-5 items-stretch">
 
                 {/* Single card with green gradient glow */}
-                <div className="flex-1 min-w-0 rounded-2xl bg-card p-4 sm:p-5 flex flex-col md:flex-row gap-4 sm:gap-5 transition-all duration-200 ring-1 ring-border">
+                <div className="flex-1 min-w-0 rounded-2xl bg-card p-4 sm:p-5 flex flex-col md:flex-row gap-4 sm:gap-5 transition-all duration-200 ring-1 ring-border overflow-hidden">
 
                   {/* Toggle: Talk to Trudy / Send a Message */}
                   <div className="flex-1 flex flex-col">
@@ -1796,7 +1796,7 @@ export default function Index() {
                   <div className="hidden md:block w-px bg-border" />
 
                   {/* Contact options */}
-                  <div className="flex flex-row flex-wrap md:flex-col gap-2 md:w-48 shrink-0 justify-center">
+                  <div className="flex flex-col gap-2 md:w-48 shrink-0">
                     <a
                       href="tel:+16097277647"
                       className="flex items-center justify-center gap-2 border border-foreground bg-background text-foreground px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-muted transition-colors">
