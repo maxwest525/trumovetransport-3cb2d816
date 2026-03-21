@@ -1,9 +1,12 @@
-import { useEffect, useRef, useState } from "react";
-import mapboxgl from "mapbox-gl";
-import { MAPBOX_TOKEN } from "@/lib/mapboxToken";
-import { MapPin, Truck, Loader2 } from "lucide-react";
+import { useMemo } from "react";
+import { MapContainer, TileLayer, Polyline, Marker, useMap } from "react-leaflet";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
+import { TILE_LAYERS, US_CENTER } from "@/lib/leafletConfig";
+import { MapPin, Truck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { StopLocation } from "./MultiStopLocationList";
+import { useEffect } from "react";
 
 interface MultiStopRoutePreviewProps {
   pickupLocations: StopLocation[];
@@ -12,182 +15,58 @@ interface MultiStopRoutePreviewProps {
   className?: string;
 }
 
+function createStopIcon(isPickup: boolean, index: number): L.DivIcon {
+  const bg = isPickup ? '#22c55e' : '#ef4444';
+  return L.divIcon({
+    className: '',
+    html: `<div style="width:28px;height:28px;border-radius:50%;background:${bg};color:white;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.3);border:2px solid white;">${index}</div>`,
+    iconSize: [28, 28],
+    iconAnchor: [14, 14],
+  });
+}
+
+function FitToMarkers({ positions }: { positions: [number, number][] }) {
+  const map = useMap();
+  useEffect(() => {
+    if (positions.length >= 1) {
+      const bounds = L.latLngBounds(positions.map(p => L.latLng(p[0], p[1])));
+      map.fitBounds(bounds, { padding: [40, 40], maxZoom: 12 });
+    }
+  }, [positions, map]);
+  return null;
+}
+
 export default function MultiStopRoutePreview({
   pickupLocations,
   dropoffLocations,
   optimizedOrder,
   className,
 }: MultiStopRoutePreviewProps) {
-  const mapContainer = useRef<HTMLDivElement>(null);
-  const map = useRef<mapboxgl.Map | null>(null);
-  const markersRef = useRef<mapboxgl.Marker[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  // Get all validated locations with coords
   const validPickups = pickupLocations.filter(l => l.validated && l.coords);
   const validDropoffs = dropoffLocations.filter(l => l.validated && l.coords);
   const allValidLocations = [...validPickups, ...validDropoffs];
-
   const hasLocations = allValidLocations.length >= 1;
 
-  // Initialize map
-  useEffect(() => {
-    if (!mapContainer.current || map.current) return;
-
-    mapboxgl.accessToken = MAPBOX_TOKEN;
-
-    map.current = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: "mapbox://styles/mapbox/light-v11",
-      center: [-98.5795, 39.8283], // Center of US
-      zoom: 3,
-      interactive: true,
-      attributionControl: false,
-    });
-
-    map.current.on("load", () => {
-      setIsLoading(false);
-      
-      // Add route line source
-      map.current?.addSource("route-line", {
-        type: "geojson",
-        data: {
-          type: "Feature",
-          properties: {},
-          geometry: {
-            type: "LineString",
-            coordinates: [],
-          },
-        },
-      });
-
-      // Add dashed connecting line
-      map.current?.addLayer({
-        id: "route-line",
-        type: "line",
-        source: "route-line",
-        layout: {
-          "line-join": "round",
-          "line-cap": "round",
-        },
-        paint: {
-          "line-color": "#6366f1",
-          "line-width": 3,
-          "line-dasharray": [2, 2],
-        },
-      });
-    });
-
-    return () => {
-      map.current?.remove();
-      map.current = null;
-    };
-  }, []);
-
-  // Update markers and route line when locations change
-  useEffect(() => {
-    if (!map.current || isLoading) return;
-
-    // Clear existing markers
-    markersRef.current.forEach(m => m.remove());
-    markersRef.current = [];
-
-    if (!hasLocations) {
-      // Reset route line
-      const source = map.current.getSource("route-line") as mapboxgl.GeoJSONSource;
-      if (source) {
-        source.setData({
-          type: "Feature",
-          properties: {},
-          geometry: { type: "LineString", coordinates: [] },
-        });
-      }
-      return;
-    }
-
-    // Determine order of waypoints
-    const orderedLocations = optimizedOrder
+  const orderedLocations = useMemo(() => {
+    return optimizedOrder
       ? optimizedOrder.map(i => allValidLocations[i]).filter(Boolean)
       : allValidLocations;
+  }, [allValidLocations, optimizedOrder]);
 
-    // Create markers
-    let pickupIndex = 0;
-    let dropoffIndex = 0;
-
-    orderedLocations.forEach((loc, index) => {
-      const isPickup = validPickups.includes(loc);
-      const displayIndex = isPickup ? ++pickupIndex : ++dropoffIndex;
-
-      // Create custom marker element
-      const el = document.createElement("div");
-      el.className = `multistop-marker ${isPickup ? "pickup" : "dropoff"}`;
-      el.innerHTML = `
-        <div class="marker-circle">
-          <span class="marker-number">${displayIndex}</span>
-        </div>
-      `;
-
-      // Add CSS styles inline
-      el.style.cssText = `
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      `;
-
-      const circle = el.querySelector(".marker-circle") as HTMLElement;
-      if (circle) {
-        circle.style.cssText = `
-          width: 28px;
-          height: 28px;
-          border-radius: 50%;
-          background: ${isPickup ? "#22c55e" : "#ef4444"};
-          color: white;
-          font-size: 12px;
-          font-weight: 700;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-          border: 2px solid white;
-        `;
-      }
-
-      const marker = new mapboxgl.Marker(el)
-        .setLngLat([loc.coords![1], loc.coords![0]]) // coords are [lat, lng], mapbox needs [lng, lat]
-        .addTo(map.current!);
-
-      markersRef.current.push(marker);
-    });
-
-    // Draw connecting line
-    const lineCoords = orderedLocations
+  // Convert coords [lat, lng] for Leaflet
+  const markerPositions = useMemo(() => 
+    orderedLocations
       .filter(l => l.coords)
-      .map(l => [l.coords![1], l.coords![0]]); // [lng, lat]
+      .map(l => [l.coords![0], l.coords![1]] as [number, number]),
+    [orderedLocations]
+  );
 
-    const source = map.current.getSource("route-line") as mapboxgl.GeoJSONSource;
-    if (source && lineCoords.length >= 2) {
-      source.setData({
-        type: "Feature",
-        properties: {},
-        geometry: {
-          type: "LineString",
-          coordinates: lineCoords,
-        },
-      });
-    }
-
-    // Fit bounds to show all markers
-    if (lineCoords.length >= 1) {
-      const bounds = new mapboxgl.LngLatBounds();
-      lineCoords.forEach(coord => bounds.extend(coord as [number, number]));
-      
-      map.current.fitBounds(bounds, {
-        padding: { top: 40, bottom: 40, left: 40, right: 40 },
-        maxZoom: 12,
-        duration: 500,
-      });
-    }
-  }, [allValidLocations, validPickups, optimizedOrder, isLoading, hasLocations]);
+  const linePositions = useMemo(() => 
+    orderedLocations
+      .filter(l => l.coords)
+      .map(l => [l.coords![0], l.coords![1]] as [number, number]),
+    [orderedLocations]
+  );
 
   if (!hasLocations) {
     return (
@@ -204,18 +83,43 @@ export default function MultiStopRoutePreview({
     );
   }
 
+  let pickupIndex = 0;
+  let dropoffIndex = 0;
+
   return (
     <div className={cn("relative rounded-lg overflow-hidden border border-border/40", className)}>
-      {isLoading && (
-        <div className="absolute inset-0 bg-muted/50 flex items-center justify-center z-10">
-          <Loader2 className="w-6 h-6 animate-spin text-primary" />
-        </div>
-      )}
-      
-      <div ref={mapContainer} className="h-[200px] w-full" />
+      <MapContainer
+        center={US_CENTER}
+        zoom={4}
+        className="h-[200px] w-full"
+        zoomControl={false}
+        attributionControl={false}
+      >
+        <TileLayer url={TILE_LAYERS.light.url} attribution={TILE_LAYERS.light.attribution} />
+        <FitToMarkers positions={markerPositions} />
+
+        {/* Connecting dashed line */}
+        {linePositions.length >= 2 && (
+          <Polyline positions={linePositions} pathOptions={{ color: '#6366f1', weight: 3, dashArray: '8 8' }} />
+        )}
+
+        {/* Stop markers */}
+        {orderedLocations.map((loc, i) => {
+          if (!loc.coords) return null;
+          const isPickup = validPickups.includes(loc);
+          const displayIndex = isPickup ? ++pickupIndex : ++dropoffIndex;
+          return (
+            <Marker
+              key={`stop-${i}`}
+              position={[loc.coords[0], loc.coords[1]]}
+              icon={createStopIcon(isPickup, displayIndex)}
+            />
+          );
+        })}
+      </MapContainer>
 
       {/* Legend */}
-      <div className="absolute bottom-2 left-2 flex items-center gap-3 px-2 py-1 bg-background/90 backdrop-blur-sm rounded-md text-[10px]">
+      <div className="absolute bottom-2 left-2 flex items-center gap-3 px-2 py-1 bg-background/90 backdrop-blur-sm rounded-md text-[10px] z-[1000]">
         <div className="flex items-center gap-1">
           <div className="w-3 h-3 rounded-full bg-primary" />
           <span className="text-muted-foreground">Pickup</span>
@@ -227,7 +131,7 @@ export default function MultiStopRoutePreview({
       </div>
 
       {/* Location count badge */}
-      <div className="absolute top-2 right-2 px-2 py-1 bg-background/90 backdrop-blur-sm rounded-md text-[10px] font-medium text-muted-foreground">
+      <div className="absolute top-2 right-2 px-2 py-1 bg-background/90 backdrop-blur-sm rounded-md text-[10px] font-medium text-muted-foreground z-[1000]">
         {validPickups.length} pickup{validPickups.length !== 1 ? 's' : ''} • {validDropoffs.length} drop-off{validDropoffs.length !== 1 ? 's' : ''}
       </div>
     </div>

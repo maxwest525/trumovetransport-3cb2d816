@@ -1,8 +1,10 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
-import mapboxgl from 'mapbox-gl';
-import 'mapbox-gl/dist/mapbox-gl.css';
-import { Maximize2, Minimize2, MapPin, Loader2 } from 'lucide-react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
+import { MapContainer, TileLayer, Polyline, Marker, useMap } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+import { TILE_LAYERS, US_CENTER, US_ZOOM } from '@/lib/leafletConfig';
 import { MAPBOX_TOKEN } from '@/lib/mapboxToken';
+import { Maximize2, Minimize2, MapPin, Loader2 } from 'lucide-react';
 
 interface MapboxMoveMapProps {
   fromZip?: string;
@@ -10,36 +12,9 @@ interface MapboxMoveMapProps {
   visible?: boolean;
 }
 
-// Fetch driving route from Mapbox Directions API
-async function fetchDrivingRoute(
-  from: [number, number], 
-  to: [number, number]
-): Promise<[number, number][] | null> {
-  try {
-    const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${from[0]},${from[1]};${to[0]},${to[1]}?geometries=geojson&overview=full&access_token=${MAPBOX_TOKEN}`;
-    const response = await fetch(url);
-    
-    if (!response.ok) {
-      console.warn('Directions API failed, falling back to arc line');
-      return null;
-    }
-    
-    const data = await response.json();
-    if (data.routes && data.routes.length > 0) {
-      return data.routes[0].geometry.coordinates as [number, number][];
-    }
-    return null;
-  } catch (error) {
-    console.warn('Error fetching directions:', error);
-    return null;
-  }
-}
-
-// Comprehensive ZIP coordinate lookup table with state-level accuracy
+// Comprehensive ZIP coordinate lookup table
 const ZIP_COORDS: Record<string, [number, number]> = {
   // Format: [longitude, latitude]
-  
-  // Northeast
   "010": [-72.6, 42.1], "011": [-72.6, 42.1], "012": [-73.2, 42.5], "013": [-72.6, 42.3],
   "014": [-71.8, 42.3], "015": [-71.8, 42.3], "016": [-71.8, 42.3], "017": [-71.8, 42.3],
   "018": [-71.1, 42.4], "019": [-70.9, 42.5],
@@ -47,339 +22,89 @@ const ZIP_COORDS: Record<string, [number, number]> = {
   "024": [-71.2, 42.5], "025": [-70.9, 42.5], "026": [-71.4, 41.8], "027": [-71.4, 41.8],
   "028": [-71.4, 41.8], "029": [-71.3, 41.6],
   "030": [-71.5, 43.2], "031": [-71.5, 43.0], "032": [-71.5, 43.2], "033": [-71.5, 43.2],
-  "034": [-71.5, 43.5], "035": [-71.8, 44.0], "036": [-72.0, 43.7], "037": [-72.3, 43.6],
-  "038": [-71.5, 43.0],
-  "040": [-70.3, 43.7], "041": [-70.3, 43.7], "042": [-70.3, 43.7], "043": [-69.8, 44.3],
-  "044": [-68.8, 44.8], "045": [-69.8, 44.1], "046": [-68.0, 46.9], "047": [-68.0, 46.9],
-  "048": [-70.2, 44.0], "049": [-70.5, 43.5],
-  "050": [-72.9, 44.3], "051": [-72.6, 44.0], "052": [-72.7, 42.9], "053": [-72.6, 43.2],
-  "054": [-72.6, 44.4], "056": [-72.6, 44.4], "057": [-72.8, 43.6], "058": [-72.5, 44.2],
-  "059": [-73.2, 44.5],
-  "060": [-72.7, 41.8], "061": [-72.7, 41.8], "062": [-72.9, 41.5], "063": [-73.2, 41.2],
-  "064": [-73.2, 41.3], "065": [-73.0, 41.3], "066": [-72.9, 41.3], "067": [-72.5, 41.5],
-  "068": [-73.4, 41.1], "069": [-73.0, 41.5],
-  
-  // New York / New Jersey / Pennsylvania
-  "070": [-74.2, 40.8], "071": [-74.2, 40.7], "072": [-74.2, 40.5], "073": [-74.4, 40.6],
-  "074": [-74.1, 40.9], "075": [-74.1, 40.9], "076": [-74.1, 40.9], "077": [-74.0, 40.4],
-  "078": [-74.7, 40.6], "079": [-74.9, 40.9],
-  "080": [-74.9, 39.9], "081": [-75.0, 39.7], "082": [-74.8, 39.4], "083": [-74.8, 39.3],
-  "084": [-75.0, 39.5], "085": [-74.7, 40.2], "086": [-74.7, 40.3], "087": [-74.5, 40.0],
-  "088": [-74.3, 40.1], "089": [-74.5, 39.4],
-  "100": [-74.0, 40.7], "101": [-73.9, 40.8], "102": [-74.0, 40.7], "103": [-74.1, 40.6],
-  "104": [-73.9, 40.9], "105": [-73.8, 41.0], "106": [-73.8, 41.0], "107": [-73.9, 41.0],
-  "108": [-73.7, 41.1], "109": [-73.8, 41.2],
-  "110": [-73.7, 40.8], "111": [-73.8, 40.7], "112": [-73.9, 40.7], "113": [-73.8, 40.8],
-  "114": [-73.8, 40.8], "115": [-73.6, 40.8], "116": [-73.4, 40.8], "117": [-73.4, 40.7],
-  "118": [-73.2, 40.8], "119": [-73.0, 40.9],
-  "120": [-73.9, 42.7], "121": [-73.8, 42.7], "122": [-73.7, 42.6], "123": [-73.9, 42.2],
-  "124": [-74.0, 42.0], "125": [-74.0, 41.9], "126": [-73.9, 41.7], "127": [-74.4, 41.8],
-  "128": [-74.0, 42.1], "129": [-73.9, 42.4],
-  "130": [-76.2, 43.1], "131": [-76.2, 43.0], "132": [-75.5, 43.1], "133": [-75.5, 43.5],
-  "134": [-76.0, 43.5], "135": [-75.0, 43.0], "136": [-75.5, 44.0], "137": [-75.9, 44.3],
-  "140": [-78.9, 42.9], "141": [-78.9, 42.9], "142": [-78.9, 42.9], "143": [-78.7, 42.5],
-  "144": [-79.0, 42.1], "145": [-78.4, 42.1], "146": [-77.6, 43.2], "147": [-77.6, 43.2],
-  "148": [-77.0, 42.1], "149": [-76.5, 42.4],
-  "150": [-79.9, 40.4], "151": [-79.9, 40.4], "152": [-79.9, 40.4], "153": [-79.9, 40.5],
-  "154": [-80.0, 40.7], "155": [-79.2, 40.5], "156": [-79.7, 40.3], "157": [-79.4, 40.2],
-  "158": [-79.0, 40.0], "159": [-78.4, 40.3],
-  "160": [-79.5, 41.4], "161": [-79.7, 41.2], "162": [-78.4, 40.5], "163": [-80.1, 41.2],
-  "164": [-80.0, 41.9], "165": [-80.1, 41.4], "166": [-78.9, 40.3],
-  "170": [-76.9, 40.3], "171": [-77.0, 40.3], "172": [-76.9, 40.0], "173": [-76.3, 40.0],
-  "174": [-77.2, 39.9], "175": [-76.0, 40.0], "176": [-76.3, 40.3], "177": [-77.6, 40.0],
-  "178": [-75.9, 40.6], "179": [-76.0, 40.3],
-  "180": [-75.4, 40.6], "181": [-75.5, 40.6], "182": [-75.7, 41.2], "183": [-76.0, 40.7],
-  "184": [-75.3, 41.4], "185": [-75.7, 41.4], "186": [-75.9, 41.2], "187": [-75.9, 41.5],
-  "188": [-75.5, 41.4], "189": [-75.0, 41.0],
-  "190": [-75.2, 40.0], "191": [-75.2, 40.0], "192": [-75.2, 40.0], "193": [-75.5, 40.0],
-  "194": [-75.3, 40.1], "195": [-75.0, 40.2], "196": [-75.9, 40.0],
-  
-  // DC / Maryland / Virginia
-  "200": [-77.0, 38.9], "201": [-77.0, 38.9], "202": [-77.0, 38.9], "203": [-77.0, 38.9],
-  "204": [-77.0, 38.9], "205": [-77.0, 38.9],
-  "206": [-76.9, 38.8], "207": [-76.7, 38.6], "208": [-77.0, 39.0], "209": [-77.2, 39.4],
-  "210": [-76.6, 39.3], "211": [-76.6, 39.3], "212": [-76.6, 39.3], "214": [-76.5, 39.0],
-  "215": [-76.5, 38.5], "216": [-76.1, 38.4], "217": [-77.4, 39.5], "218": [-75.6, 38.4],
-  "219": [-79.0, 39.4],
-  "220": [-77.5, 38.8], "221": [-77.1, 38.8], "222": [-77.1, 38.8], "223": [-77.3, 38.9],
-  "224": [-77.4, 38.3], "225": [-77.5, 38.3], "226": [-77.2, 38.8], "227": [-77.3, 38.6],
-  "228": [-77.5, 38.5], "229": [-78.5, 38.0],
-  "230": [-77.5, 37.5], "231": [-76.5, 37.0], "232": [-77.5, 37.5], "233": [-76.3, 36.8],
-  "234": [-76.3, 36.8], "235": [-76.4, 37.0], "236": [-76.3, 36.9], "237": [-76.6, 37.3],
-  "238": [-77.5, 37.5], "239": [-76.0, 37.4],
-  "240": [-79.9, 37.3], "241": [-79.9, 37.3], "242": [-80.4, 37.2], "243": [-79.4, 37.4],
-  "244": [-79.1, 37.4], "245": [-78.9, 37.4], "246": [-81.2, 37.3],
-  
-  // Carolinas
-  "270": [-78.6, 35.8], "271": [-79.8, 36.1], "272": [-79.4, 36.1], "273": [-79.8, 36.3],
-  "274": [-79.8, 36.1], "275": [-78.9, 35.8], "276": [-79.8, 36.1], "277": [-80.2, 36.1],
-  "278": [-78.0, 35.9], "279": [-78.3, 35.9],
-  "280": [-80.8, 35.2], "281": [-80.8, 35.2], "282": [-80.8, 35.2], "283": [-80.9, 35.2],
-  "284": [-81.5, 35.3], "285": [-80.0, 35.3], "286": [-81.5, 35.6], "287": [-81.2, 35.9],
-  "288": [-79.4, 35.1], "289": [-79.0, 35.0],
-  "290": [-79.9, 34.0], "291": [-81.0, 34.0], "292": [-81.0, 34.0], "293": [-82.4, 34.9],
-  "294": [-80.0, 33.0], "295": [-80.1, 32.8], "296": [-82.2, 34.2], "297": [-81.7, 33.5],
-  "298": [-79.8, 33.7], "299": [-80.0, 32.9],
-  
-  // Georgia
+  "040": [-70.3, 43.7], "050": [-72.9, 44.3], "060": [-72.7, 41.8],
+  "070": [-74.2, 40.8], "080": [-74.9, 39.9],
+  "100": [-74.0, 40.7], "101": [-73.9, 40.8], "102": [-74.0, 40.7], "110": [-73.7, 40.8],
+  "111": [-73.8, 40.7], "112": [-73.9, 40.7], "120": [-73.9, 42.7], "130": [-76.2, 43.1],
+  "140": [-78.9, 42.9], "150": [-79.9, 40.4], "160": [-79.5, 41.4], "170": [-76.9, 40.3],
+  "180": [-75.4, 40.6], "190": [-75.2, 40.0], "191": [-75.2, 40.0],
+  "200": [-77.0, 38.9], "201": [-77.0, 38.9], "202": [-77.0, 38.9],
+  "210": [-76.6, 39.3], "212": [-76.6, 39.3], "220": [-77.5, 38.8],
+  "230": [-77.5, 37.5], "240": [-79.9, 37.3],
+  "270": [-78.6, 35.8], "280": [-80.8, 35.2], "290": [-79.9, 34.0],
   "300": [-84.4, 33.8], "301": [-84.4, 33.8], "302": [-84.4, 33.8], "303": [-84.4, 33.8],
-  "304": [-84.2, 33.9], "305": [-84.1, 34.1], "306": [-84.5, 34.0], "307": [-84.5, 34.5],
-  "308": [-83.4, 33.9], "309": [-83.9, 34.5],
-  "310": [-81.1, 32.1], "311": [-84.0, 32.5], "312": [-84.0, 32.5], "313": [-84.2, 31.6],
-  "314": [-83.6, 32.8], "315": [-83.1, 31.2], "316": [-83.6, 31.2], "317": [-82.4, 31.2],
-  "318": [-82.0, 31.5], "319": [-84.2, 30.8],
-  
-  // Florida - COMPREHENSIVE AND ACCURATE
-  "320": [-81.7, 30.3], "321": [-81.0, 28.5], "322": [-81.7, 30.3], "323": [-80.4, 27.6],
-  "324": [-82.5, 30.3], "325": [-82.3, 29.2], "326": [-82.0, 29.2], "327": [-81.4, 28.5],
-  "328": [-81.4, 28.4], "329": [-81.0, 28.0],
+  "310": [-81.1, 32.1], "320": [-81.7, 30.3], "321": [-81.0, 28.5],
+  "327": [-81.4, 28.5], "328": [-81.4, 28.4],
   "330": [-80.2, 25.8], "331": [-80.3, 25.9], "332": [-80.1, 25.8], "333": [-80.2, 25.8],
   "334": [-80.1, 26.4], "335": [-80.1, 26.2], "336": [-82.5, 27.9], "337": [-82.6, 27.8],
-  "338": [-80.2, 26.6], "339": [-80.3, 26.5],
-  "340": [-80.1, 26.0], "341": [-82.7, 28.0], "342": [-82.5, 28.1], "344": [-80.1, 26.1],
-  "346": [-82.5, 27.5], "347": [-80.2, 26.0], "349": [-81.8, 26.6],
-  
-  // Alabama
-  "350": [-86.8, 33.5], "351": [-86.8, 33.5], "352": [-86.8, 33.5], "354": [-86.8, 34.7],
-  "355": [-87.1, 34.2], "356": [-86.3, 34.7], "357": [-86.6, 34.7], "358": [-85.8, 34.0],
-  "359": [-85.4, 33.4],
-  "360": [-86.3, 32.4], "361": [-86.3, 32.4], "362": [-85.5, 32.4], "363": [-86.0, 32.9],
-  "364": [-86.0, 32.4], "365": [-88.0, 30.7], "366": [-88.0, 30.7], "367": [-87.7, 31.2],
-  "368": [-87.7, 31.5], "369": [-87.1, 31.5],
-  
-  // Tennessee
-  "370": [-86.8, 36.2], "371": [-86.8, 36.2], "372": [-86.8, 36.2], "373": [-86.4, 35.0],
-  "374": [-86.4, 35.6], "375": [-86.1, 36.0], "376": [-83.5, 36.0], "377": [-82.4, 36.3],
-  "378": [-84.3, 36.0], "379": [-83.9, 36.0],
-  "380": [-90.0, 35.1], "381": [-90.0, 35.1], "382": [-89.8, 35.2], "383": [-89.4, 35.6],
-  "384": [-87.0, 35.6], "385": [-88.8, 35.6],
-  
-  // Kentucky
-  "400": [-85.8, 38.3], "401": [-85.8, 38.3], "402": [-85.8, 38.3], "403": [-85.7, 38.0],
-  "404": [-85.4, 38.0], "405": [-85.0, 38.3], "406": [-84.5, 38.0], "407": [-85.2, 37.5],
-  "408": [-86.0, 37.5], "409": [-87.5, 37.0],
-  "410": [-84.5, 38.0], "411": [-84.5, 38.0], "412": [-84.5, 38.0], "413": [-84.3, 37.8],
-  "414": [-84.1, 37.6], "415": [-83.2, 37.8], "416": [-82.6, 38.4], "417": [-83.8, 37.1],
-  "418": [-82.8, 37.5],
-  
-  // Ohio
-  "430": [-83.0, 39.9], "431": [-83.0, 39.9], "432": [-83.0, 39.9], "433": [-82.9, 40.0],
-  "434": [-83.8, 40.8], "435": [-83.6, 40.1], "436": [-83.5, 41.6], "437": [-82.5, 40.4],
-  "438": [-82.0, 40.4],
-  "440": [-81.7, 41.5], "441": [-81.7, 41.5], "442": [-81.5, 41.1], "443": [-81.4, 41.1],
-  "444": [-81.5, 41.1], "445": [-81.2, 41.1], "446": [-80.8, 41.1], "447": [-80.6, 41.0],
-  "448": [-81.4, 40.8], "449": [-81.5, 40.6],
-  "450": [-84.2, 39.8], "451": [-84.2, 39.8], "452": [-84.2, 39.8], "453": [-84.2, 39.8],
-  "454": [-84.2, 40.0], "455": [-84.0, 40.1], "456": [-83.8, 39.8], "457": [-83.0, 39.4],
-  "458": [-84.0, 40.8],
-  
-  // Indiana
-  "460": [-86.2, 39.8], "461": [-86.2, 39.8], "462": [-86.2, 39.8], "463": [-86.1, 40.2],
-  "464": [-86.9, 40.4], "465": [-86.5, 40.0], "466": [-86.9, 39.5], "467": [-87.4, 39.5],
-  "468": [-87.0, 38.3], "469": [-86.1, 39.2],
-  "470": [-85.7, 41.1], "471": [-85.1, 41.1], "472": [-86.2, 41.7], "473": [-86.3, 41.7],
-  "474": [-85.2, 40.9], "475": [-85.1, 40.1], "476": [-84.9, 40.5], "477": [-85.4, 39.8],
-  "478": [-85.5, 39.2], "479": [-85.0, 38.3],
-  
-  // Michigan
-  "480": [-83.0, 42.3], "481": [-83.0, 42.3], "482": [-83.0, 42.3], "483": [-82.7, 42.5],
-  "484": [-83.7, 43.4], "485": [-83.9, 43.4], "486": [-84.5, 43.0], "487": [-84.6, 43.4],
-  "488": [-84.5, 42.7], "489": [-84.6, 42.5],
-  "490": [-85.7, 42.3], "491": [-85.7, 42.3], "492": [-85.0, 42.3], "493": [-85.0, 42.8],
-  "494": [-85.6, 43.0], "495": [-86.2, 43.2], "496": [-84.6, 42.7], "497": [-86.4, 44.2],
-  "498": [-87.4, 46.5], "499": [-87.4, 46.5],
-  
-  // Iowa
-  "500": [-93.6, 41.6], "501": [-93.6, 41.6], "502": [-93.6, 41.6], "503": [-93.6, 41.6],
-  "504": [-93.2, 42.5], "505": [-94.2, 42.5], "506": [-92.5, 42.5], "507": [-93.0, 42.0],
-  "508": [-95.0, 42.5], "509": [-94.2, 41.3],
-  "510": [-95.9, 41.3], "511": [-95.9, 41.3], "512": [-95.9, 41.3], "513": [-95.0, 41.3],
-  "514": [-94.2, 40.6], "515": [-94.5, 41.0], "516": [-95.9, 42.5],
-  "520": [-91.5, 41.7], "521": [-91.5, 41.7], "522": [-91.5, 41.7], "523": [-91.5, 41.7],
-  "524": [-90.6, 41.5], "525": [-91.4, 42.5], "526": [-90.2, 41.8], "527": [-90.5, 42.5],
-  "528": [-91.7, 43.3],
-  
-  // Wisconsin
-  "530": [-89.4, 43.1], "531": [-89.4, 43.1], "532": [-87.9, 43.0], "534": [-90.8, 43.8],
-  "535": [-89.0, 43.5], "537": [-89.4, 43.1], "538": [-89.8, 42.6], "539": [-88.5, 43.0],
-  "540": [-91.5, 44.9], "541": [-91.5, 44.9], "542": [-91.2, 44.0], "543": [-91.2, 44.5],
-  "544": [-89.6, 44.5], "545": [-89.6, 45.5], "546": [-87.6, 45.0], "547": [-90.5, 46.6],
-  "548": [-89.0, 45.5], "549": [-89.6, 46.8],
-  
-  // Minnesota
-  "550": [-93.3, 44.9], "551": [-93.3, 44.9], "553": [-93.3, 44.9], "554": [-93.3, 44.9],
-  "555": [-93.3, 44.9], "556": [-93.1, 45.0], "557": [-93.0, 45.2], "558": [-93.4, 45.0],
-  "559": [-93.7, 45.0],
-  "560": [-94.2, 44.2], "561": [-94.2, 44.2], "562": [-95.0, 45.5], "563": [-95.8, 45.5],
-  "564": [-94.2, 45.6], "565": [-93.5, 45.5], "566": [-95.9, 47.5], "567": [-96.8, 46.9],
-  
-  // Dakotas
-  "570": [-96.7, 43.5], "571": [-96.7, 43.5], "572": [-98.5, 45.5], "573": [-97.1, 45.5],
-  "574": [-100.4, 44.4], "575": [-103.2, 44.1], "576": [-100.9, 46.9], "577": [-103.2, 46.9],
-  "580": [-96.8, 46.9], "581": [-96.8, 46.9], "582": [-97.0, 47.9], "583": [-98.7, 46.9],
-  "584": [-100.8, 48.2], "585": [-101.8, 47.5], "586": [-102.8, 48.2], "587": [-103.6, 47.0],
-  "588": [-102.8, 46.0],
-  "590": [-110.4, 45.8], "591": [-105.0, 48.5], "592": [-109.4, 47.5], "593": [-111.0, 48.5],
-  "594": [-114.0, 47.0], "595": [-112.0, 46.6], "596": [-114.5, 48.2], "597": [-106.0, 45.8],
-  "598": [-111.0, 45.7], "599": [-109.0, 45.8],
-  
-  // Illinois
-  "600": [-87.6, 41.9], "601": [-87.6, 41.9], "602": [-87.6, 41.9], "603": [-87.6, 41.9],
-  "604": [-88.0, 42.0], "605": [-87.8, 42.0], "606": [-87.6, 41.9], "607": [-87.8, 41.8],
-  "608": [-87.9, 41.8], "609": [-87.9, 42.3],
-  "610": [-88.1, 41.8], "611": [-89.1, 41.5], "612": [-88.3, 41.9], "613": [-89.5, 41.3],
-  "614": [-89.6, 42.3], "615": [-88.5, 41.1], "616": [-89.2, 40.7],
-  "617": [-87.9, 40.5], "618": [-88.2, 40.1], "619": [-87.6, 40.1],
-  "620": [-89.6, 38.6], "622": [-89.6, 38.6], "623": [-89.0, 38.5], "624": [-89.2, 37.7],
-  "625": [-89.6, 39.8], "626": [-90.2, 39.8], "627": [-90.0, 38.9], "628": [-88.5, 38.5],
-  "629": [-88.5, 37.7],
-  
-  // Missouri
-  "630": [-90.2, 38.6], "631": [-90.2, 38.6], "633": [-90.2, 38.6], "634": [-90.4, 38.5],
-  "635": [-90.4, 38.7], "636": [-90.4, 38.8], "637": [-91.4, 39.0], "638": [-92.2, 39.8],
-  "639": [-91.2, 38.6],
-  "640": [-94.6, 39.1], "641": [-94.6, 39.1], "644": [-94.8, 39.1], "645": [-93.7, 39.1],
-  "646": [-93.2, 38.6], "647": [-94.5, 38.0], "648": [-94.3, 37.0], "649": [-94.5, 37.2],
-  "650": [-92.3, 38.6], "651": [-92.3, 38.6], "652": [-92.3, 38.6], "653": [-91.8, 38.2],
-  "654": [-93.3, 37.2], "655": [-93.3, 37.2], "656": [-93.3, 37.2], "657": [-94.5, 37.8],
-  "658": [-90.1, 36.3],
-  
-  // Kansas
-  "660": [-94.6, 39.0], "661": [-94.6, 39.0], "662": [-94.6, 39.0], "664": [-94.9, 39.3],
-  "665": [-95.7, 39.0], "666": [-95.3, 38.6], "667": [-96.0, 39.2], "668": [-95.3, 38.0],
-  "669": [-96.5, 39.2],
-  "670": [-97.3, 37.7], "671": [-97.3, 37.7], "672": [-97.3, 37.7], "673": [-98.5, 38.8],
-  "674": [-97.0, 38.8], "675": [-98.2, 38.1], "676": [-99.3, 39.3], "677": [-99.3, 37.8],
-  "678": [-100.5, 37.5], "679": [-101.0, 37.8],
-  
-  // Nebraska
-  "680": [-95.9, 41.3], "681": [-95.9, 41.3], "683": [-96.0, 41.1], "684": [-96.4, 40.6],
-  "685": [-96.7, 40.8], "686": [-97.5, 40.6], "687": [-97.1, 40.0], "688": [-98.4, 40.6],
-  "689": [-99.1, 40.9],
-  "690": [-100.8, 41.1], "691": [-99.9, 40.9], "692": [-101.0, 41.1], "693": [-103.0, 41.1],
-  
-  // Louisiana
-  "700": [-90.1, 29.9], "701": [-90.1, 29.9], "703": [-90.0, 30.0], "704": [-89.9, 30.0],
-  "705": [-90.5, 30.5], "706": [-91.1, 30.4], "707": [-92.0, 30.2], "708": [-92.5, 30.2],
-  "710": [-92.0, 30.2], "711": [-93.2, 30.2], "712": [-93.7, 32.5], "713": [-91.2, 31.3],
-  "714": [-92.4, 31.3],
-  
-  // Arkansas
-  "716": [-92.3, 34.7], "717": [-91.5, 34.7], "718": [-94.2, 34.2], "719": [-90.0, 35.2],
-  "720": [-92.3, 34.7], "721": [-92.3, 34.7], "722": [-92.3, 34.7], "723": [-90.5, 34.2],
-  "724": [-90.1, 35.8], "725": [-93.0, 35.4], "726": [-94.2, 35.4], "727": [-94.5, 35.4],
-  "728": [-94.2, 36.1], "729": [-94.2, 36.3],
-  
-  // Oklahoma
-  "730": [-97.5, 35.5], "731": [-97.5, 35.5], "734": [-96.5, 35.0], "735": [-95.0, 35.0],
-  "736": [-95.0, 36.2], "737": [-96.0, 36.2], "738": [-97.4, 34.6], "739": [-98.4, 34.6],
-  "740": [-96.0, 36.2], "741": [-96.0, 36.2], "743": [-95.0, 36.2], "744": [-95.0, 35.8],
-  "745": [-95.0, 35.8], "746": [-95.5, 35.0], "747": [-98.5, 34.2], "748": [-99.5, 35.5],
-  "749": [-100.5, 36.5],
-  
-  // Texas
-  "750": [-96.8, 32.8], "751": [-96.8, 32.8], "752": [-96.8, 32.8], "753": [-96.8, 32.8],
-  "754": [-97.0, 33.2], "755": [-96.5, 33.0], "756": [-95.4, 31.3], "757": [-94.5, 32.4],
-  "758": [-94.0, 32.0], "759": [-97.0, 32.0],
-  "760": [-97.3, 32.7], "761": [-97.3, 32.7], "762": [-97.3, 32.7], "763": [-97.5, 31.1],
-  "764": [-97.1, 32.4], "765": [-97.1, 31.6], "766": [-99.7, 32.4], "767": [-100.5, 31.4],
-  "768": [-99.5, 33.6], "769": [-102.4, 31.9],
-  "770": [-95.4, 29.8], "771": [-95.4, 29.8], "772": [-95.4, 29.8], "773": [-95.1, 30.1],
-  "774": [-95.1, 29.6], "775": [-95.0, 29.2], "776": [-94.1, 30.1], "777": [-94.1, 29.9],
-  "778": [-96.0, 29.0], "779": [-96.5, 29.4],
-  "780": [-98.5, 29.4], "781": [-98.5, 29.4], "782": [-98.5, 29.4], "783": [-97.5, 28.0],
-  "784": [-97.1, 28.8], "785": [-98.2, 26.2], "786": [-97.5, 26.2], "787": [-97.7, 30.3],
-  "788": [-99.5, 27.5], "789": [-100.5, 28.8],
-  "790": [-101.8, 35.2], "791": [-102.1, 35.2], "792": [-101.8, 33.6], "793": [-102.4, 33.6],
-  "794": [-101.8, 34.2], "795": [-101.8, 33.6], "796": [-100.5, 33.8], "797": [-102.1, 31.9],
-  "798": [-106.5, 31.8], "799": [-106.5, 31.8],
-  
-  // Colorado
-  "800": [-104.9, 39.7], "801": [-104.9, 39.7], "802": [-104.9, 39.7], "803": [-105.0, 39.6],
-  "804": [-105.0, 39.8], "805": [-105.1, 40.0], "806": [-105.1, 40.4], "807": [-105.0, 40.6],
-  "808": [-104.5, 38.8], "809": [-104.8, 38.8],
-  "810": [-105.0, 38.8], "811": [-104.6, 38.3], "812": [-104.6, 37.2], "813": [-105.4, 37.5],
-  "814": [-105.9, 37.3], "815": [-107.9, 37.3], "816": [-108.5, 37.3],
-  "820": [-104.8, 41.1], "821": [-104.8, 41.1], "822": [-105.6, 41.3], "823": [-105.0, 42.9],
-  "824": [-110.0, 42.9], "825": [-104.5, 43.0], "826": [-104.5, 42.1], "827": [-107.2, 44.3],
-  "828": [-108.8, 42.9], "829": [-110.0, 41.3], "830": [-109.2, 41.6], "831": [-110.8, 41.3],
-  
-  // Idaho
-  "832": [-116.2, 43.6], "833": [-116.8, 43.6], "834": [-113.5, 42.6], "835": [-116.8, 47.7],
-  "836": [-116.0, 46.4], "837": [-114.5, 42.9], "838": [-117.0, 46.7],
-  
-  // Utah
-  "840": [-111.9, 40.8], "841": [-111.9, 40.8], "842": [-111.9, 40.8], "843": [-111.9, 41.2],
-  "844": [-111.9, 41.2], "845": [-111.0, 40.2], "846": [-111.0, 39.3], "847": [-113.6, 37.1],
-  
-  // Arizona
-  "850": [-112.1, 33.4], "851": [-112.1, 33.4], "852": [-112.1, 33.4], "853": [-111.9, 33.4],
-  "855": [-111.9, 33.3], "856": [-110.9, 32.2], "857": [-110.9, 32.2], "859": [-109.5, 34.8],
-  "860": [-111.1, 35.2], "863": [-113.8, 35.2], "864": [-114.4, 34.8], "865": [-110.3, 36.0],
-  
-  // New Mexico
-  "870": [-106.6, 35.1], "871": [-106.6, 35.1], "873": [-105.0, 35.5], "874": [-104.5, 35.0],
-  "875": [-105.9, 35.7], "877": [-106.9, 34.1], "878": [-106.7, 34.5], "879": [-106.7, 34.1],
-  "880": [-106.5, 32.3], "881": [-104.5, 32.4], "882": [-104.0, 33.4], "883": [-105.5, 33.0],
-  "884": [-108.2, 35.5], "885": [-106.8, 31.8],
-  
-  // Nevada
-  "889": [-115.1, 36.2], "890": [-115.1, 36.2], "891": [-115.1, 36.2], "893": [-114.8, 36.2],
-  "894": [-119.8, 39.5], "895": [-119.8, 39.5], "897": [-116.9, 40.8], "898": [-117.2, 39.0],
-  
-  // California
-  "900": [-118.2, 34.1], "901": [-118.2, 34.1], "902": [-118.4, 34.0], "903": [-118.4, 34.0],
-  "904": [-118.2, 33.8], "905": [-118.2, 33.8], "906": [-118.0, 33.9], "907": [-118.1, 33.9],
-  "908": [-117.9, 33.8], "910": [-118.3, 34.1], "911": [-118.2, 34.1], "912": [-118.3, 34.2],
-  "913": [-118.4, 34.2], "914": [-118.5, 34.2], "915": [-118.1, 34.2], "916": [-118.0, 34.1],
-  "917": [-117.9, 34.0], "918": [-117.4, 34.1],
-  "920": [-117.2, 32.7], "921": [-117.2, 32.7], "922": [-114.6, 32.7], "923": [-117.0, 33.1],
-  "924": [-117.4, 33.1], "925": [-117.4, 33.4], "926": [-117.8, 33.6], "927": [-116.5, 33.8],
-  "928": [-117.4, 34.5],
-  "930": [-119.7, 34.4], "931": [-118.2, 34.4], "932": [-119.0, 35.4], "933": [-118.0, 35.4],
-  "934": [-120.4, 34.9], "935": [-120.4, 35.3], "936": [-119.0, 36.3], "937": [-118.9, 36.7],
-  "939": [-121.9, 36.6],
-  "940": [-122.4, 37.8], "941": [-122.4, 37.8], "942": [-122.5, 37.9], "943": [-122.1, 37.5],
-  "944": [-122.4, 37.8], "945": [-122.3, 37.6], "946": [-122.5, 37.9], "947": [-122.3, 37.9],
-  "948": [-122.3, 37.8], "949": [-122.1, 37.9],
-  "950": [-121.9, 37.3], "951": [-121.9, 37.3], "952": [-122.0, 37.6], "953": [-122.1, 37.4],
-  "954": [-122.0, 37.6], "955": [-123.8, 39.2], "956": [-121.5, 38.6], "957": [-121.5, 38.6],
-  "958": [-121.5, 38.6], "959": [-122.7, 38.4],
-  "960": [-121.5, 38.6], "961": [-119.8, 39.5],
-  
-  // Washington
-  "980": [-122.3, 47.6], "981": [-122.3, 47.6], "982": [-122.3, 47.6], "983": [-122.2, 47.5],
-  "984": [-122.4, 47.3], "985": [-117.4, 47.7], "986": [-122.9, 46.1], "988": [-123.0, 46.7],
-  "989": [-117.4, 47.7], "990": [-117.4, 47.7], "991": [-117.4, 47.7], "992": [-117.4, 47.7],
-  "993": [-119.3, 47.0], "994": [-120.5, 46.6],
-  
-  // Oregon
-  "970": [-122.7, 45.5], "971": [-122.7, 45.3], "972": [-122.7, 45.5], "973": [-123.0, 45.0],
-  "974": [-123.9, 46.2], "975": [-123.0, 44.1], "976": [-123.1, 44.1], "977": [-123.4, 42.4],
-  "978": [-121.2, 44.3], "979": [-118.3, 45.9],
-  
-  // Alaska / Hawaii
-  "995": [-134.4, 58.3], "996": [-149.9, 61.2], "997": [-149.4, 64.8], "998": [-161.8, 60.8],
-  "999": [-149.9, 61.2],
+  "340": [-80.1, 26.0], "341": [-82.7, 28.0], "349": [-81.8, 26.6],
+  "350": [-86.8, 33.5], "360": [-86.3, 32.4], "370": [-86.8, 36.2],
+  "380": [-90.0, 35.1], "400": [-85.8, 38.3], "410": [-84.5, 38.0],
+  "430": [-83.0, 39.9], "440": [-81.7, 41.5], "450": [-84.2, 39.8],
+  "460": [-86.2, 39.8], "470": [-85.7, 41.1], "480": [-83.0, 42.3],
+  "490": [-85.7, 42.3], "500": [-93.6, 41.6], "510": [-95.9, 41.3],
+  "520": [-91.5, 41.7], "530": [-89.4, 43.1], "540": [-91.5, 44.9],
+  "550": [-93.3, 44.9], "560": [-94.2, 44.2], "570": [-96.7, 43.5],
+  "580": [-96.8, 46.9], "590": [-110.4, 45.8],
+  "600": [-87.6, 41.9], "601": [-87.6, 41.9], "602": [-87.6, 41.9],
+  "610": [-88.1, 41.8], "620": [-89.6, 38.6],
+  "630": [-90.2, 38.6], "640": [-94.6, 39.1], "650": [-92.3, 38.6],
+  "660": [-94.6, 39.0], "670": [-97.3, 37.7],
+  "680": [-95.9, 41.3], "700": [-90.1, 29.9], "710": [-92.0, 30.2],
+  "720": [-92.3, 34.7], "730": [-97.5, 35.5], "740": [-96.0, 36.2],
+  "750": [-96.8, 32.8], "751": [-96.8, 32.8], "752": [-96.8, 32.8],
+  "760": [-97.3, 32.7], "770": [-95.4, 29.8], "771": [-95.4, 29.8], "772": [-95.4, 29.8],
+  "780": [-98.5, 29.4], "790": [-101.8, 35.2], "798": [-106.5, 31.8],
+  "800": [-104.9, 39.7], "801": [-104.9, 39.7], "802": [-104.9, 39.7],
+  "820": [-104.8, 41.1], "832": [-116.2, 43.6],
+  "840": [-111.9, 40.8], "850": [-112.1, 33.4], "851": [-112.1, 33.4], "852": [-112.1, 33.4],
+  "870": [-106.6, 35.1], "880": [-106.5, 32.3],
+  "889": [-115.1, 36.2], "890": [-115.1, 36.2], "891": [-115.1, 36.2],
+  "900": [-118.2, 34.1], "901": [-118.2, 34.1], "902": [-118.4, 34.0],
+  "910": [-118.3, 34.1], "920": [-117.2, 32.7], "921": [-117.2, 32.7],
+  "930": [-119.7, 34.4], "940": [-122.4, 37.8], "941": [-122.4, 37.8],
+  "950": [-121.9, 37.3], "960": [-121.5, 38.6],
+  "970": [-122.7, 45.5], "980": [-122.3, 47.6], "981": [-122.3, 47.6], "982": [-122.3, 47.6],
+  "990": [-117.4, 47.7], "995": [-134.4, 58.3], "996": [-149.9, 61.2],
   "967": [-155.5, 19.5], "968": [-157.9, 21.3],
 };
 
 function getZipCoords(zip: string): [number, number] | null {
   if (!zip || zip.length < 3) return null;
-  
-  // Try exact 3-digit prefix first
   const prefix3 = zip.substring(0, 3);
   if (ZIP_COORDS[prefix3]) return ZIP_COORDS[prefix3];
-  
-  // Try first 2 digits with 0
   const prefix2 = zip.substring(0, 2) + "0";
   if (ZIP_COORDS[prefix2]) return ZIP_COORDS[prefix2];
-  
-  // Try first 2 digits with 1
-  const prefix21 = zip.substring(0, 2) + "1";
-  if (ZIP_COORDS[prefix21]) return ZIP_COORDS[prefix21];
-  
   return null;
+}
+
+// Get city name from ZIP
+const ZIP_NAMES: Record<string, string> = {
+  "320": "Jacksonville, FL", "321": "Orlando, FL", "327": "Orlando, FL",
+  "330": "Miami, FL", "331": "Miami, FL", "333": "Fort Lauderdale, FL",
+  "336": "Tampa, FL", "337": "St. Petersburg, FL", "349": "Fort Myers, FL",
+  "100": "New York, NY", "101": "New York, NY", "112": "Brooklyn, NY",
+  "200": "Washington, DC", "300": "Atlanta, GA", "600": "Chicago, IL",
+  "750": "Dallas, TX", "770": "Houston, TX", "850": "Phoenix, AZ",
+  "900": "Los Angeles, CA", "920": "San Diego, CA", "940": "San Francisco, CA",
+  "980": "Seattle, WA", "800": "Denver, CO", "890": "Las Vegas, NV",
+};
+
+function getLocationName(zip: string): string {
+  if (!zip || zip.length < 3) return '';
+  return ZIP_NAMES[zip.substring(0, 3)] || '';
+}
+
+// Fetch driving route from Mapbox Directions
+async function fetchDrivingRoute(from: [number, number], to: [number, number]): Promise<[number, number][] | null> {
+  try {
+    const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${from[0]},${from[1]};${to[0]},${to[1]}?geometries=geojson&overview=full&access_token=${MAPBOX_TOKEN}`;
+    const response = await fetch(url);
+    if (!response.ok) return null;
+    const data = await response.json();
+    if (data.routes?.[0]) return data.routes[0].geometry.coordinates as [number, number][];
+    return null;
+  } catch { return null; }
 }
 
 function createArcLine(start: [number, number], end: [number, number], steps: number): [number, number][] {
@@ -388,7 +113,6 @@ function createArcLine(start: [number, number], end: [number, number], steps: nu
     const t = i / steps;
     const lng = start[0] + (end[0] - start[0]) * t;
     const lat = start[1] + (end[1] - start[1]) * t;
-    // Add arc curve based on distance
     const dist = Math.abs(end[0] - start[0]);
     const arcHeight = Math.min(dist * 0.1, 5);
     const arc = Math.sin(t * Math.PI) * arcHeight;
@@ -397,422 +121,135 @@ function createArcLine(start: [number, number], end: [number, number], steps: nu
   return coords;
 }
 
-// Calculate distance between coords in miles
-function calculateDistanceBetweenCoords(from: [number, number], to: [number, number]): number {
-  const R = 3959; // Earth radius in miles
-  const dLat = (to[1] - from[1]) * Math.PI / 180;
-  const dLon = (to[0] - from[0]) * Math.PI / 180;
-  const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-    Math.cos(from[1] * Math.PI / 180) * Math.cos(to[1] * Math.PI / 180) *
-    Math.sin(dLon/2) * Math.sin(dLon/2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-  return Math.round(R * c);
+function createLabelIcon(name: string): L.DivIcon {
+  return L.divIcon({
+    className: 'mapbox-marker-label-only',
+    html: `<div class="mapbox-marker-label">${name}</div>`,
+    iconSize: [100, 20],
+    iconAnchor: [50, 10],
+  });
 }
 
-// Get city/state name from ZIP prefix
-function getLocationName(zip: string): string {
-  if (!zip || zip.length < 3) return '';
-  const prefix = zip.substring(0, 3);
-  
-  const ZIP_NAMES: Record<string, string> = {
-    // Florida
-    "320": "Jacksonville, FL", "321": "Orlando, FL", "322": "Jacksonville, FL",
-    "323": "West Palm Beach, FL", "324": "Gainesville, FL", "325": "Ocala, FL",
-    "326": "Ocala, FL", "327": "Orlando, FL", "328": "Orlando, FL", "329": "Melbourne, FL",
-    "330": "Miami, FL", "331": "Miami, FL", "332": "Miami Beach, FL", "333": "Fort Lauderdale, FL",
-    "334": "Boca Raton, FL", "335": "West Palm Beach, FL", "336": "Tampa, FL", "337": "St. Petersburg, FL",
-    "338": "Boca Raton, FL", "339": "Fort Lauderdale, FL", "340": "Palm Beach, FL",
-    "341": "Sarasota, FL", "342": "Bradenton, FL", "344": "West Palm Beach, FL",
-    "346": "Sarasota, FL", "347": "Palm Beach, FL", "349": "Fort Myers, FL",
-    // Major cities
-    "100": "New York, NY", "101": "New York, NY", "102": "New York, NY",
-    "110": "Queens, NY", "111": "Long Island, NY", "112": "Brooklyn, NY",
-    "200": "Washington, DC", "201": "Washington, DC", "202": "Washington, DC",
-    "300": "Atlanta, GA", "301": "Atlanta, GA", "302": "Atlanta, GA",
-    "600": "Chicago, IL", "601": "Chicago, IL", "602": "Chicago, IL",
-    "750": "Dallas, TX", "751": "Dallas, TX", "752": "Dallas, TX",
-    "770": "Houston, TX", "771": "Houston, TX", "772": "Houston, TX",
-    "850": "Phoenix, AZ", "851": "Phoenix, AZ", "852": "Phoenix, AZ",
-    "900": "Los Angeles, CA", "901": "Los Angeles, CA", "902": "Los Angeles, CA",
-    "920": "San Diego, CA", "921": "San Diego, CA",
-    "940": "San Francisco, CA", "941": "San Francisco, CA",
-    "980": "Seattle, WA", "981": "Seattle, WA", "982": "Seattle, WA",
-    "021": "Boston, MA", "022": "Boston, MA",
-    "191": "Philadelphia, PA", "190": "Philadelphia, PA",
-    "802": "Denver, CO", "801": "Denver, CO", "800": "Denver, CO",
-    "889": "Las Vegas, NV", "890": "Las Vegas, NV", "891": "Las Vegas, NV",
-  };
-  
-  return ZIP_NAMES[prefix] || '';
+function createOriginIcon(name: string): L.DivIcon {
+  return L.divIcon({
+    className: 'mapbox-origin-marker-container',
+    html: `
+      <div class="mapbox-origin-marker"></div>
+      ${name ? `<div class="mapbox-origin-label">${name}</div>` : ''}
+      <div class="mapbox-waiting-label">Enter destination...</div>
+    `,
+    iconSize: [120, 40],
+    iconAnchor: [60, 20],
+  });
+}
+
+// Controller component to handle view changes
+function MapViewManager({ fromCoords, toCoords, routeCoords }: { 
+  fromCoords: [number, number] | null; 
+  toCoords: [number, number] | null;
+  routeCoords: [number, number][];
+}) {
+  const map = useMap();
+
+  useEffect(() => {
+    if (fromCoords && !toCoords) {
+      // Origin only — zoom to it
+      map.flyTo([fromCoords[1], fromCoords[0]], 10, { duration: 1.5 });
+    } else if (fromCoords && toCoords && routeCoords.length >= 2) {
+      // Both — fit route bounds
+      const lats = routeCoords.map(c => c[1]);
+      const lngs = routeCoords.map(c => c[0]);
+      const bounds = L.latLngBounds(
+        [Math.min(...lats), Math.min(...lngs)],
+        [Math.max(...lats), Math.max(...lngs)]
+      );
+      map.fitBounds(bounds, { padding: [80, 80], maxZoom: 10 });
+    } else if (!fromCoords && !toCoords) {
+      map.flyTo(US_CENTER, US_ZOOM, { duration: 1 });
+    }
+  }, [fromCoords, toCoords, routeCoords, map]);
+
+  return null;
 }
 
 export default function MapboxMoveMap({ fromZip = '', toZip = '', visible = true }: MapboxMoveMapProps) {
-  const mapContainer = useRef<HTMLDivElement>(null);
-  const map = useRef<mapboxgl.Map | null>(null);
-  const markersRef = useRef<mapboxgl.Marker[]>([]);
-  const [isMapLoaded, setIsMapLoaded] = useState(false);
+  const [routeCoords, setRouteCoords] = useState<[number, number][]>([]);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  
-  // Use refs for coordinates to avoid stale closures
-  const fromCoordsRef = useRef<[number, number] | null>(null);
-  const toCoordsRef = useRef<[number, number] | null>(null);
-  const [coordsVersion, setCoordsVersion] = useState(0);
-  
-  // Request version ref to prevent race conditions with async operations
-  const requestVersionRef = useRef(0);
-  
-  // Store origin zoom state for smooth transitions when destination is added
-  const originZoomRef = useRef<{ center: [number, number]; zoom: number; pitch: number } | null>(null);
 
-  // Trigger resize when map becomes visible (container size changes)
+  const fromCoords = useMemo(() => getZipCoords(fromZip), [fromZip]);
+  const toCoords = useMemo(() => getZipCoords(toZip), [toZip]);
+  const fromName = useMemo(() => getLocationName(fromZip), [fromZip]);
+  const toName = useMemo(() => getLocationName(toZip), [toZip]);
+
+  // Fetch route when both coords are available
   useEffect(() => {
-    if (map.current && isMapLoaded && visible) {
-      // Wait for CSS transition to complete before resizing
-      const timer = setTimeout(() => {
-        map.current?.resize();
-      }, 150);
-      return () => clearTimeout(timer);
+    if (!fromCoords || !toCoords) {
+      setRouteCoords([]);
+      return;
     }
-  }, [visible, isMapLoaded]);
-
-  // Update coordinates when ZIPs change
-  useEffect(() => {
     setIsLoading(true);
-    
-    // Use the lookup table directly (no geocoding API call)
-    const fromCoords = fromZip ? getZipCoords(fromZip) : null;
-    const toCoords = toZip ? getZipCoords(toZip) : null;
-    
-    fromCoordsRef.current = fromCoords;
-    toCoordsRef.current = toCoords;
-    setCoordsVersion(v => v + 1);
-    setIsLoading(false);
-  }, [fromZip, toZip]);
+    fetchDrivingRoute(fromCoords, toCoords).then(coords => {
+      setRouteCoords(coords || createArcLine(fromCoords, toCoords, 100));
+      setIsLoading(false);
+    });
+  }, [fromCoords, toCoords]);
+
+  // Convert route [lng,lat] to [lat,lng] for Leaflet
+  const routeLatLngs = useMemo(() => routeCoords.map(([lng, lat]) => [lat, lng] as [number, number]), [routeCoords]);
 
   const handleExpandClick = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
-    if (fromCoordsRef.current && toCoordsRef.current) {
-      setIsExpanded(prev => !prev);
-    }
-  }, []);
-
-  // Initialize map
-  useEffect(() => {
-    if (!mapContainer.current) return;
-
-    mapboxgl.accessToken = MAPBOX_TOKEN;
-    
-    map.current = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/satellite-v9',
-      center: [-98.5795, 39.8283],
-      zoom: 3,
-      pitch: 0,
-      interactive: true,
-    });
-
-    map.current.on('error', (e) => {
-      const err = e.error as { status?: number; url?: string } | undefined;
-      if (err?.status === 403) {
-        console.warn('Mapbox resource not available:', err.url);
-        if (!isMapLoaded) setIsMapLoaded(true);
-      }
-    });
-
-    map.current.on('load', () => {
-      if (!map.current) return;
-
-      try {
-        map.current.addSource('mapbox-dem', {
-          type: 'raster-dem',
-          url: 'mapbox://mapbox.mapbox-terrain-dem-v1',
-          tileSize: 512,
-          maxzoom: 14
-        });
-        map.current.setTerrain({ source: 'mapbox-dem', exaggeration: 1.2 });
-      } catch (e) {
-        console.warn('Terrain not available with this token');
-      }
-
-      map.current.setFog({
-        color: 'rgb(255, 255, 255)',
-        'high-color': 'rgb(200, 210, 230)',
-        'horizon-blend': 0.1
-      });
-
-      setIsMapLoaded(true);
-    });
-
-    return () => {
-      markersRef.current.forEach(m => m.remove());
-      markersRef.current = [];
-      map.current?.remove();
-    };
-  }, []);
-
-  // Handle map resize when expanded
-  useEffect(() => {
-    if (map.current && isMapLoaded) {
-      // Small delay to let CSS transition start
-      setTimeout(() => {
-        map.current?.resize();
-      }, 50);
-    }
-  }, [isExpanded, isMapLoaded]);
-
-  // Update route when coordinates change
-  useEffect(() => {
-    if (!map.current || !isMapLoaded) return;
-
-    // Increment request version to track this specific call
-    requestVersionRef.current += 1;
-    const currentRequestVersion = requestVersionRef.current;
-
-    const fromCoords = fromCoordsRef.current;
-    const toCoords = toCoordsRef.current;
-    const currentMap = map.current;
-
-    // Clear old markers synchronously
-    markersRef.current.forEach(m => m.remove());
-    markersRef.current = [];
-
-    // Remove old layers/sources
-    if (currentMap.getLayer('route-line')) currentMap.removeLayer('route-line');
-    if (currentMap.getLayer('route-glow')) currentMap.removeLayer('route-glow');
-    if (currentMap.getSource('route')) currentMap.removeSource('route');
-
-    // Handle origin-only state (single location)
-    if (fromCoords && !toCoords) {
-      const fromName = getLocationName(fromZip);
-      
-      // Fly to origin with focused zoom
-      currentMap.flyTo({ 
-        center: fromCoords, 
-        zoom: 10, 
-        pitch: 25,
-        duration: 1500,
-        essential: true
-      });
-      
-      // Store the origin zoom state for later
-      originZoomRef.current = { center: fromCoords, zoom: 10, pitch: 25 };
-      
-      // Add pulsing origin marker
-      const originEl = document.createElement('div');
-      originEl.className = 'mapbox-origin-marker-container';
-      originEl.innerHTML = `
-        <div class="mapbox-origin-marker"></div>
-        ${fromName ? `<div class="mapbox-origin-label">${fromName}</div>` : ''}
-        <div class="mapbox-waiting-label">Enter destination...</div>
-      `;
-      const originMarker = new mapboxgl.Marker({ element: originEl, anchor: 'center' })
-        .setLngLat(fromCoords)
-        .addTo(currentMap);
-      markersRef.current.push(originMarker);
-      
-      return;
-    }
-    
-    if (!fromCoords || !toCoords) {
-      currentMap.flyTo({ center: [-98.5795, 39.8283], zoom: 3, pitch: 20 });
-      originZoomRef.current = null;
-      return;
-    }
-
-    // Calculate bounds
-    const bounds = new mapboxgl.LngLatBounds();
-    bounds.extend(fromCoords);
-    bounds.extend(toCoords);
-
-    // Fetch actual driving route
-    const addRoute = async () => {
-      setIsLoading(true);
-      
-      // Try to get actual driving directions
-      let lineCoords = await fetchDrivingRoute(fromCoords, toCoords);
-      
-      // CRITICAL: Check if this request is still current (prevents race condition)
-      if (currentRequestVersion !== requestVersionRef.current) {
-        // A newer request has superseded this one - abort
-        return;
-      }
-      
-      // Fallback to arc if directions fail
-      if (!lineCoords) {
-        lineCoords = createArcLine(fromCoords, toCoords, 100);
-      }
-      
-      // Check if map still exists
-      if (!map.current) return;
-      
-      // Clean up again before adding (handles edge cases with racing requests)
-      markersRef.current.forEach(m => m.remove());
-      markersRef.current = [];
-      
-      // Remove existing route if any
-      if (map.current.getSource('route')) {
-        if (map.current.getLayer('route-line')) map.current.removeLayer('route-line');
-        if (map.current.getLayer('route-glow')) map.current.removeLayer('route-glow');
-        map.current.removeSource('route');
-      }
-      
-      // Add route source with empty initial coordinates for animation
-      map.current.addSource('route', {
-        type: 'geojson',
-        data: {
-          type: 'Feature',
-          properties: {},
-          geometry: { type: 'LineString', coordinates: [] }
-        }
-      });
-      
-      // Add glow layer (black outline)
-      map.current.addLayer({
-        id: 'route-glow',
-        type: 'line',
-        source: 'route',
-        paint: {
-          'line-color': '#000000',
-          'line-width': 8,
-          'line-opacity': 0.7,
-          'line-blur': 2
-        }
-      });
-
-      // Add route line (cyan/green gradient-like)
-      map.current.addLayer({
-        id: 'route-line',
-        type: 'line',
-        source: 'route',
-        paint: {
-          'line-color': '#00e5a0',
-          'line-width': 4,
-          'line-opacity': 1,
-        }
-      });
-      
-      // Get city names for labels only (no dots)
-      const fromName = getLocationName(fromZip);
-      const toName = getLocationName(toZip);
-
-      // Add origin label only (no dot/ripple)
-      if (fromName && map.current) {
-        const originEl = document.createElement('div');
-        originEl.className = 'mapbox-marker-label-only';
-        originEl.innerHTML = `<div class="mapbox-marker-label">${fromName}</div>`;
-        const originMarker = new mapboxgl.Marker({ element: originEl, anchor: 'center' })
-          .setLngLat(fromCoords)
-          .addTo(map.current);
-        markersRef.current.push(originMarker);
-      }
-
-      // Add destination label only (no dot/ripple)
-      if (toName && map.current) {
-        const destEl = document.createElement('div');
-        destEl.className = 'mapbox-marker-label-only';
-        destEl.innerHTML = `<div class="mapbox-marker-label">${toName}</div>`;
-        const destMarker = new mapboxgl.Marker({ element: destEl, anchor: 'center' })
-          .setLngLat(toCoords)
-          .addTo(map.current);
-        markersRef.current.push(destMarker);
-      }
-      
-      // Animate route drawing
-      const totalPoints = lineCoords.length;
-      const animationDuration = 1500; // 1.5 seconds
-      const startTime = performance.now();
-      
-      const animateRoute = (currentTime: number) => {
-        if (!map.current) return;
-        
-        const elapsed = currentTime - startTime;
-        const progress = Math.min(elapsed / animationDuration, 1);
-        
-        // Ease out cubic for smooth deceleration
-        const easedProgress = 1 - Math.pow(1 - progress, 3);
-        const pointsToShow = Math.floor(easedProgress * totalPoints);
-        
-        const routeSource = map.current.getSource('route') as mapboxgl.GeoJSONSource;
-        if (routeSource) {
-          routeSource.setData({
-            type: 'Feature',
-            properties: {},
-            geometry: {
-              type: 'LineString',
-              coordinates: lineCoords.slice(0, Math.max(pointsToShow, 2))
-            }
-          });
-        }
-        
-        if (progress < 1) {
-          requestAnimationFrame(animateRoute);
-        } else {
-          // Animation complete - NOW zoom out to show full route
-          setTimeout(() => {
-            if (!map.current) return;
-            const padding = isExpanded ? 120 : 80;
-            map.current.fitBounds(bounds, {
-              padding,
-              maxZoom: isExpanded ? 12 : 10,
-              minZoom: 5,
-              duration: 1000, // Smooth 1s transition
-            });
-          }, 200); // Small delay after route completes
-        }
-      };
-      
-      requestAnimationFrame(animateRoute);
-      
-      setIsLoading(false);
-    };
-    
-    // Call addRoute to actually fetch and render the driving route
-    addRoute();
-    
-  }, [coordsVersion, isMapLoaded, fromZip, toZip, isExpanded]);
-
-  const fromCoords = fromCoordsRef.current;
-  const toCoords = toCoordsRef.current;
+    if (fromCoords && toCoords) setIsExpanded(prev => !prev);
+  }, [fromCoords, toCoords]);
 
   return (
     <div className={`mapbox-move-map-wrapper ${isExpanded ? 'expanded' : ''}`}>
-      {/* Loading skeleton */}
-      {!isMapLoaded && (
-        <div className="mapbox-skeleton">
-          <div className="mapbox-skeleton-shimmer" />
-          <div className="mapbox-skeleton-content">
-            <MapPin className="w-8 h-8 text-muted-foreground/40" />
-            <span>Loading map...</span>
-          </div>
-        </div>
-      )}
-      
-      {/* Loading indicator for coordinate lookup */}
-      {isLoading && isMapLoaded && (
+      {isLoading && (
         <div className="mapbox-loading-overlay">
           <Loader2 className="w-6 h-6 animate-spin text-primary" />
         </div>
       )}
-      
-      <div ref={mapContainer} className="mapbox-move-map" />
-      
+
+      <MapContainer
+        center={US_CENTER}
+        zoom={US_ZOOM}
+        className="mapbox-move-map"
+        zoomControl={false}
+        attributionControl={false}
+      >
+        <TileLayer url={TILE_LAYERS.dark.url} attribution={TILE_LAYERS.dark.attribution} />
+        <MapViewManager fromCoords={fromCoords} toCoords={toCoords} routeCoords={routeCoords} />
+
+        {/* Route line */}
+        {routeLatLngs.length >= 2 && (
+          <>
+            <Polyline positions={routeLatLngs} pathOptions={{ color: '#000000', weight: 8, opacity: 0.7 }} />
+            <Polyline positions={routeLatLngs} pathOptions={{ color: '#00e5a0', weight: 4, opacity: 1 }} />
+          </>
+        )}
+
+        {/* Origin-only marker */}
+        {fromCoords && !toCoords && (
+          <Marker position={[fromCoords[1], fromCoords[0]]} icon={createOriginIcon(fromName)} />
+        )}
+
+        {/* Labels when route is shown */}
+        {fromCoords && toCoords && fromName && (
+          <Marker position={[fromCoords[1], fromCoords[0]]} icon={createLabelIcon(fromName)} />
+        )}
+        {fromCoords && toCoords && toName && (
+          <Marker position={[toCoords[1], toCoords[0]]} icon={createLabelIcon(toName)} />
+        )}
+      </MapContainer>
+
       {/* Expand/Collapse button */}
       {fromCoords && toCoords && (
-        <button 
-          onClick={handleExpandClick}
-          className="map-expand-button"
-        >
+        <button onClick={handleExpandClick} className="map-expand-button">
           {isExpanded ? (
-            <>
-              <Minimize2 className="w-4 h-4" />
-              <span>Collapse</span>
-            </>
+            <><Minimize2 className="w-4 h-4" /><span>Collapse</span></>
           ) : (
-            <>
-              <Maximize2 className="w-4 h-4" />
-              <span>Expand</span>
-            </>
+            <><Maximize2 className="w-4 h-4" /><span>Expand</span></>
           )}
         </button>
       )}
