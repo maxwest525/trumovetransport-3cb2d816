@@ -1632,14 +1632,6 @@ export default function Index() {
                           {/* Row 2: Inline metrics */}
                           <div className="flex items-center gap-3 text-[10px] mb-1.5 ml-3">
                             <span className="font-semibold text-foreground">
-                              Veh OOS: {c.oos.vehicleOosRate}% <span className="text-muted-foreground font-normal">/ {c.oos.vehicleOosRateNationalAvg}%</span>
-                            </span>
-                            <span className="text-border">|</span>
-                            <span className="font-semibold text-foreground">
-                              Drv OOS: {c.oos.driverOosRate}% <span className="text-muted-foreground font-normal">/ {c.oos.driverOosRateNationalAvg}%</span>
-                            </span>
-                            <span className="text-border">|</span>
-                            <span className="font-semibold text-foreground">
                               {c.crashes.total} crashes <span className="text-muted-foreground font-normal">({c.crashes.fatal} fatal)</span>
                             </span>
                           </div>
