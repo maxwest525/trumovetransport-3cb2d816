@@ -160,7 +160,7 @@ async function searchMapTilerAddresses(query: string): Promise<{ suggestions: Lo
 async function searchPhotonCities(query: string): Promise<LocationSuggestion[]> {
   try {
     const res = await fetch(
-      `https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&limit=10&lang=en&layer=city,town,village`,
+      `https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&limit=10&lang=en&layer=city&layer=county&layer=state`,
       { headers: { 'Accept': 'application/json' } }
     );
     if (!res.ok) return [];
