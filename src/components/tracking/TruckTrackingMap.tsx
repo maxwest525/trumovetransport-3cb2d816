@@ -264,8 +264,11 @@ export function TruckTrackingMap({
       layersRef.current.push(m);
     });
 
-    // Fit bounds
-    if (!internalFollowMode || !isTracking) {
+    // Fit bounds or follow truck
+    if (isTracking && currentTruckPosition) {
+      // Always zoom tight on the truck during active tracking
+      map.flyTo(currentTruckPosition, internalFollowMode ? 15 : 12, { duration: 0.8 });
+    } else if (routeLatLngs.length >= 2) {
       const lats = routeCoords.map(c => c[1]);
       const lngs = routeCoords.map(c => c[0]);
       const bounds = L.latLngBounds(
@@ -273,8 +276,6 @@ export function TruckTrackingMap({
         [Math.max(...lats), Math.max(...lngs)]
       );
       map.fitBounds(bounds, { padding: [80, 80], maxZoom: 8 });
-    } else if (currentTruckPosition) {
-      map.flyTo(currentTruckPosition, 10, { duration: 0.5 });
     }
   }, [routeCoords, progress, currentTruckPosition, originCoords, destCoords, citiesOnRoute, internalFollowMode, isTracking]);
 
