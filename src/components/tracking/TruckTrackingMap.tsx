@@ -111,6 +111,12 @@ function createCityIcon(name: string): L.DivIcon {
   });
 }
 
+function MapReadyNotifier({ onReady }: { onReady: () => void }) {
+  const map = useMap();
+  useEffect(() => { if (map) onReady(); }, [map, onReady]);
+  return null;
+}
+
 // Component to control map view
 function MapViewController({ 
   center, 
@@ -266,9 +272,9 @@ export function TruckTrackingMap({
         className="w-full h-full"
         zoomControl={true}
         attributionControl={false}
-        whenReady={() => setIsLoaded(true)}
       >
         <TileLayer url={TILE_LAYERS.dark.url} attribution={TILE_LAYERS.dark.attribution} />
+        <MapReadyNotifier onReady={() => setIsLoaded(true)} />
         
         <MapViewController
           bounds={routeBounds}
