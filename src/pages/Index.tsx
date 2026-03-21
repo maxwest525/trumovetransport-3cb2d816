@@ -1790,7 +1790,7 @@ export default function Index() {
                   <div className="hidden md:block w-px bg-border" />
 
                   {/* Contact options */}
-                  <div className="flex flex-col gap-2 md:w-48 shrink-0">
+                  <div className="flex flex-col gap-3 md:w-48 shrink-0 justify-center">
                     <a
                       href="tel:+16097277647"
                       className="flex items-center justify-center gap-2 border border-foreground bg-background text-foreground px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-muted transition-colors">
