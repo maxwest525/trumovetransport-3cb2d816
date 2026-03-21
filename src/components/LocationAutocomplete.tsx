@@ -45,17 +45,7 @@ interface LocationAutocompleteProps {
   showGeolocation?: boolean; // Show "Use my location" button
 }
 
-// Generate a unique session token for API billing optimization
-function generateSessionToken(): string {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    const r = Math.random() * 16 | 0;
-    const v = c === 'x' ? r : (r & 0x3 | 0x8);
-    return v.toString(16);
-  });
-}
 
-// Session tokens for APIs - persists for the component lifecycle
-let mapboxSessionToken = generateSessionToken();
 
 // Normalize address for comparison (remove punctuation, extra spaces, lowercase)
 function normalizeAddress(addr: string): string {
