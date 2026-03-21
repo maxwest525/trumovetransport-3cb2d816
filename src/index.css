@@ -23023,7 +23023,7 @@
 .tru-vetting-stat-value {
   font-size: 36px;
   font-weight: 800;
-  color: white;
+  color: hsl(var(--background));
   letter-spacing: -0.02em;
 }
 
