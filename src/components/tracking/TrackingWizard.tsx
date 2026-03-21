@@ -1,12 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
-import { Search, Navigation, MapPin, Loader2, Play, Sparkles, ArrowRight, Navigation2 } from "lucide-react";
+import { Navigation, MapPin, Loader2, Play, Sparkles, Navigation2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import LocationAutocomplete from "@/components/LocationAutocomplete";
-import { MAPBOX_TOKEN } from "@/lib/mapboxToken";
 
-// Booking lookup - will query DB in future
 const MOCK_BOOKINGS: Record<string, { origin: string; destination: string }> = {};
 
 interface TrackingWizardProps {
@@ -29,12 +26,12 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
         try {
           const { longitude, latitude } = pos.coords;
           const res = await fetch(
-            `https://api.mapbox.com/geocoding/v5/mapbox.places/${longitude},${latitude}.json?access_token=${MAPBOX_TOKEN}&types=address&limit=1`
+            `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}&zoom=16&addressdetails=1`,
+            { headers: { Accept: "application/json" } }
           );
           const data = await res.json();
-          if (data.features?.length > 0) {
-            setOriginAddress(data.features[0].place_name);
-          }
+          const label = data?.display_name || `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
+          setOriginAddress(label);
         } catch (e) {
           console.error("Reverse geocode failed", e);
         } finally {
@@ -61,23 +58,29 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
   }, [bookingNumber]);
 
   useEffect(() => {
-    const pendingRoute = localStorage.getItem('trumove_pending_route');
+    const pendingRoute = localStorage.getItem("trumove_pending_route");
     if (pendingRoute) {
       try {
         const data = JSON.parse(pendingRoute);
         if (data.originAddress) setOriginAddress(data.originAddress);
         if (data.destAddress) setDestAddress(data.destAddress);
-        localStorage.removeItem('trumove_pending_route');
-      } catch (e) { console.error('Failed to parse pending route:', e); }
+        localStorage.removeItem("trumove_pending_route");
+      } catch (e) {
+        console.error("Failed to parse pending route:", e);
+      }
     }
   }, []);
 
   const handleSubmit = () => {
     if (!originAddress.trim() || !destAddress.trim()) return;
-    onSubmit({ originAddress: originAddress.trim(), destAddress: destAddress.trim(), bookingNumber: bookingNumber.trim() || undefined });
+    onSubmit({
+      originAddress: originAddress.trim(),
+      destAddress: destAddress.trim(),
+      bookingNumber: bookingNumber.trim() || undefined,
+    });
   };
 
-  const canSubmit = originAddress.trim().length > 3 && destAddress.trim().length > 3;
+  const canSubmit = originAddress.trim().length > 0 && destAddress.trim().length > 0;
 
   return (
     <div className="w-full max-w-md mx-auto">
@@ -85,23 +88,18 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
         <div className="p-4 sm:p-6 space-y-5 animate-in fade-in slide-in-from-bottom-4 duration-300">
           <div>
             <p className="text-[10px] uppercase tracking-[0.25em] text-primary font-semibold mb-1">Route Setup</p>
-            <h3 className="text-lg sm:text-xl font-bold text-foreground tracking-tight">
-              Enter Your Route
-            </h3>
-            <p className="text-sm text-muted-foreground mt-1">Enter origin and destination to begin tracking.</p>
+            <h3 className="text-lg sm:text-xl font-bold text-foreground tracking-tight">Enter Your Route</h3>
+            <p className="text-sm text-muted-foreground mt-1">Type any ZIP, city, or address to begin tracking.</p>
           </div>
 
-          {/* Origin Address */}
           <div className="space-y-2">
             <Label className="text-sm text-muted-foreground">Origin</Label>
             <div className="relative">
               <Navigation className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary" />
-              <LocationAutocomplete
+              <Input
                 value={originAddress}
-                onValueChange={setOriginAddress}
-                onLocationSelect={(displayAddr, zip, fullAddress) => setOriginAddress(fullAddress || displayAddr)}
-                placeholder="Enter pickup address..."
-                mode="address"
+                onChange={(e) => setOriginAddress(e.target.value)}
+                placeholder="Enter pickup ZIP, city, or address..."
                 className="w-full h-11 text-sm pl-9 pr-9 bg-secondary border-border/60"
               />
               <button
@@ -116,27 +114,24 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
             </div>
           </div>
 
-          {/* Destination Address */}
           <div className="space-y-2">
             <Label className="text-sm text-muted-foreground">Destination</Label>
             <div className="relative">
               <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-destructive" />
-              <LocationAutocomplete
+              <Input
                 value={destAddress}
-                onValueChange={setDestAddress}
-                onLocationSelect={(displayAddr, zip, fullAddress) => setDestAddress(fullAddress || displayAddr)}
-                placeholder="Enter delivery address..."
-                mode="address"
+                onChange={(e) => setDestAddress(e.target.value)}
+                placeholder="Enter delivery ZIP, city, or address..."
                 className="w-full h-11 text-sm pl-9 bg-secondary border-border/60"
               />
             </div>
           </div>
 
-          {/* View Route */}
           <Button variant="premium" className="w-full h-12 text-sm" disabled={!canSubmit} onClick={handleSubmit}>
             <Play className="w-4 h-4" />
             View Route
           </Button>
+
           {onDemo && (
             <div className="text-center">
               <Button variant="ghost" size="sm" className="gap-1 text-xs text-muted-foreground h-7" onClick={onDemo}>

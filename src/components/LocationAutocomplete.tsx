@@ -521,11 +521,6 @@ export default function LocationAutocomplete({
         const { suggestions: mapboxSuggestions, failed: mapboxFailed } = await searchMapboxAddresses(query);
         
         if (mapboxFailed) {
-          toast({
-            title: "Address lookup unavailable",
-            description: "We're having trouble searching for addresses. Please try again.",
-            variant: "destructive",
-          });
           setSuggestions([]);
         } else if (mapboxSuggestions.length > 0) {
           // Filter out suggestions that are identical to what's already entered

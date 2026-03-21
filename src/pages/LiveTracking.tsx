@@ -54,16 +54,36 @@ const CHECKPOINTS = [
 
 // Geocode address string to coordinates
 async function geocodeAddress(address: string): Promise<[number, number] | null> {
-  if (!address || address.length < 3) return null;
+  const query = address.trim();
+  if (!query || query.length < 2) return null;
+
+  const zipMatch = query.match(/\b\d{5}\b/);
+  const zip = /^\d{5}$/.test(query) ? query : zipMatch?.[0];
+
+  if (zip) {
+    try {
+      const zipResponse = await fetch(`https://api.zippopotam.us/us/${zip}`);
+      if (zipResponse.ok) {
+        const zipData = await zipResponse.json();
+        const place = zipData?.places?.[0];
+        if (place?.longitude && place?.latitude) {
+          return [Number(place.longitude), Number(place.latitude)];
+        }
+      }
+    } catch (error) {
+      console.error("ZIP lookup error:", error);
+    }
+  }
   
   try {
     const response = await fetch(
-      `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json?access_token=${MAPBOX_TOKEN}&country=US&types=address,place&limit=1`
+      `https://nominatim.openstreetmap.org/search?format=jsonv2&countrycodes=us&limit=1&q=${encodeURIComponent(query)}`,
+      { headers: { Accept: "application/json" } }
     );
     const data = await response.json();
     
-    if (data.features && data.features.length > 0) {
-      return data.features[0].center as [number, number];
+    if (Array.isArray(data) && data.length > 0) {
+      return [Number(data[0].lon), Number(data[0].lat)];
     }
     return null;
   } catch (error) {
