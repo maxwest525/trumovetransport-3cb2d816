@@ -267,7 +267,7 @@ export function TruckTrackingMap({
     // Fit bounds or follow truck
     if (isTracking && currentTruckPosition) {
       // Always zoom tight on the truck during active tracking
-      map.flyTo(currentTruckPosition, internalFollowMode ? 15 : 12, { duration: 0.8 });
+      map.flyTo(currentTruckPosition, internalFollowMode ? 18 : 16, { duration: 0.8 });
     } else if (routeLatLngs.length >= 2) {
       const lats = routeCoords.map(c => c[1]);
       const lngs = routeCoords.map(c => c[0]);
