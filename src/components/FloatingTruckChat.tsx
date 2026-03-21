@@ -182,7 +182,7 @@ export default function FloatingTruckChat() {
     return (
       <button
         onClick={handleReopen}
-        className="fixed bottom-24 right-0 z-50
+        className="fixed bottom-28 right-0 z-50 sm:bottom-24
           px-2 py-4
           bg-card/95 backdrop-blur-md
           rounded-l-xl
