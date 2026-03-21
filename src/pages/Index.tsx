@@ -1181,32 +1181,36 @@ export default function Index() {
                         </div>
 
                         <div className="grid grid-cols-2 gap-3">
-                          <div className="relative">
-                            <Home className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary" />
-                            <input
-                            type="text"
-                            value={fromZip}
-                            onChange={(e) => {
-                              const val = e.target.value.replace(/\D/g, '').slice(0, 5);
-                              setFromZip(val);
-                              if (val.length === 5) lookupZip(val).then(c => { if (c) setFromCity(c); });
+                          <CityZipInput
+                            value={fromLocationDisplay || fromZip}
+                            onValueChange={(val) => {
+                              setFromZip(val.replace(/\D/g, '').slice(0, 5) || val);
+                              setFromLocationDisplay(val);
+                            }}
+                            onLocationSelect={(city, zip, fullAddress) => {
+                              setFromCity(city);
+                              setFromZip(zip);
+                              setFromLocationDisplay(fullAddress || `${city}${zip ? `, ${zip}` : ''}`);
                             }}
                             placeholder="Current City / ZIP"
-                            className="w-full rounded-lg border border-border bg-background pl-9 pr-3 py-2.5 text-sm text-foreground text-center placeholder:text-muted-foreground placeholder:text-center focus:outline-none focus:ring-1 focus:ring-primary" />
-                          </div>
-                          <div className="relative">
-                            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary" />
-                            <input
-                            type="text"
-                            value={toZip}
-                            onChange={(e) => {
-                              const val = e.target.value.replace(/\D/g, '').slice(0, 5);
-                              setToZip(val);
-                              if (val.length === 5) lookupZip(val).then(c => { if (c) setToCity(c); });
+                            icon={<Home className="w-4 h-4 text-primary" />}
+                            className="text-center placeholder:text-center py-2.5 text-sm"
+                          />
+                          <CityZipInput
+                            value={toLocationDisplay || toZip}
+                            onValueChange={(val) => {
+                              setToZip(val.replace(/\D/g, '').slice(0, 5) || val);
+                              setToLocationDisplay(val);
+                            }}
+                            onLocationSelect={(city, zip, fullAddress) => {
+                              setToCity(city);
+                              setToZip(zip);
+                              setToLocationDisplay(fullAddress || `${city}${zip ? `, ${zip}` : ''}`);
                             }}
                             placeholder="Moving to City / ZIP"
-                            className="w-full rounded-lg border border-border bg-background pl-9 pr-3 py-2.5 text-sm text-foreground text-center placeholder:text-muted-foreground placeholder:text-center focus:outline-none focus:ring-1 focus:ring-primary" />
-                          </div>
+                            icon={<MapPin className="w-4 h-4 text-primary" />}
+                            className="text-center placeholder:text-center py-2.5 text-sm"
+                          />
                         </div>
 
                         <div>
