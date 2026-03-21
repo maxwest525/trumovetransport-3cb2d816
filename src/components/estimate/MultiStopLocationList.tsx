@@ -18,8 +18,10 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { GripVertical, X, Check, MapPin } from "lucide-react";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
-import { MAPTILER_KEY } from '@/lib/maptilerConfig';
 import { cn } from "@/lib/utils";
+
+// Geoapify API key (publishable)
+const GEOAPIFY_KEY = '196cdbf659334d408ece5c98682f2106';
 
 export interface StopLocation {
   id: string;
@@ -85,17 +87,16 @@ function SortableItem({ location, index, onRemove, onAddressChange, onLocationSe
           value={location.address}
           onValueChange={(val) => onAddressChange(location.id, val)}
           onLocationSelect={async (displayAddr, zip, fullAddress) => {
-            // Geocode to get coordinates using MapTiler
+            // Geocode to get coordinates using Geoapify
             const addr = fullAddress || displayAddr;
             try {
               const response = await fetch(
-                `https://api.maptiler.com/geocoding/${encodeURIComponent(addr)}.json?` +
-                `key=${MAPTILER_KEY}&country=us&limit=1`
+                `https://api.geoapify.com/v1/geocode/search?text=${encodeURIComponent(addr)}&filter=countrycode:us&format=json&limit=1&apiKey=${GEOAPIFY_KEY}`
               );
               const data = await response.json();
-              if (data.features?.[0]?.center) {
-                const [lng, lat] = data.features[0].center;
-                onLocationSelect(location.id, displayAddr, zip, addr, [lat, lng]);
+              if (data.results?.[0]?.lat && data.results?.[0]?.lon) {
+                const { lat, lon } = data.results[0];
+                onLocationSelect(location.id, displayAddr, zip, addr, [lat, lon]);
               } else {
                 // Fallback: mark as validated without coords
                 onLocationSelect(location.id, displayAddr, zip, addr, [0, 0]);
