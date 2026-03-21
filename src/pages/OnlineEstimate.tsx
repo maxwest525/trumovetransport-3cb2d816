@@ -114,7 +114,7 @@ export default function OnlineEstimate() {
         }>;
         if (scannedItems.length > 0) {
           setItems(scannedItems);
-          setWizardComplete(true); // Skip the wizard — go straight to inventory builder
+          setWizardComplete(true); // Skip the wizard - go straight to inventory builder
           localStorage.removeItem('tm_scanned_inventory'); // Consume so it doesn't re-import
           toast({
             title: "Scanned inventory loaded",

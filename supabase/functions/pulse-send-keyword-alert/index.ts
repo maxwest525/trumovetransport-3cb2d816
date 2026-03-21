@@ -70,7 +70,7 @@ serve(async (req) => {
       const { error } = await resend.emails.send({
         from: "PulseAI Compliance <onboarding@resend.dev>",
         to: recipients,
-        subject: `🚨 Keyword Alert: "${keyword}" — Agent: ${agentLabel}`,
+        subject: `🚨 Keyword Alert: "${keyword}" - Agent: ${agentLabel}`,
         html: `
           <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
             <h2 style="color: #dc2626;">🚨 Keyword Detected</h2>
@@ -109,7 +109,7 @@ serve(async (req) => {
       if (!urls.length) throw new Error("No valid Slack webhook URLs provided");
 
       const slackPayload = {
-        text: `🚨 *Keyword Alert:* \`${keyword}\` — Agent: ${agentLabel}`,
+        text: `🚨 *Keyword Alert:* \`${keyword}\` - Agent: ${agentLabel}`,
         blocks: [
           { type: "header", text: { type: "plain_text", text: "🚨 Keyword Detected", emoji: true } },
           { type: "section", fields: [

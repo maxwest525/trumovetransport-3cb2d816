@@ -250,7 +250,7 @@ export default function ElevenLabsTrudyWidget() {
           {!isConnected && !isConnecting && (
             <div className="absolute bottom-full right-0 mb-2 w-48 rounded-lg border border-border/60 bg-card/90 backdrop-blur-sm shadow-md px-3 py-2 opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200">
               <p className="text-[11px] font-medium text-foreground leading-tight">AI Voice Assistant</p>
-              <p className="text-[10px] text-muted-foreground leading-snug mt-0.5">Instant quotes, tracking, scheduling — powered by voice AI.</p>
+              <p className="text-[10px] text-muted-foreground leading-snug mt-0.5">Instant quotes, tracking, scheduling - powered by voice AI.</p>
             </div>
           )}
         </div>

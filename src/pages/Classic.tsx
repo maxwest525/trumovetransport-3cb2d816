@@ -297,7 +297,7 @@ Variant: classic
                   <span className="text-amber-400">Nationwide Reach.</span>
                 </h1>
                 <p className="text-xl text-white/90 mb-8 leading-relaxed max-w-xl">
-                  We're still the same family business that started with one truck and a handshake — 
+                  We're still the same family business that started with one truck and a handshake - 
                   now serving all 50 states with the personal touch you deserve.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
@@ -456,7 +456,7 @@ Variant: classic
               Big Enough to Handle It. Small Enough to Care.
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Every move gets the personal attention of our family — whether you're moving down the block or across the country.
+              Every move gets the personal attention of our family - whether you're moving down the block or across the country.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
@@ -655,7 +655,7 @@ Variant: classic
                 Local Values. National Service.
               </h2>
               <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-                We've grown from a one-truck operation to serving all 50 states — but we've never 
+                We've grown from a one-truck operation to serving all 50 states - but we've never 
                 forgotten that every move is personal. You'll always talk to family, not a call center.
               </p>
             </div>
@@ -668,7 +668,7 @@ Variant: classic
                   className="rounded-xl shadow-xl w-full"
                 />
                 <p className="text-center text-sm text-gray-500 mt-3 italic">
-                  The Mitchell Family — Three generations, one commitment to you
+                  The Mitchell Family - Three generations, one commitment to you
                 </p>
               </div>
               <div>
@@ -677,13 +677,13 @@ Variant: classic
                 </h3>
                 <p className="text-lg text-gray-600 mb-6 leading-relaxed">
                   In 1998, our father started this company with one truck and a simple promise: 
-                  treat every customer like family. That's still how we operate today — even though 
+                  treat every customer like family. That's still how we operate today - even though 
                   we now move families coast to coast.
                 </p>
                 <p className="text-lg text-gray-600 mb-8 leading-relaxed">
                   When you call TruMove, you're not getting a faceless corporation. You're getting 
                   a family that's been moving families for over 25 years. Our grandchildren now 
-                  help out on weekends — that's how much this business means to us.
+                  help out on weekends - that's how much this business means to us.
                 </p>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="flex items-center gap-3">

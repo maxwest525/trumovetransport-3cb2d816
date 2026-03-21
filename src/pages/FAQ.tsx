@@ -13,11 +13,11 @@ import { Phone, Calendar } from "lucide-react";
 const FAQ_ITEMS = [
   {
     question: "What is TruMove in simple terms?",
-    answer: "TruMove is an AI-powered moving broker that helps you get accurate quotes, vet movers, and coordinate your move. We use technology to compare real carrier data, check licensing and reviews, and give you a transparent price—all in minutes instead of days."
+    answer: "TruMove is an AI-powered moving broker that helps you get accurate quotes, vet movers, and coordinate your move. We use technology to compare real carrier data, check licensing and reviews, and give you a transparent price-all in minutes instead of days."
   },
   {
     question: "How is TruMove different from calling a mover directly?",
-    answer: "When you call a mover directly, you get one quote from one company with no way to verify if it's fair. TruMove connects to multiple vetted carriers, compares options, and uses AI to predict accurate pricing based on millions of past moves. You also get our vetting layer—we check licenses, safety records, and reviews before any mover is offered to you."
+    answer: "When you call a mover directly, you get one quote from one company with no way to verify if it's fair. TruMove connects to multiple vetted carriers, compares options, and uses AI to predict accurate pricing based on millions of past moves. You also get our vetting layer-we check licenses, safety records, and reviews before any mover is offered to you."
   },
   {
     question: "Is my quote guaranteed?",
@@ -29,11 +29,11 @@ const FAQ_ITEMS = [
   },
   {
     question: "Who actually performs the move?",
-    answer: "TruMove is a licensed broker—we coordinate and arrange transportation with FMCSA-authorized motor carriers who perform the actual move. Every carrier on our platform is vetted for licensing, insurance, safety, and customer reviews before they're allowed to work with TruMove customers."
+    answer: "TruMove is a licensed broker-we coordinate and arrange transportation with FMCSA-authorized motor carriers who perform the actual move. Every carrier on our platform is vetted for licensing, insurance, safety, and customer reviews before they're allowed to work with TruMove customers."
   },
   {
     question: "How does TruMove help reduce surprises and issues?",
-    answer: "Our AI flags risk factors before you book—things like carriers with complaint patterns, pricing that seems too low, or moves with access challenges. We also track every job in real time and have a structured response process if anything goes wrong. Most problems in moving come from bad estimates or bad carriers—TruMove addresses both."
+    answer: "Our AI flags risk factors before you book-things like carriers with complaint patterns, pricing that seems too low, or moves with access challenges. We also track every job in real time and have a structured response process if anything goes wrong. Most problems in moving come from bad estimates or bad carriers-TruMove addresses both."
   },
   {
     question: "What can cause my quote to change?",
@@ -45,7 +45,7 @@ const FAQ_ITEMS = [
   },
   {
     question: "What happens if something goes wrong during the move?",
-    answer: "TruMove has a dedicated support team and a structured incident process. If there's an issue—delays, damages, disputes—we step in to mediate between you and the carrier. Carriers with repeated problems are removed from the platform. You're not on your own."
+    answer: "TruMove has a dedicated support team and a structured incident process. If there's an issue-delays, damages, disputes-we step in to mediate between you and the carrier. Carriers with repeated problems are removed from the platform. You're not on your own."
   }
 ];
 

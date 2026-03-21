@@ -79,7 +79,7 @@ export function SatellitePreview({
 
       {/* Location Name */}
       <div className="text-sm font-semibold text-white truncate">
-        {locationName || "—"}
+        {locationName || "-"}
       </div>
 
       {/* Time */}

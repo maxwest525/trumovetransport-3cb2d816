@@ -44,7 +44,7 @@ export default function LeadCaptureModal({ isOpen, onClose, onSubmit, targetFlow
         </DialogHeader>
         
         <p className="tru-lead-capture-desc">
-          We need basic contact info to save your progress. This allows us to continue your estimate seamlessly — we'll collect home details in the next step.
+          We need basic contact info to save your progress. This allows us to continue your estimate seamlessly - we'll collect home details in the next step.
         </p>
 
         <form onSubmit={handleSubmit} className="tru-lead-capture-form">

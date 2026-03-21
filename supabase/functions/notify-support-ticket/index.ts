@@ -67,7 +67,7 @@ serve(async (req) => {
 
     if (!res.ok) {
       console.error("Resend API error:", data);
-      // Don't fail the request — ticket is already saved
+      // Don't fail the request - ticket is already saved
       return new Response(JSON.stringify({ success: false, error: data }), {
         status: 200,
         headers: { ...corsHeaders, "Content-Type": "application/json" },

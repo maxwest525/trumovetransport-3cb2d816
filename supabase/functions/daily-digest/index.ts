@@ -89,7 +89,7 @@ serve(async (req) => {
         html += `</table>`;
       }
 
-      html += `<p style="color: #666; font-size: 12px;">— TruMove Pipeline</p></div>`;
+      html += `<p style="color: #666; font-size: 12px;">- TruMove Pipeline</p></div>`;
 
       // Send via Resend
       const emailRes = await fetch("https://api.resend.com/emails", {

@@ -126,7 +126,7 @@ export default function AutoTransport() {
               Auto transport should feel predictable.
             </h2>
             <p className="text-xs sm:text-sm sm:text-base text-muted-foreground mb-4 sm:mb-5 sm:mb-8">
-              TruMove makes shipping simple — from quote to delivery.
+              TruMove makes shipping simple - from quote to delivery.
             </p>
             <Button variant="premium" size="lg" onClick={scrollToQuote}>
               Get Instant Quote

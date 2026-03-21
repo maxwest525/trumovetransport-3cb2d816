@@ -16,7 +16,7 @@ import LocationAutocomplete from "@/components/LocationAutocomplete";
 import LeadCaptureModal from "@/components/LeadCaptureModal";
 // Static Street View preview used instead of interactive component
 import AIChatContainer from "@/components/chat/AIChatContainer";
-// StatsStrip removed — trust items inlined in hero
+// StatsStrip removed - trust items inlined in hero
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 
 import logoImg from "@/assets/logo.png";
@@ -125,7 +125,7 @@ function getAiHint(step: number, fromCity: string, toCity: string, distance: num
       return "";
     case 3:
       if (distance > 0) {
-        return `🚛 ${distance.toLocaleString()} miles — analyzing best carriers for this route`;
+        return `🚛 ${distance.toLocaleString()} miles - analyzing best carriers for this route`;
       }
       return "";
     case 4:
@@ -133,9 +133,9 @@ function getAiHint(step: number, fromCity: string, toCity: string, distance: num
         const month = format(moveDate, 'MMMM');
         const isLowSeason = [0, 1, 2, 10, 11].includes(moveDate.getMonth());
         if (isLowSeason) {
-          return `📅 ${month} — typically 15-20% lower rates`;
+          return `📅 ${month} - typically 15-20% lower rates`;
         }
-        return `📅 ${month} — peak season, finding competitive rates`;
+        return `📅 ${month} - peak season, finding competitive rates`;
       }
       return "";
     case 5:
@@ -236,7 +236,7 @@ const MoveSummaryModal = React.forwardRef<HTMLDivElement, MoveSummaryModalProps>
         <div className="tru-move-summary-distance">
           <Route className="w-4 h-4" />
           <span className="tru-move-summary-mileage">
-            {fromCity && toCity && distance > 0 ? `${distance.toLocaleString()} mi` : "— mi"}
+            {fromCity && toCity && distance > 0 ? `${distance.toLocaleString()} mi` : "- mi"}
           </span>
         </div>
         
@@ -457,7 +457,7 @@ function ShipmentTrackerSection({ navigate }: {navigate: (path: string) => void;
     return () => {if (animationRef.current) cancelAnimationFrame(animationRef.current);};
   }, []);
 
-  // Route definitions for SVG overlay — recalibrated to map image
+  // Route definitions for SVG overlay - recalibrated to map image
   const routes = useMemo(() => [
   {
     color: 'hsl(142, 71%, 45%)',
@@ -657,7 +657,7 @@ export default function Index() {
     icon: Scan,
     title: 'Computer Vision Inventory',
     shortDesc: 'AI scans your rooms in seconds',
-    longDesc: 'Our proprietary neural network detects furniture, estimates cubic footage, and calculates weight — eliminating the guesswork that leads to surprise fees on move day.',
+    longDesc: 'Our proprietary neural network detects furniture, estimates cubic footage, and calculates weight - eliminating the guesswork that leads to surprise fees on move day.',
     hoverTip: 'Skip the clipboard. Snap photos and let AI do the counting.'
   },
   {
@@ -673,7 +673,7 @@ export default function Index() {
     icon: ShieldCheck,
     title: 'FMCSA Safety Intelligence',
     shortDesc: 'Federal database cross-reference',
-    longDesc: 'We pull real-time data from the SAFER Web Services API — checking operating authority, crash history, and compliance ratings before any carrier makes our list.',
+    longDesc: 'We pull real-time data from the SAFER Web Services API - checking operating authority, crash history, and compliance ratings before any carrier makes our list.',
     hoverTip: 'Same data the feds use. Zero guesswork.'
   },
   {
@@ -681,7 +681,7 @@ export default function Index() {
     icon: Shield,
     title: 'License Verification Engine',
     shortDesc: 'Active authority confirmation',
-    longDesc: 'Every carrier is validated for active MC and USDOT numbers. Revoked, suspended, or lapsed licenses get flagged instantly — you only see vetted options.',
+    longDesc: 'Every carrier is validated for active MC and USDOT numbers. Revoked, suspended, or lapsed licenses get flagged instantly - you only see vetted options.',
     hoverTip: "If it's not active, you won't see it."
   },
   {
@@ -689,7 +689,7 @@ export default function Index() {
     icon: CreditCard,
     title: 'Coverage Validation',
     shortDesc: 'Insurance limits verified on file',
-    longDesc: 'We confirm cargo, liability, and bodily injury coverage meets or exceeds federal minimums — so your belongings are protected before they leave the driveway.',
+    longDesc: 'We confirm cargo, liability, and bodily injury coverage meets or exceeds federal minimums - so your belongings are protected before they leave the driveway.',
     hoverTip: 'Proof of coverage, not just promises.'
   },
   {
@@ -1100,7 +1100,7 @@ export default function Index() {
                 The Smarter Way To <span className="tru-hero-accent">Move</span>
               </h1>
               <ul className="tru-hero-bullets">
-                <li>Scan, document, and build your own inventory — your items stay private and secure</li>
+                <li>Scan, document, and build your own inventory - your items stay private and secure</li>
                 <li>Meet your broker virtually, face to face, from anywhere</li>
                 <li>Track your most valuable belongings every step of the way</li>
                 <li>See the full history and performance record of your movers</li>
@@ -1431,7 +1431,7 @@ export default function Index() {
                       <span className="text-primary">Estimate.</span>
                     </h2>
                     <p className="text-muted-foreground max-w-md text-base md:text-lg font-light leading-relaxed mt-4">
-                      Point your camera at any room. Our AI identifies every item and calculates your move in seconds—not hours.
+                      Point your camera at any room. Our AI identifies every item and calculates your move in seconds-not hours.
                     </p>
                   </div>
                   
@@ -1497,14 +1497,14 @@ export default function Index() {
                   {[...Array(2)].map((_, dupeIdx) =>
                   [
                   { name: "Sarah M.", location: "New York → Miami", rating: 5, photo: testimonialSarah, source: "Google", text: "TruMove made our cross-country move seamless. Real-time tracking gave us total peace of mind the entire way." },
-                  { name: "James R.", location: "Chicago → Denver", rating: 5, photo: testimonialJames, source: "Yelp", text: "The AI inventory scanner saved us hours of manual cataloging. Our estimate was spot-on — no surprise charges." },
+                  { name: "James R.", location: "Chicago → Denver", rating: 5, photo: testimonialJames, source: "Yelp", text: "The AI inventory scanner saved us hours of manual cataloging. Our estimate was spot-on - no surprise charges." },
                   { name: "Emily & David K.", location: "Los Angeles → Seattle", rating: 5, photo: testimonialEmilyDavid, source: "SiteJabber", text: "Best moving experience we've ever had. The team was professional, on time, and the video consult made planning easy." },
                   { name: "Marcus T.", location: "Houston → Atlanta", rating: 5, photo: testimonialMarcus, source: "Facebook", text: "From the first call to delivery day, everything was handled with care. Trudy even helped us prep our inventory list." },
                   { name: "Lisa W.", location: "Boston → San Francisco", rating: 5, photo: testimonialLisa, source: "MovingReviews.com", text: "We tracked our shipment in real time across the country. The transparency was unlike any other mover we've used." },
                   { name: "Carlos & Ana P.", location: "Phoenix → Dallas", rating: 5, photo: testimonialCarlosAna, source: "BBB", text: "Incredible value. The video consultation caught things we would have missed. Highly recommend TruMove to anyone." },
                   { name: "Rachel S.", location: "Portland → Nashville", rating: 5, photo: testimonialSarah, source: "Google", text: "The carrier vetting gave us confidence we were hiring a safe, legit company. No hidden fees, no stress." },
                   { name: "David L.", location: "Tampa → Charlotte", rating: 5, photo: testimonialJames, source: "Yelp", text: "Scheduling was a breeze. The whole process from quote to delivery was handled professionally and on time." },
-                  { name: "Nina & Tom H.", location: "Austin → San Diego", rating: 5, photo: testimonialEmilyDavid, source: "Facebook", text: "We moved with two kids and a dog — TruMove took all the stress off our plate. Would absolutely use them again." },
+                  { name: "Nina & Tom H.", location: "Austin → San Diego", rating: 5, photo: testimonialEmilyDavid, source: "Facebook", text: "We moved with two kids and a dog - TruMove took all the stress off our plate. Would absolutely use them again." },
                   { name: "Andre W.", location: "Detroit → Orlando", rating: 5, photo: testimonialMarcus, source: "Google", text: "The live tracking map was incredible. I could see exactly where our stuff was the whole trip. Top-notch service." },
                   { name: "Jennifer K.", location: "Philadelphia → Raleigh", rating: 5, photo: testimonialLisa, source: "Google", text: "From the instant quote to delivery, everything was transparent. I always knew where my belongings were. Five stars!" },
                   { name: "Mike & Sara B.", location: "Minneapolis → Phoenix", rating: 5, photo: testimonialCarlosAna, source: "Yelp", text: "TruMove's video consultation helped us plan everything in advance. The movers showed up on time and treated our stuff like their own." },

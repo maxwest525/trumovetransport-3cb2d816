@@ -143,7 +143,7 @@ export default function ChatContainer({ initialFromLocation, initialToLocation }
       // No locations - standard greeting
       addBotMessage("Hi! I'm your TruMove assistant. Ready to get your instant move quote in under 2 minutes. 🚚");
       setTimeout(() => {
-        addBotMessage("First up — where are you moving FROM? Just type your ZIP code.");
+        addBotMessage("First up - where are you moving FROM? Just type your ZIP code.");
         setCurrentStep('from-zip');
       }, 800);
     }
@@ -182,8 +182,8 @@ export default function ChatContainer({ initialFromLocation, initialToLocation }
           setFromCity(city || "");
           setTimeout(() => {
             addBotMessage(city 
-              ? `Got it — ${city}! And where are you moving TO?`
-              : `Got it — ZIP ${value}! And where are you moving TO?`
+              ? `Got it - ${city}! And where are you moving TO?`
+              : `Got it - ZIP ${value}! And where are you moving TO?`
             );
             setCurrentStep('to-zip');
           }, 300);
