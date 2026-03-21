@@ -316,7 +316,7 @@ const MoveSummaryModal = React.forwardRef<HTMLDivElement, MoveSummaryModalProps>
           <div className="tru-move-summary-map tru-move-summary-map-lg">
             {toCoords ?
             <img
-              src={`https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${toCoords[0]},${toCoords[1]},14,0/280x280@2x?access_token=${MAPBOX_TOKEN}`}
+              src={`https://api.maptiler.com/maps/satellite/static/${toCoords[0]},${toCoords[1]},14/280x280@2x.jpg?key=${MAPTILER_KEY}`}
               alt="Destination satellite view" /> :
 
 
