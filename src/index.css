@@ -22600,21 +22600,21 @@
   align-items: center;
   gap: 10px;
   padding: 14px 24px;
-  background: white;
-  color: hsl(var(--tm-ink));
+  background: hsl(var(--card));
+  color: hsl(var(--foreground));
   font-size: 14px;
   font-weight: 600;
   border-radius: 14px;
-  border: 1.5px solid hsl(var(--tm-ink) / 0.12);
+  border: 1.5px solid hsl(var(--border));
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 2px 12px hsl(var(--tm-ink) / 0.06);
+  box-shadow: 0 2px 12px hsl(var(--foreground) / 0.06);
 }
 
 .tru-scan-alt-btn:hover {
   border-color: hsl(var(--primary) / 0.4);
   background: hsl(var(--primary) / 0.04);
-  box-shadow: 0 4px 20px hsl(var(--tm-ink) / 0.08);
+  box-shadow: 0 4px 20px hsl(var(--foreground) / 0.08);
 }
 
 .tru-scan-alt-btn svg:first-child {
