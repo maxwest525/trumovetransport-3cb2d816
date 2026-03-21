@@ -1389,7 +1389,6 @@ export default function Index() {
                     <span>•</span>
                     <span className="flex items-center gap-1"><Database className="w-3 h-3" /> First-Party Data</span>
                   </div>
-                </div>
               </div>
             </div>
           </section>
