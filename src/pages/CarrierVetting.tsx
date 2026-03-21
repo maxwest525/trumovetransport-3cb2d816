@@ -22,13 +22,6 @@ import { useToast } from '@/hooks/use-toast';
 import { MOCK_CARRIERS, MOCK_CARRIER_GOOD, MOCK_CARRIER_BAD, MOCK_CARRIER_MIXED, type MockCarrierData } from '@/data/mockCarriers';
 import { cn } from '@/lib/utils';
 import { generateCarrierComparisonPdf } from '@/lib/carrierPdfExport';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  DropdownMenuSeparator,
-} from '@/components/ui/dropdown-menu';
 
 interface CarrierData {
   carrier: {
