@@ -264,7 +264,7 @@ export default function CustomerService() {
                     <span className="w-1.5 h-1.5 rounded-full bg-primary/60" />
                     <span className="h-px w-8 bg-primary/40" />
                   </div>
-                  <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-foreground leading-[1.05]">
+                  <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-foreground leading-[1.05]">
                     Meet <span className="text-primary">Trudy</span>
                   </h1>
                   <p className="text-muted-foreground text-base md:text-lg mt-4 max-w-md mx-auto lg:mx-0 leading-relaxed font-light">
