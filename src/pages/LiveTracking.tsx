@@ -783,18 +783,46 @@ export default function LiveTracking() {
                   isEmpty={!routeData}
                 />
 
-                {/* Live Truck Street View */}
-                <TruckAerialView
-                  routeCoordinates={routeCoordinates}
-                  progress={progress}
-                  isTracking={isTracking}
-                  isPaused={isPaused}
-                  originCoords={originCoords}
-                  googleApiKey={GOOGLE_MAPS_API_KEY}
-                  expanded={streetViewExpanded}
-                  onToggleExpand={() => setStreetViewExpanded(!streetViewExpanded)}
-                  onRelocateTruck={() => setFollowMode(true)}
-                />
+                <div className="tracking-info-card">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-6 h-6 rounded-md bg-primary/20 flex items-center justify-center">
+                      <MapPin className="w-3.5 h-3.5 text-primary" />
+                    </div>
+                    <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-muted-foreground">
+                      Shipment Location
+                    </span>
+                  </div>
+
+                  {currentTruckPosition ? (
+                    <div className="space-y-3">
+                      <div className="rounded-lg border border-border bg-muted/30 p-3">
+                        <div className="text-xs uppercase tracking-wider text-muted-foreground mb-1">Current position</div>
+                        <div className="text-sm font-semibold text-foreground">
+                          {currentTruckPosition[1].toFixed(4)}, {currentTruckPosition[0].toFixed(4)}
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2 text-xs">
+                        <div className="rounded-lg border border-border bg-muted/20 p-3">
+                          <div className="text-muted-foreground uppercase tracking-wider mb-1">Origin</div>
+                          <div className="font-medium text-foreground truncate">{originName || 'Awaiting route'}</div>
+                        </div>
+                        <div className="rounded-lg border border-border bg-muted/20 p-3">
+                          <div className="text-muted-foreground uppercase tracking-wider mb-1">Destination</div>
+                          <div className="font-medium text-foreground truncate">{destName || 'Awaiting route'}</div>
+                        </div>
+                      </div>
+                      <div className="rounded-lg border border-border bg-primary/5 p-3 text-xs text-muted-foreground">
+                        {isTracking
+                          ? 'Live truck progress is now running on the free OpenStreetMap tracker.'
+                          : 'Click Analyze Route to start the live shipment simulation.'}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="rounded-lg border border-dashed border-border bg-muted/20 p-4 text-sm text-muted-foreground">
+                      Route details will appear here after the map finishes loading.
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
