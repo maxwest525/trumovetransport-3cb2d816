@@ -32455,9 +32455,16 @@ gmp-map-3d-element .gmnoprint {
 .cal-embed-container iframe {
   width: 100%;
   border: 0;
-  height: 920px;
-  min-height: 850px;
+  height: 700px;
+  min-height: 600px;
   display: block;
+}
+
+@media (min-width: 768px) {
+  .cal-embed-container iframe {
+    height: 920px;
+    min-height: 850px;
+  }
 }
 
 /* Subtle inner glow at the top edge */
