@@ -19857,7 +19857,7 @@
 .tru-scan-main-subheadline {
   font-size: 15px;
   line-height: 1.6;
-  color: hsl(var(--tm-ink) / 0.6);
+  color: hsl(var(--muted-foreground));
   max-width: 600px;
   margin: 0 auto 28px;
 }
