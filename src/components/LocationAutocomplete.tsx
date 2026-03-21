@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/tooltip";
 import { MAPTILER_KEY } from '@/lib/maptilerConfig';
 import { toast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+
 
 // Retry configuration
 const MAX_RETRIES = 2;
@@ -57,7 +57,6 @@ function generateSessionToken(): string {
 
 // Session tokens for APIs - persists for the component lifecycle
 let mapboxSessionToken = generateSessionToken();
-let googleSessionToken = generateSessionToken();
 
 // Normalize address for comparison (remove punctuation, extra spaces, lowercase)
 function normalizeAddress(addr: string): string {
@@ -103,69 +102,7 @@ async function withRetry<T>(
   return { result: null, failed: true, retryCount: maxRetries + 1 };
 }
 
-// Google Places Autocomplete API - PRIMARY source for address suggestions
-// Uses retry logic to handle transient 503 boot errors gracefully
-async function searchGooglePlaces(query: string): Promise<{ suggestions: LocationSuggestion[]; failed: boolean }> {
-  const makeRequest = async (): Promise<{ suggestions: LocationSuggestion[]; failed: boolean }> => {
-    const { data, error } = await supabase.functions.invoke('google-places-autocomplete', {
-      body: { 
-        query,
-        sessionToken: googleSessionToken,
-        types: ['address']
-      }
-    });
-
-    // Throw on transient errors (503, etc.) to trigger retry
-    if (error) {
-      const errorMessage = error.message || String(error);
-      if (errorMessage.includes('503') || errorMessage.includes('BOOT_ERROR')) {
-        throw new Error(`Transient error: ${errorMessage}`);
-      }
-      console.error('Google Places error:', error);
-      return { suggestions: [], failed: true };
-    }
-
-    // Check if we should fallback
-    if (data?.fallback || data?.error) {
-      // If it's a transient error, throw to retry
-      if (data?.code === 'BOOT_ERROR' || data?.code === 'EXCEPTION') {
-        throw new Error(`Transient API error: ${data.code}`);
-      }
-      console.log('Google Places unavailable, will fallback to Mapbox');
-      return { suggestions: [], failed: true };
-    }
-
-    // Generate new session token after successful use
-    googleSessionToken = generateSessionToken();
-
-    const suggestions: LocationSuggestion[] = (data?.suggestions || []).map((s: any) => ({
-      streetAddress: s.streetAddress || s.mainText || '',
-      city: s.city || '',
-      state: s.state || '',
-      zip: s.zip || '',
-      display: s.description || s.mainText,
-      fullAddress: s.description,
-      isVerified: false, // Will be verified after selection
-      validationLevel: null,
-      mapboxId: undefined,
-      googlePlaceId: s.placeId,
-    }));
-
-    return { suggestions, failed: false };
-  };
-
-  // Use retry logic for transient 503/boot errors
-  const { result, failed } = await withRetry(makeRequest, MAX_RETRIES, RETRY_DELAY);
-  
-  if (failed || !result) {
-    console.log('Google Places failed after retries, falling back to Mapbox');
-    return { suggestions: [], failed: true };
-  }
-  
-  return result;
-}
-
-// MapTiler Geocoding API - FALLBACK source for address suggestions
+// MapTiler Geocoding API - PRIMARY source for address suggestions
 async function searchMapTilerAddresses(query: string): Promise<{ suggestions: LocationSuggestion[]; failed: boolean }> {
   const { result, failed } = await withRetry(async () => {
     const res = await fetch(
@@ -210,8 +147,8 @@ async function searchMapTilerAddresses(query: string): Promise<{ suggestions: Lo
       zip,
       display: displayAddr,
       fullAddress: placeName,
-      isVerified: false,
-      validationLevel: hasStreet ? null : 'partial' as ValidationLevel,
+      isVerified: hasStreet,
+      validationLevel: hasStreet ? 'verified' as ValidationLevel : 'partial' as ValidationLevel,
       mapboxId: undefined,
     };
   });
@@ -219,76 +156,11 @@ async function searchMapTilerAddresses(query: string): Promise<{ suggestions: Lo
   return { suggestions, failed: false };
 }
 
-// Google Address Validation API for verified street addresses
-async function validateWithGoogle(address: string): Promise<{ 
-  address: LocationSuggestion | null; 
-  failed: boolean;
-  errorCode?: string;
-  fallbackToMapbox?: boolean;
-}> {
-  try {
-    const { data, error } = await supabase.functions.invoke('google-address-validation', {
-      body: { address }
-    });
-
-    if (error) {
-      console.error('Google Address Validation error:', error);
-      return { address: null, failed: true, errorCode: 'INVOKE_ERROR', fallbackToMapbox: true };
-    }
-
-    // Check if we should fallback to Mapbox
-    if (data?.fallbackToMapbox || data?.code === 'API_ERROR') {
-      console.log('Google API not available, falling back to Mapbox');
-      return { address: null, failed: false, errorCode: data?.code, fallbackToMapbox: true };
-    }
-
-    if (data?.error || !data?.valid) {
-      console.warn('Google validation failed:', data?.error || 'Invalid address');
-      return { address: null, failed: false, errorCode: data?.code };
-    }
-
-    const { components, formattedAddress, validationLevel: googleLevel } = data;
-    
-    // Map Google validation levels to our system
-    let validationLevel: ValidationLevel;
-    if (googleLevel === 'verified') {
-      validationLevel = 'verified';
-    } else if (googleLevel === 'partial') {
-      validationLevel = 'partial';
-    } else {
-      validationLevel = 'unverifiable';
-    }
-
-    return {
-      address: {
-        streetAddress: components.streetAddress || '',
-        city: components.city || '',
-        state: components.state || '',
-        zip: components.zip || '',
-        display: formattedAddress?.replace(', USA', '').replace(', United States', '') || '',
-        fullAddress: formattedAddress || '',
-        isVerified: validationLevel === 'verified',
-        validationLevel,
-        mapboxId: undefined, // Not from Mapbox
-      },
-      failed: false
-    };
-  } catch (error) {
-    console.error('Google Address Validation exception:', error);
-    return { address: null, failed: true, errorCode: 'EXCEPTION', fallbackToMapbox: true };
-  }
-}
-
-// Retrieve is no longer needed with MapTiler — return null for compatibility
-async function retrieveMapboxAddress(_mapboxId: string): Promise<{ address: LocationSuggestion | null; failed: boolean }> {
-  return { address: null, failed: true };
-}
-
 // Photon API for city-only search (mode="city") - CORS-friendly, fallback
 async function searchPhotonCities(query: string): Promise<LocationSuggestion[]> {
   try {
     const res = await fetch(
-      `https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&limit=10&lang=en&layer=city,town,village`,
+      `https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&limit=10&lang=en&layer=city&layer=county&layer=state`,
       { headers: { 'Accept': 'application/json' } }
     );
     if (!res.ok) return [];
@@ -446,49 +318,30 @@ export default function LocationAutocomplete({
     const normalizedQuery = normalizeAddress(query);
 
     if (mode === 'address') {
-      // For address mode, try Google Places first, fallback to Mapbox
-      const { suggestions: googleSuggestions, failed: googleFailed } = await searchGooglePlaces(query);
+      // For address mode, use MapTiler geocoding
+      const { suggestions: maptilerSuggestions, failed: maptilerFailed } = await searchMapTilerAddresses(query);
       
-      if (!googleFailed && googleSuggestions.length > 0) {
-        // Use Google Places results
-        const filtered = googleSuggestions.filter(s => {
+      if (!maptilerFailed && maptilerSuggestions.length > 0) {
+        const filtered = maptilerSuggestions.filter(s => {
           const normalizedSuggestion = normalizeAddress(s.fullAddress || s.display);
           return normalizedSuggestion !== normalizedQuery;
         });
         setSuggestions(filtered);
-      } else {
-        // Fallback to MapTiler
-        console.log('Using MapTiler fallback for address suggestions');
-        const { suggestions: mapboxSuggestions, failed: mapboxFailed } = await searchMapTilerAddresses(query);
-        
-        if (mapboxFailed) {
-          setSuggestions([]);
-        } else if (mapboxSuggestions.length > 0) {
-          // Filter out suggestions that are identical to what's already entered
-          const filtered = mapboxSuggestions.filter(s => {
-            const normalizedSuggestion = normalizeAddress(s.fullAddress || s.display);
-            return normalizedSuggestion !== normalizedQuery;
-          });
-          setSuggestions(filtered);
-        } else if (isCompleteZip) {
-          // Fallback: if both return nothing for a ZIP, show city-level with a prompt
-          const zipResult = await lookupZip(query.trim());
-          if (zipResult) {
-            // Mark as partial - needs street address
-            zipResult.validationLevel = 'partial';
-            // Only show if different from current input
-            const normalizedResult = normalizeAddress(zipResult.fullAddress || zipResult.display);
-            if (normalizedResult !== normalizedQuery) {
-              setSuggestions([zipResult]);
-            } else {
-              setSuggestions([]);
-            }
+      } else if (isCompleteZip) {
+        const zipResult = await lookupZip(query.trim());
+        if (zipResult) {
+          zipResult.validationLevel = 'partial';
+          const normalizedResult = normalizeAddress(zipResult.fullAddress || zipResult.display);
+          if (normalizedResult !== normalizedQuery) {
+            setSuggestions([zipResult]);
           } else {
             setSuggestions([]);
           }
         } else {
           setSuggestions([]);
         }
+      } else {
+        setSuggestions([]);
       }
     } else {
       // City mode: use existing logic
@@ -586,67 +439,7 @@ export default function LocationAutocomplete({
   };
 
   const handleSelect = async (suggestion: LocationSuggestion) => {
-    let finalSuggestion = suggestion;
-    
-    // For address mode, validate with Google Address Validation API first
-    if (mode === 'address') {
-      setIsValidating(true); // Show loading overlay
-      
-      // Build address string for Google validation
-      const addressToValidate = suggestion.fullAddress || 
-        (suggestion.streetAddress 
-          ? `${suggestion.streetAddress}, ${suggestion.city}, ${suggestion.state} ${suggestion.zip}`
-          : suggestion.display);
-      
-      // Try Google Address Validation first
-      const googleResult = await validateWithGoogle(addressToValidate);
-      
-      if (!googleResult.failed && !googleResult.fallbackToMapbox && googleResult.address) {
-        // Google validation succeeded
-        finalSuggestion = googleResult.address;
-        
-        // Compare user's input with the Google-standardized result
-        const currentNormalized = normalizeAddress(value);
-        const verifiedNormalized = normalizeAddress(googleResult.address.fullAddress);
-        
-        if (verifiedNormalized && currentNormalized !== verifiedNormalized) {
-          const currentStreetPart = currentNormalized.split(',')[0]?.trim();
-          const verifiedStreetPart = verifiedNormalized.split(',')[0]?.trim();
-          
-          if (currentStreetPart !== verifiedStreetPart) {
-            setCorrectionSuggestion(googleResult.address.fullAddress.replace(', USA', '').replace(', United States', ''));
-          }
-        }
-      } else if (suggestion.mapboxId) {
-        // Fallback to Mapbox retrieve if Google fails or is unavailable
-        console.log('Using Mapbox fallback for address validation');
-        const { address: mapboxVerified, failed: mapboxFailed } = await retrieveMapboxAddress(suggestion.mapboxId);
-        
-        if (!mapboxFailed && mapboxVerified) {
-          finalSuggestion = mapboxVerified;
-          
-          const currentNormalized = normalizeAddress(value);
-          const verifiedNormalized = normalizeAddress(mapboxVerified.fullAddress);
-          const displayNormalized = normalizeAddress(suggestion.display || suggestion.fullAddress || '');
-          
-          if (verifiedNormalized && currentNormalized !== verifiedNormalized) {
-            const currentStreetPart = currentNormalized.split(',')[0]?.trim();
-            const verifiedStreetPart = verifiedNormalized.split(',')[0]?.trim();
-            const suggestionStreetPart = displayNormalized.split(',')[0]?.trim();
-            
-            const isSameStreet = currentStreetPart === verifiedStreetPart;
-            const matchesSuggestion = suggestionStreetPart === verifiedStreetPart;
-            const inputContainsCorrection = currentNormalized.includes(verifiedStreetPart);
-            
-            if (!isSameStreet && !matchesSuggestion && !inputContainsCorrection) {
-              setCorrectionSuggestion(mapboxVerified.fullAddress.replace(', United States', ''));
-            }
-          }
-        }
-      }
-      
-      setIsValidating(false); // Hide loading overlay
-    }
+    const finalSuggestion = suggestion;
     
     const displayText = finalSuggestion.fullAddress?.replace(', United States', '') || 
       (finalSuggestion.streetAddress 
