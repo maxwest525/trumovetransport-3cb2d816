@@ -97,14 +97,14 @@ function getPartialRoute(coords: [number, number][], progress: number): [number,
   return partialCoords;
 }
 
-// Fetch road-snapped route from Mapbox Directions API (matches homepage pattern)
+// Fetch road-snapped route from OSRM (free)
 async function fetchRoadSnappedRoute(
   origin: [number, number],
   dest: [number, number]
 ): Promise<{ coordinates: [number, number][]; distance: number; duration: number } | null> {
   try {
     const response = await fetch(
-      `https://api.mapbox.com/directions/v5/mapbox/driving/${origin[0]},${origin[1]};${dest[0]},${dest[1]}?geometries=geojson&overview=full&access_token=${MAPBOX_TOKEN}`
+      `https://router.project-osrm.org/route/v1/driving/${origin[0]},${origin[1]};${dest[0]},${dest[1]}?geometries=geojson&overview=full`
     );
     const data = await response.json();
     
