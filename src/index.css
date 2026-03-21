@@ -21295,8 +21295,8 @@
 .tru-scan-table tbody td {
   padding: 12px 16px;
   font-size: 13px;
-  color: hsl(var(--tm-ink) / 0.7);
-  border-bottom: 1px solid hsl(var(--tm-ink) / 0.04);
+  color: hsl(var(--muted-foreground));
+  border-bottom: 1px solid hsl(var(--border) / 0.5);
   vertical-align: middle;
 }
 
