@@ -21,6 +21,7 @@ import LiveTracking from "./pages/LiveTracking";
 import AutoTransport from "./pages/AutoTransport";
 import CustomerService from "./pages/CustomerService";
 import ElevenLabsTrudyWidget from "./components/ElevenLabsTrudyWidget";
+import FloatingTruckChat from "./components/FloatingTruckChat";
 import ScrollToTop from "./components/ScrollToTop";
 
 const queryClient = new QueryClient();
@@ -58,6 +59,7 @@ const App = () => (
 
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <FloatingTruckChat />
           <ElevenLabsTrudyWidget />
         </BrowserRouter>
       </TooltipProvider>
