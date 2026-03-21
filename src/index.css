@@ -21318,7 +21318,7 @@
   height: 36px;
   object-fit: contain;
   border-radius: 6px;
-  background: white;
+  background: hsl(var(--muted));
 }
 
 .tru-scan-table-total {
