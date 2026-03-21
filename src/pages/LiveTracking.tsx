@@ -605,55 +605,8 @@ export default function LiveTracking() {
               <div className="tracking-map-area">
                 {/* Map Container */}
                 <div className="tracking-map-container">
-                  {/* Top Controls - Demo, Map View Toggle */}
+                  {/* Top Controls */}
                   <div className="absolute top-3 right-3 z-20 flex items-center gap-2">
-                    {/* Map View Toggle */}
-                    <div className="flex items-center bg-background/95 backdrop-blur-sm border-2 border-border rounded-lg shadow-lg overflow-hidden">
-                      <Button
-                        onClick={() => setMapViewType('satellite')}
-                        variant="ghost"
-                        size="sm"
-                        className={cn(
-                          "h-9 px-3 gap-1.5 text-xs rounded-none border-r border-border transition-all",
-                          mapViewType === 'satellite' 
-                            ? "bg-foreground text-background font-bold" 
-                            : "hover:bg-muted"
-                        )}
-                      >
-                        <Satellite className="w-3.5 h-3.5" />
-                        Satellite
-                      </Button>
-                      <Button
-                        onClick={() => setMapViewType('roadmap')}
-                        variant="ghost"
-                        size="sm"
-                        className={cn(
-                          "h-9 px-3 gap-1.5 text-xs rounded-none border-r border-border transition-all",
-                          mapViewType === 'roadmap' 
-                            ? "bg-foreground text-background font-bold" 
-                            : "hover:bg-muted"
-                        )}
-                      >
-                        <Map className="w-3.5 h-3.5" />
-                        Roadmap
-                      </Button>
-                      <Button
-                        onClick={() => setMapViewType('truckview')}
-                        variant="ghost"
-                        size="sm"
-                        className={cn(
-                          "h-9 px-3 gap-1.5 text-xs rounded-none transition-all",
-                          mapViewType === 'truckview' 
-                            ? "bg-foreground text-background font-bold" 
-                            : "hover:bg-muted"
-                        )}
-                      >
-                        <Truck className="w-3.5 h-3.5" />
-                        Truck View
-                      </Button>
-                    </div>
-                    
-                    {/* Demo Button */}
                     <Button
                       onClick={handleDemoClick}
                       variant="outline"
@@ -665,69 +618,15 @@ export default function LiveTracking() {
                     </Button>
                   </div>
 
-                  {/* WebGL warning banner when using static fallback */}
-                  {useStaticMap && webglDiagnostics && webglDiagnostics.warnings.length > 0 && (
-                    <div className="absolute top-16 left-0 right-0 z-30 bg-destructive text-destructive-foreground px-4 py-2 text-xs font-medium flex items-center gap-2">
-                      <AlertTriangle className="w-4 h-4 flex-shrink-0" />
-                      <span>{webglDiagnostics.warnings[0]}</span>
-                    </div>
-                  )}
-                  
-                  {useStaticMap ? (
-                    <GoogleStaticRouteMap
-                      originCoords={originCoords}
-                      destCoords={destCoords}
-                      progress={progress}
-                      isTracking={isTracking}
-                      googleApiKey={GOOGLE_MAPS_API_KEY}
-                      routePolyline={googleRouteData.polyline}
-                      truckPosition={currentTruckPosition}
-                      originName={originName}
-                      destName={destName}
-                    />
-                  ) : mapViewType === 'truckview' ? (
-                    <TruckViewPanel
-                      routeCoordinates={routeCoordinates}
-                      progress={progress}
-                      isTracking={isTracking}
-                      interactive={false}
-                      originCoords={originCoords}
-                      destCoords={destCoords}
-                      onRouteCalculated={handleRouteCalculated}
-                    />
-                  ) : (
-                    <Google2DTrackingMap
-                      originCoords={originCoords}
-                      destCoords={destCoords}
-                      progress={progress}
-                      isTracking={isTracking}
-                      onRouteCalculated={handleRouteCalculated}
-                      followMode={true}
-                      onFollowModeChange={() => {}}
-                      mapType={mapViewType}
-                      googleApiKey={GOOGLE_MAPS_API_KEY}
-                    />
-                  )}
-                  
-                  {/* Map View Transition Overlay */}
-                  <div 
-                    className={cn(
-                      "absolute inset-0 bg-background/80 backdrop-blur-sm pointer-events-none z-40 transition-opacity duration-300",
-                      isViewTransitioning ? "opacity-100" : "opacity-0"
-                    )}
-                  >
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className={cn(
-                        "flex items-center gap-2 px-4 py-2 rounded-lg bg-background border border-border shadow-lg transition-all duration-300",
-                        isViewTransitioning ? "opacity-100 scale-100" : "opacity-0 scale-95"
-                      )}>
-                        <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                        <span className="text-sm font-medium text-foreground">
-                          Switching to {mapViewType === 'truckview' ? 'Truck View' : mapViewType === 'roadmap' ? 'Roadmap' : 'Satellite'}...
-                        </span>
-                      </div>
-                    </div>
-                  </div>
+                  <TruckTrackingMap
+                    originCoords={originCoords}
+                    destCoords={destCoords}
+                    progress={progress}
+                    isTracking={isTracking}
+                    onRouteCalculated={handleRouteCalculated}
+                    followMode={followMode}
+                    onFollowModeChange={setFollowMode}
+                  />
                 </div>
 
                 {/* Map Controls Strip - Go/Pause/Reset + Route Info Dropdowns */}
