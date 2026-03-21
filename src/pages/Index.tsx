@@ -1169,13 +1169,13 @@ export default function Index() {
                             className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground text-center placeholder:text-muted-foreground placeholder:text-center focus:outline-none focus:ring-1 focus:ring-primary" />
                           </div>
                           <div>
-                            <label className="text-xs font-medium text-muted-foreground mb-1 block">Email</label>
+                            <label className="text-xs font-medium text-muted-foreground mb-1 block text-center">Email</label>
                             <input
                             type="email"
                             value={contactEmail}
                             onChange={(e) => setContactEmail(e.target.value)}
-                            placeholder="you@email.com"
-                            className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
+                            placeholder="Email"
+                            className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground text-center placeholder:text-muted-foreground placeholder:text-center focus:outline-none focus:ring-1 focus:ring-primary" />
                           </div>
                         </div>
 
