@@ -439,67 +439,7 @@ export default function LocationAutocomplete({
   };
 
   const handleSelect = async (suggestion: LocationSuggestion) => {
-    let finalSuggestion = suggestion;
-    
-    // For address mode, validate with Google Address Validation API first
-    if (mode === 'address') {
-      setIsValidating(true); // Show loading overlay
-      
-      // Build address string for Google validation
-      const addressToValidate = suggestion.fullAddress || 
-        (suggestion.streetAddress 
-          ? `${suggestion.streetAddress}, ${suggestion.city}, ${suggestion.state} ${suggestion.zip}`
-          : suggestion.display);
-      
-      // Try Google Address Validation first
-      const googleResult = await validateWithGoogle(addressToValidate);
-      
-      if (!googleResult.failed && !googleResult.fallbackToMapbox && googleResult.address) {
-        // Google validation succeeded
-        finalSuggestion = googleResult.address;
-        
-        // Compare user's input with the Google-standardized result
-        const currentNormalized = normalizeAddress(value);
-        const verifiedNormalized = normalizeAddress(googleResult.address.fullAddress);
-        
-        if (verifiedNormalized && currentNormalized !== verifiedNormalized) {
-          const currentStreetPart = currentNormalized.split(',')[0]?.trim();
-          const verifiedStreetPart = verifiedNormalized.split(',')[0]?.trim();
-          
-          if (currentStreetPart !== verifiedStreetPart) {
-            setCorrectionSuggestion(googleResult.address.fullAddress.replace(', USA', '').replace(', United States', ''));
-          }
-        }
-      } else if (suggestion.mapboxId) {
-        // Fallback to Mapbox retrieve if Google fails or is unavailable
-        console.log('Using Mapbox fallback for address validation');
-        const { address: mapboxVerified, failed: mapboxFailed } = await retrieveMapboxAddress(suggestion.mapboxId);
-        
-        if (!mapboxFailed && mapboxVerified) {
-          finalSuggestion = mapboxVerified;
-          
-          const currentNormalized = normalizeAddress(value);
-          const verifiedNormalized = normalizeAddress(mapboxVerified.fullAddress);
-          const displayNormalized = normalizeAddress(suggestion.display || suggestion.fullAddress || '');
-          
-          if (verifiedNormalized && currentNormalized !== verifiedNormalized) {
-            const currentStreetPart = currentNormalized.split(',')[0]?.trim();
-            const verifiedStreetPart = verifiedNormalized.split(',')[0]?.trim();
-            const suggestionStreetPart = displayNormalized.split(',')[0]?.trim();
-            
-            const isSameStreet = currentStreetPart === verifiedStreetPart;
-            const matchesSuggestion = suggestionStreetPart === verifiedStreetPart;
-            const inputContainsCorrection = currentNormalized.includes(verifiedStreetPart);
-            
-            if (!isSameStreet && !matchesSuggestion && !inputContainsCorrection) {
-              setCorrectionSuggestion(mapboxVerified.fullAddress.replace(', United States', ''));
-            }
-          }
-        }
-      }
-      
-      setIsValidating(false); // Hide loading overlay
-    }
+    const finalSuggestion = suggestion;
     
     const displayText = finalSuggestion.fullAddress?.replace(', United States', '') || 
       (finalSuggestion.streetAddress 
