@@ -293,7 +293,7 @@ export default function TrudyChatBox() {
           style={{ height: 340, scrollBehavior: 'smooth' }}
         >
           {messages.map((msg, i) => (
-            <MessageBubble key={msg.id} message={msg} isLast={i === messages.length - 1} />
+            <MessageBubble key={msg.id} message={msg} isLast={i === messages.length - 1} onSuggestionClick={handleQuickPrompt} />
           ))}
           {isTyping && <TypingIndicator />}
         </div>
