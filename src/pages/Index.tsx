@@ -1202,7 +1202,7 @@ export default function Index() {
             <div className="tru-hero-left-column">
               <img src={logoImg} alt="TruMove" className="tru-hero-logo" />
               <h1 className="tru-hero-headline">
-                The Smarter Way To <span className="tru-hero-accent">Move</span>
+                The Smarter Way To <span className="text-primary">Move</span>
               </h1>
               <ul className="tru-hero-bullets">
                 <li>Scan, document, and build your own inventory — your items stay private and secure</li>
