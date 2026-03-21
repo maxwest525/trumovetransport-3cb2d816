@@ -22994,7 +22994,7 @@
   flex-direction: column;
   font-size: 11px;
   font-weight: 600;
-  color: hsl(var(--tm-ink));
+  color: hsl(var(--foreground));
   line-height: 1.2;
 }
 
