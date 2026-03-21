@@ -1790,30 +1790,26 @@ export default function Index() {
                   <div className="hidden md:block w-px bg-border" />
 
                   {/* Contact options */}
-                  <div className="flex flex-col gap-4 md:w-48 shrink-0 justify-between py-2">
+                  <div className="flex flex-col gap-3 md:w-48 shrink-0 justify-center">
                     <a
                       href="tel:+16097277647"
-                      className="flex items-center justify-center gap-2 border border-foreground bg-background text-foreground px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-muted transition-colors">
-                      <Phone className="w-4 h-4 text-primary" />
-                      Call Us
-                      <ArrowRight className="w-4 h-4 text-primary" />
+                      className="flex flex-col items-center gap-1.5 border border-foreground bg-background text-foreground px-5 py-4 rounded-lg hover:bg-muted transition-colors">
+                      <Phone className="w-5 h-5 text-primary" />
+                      <span className="flex items-center gap-1 text-sm font-semibold">Call Us <ArrowRight className="w-3.5 h-3.5 text-primary" /></span>
                     </a>
 
                     <a
                       href="sms:+16097277647"
-                      className="flex items-center justify-center gap-2 border border-foreground bg-background text-foreground px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-muted transition-colors">
-                      <MessageSquare className="w-4 h-4 text-primary" />
-                      Text Support
-                      <ArrowRight className="w-4 h-4 text-primary" />
+                      className="flex flex-col items-center gap-1.5 border border-foreground bg-background text-foreground px-5 py-4 rounded-lg hover:bg-muted transition-colors">
+                      <MessageSquare className="w-5 h-5 text-primary" />
+                      <span className="flex items-center gap-1 text-sm font-semibold">Text Support <ArrowRight className="w-3.5 h-3.5 text-primary" /></span>
                     </a>
-
 
                     <button
                       onClick={() => navigate("/book")}
-                      className="flex items-center justify-center gap-2 border border-foreground bg-background text-foreground px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-muted transition-colors">
-                      <Video className="w-4 h-4 text-primary" />
-                      Video Consult
-                      <ArrowRight className="w-4 h-4 text-primary" />
+                      className="flex flex-col items-center gap-1.5 border border-foreground bg-background text-foreground px-5 py-4 rounded-lg hover:bg-muted transition-colors">
+                      <Video className="w-5 h-5 text-primary" />
+                      <span className="flex items-center gap-1 text-sm font-semibold">Video Consult <ArrowRight className="w-3.5 h-3.5 text-primary" /></span>
                     </button>
                   </div>
 
