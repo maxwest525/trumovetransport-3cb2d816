@@ -1132,7 +1132,7 @@ export default function Index() {
 
                     {/* Step 1: Contact + Date */}
                     {step === 1 &&
-                    <div key="step-1" className="space-y-4">
+                    <div key="step-1" className="space-y-5">
                         <div className="grid grid-cols-2 gap-3">
                           <div className="relative">
                             <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary" />
