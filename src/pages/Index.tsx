@@ -1703,7 +1703,7 @@ export default function Index() {
               <div className="flex flex-col gap-5 items-stretch">
 
                 {/* Single card with green gradient glow */}
-                <div className="flex-1 min-w-0 rounded-2xl bg-card p-4 sm:p-5 flex flex-col md:flex-row gap-4 sm:gap-5 transition-all duration-200 ring-1 ring-border">
+                <div className="flex-1 min-w-0 rounded-2xl bg-card p-4 sm:p-5 flex flex-col md:flex-row gap-4 sm:gap-5 transition-all duration-200 ring-1 ring-border overflow-hidden">
 
                   {/* Toggle: Talk to Trudy / Send a Message */}
                   <div className="flex-1 flex flex-col">
