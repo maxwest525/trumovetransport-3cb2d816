@@ -19,6 +19,7 @@ interface QuoteRevealProps {
     transportType: string;
   };
   hideSummary?: boolean;
+  onScrollToContact?: () => void;
 }
 
 const perks = [
