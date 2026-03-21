@@ -32258,8 +32258,17 @@ gmp-map-3d-element .gmnoprint {
 }
 
 /* Hide default ElevenLabs widget — we use custom FloatingTruckChat instead */
-elevenlabs-convai {
+elevenlabs-convai,
+elevenlabs-convai *,
+[class*="elevenlabs"],
+[id*="elevenlabs"] {
   display: none !important;
+  visibility: hidden !important;
+  width: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+  position: absolute !important;
+  pointer-events: none !important;
 }
 
 /* ===== Brand Override Scope =====
