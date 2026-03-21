@@ -1697,29 +1697,6 @@
   border-radius: 4px;
 }
 
-/* Legacy support for existing headline styles */
-.tru-hero-headline-main {
-  font-size: 60px;
-  font-weight: 900;
-  letter-spacing: -0.03em;
-  line-height: 1.05;
-  color: hsl(0 0% 100%);
-  margin: 0;
-  text-shadow: 
-    0 2px 4px hsl(0 0% 0% / 1),
-    0 4px 10px hsl(0 0% 0% / 1),
-    0 6px 16px hsl(0 0% 0% / 0.95),
-    0 10px 28px hsl(0 0% 0% / 0.9);
-}
-
-.tru-hero-headline-accent {
-  color: hsl(var(--tm-green));
-  -webkit-text-fill-color: hsl(var(--tm-green));
-  position: relative;
-  display: inline-block;
-  filter: drop-shadow(0 2px 8px hsl(var(--tm-green) / 0.4));
-}
-
 /* Animated Arrow Indicator */
 @keyframes arrow-bounce {
   0%, 100% {
@@ -1743,71 +1720,6 @@
     opacity: 0.8;
   }
 }
-
-.tru-hero-arrow-indicator {
-  display: none;
-  align-items: center;
-  justify-content: center;
-  margin-top: 8px;
-  color: hsl(var(--tm-ink));
-  animation: arrow-bounce 1.5s ease-in-out infinite;
-}
-
-@media (min-width: 1024px) {
-  .tru-hero-arrow-indicator {
-    display: flex;
-    position: absolute;
-    bottom: -8px;
-    left: 25%;
-    transform: translateX(-50%);
-  }
-}
-
-/* Full-width top section spanning both columns (legacy) */
-.tru-hero.tru-hero-split > .tru-hero-top-section {
-  grid-column: 1 / -1;
-  padding-bottom: 8px;
-}
-
-/* LEFT: Form + Sidebar together (swapped from right) */
-.tru-hero-right-half {
-  display: flex;
-  flex-direction: row;
-  gap: 12px;
-  align-items: flex-start;
-  justify-content: flex-start;
-  height: 100%;
-  grid-row: 2;
-  grid-column: 1;
-}
-
-.tru-hero-right-half .tru-hero-form-panel {
-  width: 100%;
-  min-width: 500px;
-  max-width: 520px;
-  flex-shrink: 0;
-}
-
-/* Non-layout elements should not affect grid */
-.tru-hero.tru-hero-split > .tru-hero-particles,
-.tru-hero.tru-hero-split > .tru-hero-particles-overlay {
-  position: absolute;
-  grid-column: unset;
-  grid-row: unset;
-}
-
-/* RIGHT PANEL: Stacked Cards (Why TruMove + Tracking) */
-.tru-hero-content-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  justify-content: flex-start;
-  height: auto;
-  grid-row: 2;
-  grid-column: 2;
-  padding-left: 16px;
-  padding-right: 32px;
-  padding-top: 0;
   overflow-x: clip;
 }
 
