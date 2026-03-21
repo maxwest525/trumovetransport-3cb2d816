@@ -19,7 +19,7 @@ export default function Book() {
     <SiteShell hideTrustStrip>
       {/* Hero */}
       <ScrollFadeIn>
-        <section className="py-10 md:py-14 relative overflow-hidden">
+        <section className="py-6 md:py-8 relative overflow-hidden">
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full bg-primary/[0.06] blur-[120px]" />
             <div className="absolute bottom-0 left-0 w-[500px] h-[500px] rounded-full bg-primary/[0.04] blur-[100px]" />
