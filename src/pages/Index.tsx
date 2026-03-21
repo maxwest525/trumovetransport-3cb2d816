@@ -105,10 +105,10 @@ async function geocodeLocation(location: string): Promise<[number, number] | nul
     } catch {}
   }
 
+  // Use MapTiler geocoding
   try {
-    const token = 'pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g';
     const res = await fetch(
-      `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(trimmedLocation)}.json?country=us&limit=1&access_token=${token}`
+      `https://api.maptiler.com/geocoding/${encodeURIComponent(trimmedLocation)}.json?key=X6zFH8Vcg9bMuUCrXFWU&country=us&limit=1&language=en`
     );
     if (res.ok) {
       const data = await res.json();
@@ -119,16 +119,12 @@ async function geocodeLocation(location: string): Promise<[number, number] | nul
     }
   } catch {}
 
+  // Nominatim fallback
   try {
     const nominatimRes = await fetch(
       `https://nominatim.openstreetmap.org/search?format=jsonv2&countrycodes=us&limit=1&q=${encodeURIComponent(trimmedLocation)}`,
-      {
-        headers: {
-          Accept: 'application/json',
-        },
-      }
+      { headers: { Accept: 'application/json' } }
     );
-
     if (nominatimRes.ok) {
       const nominatimData = await nominatimRes.json();
       const match = nominatimData?.[0];
