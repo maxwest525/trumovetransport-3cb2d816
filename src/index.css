@@ -21323,7 +21323,7 @@
 
 .tru-scan-table-total {
   font-weight: 700;
-  color: hsl(var(--tm-ink)) !important;
+  color: hsl(var(--foreground)) !important;
 }
 
 .tru-scan-table tfoot td {
