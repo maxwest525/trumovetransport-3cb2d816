@@ -1504,8 +1504,6 @@
     opacity: 0.8;
   }
 }
-  overflow-x: clip;
-}
 
 
 /* =============================================
@@ -1799,155 +1797,7 @@
   overflow: visible;
 }
 
-/* Header row: centered title with previews on right */
-.tru-ai-header-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  align-items: center;
-  justify-items: center;
-  width: 100%;
-  max-width: 1600px;
-  margin: 0 auto;
-  gap: 1.5rem;
-  padding: 0;
-}
-
-/* Steps left container - center-relative positioning for consistent gap */
-/* =============================================
-   AI ANALYSIS SECTION - 3-column centered layout
-   Description (left) | Room Demo (center @ 770px) | Detection (right)
-   ============================================= */
-
-/* Description - LEFT of center */
-.tru-ai-content-left {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 1.5rem;
-  width: auto;
-  max-width: 24rem;
-  z-index: 5;
-  background: transparent;
-  border: none;
-  border-radius: 12px;
-  padding: 2rem 1.5rem;
-  box-shadow: none;
-}
-
-/* Room Scanner Demo - CENTERED at 770px anchor */
-.tru-ai-scanner-center {
-  position: relative;
-  z-index: 10;
-}
-
-/* Detection List - RIGHT of center */
-.tru-ai-detection-right {
-  position: relative;
-  z-index: 10;
-}
-
-/* Legacy class - keep for backwards compatibility */
-.tru-ai-steps-left {
-  position: absolute;
-  left: 770px;
-  top: 50%;
-  transform: translate(-100%, -50%);
-  margin-left: -4rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 1.25rem;
-  width: auto;
-  max-width: 26rem;
-  z-index: 5;
-}
-
-/* Premium AI Headline Block */
-.tru-ai-headline-block {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-}
-
-/* Section Title */
-.tru-ai-section-title {
-  font-size: 18px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: hsl(var(--muted-foreground));
-  margin: 8px 0 6px 0;
-}
-
-.tru-ai-eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: hsl(var(--tm-ink));
-  background: hsl(var(--tm-ink) / 0.08);
-  padding: 6px 12px;
-  border-radius: 6px;
-  width: fit-content;
-  border: 1px solid hsl(var(--tm-ink) / 0.15);
-}
-
-
-/* Responsive adjustments for new design */
-@media (max-width: 1400px) {
-  .tru-ai-content-left,
-  .tru-ai-steps-left {
-    width: 18.75rem; /* 300px in rem */
-  }
-  .tru-ai-header-previews .tru-ai-live-scanner {
-    width: 21.25rem; /* 340px in rem */
-  }
-  .tru-ai-header-previews .tru-ai-live-inventory {
-    width: 10.625rem; /* ~170px — half of 340px */
-  }
-}
-
-/* Responsive: smaller screens - stack layout */
-@media (max-width: 1100px) {
-  .tru-ai-header-row {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: auto;
-    gap: var(--spacing-xl);
-  }
-  .tru-ai-content-left,
-  .tru-ai-steps-left {
-    position: relative;
-    left: auto;
-    top: auto;
-    transform: none;
-    margin-left: 0;
-    width: 100%;
-    max-width: 31.25rem; /* 500px */
-    text-align: center;
-    align-items: center;
-  }
-  .tru-ai-scanner-center {
-    position: relative;
-    left: auto;
-    top: auto;
-    transform: none;
-  }
-  .tru-ai-detection-right {
-    position: relative;
-    left: auto;
-    top: auto;
-    transform: none;
-    margin-left: 0;
-  }
+/* Legacy AI section classes removed — now using inline Tailwind */
   .tru-ai-headline-block {
     align-items: center;
   }
@@ -31611,21 +31461,7 @@ gmp-map-3d-element .gmnoprint {
   }
 
 
-  /* --- 1. AI Scanner 3-column grid → vertical stack --- */
-  .tru-ai-header-row {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 16px !important;
-  }
-
-  .tru-ai-content-left,
-  .tru-ai-scanner-center,
-  .tru-ai-detection-right {
-    width: 100% !important;
-    max-width: 100% !important;
-    min-width: 0 !important;
-    flex-shrink: 1 !important;
-  }
+  /* AI Scanner responsive — now handled by Tailwind grid */
 
   .tru-ai-live-scanner {
     width: 100% !important;
@@ -32201,9 +32037,6 @@ gmp-map-3d-element .gmnoprint {
     font-size: 1.5rem !important;
   }
 
-  .tru-ai-header-row {
-    gap: 12px !important;
-  }
 
 }
 
