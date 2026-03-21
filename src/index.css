@@ -21329,19 +21329,19 @@
 .tru-scan-table tfoot td {
   padding: 14px 16px;
   font-size: 13px;
-  border-top: 1px solid hsl(var(--tm-ink) / 0.08);
-  background: hsl(var(--tm-ink) / 0.02);
+  border-top: 1px solid hsl(var(--border));
+  background: hsl(var(--muted) / 0.5);
 }
 
 .tru-scan-table-footer-label {
   text-align: right;
   font-weight: 600;
-  color: hsl(var(--tm-ink) / 0.5);
+  color: hsl(var(--muted-foreground));
 }
 
 .tru-scan-table-footer-value {
   font-weight: 700;
-  color: hsl(var(--tm-ink));
+  color: hsl(var(--foreground));
 }
 
 .tru-scan-table-actions {
