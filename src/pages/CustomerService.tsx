@@ -202,7 +202,7 @@ function VoiceOrb({ isConnected, isSpeaking }: { isConnected: boolean; isSpeakin
     };
   }, [isConnected, isSpeaking]);
 
-  return <canvas ref={canvasRef} className="w-[240px] h-[240px]" style={{ imageRendering: 'auto' }} />;
+  return <canvas ref={canvasRef} className="w-[180px] h-[180px] sm:w-[240px] sm:h-[240px]" style={{ imageRendering: 'auto' }} />;
 }
 
 /* ─── Main Page ─── */
@@ -264,7 +264,7 @@ export default function CustomerService() {
                     <span className="w-1.5 h-1.5 rounded-full bg-primary/60" />
                     <span className="h-px w-8 bg-primary/40" />
                   </div>
-                  <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-foreground leading-[1.05]">
+                  <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-foreground leading-[1.05]">
                     Meet <span className="text-primary">Trudy</span>
                   </h1>
                   <p className="text-muted-foreground text-base md:text-lg mt-4 max-w-md mx-auto lg:mx-0 leading-relaxed font-light">
@@ -288,7 +288,7 @@ export default function CustomerService() {
                 </div>
 
                 {/* Stats row */}
-                <div className="grid grid-cols-4 gap-4 max-w-sm mx-auto lg:mx-0 pt-2">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 max-w-sm mx-auto lg:mx-0 pt-2">
                   {[
                     { value: '24/7', label: 'Availability' },
                     { value: '<3s', label: 'Response' },

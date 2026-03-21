@@ -1700,10 +1700,10 @@ export default function Index() {
                 <p className="text-muted-foreground max-w-xl mx-auto text-base md:text-lg font-light leading-relaxed mt-4">Our team is standing by. Voice, video, text, or email.</p>
               </div>
 
-              <div className="flex flex-col md:flex-row gap-5 items-stretch">
+              <div className="flex flex-col gap-5 items-stretch">
 
                 {/* Single card with green gradient glow */}
-                <div className="flex-1 min-w-0 rounded-2xl bg-card p-5 flex flex-col md:flex-row gap-5 transition-all duration-200 ring-1 ring-border">
+                <div className="flex-1 min-w-0 rounded-2xl bg-card p-4 sm:p-5 flex flex-col md:flex-row gap-4 sm:gap-5 transition-all duration-200 ring-1 ring-border">
 
                   {/* Toggle: Talk to Trudy / Send a Message */}
                   <div className="flex-1 flex flex-col">
@@ -1796,7 +1796,7 @@ export default function Index() {
                   <div className="hidden md:block w-px bg-border" />
 
                   {/* Contact options */}
-                  <div className="flex flex-col gap-2 md:w-48 shrink-0 justify-center">
+                  <div className="flex flex-row flex-wrap md:flex-col gap-2 md:w-48 shrink-0 justify-center">
                     <a
                       href="tel:+16097277647"
                       className="flex items-center justify-center gap-2 border border-foreground bg-background text-foreground px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-muted transition-colors">
