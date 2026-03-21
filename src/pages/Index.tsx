@@ -1118,7 +1118,7 @@ export default function Index() {
 
             {/* RIGHT COLUMN: Form */}
             <div className="tru-hero-right-column" ref={quoteBuilderRef}>
-                <div className="rounded-2xl ring-1 ring-border bg-card overflow-hidden border-0">
+                <div className="rounded-2xl bg-card overflow-hidden">
                   {/* Form Header */}
                   <div className="bg-foreground px-6 py-4 text-center">
                     <h2 className="text-lg md:text-xl font-bold text-background tracking-wide uppercase">
