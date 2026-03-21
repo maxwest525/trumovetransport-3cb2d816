@@ -21273,9 +21273,9 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: hsl(var(--tm-ink) / 0.5);
+  color: hsl(var(--muted-foreground));
   text-align: left;
-  border-bottom: 1px solid hsl(var(--tm-ink) / 0.08);
+  border-bottom: 1px solid hsl(var(--border));
   white-space: nowrap;
 }
 
