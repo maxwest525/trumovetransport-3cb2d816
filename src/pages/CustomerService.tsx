@@ -288,7 +288,7 @@ export default function CustomerService() {
                 </div>
 
                 {/* Stats row */}
-                <div className="grid grid-cols-4 gap-4 max-w-sm mx-auto lg:mx-0 pt-2">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 max-w-sm mx-auto lg:mx-0 pt-2">
                   {[
                     { value: '24/7', label: 'Availability' },
                     { value: '<3s', label: 'Response' },
