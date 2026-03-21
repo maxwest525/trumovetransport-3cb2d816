@@ -2842,7 +2842,7 @@
   width: auto;
   max-width: 24rem;
   z-index: 5;
-  background: hsl(var(--card));
+  background: transparent;
   border: none;
   border-radius: 12px;
   padding: 2rem 1.5rem;
