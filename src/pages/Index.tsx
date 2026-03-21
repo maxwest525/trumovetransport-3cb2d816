@@ -1135,7 +1135,7 @@ export default function Index() {
                     <div key="step-1" className="space-y-3">
                         <div className="grid grid-cols-2 gap-3">
                           <div>
-                            <label className="text-xs font-medium text-muted-foreground mb-1 block">First Name</label>
+                            <label className="text-xs font-medium text-muted-foreground mb-1 block text-center">First Name</label>
                             <input
                             type="text"
                             value={contactFirstName}
@@ -1144,48 +1144,48 @@ export default function Index() {
                               if (e.target.value.length > 0 && !isEngaged) setIsEngaged(true);
                             }}
                             placeholder="First Name"
-                            className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                            className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground text-center placeholder:text-muted-foreground placeholder:text-center focus:outline-none focus:ring-1 focus:ring-primary"
                             autoFocus />
                           </div>
                           <div>
-                            <label className="text-xs font-medium text-muted-foreground mb-1 block">Last Name</label>
+                            <label className="text-xs font-medium text-muted-foreground mb-1 block text-center">Last Name</label>
                             <input
                             type="text"
                             value={contactLastName}
                             onChange={(e) => setContactLastName(e.target.value)}
                             placeholder="Last Name"
-                            className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
+                            className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground text-center placeholder:text-muted-foreground placeholder:text-center focus:outline-none focus:ring-1 focus:ring-primary" />
                           </div>
                         </div>
 
                         <div className="grid grid-cols-2 gap-3">
                           <div>
-                            <label className="text-xs font-medium text-muted-foreground mb-1 block">Phone</label>
+                            <label className="text-xs font-medium text-muted-foreground mb-1 block text-center">Phone</label>
                             <input
                             type="tel"
                             value={contactPhone}
                             onChange={(e) => setContactPhone(formatPhoneNumber(e.target.value))}
-                            placeholder="(555) 555-5555"
-                            className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
+                            placeholder="Phone"
+                            className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground text-center placeholder:text-muted-foreground placeholder:text-center focus:outline-none focus:ring-1 focus:ring-primary" />
                           </div>
                           <div>
-                            <label className="text-xs font-medium text-muted-foreground mb-1 block">Email</label>
+                            <label className="text-xs font-medium text-muted-foreground mb-1 block text-center">Email</label>
                             <input
                             type="email"
                             value={contactEmail}
                             onChange={(e) => setContactEmail(e.target.value)}
-                            placeholder="you@email.com"
-                            className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
+                            placeholder="Email"
+                            className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground text-center placeholder:text-muted-foreground placeholder:text-center focus:outline-none focus:ring-1 focus:ring-primary" />
                           </div>
                         </div>
 
                         <div>
-                          <label className="text-xs font-medium text-muted-foreground mb-1 block">Move Date</label>
+                          <label className="text-xs font-medium text-muted-foreground mb-1 block text-center">Move Date</label>
                           <Popover>
                             <PopoverTrigger asChild>
                               <button
                               type="button"
-                              className="w-full flex items-center gap-2 rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground hover:border-primary/40 transition-colors">
+                              className="w-full flex items-center justify-center gap-2 rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground hover:border-primary/40 transition-colors">
                                 <Calendar className="w-4 h-4 shrink-0 text-primary" />
                                 <span className={moveDate ? '' : 'text-muted-foreground'}>
                                   {moveDate ? format(moveDate, 'MMM d, yyyy') : 'Select a date'}
