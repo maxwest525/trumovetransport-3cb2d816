@@ -12,6 +12,8 @@ import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "@/hooks/use-toast";
 import usMapImg from "@/assets/us-map.png";
+import { lazy, Suspense } from "react";
+const Vehicle3DViewer = lazy(() => import("@/components/auto-transport/Vehicle3DViewer"));
 
 const years = ["2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025"];
 const makes = ["Acura", "Alfa Romeo", "Aston Martin", "Audi", "Bentley", "BMW", "Buick", "Cadillac", "Chevrolet", "Chrysler", "Dodge", "Ferrari", "Fiat", "Ford", "Genesis", "GMC", "Honda", "Hyundai", "Infiniti", "Jaguar", "Jeep", "Kia", "Lamborghini", "Land Rover", "Lexus", "Lincoln", "Lotus", "Lucid", "Maserati", "Mazda", "McLaren", "Mercedes-Benz", "Mini", "Mitsubishi", "Nissan", "Polestar", "Porsche", "Ram", "Rivian", "Rolls-Royce", "Subaru", "Tesla", "Toyota", "Volkswagen", "Volvo"];
@@ -556,31 +558,18 @@ export function QuoteWizard({ onGetEstimate, quoteData, setQuoteData, variant = 
                   {/* Right: 3D Vehicle Viewer — hidden on mobile */}
                   <div className="hidden lg:flex flex-col relative bg-gradient-to-b from-secondary/40 via-card to-muted/30 dark:from-[hsl(155_8%_13%)] dark:via-card dark:to-[hsl(160_10%_8%)] border-l border-border/40 min-h-[400px]">
                     <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_50%_55%,hsl(var(--primary)/0.05),transparent)]" />
-                    {/* @ts-ignore */}
-                    <model-viewer
-                      src="/models/car.glb"
-                      alt={`${quoteData.year} ${quoteData.make} ${quoteData.model} 3D preview`}
-                      camera-controls
-                      auto-rotate
-                      rotation-per-second="18deg"
-                      camera-orbit="30deg 68deg 105%"
-                      loading="eager"
-                      reveal="auto"
-                      environment-image="/models/studio.hdr"
-                      skybox-image=""
-                      shadow-intensity="1.8"
-                      shadow-softness="1"
-                      exposure="1.3"
-                      tone-mapping="commerce"
-                      style={{ width: '100%', height: '100%', backgroundColor: 'transparent', minHeight: '280px', flex: 1 }}
-                    />
-                    <div className="absolute bottom-3 left-3 bg-background/70 backdrop-blur-md rounded-lg px-3 py-1.5 border border-border/40">
+                    <div className="flex-1 relative z-10">
+                      <Suspense fallback={<div className="h-full flex items-center justify-center"><div className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin" /></div>}>
+                        <Vehicle3DViewer vehicleType={quoteData.vehicleType || "Sedan"} className="h-full border-0 rounded-none bg-transparent" />
+                      </Suspense>
+                    </div>
+                    <div className="absolute bottom-[52px] left-3 bg-background/70 backdrop-blur-md rounded-lg px-3 py-1.5 border border-border/40 z-20">
                       <p className="text-xs font-semibold text-foreground">{quoteData.year || "Year"} {quoteData.make || "Make"} {quoteData.model || "Model"}</p>
                       <p className="text-[10px] text-muted-foreground">{quoteData.vehicleType || "Vehicle"} · {quoteData.transportType || "Transport"}</p>
                     </div>
 
                     {/* Spec panel at bottom */}
-                    <div className="grid grid-cols-3 gap-px bg-border/60 border-t border-border/60 text-xs">
+                    <div className="grid grid-cols-3 gap-px bg-border/60 border-t border-border/60 text-xs relative z-10">
                       <div className="p-2.5 bg-card text-center">
                         <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-0.5">Est. Weight</p>
                         <p className="font-medium text-foreground text-xs">
