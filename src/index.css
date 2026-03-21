@@ -23004,7 +23004,7 @@
   justify-content: center;
   gap: 60px;
   padding: 48px 40px;
-  background: hsl(var(--tm-ink));
+  background: hsl(var(--foreground));
   margin: 0;
 }
 
