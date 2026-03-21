@@ -15,7 +15,7 @@ import HeroParticles from "@/components/HeroParticles";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import LeadCaptureModal from "@/components/LeadCaptureModal";
 // Static Street View preview used instead of interactive component
-import AIChatContainer from "@/components/chat/AIChatContainer";
+// AIChatContainer removed from contact section
 // StatsStrip removed - trust items inlined in hero
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 
