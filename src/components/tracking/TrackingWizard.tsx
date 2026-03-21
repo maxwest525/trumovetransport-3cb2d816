@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { Navigation, MapPin, Loader2, Play, Sparkles, Navigation2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import LocationAutocomplete from "@/components/LocationAutocomplete";
 
 const MOCK_BOOKINGS: Record<string, { origin: string; destination: string }> = {};
 
@@ -95,19 +95,23 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
           <div className="space-y-2">
             <Label className="text-sm text-muted-foreground">Origin</Label>
             <div className="relative">
-              <Navigation className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary" />
-              <Input
+              <Navigation className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary z-10 pointer-events-none" />
+              <LocationAutocomplete
                 value={originAddress}
-                onChange={(e) => setOriginAddress(e.target.value)}
+                onValueChange={setOriginAddress}
+                onLocationSelect={(displayAddr, _zip, fullAddress) =>
+                  setOriginAddress(fullAddress || displayAddr)
+                }
                 placeholder="Enter pickup ZIP, city, or address..."
-                className="w-full h-11 text-sm pl-9 pr-9 bg-secondary border-border/60"
+                mode="address"
+                className="pl-9 pr-9"
               />
               <button
                 type="button"
                 onClick={handleLocateMe}
                 disabled={isLocating}
                 title="Use my current location"
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50"
+                className="absolute right-2 top-1/2 -translate-y-1/2 z-10 text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50"
               >
                 {isLocating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Navigation2 className="w-3.5 h-3.5" />}
               </button>
@@ -117,12 +121,16 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
           <div className="space-y-2">
             <Label className="text-sm text-muted-foreground">Destination</Label>
             <div className="relative">
-              <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-destructive" />
-              <Input
+              <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-destructive z-10 pointer-events-none" />
+              <LocationAutocomplete
                 value={destAddress}
-                onChange={(e) => setDestAddress(e.target.value)}
+                onValueChange={setDestAddress}
+                onLocationSelect={(displayAddr, _zip, fullAddress) =>
+                  setDestAddress(fullAddress || displayAddr)
+                }
                 placeholder="Enter delivery ZIP, city, or address..."
-                className="w-full h-11 text-sm pl-9 bg-secondary border-border/60"
+                mode="address"
+                className="pl-9"
               />
             </div>
           </div>
