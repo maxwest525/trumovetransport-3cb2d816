@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { MapPin, Navigation, Loader2 } from "lucide-react";
-import { MAPBOX_TOKEN } from "@/lib/mapboxToken";
+import { getStaticMapUrl } from "@/lib/maptilerConfig";
 
 interface SatellitePreviewProps {
   coordinates: [number, number] | null;
