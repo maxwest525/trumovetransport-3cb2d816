@@ -22659,7 +22659,7 @@
 
 .tru-vetting-page {
   min-height: 100vh;
-  background: linear-gradient(180deg, hsl(var(--background)) 0%, hsl(220 20% 97%) 100%);
+  background: hsl(var(--background));
 }
 
 /* Hero Section */
