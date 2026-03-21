@@ -1144,7 +1144,7 @@ export default function Index() {
                               if (e.target.value.length > 0 && !isEngaged) setIsEngaged(true);
                             }}
                             placeholder="First Name"
-                            className="w-full rounded-lg border border-border bg-background pl-9 pr-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                            className="w-full rounded-lg border border-border bg-background pl-9 pr-3 py-2.5 text-sm text-foreground text-center placeholder:text-muted-foreground placeholder:text-center focus:outline-none focus:ring-1 focus:ring-primary"
                             autoFocus />
                           </div>
                           <div className="relative">
@@ -1154,7 +1154,7 @@ export default function Index() {
                             value={contactLastName}
                             onChange={(e) => setContactLastName(e.target.value)}
                             placeholder="Last Name"
-                            className="w-full rounded-lg border border-border bg-background pl-9 pr-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
+                            className="w-full rounded-lg border border-border bg-background pl-9 pr-3 py-2.5 text-sm text-foreground text-center placeholder:text-muted-foreground placeholder:text-center focus:outline-none focus:ring-1 focus:ring-primary" />
                           </div>
                         </div>
 
@@ -1166,7 +1166,7 @@ export default function Index() {
                             value={contactPhone}
                             onChange={(e) => setContactPhone(formatPhoneNumber(e.target.value))}
                             placeholder="Phone"
-                            className="w-full rounded-lg border border-border bg-background pl-9 pr-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
+                            className="w-full rounded-lg border border-border bg-background pl-9 pr-3 py-2.5 text-sm text-foreground text-center placeholder:text-muted-foreground placeholder:text-center focus:outline-none focus:ring-1 focus:ring-primary" />
                           </div>
                           <div className="relative">
                             <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary" />
@@ -1175,7 +1175,7 @@ export default function Index() {
                             value={contactEmail}
                             onChange={(e) => setContactEmail(e.target.value)}
                             placeholder="Email"
-                            className="w-full rounded-lg border border-border bg-background pl-9 pr-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
+                            className="w-full rounded-lg border border-border bg-background pl-9 pr-3 py-2.5 text-sm text-foreground text-center placeholder:text-muted-foreground placeholder:text-center focus:outline-none focus:ring-1 focus:ring-primary" />
                           </div>
                         </div>
 
@@ -1184,7 +1184,7 @@ export default function Index() {
                             <PopoverTrigger asChild>
                               <button
                               type="button"
-                              className="w-full flex items-center gap-2 rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground hover:border-primary/40 transition-colors">
+                              className="w-full flex items-center justify-center gap-2 rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground hover:border-primary/40 transition-colors">
                                 <Calendar className="w-4 h-4 shrink-0 text-primary" />
                                 <span className={moveDate ? '' : 'text-muted-foreground'}>
                                   {moveDate ? format(moveDate, 'MMM d, yyyy') : 'Select a date'}
