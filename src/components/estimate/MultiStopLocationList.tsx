@@ -94,9 +94,9 @@ function SortableItem({ location, index, onRemove, onAddressChange, onLocationSe
                 `https://api.geoapify.com/v1/geocode/search?text=${encodeURIComponent(addr)}&filter=countrycode:us&format=json&limit=1&apiKey=${GEOAPIFY_KEY}`
               );
               const data = await response.json();
-              if (data.features?.[0]?.center) {
-                const [lng, lat] = data.features[0].center;
-                onLocationSelect(location.id, displayAddr, zip, addr, [lat, lng]);
+              if (data.results?.[0]?.lat && data.results?.[0]?.lon) {
+                const { lat, lon } = data.results[0];
+                onLocationSelect(location.id, displayAddr, zip, addr, [lat, lon]);
               } else {
                 // Fallback: mark as validated without coords
                 onLocationSelect(location.id, displayAddr, zip, addr, [0, 0]);
