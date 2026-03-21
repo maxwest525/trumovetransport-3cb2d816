@@ -21285,11 +21285,11 @@
 }
 
 .tru-scan-table tbody tr:nth-child(even) {
-  background: hsl(var(--tm-ink) / 0.015);
+  background: hsl(var(--muted) / 0.3);
 }
 
 .tru-scan-table tbody tr:hover {
-  background: hsl(var(--primary) / 0.03);
+  background: hsl(var(--primary) / 0.05);
 }
 
 .tru-scan-table tbody td {
