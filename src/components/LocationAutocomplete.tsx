@@ -94,16 +94,17 @@ async function withRetry<T>(
   return { result: null, failed: true, retryCount: maxRetries + 1 };
 }
 
-// MapTiler Geocoding API - PRIMARY source for address suggestions
-async function searchMapTilerAddresses(query: string): Promise<{ suggestions: LocationSuggestion[]; failed: boolean }> {
+// Geoapify Address Autocomplete API - PRIMARY source for address suggestions
+async function searchGeoapifyAddresses(query: string, mode: 'city' | 'address'): Promise<{ suggestions: LocationSuggestion[]; failed: boolean }> {
+  const typeParam = mode === 'city' ? '&type=city' : '';
   const { result, failed } = await withRetry(async () => {
     const res = await fetch(
-      `https://api.maptiler.com/geocoding/${encodeURIComponent(query)}.json?key=${MAPTILER_KEY}&country=us&language=en&limit=5`,
+      `https://api.geoapify.com/v1/geocode/autocomplete?text=${encodeURIComponent(query)}&filter=countrycode:us&format=json&limit=5${typeParam}&apiKey=${GEOAPIFY_KEY}`,
       { headers: { 'Accept': 'application/json' } }
     );
     
     if (!res.ok) {
-      throw new Error(`MapTiler API error: ${res.status}`);
+      throw new Error(`Geoapify API error: ${res.status}`);
     }
     
     return res.json();
@@ -113,36 +114,29 @@ async function searchMapTilerAddresses(query: string): Promise<{ suggestions: Lo
     return { suggestions: [], failed: true };
   }
   
-  const suggestions = (result.features || []).map((f: any) => {
-    const placeName = f.place_name || '';
-    const text = f.text || '';
-    const placeType = f.place_type?.[0] || '';
+  const suggestions = (result.results || []).map((r: any) => {
+    const streetAddress = r.housenumber && r.street 
+      ? `${r.housenumber} ${r.street}` 
+      : r.street || '';
+    const city = r.city || '';
+    const state = r.state_code || r.state || '';
+    const zip = r.postcode || '';
+    const formatted = r.formatted || '';
+    const displayAddr = formatted.replace(/, United States of America$/i, '');
     
-    // Extract components from context
-    const context = f.context || [];
-    const cityCtx = context.find((c: any) => c.id?.startsWith('place'));
-    const stateCtx = context.find((c: any) => c.id?.startsWith('region'));
-    const zipCtx = context.find((c: any) => c.id?.startsWith('postcode'));
-    const addressCtx = context.find((c: any) => c.id?.startsWith('address'));
+    // Determine verification level from Geoapify confidence scores
+    const confidence = r.rank?.confidence || 0;
+    const resultType = r.result_type || '';
+    const hasStreet = !!streetAddress && resultType !== 'postcode' && resultType !== 'city';
     
-    // Build street address: for 'address' type, text contains house number + street
-    // For other types, check if there's an address in context
-    let streetAddress = '';
-    if (placeType === 'address') {
-      // address field — f.address is house number, f.text is street name
-      streetAddress = f.address ? `${f.address} ${text}` : text;
+    let validLevel: ValidationLevel = 'partial';
+    if (hasStreet && confidence >= 0.8) {
+      validLevel = 'verified';
+    } else if (hasStreet && confidence >= 0.5) {
+      validLevel = 'partial';
+    } else if (resultType === 'city' || resultType === 'postcode') {
+      validLevel = 'partial';
     }
-    
-    // City: from context, or if this IS a place/city result, use text
-    const city = cityCtx?.text || (placeType === 'place' ? text : '');
-    const state = stateCtx?.short_code?.replace('US-', '') || stateCtx?.text || '';
-    const zip = zipCtx?.text || (placeType === 'postcode' ? text : '');
-    
-    // Use place_name as display — it's always the best formatted full address
-    const displayAddr = placeName.replace(', United States', '');
-    
-    // Determine if this is a verified street-level address
-    const hasStreet = placeType === 'address' && streetAddress.length > 0 && !streetAddress.match(/^\d{5}$/);
     
     return {
       streetAddress,
@@ -150,9 +144,9 @@ async function searchMapTilerAddresses(query: string): Promise<{ suggestions: Lo
       state,
       zip,
       display: displayAddr,
-      fullAddress: placeName,
-      isVerified: hasStreet,
-      validationLevel: hasStreet ? 'verified' as ValidationLevel : 'partial' as ValidationLevel,
+      fullAddress: formatted,
+      isVerified: validLevel === 'verified',
+      validationLevel: validLevel,
     };
   });
   
