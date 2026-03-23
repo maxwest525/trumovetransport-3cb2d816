@@ -32264,7 +32264,9 @@ elevenlabs-convai::part(*),
 [class*="elevenlabs"],
 [id*="elevenlabs"],
 div[data-elevenlabs],
-div[class*="convai"] {
+div[class*="convai"],
+body > div:not(#root):not([class]):not([id]) > button[role="switch"],
+body > div:not(#root) > div:not([class]):not([id]) > button[role="switch"] {
   display: none !important;
   visibility: hidden !important;
   width: 0 !important;
