@@ -32280,6 +32280,18 @@ div[class*="convai"] {
   clip: rect(0,0,0,0) !important;
 }
 
+/* Keep intro/warning modals visually isolated from underlying switches */
+.tru-intro-modal {
+  isolation: isolate;
+}
+
+.tru-intro-modal-open button[role="switch"],
+.tru-intro-modal-open button[role="switch"] * {
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+}
+
 /* ===== Brand Override Scope =====
    When a brand preset is applied in the style extractor fullscreen view,
    this class neutralizes the global !important font-size, line-height,
