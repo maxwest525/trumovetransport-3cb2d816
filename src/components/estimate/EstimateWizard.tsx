@@ -240,17 +240,12 @@ export default function EstimateWizard({ onComplete, initialDetails }: EstimateW
         <div className="tru-floating-form-card">
           {/* Progress bar removed */}
           
-          {/* Header - Dynamic based on step */}
+          {/* Header */}
            <div className="tru-summary-header-large">
              <div className="text-center flex-1">
                 <h3 className="text-xl font-black uppercase tracking-wide">
-                  {step === 1 && <>WHERE ARE YOU <span className="text-primary">MOVING FROM?</span></>}
-                  {step === 2 && <>WHERE ARE YOU <span className="text-primary">MOVING TO?</span></>}
-                  {step === 3 && <>ALMOST DONE! HOW CAN WE <span className="text-primary">REACH YOU?</span></>}
+                  ENTER MOVE <span className="text-primary">DETAILS</span>
                 </h3>
-                {step === 3 && (
-                  <p className="text-[10px] uppercase tracking-wide mt-1">We'll send your personalized quote</p>
-                )}
              </div>
            </div>
 
