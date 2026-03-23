@@ -21,19 +21,41 @@ export default function FloatingTruckChat() {
 
   // Remove any ElevenLabs SDK-injected widget elements from the DOM
   useEffect(() => {
-    const removeWidget = () => {
-      document.querySelectorAll('elevenlabs-convai').forEach(el => el.remove());
+    const isOrphanedSdkSwitch = (el: Element) => {
+      if (!(el instanceof HTMLElement)) return false;
+      if (el.tagName.toLowerCase() !== 'button' || el.getAttribute('role') !== 'switch') return false;
+      if (el.closest('.tru-floating-truck-chat, [data-radix-popper-content-wrapper], [data-sonner-toaster], [data-state]')) return false;
+
+      const text = el.textContent?.trim() ?? '';
+      const width = el.offsetWidth || el.getBoundingClientRect().width;
+      const height = el.offsetHeight || el.getBoundingClientRect().height;
+      const hasElevenLabsParent = Boolean(el.closest('elevenlabs-convai, [data-elevenlabs], [class*="convai"], [class*="elevenlabs"], [id*="elevenlabs"]'));
+
+      return hasElevenLabsParent || (!text && width <= 64 && height <= 40);
     };
-    removeWidget();
-    const observer = new MutationObserver((mutations) => {
-      for (const m of mutations) {
-        m.addedNodes.forEach(node => {
-          if (node instanceof HTMLElement && (node.tagName?.toLowerCase() === 'elevenlabs-convai' || node.querySelector?.('elevenlabs-convai'))) {
-            removeWidget();
+
+    const removeWidgetArtifacts = () => {
+      document
+        .querySelectorAll('elevenlabs-convai, [data-elevenlabs], [class*="convai"], [class*="elevenlabs"], [id*="elevenlabs"]')
+        .forEach((el) => {
+          if (!el.closest('.tru-floating-truck-chat')) {
+            el.remove();
           }
         });
-      }
+
+      document.querySelectorAll('button[role="switch"]').forEach((el) => {
+        if (isOrphanedSdkSwitch(el)) {
+          el.remove();
+        }
+      });
+    };
+
+    removeWidgetArtifacts();
+
+    const observer = new MutationObserver(() => {
+      removeWidgetArtifacts();
     });
+
     observer.observe(document.body, { childList: true, subtree: true });
     return () => observer.disconnect();
   }, []);
