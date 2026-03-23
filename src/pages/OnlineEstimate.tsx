@@ -352,7 +352,7 @@ export default function OnlineEstimate() {
           <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
         </div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center mb-6">
+          <div className="text-center mb-3">
             <p className="text-[11px] uppercase tracking-[0.3em] text-primary font-semibold mb-3">Virtual Inventory</p>
             <div className="flex items-center justify-center gap-2 mb-4">
               <span className="h-px w-8 bg-primary/40" />
@@ -373,7 +373,7 @@ export default function OnlineEstimate() {
       </section>
 
       {/* Main Content */}
-      <div className="min-h-[80vh] flex flex-col items-center justify-center px-6 -mt-[35px] bg-background">
+      <div className="min-h-[80vh] flex flex-col items-center justify-center px-6 -mt-2 bg-background">
         <div className="w-full max-w-[1440px] mx-auto">
 
           {/* Conditional Layout: 3-column when locked, 2-column when unlocked */}
