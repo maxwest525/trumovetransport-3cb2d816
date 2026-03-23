@@ -373,7 +373,7 @@ export default function OnlineEstimate() {
       </section>
 
       {/* Main Content */}
-      <div className="min-h-[80vh] flex flex-col items-center justify-center px-6 -mt-[35px] bg-background">
+      <div className="min-h-[80vh] flex flex-col items-center justify-center px-6 -mt-2 bg-background">
         <div className="w-full max-w-[1440px] mx-auto">
 
           {/* Conditional Layout: 3-column when locked, 2-column when unlocked */}
