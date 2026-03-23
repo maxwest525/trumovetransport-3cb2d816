@@ -371,13 +371,6 @@ export default function EstimateWizard({ onComplete, initialDetails }: EstimateW
           {/* Step 2: Moving TO Details + Parking */}
           {step === 2 && (
             <div className="tru-qb-step-content" key="step-2">
-              <div className="tru-summary-header-large rounded-lg mb-4">
-                <div className="text-center flex-1">
-                  <h3 className="text-xl font-black uppercase tracking-wide">
-                    WHERE ARE YOU <span className="text-primary">MOVING TO?</span>
-                  </h3>
-                </div>
-              </div>
 
               <div className="tru-qb-input-wrap tru-qb-zip-wrap">
                 <LocationAutocomplete
