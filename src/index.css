@@ -32282,13 +32282,9 @@ body > div:not(#root) > div:not([class]):not([id]) > button[role="switch"] {
   clip: rect(0,0,0,0) !important;
 }
 
-/* Nuke ALL orphaned switch buttons that aren't part of our Radix-based UI components */
-button[role="switch"]:not([class*="radix"]):not([data-state]),
-button[role="switch"]:not([class*="Switch"]):not([class*="switch"]):not([data-state]),
-input[type="checkbox"][role="switch"]:not([data-state]),
-/* Catch any small unclassed toggle-like elements injected by third-party SDKs */
-button[role="switch"][style],
-div:not(.tru-floating-truck-chat) > button[role="switch"] {
+/* Nuke ALL orphaned switch buttons — only allow switches inside our own UI containers */
+button[role="switch"]:not([data-radix-collection-item]):not([class*="peer"]),
+input[type="checkbox"][role="switch"]:not([data-radix-collection-item]) {
   display: none !important;
   visibility: hidden !important;
   width: 0 !important;
