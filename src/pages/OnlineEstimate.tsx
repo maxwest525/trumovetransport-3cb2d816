@@ -343,7 +343,7 @@ export default function OnlineEstimate() {
   return (
     <SiteShell hideTrustStrip>
       {/* Hero */}
-      <section className="py-8 md:py-10 relative overflow-hidden bg-background">
+      <section className="pt-6 pb-2 md:pt-8 md:pb-2 relative overflow-hidden bg-background">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full bg-primary/[0.06] blur-[120px]" />
           <div className="absolute bottom-0 left-0 w-[500px] h-[500px] rounded-full bg-primary/[0.04] blur-[100px]" />
