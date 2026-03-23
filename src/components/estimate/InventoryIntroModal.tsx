@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Package, AlertTriangle, Phone, ArrowRight, Video, Scan } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -12,10 +13,17 @@ export default function InventoryIntroModal({
   isOpen, 
   onClose, 
 }: InventoryIntroModalProps) {
+  useEffect(() => {
+    if (!isOpen) return;
+
+    document.body.classList.add("tru-intro-modal-open");
+    return () => document.body.classList.remove("tru-intro-modal-open");
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="tru-intro-modal fixed inset-0 z-[100] flex items-center justify-center p-4">
       {/* Backdrop */}
       <div 
         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
