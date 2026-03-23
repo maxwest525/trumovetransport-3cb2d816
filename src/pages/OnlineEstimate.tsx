@@ -522,9 +522,10 @@ export default function OnlineEstimate() {
                     <button
                     type="button"
                     onClick={handleSubmit}
-                    className="tru-qb-continue w-full">
+                    disabled={isSubmitting}
+                    className="tru-qb-continue w-full disabled:opacity-60">
                     
-                      Send My Estimate Request →
+                      {isSubmitting ? "Submitting…" : "Send My Estimate Request →"}
                     </button>
                     
                     {/* View Route Button */}
