@@ -32260,15 +32260,24 @@ gmp-map-3d-element .gmnoprint {
 /* Hide default ElevenLabs widget — we use custom FloatingTruckChat instead */
 elevenlabs-convai,
 elevenlabs-convai *,
+elevenlabs-convai::part(*),
 [class*="elevenlabs"],
-[id*="elevenlabs"] {
+[id*="elevenlabs"],
+div[data-elevenlabs],
+div[class*="convai"] {
   display: none !important;
   visibility: hidden !important;
   width: 0 !important;
   height: 0 !important;
+  max-width: 0 !important;
+  max-height: 0 !important;
   overflow: hidden !important;
-  position: absolute !important;
+  position: fixed !important;
+  top: -9999px !important;
+  left: -9999px !important;
+  opacity: 0 !important;
   pointer-events: none !important;
+  clip: rect(0,0,0,0) !important;
 }
 
 /* ===== Brand Override Scope =====
