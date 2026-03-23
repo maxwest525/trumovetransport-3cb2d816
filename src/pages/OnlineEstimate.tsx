@@ -448,7 +448,7 @@ export default function OnlineEstimate() {
                 <div className="tru-summary-header-large border-b border-border/40">
                   <div className="text-center flex-1">
                     <h3 className="text-2xl md:text-3xl font-black uppercase tracking-wide text-white">
-                      INVENTORY <span className="text-primary">BUILDER</span>
+                      BUILD <span className="text-primary">INVENTORY</span>
                     </h3>
                     <p className="text-sm">What are we looking to move?</p>
                   </div>
