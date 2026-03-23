@@ -369,19 +369,6 @@ export default function OnlineEstimate() {
 
           <EstimatorNavToggle />
 
-          {/* How It Works - Inline Steps */}
-          <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6 mt-6">
-            {[
-              { icon: Calculator, label: "Enter Move Details" },
-              { icon: Package, label: "Build Inventory" },
-              { icon: Sparkles, label: "Get Instant Quote" },
-            ].map((item) => (
-              <div key={item.label} className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-                <item.icon className="w-3.5 h-3.5 text-primary" />
-                <span className="font-medium">{item.label}</span>
-              </div>
-            ))}
-          </div>
         </div>
       </section>
 
