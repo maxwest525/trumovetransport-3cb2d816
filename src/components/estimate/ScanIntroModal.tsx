@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Scan, AlertTriangle, Phone, ArrowRight, Video } from "lucide-react";
 
 interface ScanIntroModalProps {
@@ -6,11 +7,18 @@ interface ScanIntroModalProps {
   onStartScan: () => void;
 }
 
-export default function ScanIntroModal({ 
-  isOpen, 
+export default function ScanIntroModal({
+  isOpen,
   onClose,
   onStartScan,
 }: ScanIntroModalProps) {
+  useEffect(() => {
+    if (!isOpen) return;
+
+    document.body.classList.add("tru-intro-modal-open");
+    return () => document.body.classList.remove("tru-intro-modal-open");
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   const handleStartScan = () => {
@@ -19,16 +27,13 @@ export default function ScanIntroModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {/* Backdrop */}
-      <div 
+    <div className="tru-intro-modal fixed inset-0 z-[100] flex items-center justify-center p-4">
+      <div
         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
         onClick={onClose}
       />
-      
-      {/* Modal */}
+
       <div className="relative bg-card rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-        {/* Warning Header - Executive Style */}
         <div className="tru-inventory-warning-header">
           <div className="flex flex-col items-center justify-center text-center gap-2">
             <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
@@ -45,9 +50,7 @@ export default function ScanIntroModal({
           </div>
         </div>
 
-        {/* Content */}
         <div className="p-6">
-          {/* Price Impact Warning */}
           <div className="tru-inventory-info-box">
             <div className="flex gap-3">
               <div>
@@ -55,9 +58,9 @@ export default function ScanIntroModal({
                   Complete Scan = Accurate Quote
                 </p>
                 <p className="text-sm tru-info-text">
-                  Our AI will identify furniture, boxes, and appliances from your video scan. 
-                  For best results, slowly pan through each room and ensure all items are visible. 
-                  You can review and adjust the detected inventory before finalizing your quote. 
+                  Our AI will identify furniture, boxes, and appliances from your video scan.
+                  For best results, slowly pan through each room and ensure all items are visible.
+                  You can review and adjust the detected inventory before finalizing your quote.
                   Missing items may result in additional charges on move day.
                 </p>
               </div>
@@ -65,7 +68,6 @@ export default function ScanIntroModal({
           </div>
 
           <div className="space-y-4">
-            {/* Primary CTA - Start Scan */}
             <button
               type="button"
               onClick={handleStartScan}
@@ -75,8 +77,7 @@ export default function ScanIntroModal({
               Start AI Inventory Scan
               <ArrowRight className="w-4 h-4" />
             </button>
-            
-            {/* Secondary CTAs */}
+
             <div className="flex items-center justify-center gap-3">
               <a
                 href="tel:1-800-555-0123"
