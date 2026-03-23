@@ -19,6 +19,25 @@ export default function FloatingTruckChat() {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
 
+  // Remove any ElevenLabs SDK-injected widget elements from the DOM
+  useEffect(() => {
+    const removeWidget = () => {
+      document.querySelectorAll('elevenlabs-convai').forEach(el => el.remove());
+    };
+    removeWidget();
+    const observer = new MutationObserver((mutations) => {
+      for (const m of mutations) {
+        m.addedNodes.forEach(node => {
+          if (node instanceof HTMLElement && (node.tagName?.toLowerCase() === 'elevenlabs-convai' || node.querySelector?.('elevenlabs-convai'))) {
+            removeWidget();
+          }
+        });
+      }
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+    return () => observer.disconnect();
+  }, []);
+
   const [isMinimized, setIsMinimized] = useState(() =>
     localStorage.getItem('tm_ai_helper_minimized') === 'true'
   );
