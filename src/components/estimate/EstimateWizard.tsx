@@ -240,12 +240,17 @@ export default function EstimateWizard({ onComplete, initialDetails }: EstimateW
         <div className="tru-floating-form-card">
           {/* Progress bar removed */}
           
-          {/* Header - Matching homepage style */}
+          {/* Header - Dynamic based on step */}
            <div className="tru-summary-header-large">
              <div className="text-center flex-1">
                 <h3 className="text-xl font-black uppercase tracking-wide">
-                  WHERE ARE YOU <span className="text-primary">MOVING FROM?</span>
+                  {step === 1 && <>WHERE ARE YOU <span className="text-primary">MOVING FROM?</span></>}
+                  {step === 2 && <>WHERE ARE YOU <span className="text-primary">MOVING TO?</span></>}
+                  {step === 3 && <>ALMOST DONE! HOW CAN WE <span className="text-primary">REACH YOU?</span></>}
                 </h3>
+                {step === 3 && (
+                  <p className="text-[10px] uppercase tracking-wide mt-1">We'll send your personalized quote</p>
+                )}
              </div>
            </div>
 
@@ -366,13 +371,6 @@ export default function EstimateWizard({ onComplete, initialDetails }: EstimateW
           {/* Step 2: Moving TO Details + Parking */}
           {step === 2 && (
             <div className="tru-qb-step-content" key="step-2">
-              <div className="tru-summary-header-large rounded-lg mb-4">
-                <div className="text-center flex-1">
-                  <h3 className="text-xl font-black uppercase tracking-wide">
-                    WHERE ARE YOU <span className="text-primary">MOVING TO?</span>
-                  </h3>
-                </div>
-              </div>
 
               <div className="tru-qb-input-wrap tru-qb-zip-wrap">
                 <LocationAutocomplete
@@ -502,14 +500,8 @@ export default function EstimateWizard({ onComplete, initialDetails }: EstimateW
           {/* Step 3: Contact Information (Final Step) */}
           {step === 3 && (
             <div className="tru-qb-step-content" key="step-3">
-              <div className="tru-summary-header-large rounded-lg mb-4">
-                <div className="text-center flex-1">
-                  <h3 className="text-xl font-black uppercase tracking-wide">
-                    ALMOST DONE! HOW CAN WE <span className="text-primary">REACH YOU?</span>
-                  </h3>
-                  <p className="text-[10px] uppercase tracking-wide mt-1">We'll send your personalized quote</p>
-                </div>
-              </div>
+
+
 
               <div className="tru-qb-contact-fields">
                 <div className="tru-qb-input-wrap">
