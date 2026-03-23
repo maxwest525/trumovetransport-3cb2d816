@@ -32282,8 +32282,13 @@ body > div:not(#root) > div:not([class]):not([id]) > button[role="switch"] {
   clip: rect(0,0,0,0) !important;
 }
 
-/* Nuke ALL orphaned ElevenLabs switch buttons that appear outside our own components */
-button[role="switch"]:not([class*="radix"]):not([data-state]) {
+/* Nuke ALL orphaned switch buttons that aren't part of our Radix-based UI components */
+button[role="switch"]:not([class*="radix"]):not([data-state]),
+button[role="switch"]:not([class*="Switch"]):not([class*="switch"]):not([data-state]),
+input[type="checkbox"][role="switch"]:not([data-state]),
+/* Catch any small unclassed toggle-like elements injected by third-party SDKs */
+button[role="switch"][style],
+div:not(.tru-floating-truck-chat) > button[role="switch"] {
   display: none !important;
   visibility: hidden !important;
   width: 0 !important;
@@ -32292,6 +32297,7 @@ button[role="switch"]:not([class*="radix"]):not([data-state]) {
   position: fixed !important;
   top: -9999px !important;
   pointer-events: none !important;
+  clip: rect(0,0,0,0) !important;
 }
 
 /* Keep intro/warning modals visually isolated from underlying switches */
