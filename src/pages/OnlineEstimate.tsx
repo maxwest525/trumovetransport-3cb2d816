@@ -369,19 +369,6 @@ export default function OnlineEstimate() {
 
           <EstimatorNavToggle />
 
-          {/* How It Works - Inline Steps */}
-          <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6 mt-6">
-            {[
-              { icon: Calculator, label: "Enter Move Details" },
-              { icon: Package, label: "Build Inventory" },
-              { icon: Sparkles, label: "Get Instant Quote" },
-            ].map((item) => (
-              <div key={item.label} className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-                <item.icon className="w-3.5 h-3.5 text-primary" />
-                <span className="font-medium">{item.label}</span>
-              </div>
-            ))}
-          </div>
         </div>
       </section>
 
@@ -406,7 +393,7 @@ export default function OnlineEstimate() {
                 <div className="tru-summary-header-large border-b border-border/40">
                   <div className="text-center flex-1">
                     <h3 className="text-2xl md:text-3xl font-black uppercase tracking-wide text-white">
-                      INVENTORY <span className="text-primary">BUILDER</span>
+                      BUILD <span className="text-primary">INVENTORY</span>
                     </h3>
                     <p className="text-sm">What are we looking to move?</p>
                   </div>
@@ -461,7 +448,7 @@ export default function OnlineEstimate() {
                 <div className="tru-summary-header-large border-b border-border/40">
                   <div className="text-center flex-1">
                     <h3 className="text-2xl md:text-3xl font-black uppercase tracking-wide text-white">
-                      INVENTORY <span className="text-primary">BUILDER</span>
+                      BUILD <span className="text-primary">INVENTORY</span>
                     </h3>
                     <p className="text-sm">What are we looking to move?</p>
                   </div>
