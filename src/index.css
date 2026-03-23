@@ -32282,15 +32282,21 @@ body > div:not(#root) > div:not([class]):not([id]) > button[role="switch"] {
   clip: rect(0,0,0,0) !important;
 }
 
+/* Nuke ALL orphaned ElevenLabs switch buttons that appear outside our own components */
+button[role="switch"]:not([class*="radix"]):not([data-state]) {
+  display: none !important;
+  visibility: hidden !important;
+  width: 0 !important;
+  height: 0 !important;
+  opacity: 0 !important;
+  position: fixed !important;
+  top: -9999px !important;
+  pointer-events: none !important;
+}
+
 /* Keep intro/warning modals visually isolated from underlying switches */
 .tru-intro-modal {
   isolation: isolate;
-}
-
-.tru-intro-modal-open button[role="switch"],
-.tru-intro-modal-open button[role="switch"] * {
-  opacity: 0 !important;
-  visibility: hidden !important;
 }
 
 /* ===== Brand Override Scope =====
