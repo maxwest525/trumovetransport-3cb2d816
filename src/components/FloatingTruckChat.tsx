@@ -244,7 +244,7 @@ export default function FloatingTruckChat() {
   }
 
   return (
-    <div className="fixed bottom-20 right-3 z-[9999] flex flex-col items-end gap-2 sm:bottom-5 sm:right-5 md:bottom-20">
+    <div className="tru-floating-truck-chat fixed bottom-20 right-3 z-[9999] flex flex-col items-end gap-2 sm:bottom-5 sm:right-5 md:bottom-20">
       {/* Post-call transcript */}
       {showPostCall && !isConnected && savedTranscript.length > 0 && (
         <div className={`${panelClasses} animate-in fade-in slide-in-from-bottom-2 duration-200`}>
