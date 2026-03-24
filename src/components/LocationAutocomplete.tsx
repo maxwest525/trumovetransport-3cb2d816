@@ -706,7 +706,7 @@ export default function LocationAutocomplete({
               ref={inputRef}
               type="text"
               className={cn(
-                "w-full h-11 px-4 pr-14 rounded-lg border bg-background text-sm font-medium text-center",
+                "w-full h-11 px-4 pr-10 rounded-lg border bg-background text-sm font-medium text-center",
                 "placeholder:text-muted-foreground/50 focus:outline-none",
                 "transition-all duration-300",
                 "tru-input-glow",
@@ -724,11 +724,11 @@ export default function LocationAutocomplete({
               autoFocus={autoFocus}
             />
             
-            {/* Validation indicators with tooltips - wrapped in span for proper ref handling */}
+            {/* Validation indicators with tooltips */}
             {isValid && validationLevel === 'verified' && (
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <span className="absolute right-10 top-1/2 -translate-y-1/2 cursor-help">
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 cursor-help z-10">
                     <CheckCircle className="w-4 h-4 text-emerald-500" />
                   </span>
                 </TooltipTrigger>
@@ -740,24 +740,24 @@ export default function LocationAutocomplete({
             {isValid && validationLevel === 'partial' && mode === 'address' && (
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <span className="absolute right-10 top-1/2 -translate-y-1/2 cursor-help">
-                    <CheckCircle className="w-4 h-4 text-emerald-600" />
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 cursor-help z-10">
+                    <AlertCircle className="w-4 h-4 text-yellow-500" />
                   </span>
                 </TooltipTrigger>
                 <TooltipContent side="left" className="max-w-[200px] bg-popover border border-border z-[150]">
-                  <p className="text-xs">{getTooltipContent()}</p>
+                  <p className="text-xs">City/ZIP verified — enter a full street address for exact verification</p>
                 </TooltipContent>
               </Tooltip>
             )}
             {isValid && validationLevel === 'partial' && mode === 'city' && (
-              <span className="absolute right-10 top-1/2 -translate-y-1/2">
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 z-10">
                 <CheckCircle className="w-4 h-4 text-emerald-500" />
               </span>
             )}
             {isValid && validationLevel === 'unverifiable' && (
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <span className="absolute right-10 top-1/2 -translate-y-1/2 cursor-help">
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 cursor-help z-10">
                     <XCircle className="w-4 h-4 text-red-500" />
                   </span>
                 </TooltipTrigger>
