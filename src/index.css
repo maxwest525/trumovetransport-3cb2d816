@@ -32282,9 +32282,9 @@ body > div:not(#root) > div:not([class]):not([id]) > button[role="switch"] {
   clip: rect(0,0,0,0) !important;
 }
 
-/* Nuke ALL orphaned switch buttons — only allow switches inside known UI containers */
-button[role="switch"]:not(.tru-floating-truck-chat button):not([data-radix-collection-item]):not([class*="peer"]):not([class*="Switch"]):not([class*="switch"]),
-input[type="checkbox"][role="switch"]:not([data-radix-collection-item]):not([class*="Switch"]):not([class*="switch"]) {
+/* Nuke orphaned third-party switch artifacts — keep only app switches we explicitly tag */
+button[role="switch"]:not([data-ui-switch="true"]),
+input[type="checkbox"][role="switch"]:not([data-ui-switch="true"]) {
   display: none !important;
   visibility: hidden !important;
   width: 0 !important;
