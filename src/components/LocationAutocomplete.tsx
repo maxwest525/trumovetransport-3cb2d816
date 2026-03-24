@@ -743,19 +743,15 @@ export default function LocationAutocomplete({
                 </TooltipContent>
               </Tooltip>
             )}
-            {isValid && validationLevel === 'partial' && mode === 'address' && (
+            {isValid && validationLevel === 'partial' && mode === 'address' && !strictAddressVerification && (
               <Tooltip>
                 <TooltipTrigger asChild>
                   <span className={cn("absolute top-1/2 -translate-y-1/2 cursor-help z-10", validationIconInsetClassName)}>
-                    <AlertCircle className={cn("w-4 h-4", strictAddressVerification ? "text-muted-foreground" : "text-yellow-500")} />
+                    <AlertCircle className="w-4 h-4 text-yellow-500" />
                   </span>
                 </TooltipTrigger>
                 <TooltipContent side="left" className="max-w-[200px] bg-popover border border-border z-[150]">
-                  <p className="text-xs">
-                    {strictAddressVerification
-                      ? "Enter a full street address to verify this location"
-                      : "City/ZIP verified — enter a full street address for exact verification"}
-                  </p>
+                  <p className="text-xs">City/ZIP verified — enter a full street address for exact verification</p>
                 </TooltipContent>
               </Tooltip>
             )}
