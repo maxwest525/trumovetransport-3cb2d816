@@ -1153,15 +1153,19 @@ export default function Index() {
                               setFromZip(val.replace(/\D/g, '').slice(0, 5) || val);
                               setFromLocationDisplay(val);
                             }}
-                            onLocationSelect={(city, zip, fullAddress) => {
+                            onLocationSelect={(city, zip, fullAddress, isVerified, lat, lng) => {
                               setFromCity(city);
                               setFromZip(zip);
                               const nextLocation = fullAddress || `${city}${zip ? `, ${zip}` : ''}`;
                               setFromLocationDisplay(nextLocation);
-                              void (async () => {
-                                const coords = await resolveLocationCoords(nextLocation);
-                                if (coords) setFromCoords(coords);
-                              })();
+                              if (lat !== undefined && lng !== undefined) {
+                                setFromCoords([lng, lat]);
+                              } else {
+                                void (async () => {
+                                  const coords = await resolveLocationCoords(nextLocation);
+                                  if (coords) setFromCoords(coords);
+                                })();
+                              }
                             }}
                             placeholder="Current City / ZIP"
                             icon={<Home className="w-4 h-4 text-primary" />}
