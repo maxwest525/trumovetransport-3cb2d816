@@ -19,18 +19,20 @@ const MAX_RETRIES = 2;
 const RETRY_DELAY = 500; // ms
 
 // Debounce delay for API calls (ms) - shorter for faster suggestions
-const DEBOUNCE_DELAY = 200;
+const DEBOUNCE_DELAY = 250;
 
 // Validation levels for address verification
 export type ValidationLevel = 'verified' | 'partial' | 'unverifiable' | null;
 
-interface LocationSuggestion {
+export interface LocationSuggestion {
   streetAddress: string;
   city: string;
   state: string;
   zip: string;
   display: string;
   fullAddress: string;
+  lat?: number;
+  lng?: number;
   isVerified?: boolean;
   validationLevel?: ValidationLevel;
 }
@@ -38,7 +40,7 @@ interface LocationSuggestion {
 interface LocationAutocompleteProps {
   value: string;
   onValueChange: (value: string) => void;
-  onLocationSelect: (city: string, zip: string, fullAddress?: string, isVerified?: boolean) => void;
+  onLocationSelect: (city: string, zip: string, fullAddress?: string, isVerified?: boolean, lat?: number, lng?: number) => void;
   placeholder?: string;
   autoFocus?: boolean;
   onKeyDown?: (e: React.KeyboardEvent) => void;
@@ -99,7 +101,7 @@ async function searchGeoapifyAddresses(query: string, mode: 'city' | 'address'):
   const typeParam = mode === 'city' ? '&type=city' : '';
   const { result, failed } = await withRetry(async () => {
     const res = await fetch(
-      `https://api.geoapify.com/v1/geocode/autocomplete?text=${encodeURIComponent(query)}&filter=countrycode:us&format=json&limit=5${typeParam}&apiKey=${GEOAPIFY_KEY}`,
+      `https://api.geoapify.com/v1/geocode/autocomplete?text=${encodeURIComponent(query)}&filter=countrycode:us&format=json&limit=6${typeParam}&apiKey=${GEOAPIFY_KEY}`,
       { headers: { 'Accept': 'application/json' } }
     );
     
@@ -118,11 +120,17 @@ async function searchGeoapifyAddresses(query: string, mode: 'city' | 'address'):
     const streetAddress = r.housenumber && r.street 
       ? `${r.housenumber} ${r.street}` 
       : r.street || '';
-    const city = r.city || '';
+    const city = r.city || r.county || '';
     const state = r.state_code || r.state || '';
     const zip = r.postcode || '';
     const formatted = r.formatted || '';
-    const displayAddr = formatted.replace(/, United States of America$/i, '');
+    const displayAddr = formatted
+      .replace(/, United States of America$/i, '')
+      .replace(/, United States$/i, '');
+    
+    // Extract coordinates
+    const lat = r.lat;
+    const lng = r.lon;
     
     // Determine verification level from Geoapify confidence scores
     const confidence = r.rank?.confidence || 0;
@@ -145,12 +153,24 @@ async function searchGeoapifyAddresses(query: string, mode: 'city' | 'address'):
       zip,
       display: displayAddr,
       fullAddress: formatted,
+      lat,
+      lng,
       isVerified: validLevel === 'verified',
       validationLevel: validLevel,
+      _resultType: resultType,
     };
   });
+
+  // In address mode, prioritize street-level results over city/zip-only results
+  if (mode === 'address') {
+    const streetResults = suggestions.filter((s: any) => s.streetAddress && s._resultType !== 'city' && s._resultType !== 'postcode');
+    const otherResults = suggestions.filter((s: any) => !s.streetAddress || s._resultType === 'city' || s._resultType === 'postcode');
+    // Show street results first, then other results (up to 5 total)
+    const sorted = [...streetResults, ...otherResults].slice(0, 5);
+    return { suggestions: sorted.map(({ _resultType, ...rest }: any) => rest), failed: false };
+  }
   
-  return { suggestions, failed: false };
+  return { suggestions: suggestions.map(({ _resultType, ...rest }: any) => rest).slice(0, 5), failed: false };
 }
 
 // Photon API for city-only search (mode="city") - CORS-friendly, fallback
@@ -170,6 +190,7 @@ async function searchPhotonCities(query: string): Promise<LocationSuggestion[]> 
         const city = props.city || props.town || props.village || props.name || '';
         const state = props.state || '';
         const zip = props.postcode || '';
+        const coords = f.geometry?.coordinates;
         
         return {
           streetAddress: '',
@@ -178,6 +199,8 @@ async function searchPhotonCities(query: string): Promise<LocationSuggestion[]> 
           zip,
           display: `${city}, ${state}`,
           fullAddress: `${city}, ${state}${zip ? ` ${zip}` : ''}`,
+          lat: coords ? coords[1] : undefined,
+          lng: coords ? coords[0] : undefined,
           isVerified: false,
           validationLevel: 'partial' as ValidationLevel,
         };
@@ -196,6 +219,8 @@ async function lookupZip(zip: string): Promise<LocationSuggestion | null> {
       const data = await res.json();
       const city = data.places[0]["place name"];
       const state = data.places[0]["state abbreviation"];
+      const lat = parseFloat(data.places[0].latitude);
+      const lng = parseFloat(data.places[0].longitude);
       return {
         streetAddress: '',
         city,
@@ -203,6 +228,8 @@ async function lookupZip(zip: string): Promise<LocationSuggestion | null> {
         zip,
         display: `${city}, ${state} ${zip}`,
         fullAddress: `${city}, ${state} ${zip}`,
+        lat: isNaN(lat) ? undefined : lat,
+        lng: isNaN(lng) ? undefined : lng,
         isVerified: false, // ZIP only = partial verification
         validationLevel: 'partial' as ValidationLevel,
       };
@@ -229,7 +256,9 @@ async function reverseGeocode(lat: number, lng: number): Promise<LocationSuggest
     const state = r.state_code || r.state || '';
     const zip = r.postcode || '';
     const formatted = r.formatted || '';
-    const displayAddr = formatted.replace(/, United States of America$/i, '');
+    const displayAddr = formatted
+      .replace(/, United States of America$/i, '')
+      .replace(/, United States$/i, '');
     const hasStreet = !!streetAddress && streetAddress !== city;
     
     return {
@@ -239,6 +268,8 @@ async function reverseGeocode(lat: number, lng: number): Promise<LocationSuggest
       zip,
       display: displayAddr,
       fullAddress: formatted,
+      lat: r.lat,
+      lng: r.lon,
       isVerified: hasStreet,
       validationLevel: hasStreet ? 'verified' : 'partial',
     };
@@ -306,7 +337,6 @@ export default function LocationAutocomplete({
 
     // Check if it's a complete ZIP code (5 digits)
     const isCompleteZip = /^\d{5}$/.test(query.trim());
-    const isPartialZip = /^\d{2,4}$/.test(query.trim());
     
     // Normalize current input for duplicate detection
     const normalizedQuery = normalizeAddress(query);
@@ -421,10 +451,10 @@ export default function LocationAutocomplete({
         const result = await reverseGeocode(latitude, longitude);
         
         if (result) {
-          const displayText = result.fullAddress?.replace(', United States', '') || result.display;
+          const displayText = result.display || result.fullAddress?.replace(/, United States( of America)?$/i, '') || '';
           setSelectedDisplay(displayText);
           onValueChange(displayText);
-          onLocationSelect(displayText, result.zip, result.fullAddress, result.isVerified);
+          onLocationSelect(displayText, result.zip, result.fullAddress, result.isVerified, result.lat, result.lng);
           setIsValid(true);
           setValidationLevel(result.validationLevel || 'verified');
         }
@@ -442,15 +472,32 @@ export default function LocationAutocomplete({
   const handleSelect = async (suggestion: LocationSuggestion) => {
     const finalSuggestion = suggestion;
     
-    const displayText = finalSuggestion.fullAddress?.replace(/, United States( of America)?$/i, '') || 
-      (finalSuggestion.streetAddress 
-        ? `${finalSuggestion.streetAddress}, ${finalSuggestion.city}, ${finalSuggestion.state} ${finalSuggestion.zip}`.trim()
-        : `${finalSuggestion.display}${finalSuggestion.zip ? ` ${finalSuggestion.zip}` : ''}`);
+    // Build a clean display text
+    let displayText: string;
+    if (finalSuggestion.streetAddress) {
+      // Full street address: "123 Main St, City, ST 12345"
+      const parts = [finalSuggestion.streetAddress];
+      if (finalSuggestion.city) parts.push(finalSuggestion.city);
+      const stateZip = [finalSuggestion.state, finalSuggestion.zip].filter(Boolean).join(' ');
+      if (stateZip) parts.push(stateZip);
+      displayText = parts.join(', ');
+    } else {
+      displayText = finalSuggestion.display || `${finalSuggestion.city}, ${finalSuggestion.state}${finalSuggestion.zip ? ' ' + finalSuggestion.zip : ''}`;
+    }
+    
+    // Clean up any trailing "United States"
+    displayText = displayText.replace(/, United States( of America)?$/i, '').trim();
     
     setSelectedDisplay(displayText);
     onValueChange(displayText);
-    // Pass the full verified address as the first parameter for easier consumption
-    onLocationSelect(displayText, finalSuggestion.zip, finalSuggestion.fullAddress, finalSuggestion.isVerified);
+    onLocationSelect(
+      displayText,
+      finalSuggestion.zip,
+      finalSuggestion.fullAddress,
+      finalSuggestion.isVerified,
+      finalSuggestion.lat,
+      finalSuggestion.lng
+    );
     setShowDropdown(false);
     setSuggestions([]);
     setIsValid(true);
@@ -530,7 +577,7 @@ export default function LocationAutocomplete({
             const displayText = `${zipResult.city}, ${zipResult.state} ${zipResult.zip}`;
             setSelectedDisplay(displayText);
             onValueChange(displayText);
-            onLocationSelect(displayText, zipResult.zip, zipResult.fullAddress, false);
+            onLocationSelect(displayText, zipResult.zip, zipResult.fullAddress, false, zipResult.lat, zipResult.lng);
             setIsValid(true);
             setValidationLevel('partial');
           }
@@ -569,6 +616,19 @@ export default function LocationAutocomplete({
       default:
         return "";
     }
+  };
+
+  // Build a clean display string for each suggestion in the dropdown
+  const getSuggestionDisplay = (suggestion: LocationSuggestion): { primary: string; secondary?: string } => {
+    if (suggestion.streetAddress) {
+      const primary = suggestion.streetAddress;
+      const secondaryParts = [suggestion.city, suggestion.state, suggestion.zip].filter(Boolean);
+      return { primary, secondary: secondaryParts.join(', ') };
+    }
+    // City-only result
+    const primary = suggestion.city || suggestion.display;
+    const secondaryParts = [suggestion.state, suggestion.zip].filter(Boolean);
+    return { primary, secondary: secondaryParts.length > 0 ? secondaryParts.join(' ') : undefined };
   };
 
   return (
@@ -687,8 +747,6 @@ export default function LocationAutocomplete({
           </p>
         )}
         
-        {/* Address correction suggestion removed - was causing UI clutter */}
-        
         {showDropdown && (suggestions.length > 0 || isLoading) && (
           <div 
             ref={dropdownRef}
@@ -723,35 +781,38 @@ export default function LocationAutocomplete({
               </div>
             ) : (
               <>
-                {/* Hint banner removed for cleaner UI */}
-                {suggestions.map((suggestion, idx) => (
-                  <div
-                    key={`${suggestion.zip}-${idx}`}
-                    className={cn(
-                      "flex items-start gap-3 px-4 py-2.5 cursor-pointer transition-colors",
-                      idx === selectedIndex ? "bg-slate-100" : "hover:bg-slate-50"
-                    )}
-                    onMouseDown={() => {
-                      isClickingDropdownRef.current = true;
-                    }}
-                    onClick={() => {
-                      isClickingDropdownRef.current = false;
-                      handleSelect(suggestion);
-                    }}
-                    onMouseEnter={() => setSelectedIndex(idx)}
-                  >
-                    <MapPin className="w-4 h-4 flex-shrink-0 mt-0.5 text-primary" />
-                    <div className="flex flex-col">
-                      <span className="text-sm font-medium text-foreground">
-                        {suggestion.streetAddress
-                          ? `${suggestion.streetAddress}, ${suggestion.city}, ${suggestion.state} ${suggestion.zip}`.trim()
-                          : `${suggestion.display}${suggestion.zip && !suggestion.display.includes(suggestion.zip) ? ` ${suggestion.zip}` : ''}`
-                        }
-                      </span>
-                      {/* Verification badges removed for cleaner UI */}
+                {suggestions.map((suggestion, idx) => {
+                  const { primary, secondary } = getSuggestionDisplay(suggestion);
+                  return (
+                    <div
+                      key={`${suggestion.zip}-${suggestion.lat}-${idx}`}
+                      className={cn(
+                        "flex items-start gap-3 px-4 py-2.5 cursor-pointer transition-colors",
+                        idx === selectedIndex ? "bg-muted" : "hover:bg-muted/50"
+                      )}
+                      onMouseDown={() => {
+                        isClickingDropdownRef.current = true;
+                      }}
+                      onClick={() => {
+                        isClickingDropdownRef.current = false;
+                        handleSelect(suggestion);
+                      }}
+                      onMouseEnter={() => setSelectedIndex(idx)}
+                    >
+                      <MapPin className="w-4 h-4 flex-shrink-0 mt-0.5 text-primary" />
+                      <div className="flex flex-col min-w-0">
+                        <span className="text-sm font-medium text-foreground truncate">
+                          {primary}
+                        </span>
+                        {secondary && (
+                          <span className="text-xs text-muted-foreground truncate">
+                            {secondary}
+                          </span>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </>
             )}
           </div>
