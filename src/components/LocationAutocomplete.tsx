@@ -743,19 +743,15 @@ export default function LocationAutocomplete({
                 </TooltipContent>
               </Tooltip>
             )}
-            {isValid && validationLevel === 'partial' && mode === 'address' && (
+            {isValid && validationLevel === 'partial' && mode === 'address' && !strictAddressVerification && (
               <Tooltip>
                 <TooltipTrigger asChild>
                   <span className={cn("absolute top-1/2 -translate-y-1/2 cursor-help z-10", validationIconInsetClassName)}>
-                    <AlertCircle className={cn("w-4 h-4", strictAddressVerification ? "text-muted-foreground" : "text-yellow-500")} />
+                    <AlertCircle className="w-4 h-4 text-yellow-500" />
                   </span>
                 </TooltipTrigger>
                 <TooltipContent side="left" className="max-w-[200px] bg-popover border border-border z-[150]">
-                  <p className="text-xs">
-                    {strictAddressVerification
-                      ? "Enter a full street address to verify this location"
-                      : "City/ZIP verified — enter a full street address for exact verification"}
-                  </p>
+                  <p className="text-xs">City/ZIP verified — enter a full street address for exact verification</p>
                 </TooltipContent>
               </Tooltip>
             )}
@@ -807,7 +803,12 @@ export default function LocationAutocomplete({
           )}
         </div>
         
-        {/* Helper text */}
+        {/* Helper text - strict mode shows inline message for partial (city/zip only) matches */}
+        {strictAddressVerification && isValid && validationLevel === 'partial' && (
+          <p className="mt-1.5 text-xs text-yellow-600 dark:text-yellow-400 animate-in fade-in slide-in-from-top-1 duration-200">
+            Enter a full street address (e.g., 123 Main St, City, ST 12345)
+          </p>
+        )}
         {showHelperText && mode === 'address' && !isValid && (
           <p className="mt-1.5 text-xs text-muted-foreground">
             Enter a complete street address (e.g., 123 Main St, City, ST 12345)
