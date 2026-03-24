@@ -448,7 +448,8 @@ export function RouteSetupModal({ open, onClose, onSubmit, onDemo }: RouteSetupM
                 }}
                 placeholder="Enter delivery address..."
                 mode="address"
-                className="w-full h-9 text-sm"
+                strictAddressVerification
+                className="w-full h-9 pr-10 text-sm text-left"
               />
             </div>
             

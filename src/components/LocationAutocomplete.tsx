@@ -48,6 +48,8 @@ interface LocationAutocompleteProps {
   mode?: 'city' | 'address'; // 'city' for homepage, 'address' for full street addresses
   showHelperText?: boolean; // Show helper text below input
   showGeolocation?: boolean; // Show "Use my location" button
+  strictAddressVerification?: boolean;
+  validationIconInsetClassName?: string;
 }
 
 

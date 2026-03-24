@@ -151,7 +151,8 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
                 }}
                 placeholder="Enter delivery ZIP, city, or address..."
                 mode="address"
-                className="pl-9"
+                strictAddressVerification
+                className="pl-9 pr-10 text-left"
               />
             </div>
           </div>
