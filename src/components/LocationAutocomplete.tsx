@@ -803,7 +803,12 @@ export default function LocationAutocomplete({
           )}
         </div>
         
-        {/* Helper text */}
+        {/* Helper text - strict mode shows inline message for partial (city/zip only) matches */}
+        {strictAddressVerification && isValid && validationLevel === 'partial' && (
+          <p className="mt-1.5 text-xs text-yellow-600 dark:text-yellow-400 animate-in fade-in slide-in-from-top-1 duration-200">
+            Enter a full street address (e.g., 123 Main St, City, ST 12345)
+          </p>
+        )}
         {showHelperText && mode === 'address' && !isValid && (
           <p className="mt-1.5 text-xs text-muted-foreground">
             Enter a complete street address (e.g., 123 Main St, City, ST 12345)
