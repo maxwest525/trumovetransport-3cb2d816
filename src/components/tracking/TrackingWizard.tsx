@@ -109,10 +109,14 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
               <Navigation className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary z-10 pointer-events-none" />
               <LocationAutocomplete
                 value={originAddress}
-                onValueChange={setOriginAddress}
-                onLocationSelect={(displayAddr, _zip, fullAddress) =>
-                  setOriginAddress(fullAddress || displayAddr)
-                }
+                onValueChange={(value) => {
+                  setOriginAddress(value);
+                  setOriginCoords(null);
+                }}
+                onLocationSelect={(displayAddr, _zip, fullAddress, _isVerified, lat, lng) => {
+                  setOriginAddress(fullAddress || displayAddr);
+                  setOriginCoords(lat !== undefined && lng !== undefined ? [lng, lat] : null);
+                }}
                 placeholder="Enter pickup ZIP, city, or address..."
                 mode="address"
                 className="pl-9 pr-9"
