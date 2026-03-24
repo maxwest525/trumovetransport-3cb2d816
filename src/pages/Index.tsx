@@ -1177,15 +1177,19 @@ export default function Index() {
                               setToZip(val.replace(/\D/g, '').slice(0, 5) || val);
                               setToLocationDisplay(val);
                             }}
-                            onLocationSelect={(city, zip, fullAddress) => {
+                            onLocationSelect={(city, zip, fullAddress, isVerified, lat, lng) => {
                               setToCity(city);
                               setToZip(zip);
                               const nextLocation = fullAddress || `${city}${zip ? `, ${zip}` : ''}`;
                               setToLocationDisplay(nextLocation);
-                              void (async () => {
-                                const coords = await resolveLocationCoords(nextLocation);
-                                if (coords) setToCoords(coords);
-                              })();
+                              if (lat !== undefined && lng !== undefined) {
+                                setToCoords([lng, lat]);
+                              } else {
+                                void (async () => {
+                                  const coords = await resolveLocationCoords(nextLocation);
+                                  if (coords) setToCoords(coords);
+                                })();
+                              }
                             }}
                             placeholder="Moving to City / ZIP"
                             icon={<MapPin className="w-4 h-4 text-primary" />}
