@@ -43,11 +43,15 @@ export default function FloatingTruckChat() {
           }
         });
 
+      // Remove any switch button NOT explicitly tagged by our UI
       document.querySelectorAll('button[role="switch"]').forEach((el) => {
-        if (isOrphanedSdkSwitch(el)) {
+        if (!(el as HTMLElement).hasAttribute('data-ui-switch') && !(el as HTMLElement).hasAttribute('data-state')) {
           el.remove();
         }
       });
+
+      // Also nuke any iframe or shadow-root widget the SDK may inject
+      document.querySelectorAll('iframe[src*="elevenlabs"], iframe[src*="convai"]').forEach(el => el.remove());
     };
 
     removeWidgetArtifacts();
