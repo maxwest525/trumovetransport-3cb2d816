@@ -309,31 +309,33 @@ export function TruckTrackingMap({
     <div className="relative w-full h-full rounded-2xl overflow-hidden border border-white/10">
       <div ref={mapRef} className="w-full h-full" />
 
-      {isTracking && (
-        <div className="absolute top-[70px] left-4 z-[1000] flex gap-2">
-          <span className="tracking-status-chip live">
-            <span className="w-2 h-2 rounded-full bg-destructive animate-pulse" />
-            LIVE
-          </span>
-          <span className="tracking-status-chip">IN TRANSIT</span>
-          <span className="tracking-status-chip success">ON SCHEDULE</span>
-        </div>
-      )}
-
-      <button
-        onClick={toggleFollowMode}
-        className={cn(
-          "absolute top-4 right-4 z-[1000] flex items-center gap-2 px-3 py-2 rounded-lg backdrop-blur-md border transition-all duration-300",
-          internalFollowMode
-            ? "bg-black/60 border-primary text-primary shadow-lg shadow-primary/30"
-            : "bg-black/60 border-white/20 text-white/80 hover:bg-black/80"
+      <div className="absolute top-4 right-4 z-[1000] flex items-center gap-2">
+        {isTracking && (
+          <>
+            <span className="tracking-status-chip live">
+              <span className="w-2 h-2 rounded-full bg-destructive animate-pulse" />
+              LIVE
+            </span>
+            <span className="tracking-status-chip">IN TRANSIT</span>
+            <span className="tracking-status-chip success">ON SCHEDULE</span>
+          </>
         )}
-      >
-        <Navigation className={cn("w-4 h-4", internalFollowMode && "animate-pulse")} />
-        <span className="text-xs font-semibold uppercase tracking-wider">
-          {internalFollowMode ? "Following" : "Follow"}
-        </span>
-      </button>
+
+        <button
+          onClick={toggleFollowMode}
+          className={cn(
+            "flex items-center gap-2 px-3 py-2 rounded-lg backdrop-blur-md border transition-all duration-300",
+            internalFollowMode
+              ? "bg-black/60 border-primary text-primary shadow-lg shadow-primary/30"
+              : "bg-black/60 border-white/20 text-white/80 hover:bg-black/80"
+          )}
+        >
+          <Navigation className={cn("w-4 h-4", internalFollowMode && "animate-pulse")} />
+          <span className="text-xs font-semibold uppercase tracking-wider">
+            {internalFollowMode ? "Following" : "Follow"}
+          </span>
+        </button>
+      </div>
 
       <TrafficLegend isVisible={isTracking} />
 
