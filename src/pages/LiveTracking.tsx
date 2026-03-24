@@ -29,6 +29,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 // Google Maps API key from environment
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "AIzaSyD8aMj_HlkLUWuYbZRU7I6oFGTavx2zKOc";
+const GEOAPIFY_KEY = "6a8a5dfb3b144c7a98f9a7614bd6fbbf";
 
 interface RouteData {
   coordinates: [number, number][];
@@ -50,12 +51,9 @@ async function geocodeAddress(address: string): Promise<[number, number] | null>
   const query = address.trim();
   if (!query || query.length < 2) return null;
 
-  const zipMatch = query.match(/\b\d{5}\b/);
-  const zip = /^\d{5}$/.test(query) ? query : zipMatch?.[0];
-
-  if (zip) {
+  if (/^\d{5}$/.test(query)) {
     try {
-      const zipResponse = await fetch(`https://api.zippopotam.us/us/${zip}`);
+      const zipResponse = await fetch(`https://api.zippopotam.us/us/${query}`);
       if (zipResponse.ok) {
         const zipData = await zipResponse.json();
         const place = zipData?.places?.[0];
@@ -67,17 +65,19 @@ async function geocodeAddress(address: string): Promise<[number, number] | null>
       console.error("ZIP lookup error:", error);
     }
   }
-  
+
   try {
     const response = await fetch(
-      `https://nominatim.openstreetmap.org/search?format=jsonv2&countrycodes=us&limit=1&q=${encodeURIComponent(query)}`,
+      `https://api.geoapify.com/v1/geocode/search?text=${encodeURIComponent(query)}&filter=countrycode:us&format=json&limit=1&apiKey=${GEOAPIFY_KEY}`,
       { headers: { Accept: "application/json" } }
     );
     const data = await response.json();
-    
-    if (Array.isArray(data) && data.length > 0) {
-      return [Number(data[0].lon), Number(data[0].lat)];
+    const match = data?.results?.[0];
+
+    if (match?.lon && match?.lat) {
+      return [Number(match.lon), Number(match.lat)];
     }
+
     return null;
   } catch (error) {
     console.error("Geocoding error:", error);
@@ -198,21 +198,45 @@ export default function LiveTracking() {
   });
 
   // Handle origin location selection
-  const handleOriginSelect = useCallback(async (city: string, zip: string, fullAddress?: string) => {
-    const addressToGeocode = fullAddress || `${city}, ${zip}`;
+  const handleOriginSelect = useCallback(async (
+    city: string,
+    zip: string,
+    fullAddress?: string,
+    _isVerified?: boolean,
+    lat?: number,
+    lng?: number,
+  ) => {
+    const addressToGeocode = fullAddress || [city, zip].filter(Boolean).join(", ");
     setOriginAddress(addressToGeocode);
     setOriginName(city || addressToGeocode);
-    
+
+    if (lat !== undefined && lng !== undefined) {
+      setOriginCoords([lng, lat]);
+      return;
+    }
+
     const coords = await geocodeAddress(addressToGeocode);
     setOriginCoords(coords);
   }, []);
 
   // Handle destination location selection
-  const handleDestSelect = useCallback(async (city: string, zip: string, fullAddress?: string) => {
-    const addressToGeocode = fullAddress || `${city}, ${zip}`;
+  const handleDestSelect = useCallback(async (
+    city: string,
+    zip: string,
+    fullAddress?: string,
+    _isVerified?: boolean,
+    lat?: number,
+    lng?: number,
+  ) => {
+    const addressToGeocode = fullAddress || [city, zip].filter(Boolean).join(", ");
     setDestAddress(addressToGeocode);
     setDestName(city || addressToGeocode);
-    
+
+    if (lat !== undefined && lng !== undefined) {
+      setDestCoords([lng, lat]);
+      return;
+    }
+
     const coords = await geocodeAddress(addressToGeocode);
     setDestCoords(coords);
   }, []);
@@ -457,11 +481,13 @@ export default function LiveTracking() {
   const handleRouteModalSubmit = async (data: {
     originAddress: string;
     destAddress: string;
+    originCoords?: [number, number] | null;
+    destCoords?: [number, number] | null;
     moveDate?: Date;
     bookingNumber?: string;
   }) => {
-    await handleOriginSelect('', '', data.originAddress);
-    await handleDestSelect('', '', data.destAddress);
+    await handleOriginSelect('', '', data.originAddress, undefined, data.originCoords?.[1], data.originCoords?.[0]);
+    await handleDestSelect('', '', data.destAddress, undefined, data.destCoords?.[1], data.destCoords?.[0]);
     if (data.moveDate) {
       setMoveDate(data.moveDate);
     }

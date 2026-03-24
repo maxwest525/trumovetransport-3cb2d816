@@ -18,6 +18,8 @@ interface RouteSetupModalProps {
   onSubmit: (data: {
     originAddress: string;
     destAddress: string;
+    originCoords?: [number, number] | null;
+    destCoords?: [number, number] | null;
     moveDate?: Date;
     bookingNumber?: string;
   }) => void;
@@ -213,33 +215,26 @@ export function RouteSetupModal({ open, onClose, onSubmit, onDemo }: RouteSetupM
   const [originCoords, setOriginCoords] = useState<[number, number] | null>(null);
   const [destCoords, setDestCoords] = useState<[number, number] | null>(null);
 
-  // Geocode origin address when it changes
+  // Geocode origin/destination only when exact coordinates have not already been selected
   useEffect(() => {
     const timer = setTimeout(async () => {
-      if (originAddress && originAddress.length > 5) {
-        const coords = await geocodeAddress(originAddress);
-        setOriginCoords(coords);
-      } else {
-        setOriginCoords(null);
-      }
-    }, 500); // Debounce
-    
-    return () => clearTimeout(timer);
-  }, [originAddress]);
+      if (originCoords || !originAddress || originAddress.length <= 5) return;
+      const coords = await geocodeAddress(originAddress);
+      setOriginCoords(coords);
+    }, 500);
 
-  // Geocode destination address when it changes
+    return () => clearTimeout(timer);
+  }, [originAddress, originCoords]);
+
   useEffect(() => {
     const timer = setTimeout(async () => {
-      if (destAddress && destAddress.length > 5) {
-        const coords = await geocodeAddress(destAddress);
-        setDestCoords(coords);
-      } else {
-        setDestCoords(null);
-      }
-    }, 500); // Debounce
-    
+      if (destCoords || !destAddress || destAddress.length <= 5) return;
+      const coords = await geocodeAddress(destAddress);
+      setDestCoords(coords);
+    }, 500);
+
     return () => clearTimeout(timer);
-  }, [destAddress]);
+  }, [destAddress, destCoords]);
 
   // Auto-populate from booking number with loading animation
   useEffect(() => {
@@ -283,6 +278,8 @@ export function RouteSetupModal({ open, onClose, onSubmit, onDemo }: RouteSetupM
     onSubmit({
       originAddress: originAddress.trim(),
       destAddress: destAddress.trim(),
+      originCoords,
+      destCoords,
       bookingNumber: bookingNumber.trim() || undefined,
     });
   };
@@ -399,10 +396,14 @@ export function RouteSetupModal({ open, onClose, onSubmit, onDemo }: RouteSetupM
               </Label>
               <LocationAutocomplete
                 value={originAddress}
-                onValueChange={setOriginAddress}
-                onLocationSelect={(displayAddr, zip, fullAddress) => 
-                  setOriginAddress(fullAddress || displayAddr)
-                }
+                onValueChange={(value) => {
+                  setOriginAddress(value);
+                  setOriginCoords(null);
+                }}
+                onLocationSelect={(displayAddr, _zip, fullAddress, _isVerified, lat, lng) => {
+                  setOriginAddress(fullAddress || displayAddr);
+                  setOriginCoords(lat !== undefined && lng !== undefined ? [lng, lat] : null);
+                }}
                 placeholder="Enter pickup address..."
                 mode="address"
                 className="w-full h-9 text-sm"
@@ -436,10 +437,14 @@ export function RouteSetupModal({ open, onClose, onSubmit, onDemo }: RouteSetupM
               </Label>
               <LocationAutocomplete
                 value={destAddress}
-                onValueChange={setDestAddress}
-                onLocationSelect={(displayAddr, zip, fullAddress) => 
-                  setDestAddress(fullAddress || displayAddr)
-                }
+                onValueChange={(value) => {
+                  setDestAddress(value);
+                  setDestCoords(null);
+                }}
+                onLocationSelect={(displayAddr, _zip, fullAddress, _isVerified, lat, lng) => {
+                  setDestAddress(fullAddress || displayAddr);
+                  setDestCoords(lat !== undefined && lng !== undefined ? [lng, lat] : null);
+                }}
                 placeholder="Enter delivery address..."
                 mode="address"
                 className="w-full h-9 text-sm"

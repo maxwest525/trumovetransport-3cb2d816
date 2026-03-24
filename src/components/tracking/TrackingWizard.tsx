@@ -7,7 +7,13 @@ import LocationAutocomplete from "@/components/LocationAutocomplete";
 const MOCK_BOOKINGS: Record<string, { origin: string; destination: string }> = {};
 
 interface TrackingWizardProps {
-  onSubmit: (data: { originAddress: string; destAddress: string; bookingNumber?: string }) => void;
+  onSubmit: (data: {
+    originAddress: string;
+    destAddress: string;
+    originCoords?: [number, number] | null;
+    destCoords?: [number, number] | null;
+    bookingNumber?: string;
+  }) => void;
   onDemo?: () => void;
 }
 
@@ -16,6 +22,8 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
   const [isLookingUp, setIsLookingUp] = useState(false);
   const [originAddress, setOriginAddress] = useState("");
   const [destAddress, setDestAddress] = useState("");
+  const [originCoords, setOriginCoords] = useState<[number, number] | null>(null);
+  const [destCoords, setDestCoords] = useState<[number, number] | null>(null);
   const [isLocating, setIsLocating] = useState(false);
 
   const handleLocateMe = useCallback(() => {
@@ -32,6 +40,7 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
           const data = await res.json();
           const label = data?.display_name || `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
           setOriginAddress(label);
+          setOriginCoords([longitude, latitude]);
         } catch (e) {
           console.error("Reverse geocode failed", e);
         } finally {
@@ -76,6 +85,8 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
     onSubmit({
       originAddress: originAddress.trim(),
       destAddress: destAddress.trim(),
+      originCoords,
+      destCoords,
       bookingNumber: bookingNumber.trim() || undefined,
     });
   };
@@ -98,10 +109,14 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
               <Navigation className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary z-10 pointer-events-none" />
               <LocationAutocomplete
                 value={originAddress}
-                onValueChange={setOriginAddress}
-                onLocationSelect={(displayAddr, _zip, fullAddress) =>
-                  setOriginAddress(fullAddress || displayAddr)
-                }
+                onValueChange={(value) => {
+                  setOriginAddress(value);
+                  setOriginCoords(null);
+                }}
+                onLocationSelect={(displayAddr, _zip, fullAddress, _isVerified, lat, lng) => {
+                  setOriginAddress(fullAddress || displayAddr);
+                  setOriginCoords(lat !== undefined && lng !== undefined ? [lng, lat] : null);
+                }}
                 placeholder="Enter pickup ZIP, city, or address..."
                 mode="address"
                 className="pl-9 pr-9"
@@ -124,10 +139,14 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
               <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-destructive z-10 pointer-events-none" />
               <LocationAutocomplete
                 value={destAddress}
-                onValueChange={setDestAddress}
-                onLocationSelect={(displayAddr, _zip, fullAddress) =>
-                  setDestAddress(fullAddress || displayAddr)
-                }
+                onValueChange={(value) => {
+                  setDestAddress(value);
+                  setDestCoords(null);
+                }}
+                onLocationSelect={(displayAddr, _zip, fullAddress, _isVerified, lat, lng) => {
+                  setDestAddress(fullAddress || displayAddr);
+                  setDestCoords(lat !== undefined && lng !== undefined ? [lng, lat] : null);
+                }}
                 placeholder="Enter delivery ZIP, city, or address..."
                 mode="address"
                 className="pl-9"

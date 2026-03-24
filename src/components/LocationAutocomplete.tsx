@@ -99,26 +99,30 @@ async function withRetry<T>(
 // Geoapify Address Autocomplete API - PRIMARY source for address suggestions
 async function searchGeoapifyAddresses(query: string, mode: 'city' | 'address'): Promise<{ suggestions: LocationSuggestion[]; failed: boolean }> {
   const typeParam = mode === 'city' ? '&type=city' : '';
+  const normalizedQuery = normalizeAddress(query);
+  const queryHasStreetNumber = /^\d{1,6}\b/.test(query.trim());
+  const queryHasStreetText = /\d+\s+[a-z]/i.test(query.trim());
+
   const { result, failed } = await withRetry(async () => {
     const res = await fetch(
       `https://api.geoapify.com/v1/geocode/autocomplete?text=${encodeURIComponent(query)}&filter=countrycode:us&format=json&limit=6${typeParam}&apiKey=${GEOAPIFY_KEY}`,
       { headers: { 'Accept': 'application/json' } }
     );
-    
+
     if (!res.ok) {
       throw new Error(`Geoapify API error: ${res.status}`);
     }
-    
+
     return res.json();
   });
-  
+
   if (failed || !result) {
     return { suggestions: [], failed: true };
   }
-  
+
   const suggestions = (result.results || []).map((r: any) => {
-    const streetAddress = r.housenumber && r.street 
-      ? `${r.housenumber} ${r.street}` 
+    const streetAddress = r.housenumber && r.street
+      ? `${r.housenumber} ${r.street}`
       : r.street || '';
     const city = r.city || r.county || '';
     const state = r.state_code || r.state || '';
@@ -127,25 +131,26 @@ async function searchGeoapifyAddresses(query: string, mode: 'city' | 'address'):
     const displayAddr = formatted
       .replace(/, United States of America$/i, '')
       .replace(/, United States$/i, '');
-    
-    // Extract coordinates
+
     const lat = r.lat;
     const lng = r.lon;
-    
-    // Determine verification level from Geoapify confidence scores
     const confidence = r.rank?.confidence || 0;
     const resultType = r.result_type || '';
     const hasStreet = !!streetAddress && resultType !== 'postcode' && resultType !== 'city';
-    
+    const normalizedStreet = normalizeAddress(streetAddress);
+    const streetStartsWithQuery = normalizedStreet.startsWith(normalizedQuery);
+    const formattedStartsWithQuery = normalizeAddress(displayAddr).startsWith(normalizedQuery);
+    const streetMatchesTypedAddress = !queryHasStreetText || streetStartsWithQuery || formattedStartsWithQuery;
+
     let validLevel: ValidationLevel = 'partial';
-    if (hasStreet && confidence >= 0.8) {
+    if (hasStreet && confidence >= 0.8 && streetMatchesTypedAddress) {
       validLevel = 'verified';
-    } else if (hasStreet && confidence >= 0.5) {
+    } else if (hasStreet && confidence >= 0.5 && streetMatchesTypedAddress) {
       validLevel = 'partial';
     } else if (resultType === 'city' || resultType === 'postcode') {
       validLevel = 'partial';
     }
-    
+
     return {
       streetAddress,
       city,
@@ -158,19 +163,31 @@ async function searchGeoapifyAddresses(query: string, mode: 'city' | 'address'):
       isVerified: validLevel === 'verified',
       validationLevel: validLevel,
       _resultType: resultType,
+      _streetMatchesTypedAddress: streetMatchesTypedAddress,
+      _queryHasStreetNumber: queryHasStreetNumber,
     };
   });
 
-  // In address mode, prioritize street-level results over city/zip-only results
   if (mode === 'address') {
-    const streetResults = suggestions.filter((s: any) => s.streetAddress && s._resultType !== 'city' && s._resultType !== 'postcode');
-    const otherResults = suggestions.filter((s: any) => !s.streetAddress || s._resultType === 'city' || s._resultType === 'postcode');
-    // Show street results first, then other results (up to 5 total)
+    const filteredAddressResults = suggestions.filter((s: any) => {
+      if (!s._queryHasStreetNumber) return true;
+      if (!s.streetAddress) return false;
+      return s._streetMatchesTypedAddress;
+    });
+
+    const streetResults = filteredAddressResults.filter((s: any) => s.streetAddress && s._resultType !== 'city' && s._resultType !== 'postcode');
+    const otherResults = filteredAddressResults.filter((s: any) => !s.streetAddress || s._resultType === 'city' || s._resultType === 'postcode');
     const sorted = [...streetResults, ...otherResults].slice(0, 5);
-    return { suggestions: sorted.map(({ _resultType, ...rest }: any) => rest), failed: false };
+    return {
+      suggestions: sorted.map(({ _resultType, _streetMatchesTypedAddress, _queryHasStreetNumber, ...rest }: any) => rest),
+      failed: false,
+    };
   }
-  
-  return { suggestions: suggestions.map(({ _resultType, ...rest }: any) => rest).slice(0, 5), failed: false };
+
+  return {
+    suggestions: suggestions.map(({ _resultType, _streetMatchesTypedAddress, _queryHasStreetNumber, ...rest }: any) => rest).slice(0, 5),
+    failed: false,
+  };
 }
 
 // Photon API for city-only search (mode="city") - CORS-friendly, fallback
@@ -608,9 +625,9 @@ export default function LocationAutocomplete({
   const getTooltipContent = () => {
     switch (validationLevel) {
       case 'verified':
-        return "Address verified via Google USPS CASS validation";
+        return "Street-level match confirmed from autocomplete";
       case 'partial':
-        return "City/ZIP verified. Add a street address for full USPS verification";
+        return "Closest address match found — verify city/state before submitting";
       case 'unverifiable':
         return "Could not verify this address. Please check for errors";
       default:
