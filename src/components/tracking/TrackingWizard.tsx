@@ -138,7 +138,7 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
           <div className="space-y-2">
             <Label className="text-sm text-muted-foreground">Destination</Label>
             <div className="relative">
-              <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-destructive z-10 pointer-events-none" />
+              <MapPin className="absolute left-3 top-[22px] -translate-y-1/2 w-4 h-4 text-destructive z-10 pointer-events-none" />
               <LocationAutocomplete
                 value={destAddress}
                 onValueChange={(value) => {
