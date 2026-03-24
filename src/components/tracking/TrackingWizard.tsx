@@ -85,6 +85,8 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
     onSubmit({
       originAddress: originAddress.trim(),
       destAddress: destAddress.trim(),
+      originCoords,
+      destCoords,
       bookingNumber: bookingNumber.trim() || undefined,
     });
   };
