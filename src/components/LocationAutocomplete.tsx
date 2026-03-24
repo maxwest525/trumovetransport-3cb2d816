@@ -625,9 +625,9 @@ export default function LocationAutocomplete({
   const getTooltipContent = () => {
     switch (validationLevel) {
       case 'verified':
-        return "Address verified via Google USPS CASS validation";
+        return "Street-level match confirmed from autocomplete";
       case 'partial':
-        return "City/ZIP verified. Add a street address for full USPS verification";
+        return "Closest address match found — verify city/state before submitting";
       case 'unverifiable':
         return "Could not verify this address. Please check for errors";
       default:

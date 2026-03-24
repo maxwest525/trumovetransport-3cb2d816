@@ -437,10 +437,14 @@ export function RouteSetupModal({ open, onClose, onSubmit, onDemo }: RouteSetupM
               </Label>
               <LocationAutocomplete
                 value={destAddress}
-                onValueChange={setDestAddress}
-                onLocationSelect={(displayAddr, zip, fullAddress) => 
-                  setDestAddress(fullAddress || displayAddr)
-                }
+                onValueChange={(value) => {
+                  setDestAddress(value);
+                  setDestCoords(null);
+                }}
+                onLocationSelect={(displayAddr, _zip, fullAddress, _isVerified, lat, lng) => {
+                  setDestAddress(fullAddress || displayAddr);
+                  setDestCoords(lat !== undefined && lng !== undefined ? [lng, lat] : null);
+                }}
                 placeholder="Enter delivery address..."
                 mode="address"
                 className="w-full h-9 text-sm"
