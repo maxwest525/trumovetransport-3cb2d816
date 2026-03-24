@@ -18,6 +18,8 @@ interface RouteSetupModalProps {
   onSubmit: (data: {
     originAddress: string;
     destAddress: string;
+    originCoords?: [number, number] | null;
+    destCoords?: [number, number] | null;
     moveDate?: Date;
     bookingNumber?: string;
   }) => void;
