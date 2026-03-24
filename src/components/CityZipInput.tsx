@@ -7,6 +7,7 @@ interface CityZipInputProps {
   onValueChange: (value: string) => void;
   onLocationSelect: (city: string, zip: string, fullAddress?: string, isVerified?: boolean, lat?: number, lng?: number) => void;
   placeholder?: string;
+  label?: string;
   icon?: React.ReactNode;
   className?: string;
   autoFocus?: boolean;
