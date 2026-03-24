@@ -22,6 +22,8 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
   const [isLookingUp, setIsLookingUp] = useState(false);
   const [originAddress, setOriginAddress] = useState("");
   const [destAddress, setDestAddress] = useState("");
+  const [originCoords, setOriginCoords] = useState<[number, number] | null>(null);
+  const [destCoords, setDestCoords] = useState<[number, number] | null>(null);
   const [isLocating, setIsLocating] = useState(false);
 
   const handleLocateMe = useCallback(() => {
