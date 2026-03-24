@@ -215,33 +215,26 @@ export function RouteSetupModal({ open, onClose, onSubmit, onDemo }: RouteSetupM
   const [originCoords, setOriginCoords] = useState<[number, number] | null>(null);
   const [destCoords, setDestCoords] = useState<[number, number] | null>(null);
 
-  // Geocode origin address when it changes
+  // Geocode origin/destination only when exact coordinates have not already been selected
   useEffect(() => {
     const timer = setTimeout(async () => {
-      if (originAddress && originAddress.length > 5) {
-        const coords = await geocodeAddress(originAddress);
-        setOriginCoords(coords);
-      } else {
-        setOriginCoords(null);
-      }
-    }, 500); // Debounce
-    
-    return () => clearTimeout(timer);
-  }, [originAddress]);
+      if (originCoords || !originAddress || originAddress.length <= 5) return;
+      const coords = await geocodeAddress(originAddress);
+      setOriginCoords(coords);
+    }, 500);
 
-  // Geocode destination address when it changes
+    return () => clearTimeout(timer);
+  }, [originAddress, originCoords]);
+
   useEffect(() => {
     const timer = setTimeout(async () => {
-      if (destAddress && destAddress.length > 5) {
-        const coords = await geocodeAddress(destAddress);
-        setDestCoords(coords);
-      } else {
-        setDestCoords(null);
-      }
-    }, 500); // Debounce
-    
+      if (destCoords || !destAddress || destAddress.length <= 5) return;
+      const coords = await geocodeAddress(destAddress);
+      setDestCoords(coords);
+    }, 500);
+
     return () => clearTimeout(timer);
-  }, [destAddress]);
+  }, [destAddress, destCoords]);
 
   // Auto-populate from booking number with loading animation
   useEffect(() => {
