@@ -348,6 +348,8 @@ export default function LocationAutocomplete({
   mode = 'city', // Default to city-only mode
   showHelperText = false,
   showGeolocation = false,
+  strictAddressVerification = false,
+  validationIconInsetClassName = "right-3",
 }: LocationAutocompleteProps) {
   const [suggestions, setSuggestions] = useState<LocationSuggestion[]>([]);
   const [isLoading, setIsLoading] = useState(false);
