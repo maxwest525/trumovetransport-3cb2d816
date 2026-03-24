@@ -212,13 +212,15 @@ async function searchGeoapifyAddresses(query: string, mode: 'city' | 'address', 
 
   if (mode === 'address') {
     const filteredAddressResults = suggestions.filter((s: any) => {
-      if (!s._queryHasStreetNumber) return true;
+      if (!s._queryHasStreetNumber) return strictAddressOnly ? !!s.streetAddress : true;
       if (!s.streetAddress) return false;
       return s._streetMatchesTypedAddress;
     });
 
     const streetResults = filteredAddressResults.filter((s: any) => s.streetAddress && s._resultType !== 'city' && s._resultType !== 'postcode');
-    const otherResults = filteredAddressResults.filter((s: any) => !s.streetAddress || s._resultType === 'city' || s._resultType === 'postcode');
+    const otherResults = strictAddressOnly
+      ? []
+      : filteredAddressResults.filter((s: any) => !s.streetAddress || s._resultType === 'city' || s._resultType === 'postcode');
     const sorted = [...streetResults, ...otherResults].slice(0, 5);
     return {
       suggestions: sorted.map(({ _resultType, _streetMatchesTypedAddress, _queryHasStreetNumber, ...rest }: any) => rest),
