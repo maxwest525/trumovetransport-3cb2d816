@@ -396,10 +396,14 @@ export function RouteSetupModal({ open, onClose, onSubmit, onDemo }: RouteSetupM
               </Label>
               <LocationAutocomplete
                 value={originAddress}
-                onValueChange={setOriginAddress}
-                onLocationSelect={(displayAddr, zip, fullAddress) => 
-                  setOriginAddress(fullAddress || displayAddr)
-                }
+                onValueChange={(value) => {
+                  setOriginAddress(value);
+                  setOriginCoords(null);
+                }}
+                onLocationSelect={(displayAddr, _zip, fullAddress, _isVerified, lat, lng) => {
+                  setOriginAddress(fullAddress || displayAddr);
+                  setOriginCoords(lat !== undefined && lng !== undefined ? [lng, lat] : null);
+                }}
                 placeholder="Enter pickup address..."
                 mode="address"
                 className="w-full h-9 text-sm"
