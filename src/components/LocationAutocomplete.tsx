@@ -406,7 +406,7 @@ export default function LocationAutocomplete({
 
     if (mode === 'address') {
       // For address mode, use Geoapify autocomplete
-      const { suggestions: geoapifySuggestions, failed: geoapifyFailed } = await searchGeoapifyAddresses(query, 'address');
+      const { suggestions: geoapifySuggestions, failed: geoapifyFailed } = await searchGeoapifyAddresses(query, 'address', strictAddressVerification);
       
       if (!geoapifyFailed && geoapifySuggestions.length > 0) {
         const filtered = geoapifySuggestions.filter(s => {
@@ -414,7 +414,7 @@ export default function LocationAutocomplete({
           return normalizedSuggestion !== normalizedQuery;
         });
         setSuggestions(filtered);
-      } else if (isCompleteZip) {
+      } else if (isCompleteZip && !strictAddressVerification) {
         const zipResult = await lookupZip(query.trim());
         if (zipResult) {
           zipResult.validationLevel = 'partial';
