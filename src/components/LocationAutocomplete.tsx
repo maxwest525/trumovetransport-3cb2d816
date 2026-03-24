@@ -741,11 +741,11 @@ export default function LocationAutocomplete({
               <Tooltip>
                 <TooltipTrigger asChild>
                   <span className="absolute right-3 top-1/2 -translate-y-1/2 cursor-help z-10">
-                    <CheckCircle className="w-4 h-4 text-emerald-600" />
+                    <AlertCircle className="w-4 h-4 text-yellow-500" />
                   </span>
                 </TooltipTrigger>
                 <TooltipContent side="left" className="max-w-[200px] bg-popover border border-border z-[150]">
-                  <p className="text-xs">{getTooltipContent()}</p>
+                  <p className="text-xs">City/ZIP verified — enter a full street address for exact verification</p>
                 </TooltipContent>
               </Tooltip>
             )}
