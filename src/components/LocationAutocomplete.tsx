@@ -96,6 +96,26 @@ async function withRetry<T>(
   return { result: null, failed: true, retryCount: maxRetries + 1 };
 }
 
+// In-memory cache for USPS city names by ZIP
+const uspsCityCache: Record<string, string | null> = {};
+
+async function getUspsCityForZip(zip: string): Promise<string | null> {
+  if (!zip || zip.length !== 5) return null;
+  if (zip in uspsCityCache) return uspsCityCache[zip];
+
+  try {
+    const res = await fetch(`https://api.zippopotam.us/us/${zip}`);
+    if (res.ok) {
+      const data = await res.json();
+      const city = data.places?.[0]?.["place name"] || null;
+      uspsCityCache[zip] = city;
+      return city;
+    }
+  } catch {}
+  uspsCityCache[zip] = null;
+  return null;
+}
+
 // Geoapify Address Autocomplete API - PRIMARY source for address suggestions
 async function searchGeoapifyAddresses(query: string, mode: 'city' | 'address'): Promise<{ suggestions: LocationSuggestion[]; failed: boolean }> {
   const typeParam = mode === 'city' ? '&type=city' : '';
@@ -120,17 +140,37 @@ async function searchGeoapifyAddresses(query: string, mode: 'city' | 'address'):
     return { suggestions: [], failed: true };
   }
 
+  // Collect unique ZIP codes from results for USPS city enrichment
+  const uniqueZips = new Set<string>();
+  (result.results || []).forEach((r: any) => {
+    if (r.postcode && r.postcode.length === 5) uniqueZips.add(r.postcode);
+  });
+
+  // Prefetch USPS city names in parallel (cached calls are instant)
+  await Promise.all([...uniqueZips].map(z => getUspsCityForZip(z)));
+
   const suggestions = (result.results || []).map((r: any) => {
     const streetAddress = r.housenumber && r.street
       ? `${r.housenumber} ${r.street}`
       : r.street || '';
-    const city = r.city || r.county || '';
+    const geoapifyCity = r.city || r.county || '';
     const state = r.state_code || r.state || '';
     const zip = r.postcode || '';
+
+    // Use USPS city name when available (fixes CDP names like "Boca del Mar" → "Boca Raton")
+    const uspsCity = zip ? uspsCityCache[zip] : null;
+    const city = uspsCity || geoapifyCity;
+
     const formatted = r.formatted || '';
-    const displayAddr = formatted
+    // Also fix the display/fullAddress strings to use USPS city
+    let displayAddr = formatted
       .replace(/, United States of America$/i, '')
       .replace(/, United States$/i, '');
+    let fullAddr = formatted;
+    if (uspsCity && geoapifyCity && uspsCity !== geoapifyCity) {
+      displayAddr = displayAddr.replace(geoapifyCity, uspsCity);
+      fullAddr = fullAddr.replace(geoapifyCity, uspsCity);
+    }
 
     const lat = r.lat;
     const lng = r.lon;
@@ -157,7 +197,7 @@ async function searchGeoapifyAddresses(query: string, mode: 'city' | 'address'):
       state,
       zip,
       display: displayAddr,
-      fullAddress: formatted,
+      fullAddress: fullAddr,
       lat,
       lng,
       isVerified: validLevel === 'verified',
