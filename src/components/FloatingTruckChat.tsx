@@ -31,8 +31,8 @@ export default function FloatingTruckChat() {
         });
 
       // Remove any switch button NOT explicitly tagged by our UI
-      document.querySelectorAll('button[role="switch"]').forEach((el) => {
-        if (!(el as HTMLElement).hasAttribute('data-ui-switch') && !(el as HTMLElement).hasAttribute('data-state')) {
+      document.querySelectorAll('button[role="switch"], input[role="switch"]').forEach((el) => {
+        if (!(el as HTMLElement).hasAttribute('data-ui-switch')) {
           el.remove();
         }
       });
