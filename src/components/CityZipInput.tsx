@@ -38,20 +38,27 @@ export default function CityZipInput({
 
   return (
     <div className="relative">
-      {icon && (
-        <div className="absolute left-3 top-1/2 -translate-y-1/2 z-10 pointer-events-none">
-          {icon}
-        </div>
+      {label && (
+        <label className="block text-xs font-semibold text-muted-foreground mb-1.5 tracking-wide">
+          {label}
+        </label>
       )}
-      <LocationAutocomplete
-        value={value}
-        onValueChange={onValueChange}
-        onLocationSelect={handleSelect}
-        placeholder={placeholder}
-        autoFocus={autoFocus}
-        mode={mode}
-        className={cn(icon ? "pl-9" : "", className)}
-      />
+      <div className="relative">
+        {icon && (
+          <div className="absolute left-3 top-1/2 -translate-y-1/2 z-10 pointer-events-none">
+            {icon}
+          </div>
+        )}
+        <LocationAutocomplete
+          value={value}
+          onValueChange={onValueChange}
+          onLocationSelect={handleSelect}
+          placeholder={placeholder}
+          autoFocus={autoFocus}
+          mode={mode}
+          className={cn(icon ? "pl-9" : "", className)}
+        />
+      </div>
     </div>
   );
 }
