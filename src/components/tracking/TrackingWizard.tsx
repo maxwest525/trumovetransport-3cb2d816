@@ -7,7 +7,13 @@ import LocationAutocomplete from "@/components/LocationAutocomplete";
 const MOCK_BOOKINGS: Record<string, { origin: string; destination: string }> = {};
 
 interface TrackingWizardProps {
-  onSubmit: (data: { originAddress: string; destAddress: string; bookingNumber?: string }) => void;
+  onSubmit: (data: {
+    originAddress: string;
+    destAddress: string;
+    originCoords?: [number, number] | null;
+    destCoords?: [number, number] | null;
+    bookingNumber?: string;
+  }) => void;
   onDemo?: () => void;
 }
 
