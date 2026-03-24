@@ -106,7 +106,7 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
           <div className="space-y-2">
             <Label className="text-sm text-muted-foreground">Origin</Label>
             <div className="relative">
-              <Navigation className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary z-10 pointer-events-none" />
+              <Navigation className="absolute left-3 top-[22px] -translate-y-1/2 w-4 h-4 text-primary z-10 pointer-events-none" />
               <LocationAutocomplete
                 value={originAddress}
                 onValueChange={(value) => {
@@ -128,7 +128,7 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
                 onClick={handleLocateMe}
                 disabled={isLocating}
                 title="Use my current location"
-                className="absolute right-2 top-1/2 -translate-y-1/2 z-10 text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50"
+                className="absolute right-2 top-[22px] -translate-y-1/2 z-10 text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50"
               >
                 {isLocating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Navigation2 className="w-3.5 h-3.5" />}
               </button>
