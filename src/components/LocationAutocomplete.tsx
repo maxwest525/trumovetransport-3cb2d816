@@ -706,7 +706,7 @@ export default function LocationAutocomplete({
               ref={inputRef}
               type="text"
               className={cn(
-                "w-full h-11 px-4 pr-10 rounded-lg border bg-background text-sm font-medium text-center",
+                "w-full h-11 px-4 pr-14 rounded-lg border bg-background text-sm font-medium text-center",
                 "placeholder:text-muted-foreground/50 focus:outline-none",
                 "transition-all duration-300",
                 "tru-input-glow",
@@ -728,7 +728,7 @@ export default function LocationAutocomplete({
             {isValid && validationLevel === 'verified' && (
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 cursor-help">
+                  <span className="absolute right-10 top-1/2 -translate-y-1/2 cursor-help">
                     <CheckCircle className="w-4 h-4 text-emerald-500" />
                   </span>
                 </TooltipTrigger>
@@ -740,7 +740,7 @@ export default function LocationAutocomplete({
             {isValid && validationLevel === 'partial' && mode === 'address' && (
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 cursor-help">
+                  <span className="absolute right-10 top-1/2 -translate-y-1/2 cursor-help">
                     <CheckCircle className="w-4 h-4 text-emerald-600" />
                   </span>
                 </TooltipTrigger>
@@ -750,14 +750,14 @@ export default function LocationAutocomplete({
               </Tooltip>
             )}
             {isValid && validationLevel === 'partial' && mode === 'city' && (
-              <span className="absolute right-3 top-1/2 -translate-y-1/2">
+              <span className="absolute right-10 top-1/2 -translate-y-1/2">
                 <CheckCircle className="w-4 h-4 text-emerald-500" />
               </span>
             )}
             {isValid && validationLevel === 'unverifiable' && (
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 cursor-help">
+                  <span className="absolute right-10 top-1/2 -translate-y-1/2 cursor-help">
                     <XCircle className="w-4 h-4 text-red-500" />
                   </span>
                 </TooltipTrigger>
