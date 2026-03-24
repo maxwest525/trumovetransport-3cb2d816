@@ -119,7 +119,7 @@ async function getUspsCityForZip(zip: string): Promise<string | null> {
 }
 
 // Geoapify Address Autocomplete API - PRIMARY source for address suggestions
-async function searchGeoapifyAddresses(query: string, mode: 'city' | 'address'): Promise<{ suggestions: LocationSuggestion[]; failed: boolean }> {
+async function searchGeoapifyAddresses(query: string, mode: 'city' | 'address', strictAddressOnly: boolean = false): Promise<{ suggestions: LocationSuggestion[]; failed: boolean }> {
   const typeParam = mode === 'city' ? '&type=city' : '';
   const normalizedQuery = normalizeAddress(query);
   const queryHasStreetNumber = /^\d{1,6}\b/.test(query.trim());
