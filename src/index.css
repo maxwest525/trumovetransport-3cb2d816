@@ -32283,8 +32283,8 @@ body > div:not(#root) > div:not([class]):not([id]) > button[role="switch"] {
 }
 
 /* Nuke orphaned third-party switch artifacts — keep only app switches we explicitly tag */
-button[role="switch"]:not([data-ui-switch="true"]),
-input[type="checkbox"][role="switch"]:not([data-ui-switch="true"]) {
+button[role="switch"]:not([data-ui-switch="true"]):not([data-state]),
+input[type="checkbox"][role="switch"]:not([data-ui-switch="true"]):not([data-state]) {
   display: none !important;
   visibility: hidden !important;
   width: 0 !important;

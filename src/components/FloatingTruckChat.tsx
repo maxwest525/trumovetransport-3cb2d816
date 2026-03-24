@@ -21,19 +21,6 @@ export default function FloatingTruckChat() {
 
   // Remove any ElevenLabs SDK-injected widget elements from the DOM
   useEffect(() => {
-    const isOrphanedSdkSwitch = (el: Element) => {
-      if (!(el instanceof HTMLElement)) return false;
-      if (el.tagName.toLowerCase() !== 'button' || el.getAttribute('role') !== 'switch') return false;
-      if (el.closest('.tru-floating-truck-chat, [data-radix-popper-content-wrapper], [data-sonner-toaster], [data-state]')) return false;
-
-      const text = el.textContent?.trim() ?? '';
-      const width = el.offsetWidth || el.getBoundingClientRect().width;
-      const height = el.offsetHeight || el.getBoundingClientRect().height;
-      const hasElevenLabsParent = Boolean(el.closest('elevenlabs-convai, [data-elevenlabs], [class*="convai"], [class*="elevenlabs"], [id*="elevenlabs"]'));
-
-      return hasElevenLabsParent || (!text && width <= 64 && height <= 40);
-    };
-
     const removeWidgetArtifacts = () => {
       document
         .querySelectorAll('elevenlabs-convai, [data-elevenlabs], [class*="convai"], [class*="elevenlabs"], [id*="elevenlabs"]')
@@ -43,11 +30,15 @@ export default function FloatingTruckChat() {
           }
         });
 
+      // Remove any switch button NOT explicitly tagged by our UI
       document.querySelectorAll('button[role="switch"]').forEach((el) => {
-        if (isOrphanedSdkSwitch(el)) {
+        if (!(el as HTMLElement).hasAttribute('data-ui-switch') && !(el as HTMLElement).hasAttribute('data-state')) {
           el.remove();
         }
       });
+
+      // Also nuke any iframe or shadow-root widget the SDK may inject
+      document.querySelectorAll('iframe[src*="elevenlabs"], iframe[src*="convai"]').forEach(el => el.remove());
     };
 
     removeWidgetArtifacts();
