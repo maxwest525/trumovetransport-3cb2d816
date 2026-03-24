@@ -724,11 +724,11 @@ export default function LocationAutocomplete({
               autoFocus={autoFocus}
             />
             
-            {/* Validation indicators with tooltips - wrapped in span for proper ref handling */}
+            {/* Validation indicators with tooltips */}
             {isValid && validationLevel === 'verified' && (
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <span className="absolute right-10 top-1/2 -translate-y-1/2 cursor-help">
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 cursor-help z-10">
                     <CheckCircle className="w-4 h-4 text-emerald-500" />
                   </span>
                 </TooltipTrigger>
@@ -740,7 +740,7 @@ export default function LocationAutocomplete({
             {isValid && validationLevel === 'partial' && mode === 'address' && (
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <span className="absolute right-10 top-1/2 -translate-y-1/2 cursor-help">
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 cursor-help z-10">
                     <CheckCircle className="w-4 h-4 text-emerald-600" />
                   </span>
                 </TooltipTrigger>
@@ -750,14 +750,14 @@ export default function LocationAutocomplete({
               </Tooltip>
             )}
             {isValid && validationLevel === 'partial' && mode === 'city' && (
-              <span className="absolute right-10 top-1/2 -translate-y-1/2">
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 z-10">
                 <CheckCircle className="w-4 h-4 text-emerald-500" />
               </span>
             )}
             {isValid && validationLevel === 'unverifiable' && (
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <span className="absolute right-10 top-1/2 -translate-y-1/2 cursor-help">
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 cursor-help z-10">
                     <XCircle className="w-4 h-4 text-red-500" />
                   </span>
                 </TooltipTrigger>
