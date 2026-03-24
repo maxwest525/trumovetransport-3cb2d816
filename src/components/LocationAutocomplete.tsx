@@ -706,7 +706,7 @@ export default function LocationAutocomplete({
               ref={inputRef}
               type="text"
               className={cn(
-                "w-full h-11 px-4 pr-14 rounded-lg border bg-background text-sm font-medium text-center",
+                "w-full h-11 px-4 pr-10 rounded-lg border bg-background text-sm font-medium text-center",
                 "placeholder:text-muted-foreground/50 focus:outline-none",
                 "transition-all duration-300",
                 "tru-input-glow",
