@@ -278,6 +278,8 @@ export function RouteSetupModal({ open, onClose, onSubmit, onDemo }: RouteSetupM
     onSubmit({
       originAddress: originAddress.trim(),
       destAddress: destAddress.trim(),
+      originCoords,
+      destCoords,
       bookingNumber: bookingNumber.trim() || undefined,
     });
   };
