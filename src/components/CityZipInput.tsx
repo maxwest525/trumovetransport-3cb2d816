@@ -23,6 +23,7 @@ export default function CityZipInput({
   onValueChange,
   onLocationSelect,
   placeholder = "City or ZIP",
+  label,
   icon,
   className,
   autoFocus = false,
