@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
@@ -25,6 +25,16 @@ import FloatingTruckChat from "./components/FloatingTruckChat";
 import ScrollToTop from "./components/ScrollToTop";
 
 const queryClient = new QueryClient();
+
+function GlobalFloatingTruckChat() {
+  const location = useLocation();
+
+  if (location.pathname === "/customer-service") {
+    return null;
+  }
+
+  return <FloatingTruckChat />;
+}
 
 const App = () => (
   <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
@@ -60,7 +70,7 @@ const App = () => (
 
             <Route path="*" element={<NotFound />} />
           </Routes>
-          <FloatingTruckChat />
+          <GlobalFloatingTruckChat />
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
