@@ -198,21 +198,45 @@ export default function LiveTracking() {
   });
 
   // Handle origin location selection
-  const handleOriginSelect = useCallback(async (city: string, zip: string, fullAddress?: string) => {
-    const addressToGeocode = fullAddress || `${city}, ${zip}`;
+  const handleOriginSelect = useCallback(async (
+    city: string,
+    zip: string,
+    fullAddress?: string,
+    _isVerified?: boolean,
+    lat?: number,
+    lng?: number,
+  ) => {
+    const addressToGeocode = fullAddress || [city, zip].filter(Boolean).join(", ");
     setOriginAddress(addressToGeocode);
     setOriginName(city || addressToGeocode);
-    
+
+    if (lat !== undefined && lng !== undefined) {
+      setOriginCoords([lng, lat]);
+      return;
+    }
+
     const coords = await geocodeAddress(addressToGeocode);
     setOriginCoords(coords);
   }, []);
 
   // Handle destination location selection
-  const handleDestSelect = useCallback(async (city: string, zip: string, fullAddress?: string) => {
-    const addressToGeocode = fullAddress || `${city}, ${zip}`;
+  const handleDestSelect = useCallback(async (
+    city: string,
+    zip: string,
+    fullAddress?: string,
+    _isVerified?: boolean,
+    lat?: number,
+    lng?: number,
+  ) => {
+    const addressToGeocode = fullAddress || [city, zip].filter(Boolean).join(", ");
     setDestAddress(addressToGeocode);
     setDestName(city || addressToGeocode);
-    
+
+    if (lat !== undefined && lng !== undefined) {
+      setDestCoords([lng, lat]);
+      return;
+    }
+
     const coords = await geocodeAddress(addressToGeocode);
     setDestCoords(coords);
   }, []);
