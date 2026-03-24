@@ -40,6 +40,7 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
           const data = await res.json();
           const label = data?.display_name || `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
           setOriginAddress(label);
+          setOriginCoords([longitude, latitude]);
         } catch (e) {
           console.error("Reverse geocode failed", e);
         } finally {
