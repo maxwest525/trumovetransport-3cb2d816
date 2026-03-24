@@ -481,11 +481,13 @@ export default function LiveTracking() {
   const handleRouteModalSubmit = async (data: {
     originAddress: string;
     destAddress: string;
+    originCoords?: [number, number] | null;
+    destCoords?: [number, number] | null;
     moveDate?: Date;
     bookingNumber?: string;
   }) => {
-    await handleOriginSelect('', '', data.originAddress);
-    await handleDestSelect('', '', data.destAddress);
+    await handleOriginSelect('', '', data.originAddress, undefined, data.originCoords?.[1], data.originCoords?.[0]);
+    await handleDestSelect('', '', data.destAddress, undefined, data.destCoords?.[1], data.destCoords?.[0]);
     if (data.moveDate) {
       setMoveDate(data.moveDate);
     }

@@ -139,10 +139,14 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
               <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-destructive z-10 pointer-events-none" />
               <LocationAutocomplete
                 value={destAddress}
-                onValueChange={setDestAddress}
-                onLocationSelect={(displayAddr, _zip, fullAddress) =>
-                  setDestAddress(fullAddress || displayAddr)
-                }
+                onValueChange={(value) => {
+                  setDestAddress(value);
+                  setDestCoords(null);
+                }}
+                onLocationSelect={(displayAddr, _zip, fullAddress, _isVerified, lat, lng) => {
+                  setDestAddress(fullAddress || displayAddr);
+                  setDestCoords(lat !== undefined && lng !== undefined ? [lng, lat] : null);
+                }}
                 placeholder="Enter delivery ZIP, city, or address..."
                 mode="address"
                 className="pl-9"
