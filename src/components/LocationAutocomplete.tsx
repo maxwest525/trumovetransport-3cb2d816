@@ -732,7 +732,7 @@ export default function LocationAutocomplete({
             {isValid && validationLevel === 'verified' && (
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 cursor-help z-10">
+                  <span className={cn("absolute top-1/2 -translate-y-1/2 cursor-help z-10", validationIconInsetClassName)}>
                     <CheckCircle className="w-4 h-4 text-emerald-500" />
                   </span>
                 </TooltipTrigger>
@@ -744,24 +744,28 @@ export default function LocationAutocomplete({
             {isValid && validationLevel === 'partial' && mode === 'address' && (
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 cursor-help z-10">
-                    <AlertCircle className="w-4 h-4 text-yellow-500" />
+                  <span className={cn("absolute top-1/2 -translate-y-1/2 cursor-help z-10", validationIconInsetClassName)}>
+                    <AlertCircle className={cn("w-4 h-4", strictAddressVerification ? "text-muted-foreground" : "text-yellow-500")} />
                   </span>
                 </TooltipTrigger>
                 <TooltipContent side="left" className="max-w-[200px] bg-popover border border-border z-[150]">
-                  <p className="text-xs">City/ZIP verified — enter a full street address for exact verification</p>
+                  <p className="text-xs">
+                    {strictAddressVerification
+                      ? "Enter a full street address to verify this location"
+                      : "City/ZIP verified — enter a full street address for exact verification"}
+                  </p>
                 </TooltipContent>
               </Tooltip>
             )}
             {isValid && validationLevel === 'partial' && mode === 'city' && (
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 z-10">
+              <span className={cn("absolute top-1/2 -translate-y-1/2 z-10", validationIconInsetClassName)}>
                 <CheckCircle className="w-4 h-4 text-emerald-500" />
               </span>
             )}
             {isValid && validationLevel === 'unverifiable' && (
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 cursor-help z-10">
+                  <span className={cn("absolute top-1/2 -translate-y-1/2 cursor-help z-10", validationIconInsetClassName)}>
                     <XCircle className="w-4 h-4 text-red-500" />
                   </span>
                 </TooltipTrigger>
