@@ -119,7 +119,9 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
                 }}
                 placeholder="Enter pickup ZIP, city, or address..."
                 mode="address"
-                className="pl-9 pr-9"
+                strictAddressVerification
+                validationIconInsetClassName="right-9"
+                className="pl-9 pr-14 text-left"
               />
               <button
                 type="button"
@@ -149,7 +151,8 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
                 }}
                 placeholder="Enter delivery ZIP, city, or address..."
                 mode="address"
-                className="pl-9"
+                strictAddressVerification
+                className="pl-9 pr-10 text-left"
               />
             </div>
           </div>
