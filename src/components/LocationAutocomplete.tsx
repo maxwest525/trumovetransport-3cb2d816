@@ -659,7 +659,9 @@ export default function LocationAutocomplete({
       case 'verified':
         return "border-emerald-500/60 focus:border-emerald-500";
       case 'partial':
-        return "border-emerald-600/50 border-2 focus:border-emerald-500";
+        return strictAddressVerification
+          ? "border-yellow-500/40 focus:border-yellow-500"
+          : "border-emerald-600/50 border-2 focus:border-emerald-500";
       case 'unverifiable':
         return "border-red-500/60 focus:border-red-500";
       default:
