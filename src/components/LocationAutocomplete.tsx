@@ -119,7 +119,7 @@ async function getUspsCityForZip(zip: string): Promise<string | null> {
 }
 
 // Geoapify Address Autocomplete API - PRIMARY source for address suggestions
-async function searchGeoapifyAddresses(query: string, mode: 'city' | 'address'): Promise<{ suggestions: LocationSuggestion[]; failed: boolean }> {
+async function searchGeoapifyAddresses(query: string, mode: 'city' | 'address', strictAddressOnly: boolean = false): Promise<{ suggestions: LocationSuggestion[]; failed: boolean }> {
   const typeParam = mode === 'city' ? '&type=city' : '';
   const normalizedQuery = normalizeAddress(query);
   const queryHasStreetNumber = /^\d{1,6}\b/.test(query.trim());
@@ -212,13 +212,15 @@ async function searchGeoapifyAddresses(query: string, mode: 'city' | 'address'):
 
   if (mode === 'address') {
     const filteredAddressResults = suggestions.filter((s: any) => {
-      if (!s._queryHasStreetNumber) return true;
+      if (!s._queryHasStreetNumber) return strictAddressOnly ? !!s.streetAddress : true;
       if (!s.streetAddress) return false;
       return s._streetMatchesTypedAddress;
     });
 
     const streetResults = filteredAddressResults.filter((s: any) => s.streetAddress && s._resultType !== 'city' && s._resultType !== 'postcode');
-    const otherResults = filteredAddressResults.filter((s: any) => !s.streetAddress || s._resultType === 'city' || s._resultType === 'postcode');
+    const otherResults = strictAddressOnly
+      ? []
+      : filteredAddressResults.filter((s: any) => !s.streetAddress || s._resultType === 'city' || s._resultType === 'postcode');
     const sorted = [...streetResults, ...otherResults].slice(0, 5);
     return {
       suggestions: sorted.map(({ _resultType, _streetMatchesTypedAddress, _queryHasStreetNumber, ...rest }: any) => rest),
@@ -404,7 +406,7 @@ export default function LocationAutocomplete({
 
     if (mode === 'address') {
       // For address mode, use Geoapify autocomplete
-      const { suggestions: geoapifySuggestions, failed: geoapifyFailed } = await searchGeoapifyAddresses(query, 'address');
+      const { suggestions: geoapifySuggestions, failed: geoapifyFailed } = await searchGeoapifyAddresses(query, 'address', strictAddressVerification);
       
       if (!geoapifyFailed && geoapifySuggestions.length > 0) {
         const filtered = geoapifySuggestions.filter(s => {
@@ -412,7 +414,7 @@ export default function LocationAutocomplete({
           return normalizedSuggestion !== normalizedQuery;
         });
         setSuggestions(filtered);
-      } else if (isCompleteZip) {
+      } else if (isCompleteZip && !strictAddressVerification) {
         const zipResult = await lookupZip(query.trim());
         if (zipResult) {
           zipResult.validationLevel = 'partial';
