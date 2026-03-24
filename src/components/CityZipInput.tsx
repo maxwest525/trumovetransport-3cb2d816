@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 interface CityZipInputProps {
   value: string;
   onValueChange: (value: string) => void;
-  onLocationSelect: (city: string, zip: string, fullAddress?: string) => void;
+  onLocationSelect: (city: string, zip: string, fullAddress?: string, isVerified?: boolean, lat?: number, lng?: number) => void;
   placeholder?: string;
   icon?: React.ReactNode;
   className?: string;
@@ -14,7 +14,7 @@ interface CityZipInputProps {
 }
 
 /**
- * Reusable city/ZIP input combining LocationAutocomplete with Mapbox.
+ * Reusable city/ZIP input combining LocationAutocomplete.
  * Use site-wide for consistent city/zip autocomplete and validation.
  */
 export default function CityZipInput({
@@ -28,8 +28,8 @@ export default function CityZipInput({
   mode = "city",
 }: CityZipInputProps) {
   const handleSelect = useCallback(
-    (city: string, zip: string, fullAddress?: string) => {
-      onLocationSelect(city, zip, fullAddress);
+    (city: string, zip: string, fullAddress?: string, isVerified?: boolean, lat?: number, lng?: number) => {
+      onLocationSelect(city, zip, fullAddress, isVerified, lat, lng);
     },
     [onLocationSelect]
   );
