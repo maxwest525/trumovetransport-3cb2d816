@@ -185,7 +185,9 @@ async function searchGeoapifyAddresses(query: string, mode: 'city' | 'address', 
     const streetMatchesTypedAddress = !queryHasStreetText || streetStartsWithQuery || formattedStartsWithQuery;
 
     let validLevel: ValidationLevel = 'partial';
-    if (hasStreet && confidence >= 0.8 && streetMatchesTypedAddress) {
+    const isStreetLevelQuery = queryHasStreetNumber && queryHasStreetText;
+
+    if (hasStreet && streetMatchesTypedAddress && (isStreetLevelQuery || confidence >= 0.8)) {
       validLevel = 'verified';
     } else if (hasStreet && confidence >= 0.5 && streetMatchesTypedAddress) {
       validLevel = 'partial';

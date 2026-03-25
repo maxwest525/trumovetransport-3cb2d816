@@ -128,6 +128,7 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
                 onClick={handleLocateMe}
                 disabled={isLocating}
                 title="Use my current location"
+                tabIndex={-1}
                 className="absolute right-2 top-[22px] -translate-y-1/2 z-10 text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50"
               >
                 {isLocating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Navigation2 className="w-3.5 h-3.5" />}
