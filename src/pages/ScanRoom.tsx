@@ -32,6 +32,7 @@ function ScrollFadeIn({ children, delay = 0 }: { children: ReactNode; delay?: nu
 const useScrollToTop = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
+    document.title = "AI-Powered Inventory Scanner | TruMove";
   }, []);
 };
 import { useNavigate, Link } from "react-router-dom";

@@ -13,7 +13,7 @@ const TRUST_ITEMS = [
 
 export default function Book() {
   const [iframeLoaded, setIframeLoaded] = useState(false);
-  useEffect(() => { window.scrollTo(0, 0); }, []);
+  useEffect(() => { window.scrollTo(0, 0); document.title = "Moving Estimates & Consultations | TruMove"; }, []);
 
   return (
     <SiteShell hideTrustStrip>

@@ -44,7 +44,7 @@ const STATS = [
 ];
 
 export default function Vetting() {
-  useEffect(() => { window.scrollTo(0, 0); }, []);
+  useEffect(() => { window.scrollTo(0, 0); document.title = "Vetting Moving Carriers | TruMove"; }, []);
   return (
     <SiteShell hideTrustStrip>
       <div className="tru-vetting-page relative overflow-hidden">

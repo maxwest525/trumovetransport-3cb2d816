@@ -6,6 +6,7 @@ import { ScrollFadeIn } from '@/hooks/useScrollFadeIn';
 const useScrollToTop = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
+    document.title = "Carrier Vetting: Ensuring Safe Moving Services | TruMove";
   }, []);
 };
 import { useSearchParams } from 'react-router-dom';

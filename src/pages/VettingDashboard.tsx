@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 const useScrollToTop = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
+    document.title = "Carrier Vetting: Ensuring Safe Moving Services | TruMove";
   }, []);
 };
 import { Link } from "react-router-dom";

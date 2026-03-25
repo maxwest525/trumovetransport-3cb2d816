@@ -212,7 +212,7 @@ export default function CustomerService() {
   const [activeTab, setActiveTab] = useState<'voice' | 'form'>('voice');
   const chatRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => { window.scrollTo(0, 0); }, []);
+  useEffect(() => { window.scrollTo(0, 0); document.title = "Customer Service & Support | TruMove Inc."; }, []);
 
   const scrollToChat = useCallback(() => {
     chatRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
