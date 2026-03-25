@@ -32506,15 +32506,15 @@ input[type="checkbox"][role="switch"]:not([data-ui-switch="true"]) {
 .cal-embed-container iframe {
   width: 100%;
   border: 0;
-  height: 520px;
-  min-height: 460px;
+  height: 420px;
+  min-height: 380px;
   display: block;
 }
 
 @media (min-width: 768px) {
   .cal-embed-container iframe {
-    height: 560px;
-    min-height: 500px;
+    height: 460px;
+    min-height: 420px;
   }
 }
 
