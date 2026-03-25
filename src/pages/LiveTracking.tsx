@@ -249,6 +249,7 @@ export default function LiveTracking() {
 
   // Set map mode on mount
   useEffect(() => {
+    document.title = "Track Your Shipment with Live GPS Tracking | TruMove";
     const diagnostics = getWebGLDiagnostics();
     if (!diagnostics.supported || diagnostics.recommendation === 'static') {
       setUseStaticMap(true);
