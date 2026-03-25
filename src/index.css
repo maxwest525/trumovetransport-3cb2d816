@@ -32513,8 +32513,8 @@ input[type="checkbox"][role="switch"]:not([data-ui-switch="true"]) {
 
 @media (min-width: 768px) {
   .cal-embed-container iframe {
-    height: 660px;
-    min-height: 600px;
+    height: 560px;
+    min-height: 500px;
   }
 }
 
