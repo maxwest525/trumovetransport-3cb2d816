@@ -281,10 +281,6 @@ export default function CustomerService() {
                     <MessageCircle className="h-4 w-4" />
                     Chat with Trudy
                   </button>
-                  <a href="tel:+16097277647" className="tru-secondary-action-btn !text-sm !py-2.5 !px-5">
-                    <Phone className="h-4 w-4" />
-                    (609) 727-7647
-                  </a>
                 </div>
 
                 {/* Stats row */}
