@@ -95,7 +95,7 @@ export default function TrackingWizard({ onSubmit, onDemo }: TrackingWizardProps
 
   return (
     <div className="w-full max-w-md mx-auto">
-      <div className="bg-card border border-border/60 rounded-2xl overflow-hidden shadow-[0_0_80px_-20px_hsl(var(--primary)/0.12)]">
+      <div className="bg-card border border-border/60 rounded-2xl overflow-visible shadow-[0_0_80px_-20px_hsl(var(--primary)/0.12)]">
         <div className="p-4 sm:p-6 space-y-5 animate-in fade-in slide-in-from-bottom-4 duration-300">
           <div>
             <p className="text-[10px] uppercase tracking-[0.25em] text-primary font-semibold mb-1">Route Setup</p>
