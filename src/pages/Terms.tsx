@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import SiteShell from "@/components/layout/SiteShell";
 
 export default function Terms() {
-  useEffect(() => { window.scrollTo(0, 0); }, []);
+  useEffect(() => { window.scrollTo(0, 0); document.title = "Terms & Conditions | TruMove - AI-Powered Moving Estimates"; }, []);
   return (
     <SiteShell hideTrustStrip>
       <div className="relative overflow-hidden">

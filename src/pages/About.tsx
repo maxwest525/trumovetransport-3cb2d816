@@ -59,7 +59,7 @@ const COMPARISON = [
 ];
 
 export default function About() {
-  useEffect(() => { window.scrollTo(0, 0); }, []);
+  useEffect(() => { window.scrollTo(0, 0); document.title = "About TruMove: Interstate Moves with AI | TruMove Inc."; }, []);
   return (
     <SiteShell hideTrustStrip>
       <div className="relative overflow-hidden">

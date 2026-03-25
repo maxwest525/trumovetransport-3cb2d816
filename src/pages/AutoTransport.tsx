@@ -23,6 +23,7 @@ export default function AutoTransport() {
   const [showMobileCTA, setShowMobileCTA] = useState(false);
 
   useEffect(() => {
+    document.title = "Auto Transport | TruMove";
     const handleScroll = () => {
       setShowMobileCTA(window.scrollY > 500);
     };

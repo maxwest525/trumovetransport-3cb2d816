@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import SiteShell from "@/components/layout/SiteShell";
 
 export default function Privacy() {
-  useEffect(() => { window.scrollTo(0, 0); }, []);
+  useEffect(() => { window.scrollTo(0, 0); document.title = "Privacy Policy: Your Data & TruMove"; }, []);
   return (
     <SiteShell hideTrustStrip>
       <div className="relative overflow-hidden">

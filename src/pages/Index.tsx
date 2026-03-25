@@ -5,6 +5,7 @@ import { useState, useCallback, useMemo, useRef, useEffect } from "react";
 const useScrollToTop = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
+    document.title = "AI-Powered Moving Estimates | TruMove";
   }, []);
 };
 import { useNavigate, Link } from "react-router-dom";

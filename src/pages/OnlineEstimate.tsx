@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 const useScrollToTop = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
+    document.title = "AI-Powered Moving Estimates | TruMove";
   }, []);
 };
 import { format } from "date-fns";

@@ -50,7 +50,7 @@ const FAQ_ITEMS = [
 ];
 
 export default function FAQ() {
-  useEffect(() => { window.scrollTo(0, 0); }, []);
+  useEffect(() => { window.scrollTo(0, 0); document.title = "FAQ: Answers to Your Moving Questions | TruMove"; }, []);
   return (
     <SiteShell hideTrustStrip>
       <div className="relative overflow-hidden">
