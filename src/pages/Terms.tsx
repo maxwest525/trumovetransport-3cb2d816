@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-
+import { Link } from "react-router-dom";
 import SiteShell from "@/components/layout/SiteShell";
 
 export default function Terms() {
@@ -127,12 +127,41 @@ export default function Terms() {
             TruMove may update these Terms at any time. Updates become effective when posted with a revised Effective Date. Continued use of the Services after updates constitutes acceptance.
           </p>
 
-          <h2 className="text-xl font-black text-foreground mt-8 mb-4">14. Contact</h2>
+          <h2 className="text-xl font-black text-foreground mt-8 mb-4">14. SMS Communications</h2>
+          <p className="text-muted-foreground mb-4">
+            By consenting to SMS communications, you agree to receive transactional messages related to your requested services. Consent is not a condition of purchase. Message frequency varies. Reply STOP to opt out or HELP for assistance. Message and data rates may apply.
+          </p>
+          <p className="text-muted-foreground mb-4">
+            Carriers (including T-Mobile, AT&T, and Verizon) are not liable for delayed or undelivered messages.
+          </p>
+          <p className="text-muted-foreground mb-4">
+            For full details on how consent is obtained and managed, see our{" "}
+            <Link to="/sms-consent" className="text-primary hover:underline">SMS Consent & Communications Policy</Link>.
+          </p>
+
+          <h2 className="text-xl font-black text-foreground mt-8 mb-4">15. Arbitration and Class Action Waiver</h2>
+          <p className="text-muted-foreground mb-4">
+            Any dispute arising out of or relating to SMS communications or these Terms shall be resolved by binding arbitration administered by the American Arbitration Association (AAA) under its Consumer Arbitration Rules. You agree to waive any right to participate in a class action lawsuit or class-wide arbitration related to SMS communications or any other matter covered by these Terms.
+          </p>
+
+          <h2 className="text-xl font-black text-foreground mt-8 mb-4">16. Contact</h2>
           <p className="text-muted-foreground mb-4">
             For questions about these Terms, contact:<br />
             Email: <a href="mailto:legal@trumove.com" className="text-primary hover:underline">legal@trumove.com</a><br />
-            Phone: 609-727-7647
+            Phone: 201-820-8143
           </p>
+
+          <div className="mt-12 pt-8 border-t border-border">
+            <h2 className="text-lg font-bold text-foreground mb-3">Related Policies</h2>
+            <ul className="list-none text-muted-foreground space-y-2">
+              <li>
+                <Link to="/privacy" className="text-primary hover:underline">Privacy Policy</Link>
+              </li>
+              <li>
+                <Link to="/sms-consent" className="text-primary hover:underline">SMS Consent & Communications Policy</Link>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
       </div>

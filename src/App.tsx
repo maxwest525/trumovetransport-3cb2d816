@@ -14,6 +14,7 @@ import FAQ from "./pages/FAQ";
 import About from "./pages/About";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
+import SmsConsent from "./pages/SmsConsent";
 import PropertyLookup from "./pages/PropertyLookup";
 import ScanRoom from "./pages/ScanRoom";
 import Classic from "./pages/Classic";
@@ -57,6 +58,7 @@ const App = () => (
             <Route path="/about" element={<About />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/terms" element={<Terms />} />
+            <Route path="/sms-consent" element={<SmsConsent />} />
             <Route path="/property-lookup" element={<PropertyLookup />} />
             <Route path="/scan-room" element={<ScanRoom />} />
             <Route path="/classic" element={<Classic />} />

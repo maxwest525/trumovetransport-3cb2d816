@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-
+import { Link } from "react-router-dom";
 import SiteShell from "@/components/layout/SiteShell";
 
 export default function Privacy() {
@@ -166,10 +166,31 @@ export default function Privacy() {
             We will not discriminate against you for exercising your privacy rights.
           </p>
 
-          <h2 className="text-xl font-black text-foreground mt-8 mb-4">10. Changes to This Policy</h2>
+          <h2 className="text-xl font-black text-foreground mt-8 mb-4">10. SMS Data Handling</h2>
+          <p className="text-muted-foreground mb-4">
+            Phone numbers collected for SMS communication are treated as personal data and are used solely for fulfilling customer-requested services. TruMove does not sell, rent, or share this information for marketing purposes. Phone numbers are stored securely and access is restricted to authorized personnel.
+          </p>
+          <p className="text-muted-foreground mb-4">
+            Messaging is facilitated through compliant third-party service providers (e.g., Twilio) who are contractually bound to protect your data. For full details on our SMS practices, see our{" "}
+            <Link to="/sms-consent" className="text-primary hover:underline">SMS Consent & Communications Policy</Link>.
+          </p>
+
+          <h2 className="text-xl font-black text-foreground mt-8 mb-4">11. Changes to This Policy</h2>
           <p className="text-muted-foreground mb-4">
             We may update this Privacy Policy from time to time. Updates become effective when posted with a revised Effective Date.
           </p>
+
+          <div className="mt-12 pt-8 border-t border-border">
+            <h2 className="text-lg font-bold text-foreground mb-3">Related Policies</h2>
+            <ul className="list-none text-muted-foreground space-y-2">
+              <li>
+                <Link to="/terms" className="text-primary hover:underline">Terms & Conditions</Link>
+              </li>
+              <li>
+                <Link to="/sms-consent" className="text-primary hover:underline">SMS Consent & Communications Policy</Link>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
       </div>

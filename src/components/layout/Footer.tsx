@@ -25,6 +25,9 @@ export default function Footer() {
           <Link className="footer-link" to="/terms">
             Terms
           </Link>
+          <Link className="footer-link" to="/sms-consent">
+            SMS Policy
+          </Link>
           <div className="ml-2">
             <ThemeToggle />
           </div>
