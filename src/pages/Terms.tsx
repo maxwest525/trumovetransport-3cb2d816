@@ -114,12 +114,12 @@ export default function Terms() {
 
           <h2 className="text-xl font-black text-foreground mt-8 mb-4">11. Dispute Resolution and Arbitration</h2>
           <p className="text-muted-foreground mb-4">
-            Any dispute arising out of or relating to these Terms or the Services shall be resolved by binding arbitration administered by the American Arbitration Association (AAA) under its Consumer Arbitration Rules. Arbitration will take place in [Insert Location] unless otherwise agreed. You agree to waive any right to participate in a class action lawsuit or class-wide arbitration.
+            Any dispute arising out of or relating to these Terms or the Services shall be resolved by binding arbitration administered by the American Arbitration Association (AAA) under its Consumer Arbitration Rules. Arbitration will take place in New Jersey unless otherwise agreed. You agree to waive any right to participate in a class action lawsuit or class-wide arbitration.
           </p>
 
           <h2 className="text-xl font-black text-foreground mt-8 mb-4">12. Governing Law</h2>
           <p className="text-muted-foreground mb-4">
-            These Terms are governed by the laws of the State of [Insert State], without regard to conflict of law principles.
+            These Terms are governed by the laws of the State of New Jersey, without regard to conflict of law principles.
           </p>
 
           <h2 className="text-xl font-black text-foreground mt-8 mb-4">13. Changes to Terms</h2>
