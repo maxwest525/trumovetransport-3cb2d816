@@ -14,6 +14,7 @@ import FAQ from "./pages/FAQ";
 import About from "./pages/About";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
+import SmsConsent from "./pages/SmsConsent";
 import PropertyLookup from "./pages/PropertyLookup";
 import ScanRoom from "./pages/ScanRoom";
 import Classic from "./pages/Classic";
