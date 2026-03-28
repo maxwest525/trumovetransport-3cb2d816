@@ -1248,7 +1248,10 @@ export default function Index() {
                           <ArrowRight className="w-4 h-4" />
                         </button>
 
-                        <p className="text-center text-[9px] leading-tight text-muted-foreground/70 max-w-xs mx-auto">By clicking above, you consent to receive calls, texts, and emails at the number/email provided, including via automated technology. Consent is not a condition of purchase. Msg & data rates may apply.</p>
+                        <label className="flex items-start gap-2 text-[10px] leading-snug text-muted-foreground/80 max-w-sm mx-auto cursor-pointer select-none mt-1">
+                          <input type="checkbox" className="mt-0.5 h-3.5 w-3.5 rounded border-border accent-primary shrink-0" />
+                          <span>By checking this box, I agree to receive SMS text messages from TruMove regarding my request, including estimate updates, document notifications, and account-related information. Message frequency varies. Message and data rates may apply. Reply <strong>HELP</strong> for help or <strong>STOP</strong> to opt out at any time.</span>
+                        </label>
                       </div>
                     }
                   </div>
