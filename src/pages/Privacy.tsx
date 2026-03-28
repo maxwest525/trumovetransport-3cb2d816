@@ -17,7 +17,7 @@ export default function Privacy() {
         <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-foreground mb-2">
           TruMove Inc. Privacy Policy
         </h1>
-        <p className="text-muted-foreground mb-8">Effective Date: [Insert Date]</p>
+        <p className="text-muted-foreground mb-8">Effective Date: March 28, 2026</p>
 
         <div className="prose prose-neutral max-w-none">
           <p className="text-muted-foreground mb-8">
