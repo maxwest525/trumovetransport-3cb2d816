@@ -58,6 +58,7 @@ const App = () => (
             <Route path="/about" element={<About />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/terms" element={<Terms />} />
+            <Route path="/sms-consent" element={<SmsConsent />} />
             <Route path="/property-lookup" element={<PropertyLookup />} />
             <Route path="/scan-room" element={<ScanRoom />} />
             <Route path="/classic" element={<Classic />} />

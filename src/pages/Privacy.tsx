@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-
+import { Link } from "react-router-dom";
 import SiteShell from "@/components/layout/SiteShell";
 
 export default function Privacy() {
