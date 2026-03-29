@@ -22,6 +22,8 @@ import LiveTracking from "./pages/LiveTracking";
 import AutoTransport from "./pages/AutoTransport";
 import ThankYou from "./pages/ThankYou";
 import CustomerService from "./pages/CustomerService";
+import CrmLeads from "./pages/CrmLeads";
+import CrmLeadDetail from "./pages/CrmLeadDetail";
 import FloatingTruckChat from "./components/FloatingTruckChat";
 import ScrollToTop from "./components/ScrollToTop";
 import CookieConsent from "./components/CookieConsent";
