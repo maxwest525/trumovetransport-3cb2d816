@@ -1,123 +1,74 @@
 
 
-## Plan: Comprehensive Lead Attribution, Behavior Tracking & Enhanced Data Collection
+## Plan: Cookie-Consent Lead Creation + Attribution Panel + Modal Attribution
 
-### What We're Building
-A full lead intelligence system that automatically captures UTM parameters, ad click IDs, referrer data, session behavior, device info, and enhanced form fields -- all stored in the database and sent with every lead submission.
-
----
-
-### 1. Database Migration: Add `lead_attribution` Table
-
-New table `lead_attribution` linked to leads:
-
-| Column | Type | Notes |
-|--------|------|-------|
-| id | uuid | PK |
-| lead_id | uuid | FK to leads |
-| utm_source | text | Google, Meta, etc. |
-| utm_medium | text | cpc, organic, email |
-| utm_campaign | text | Campaign name |
-| utm_term | text | Keyword |
-| utm_content | text | Ad variant |
-| gclid | text | Google Ads click ID |
-| fbclid | text | Meta click ID |
-| msclkid | text | Microsoft Ads click ID |
-| referrer_url | text | document.referrer |
-| landing_page | text | First page visited |
-| device_type | text | mobile/desktop/tablet |
-| browser | text | Chrome, Safari, etc. |
-| os | text | iOS, Windows, etc. |
-| screen_resolution | text | e.g. 1920x1080 |
-| ip_geolocation | text | Pending integration |
-| session_duration_seconds | integer | Time on site |
-| pages_visited | integer | Page count |
-| page_path_history | text[] | Pages visited in order |
-| form_started_at | timestamptz | When form engagement began |
-| form_completed_at | timestamptz | When form submitted |
-| lead_source_self_reported | text | "How did you hear about us?" |
-| preferred_contact_method | text | call/text/email |
-| move_urgency | text | asap/flexible/just_browsing |
-| sms_consent | boolean | SMS checkbox value |
-| sms_consent_timestamp | timestamptz | TCPA compliance |
-| sms_consent_ip | text | TCPA compliance |
-| created_at | timestamptz | Default now() |
-
-RLS: Service role insert (edge function), staff read via `has_any_role`.
+### What This Does
+When a visitor clicks "Accept All" on the cookie banner, we immediately create a **anonymous lead** in the CRM with all 30+ collected data points — no form required. If that visitor later fills out a form, we **merge** their form data into the existing lead instead of creating a duplicate. Agents see all attribution data in a new panel on the CRM lead detail view.
 
 ---
 
-### 2. New Utility: `src/lib/leadAttribution.ts`
+### 1. New Edge Function: `capture-anonymous-visitor`
+Creates a lead from cookie consent alone.
 
-A client-side module that:
-- On page load, captures and stores UTM params, gclid, fbclid, msclkid from URL into sessionStorage
-- Captures `document.referrer`, landing page URL, device/browser/OS/screen info
-- Tracks pages visited (array), session start time
-- Tracks form engagement start time
-- Exposes a `getAttributionData()` function that returns all collected data as an object
-- Data persists across page navigations via sessionStorage
+- Accepts: all attribution data (device, UTM, referrer, scroll, etc.)
+- Creates a `leads` row with `first_name: "Anonymous"`, `last_name: "Visitor"`, `source: "website"`, `status: "new"`, `tags: ["cookie-consent", "anonymous"]`
+- Creates a `lead_attribution` row linked to that lead
+- Returns `{ leadId }` → stored in `localStorage` as `tm_anonymous_lead_id`
+- Uses service role key (no auth required from visitor), RLS policy needed for anon insert OR use service role
+- No JWT verification needed (public-facing)
+
+### 2. Update `CookieConsent.tsx`
+On "Accept All":
+1. Call `initAttribution()` (already done)
+2. Wait ~2 seconds (let scroll/page data accumulate), then call `capture-anonymous-visitor` edge function with `getAttributionData()`
+3. Store returned `leadId` in `localStorage` as `tm_anonymous_lead_id`
+4. Update cookie banner verbiage to be more comprehensive:
+   > "We use cookies and similar tracking technologies to personalize your experience, remember your preferences, analyze how you use our site, measure ad performance, and improve our services. By clicking 'Accept All,' you consent to our full use of cookies as described in our Privacy Policy."
+
+### 3. Update `submit-estimate` Edge Function
+Before creating a new lead, check if `anonymousLeadId` is passed in the request body:
+- If present: **UPDATE** the existing anonymous lead with the form data (name, email, phone, addresses, etc.) instead of inserting a new one. Also update the existing `lead_attribution` row with form timing data.
+- If not present: Create new lead as usual (current behavior).
+
+### 4. Update `OnlineEstimate.tsx`
+- Read `tm_anonymous_lead_id` from `localStorage` and pass it as `anonymousLeadId` in the `submit-estimate` body
+
+### 5. Update `LeadCaptureModal.tsx` + `Index.tsx`
+- `LeadCaptureModal` `onSubmit` callback now also returns `leadSource`, `contactPreference`, `moveUrgency` (already does)
+- In `Index.tsx` `handleLeadCaptureSubmit`: also store `getAttributionData()` and `tm_anonymous_lead_id` into `localStorage` so it flows through to `submit-estimate`
+- Ensure the modal form submission passes attribution data through to the estimate flow
+
+### 6. New Component: `LeadAttributionPanel.tsx`
+A collapsible card for the CRM lead detail view showing:
+- **Marketing Attribution**: UTM source/medium/campaign/term/content, gclid, fbclid, msclkid
+- **Referrer & Landing**: referrer URL, landing page
+- **Device & Environment**: device type, browser, OS, screen resolution, viewport, timezone, language, connection type, touch device, color depth, cores, DNT, ad blocker
+- **Session Behavior**: session duration, pages visited, page path history, visit count, tab blur count, max scroll depth
+- **Form Engagement**: form started at, form completed at
+- **Self-Reported**: lead source, contact preference, move urgency
+- **Consent**: SMS consent, cookie consent timestamp
+
+This is a read-only panel that queries `lead_attribution` by `lead_id`.
+
+> Note: The CRM lead detail view doesn't exist yet in the frontend routes. This component will be built as a standalone reusable component, ready to drop into the CRM when those pages are built. For now, it can be previewed/tested independently.
+
+### 7. Database Migration
+- Add `anon` INSERT policy on `lead_attribution` so the edge function with service role can insert (service role bypasses RLS, so actually no migration needed)
+- Make `lead_id` on `lead_attribution` nullable (to handle the edge case of standalone anonymous tracking before merge)
+
+Actually — since the edge function uses the **service role key**, it bypasses RLS entirely. No migration needed.
 
 ---
 
-### 3. Update Hero Form (Index.tsx)
+### Files Created
+- `supabase/functions/capture-anonymous-visitor/index.ts`
+- `src/components/crm/LeadAttributionPanel.tsx`
 
-Add three new fields below the date picker, before the submit button:
-
-- **"How did you hear about us?"** -- dropdown: Google Search, Social Media, Friend/Family, Moving.com, Yelp, TV/Radio, Other
-- **"How would you prefer to be contacted?"** -- pill selector: Call, Text, Email
-- **"How soon are you moving?"** -- pill selector: ASAP, Within 30 Days, Flexible, Just Browsing
-
-Track SMS consent checkbox state and timestamp.
-
-On submit (`goNext`), call `getAttributionData()` and include all data in the `tm_lead` localStorage payload.
-
----
-
-### 4. Update `submit-estimate` Edge Function
-
-Accept the new attribution fields in the request body. After creating the lead:
-- Insert a row into `lead_attribution` with all captured data
-- Store `preferred_contact_method`, `move_urgency`, and `lead_source_self_reported` 
-- Log SMS consent timestamp and IP for TCPA compliance
-
----
-
-### 5. Update Online Estimate Submission (OnlineEstimate.tsx)
-
-Pass attribution data from `getAttributionData()` alongside existing estimate body to `submit-estimate`.
-
----
-
-### 6. Update LeadCaptureModal
-
-Add the same three fields (how heard, contact preference, urgency) and pass them through `onSubmit`.
-
----
-
-### 7. Initialize Attribution Tracking in App.tsx
-
-Call the attribution capture function on app mount so UTM params are stored immediately on first page load, before any navigation clears them.
-
----
-
-### Technical Details
-
-**Files to create:**
-- `src/lib/leadAttribution.ts` -- attribution capture utility
-
-**Files to edit:**
-- `src/pages/Index.tsx` -- add form fields + attribution capture on submit
-- `src/pages/OnlineEstimate.tsx` -- pass attribution data to submit
-- `src/components/LeadCaptureModal.tsx` -- add fields
-- `src/App.tsx` -- initialize attribution capture on mount
-- `supabase/functions/submit-estimate/index.ts` -- accept & store attribution data
-
-**Database migration:**
-- Create `lead_attribution` table with RLS policies
-
-**Pending integrations (labeled in code):**
-- IP geolocation (requires server-side lookup -- marked "Pending: IP Geolocation API")
-- Facebook Conversions API (marked "Pending: Meta CAPI")  
-- Google Ads offline conversion import (marked "Pending: Google Ads API")
-- Scroll depth / heatmap tracking (marked "Pending: Analytics integration")
+### Files Modified
+- `src/components/CookieConsent.tsx` — new verbiage + call edge function on accept
+- `supabase/functions/submit-estimate/index.ts` — merge logic for anonymous leads
+- `src/pages/OnlineEstimate.tsx` — pass `anonymousLeadId`
+- `src/pages/Index.tsx` — pass attribution through LeadCaptureModal flow
+- `src/components/LeadCaptureModal.tsx` — include `getAttributionData()` in onSubmit data
+- `src/lib/leadAttribution.ts` — no changes needed (already comprehensive)
 
