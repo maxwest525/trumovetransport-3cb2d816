@@ -18,10 +18,14 @@ serve(async (req) => {
       fromFloor, toFloor,
       fromHasElevator, toHasElevator,
       hasVehicleTransport, needsPackingService,
-      items, // inventory array
+      items,
       distance, moveType,
       estimateMin, estimateMax,
       totalWeight, totalCubicFeet,
+      // Enhanced attribution fields
+      leadSource, contactPreference, moveUrgency,
+      smsConsent, smsConsentTimestamp, smsConsentIp,
+      attribution,
     } = await req.json();
 
     if (!name || !email || !fromLocation || !toLocation) {
