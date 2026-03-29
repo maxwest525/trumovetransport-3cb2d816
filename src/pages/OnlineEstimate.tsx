@@ -306,6 +306,7 @@ export default function OnlineEstimate() {
       const attribution = getAttributionData();
       const storedLead = localStorage.getItem("tm_lead");
       const leadData = storedLead ? JSON.parse(storedLead) : {};
+      const anonymousLeadId = localStorage.getItem("tm_anonymous_lead_id") || null;
 
       const { data, error } = await supabase.functions.invoke('submit-estimate', {
         body: {
