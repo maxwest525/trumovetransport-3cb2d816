@@ -24,12 +24,9 @@ import ThankYou from "./pages/ThankYou";
 import CustomerService from "./pages/CustomerService";
 import FloatingTruckChat from "./components/FloatingTruckChat";
 import ScrollToTop from "./components/ScrollToTop";
-import { initAttribution } from "./lib/leadAttribution";
+import CookieConsent from "./components/CookieConsent";
 
 const queryClient = new QueryClient();
-
-// Initialize attribution tracking on first load
-initAttribution();
 
 function GlobalFloatingTruckChat() {
   const location = useLocation();
