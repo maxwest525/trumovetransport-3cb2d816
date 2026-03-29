@@ -53,6 +53,7 @@ import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext
 import { calculateDistance } from "@/lib/distanceCalculator";
 import { formatPhoneNumber, isValidPhoneNumber, getDigitsOnly } from "@/lib/phoneFormat";
 import { calculateEstimate, formatCurrency } from "@/lib/priceCalculator";
+import { markFormStart, markFormComplete, getAttributionData } from "@/lib/leadAttribution";
 import {
   Shield, Video, Boxes, CheckCircle, Info, FileText,
   MapPin, Route, Clock, DollarSign, Headphones, Phone, ArrowRight, ArrowDown, ArrowUp,
@@ -721,6 +722,13 @@ export default function Index() {
   const [contactFormSending, setContactFormSending] = useState(false);
   const [contactFormSent, setContactFormSent] = useState(false);
 
+  // Enhanced lead intelligence fields
+  const [leadSource, setLeadSource] = useState("");
+  const [contactPreference, setContactPreference] = useState("");
+  const [moveUrgency, setMoveUrgency] = useState("");
+  const [smsConsent, setSmsConsent] = useState(false);
+  const [smsConsentTimestamp, setSmsConsentTimestamp] = useState<string | null>(null);
+
   // Why TruMove features data - Updated per plan
   const whyTruMoveFeatures = [
   {
@@ -999,14 +1007,23 @@ export default function Index() {
   const goNext = async () => {
     if (canContinue() && step < 3) {
       if (step === 1) {
-        // Save lead data and navigate directly to thank-you page
+        markFormComplete();
+        const attribution = getAttributionData();
         const fullName = `${contactFirstName.trim()} ${contactLastName.trim()}`;
         localStorage.setItem("tm_lead", JSON.stringify({
           name: fullName, fromZip, toZip, fromCity, toCity,
           fromLocationDisplay: fromLocationDisplay || `${fromCity} ${fromZip}`,
           toLocationDisplay: toLocationDisplay || `${toCity} ${toZip}`,
           moveDate: moveDate?.toISOString(),
-          email: contactEmail, phone: contactPhone, ts: Date.now()
+          email: contactEmail, phone: contactPhone, ts: Date.now(),
+          // Enhanced fields
+          leadSource,
+          contactPreference,
+          moveUrgency,
+          smsConsent,
+          smsConsentTimestamp,
+          // Attribution data
+          attribution,
         }));
         localStorage.setItem("tm_lead_contact", JSON.stringify({
           name: fullName, email: contactEmail, phone: contactPhone,
@@ -1110,6 +1127,7 @@ export default function Index() {
                             onChange={(e) => {
                               setContactFirstName(e.target.value);
                               if (e.target.value.length > 0 && !isEngaged) setIsEngaged(true);
+                              markFormStart();
                             }}
                             placeholder="First Name"
                             className="w-full rounded-lg border border-border bg-background pl-9 pr-3 py-2.5 text-sm text-foreground text-center placeholder:text-muted-foreground placeholder:text-center focus:outline-none focus:ring-1 focus:ring-primary"
@@ -1224,6 +1242,57 @@ export default function Index() {
                           </Popover>
                         </div>
 
+                        {/* How did you hear about us? */}
+                        <div className="relative">
+                          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary" />
+                          <select
+                            value={leadSource}
+                            onChange={(e) => setLeadSource(e.target.value)}
+                            className="w-full rounded-lg border border-border bg-background pl-9 pr-3 py-2.5 text-sm text-foreground text-center appearance-none focus:outline-none focus:ring-1 focus:ring-primary">
+                            <option value="">How did you hear about us?</option>
+                            <option value="google">Google Search</option>
+                            <option value="social_media">Social Media</option>
+                            <option value="friend_family">Friend / Family</option>
+                            <option value="moving_com">Moving.com</option>
+                            <option value="yelp">Yelp</option>
+                            <option value="tv_radio">TV / Radio</option>
+                            <option value="other">Other</option>
+                          </select>
+                        </div>
+
+                        {/* Contact Preference */}
+                        <div>
+                          <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-1.5 text-center">Preferred Contact</p>
+                          <div className="grid grid-cols-3 gap-2">
+                            {[{ label: "Call", value: "call", icon: Phone }, { label: "Text", value: "text", icon: MessageSquare }, { label: "Email", value: "email", icon: Mail }].map(opt => (
+                              <button
+                                key={opt.value}
+                                type="button"
+                                onClick={() => setContactPreference(opt.value)}
+                                className={`flex items-center justify-center gap-1.5 rounded-lg border px-2 py-2 text-xs font-medium transition-all ${contactPreference === opt.value ? 'border-primary bg-primary/10 text-primary' : 'border-border text-muted-foreground hover:border-primary/40'}`}>
+                                <opt.icon className="w-3 h-3" />
+                                {opt.label}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Move Urgency */}
+                        <div>
+                          <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-1.5 text-center">How soon?</p>
+                          <div className="grid grid-cols-4 gap-1.5">
+                            {[{ label: "ASAP", value: "asap" }, { label: "30 Days", value: "30_days" }, { label: "Flexible", value: "flexible" }, { label: "Browsing", value: "just_browsing" }].map(opt => (
+                              <button
+                                key={opt.value}
+                                type="button"
+                                onClick={() => setMoveUrgency(opt.value)}
+                                className={`rounded-lg border px-2 py-2 text-[10px] font-medium transition-all ${moveUrgency === opt.value ? 'border-primary bg-primary/10 text-primary' : 'border-border text-muted-foreground hover:border-primary/40'}`}>
+                                {opt.label}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
                         {formError &&
                       <p className="text-destructive text-xs text-center">{formError}</p>
                       }
@@ -1249,7 +1318,18 @@ export default function Index() {
                         </button>
 
                         <label className="flex items-start gap-2 text-[10px] leading-snug text-muted-foreground/80 max-w-sm mx-auto cursor-pointer select-none mt-1">
-                          <input type="checkbox" className="mt-0.5 h-3.5 w-3.5 rounded border-border accent-primary shrink-0" />
+                          <input
+                            type="checkbox"
+                            checked={smsConsent}
+                            onChange={(e) => {
+                              setSmsConsent(e.target.checked);
+                              if (e.target.checked) {
+                                setSmsConsentTimestamp(new Date().toISOString());
+                              } else {
+                                setSmsConsentTimestamp(null);
+                              }
+                            }}
+                            className="mt-0.5 h-3.5 w-3.5 rounded border-border accent-primary shrink-0" />
                           <span>By checking this box, I agree to receive SMS text messages from TruMove regarding my request, including estimate updates, document notifications, and account-related information. Message frequency varies. Message and data rates may apply. Reply <strong>HELP</strong> for help or <strong>STOP</strong> to opt out at any time.</span>
                         </label>
                       </div>

@@ -18,10 +18,14 @@ serve(async (req) => {
       fromFloor, toFloor,
       fromHasElevator, toHasElevator,
       hasVehicleTransport, needsPackingService,
-      items, // inventory array
+      items,
       distance, moveType,
       estimateMin, estimateMax,
       totalWeight, totalCubicFeet,
+      // Enhanced attribution fields
+      leadSource, contactPreference, moveUrgency,
+      smsConsent, smsConsentTimestamp, smsConsentIp,
+      attribution,
     } = await req.json();
 
     if (!name || !email || !fromLocation || !toLocation) {
@@ -101,6 +105,38 @@ serve(async (req) => {
       lead_id: leadId,
       stage: "new_lead",
       deal_value: estimateMax || 0,
+    });
+
+    // 5. Insert lead attribution data
+    const attr = attribution || {};
+    await supabase.from("lead_attribution").insert({
+      lead_id: leadId,
+      utm_source: attr.utm_source || null,
+      utm_medium: attr.utm_medium || null,
+      utm_campaign: attr.utm_campaign || null,
+      utm_term: attr.utm_term || null,
+      utm_content: attr.utm_content || null,
+      gclid: attr.gclid || null,
+      fbclid: attr.fbclid || null,
+      msclkid: attr.msclkid || null,
+      referrer_url: attr.referrer_url || null,
+      landing_page: attr.landing_page || null,
+      device_type: attr.device_type || null,
+      browser: attr.browser || null,
+      os: attr.os || null,
+      screen_resolution: attr.screen_resolution || null,
+      ip_geolocation: null, // Pending: IP Geolocation API
+      session_duration_seconds: attr.session_duration_seconds || 0,
+      pages_visited: attr.pages_visited || 0,
+      page_path_history: attr.page_path_history || [],
+      form_started_at: attr.form_started_at || null,
+      form_completed_at: attr.form_completed_at || null,
+      lead_source_self_reported: leadSource || null,
+      preferred_contact_method: contactPreference || null,
+      move_urgency: moveUrgency || null,
+      sms_consent: smsConsent || false,
+      sms_consent_timestamp: smsConsentTimestamp || null,
+      sms_consent_ip: smsConsentIp || null,
     });
 
     // 5. Send email notification via send-deal-email

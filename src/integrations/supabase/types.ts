@@ -635,6 +635,110 @@ export type Database = {
         }
         Relationships: []
       }
+      lead_attribution: {
+        Row: {
+          browser: string | null
+          created_at: string
+          device_type: string | null
+          fbclid: string | null
+          form_completed_at: string | null
+          form_started_at: string | null
+          gclid: string | null
+          id: string
+          ip_geolocation: string | null
+          landing_page: string | null
+          lead_id: string | null
+          lead_source_self_reported: string | null
+          move_urgency: string | null
+          msclkid: string | null
+          os: string | null
+          page_path_history: string[] | null
+          pages_visited: number | null
+          preferred_contact_method: string | null
+          referrer_url: string | null
+          screen_resolution: string | null
+          session_duration_seconds: number | null
+          sms_consent: boolean | null
+          sms_consent_ip: string | null
+          sms_consent_timestamp: string | null
+          utm_campaign: string | null
+          utm_content: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          utm_term: string | null
+        }
+        Insert: {
+          browser?: string | null
+          created_at?: string
+          device_type?: string | null
+          fbclid?: string | null
+          form_completed_at?: string | null
+          form_started_at?: string | null
+          gclid?: string | null
+          id?: string
+          ip_geolocation?: string | null
+          landing_page?: string | null
+          lead_id?: string | null
+          lead_source_self_reported?: string | null
+          move_urgency?: string | null
+          msclkid?: string | null
+          os?: string | null
+          page_path_history?: string[] | null
+          pages_visited?: number | null
+          preferred_contact_method?: string | null
+          referrer_url?: string | null
+          screen_resolution?: string | null
+          session_duration_seconds?: number | null
+          sms_consent?: boolean | null
+          sms_consent_ip?: string | null
+          sms_consent_timestamp?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+        }
+        Update: {
+          browser?: string | null
+          created_at?: string
+          device_type?: string | null
+          fbclid?: string | null
+          form_completed_at?: string | null
+          form_started_at?: string | null
+          gclid?: string | null
+          id?: string
+          ip_geolocation?: string | null
+          landing_page?: string | null
+          lead_id?: string | null
+          lead_source_self_reported?: string | null
+          move_urgency?: string | null
+          msclkid?: string | null
+          os?: string | null
+          page_path_history?: string[] | null
+          pages_visited?: number | null
+          preferred_contact_method?: string | null
+          referrer_url?: string | null
+          screen_resolution?: string | null
+          session_duration_seconds?: number | null
+          sms_consent?: boolean | null
+          sms_consent_ip?: string | null
+          sms_consent_timestamp?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_attribution_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lead_inventory: {
         Row: {
           created_at: string
