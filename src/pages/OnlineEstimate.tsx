@@ -302,6 +302,11 @@ export default function OnlineEstimate() {
         : moveDetails.moveType;
       const estimate = calculateEstimate(weight, moveDetails.distance, effectiveMoveType);
 
+      markFormComplete();
+      const attribution = getAttributionData();
+      const storedLead = localStorage.getItem("tm_lead");
+      const leadData = storedLead ? JSON.parse(storedLead) : {};
+
       const { data, error } = await supabase.functions.invoke('submit-estimate', {
         body: {
           name: extendedDetails.name,
@@ -326,6 +331,13 @@ export default function OnlineEstimate() {
           estimateMax: estimate.max,
           totalWeight: weight,
           totalCubicFeet: cubicFt,
+          // Enhanced attribution
+          leadSource: leadData.leadSource || null,
+          contactPreference: leadData.contactPreference || null,
+          moveUrgency: leadData.moveUrgency || null,
+          smsConsent: leadData.smsConsent || false,
+          smsConsentTimestamp: leadData.smsConsentTimestamp || null,
+          attribution,
         },
       });
 
