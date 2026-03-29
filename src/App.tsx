@@ -22,6 +22,8 @@ import LiveTracking from "./pages/LiveTracking";
 import AutoTransport from "./pages/AutoTransport";
 import ThankYou from "./pages/ThankYou";
 import CustomerService from "./pages/CustomerService";
+import CrmLeads from "./pages/CrmLeads";
+import CrmLeadDetail from "./pages/CrmLeadDetail";
 import FloatingTruckChat from "./components/FloatingTruckChat";
 import ScrollToTop from "./components/ScrollToTop";
 import CookieConsent from "./components/CookieConsent";
@@ -67,6 +69,8 @@ const App = () => (
             <Route path="/auto-transport" element={<AutoTransport />} />
             <Route path="/customer-service" element={<CustomerService />} />
             <Route path="/thank-you" element={<ThankYou />} />
+            <Route path="/crm/leads" element={<CrmLeads />} />
+            <Route path="/crm/leads/:leadId" element={<CrmLeadDetail />} />
 
             {/* Legacy /site/* redirects */}
             <Route path="/site/*" element={<Navigate to="/" replace />} />
