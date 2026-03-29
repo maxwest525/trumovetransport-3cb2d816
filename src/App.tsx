@@ -74,6 +74,7 @@ const App = () => (
             <Route path="*" element={<NotFound />} />
           </Routes>
           <GlobalFloatingTruckChat />
+          <CookieConsent />
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
