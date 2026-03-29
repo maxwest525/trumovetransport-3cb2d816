@@ -722,6 +722,13 @@ export default function Index() {
   const [contactFormSending, setContactFormSending] = useState(false);
   const [contactFormSent, setContactFormSent] = useState(false);
 
+  // Enhanced lead intelligence fields
+  const [leadSource, setLeadSource] = useState("");
+  const [contactPreference, setContactPreference] = useState("");
+  const [moveUrgency, setMoveUrgency] = useState("");
+  const [smsConsent, setSmsConsent] = useState(false);
+  const [smsConsentTimestamp, setSmsConsentTimestamp] = useState<string | null>(null);
+
   // Why TruMove features data - Updated per plan
   const whyTruMoveFeatures = [
   {
