@@ -1007,14 +1007,23 @@ export default function Index() {
   const goNext = async () => {
     if (canContinue() && step < 3) {
       if (step === 1) {
-        // Save lead data and navigate directly to thank-you page
+        markFormComplete();
+        const attribution = getAttributionData();
         const fullName = `${contactFirstName.trim()} ${contactLastName.trim()}`;
         localStorage.setItem("tm_lead", JSON.stringify({
           name: fullName, fromZip, toZip, fromCity, toCity,
           fromLocationDisplay: fromLocationDisplay || `${fromCity} ${fromZip}`,
           toLocationDisplay: toLocationDisplay || `${toCity} ${toZip}`,
           moveDate: moveDate?.toISOString(),
-          email: contactEmail, phone: contactPhone, ts: Date.now()
+          email: contactEmail, phone: contactPhone, ts: Date.now(),
+          // Enhanced fields
+          leadSource,
+          contactPreference,
+          moveUrgency,
+          smsConsent,
+          smsConsentTimestamp,
+          // Attribution data
+          attribution,
         }));
         localStorage.setItem("tm_lead_contact", JSON.stringify({
           name: fullName, email: contactEmail, phone: contactPhone,
