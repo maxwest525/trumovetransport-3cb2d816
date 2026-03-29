@@ -979,14 +979,27 @@ export default function Index() {
     }
   };
 
-  const handleLeadCaptureSubmit = (data: {name: string;email: string;phone: string;}) => {
+  const handleLeadCaptureSubmit = (data: {name: string;email: string;phone: string; leadSource?: string; contactPreference?: string; moveUrgency?: string}) => {
     setName(data.name);
     setEmail(data.email);
     setPhoneNum(data.phone);
     setHasProvidedContactInfo(true);
     setLeadCaptureOpen(false);
 
-    // Store the lead data
+    // Store the lead data with attribution extras
+    const existing = localStorage.getItem("tm_lead");
+    const leadData = existing ? JSON.parse(existing) : {};
+    localStorage.setItem("tm_lead", JSON.stringify({
+      ...leadData,
+      name: data.name,
+      email: data.email,
+      phone: data.phone,
+      leadSource: data.leadSource || leadData.leadSource || null,
+      contactPreference: data.contactPreference || leadData.contactPreference || null,
+      moveUrgency: data.moveUrgency || leadData.moveUrgency || null,
+      ts: Date.now()
+    }));
+
     localStorage.setItem("tm_lead_contact", JSON.stringify({
       name: data.name,
       email: data.email,
