@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
-import { Shield, X } from "lucide-react";
-import { initAttribution } from "@/lib/leadAttribution";
+import { Shield } from "lucide-react";
+import { initAttribution, getAttributionData } from "@/lib/leadAttribution";
+import { supabase } from "@/integrations/supabase/client";
 
 const CONSENT_KEY = "tm_tracking_consent";
+const ANON_LEAD_KEY = "tm_anonymous_lead_id";
 
 export default function CookieConsent() {
   const [visible, setVisible] = useState(false);
@@ -10,18 +12,38 @@ export default function CookieConsent() {
   useEffect(() => {
     const consent = localStorage.getItem(CONSENT_KEY);
     if (consent === "accepted") {
-      // Already accepted — initialize tracking silently
       initAttribution();
     } else if (consent !== "declined") {
-      // No decision yet — show banner
       setVisible(true);
     }
   }, []);
+
+  const captureAnonymousVisitor = async () => {
+    // Already captured this session
+    if (localStorage.getItem(ANON_LEAD_KEY)) return;
+
+    // Wait 2s for attribution data to accumulate
+    await new Promise((r) => setTimeout(r, 2000));
+
+    try {
+      const attribution = getAttributionData();
+      const { data, error } = await supabase.functions.invoke("capture-anonymous-visitor", {
+        body: { attribution },
+      });
+
+      if (!error && data?.leadId) {
+        localStorage.setItem(ANON_LEAD_KEY, data.leadId);
+      }
+    } catch (e) {
+      console.error("Anonymous capture failed:", e);
+    }
+  };
 
   const handleAccept = () => {
     localStorage.setItem(CONSENT_KEY, "accepted");
     setVisible(false);
     initAttribution();
+    captureAnonymousVisitor();
   };
 
   const handleDecline = () => {
@@ -38,10 +60,10 @@ export default function CookieConsent() {
           <div className="flex items-start gap-3 flex-1 min-w-0">
             <Shield className="w-5 h-5 text-primary shrink-0 mt-0.5" />
             <p className="text-sm text-foreground leading-relaxed">
-              We use cookies and similar technologies to improve your experience, analyze site traffic, and personalize your move estimate.{" "}
+              We use cookies and similar tracking technologies to personalize your experience, remember your preferences, analyze how you use our site, measure ad performance, and improve our services. By clicking &ldquo;Accept All,&rdquo; you consent to our full use of cookies as described in our{" "}
               <a href="/privacy" className="text-primary underline underline-offset-2 hover:text-primary/80">
                 Privacy Policy
-              </a>
+              </a>.
             </p>
           </div>
           <div className="flex items-center gap-2 shrink-0">

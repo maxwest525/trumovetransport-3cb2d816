@@ -1,0 +1,222 @@
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import {
+  Globe, Monitor, Smartphone, Tablet, Clock, MapPin, MousePointer,
+  Eye, BarChart3, MessageSquare, Shield, ChevronDown, ChevronUp,
+  Search, Fingerprint, Wifi
+} from "lucide-react";
+
+interface LeadAttributionPanelProps {
+  leadId: string;
+}
+
+interface AttributionRow {
+  utm_source: string | null;
+  utm_medium: string | null;
+  utm_campaign: string | null;
+  utm_term: string | null;
+  utm_content: string | null;
+  gclid: string | null;
+  fbclid: string | null;
+  msclkid: string | null;
+  referrer_url: string | null;
+  landing_page: string | null;
+  device_type: string | null;
+  browser: string | null;
+  os: string | null;
+  screen_resolution: string | null;
+  viewport_size: string | null;
+  timezone: string | null;
+  browser_language: string | null;
+  connection_type: string | null;
+  is_touch_device: boolean | null;
+  color_depth: number | null;
+  hardware_concurrency: number | null;
+  do_not_track: boolean | null;
+  ad_blocker_detected: boolean | null;
+  cookies_enabled: boolean | null;
+  pdf_viewer_enabled: boolean | null;
+  session_duration_seconds: number | null;
+  pages_visited: number | null;
+  page_path_history: string[] | null;
+  visit_count: number | null;
+  tab_blur_count: number | null;
+  max_scroll_depth: number | null;
+  form_started_at: string | null;
+  form_completed_at: string | null;
+  lead_source_self_reported: string | null;
+  preferred_contact_method: string | null;
+  move_urgency: string | null;
+  sms_consent: boolean | null;
+  sms_consent_timestamp: string | null;
+  created_at: string;
+}
+
+function DataRow({ label, value, icon }: { label: string; value: string | null | undefined; icon?: React.ReactNode }) {
+  if (!value) return null;
+  return (
+    <div className="flex items-start gap-2 py-1.5 border-b border-border/30 last:border-0">
+      {icon && <span className="text-muted-foreground mt-0.5">{icon}</span>}
+      <span className="text-xs text-muted-foreground w-32 shrink-0">{label}</span>
+      <span className="text-xs text-foreground font-medium break-all">{value}</span>
+    </div>
+  );
+}
+
+function Section({ title, icon, children, defaultOpen = false }: { title: string; icon: React.ReactNode; children: React.ReactNode; defaultOpen?: boolean }) {
+  const [open, setOpen] = useState(defaultOpen);
+  return (
+    <div className="border border-border/50 rounded-lg overflow-hidden">
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center gap-2 px-3 py-2.5 bg-muted/30 hover:bg-muted/50 transition-colors text-left"
+      >
+        <span className="text-primary">{icon}</span>
+        <span className="text-xs font-semibold text-foreground flex-1">{title}</span>
+        {open ? <ChevronUp className="w-3.5 h-3.5 text-muted-foreground" /> : <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />}
+      </button>
+      {open && <div className="px-3 py-2">{children}</div>}
+    </div>
+  );
+}
+
+function formatDuration(seconds: number): string {
+  if (seconds < 60) return `${seconds}s`;
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return `${m}m ${s}s`;
+}
+
+export default function LeadAttributionPanel({ leadId }: LeadAttributionPanelProps) {
+  const [data, setData] = useState<AttributionRow | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetch() {
+      const { data: rows, error } = await supabase
+        .from("lead_attribution")
+        .select("*")
+        .eq("lead_id", leadId)
+        .limit(1);
+
+      if (!error && rows && rows.length > 0) {
+        setData(rows[0] as unknown as AttributionRow);
+      }
+      setLoading(false);
+    }
+    fetch();
+  }, [leadId]);
+
+  if (loading) {
+    return (
+      <div className="rounded-xl border border-border bg-card p-4">
+        <div className="animate-pulse space-y-2">
+          <div className="h-4 bg-muted rounded w-1/3" />
+          <div className="h-3 bg-muted rounded w-2/3" />
+          <div className="h-3 bg-muted rounded w-1/2" />
+        </div>
+      </div>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div className="rounded-xl border border-border bg-card p-4">
+        <p className="text-xs text-muted-foreground">No attribution data available for this lead.</p>
+      </div>
+    );
+  }
+
+  const deviceIcon = data.device_type === "mobile" ? <Smartphone className="w-3.5 h-3.5" /> :
+    data.device_type === "tablet" ? <Tablet className="w-3.5 h-3.5" /> :
+    <Monitor className="w-3.5 h-3.5" />;
+
+  return (
+    <div className="rounded-xl border border-border bg-card overflow-hidden">
+      <div className="px-4 py-3 bg-muted/40 border-b border-border">
+        <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+          <Fingerprint className="w-4 h-4 text-primary" />
+          Attribution & Behavioral Intelligence
+        </h3>
+        <p className="text-[10px] text-muted-foreground mt-0.5">
+          Captured {new Date(data.created_at).toLocaleString()}
+        </p>
+      </div>
+
+      <div className="p-3 space-y-2">
+        {/* Marketing Attribution */}
+        <Section title="Marketing Attribution" icon={<Search className="w-3.5 h-3.5" />} defaultOpen>
+          <DataRow label="UTM Source" value={data.utm_source} />
+          <DataRow label="UTM Medium" value={data.utm_medium} />
+          <DataRow label="UTM Campaign" value={data.utm_campaign} />
+          <DataRow label="UTM Term" value={data.utm_term} />
+          <DataRow label="UTM Content" value={data.utm_content} />
+          <DataRow label="Google Click ID" value={data.gclid} />
+          <DataRow label="Facebook Click ID" value={data.fbclid} />
+          <DataRow label="Microsoft Click ID" value={data.msclkid} />
+          {!data.utm_source && !data.gclid && !data.fbclid && !data.msclkid && (
+            <p className="text-[10px] text-muted-foreground italic py-1">No campaign tracking detected — likely direct or organic traffic.</p>
+          )}
+        </Section>
+
+        {/* Referrer & Landing */}
+        <Section title="Referrer & Landing Page" icon={<Globe className="w-3.5 h-3.5" />}>
+          <DataRow label="Referrer URL" value={data.referrer_url} icon={<Globe className="w-3 h-3" />} />
+          <DataRow label="Landing Page" value={data.landing_page} icon={<MapPin className="w-3 h-3" />} />
+        </Section>
+
+        {/* Device & Environment */}
+        <Section title="Device & Environment" icon={deviceIcon}>
+          <DataRow label="Device" value={data.device_type} icon={deviceIcon} />
+          <DataRow label="Browser" value={data.browser} />
+          <DataRow label="OS" value={data.os} />
+          <DataRow label="Screen" value={data.screen_resolution} />
+          <DataRow label="Viewport" value={data.viewport_size} />
+          <DataRow label="Timezone" value={data.timezone} icon={<Clock className="w-3 h-3" />} />
+          <DataRow label="Language" value={data.browser_language} />
+          <DataRow label="Connection" value={data.connection_type} icon={<Wifi className="w-3 h-3" />} />
+          <DataRow label="Touch Device" value={data.is_touch_device ? "Yes" : "No"} />
+          <DataRow label="Color Depth" value={data.color_depth ? `${data.color_depth}-bit` : null} />
+          <DataRow label="CPU Cores" value={data.hardware_concurrency?.toString()} />
+          <DataRow label="Do Not Track" value={data.do_not_track ? "Enabled" : "Disabled"} />
+          <DataRow label="Ad Blocker" value={data.ad_blocker_detected ? "Detected" : "Not detected"} />
+          <DataRow label="Cookies" value={data.cookies_enabled ? "Enabled" : "Disabled"} />
+        </Section>
+
+        {/* Session Behavior */}
+        <Section title="Session Behavior" icon={<BarChart3 className="w-3.5 h-3.5" />}>
+          <DataRow label="Session Duration" value={data.session_duration_seconds != null ? formatDuration(data.session_duration_seconds) : null} icon={<Clock className="w-3 h-3" />} />
+          <DataRow label="Pages Visited" value={data.pages_visited?.toString()} icon={<Eye className="w-3 h-3" />} />
+          <DataRow label="Visit Count" value={data.visit_count?.toString()} />
+          <DataRow label="Tab Blurs" value={data.tab_blur_count?.toString()} />
+          <DataRow label="Max Scroll" value={data.max_scroll_depth != null ? `${data.max_scroll_depth}%` : null} icon={<MousePointer className="w-3 h-3" />} />
+          {data.page_path_history && data.page_path_history.length > 0 && (
+            <div className="mt-1">
+              <span className="text-[10px] text-muted-foreground font-medium">Page Path:</span>
+              <div className="flex flex-wrap gap-1 mt-1">
+                {data.page_path_history.map((p, i) => (
+                  <span key={i} className="text-[10px] px-1.5 py-0.5 bg-muted rounded font-mono">{p}</span>
+                ))}
+              </div>
+            </div>
+          )}
+        </Section>
+
+        {/* Form Engagement */}
+        <Section title="Form Engagement" icon={<MessageSquare className="w-3.5 h-3.5" />}>
+          <DataRow label="Form Started" value={data.form_started_at ? new Date(data.form_started_at).toLocaleString() : "Not started"} />
+          <DataRow label="Form Completed" value={data.form_completed_at ? new Date(data.form_completed_at).toLocaleString() : "Not completed"} />
+          <DataRow label="Self-Reported Source" value={data.lead_source_self_reported} />
+          <DataRow label="Contact Preference" value={data.preferred_contact_method} />
+          <DataRow label="Move Urgency" value={data.move_urgency} />
+        </Section>
+
+        {/* Consent */}
+        <Section title="Consent & Compliance" icon={<Shield className="w-3.5 h-3.5" />}>
+          <DataRow label="SMS Consent" value={data.sms_consent ? "Granted" : "Not granted"} />
+          <DataRow label="SMS Consent At" value={data.sms_consent_timestamp ? new Date(data.sms_consent_timestamp).toLocaleString() : null} />
+        </Section>
+      </div>
+    </div>
+  );
+}
