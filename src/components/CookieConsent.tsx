@@ -45,6 +45,7 @@ export default function CookieConsent() {
     localStorage.setItem(CONSENT_KEY, "accepted");
     setVisible(false);
     initAttribution();
+    initBehaviorTracking();
     captureAnonymousVisitor();
   };
 
