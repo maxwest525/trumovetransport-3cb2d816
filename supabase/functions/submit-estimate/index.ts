@@ -101,7 +101,7 @@ serve(async (req) => {
           })
           .eq("lead_id", anonymousLeadId);
       } else {
-        // Anonymous lead not found — create fresh
+        // Anonymous lead not found - create fresh
         leadId = await createNewLead(supabase, {
           firstName, lastName, email, phone, fromLocation, toLocation,
           moveDate, totalWeight, estimateMax, estimateMin, totalCubicFeet, items,
