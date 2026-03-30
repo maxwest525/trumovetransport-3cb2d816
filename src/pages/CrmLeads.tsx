@@ -193,11 +193,14 @@ export default function CrmLeads() {
                   </p>
                 </div>
 
-                {/* Date + arrow */}
-                <div className="text-right shrink-0 flex items-center gap-2">
-                  <span className="text-[10px] text-muted-foreground">
-                    {new Date(lead.created_at).toLocaleDateString()}
-                  </span>
+                {/* Claim timer + Date + arrow */}
+                <div className="text-right shrink-0 flex items-center gap-3">
+                  <div className="flex flex-col items-end gap-0.5">
+                    <ClaimTimer createdAt={lead.created_at} claimed={!!lead.assigned_agent_id} />
+                    <span className="text-[10px] text-muted-foreground">
+                      {new Date(lead.created_at).toLocaleDateString()}
+                    </span>
+                  </div>
                   <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
                 </div>
               </button>
