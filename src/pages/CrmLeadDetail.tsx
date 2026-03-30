@@ -77,6 +77,35 @@ export default function CrmLeadDetail() {
   const [deals, setDeals] = useState<Deal[]>([]);
   const [loading, setLoading] = useState(true);
   const [agentName, setAgentName] = useState<string | null>(null);
+  const [claiming, setClaiming] = useState(false);
+
+  const handleClaimLead = async () => {
+    if (!lead || !leadId) return;
+    setClaiming(true);
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      toast.error("You must be logged in to claim a lead.");
+      setClaiming(false);
+      return;
+    }
+    const { error } = await supabase
+      .from("leads")
+      .update({ assigned_agent_id: user.id, status: "contacted" as any })
+      .eq("id", leadId);
+    if (error) {
+      toast.error("Failed to claim lead: " + error.message);
+    } else {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("display_name, email")
+        .eq("id", user.id)
+        .single();
+      setAgentName(profile?.display_name || profile?.email || "You");
+      setLead({ ...lead, assigned_agent_id: user.id, status: "contacted" });
+      toast.success("Lead claimed successfully!");
+    }
+    setClaiming(false);
+  };
 
   useEffect(() => {
     if (!leadId) return;
