@@ -23,15 +23,8 @@ import logoImg from "@/assets/logo.png";
 import trackingLifestyleImg from "@/assets/tracking-lifestyle.png";
 
 // Preview images for value cards
-import previewAiScanner from "@/assets/preview-ai-scanner.jpg";
-import previewCarrierVetting from "@/assets/preview-carrier-vetting.jpg";
-import trudyVideoCall from "@/assets/trudy-video-call.jpg";
-import previewPropertyLookup from "@/assets/preview-property-lookup.jpg";
 import sampleRoomLiving from "@/assets/sample-room-living.jpg";
-import scanRoomPreview from "@/assets/scan-room-preview.jpg";
 import heroFamilyMove from "@/assets/hero-family-move.jpg";
-import videoConsultPreview from "@/assets/video-consult-preview.jpg";
-import trudyVoicePreview from "@/assets/trudy-voice-preview.jpg";
 import contactAgentImg from "@/assets/contact-agent.png";
 import testimonialSarah from "@/assets/testimonial-sarah.jpg";
 import testimonialJames from "@/assets/testimonial-james.jpg";
