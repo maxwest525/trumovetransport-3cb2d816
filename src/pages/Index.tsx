@@ -8,7 +8,7 @@ const useScrollToTop = () => {
     document.title = "AI-Powered Moving Estimates | TruMove";
   }, []);
 };
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import SiteShell from "@/components/layout/SiteShell";
 import AnimatedRouteMap from "@/components/estimate/AnimatedRouteMap";
