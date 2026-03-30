@@ -43,13 +43,10 @@ import { calculateEstimate } from "@/lib/priceCalculator";
 import { markFormStart, markFormComplete, getAttributionData } from "@/lib/leadAttribution";
 import { flushBehaviorData } from "@/lib/behaviorTracker";
 import {
-  Shield, Video, Boxes, CheckCircle, Info, FileText,
-  MapPin, Route, Clock, DollarSign, Headphones, Phone, ArrowRight, ArrowDown, ArrowUp,
-  CalendarIcon, ChevronLeft, Lock, Truck, Sparkles, Star, Users, User,
-  Database, ChevronRight, Radar, CreditCard, ShieldCheck, BarChart3, Zap,
-  Home, Building2, MoveVertical, ArrowUpDown, Scan, ChevronUp, ChevronDown, Camera, Globe,
-  Play, Pause, MapPinned, Calendar, Mail, MessageSquare, AlertTriangle, XCircle, Search } from
-"lucide-react";
+  Shield, Video, CheckCircle, MapPin, Route, Clock, Headphones, Phone, ArrowRight,
+  Lock, Truck, Sparkles, Star, User, Database, Radar, CreditCard, ShieldCheck, Zap,
+  Home, Scan, Calendar, Mail, MessageSquare, AlertTriangle, XCircle, Search
+} from "lucide-react";
 import { MOCK_CARRIERS } from "@/data/mockCarriers";
 
 
