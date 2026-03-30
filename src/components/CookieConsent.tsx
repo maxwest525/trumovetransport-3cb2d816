@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Shield } from "lucide-react";
 import { initAttribution, getAttributionData } from "@/lib/leadAttribution";
+import { initBehaviorTracking } from "@/lib/behaviorTracker";
 import { supabase } from "@/integrations/supabase/client";
 
 const CONSENT_KEY = "tm_tracking_consent";
