@@ -41,7 +41,7 @@ export default function ThankYou() {
               <CheckCircle className="w-14 h-14 text-primary" />
             </div>
             <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-3">
-              Thank You{firstName ? `, ${firstName}` : ""}! 🎉
+              Thank You{firstName ? `, ${firstName}` : ""}!
             </h1>
             <p className="text-lg text-muted-foreground max-w-md mx-auto">
               A specialist will contact you shortly.
