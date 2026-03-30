@@ -107,6 +107,25 @@ export default function CrmLeads() {
 
   const statuses = ["all", "new", "contacted", "qualified", "lost"];
 
+  // KPI calculations
+  const unclaimed = leads.filter(l => !l.assigned_agent_id);
+  const claimed = leads.filter(l => !!l.assigned_agent_id);
+  const now = Date.now();
+
+  // Avg time-to-claim: for claimed leads, use (updated_at - created_at) as proxy
+  const claimTimes = claimed.map(l =>
+    new Date(l.updated_at).getTime() - new Date(l.created_at).getTime()
+  ).filter(t => t > 0 && t < 7 * 24 * 60 * 60 * 1000); // filter outliers > 7 days
+
+  const avgClaimMs = claimTimes.length > 0
+    ? claimTimes.reduce((a, b) => a + b, 0) / claimTimes.length
+    : 0;
+
+  // Oldest unclaimed age
+  const oldestUnclaimedMs = unclaimed.length > 0
+    ? Math.max(...unclaimed.map(l => now - new Date(l.created_at).getTime()))
+    : 0;
+
   return (
     <div className="min-h-screen bg-background">
       {/* Top bar */}
@@ -122,6 +141,44 @@ export default function CrmLeads() {
       </div>
 
       <div className="max-w-6xl mx-auto px-4 py-6 space-y-4">
+        {/* KPI Strip */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <Card className="p-3">
+            <div className="flex items-center gap-2 mb-1">
+              <Users className="w-3.5 h-3.5 text-primary" />
+              <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Total Leads</span>
+            </div>
+            <p className="text-xl font-bold text-foreground">{leads.length}</p>
+          </Card>
+          <Card className="p-3">
+            <div className="flex items-center gap-2 mb-1">
+              <AlertTriangle className="w-3.5 h-3.5 text-yellow-400" />
+              <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Unclaimed</span>
+            </div>
+            <p className={`text-xl font-bold ${unclaimed.length > 0 ? "text-yellow-400" : "text-foreground"}`}>
+              {unclaimed.length}
+            </p>
+          </Card>
+          <Card className="p-3">
+            <div className="flex items-center gap-2 mb-1">
+              <TrendingUp className="w-3.5 h-3.5 text-primary" />
+              <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Avg Claim Time</span>
+            </div>
+            <p className="text-xl font-bold text-foreground font-mono tabular-nums">
+              {avgClaimMs > 0 ? formatElapsed(avgClaimMs) : "-"}
+            </p>
+          </Card>
+          <Card className="p-3">
+            <div className="flex items-center gap-2 mb-1">
+              <Clock className="w-3.5 h-3.5 text-red-400" />
+              <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Oldest Unclaimed</span>
+            </div>
+            <p className={`text-xl font-bold font-mono tabular-nums ${oldestUnclaimedMs > 15 * 60 * 1000 ? "text-red-400" : "text-foreground"}`}>
+              {oldestUnclaimedMs > 0 ? formatElapsed(oldestUnclaimedMs) : "-"}
+            </p>
+          </Card>
+        </div>
+
         {/* Filters */}
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">
