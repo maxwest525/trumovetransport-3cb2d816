@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import {
-  Search, ChevronRight, Users, Filter, ArrowLeft
+  Search, ChevronRight, Users, ArrowLeft, Clock
 } from "lucide-react";
 
 interface LeadRow {
@@ -19,8 +19,52 @@ interface LeadRow {
   status: string;
   tags: string[] | null;
   created_at: string;
+  updated_at: string;
   origin_address: string | null;
   destination_address: string | null;
+  assigned_agent_id: string | null;
+}
+
+function formatElapsed(ms: number): string {
+  const totalSeconds = Math.floor(ms / 1000);
+  if (totalSeconds < 60) return `${totalSeconds}s`;
+  const minutes = Math.floor(totalSeconds / 60);
+  if (minutes < 60) return `${minutes}m ${totalSeconds % 60}s`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ${minutes % 60}m`;
+  const days = Math.floor(hours / 24);
+  return `${days}d ${hours % 24}h`;
+}
+
+function ClaimTimer({ createdAt, claimed }: { createdAt: string; claimed: boolean }) {
+  const [now, setNow] = useState(Date.now());
+
+  useEffect(() => {
+    if (claimed) return;
+    const id = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, [claimed]);
+
+  const elapsed = now - new Date(createdAt).getTime();
+  const label = formatElapsed(elapsed);
+  const isUrgent = elapsed > 5 * 60 * 1000; // >5 min
+  const isCritical = elapsed > 15 * 60 * 1000; // >15 min
+
+  if (claimed) {
+    return (
+      <span className="inline-flex items-center gap-1 text-[10px] text-green-400">
+        <Clock className="w-3 h-3" /> Claimed
+      </span>
+    );
+  }
+
+  return (
+    <span className={`inline-flex items-center gap-1 text-[10px] font-mono tabular-nums ${
+      isCritical ? "text-red-400 animate-pulse" : isUrgent ? "text-yellow-400" : "text-muted-foreground"
+    }`}>
+      <Clock className="w-3 h-3" /> {label}
+    </span>
+  );
 }
 
 const statusColors: Record<string, string> = {
@@ -41,7 +85,7 @@ export default function CrmLeads() {
     async function fetchLeads() {
       const { data } = await supabase
         .from("leads")
-        .select("id, first_name, last_name, email, phone, source, status, tags, created_at, origin_address, destination_address")
+        .select("id, first_name, last_name, email, phone, source, status, tags, created_at, updated_at, origin_address, destination_address, assigned_agent_id")
         .order("created_at", { ascending: false })
         .limit(200);
       if (data) setLeads(data as LeadRow[]);
@@ -149,11 +193,14 @@ export default function CrmLeads() {
                   </p>
                 </div>
 
-                {/* Date + arrow */}
-                <div className="text-right shrink-0 flex items-center gap-2">
-                  <span className="text-[10px] text-muted-foreground">
-                    {new Date(lead.created_at).toLocaleDateString()}
-                  </span>
+                {/* Claim timer + Date + arrow */}
+                <div className="text-right shrink-0 flex items-center gap-3">
+                  <div className="flex flex-col items-end gap-0.5">
+                    <ClaimTimer createdAt={lead.created_at} claimed={!!lead.assigned_agent_id} />
+                    <span className="text-[10px] text-muted-foreground">
+                      {new Date(lead.created_at).toLocaleDateString()}
+                    </span>
+                  </div>
                   <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
                 </div>
               </button>
