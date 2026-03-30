@@ -54,6 +54,7 @@ import { calculateDistance } from "@/lib/distanceCalculator";
 import { formatPhoneNumber, isValidPhoneNumber, getDigitsOnly } from "@/lib/phoneFormat";
 import { calculateEstimate, formatCurrency } from "@/lib/priceCalculator";
 import { markFormStart, markFormComplete, getAttributionData } from "@/lib/leadAttribution";
+import { flushBehaviorData } from "@/lib/behaviorTracker";
 import {
   Shield, Video, Boxes, CheckCircle, Info, FileText,
   MapPin, Route, Clock, DollarSign, Headphones, Phone, ArrowRight, ArrowDown, ArrowUp,
@@ -1020,6 +1021,7 @@ export default function Index() {
     if (canContinue() && step < 3) {
       if (step === 1) {
         markFormComplete();
+        await flushBehaviorData();
         const attribution = getAttributionData();
         const fullName = `${contactFirstName.trim()} ${contactLastName.trim()}`;
         localStorage.setItem("tm_lead", JSON.stringify({

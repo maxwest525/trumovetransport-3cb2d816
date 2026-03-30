@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Shield } from "lucide-react";
 import { initAttribution, getAttributionData } from "@/lib/leadAttribution";
+import { initBehaviorTracking } from "@/lib/behaviorTracker";
 import { supabase } from "@/integrations/supabase/client";
 
 const CONSENT_KEY = "tm_tracking_consent";
@@ -13,6 +14,7 @@ export default function CookieConsent() {
     const consent = localStorage.getItem(CONSENT_KEY);
     if (consent === "accepted") {
       initAttribution();
+      initBehaviorTracking();
     } else if (consent !== "declined") {
       setVisible(true);
     }
@@ -43,6 +45,7 @@ export default function CookieConsent() {
     localStorage.setItem(CONSENT_KEY, "accepted");
     setVisible(false);
     initAttribution();
+    initBehaviorTracking();
     captureAnonymousVisitor();
   };
 

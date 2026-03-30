@@ -640,21 +640,27 @@ export type Database = {
           ad_blocker_detected: boolean | null
           browser: string | null
           browser_language: string | null
+          click_events: Json | null
           color_depth: number | null
           connection_type: string | null
           cookies_enabled: boolean | null
           created_at: string
+          cta_interactions: Json | null
           device_type: string | null
           do_not_track: boolean | null
+          exit_intent_count: number | null
           fbclid: string | null
           form_completed_at: string | null
+          form_field_interactions: Json | null
           form_started_at: string | null
           gclid: string | null
           hardware_concurrency: number | null
+          hover_events: Json | null
           id: string
           ip_geolocation: string | null
           is_touch_device: boolean | null
           landing_page: string | null
+          last_activity_at: string | null
           lead_id: string | null
           lead_source_self_reported: string | null
           max_scroll_depth: number | null
@@ -665,14 +671,18 @@ export type Database = {
           pages_visited: number | null
           pdf_viewer_enabled: boolean | null
           preferred_contact_method: string | null
+          rage_clicks: number | null
           referrer_url: string | null
           screen_resolution: string | null
+          scroll_milestones: Json | null
           session_duration_seconds: number | null
           sms_consent: boolean | null
           sms_consent_ip: string | null
           sms_consent_timestamp: string | null
           tab_blur_count: number | null
           timezone: string | null
+          total_clicks: number | null
+          total_time_on_page: Json | null
           user_agent: string | null
           utm_campaign: string | null
           utm_content: string | null
@@ -686,21 +696,27 @@ export type Database = {
           ad_blocker_detected?: boolean | null
           browser?: string | null
           browser_language?: string | null
+          click_events?: Json | null
           color_depth?: number | null
           connection_type?: string | null
           cookies_enabled?: boolean | null
           created_at?: string
+          cta_interactions?: Json | null
           device_type?: string | null
           do_not_track?: boolean | null
+          exit_intent_count?: number | null
           fbclid?: string | null
           form_completed_at?: string | null
+          form_field_interactions?: Json | null
           form_started_at?: string | null
           gclid?: string | null
           hardware_concurrency?: number | null
+          hover_events?: Json | null
           id?: string
           ip_geolocation?: string | null
           is_touch_device?: boolean | null
           landing_page?: string | null
+          last_activity_at?: string | null
           lead_id?: string | null
           lead_source_self_reported?: string | null
           max_scroll_depth?: number | null
@@ -711,14 +727,18 @@ export type Database = {
           pages_visited?: number | null
           pdf_viewer_enabled?: boolean | null
           preferred_contact_method?: string | null
+          rage_clicks?: number | null
           referrer_url?: string | null
           screen_resolution?: string | null
+          scroll_milestones?: Json | null
           session_duration_seconds?: number | null
           sms_consent?: boolean | null
           sms_consent_ip?: string | null
           sms_consent_timestamp?: string | null
           tab_blur_count?: number | null
           timezone?: string | null
+          total_clicks?: number | null
+          total_time_on_page?: Json | null
           user_agent?: string | null
           utm_campaign?: string | null
           utm_content?: string | null
@@ -732,21 +752,27 @@ export type Database = {
           ad_blocker_detected?: boolean | null
           browser?: string | null
           browser_language?: string | null
+          click_events?: Json | null
           color_depth?: number | null
           connection_type?: string | null
           cookies_enabled?: boolean | null
           created_at?: string
+          cta_interactions?: Json | null
           device_type?: string | null
           do_not_track?: boolean | null
+          exit_intent_count?: number | null
           fbclid?: string | null
           form_completed_at?: string | null
+          form_field_interactions?: Json | null
           form_started_at?: string | null
           gclid?: string | null
           hardware_concurrency?: number | null
+          hover_events?: Json | null
           id?: string
           ip_geolocation?: string | null
           is_touch_device?: boolean | null
           landing_page?: string | null
+          last_activity_at?: string | null
           lead_id?: string | null
           lead_source_self_reported?: string | null
           max_scroll_depth?: number | null
@@ -757,14 +783,18 @@ export type Database = {
           pages_visited?: number | null
           pdf_viewer_enabled?: boolean | null
           preferred_contact_method?: string | null
+          rage_clicks?: number | null
           referrer_url?: string | null
           screen_resolution?: string | null
+          scroll_milestones?: Json | null
           session_duration_seconds?: number | null
           sms_consent?: boolean | null
           sms_consent_ip?: string | null
           sms_consent_timestamp?: string | null
           tab_blur_count?: number | null
           timezone?: string | null
+          total_clicks?: number | null
+          total_time_on_page?: Json | null
           user_agent?: string | null
           utm_campaign?: string | null
           utm_content?: string | null

@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   Globe, Monitor, Smartphone, Tablet, Clock, MapPin, MousePointer,
   Eye, BarChart3, MessageSquare, Shield, ChevronDown, ChevronUp,
-  Search, Fingerprint, Wifi
+  Search, Fingerprint, Wifi, Zap, Target, AlertTriangle
 } from "lucide-react";
 
 interface LeadAttributionPanelProps {
@@ -50,6 +50,17 @@ interface AttributionRow {
   sms_consent: boolean | null;
   sms_consent_timestamp: string | null;
   created_at: string;
+  // Behavioral columns
+  click_events: any[] | null;
+  hover_events: any[] | null;
+  cta_interactions: any[] | null;
+  form_field_interactions: any[] | null;
+  rage_clicks: number | null;
+  total_clicks: number | null;
+  exit_intent_count: number | null;
+  scroll_milestones: number[] | null;
+  total_time_on_page: Record<string, number> | null;
+  last_activity_at: string | null;
 }
 
 function DataRow({ label, value, icon }: { label: string; value: string | null | undefined; icon?: React.ReactNode }) {
@@ -63,7 +74,7 @@ function DataRow({ label, value, icon }: { label: string; value: string | null |
   );
 }
 
-function Section({ title, icon, children, defaultOpen = false }: { title: string; icon: React.ReactNode; children: React.ReactNode; defaultOpen?: boolean }) {
+function Section({ title, icon, children, defaultOpen = false, badge }: { title: string; icon: React.ReactNode; children: React.ReactNode; defaultOpen?: boolean; badge?: string }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
     <div className="border border-border/50 rounded-lg overflow-hidden">
@@ -73,6 +84,7 @@ function Section({ title, icon, children, defaultOpen = false }: { title: string
       >
         <span className="text-primary">{icon}</span>
         <span className="text-xs font-semibold text-foreground flex-1">{title}</span>
+        {badge && <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-primary/10 text-primary font-bold">{badge}</span>}
         {open ? <ChevronUp className="w-3.5 h-3.5 text-muted-foreground" /> : <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />}
       </button>
       {open && <div className="px-3 py-2">{children}</div>}
@@ -131,6 +143,18 @@ export default function LeadAttributionPanel({ leadId }: LeadAttributionPanelPro
     data.device_type === "tablet" ? <Tablet className="w-3.5 h-3.5" /> :
     <Monitor className="w-3.5 h-3.5" />;
 
+  const ctaCount = data.cta_interactions?.length || 0;
+  const clickCount = data.total_clicks || 0;
+  const topCTAs = (data.cta_interactions || [])
+    .reduce((acc: Record<string, number>, cta: any) => {
+      const key = cta.label || "Unknown";
+      acc[key] = (acc[key] || 0) + 1;
+      return acc;
+    }, {});
+
+  const totalTimeOnPages = data.total_time_on_page || {};
+  const sortedPages = Object.entries(totalTimeOnPages).sort(([, a], [, b]) => (b as number) - (a as number));
+
   return (
     <div className="rounded-xl border border-border bg-card overflow-hidden">
       <div className="px-4 py-3 bg-muted/40 border-b border-border">
@@ -140,7 +164,23 @@ export default function LeadAttributionPanel({ leadId }: LeadAttributionPanelPro
         </h3>
         <p className="text-[10px] text-muted-foreground mt-0.5">
           Captured {new Date(data.created_at).toLocaleString()}
+          {data.last_activity_at && ` · Last active ${new Date(data.last_activity_at).toLocaleString()}`}
         </p>
+      </div>
+
+      {/* Quick Stats Bar */}
+      <div className="grid grid-cols-4 gap-px bg-border/30">
+        {[
+          { label: "Clicks", value: clickCount.toString(), icon: <MousePointer className="w-3 h-3" /> },
+          { label: "CTAs", value: ctaCount.toString(), icon: <Target className="w-3 h-3" /> },
+          { label: "Rage", value: (data.rage_clicks || 0).toString(), icon: <AlertTriangle className="w-3 h-3" /> },
+          { label: "Exit Intent", value: (data.exit_intent_count || 0).toString(), icon: <Zap className="w-3 h-3" /> },
+        ].map((s) => (
+          <div key={s.label} className="bg-card px-2 py-2 text-center">
+            <div className="flex items-center justify-center gap-1 text-muted-foreground">{s.icon}<span className="text-[9px]">{s.label}</span></div>
+            <p className="text-sm font-bold text-foreground">{s.value}</p>
+          </div>
+        ))}
       </div>
 
       <div className="p-3 space-y-2">
@@ -156,6 +196,38 @@ export default function LeadAttributionPanel({ leadId }: LeadAttributionPanelPro
           <DataRow label="Microsoft Click ID" value={data.msclkid} />
           {!data.utm_source && !data.gclid && !data.fbclid && !data.msclkid && (
             <p className="text-[10px] text-muted-foreground italic py-1">No campaign tracking detected — likely direct or organic traffic.</p>
+          )}
+        </Section>
+
+        {/* CTA Interactions */}
+        <Section title="CTA Interactions" icon={<Target className="w-3.5 h-3.5" />} badge={ctaCount > 0 ? `${ctaCount}` : undefined}>
+          {Object.entries(topCTAs).length > 0 ? (
+            <div className="space-y-1">
+              {Object.entries(topCTAs).sort(([, a], [, b]) => (b as number) - (a as number)).slice(0, 15).map(([label, count]) => (
+                <div key={label} className="flex items-center justify-between py-1 border-b border-border/20 last:border-0">
+                  <span className="text-[11px] text-foreground truncate max-w-[200px]">{label}</span>
+                  <span className="text-[10px] font-bold text-primary">{count as number}×</span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-[10px] text-muted-foreground italic py-1">No CTA interactions recorded yet.</p>
+          )}
+        </Section>
+
+        {/* Time on Page */}
+        <Section title="Time on Page" icon={<Clock className="w-3.5 h-3.5" />} badge={sortedPages.length > 0 ? `${sortedPages.length} pages` : undefined}>
+          {sortedPages.length > 0 ? (
+            <div className="space-y-1">
+              {sortedPages.slice(0, 10).map(([path, seconds]) => (
+                <div key={path} className="flex items-center justify-between py-1 border-b border-border/20 last:border-0">
+                  <span className="text-[11px] text-foreground font-mono truncate max-w-[180px]">{path}</span>
+                  <span className="text-[10px] font-bold text-muted-foreground">{formatDuration(seconds as number)}</span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-[10px] text-muted-foreground italic py-1">No page time data yet.</p>
           )}
         </Section>
 
@@ -190,6 +262,9 @@ export default function LeadAttributionPanel({ leadId }: LeadAttributionPanelPro
           <DataRow label="Visit Count" value={data.visit_count?.toString()} />
           <DataRow label="Tab Blurs" value={data.tab_blur_count?.toString()} />
           <DataRow label="Max Scroll" value={data.max_scroll_depth != null ? `${data.max_scroll_depth}%` : null} icon={<MousePointer className="w-3 h-3" />} />
+          <DataRow label="Scroll Milestones" value={data.scroll_milestones && data.scroll_milestones.length > 0 ? data.scroll_milestones.map(m => `${m}%`).join(", ") : null} />
+          <DataRow label="Rage Clicks" value={data.rage_clicks ? `${data.rage_clicks} detected` : "None"} />
+          <DataRow label="Exit Intents" value={data.exit_intent_count ? `${data.exit_intent_count} detected` : "None"} />
           {data.page_path_history && data.page_path_history.length > 0 && (
             <div className="mt-1">
               <span className="text-[10px] text-muted-foreground font-medium">Page Path:</span>
@@ -202,13 +277,26 @@ export default function LeadAttributionPanel({ leadId }: LeadAttributionPanelPro
           )}
         </Section>
 
-        {/* Form Engagement */}
-        <Section title="Form Engagement" icon={<MessageSquare className="w-3.5 h-3.5" />}>
+        {/* Form Field Interactions */}
+        <Section title="Form Field Interactions" icon={<MessageSquare className="w-3.5 h-3.5" />} badge={data.form_field_interactions?.length ? `${data.form_field_interactions.length}` : undefined}>
           <DataRow label="Form Started" value={data.form_started_at ? new Date(data.form_started_at).toLocaleString() : "Not started"} />
           <DataRow label="Form Completed" value={data.form_completed_at ? new Date(data.form_completed_at).toLocaleString() : "Not completed"} />
           <DataRow label="Self-Reported Source" value={data.lead_source_self_reported} />
           <DataRow label="Contact Preference" value={data.preferred_contact_method} />
           <DataRow label="Move Urgency" value={data.move_urgency} />
+          {data.form_field_interactions && data.form_field_interactions.length > 0 && (
+            <div className="mt-2">
+              <span className="text-[10px] text-muted-foreground font-medium">Field Activity:</span>
+              <div className="mt-1 space-y-0.5 max-h-32 overflow-y-auto">
+                {(data.form_field_interactions as any[]).filter((f: any) => f.event === "blur" && f.timeSpent).slice(-10).map((f: any, i: number) => (
+                  <div key={i} className="flex items-center justify-between text-[10px] py-0.5">
+                    <span className="text-foreground font-mono">{f.field}</span>
+                    <span className="text-muted-foreground">{f.timeSpent ? `${(f.timeSpent / 1000).toFixed(1)}s` : "—"}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </Section>
 
         {/* Consent */}
