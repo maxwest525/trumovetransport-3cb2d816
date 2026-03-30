@@ -183,6 +183,17 @@ export default function CrmLeadDetail() {
           <Badge variant="outline" className={statusColors[lead.status] || ""}>
             {lead.status.toUpperCase()}
           </Badge>
+          {!lead.assigned_agent_id && (
+            <Button
+              size="sm"
+              onClick={handleClaimLead}
+              disabled={claiming}
+              className="gap-1.5"
+            >
+              <UserCheck className="w-4 h-4" />
+              {claiming ? "Claiming..." : "Claim Lead"}
+            </Button>
+          )}
         </div>
       </div>
 
