@@ -979,7 +979,7 @@ export default function Index() {
     }
   };
 
-  const handleLeadCaptureSubmit = (data: {name: string;email: string;phone: string; leadSource?: string; contactPreference?: string; moveUrgency?: string}) => {
+  const handleLeadCaptureSubmit = (data: {name: string;email: string;phone: string; smsConsent?: boolean}) => {
     setName(data.name);
     setEmail(data.email);
     setPhoneNum(data.phone);
@@ -994,9 +994,8 @@ export default function Index() {
       name: data.name,
       email: data.email,
       phone: data.phone,
-      leadSource: data.leadSource || leadData.leadSource || null,
-      contactPreference: data.contactPreference || leadData.contactPreference || null,
-      moveUrgency: data.moveUrgency || leadData.moveUrgency || null,
+      smsConsent: data.smsConsent || false,
+      smsConsentTimestamp: data.smsConsent ? new Date().toISOString() : null,
       ts: Date.now()
     }));
 
