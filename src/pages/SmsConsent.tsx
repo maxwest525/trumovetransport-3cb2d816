@@ -109,7 +109,7 @@ export default function SmsConsent() {
               <h2 className="text-lg font-bold text-foreground mb-3">Related Policies</h2>
               <ul className="list-none text-muted-foreground space-y-2">
                 <li>
-                  <Link to="/privacy" className="text-primary hover:underline">Privacy Policy</Link> — How we collect, use, and protect your data
+                  <Link to="/privacy" className="text-primary hover:underline">Privacy Policy</Link> - How we collect, use, and protect your data
                 </li>
                 <li>
                   <Link to="/terms" className="text-primary hover:underline">Terms & Conditions</Link> — Full terms governing use of our services
