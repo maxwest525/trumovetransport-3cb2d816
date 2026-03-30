@@ -124,56 +124,8 @@ async function geocodeLocation(location: string): Promise<[number, number] | nul
   return null;
 }
 
-function getStaticMapUrl(coords: [number, number] | null): string {
-  if (!coords) return "";
-  const [lng, lat] = coords;
-  return `https://api.maptiler.com/maps/streets-v2/static/${lng},${lat},13/720x440@2x.png?key=X6zFH8Vcg9bMuUCrXFWU`;
-}
-
-function encodePolyline(points: [number, number][]): string {
-  let lastLat = 0;
-  let lastLng = 0;
-
-  const encodeValue = (value: number) => {
-    let encoded = "";
-    let v = value < 0 ? ~(value << 1) : value << 1;
-
-    while (v >= 0x20) {
-      encoded += String.fromCharCode((0x20 | (v & 0x1f)) + 63);
-      v >>= 5;
-    }
-
-    encoded += String.fromCharCode(v + 63);
-    return encoded;
-  };
-
-  return points
-    .map(([lng, lat]) => {
-      const latE5 = Math.round(lat * 1e5);
-      const lngE5 = Math.round(lng * 1e5);
-      const encodedLat = encodeValue(latE5 - lastLat);
-      const encodedLng = encodeValue(lngE5 - lastLng);
-      lastLat = latE5;
-      lastLng = lngE5;
-      return `${encodedLat}${encodedLng}`;
-    })
-    .join("");
-}
-
-const MOVE_SIZES = [
-{ label: "Studio", value: "Studio" },
-{ label: "1 Bed", value: "1 Bedroom" },
-{ label: "2 Bed", value: "2 Bedroom" },
-{ label: "3 Bed", value: "3 Bedroom" },
-{ label: "4+ Bed", value: "4+ Bedroom" },
-{ label: "Office", value: "Office" }];
 
 
-const FLOOR_OPTIONS = [
-{ label: "Ground/1st", value: 1 },
-{ label: "2nd", value: 2 },
-{ label: "3rd", value: 3 },
-{ label: "4th+", value: 4 }];
 
 
 // AI Messages based on context
