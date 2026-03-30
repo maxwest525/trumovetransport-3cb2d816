@@ -482,7 +482,7 @@ export default function Index() {
   useScrollToTop();
   const navigate = useNavigate();
   const quoteBuilderRef = useRef<HTMLDivElement>(null);
-  const heroSectionRef = useRef<HTMLElement>(null);
+  
 
   // Scroll-triggered animation for hero content
   const [heroContentRef, isHeroInView] = useScrollAnimation<HTMLDivElement>({
