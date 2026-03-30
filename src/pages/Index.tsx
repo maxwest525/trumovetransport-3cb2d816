@@ -427,69 +427,7 @@ function DetectionList({ visibleCount }: DetectionListProps) {
 
 // Shipment Tracker Section - Compact ELD verification layout
 function ShipmentTrackerSection({ navigate }: {navigate: (path: string) => void;}) {
-  const animationRef = useRef<number>();
-  const [truckProgress, setTruckProgress] = useState(0);
 
-  useEffect(() => {
-    let p = 0;
-    const tick = () => {
-      p += 0.0003;
-      if (p > 1) p = 0;
-      setTruckProgress(p);
-      animationRef.current = requestAnimationFrame(tick);
-    };
-    tick();
-    return () => {if (animationRef.current) cancelAnimationFrame(animationRef.current);};
-  }, []);
-
-  // Route definitions for SVG overlay - recalibrated to map image
-  const routes = useMemo(() => [
-  {
-    color: 'hsl(142, 71%, 45%)',
-    startLabel: 'Los Angeles', endLabel: 'New York',
-    offset: 0, speed: 1,
-    // LA (SW California) → across southern states → up to NYC (NE coast)
-    pts: [[100, 215], [145, 208], [195, 198], [250, 185], [305, 170], [355, 155], [400, 135], [445, 120], [485, 110], [525, 100], [555, 92]] as [number, number][]
-  },
-  {
-    color: 'hsl(35, 90%, 55%)',
-    startLabel: 'Seattle', endLabel: 'Denver',
-    offset: 0.6, speed: 0.7,
-    // Seattle (WA, NW corner) → SE to Denver (CO, central)
-    pts: [[88, 42], [110, 65], [138, 90], [168, 115], [198, 135], [225, 150], [248, 158]] as [number, number][]
-  },
-  {
-    color: 'hsl(280, 65%, 60%)',
-    startLabel: 'Dallas', endLabel: 'Atlanta',
-    offset: 0.15, speed: 0.9,
-    // Dallas (N Texas) → east to Atlanta (N Georgia)
-    pts: [[300, 248], [335, 238], [370, 225], [405, 215], [440, 208], [460, 205]] as [number, number][]
-  }], []);
-
-  // Helper: build smooth SVG path from points
-  const buildPath = (pts: [number, number][]) => {
-    let d = `M ${pts[0][0]} ${pts[0][1]}`;
-    for (let i = 0; i < pts.length - 1; i++) {
-      const xc = (pts[i][0] + pts[i + 1][0]) / 2;
-      const yc = (pts[i][1] + pts[i + 1][1]) / 2;
-      d += ` Q ${pts[i][0]} ${pts[i][1]} ${xc} ${yc}`;
-    }
-    const last = pts[pts.length - 1];
-    d += ` L ${last[0]} ${last[1]}`;
-    return d;
-  };
-
-  // Get truck position along route
-  const getTruckPos = (pts: [number, number][], progress: number): [number, number] => {
-    const segs = pts.length - 1;
-    const sf = progress * segs;
-    const si = Math.min(Math.floor(sf), segs - 1);
-    const t = sf - si;
-    return [
-    pts[si][0] + (pts[si + 1][0] - pts[si][0]) * t,
-    pts[si][1] + (pts[si + 1][1] - pts[si][1]) * t];
-
-  };
 
   return (
     <section className="py-10 md:py-20 relative overflow-hidden">
