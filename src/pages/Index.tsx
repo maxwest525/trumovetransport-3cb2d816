@@ -1290,21 +1290,6 @@ export default function Index() {
                           </div>
                         </div>
 
-                        {/* Move Urgency */}
-                        <div>
-                          <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-1.5 text-center">How soon?</p>
-                          <div className="grid grid-cols-4 gap-1.5">
-                            {[{ label: "ASAP", value: "asap" }, { label: "30 Days", value: "30_days" }, { label: "Flexible", value: "flexible" }, { label: "Browsing", value: "just_browsing" }].map(opt => (
-                              <button
-                                key={opt.value}
-                                type="button"
-                                onClick={() => setMoveUrgency(opt.value)}
-                                className={`rounded-lg border px-2 py-2 text-[10px] font-medium transition-all ${moveUrgency === opt.value ? 'border-primary bg-primary/10 text-primary' : 'border-border text-muted-foreground hover:border-primary/40'}`}>
-                                {opt.label}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
 
                         {formError &&
                       <p className="text-destructive text-xs text-center">{formError}</p>
