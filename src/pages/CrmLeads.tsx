@@ -19,8 +19,52 @@ interface LeadRow {
   status: string;
   tags: string[] | null;
   created_at: string;
+  updated_at: string;
   origin_address: string | null;
   destination_address: string | null;
+  assigned_agent_id: string | null;
+}
+
+function formatElapsed(ms: number): string {
+  const totalSeconds = Math.floor(ms / 1000);
+  if (totalSeconds < 60) return `${totalSeconds}s`;
+  const minutes = Math.floor(totalSeconds / 60);
+  if (minutes < 60) return `${minutes}m ${totalSeconds % 60}s`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ${minutes % 60}m`;
+  const days = Math.floor(hours / 24);
+  return `${days}d ${hours % 24}h`;
+}
+
+function ClaimTimer({ createdAt, claimed }: { createdAt: string; claimed: boolean }) {
+  const [now, setNow] = useState(Date.now());
+
+  useEffect(() => {
+    if (claimed) return;
+    const id = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, [claimed]);
+
+  const elapsed = now - new Date(createdAt).getTime();
+  const label = formatElapsed(elapsed);
+  const isUrgent = elapsed > 5 * 60 * 1000; // >5 min
+  const isCritical = elapsed > 15 * 60 * 1000; // >15 min
+
+  if (claimed) {
+    return (
+      <span className="inline-flex items-center gap-1 text-[10px] text-green-400">
+        <Clock className="w-3 h-3" /> Claimed
+      </span>
+    );
+  }
+
+  return (
+    <span className={`inline-flex items-center gap-1 text-[10px] font-mono tabular-nums ${
+      isCritical ? "text-red-400 animate-pulse" : isUrgent ? "text-yellow-400" : "text-muted-foreground"
+    }`}>
+      <Clock className="w-3 h-3" /> {label}
+    </span>
+  );
 }
 
 const statusColors: Record<string, string> = {
