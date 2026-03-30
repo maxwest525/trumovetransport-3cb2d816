@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import {
-  Search, ChevronRight, Users, Filter, ArrowLeft, Clock
+  Search, ChevronRight, Users, ArrowLeft, Clock
 } from "lucide-react";
 
 interface LeadRow {
