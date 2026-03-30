@@ -8,12 +8,10 @@ const useScrollToTop = () => {
     document.title = "AI-Powered Moving Estimates | TruMove";
   }, []);
 };
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import SiteShell from "@/components/layout/SiteShell";
-import AnimatedRouteMap from "@/components/estimate/AnimatedRouteMap";
 import HeroParticles from "@/components/HeroParticles";
-import LocationAutocomplete from "@/components/LocationAutocomplete";
 import CityZipInput from "@/components/CityZipInput";
 import LeadCaptureModal from "@/components/LeadCaptureModal";
 // Static Street View preview used instead of interactive component
@@ -22,19 +20,11 @@ import AIChatContainer from "@/components/chat/AIChatContainer";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 
 import logoImg from "@/assets/logo.png";
-import eldMapImg from "@/assets/eld-map.jpg";
 import trackingLifestyleImg from "@/assets/tracking-lifestyle.png";
 
 // Preview images for value cards
-import previewAiScanner from "@/assets/preview-ai-scanner.jpg";
-import previewCarrierVetting from "@/assets/preview-carrier-vetting.jpg";
-import trudyVideoCall from "@/assets/trudy-video-call.jpg";
-import previewPropertyLookup from "@/assets/preview-property-lookup.jpg";
 import sampleRoomLiving from "@/assets/sample-room-living.jpg";
-import scanRoomPreview from "@/assets/scan-room-preview.jpg";
 import heroFamilyMove from "@/assets/hero-family-move.jpg";
-import videoConsultPreview from "@/assets/video-consult-preview.jpg";
-import trudyVoicePreview from "@/assets/trudy-voice-preview.jpg";
 import contactAgentImg from "@/assets/contact-agent.png";
 import testimonialSarah from "@/assets/testimonial-sarah.jpg";
 import testimonialJames from "@/assets/testimonial-james.jpg";
@@ -43,26 +33,20 @@ import testimonialMarcus from "@/assets/testimonial-marcus.jpg";
 import testimonialLisa from "@/assets/testimonial-lisa.jpg";
 import testimonialCarlosAna from "@/assets/testimonial-carlos-ana.jpg";
 
-import { Mic } from "lucide-react";
+
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext, type CarouselApi } from "@/components/ui/carousel";
 
 import { calculateDistance } from "@/lib/distanceCalculator";
-import { formatPhoneNumber, isValidPhoneNumber, getDigitsOnly } from "@/lib/phoneFormat";
-import { calculateEstimate, formatCurrency } from "@/lib/priceCalculator";
+import { formatPhoneNumber, isValidPhoneNumber } from "@/lib/phoneFormat";
+import { calculateEstimate } from "@/lib/priceCalculator";
 import { markFormStart, markFormComplete, getAttributionData } from "@/lib/leadAttribution";
 import { flushBehaviorData } from "@/lib/behaviorTracker";
 import {
-  Shield, Video, Boxes, CheckCircle, Info, FileText,
-  MapPin, Route, Clock, DollarSign, Headphones, Phone, ArrowRight, ArrowDown, ArrowUp,
-  CalendarIcon, ChevronLeft, Lock, Truck, Sparkles, Star, Users, User,
-  Database, ChevronRight, Radar, CreditCard, ShieldCheck, BarChart3, Zap,
-  Home, Building2, MoveVertical, ArrowUpDown, Scan, ChevronUp, ChevronDown, Camera, Globe,
-  Play, Pause, MapPinned, Calendar, Mail, MessageSquare, AlertTriangle, XCircle, Search } from
-"lucide-react";
+  Shield, Video, CheckCircle, MapPin, Route, Clock, Headphones, Phone, ArrowRight,
+  Lock, Truck, Sparkles, Star, User, Database, Radar, CreditCard, ShieldCheck, Zap,
+  Home, Scan, Calendar, Mail, MessageSquare, AlertTriangle, XCircle, Search
+} from "lucide-react";
 import { MOCK_CARRIERS } from "@/data/mockCarriers";
 
 
@@ -140,56 +124,8 @@ async function geocodeLocation(location: string): Promise<[number, number] | nul
   return null;
 }
 
-function getStaticMapUrl(coords: [number, number] | null): string {
-  if (!coords) return "";
-  const [lng, lat] = coords;
-  return `https://api.maptiler.com/maps/streets-v2/static/${lng},${lat},13/720x440@2x.png?key=X6zFH8Vcg9bMuUCrXFWU`;
-}
-
-function encodePolyline(points: [number, number][]): string {
-  let lastLat = 0;
-  let lastLng = 0;
-
-  const encodeValue = (value: number) => {
-    let encoded = "";
-    let v = value < 0 ? ~(value << 1) : value << 1;
-
-    while (v >= 0x20) {
-      encoded += String.fromCharCode((0x20 | (v & 0x1f)) + 63);
-      v >>= 5;
-    }
-
-    encoded += String.fromCharCode(v + 63);
-    return encoded;
-  };
-
-  return points
-    .map(([lng, lat]) => {
-      const latE5 = Math.round(lat * 1e5);
-      const lngE5 = Math.round(lng * 1e5);
-      const encodedLat = encodeValue(latE5 - lastLat);
-      const encodedLng = encodeValue(lngE5 - lastLng);
-      lastLat = latE5;
-      lastLng = lngE5;
-      return `${encodedLat}${encodedLng}`;
-    })
-    .join("");
-}
-
-const MOVE_SIZES = [
-{ label: "Studio", value: "Studio" },
-{ label: "1 Bed", value: "1 Bedroom" },
-{ label: "2 Bed", value: "2 Bedroom" },
-{ label: "3 Bed", value: "3 Bedroom" },
-{ label: "4+ Bed", value: "4+ Bedroom" },
-{ label: "Office", value: "Office" }];
 
 
-const FLOOR_OPTIONS = [
-{ label: "Ground/1st", value: 1 },
-{ label: "2nd", value: 2 },
-{ label: "3rd", value: 3 },
-{ label: "4th+", value: 4 }];
 
 
 // AI Messages based on context
@@ -483,102 +419,15 @@ function DetectionList({ visibleCount }: DetectionListProps) {
 
 // Tracking Preview Component - Left column (mirrored layout)
 // Sample route: New York, NY to Los Angeles, CA (cross-country)
-const SAMPLE_ROUTE = {
-  origin: { lat: 40.7128, lng: -74.0060, name: "New York, NY" },
-  destination: { lat: 34.0522, lng: -118.2437, name: "Los Angeles, CA" },
-  truckPosition: { lat: 39.0997, lng: -94.5786 }, // Kansas City, MO - midpoint
-  distance: "2,789 mi",
-  eta: "41h 15m",
-  traffic: "Light",
-  weather: "58°F Clear"
-};
 
-const MAPTILER_STATIC_KEY = 'X6zFH8Vcg9bMuUCrXFWU';
 
-// Supabase URL for edge function proxying
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://nhoagucgcqjfbtifykha.supabase.co';
-
-// Route waypoints from NY to LA (simplified path)
-const ROUTE_WAYPOINTS = [
-{ lat: 40.7128, lng: -74.0060 }, // NYC
-{ lat: 40.4406, lng: -79.9959 }, // Pittsburgh
-{ lat: 39.7684, lng: -86.1581 }, // Indianapolis
-{ lat: 38.6270, lng: -90.1994 }, // St. Louis
-{ lat: 39.0997, lng: -94.5786 }, // Kansas City
-{ lat: 35.4676, lng: -97.5164 }, // Oklahoma City
-{ lat: 35.0844, lng: -106.6504 }, // Albuquerque
-{ lat: 33.4484, lng: -112.0740 }, // Phoenix
-{ lat: 34.0522, lng: -118.2437 } // LA
-];
 
 // Note: useTruckAnimation hook preserved for use on other pages (e.g., live tracking)
 // Homepage now uses static demo preview - no animation needed
 
 // Shipment Tracker Section - Compact ELD verification layout
 function ShipmentTrackerSection({ navigate }: {navigate: (path: string) => void;}) {
-  const animationRef = useRef<number>();
-  const [truckProgress, setTruckProgress] = useState(0);
 
-  useEffect(() => {
-    let p = 0;
-    const tick = () => {
-      p += 0.0003;
-      if (p > 1) p = 0;
-      setTruckProgress(p);
-      animationRef.current = requestAnimationFrame(tick);
-    };
-    tick();
-    return () => {if (animationRef.current) cancelAnimationFrame(animationRef.current);};
-  }, []);
-
-  // Route definitions for SVG overlay - recalibrated to map image
-  const routes = useMemo(() => [
-  {
-    color: 'hsl(142, 71%, 45%)',
-    startLabel: 'Los Angeles', endLabel: 'New York',
-    offset: 0, speed: 1,
-    // LA (SW California) → across southern states → up to NYC (NE coast)
-    pts: [[100, 215], [145, 208], [195, 198], [250, 185], [305, 170], [355, 155], [400, 135], [445, 120], [485, 110], [525, 100], [555, 92]] as [number, number][]
-  },
-  {
-    color: 'hsl(35, 90%, 55%)',
-    startLabel: 'Seattle', endLabel: 'Denver',
-    offset: 0.6, speed: 0.7,
-    // Seattle (WA, NW corner) → SE to Denver (CO, central)
-    pts: [[88, 42], [110, 65], [138, 90], [168, 115], [198, 135], [225, 150], [248, 158]] as [number, number][]
-  },
-  {
-    color: 'hsl(280, 65%, 60%)',
-    startLabel: 'Dallas', endLabel: 'Atlanta',
-    offset: 0.15, speed: 0.9,
-    // Dallas (N Texas) → east to Atlanta (N Georgia)
-    pts: [[300, 248], [335, 238], [370, 225], [405, 215], [440, 208], [460, 205]] as [number, number][]
-  }], []);
-
-  // Helper: build smooth SVG path from points
-  const buildPath = (pts: [number, number][]) => {
-    let d = `M ${pts[0][0]} ${pts[0][1]}`;
-    for (let i = 0; i < pts.length - 1; i++) {
-      const xc = (pts[i][0] + pts[i + 1][0]) / 2;
-      const yc = (pts[i][1] + pts[i + 1][1]) / 2;
-      d += ` Q ${pts[i][0]} ${pts[i][1]} ${xc} ${yc}`;
-    }
-    const last = pts[pts.length - 1];
-    d += ` L ${last[0]} ${last[1]}`;
-    return d;
-  };
-
-  // Get truck position along route
-  const getTruckPos = (pts: [number, number][], progress: number): [number, number] => {
-    const segs = pts.length - 1;
-    const sf = progress * segs;
-    const si = Math.min(Math.floor(sf), segs - 1);
-    const t = sf - si;
-    return [
-    pts[si][0] + (pts[si + 1][0] - pts[si][0]) * t,
-    pts[si][1] + (pts[si + 1][1] - pts[si][1]) * t];
-
-  };
 
   return (
     <section className="py-10 md:py-20 relative overflow-hidden">
@@ -633,7 +482,7 @@ export default function Index() {
   useScrollToTop();
   const navigate = useNavigate();
   const quoteBuilderRef = useRef<HTMLDivElement>(null);
-  const heroSectionRef = useRef<HTMLElement>(null);
+  
 
   // Scroll-triggered animation for hero content
   const [heroContentRef, isHeroInView] = useScrollAnimation<HTMLDivElement>({
@@ -647,19 +496,14 @@ export default function Index() {
   // Step tracking (1-4)
   const [step, setStep] = useState(1);
 
-  // Analyzing transition state
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [analyzePhase, setAnalyzePhase] = useState(0); // 0: origin, 1: destination, 2: route
-  const [fromCoords, setFromCoords] = useState<[number, number] | null>(null);
-  const [toCoords, setToCoords] = useState<[number, number] | null>(null);
-  const [routeProgress, setRouteProgress] = useState(0); // 0-100 for route drawing animation
-  const [routeGeometry, setRouteGeometry] = useState<string | null>(null);
+  const [, setFromCoords] = useState<[number, number] | null>(null);
+  const [, setToCoords] = useState<[number, number] | null>(null);
 
   // UI engagement state - cards expand when user starts typing
   const [isEngaged, setIsEngaged] = useState(false);
 
   // Chat state
-  const [chatOpen, setChatOpen] = useState(false);
+  
 
   // Lead capture modal state
   const [leadCaptureOpen, setLeadCaptureOpen] = useState(false);
