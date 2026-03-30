@@ -503,7 +503,7 @@ export default function Index() {
   const [isEngaged, setIsEngaged] = useState(false);
 
   // Chat state
-  const [chatOpen, setChatOpen] = useState(false);
+  
 
   // Lead capture modal state
   const [leadCaptureOpen, setLeadCaptureOpen] = useState(false);
