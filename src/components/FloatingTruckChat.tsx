@@ -292,7 +292,7 @@ export default function FloatingTruckChat() {
         </div>
       )}
 
-      {/* Mini live transcript ticker — always visible during call */}
+      {/* Mini live transcript ticker - always visible during call */}
       {isConnected && !showTranscript && (
         <button
           onClick={() => setShowTranscript(true)}

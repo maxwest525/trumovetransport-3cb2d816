@@ -101,7 +101,7 @@ serve(async (req) => {
           })
           .eq("lead_id", anonymousLeadId);
       } else {
-        // Anonymous lead not found — create fresh
+        // Anonymous lead not found - create fresh
         leadId = await createNewLead(supabase, {
           firstName, lastName, email, phone, fromLocation, toLocation,
           moveDate, totalWeight, estimateMax, estimateMin, totalCubicFeet, items,
@@ -109,7 +109,7 @@ serve(async (req) => {
         await insertAttribution(supabase, leadId, attribution, { leadSource, contactPreference, moveUrgency, smsConsent, smsConsentTimestamp, smsConsentIp });
       }
     } else {
-      // No anonymous lead — create fresh
+      // No anonymous lead - create fresh
       leadId = await createNewLead(supabase, {
         firstName, lastName, email, phone, fromLocation, toLocation,
         moveDate, totalWeight, estimateMax, estimateMin, totalCubicFeet, items,

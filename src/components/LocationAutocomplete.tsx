@@ -677,7 +677,7 @@ export default function LocationAutocomplete({
       case 'verified':
         return "Street-level match confirmed from autocomplete";
       case 'partial':
-        return "Closest address match found — verify city/state before submitting";
+        return "Closest address match found - verify city/state before submitting";
       case 'unverifiable':
         return "Could not verify this address. Please check for errors";
       default:
@@ -755,7 +755,7 @@ export default function LocationAutocomplete({
                   </span>
                 </TooltipTrigger>
                 <TooltipContent side="left" className="max-w-[200px] bg-popover border border-border z-[150]">
-                  <p className="text-xs">City/ZIP verified — enter a full street address for exact verification</p>
+                  <p className="text-xs">City/ZIP verified - enter a full street address for exact verification</p>
                 </TooltipContent>
               </Tooltip>
             )}
