@@ -1021,6 +1021,7 @@ export default function Index() {
     if (canContinue() && step < 3) {
       if (step === 1) {
         markFormComplete();
+        await flushBehaviorData();
         const attribution = getAttributionData();
         const fullName = `${contactFirstName.trim()} ${contactLastName.trim()}`;
         localStorage.setItem("tm_lead", JSON.stringify({
