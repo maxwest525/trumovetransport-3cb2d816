@@ -80,7 +80,7 @@ export function TruckTrackingMap({
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<L.Map | null>(null);
 
-  // Persistent layer refs — updated in place, never destroyed on progress tick
+  // Persistent layer refs - updated in place, never destroyed on progress tick
   const staticLayersRef = useRef<L.Layer[]>([]);
   const traveledLineRef = useRef<L.Polyline | null>(null);
   const truckMarkerRef = useRef<L.Marker | null>(null);
@@ -151,7 +151,7 @@ export function TruckTrackingMap({
     if (originCoords && destCoords) fetchRoute(originCoords, destCoords);
   }, [originCoords, destCoords, fetchRoute]);
 
-  // Draw STATIC layers (route line, markers, cities) — only when route changes
+  // Draw STATIC layers (route line, markers, cities) - only when route changes
   useEffect(() => {
     const map = mapInstance.current;
     if (!map || routeCoords.length === 0) return;
@@ -236,7 +236,7 @@ export function TruckTrackingMap({
     setCurrentLocationName(`${currentLat.toFixed(4)}°N, ${Math.abs(currentLng).toFixed(4)}°W`);
   }, [progress, routeCoords]);
 
-  // UPDATE dynamic layers in place (truck + traveled line) — no destroy/recreate
+  // UPDATE dynamic layers in place (truck + traveled line) - no destroy/recreate
   useEffect(() => {
     const map = mapInstance.current;
     if (!map || routeCoords.length === 0 || !currentTruckPosition) return;
@@ -277,7 +277,7 @@ export function TruckTrackingMap({
       }).addTo(map);
     }
 
-    // Pan to truck smoothly — use panTo (no zoom animation) to avoid jitter
+    // Pan to truck smoothly - use panTo (no zoom animation) to avoid jitter
     if (isTracking) {
       const targetZoom = internalFollowMode ? 18 : 16;
       const currentZoom = map.getZoom();

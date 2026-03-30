@@ -158,7 +158,7 @@ export default function CrmLeadDetail() {
 
       <div className="max-w-6xl mx-auto px-4 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left column — Contact + Move Info */}
+          {/* Left column - Contact + Move Info */}
           <div className="lg:col-span-2 space-y-6">
             {/* Contact Info */}
             <Card>
@@ -255,7 +255,7 @@ export default function CrmLeadDetail() {
             )}
           </div>
 
-          {/* Right column — Attribution Panel */}
+          {/* Right column - Attribution Panel */}
           <div className="space-y-6">
             <LeadAttributionPanel leadId={leadId!} />
 
