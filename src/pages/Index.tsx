@@ -11,9 +11,7 @@ const useScrollToTop = () => {
 import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import SiteShell from "@/components/layout/SiteShell";
-import AnimatedRouteMap from "@/components/estimate/AnimatedRouteMap";
 import HeroParticles from "@/components/HeroParticles";
-import LocationAutocomplete from "@/components/LocationAutocomplete";
 import CityZipInput from "@/components/CityZipInput";
 import LeadCaptureModal from "@/components/LeadCaptureModal";
 // Static Street View preview used instead of interactive component
