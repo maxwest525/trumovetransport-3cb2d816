@@ -1,16 +1,16 @@
 import { useState } from "react";
-import { User, Phone, Mail, ArrowRight, Lock, Search, MessageSquare } from "lucide-react";
-import { getAttributionData } from "@/lib/leadAttribution";
+import { User, Phone, Mail, ArrowRight, Lock, Shield, CheckSquare } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { formatPhoneNumber, isValidPhoneNumber } from "@/lib/phoneFormat";
 import { markFormStart } from "@/lib/leadAttribution";
 
 interface LeadCaptureModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: { name: string; email: string; phone: string; leadSource?: string; contactPreference?: string; moveUrgency?: string }) => void;
+  onSubmit: (data: { name: string; email: string; phone: string; smsConsent?: boolean }) => void;
   targetFlow: "manual" | "ai";
 }
 
@@ -18,9 +18,7 @@ export default function LeadCaptureModal({ isOpen, onClose, onSubmit, targetFlow
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [leadSource, setLeadSource] = useState("");
-  const [contactPreference, setContactPreference] = useState("");
-  const [moveUrgency, setMoveUrgency] = useState("");
+  const [smsConsent, setSmsConsent] = useState(false);
   const [errors, setErrors] = useState<{ name?: string; email?: string; phone?: string }>({});
 
   const validate = () => {
@@ -35,7 +33,7 @@ export default function LeadCaptureModal({ isOpen, onClose, onSubmit, targetFlow
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validate()) {
-      onSubmit({ name, email, phone, leadSource, contactPreference, moveUrgency });
+      onSubmit({ name, email, phone, smsConsent });
     }
   };
 
@@ -49,7 +47,7 @@ export default function LeadCaptureModal({ isOpen, onClose, onSubmit, targetFlow
         </DialogHeader>
         
         <p className="tru-lead-capture-desc">
-          We need basic contact info to save your progress. This allows us to continue your estimate seamlessly - we'll collect home details in the next step.
+          We need basic contact info to save your progress and send your estimate.
         </p>
 
         <form onSubmit={handleSubmit} className="tru-lead-capture-form">
@@ -98,62 +96,30 @@ export default function LeadCaptureModal({ isOpen, onClose, onSubmit, targetFlow
             {errors.phone && <span className="tru-lead-capture-error">{errors.phone}</span>}
           </div>
 
-          {/* How did you hear about us? */}
-          <div className="tru-lead-capture-field">
-            <label className="tru-lead-capture-label">
-              <Search className="w-3.5 h-3.5" />
-              How did you hear about us?
+          {/* SMS Consent Checkbox + TCPA Disclaimer */}
+          <div className="rounded-lg border border-border/60 bg-muted/30 p-3 space-y-2">
+            <label className="flex items-start gap-2.5 cursor-pointer group">
+              <Checkbox
+                checked={smsConsent}
+                onCheckedChange={(v) => setSmsConsent(v === true)}
+                className="mt-0.5 shrink-0"
+                data-ui-switch="true"
+              />
+              <span className="text-[11px] leading-relaxed text-muted-foreground group-hover:text-foreground transition-colors">
+                By checking this box, I agree to receive SMS text messages from TruMove
+                regarding my request, including estimate updates, document notifications, and
+                account-related information. Message frequency varies. Message and data rates
+                may apply. Reply <strong>HELP</strong> for help or <strong>STOP</strong> to opt out at any time.
+                View our{" "}
+                <a href="/privacy" target="_blank" className="text-primary underline underline-offset-2 hover:text-primary/80">
+                  Privacy Policy
+                </a>{" "}
+                &amp;{" "}
+                <a href="/sms-consent" target="_blank" className="text-primary underline underline-offset-2 hover:text-primary/80">
+                  SMS Terms
+                </a>.
+              </span>
             </label>
-            <select
-              value={leadSource}
-              onChange={(e) => setLeadSource(e.target.value)}
-              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary">
-              <option value="">Select one (optional)</option>
-              <option value="google">Google Search</option>
-              <option value="social_media">Social Media</option>
-              <option value="friend_family">Friend / Family</option>
-              <option value="moving_com">Moving.com</option>
-              <option value="yelp">Yelp</option>
-              <option value="other">Other</option>
-            </select>
-          </div>
-
-          {/* Contact Preference */}
-          <div className="tru-lead-capture-field">
-            <label className="tru-lead-capture-label">
-              <MessageSquare className="w-3.5 h-3.5" />
-              Preferred Contact
-            </label>
-            <div className="grid grid-cols-3 gap-2">
-              {[{ label: "Call", value: "call" }, { label: "Text", value: "text" }, { label: "Email", value: "email" }].map(opt => (
-                <button
-                  key={opt.value}
-                  type="button"
-                  onClick={() => setContactPreference(opt.value)}
-                  className={`rounded-md border px-2 py-1.5 text-xs font-medium transition-all ${contactPreference === opt.value ? 'border-primary bg-primary/10 text-primary' : 'border-input text-muted-foreground hover:border-primary/40'}`}>
-                  {opt.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Move Urgency */}
-          <div className="tru-lead-capture-field">
-            <label className="tru-lead-capture-label">
-              <ArrowRight className="w-3.5 h-3.5" />
-              How soon are you moving?
-            </label>
-            <div className="grid grid-cols-4 gap-1.5">
-              {[{ label: "ASAP", value: "asap" }, { label: "30 Days", value: "30_days" }, { label: "Flexible", value: "flexible" }, { label: "Browsing", value: "just_browsing" }].map(opt => (
-                <button
-                  key={opt.value}
-                  type="button"
-                  onClick={() => setMoveUrgency(opt.value)}
-                  className={`rounded-md border px-1.5 py-1.5 text-[10px] font-medium transition-all ${moveUrgency === opt.value ? 'border-primary bg-primary/10 text-primary' : 'border-input text-muted-foreground hover:border-primary/40'}`}>
-                  {opt.label}
-                </button>
-              ))}
-            </div>
           </div>
 
           <div className="tru-lead-capture-actions">
@@ -166,9 +132,14 @@ export default function LeadCaptureModal({ isOpen, onClose, onSubmit, targetFlow
             </button>
           </div>
 
-          <p className="tru-lead-capture-disclaimer">
-            <Lock className="w-3 h-3" /> Your info is secure and never sold.
-          </p>
+          {/* Trust strip */}
+          <div className="flex items-center justify-center gap-3 pt-1 text-[10px] text-muted-foreground">
+            <span className="flex items-center gap-1"><Lock className="w-3 h-3" /> TLS 1.3</span>
+            <span className="text-border">•</span>
+            <span className="flex items-center gap-1"><Shield className="w-3 h-3" /> FMCSA VERIFIED</span>
+            <span className="text-border">•</span>
+            <span className="flex items-center gap-1"><CheckSquare className="w-3 h-3" /> FIRST PARTY DATA</span>
+          </div>
         </form>
       </DialogContent>
     </Dialog>
