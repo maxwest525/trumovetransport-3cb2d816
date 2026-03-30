@@ -4,9 +4,8 @@ import { useConversation } from '@elevenlabs/react';
 import { Hand, ChevronLeft, Mic, PhoneOff, Loader2, X, Copy, Download, Check, MessageCircle } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { toast } from '@/hooks/use-toast';
+import { fetchElevenLabsConversationToken } from '@/lib/elevenlabsConversation';
 import VoiceWaveform from './VoiceWaveform';
-
-const TRUDY_AGENT_ID = 'agent_0501khwa2t2pfj0s3echetmjhx4n';
 
 interface TranscriptEntry {
   id: number;
@@ -117,10 +116,13 @@ export default function FloatingTruckChat() {
     setIsConnecting(true);
     try {
       await navigator.mediaDevices.getUserMedia({ audio: true });
-      await conversation.startSession({ agentId: TRUDY_AGENT_ID, connectionType: 'webrtc' });
+      const conversationToken = await fetchElevenLabsConversationToken();
+      await conversation.startSession({ conversationToken, connectionType: 'webrtc' });
     } catch (err: any) {
       if (err.name === 'NotAllowedError') {
         toast({ variant: 'destructive', title: 'Microphone Required', description: 'Allow mic access to talk with Trudy.' });
+      } else {
+        toast({ variant: 'destructive', title: 'Connection Error', description: err?.message || 'Failed to connect to Trudy.' });
       }
     } finally {
       setIsConnecting(false);
