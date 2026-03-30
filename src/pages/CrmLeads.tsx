@@ -85,7 +85,7 @@ export default function CrmLeads() {
     async function fetchLeads() {
       const { data } = await supabase
         .from("leads")
-        .select("id, first_name, last_name, email, phone, source, status, tags, created_at, origin_address, destination_address")
+        .select("id, first_name, last_name, email, phone, source, status, tags, created_at, updated_at, origin_address, destination_address, assigned_agent_id")
         .order("created_at", { ascending: false })
         .limit(200);
       if (data) setLeads(data as LeadRow[]);
