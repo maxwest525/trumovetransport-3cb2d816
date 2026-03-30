@@ -112,7 +112,7 @@ export default function SmsConsent() {
                   <Link to="/privacy" className="text-primary hover:underline">Privacy Policy</Link> - How we collect, use, and protect your data
                 </li>
                 <li>
-                  <Link to="/terms" className="text-primary hover:underline">Terms & Conditions</Link> — Full terms governing use of our services
+                  <Link to="/terms" className="text-primary hover:underline">Terms & Conditions</Link> - Full terms governing use of our services
                 </li>
               </ul>
             </div>

@@ -291,7 +291,7 @@ export default function LeadAttributionPanel({ leadId }: LeadAttributionPanelPro
                 {(data.form_field_interactions as any[]).filter((f: any) => f.event === "blur" && f.timeSpent).slice(-10).map((f: any, i: number) => (
                   <div key={i} className="flex items-center justify-between text-[10px] py-0.5">
                     <span className="text-foreground font-mono">{f.field}</span>
-                    <span className="text-muted-foreground">{f.timeSpent ? `${(f.timeSpent / 1000).toFixed(1)}s` : "—"}</span>
+                    <span className="text-muted-foreground">{f.timeSpent ? `${(f.timeSpent / 1000).toFixed(1)}s` : "-"}</span>
                   </div>
                 ))}
               </div>

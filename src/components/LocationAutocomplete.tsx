@@ -755,7 +755,7 @@ export default function LocationAutocomplete({
                   </span>
                 </TooltipTrigger>
                 <TooltipContent side="left" className="max-w-[200px] bg-popover border border-border z-[150]">
-                  <p className="text-xs">City/ZIP verified — enter a full street address for exact verification</p>
+                  <p className="text-xs">City/ZIP verified - enter a full street address for exact verification</p>
                 </TooltipContent>
               </Tooltip>
             )}
