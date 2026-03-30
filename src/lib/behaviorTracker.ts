@@ -1,5 +1,5 @@
 /**
- * Behavior Tracker — captures clicks, hovers, CTA interactions,
+ * Behavior Tracker - captures clicks, hovers, CTA interactions,
  * form field engagement, rage clicks, exit intent, scroll milestones,
  * and time-on-page per route. All data is buffered and synced to
  * the anonymous lead's attribution record periodically.
