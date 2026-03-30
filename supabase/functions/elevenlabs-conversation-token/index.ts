@@ -30,9 +30,8 @@ serve(async (req) => {
     console.log("Fetching conversation token for agent:", ELEVENLABS_AGENT_ID);
 
     const response = await fetch(
-      `https://api.elevenlabs.io/v1/convai/conversation/get-signed-url?agent_id=${ELEVENLABS_AGENT_ID}`,
+      `https://api.elevenlabs.io/v1/convai/conversation/token?agent_id=${ELEVENLABS_AGENT_ID}`,
       {
-        method: "GET",
         headers: {
           "xi-api-key": ELEVENLABS_API_KEY,
         },
@@ -41,24 +40,32 @@ serve(async (req) => {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error("ElevenLabs API error:", response.status, errorText);
+      console.error("ElevenLabs token API error:", response.status, errorText);
       
       const isPermissionError = errorText.includes("missing_permissions") || response.status === 401;
       return new Response(
         JSON.stringify({ 
           error: isPermissionError 
             ? "Voice assistant is temporarily unavailable" 
-            : `ElevenLabs API error: ${response.status}`,
+            : `ElevenLabs token API error: ${response.status}`,
         }),
         { status: response.status, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
     const data = await response.json();
-    console.log("Successfully obtained signed URL");
+    if (!data?.token) {
+      console.error("ElevenLabs token API returned no token", data);
+      return new Response(
+        JSON.stringify({ error: "Failed to generate conversation token" }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    console.log("Successfully obtained conversation token");
 
     return new Response(
-      JSON.stringify({ signed_url: data.signed_url }),
+      JSON.stringify({ token: data.token }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {

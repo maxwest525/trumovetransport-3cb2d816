@@ -4,9 +4,8 @@ import { PhoneOff, Loader2, X, Mic, Copy, Download, Check, Video, ChevronUp, Pho
 import { toast } from '@/hooks/use-toast';
 import { useNavigate, useLocation } from 'react-router-dom';
 import trudyAvatar from '@/assets/trudy-avatar.png';
+import { fetchElevenLabsConversationToken } from '@/lib/elevenlabsConversation';
 import VoiceWaveform from './VoiceWaveform';
-
-const TRUDY_AGENT_ID = 'agent_0501khwa2t2pfj0s3echetmjhx4n';
 
 interface TranscriptEntry {
   id: number;
@@ -76,10 +75,13 @@ export default function ElevenLabsTrudyWidget() {
     setIsConnecting(true);
     try {
       await navigator.mediaDevices.getUserMedia({ audio: true });
-      await conversation.startSession({ agentId: TRUDY_AGENT_ID, connectionType: 'webrtc' });
+      const conversationToken = await fetchElevenLabsConversationToken();
+      await conversation.startSession({ conversationToken, connectionType: 'webrtc' });
     } catch (err: any) {
       if (err.name === 'NotAllowedError') {
         toast({ variant: 'destructive', title: 'Microphone Required', description: 'Allow mic access to talk with Trudy.' });
+      } else {
+        toast({ variant: 'destructive', title: 'Connection Error', description: err?.message || 'Failed to connect to Trudy.' });
       }
     } finally {
       setIsConnecting(false);
