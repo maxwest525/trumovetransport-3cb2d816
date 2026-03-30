@@ -1232,7 +1232,7 @@ export default function Index() {
                           />
                         </div>
 
-                        <div>
+                        <div className="grid grid-cols-2 gap-2">
                           <Popover>
                             <PopoverTrigger asChild>
                               <button
@@ -1254,24 +1254,23 @@ export default function Index() {
                               className="p-3 pointer-events-auto" />
                             </PopoverContent>
                           </Popover>
-                        </div>
 
-                        {/* How did you hear about us? */}
-                        <div className="relative">
-                          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary" />
-                          <select
-                            value={leadSource}
-                            onChange={(e) => setLeadSource(e.target.value)}
-                            className="w-full rounded-lg border border-border bg-background pl-9 pr-3 py-2.5 text-sm text-foreground text-center appearance-none focus:outline-none focus:ring-1 focus:ring-primary">
-                            <option value="">How did you hear about us?</option>
-                            <option value="google">Google Search</option>
-                            <option value="social_media">Social Media</option>
-                            <option value="friend_family">Friend / Family</option>
-                            <option value="moving_com">Moving.com</option>
-                            <option value="yelp">Yelp</option>
-                            <option value="tv_radio">TV / Radio</option>
-                            <option value="other">Other</option>
-                          </select>
+                          <div className="relative">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary" />
+                            <select
+                              value={leadSource}
+                              onChange={(e) => setLeadSource(e.target.value)}
+                              className="w-full rounded-lg border border-border bg-background pl-9 pr-3 py-2.5 text-sm text-foreground text-center appearance-none focus:outline-none focus:ring-1 focus:ring-primary">
+                              <option value="">How'd you hear?</option>
+                              <option value="google">Google Search</option>
+                              <option value="social_media">Social Media</option>
+                              <option value="friend_family">Friend / Family</option>
+                              <option value="moving_com">Moving.com</option>
+                              <option value="yelp">Yelp</option>
+                              <option value="tv_radio">TV / Radio</option>
+                              <option value="other">Other</option>
+                            </select>
+                          </div>
                         </div>
 
                         {/* Contact Preference */}
