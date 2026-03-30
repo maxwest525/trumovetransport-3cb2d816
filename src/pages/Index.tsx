@@ -20,7 +20,6 @@ import AIChatContainer from "@/components/chat/AIChatContainer";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 
 import logoImg from "@/assets/logo.png";
-import eldMapImg from "@/assets/eld-map.jpg";
 import trackingLifestyleImg from "@/assets/tracking-lifestyle.png";
 
 // Preview images for value cards
