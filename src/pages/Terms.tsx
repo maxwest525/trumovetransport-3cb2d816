@@ -144,7 +144,12 @@ export default function Terms() {
             Any dispute arising out of or relating to SMS communications or these Terms shall be resolved by binding arbitration administered by the American Arbitration Association (AAA) under its Consumer Arbitration Rules. You agree to waive any right to participate in a class action lawsuit or class-wide arbitration related to SMS communications or any other matter covered by these Terms.
           </p>
 
-          <h2 className="text-xl font-black text-foreground mt-8 mb-4">16. Contact</h2>
+          <h2 className="text-xl font-black text-foreground mt-8 mb-4">16. AI Voice Agent & ElevenLabs Consent</h2>
+          <p className="text-muted-foreground mb-4">
+            We use ElevenLabs Agents to help power our virtual customer service agents. By clicking "Agree" and each time you interact with this AI agent, you consent to us, ElevenLabs, and each of our service providers (including third-party LLM providers) recording, viewing, storing, and sharing your communications to provide the service, improve our products and services, train machine learning models, and comply with applicable law.
+          </p>
+
+          <h2 className="text-xl font-black text-foreground mt-8 mb-4">17. Contact</h2>
           <p className="text-muted-foreground mb-4">
             For questions about these Terms, contact:<br />
             Email: <a href="mailto:legal@trumove.com" className="text-primary hover:underline">legal@trumove.com</a><br />
