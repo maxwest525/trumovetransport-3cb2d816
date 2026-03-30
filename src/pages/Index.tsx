@@ -496,13 +496,8 @@ export default function Index() {
   // Step tracking (1-4)
   const [step, setStep] = useState(1);
 
-  // Analyzing transition state
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [analyzePhase, setAnalyzePhase] = useState(0); // 0: origin, 1: destination, 2: route
-  const [fromCoords, setFromCoords] = useState<[number, number] | null>(null);
-  const [toCoords, setToCoords] = useState<[number, number] | null>(null);
-  const [routeProgress, setRouteProgress] = useState(0); // 0-100 for route drawing animation
-  const [routeGeometry, setRouteGeometry] = useState<string | null>(null);
+  const [, setFromCoords] = useState<[number, number] | null>(null);
+  const [, setToCoords] = useState<[number, number] | null>(null);
 
   // UI engagement state - cards expand when user starts typing
   const [isEngaged, setIsEngaged] = useState(false);
