@@ -1201,7 +1201,6 @@ export default function Index() {
                               }
                             }}
                             placeholder="Current City / ZIP"
-                            label="Current City"
                             icon={<Home className="w-4 h-4 text-primary" />}
                             className="text-center placeholder:text-center py-2.5 text-sm"
                           />
@@ -1226,7 +1225,6 @@ export default function Index() {
                               }
                             }}
                             placeholder="Moving to City / ZIP"
-                            label="Moving To"
                             icon={<MapPin className="w-4 h-4 text-primary" />}
                             className="text-center placeholder:text-center py-2.5 text-sm"
                           />
