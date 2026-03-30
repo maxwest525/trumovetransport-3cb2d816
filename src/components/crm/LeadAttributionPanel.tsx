@@ -195,7 +195,7 @@ export default function LeadAttributionPanel({ leadId }: LeadAttributionPanelPro
           <DataRow label="Facebook Click ID" value={data.fbclid} />
           <DataRow label="Microsoft Click ID" value={data.msclkid} />
           {!data.utm_source && !data.gclid && !data.fbclid && !data.msclkid && (
-            <p className="text-[10px] text-muted-foreground italic py-1">No campaign tracking detected — likely direct or organic traffic.</p>
+            <p className="text-[10px] text-muted-foreground italic py-1">No campaign tracking detected - likely direct or organic traffic.</p>
           )}
         </Section>
 
