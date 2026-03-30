@@ -677,7 +677,7 @@ export default function LocationAutocomplete({
       case 'verified':
         return "Street-level match confirmed from autocomplete";
       case 'partial':
-        return "Closest address match found — verify city/state before submitting";
+        return "Closest address match found - verify city/state before submitting";
       case 'unverifiable':
         return "Could not verify this address. Please check for errors";
       default:
