@@ -419,33 +419,8 @@ function DetectionList({ visibleCount }: DetectionListProps) {
 
 // Tracking Preview Component - Left column (mirrored layout)
 // Sample route: New York, NY to Los Angeles, CA (cross-country)
-const SAMPLE_ROUTE = {
-  origin: { lat: 40.7128, lng: -74.0060, name: "New York, NY" },
-  destination: { lat: 34.0522, lng: -118.2437, name: "Los Angeles, CA" },
-  truckPosition: { lat: 39.0997, lng: -94.5786 }, // Kansas City, MO - midpoint
-  distance: "2,789 mi",
-  eta: "41h 15m",
-  traffic: "Light",
-  weather: "58°F Clear"
-};
 
-const MAPTILER_STATIC_KEY = 'X6zFH8Vcg9bMuUCrXFWU';
 
-// Supabase URL for edge function proxying
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://nhoagucgcqjfbtifykha.supabase.co';
-
-// Route waypoints from NY to LA (simplified path)
-const ROUTE_WAYPOINTS = [
-{ lat: 40.7128, lng: -74.0060 }, // NYC
-{ lat: 40.4406, lng: -79.9959 }, // Pittsburgh
-{ lat: 39.7684, lng: -86.1581 }, // Indianapolis
-{ lat: 38.6270, lng: -90.1994 }, // St. Louis
-{ lat: 39.0997, lng: -94.5786 }, // Kansas City
-{ lat: 35.4676, lng: -97.5164 }, // Oklahoma City
-{ lat: 35.0844, lng: -106.6504 }, // Albuquerque
-{ lat: 33.4484, lng: -112.0740 }, // Phoenix
-{ lat: 34.0522, lng: -118.2437 } // LA
-];
 
 // Note: useTruckAnimation hook preserved for use on other pages (e.g., live tracking)
 // Homepage now uses static demo preview - no animation needed
