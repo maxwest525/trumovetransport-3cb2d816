@@ -1293,7 +1293,8 @@
   flex-direction: column;
   justify-content: center;
   flex: 1;
-  min-height: 0; /* Allow flex to work properly */
+  min-height: 0;
+  background: hsl(var(--background));
 }
 
 .tru-page-inner {
@@ -1301,6 +1302,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  background: hsl(var(--background));
 }
 
 /* HERO */
