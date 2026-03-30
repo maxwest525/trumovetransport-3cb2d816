@@ -1331,7 +1331,7 @@ export default function Index() {
                           <ArrowRight className="w-4 h-4" />
                         </button>
 
-                        <label className="flex items-start gap-2 text-[10px] leading-snug text-muted-foreground/80 max-w-sm mx-auto cursor-pointer select-none mt-1">
+                        <label className="flex items-start gap-2 text-[10px] leading-snug text-muted-foreground/80 cursor-pointer select-none mt-1">
                           <input
                             type="checkbox"
                             checked={smsConsent}
