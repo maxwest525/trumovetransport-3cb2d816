@@ -39,7 +39,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 
 import { calculateDistance } from "@/lib/distanceCalculator";
 import { formatPhoneNumber, isValidPhoneNumber } from "@/lib/phoneFormat";
-import { calculateEstimate, formatCurrency } from "@/lib/priceCalculator";
+import { calculateEstimate } from "@/lib/priceCalculator";
 import { markFormStart, markFormComplete, getAttributionData } from "@/lib/leadAttribution";
 import { flushBehaviorData } from "@/lib/behaviorTracker";
 import {
