@@ -14,6 +14,7 @@ export default function CookieConsent() {
     const consent = localStorage.getItem(CONSENT_KEY);
     if (consent === "accepted") {
       initAttribution();
+      initBehaviorTracking();
     } else if (consent !== "declined") {
       setVisible(true);
     }
