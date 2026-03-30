@@ -292,12 +292,33 @@ export default function FloatingTruckChat() {
         </div>
       )}
 
-      {/* Minimized active call bar */}
+      {/* Mini live transcript ticker — always visible during call */}
       {isConnected && !showTranscript && (
-        <button onClick={() => setShowTranscript(true)} className="flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 shadow-md hover:bg-accent transition-colors text-xs font-medium text-foreground">
-          <Mic className="h-3.5 w-3.5" />
-          {conversation.isSpeaking ? 'Speaking…' : 'Listening…'}
-          <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+        <button
+          onClick={() => setShowTranscript(true)}
+          className="w-[260px] rounded-xl border border-border bg-card shadow-md overflow-hidden text-left transition-colors hover:border-primary/40"
+        >
+          <div className="flex items-center gap-2 px-3 py-1.5 border-b border-border/50">
+            <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+            <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide flex-1">
+              {conversation.isSpeaking ? 'Trudy speaking…' : 'Listening…'}
+            </span>
+            <MessageCircle className="h-3 w-3 text-muted-foreground" />
+          </div>
+          <div className="px-3 py-2 max-h-16 overflow-hidden space-y-1">
+            {transcript.length === 0 ? (
+              <p className="text-[10px] text-muted-foreground italic">Start speaking…</p>
+            ) : (
+              transcript.slice(-2).map((e) => (
+                <p key={e.id} className="text-[11px] leading-snug truncate">
+                  <span className={`font-semibold ${e.speaker === 'trudy' ? 'text-primary' : 'text-foreground'}`}>
+                    {e.speaker === 'trudy' ? 'Trudy' : 'You'}:
+                  </span>{' '}
+                  <span className="text-muted-foreground">{e.text}</span>
+                </p>
+              ))
+            )}
+          </div>
         </button>
       )}
 
