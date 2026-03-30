@@ -33,7 +33,7 @@ import testimonialMarcus from "@/assets/testimonial-marcus.jpg";
 import testimonialLisa from "@/assets/testimonial-lisa.jpg";
 import testimonialCarlosAna from "@/assets/testimonial-carlos-ana.jpg";
 
-import { Mic } from "lucide-react";
+
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
