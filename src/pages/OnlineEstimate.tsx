@@ -345,6 +345,7 @@ export default function OnlineEstimate() {
 
       if (error) throw error;
 
+      trackQuoteSubmission({ moveType: effectiveMoveType, distance: moveDetails.distance, estimateMin: estimate.min, estimateMax: estimate.max });
       toast({ title: "Estimate submitted!", description: "Our team will reach out shortly with your personalized quote." });
       navigate('/thank-you');
     } catch (err) {

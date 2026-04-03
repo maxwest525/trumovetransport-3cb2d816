@@ -1543,6 +1543,7 @@ export default function Index() {
                           await supabase.functions.invoke("notify-support-ticket", {
                             body: { name: contactFormName, email: contactFormEmail, message: contactFormMessage }
                           });
+                          trackContactForm();
                           setContactFormSent(true);
                         } catch (err) {
                           console.error("Contact form error:", err);

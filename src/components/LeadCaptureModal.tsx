@@ -33,6 +33,7 @@ export default function LeadCaptureModal({ isOpen, onClose, onSubmit, targetFlow
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validate()) {
+      trackLeadCapture(targetFlow);
       onSubmit({ name, email, phone, smsConsent });
     }
   };
