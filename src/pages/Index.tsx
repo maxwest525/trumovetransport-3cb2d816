@@ -1,4 +1,5 @@
 import { useState, useCallback, useMemo, useRef, useEffect } from "react";
+import { trackContactForm } from "@/lib/gtag";
 
 
 // Scroll to top on mount

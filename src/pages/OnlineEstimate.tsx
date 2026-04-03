@@ -1,5 +1,6 @@
 import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { getAttributionData, markFormComplete } from "@/lib/leadAttribution";
+import { trackQuoteSubmission } from "@/lib/gtag";
 import { useNavigate } from "react-router-dom";
 
 // Scroll to top on mount
