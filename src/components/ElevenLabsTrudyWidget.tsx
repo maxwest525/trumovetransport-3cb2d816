@@ -3,6 +3,7 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { PhoneOff, Loader2, X, Mic, Copy, Download, Check, Video, ChevronUp, Phone } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { trackPhoneCall } from '@/lib/gtag';
 import trudyAvatar from '@/assets/trudy-avatar.png';
 import { fetchElevenLabsConversationToken } from '@/lib/elevenlabsConversation';
 import VoiceWaveform from './VoiceWaveform';
@@ -263,7 +264,7 @@ export default function ElevenLabsTrudyWidget() {
         <div className={`flex flex-col items-end gap-1 ${optionsClosing ? 'animate-out fade-out slide-out-to-bottom-2 duration-200 fill-mode-forwards' : ''}`}>
           <a
             href="tel:+16097277647"
-            onClick={() => closeOptions()}
+            onClick={() => { trackPhoneCall('trudy_widget'); closeOptions(); }}
             className={`flex items-center gap-2 rounded-lg border border-border/60 bg-card/80 backdrop-blur-sm shadow-sm px-3.5 py-2 hover:bg-accent transition-all ${
               optionsClosing ? '' : 'animate-in fade-in slide-in-from-top-2 duration-200'
             }`}

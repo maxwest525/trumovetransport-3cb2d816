@@ -1,5 +1,6 @@
 import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { getAttributionData, markFormComplete } from "@/lib/leadAttribution";
+import { trackQuoteSubmission } from "@/lib/gtag";
 import { useNavigate } from "react-router-dom";
 
 // Scroll to top on mount
@@ -345,6 +346,7 @@ export default function OnlineEstimate() {
 
       if (error) throw error;
 
+      trackQuoteSubmission({ moveType: effectiveMoveType, distance: moveDetails.distance, estimateMin: estimate.min, estimateMax: estimate.max });
       toast({ title: "Estimate submitted!", description: "Our team will reach out shortly with your personalized quote." });
       navigate('/thank-you');
     } catch (err) {

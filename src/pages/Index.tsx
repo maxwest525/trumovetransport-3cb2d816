@@ -1,4 +1,5 @@
 import { useState, useCallback, useMemo, useRef, useEffect } from "react";
+import { trackContactForm } from "@/lib/gtag";
 
 
 // Scroll to top on mount
@@ -1543,6 +1544,7 @@ export default function Index() {
                           await supabase.functions.invoke("notify-support-ticket", {
                             body: { name: contactFormName, email: contactFormEmail, message: contactFormMessage }
                           });
+                          trackContactForm();
                           setContactFormSent(true);
                         } catch (err) {
                           console.error("Contact form error:", err);

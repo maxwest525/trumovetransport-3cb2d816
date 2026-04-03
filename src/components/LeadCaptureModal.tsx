@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { formatPhoneNumber, isValidPhoneNumber } from "@/lib/phoneFormat";
 import { markFormStart } from "@/lib/leadAttribution";
+import { trackLeadCapture } from "@/lib/gtag";
 
 interface LeadCaptureModalProps {
   isOpen: boolean;
@@ -33,6 +34,7 @@ export default function LeadCaptureModal({ isOpen, onClose, onSubmit, targetFlow
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validate()) {
+      trackLeadCapture(targetFlow);
       onSubmit({ name, email, phone, smsConsent });
     }
   };
