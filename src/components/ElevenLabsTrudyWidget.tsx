@@ -264,7 +264,7 @@ export default function ElevenLabsTrudyWidget() {
         <div className={`flex flex-col items-end gap-1 ${optionsClosing ? 'animate-out fade-out slide-out-to-bottom-2 duration-200 fill-mode-forwards' : ''}`}>
           <a
             href="tel:+16097277647"
-            onClick={() => closeOptions()}
+            onClick={() => { trackPhoneCall('trudy_widget'); closeOptions(); }}
             className={`flex items-center gap-2 rounded-lg border border-border/60 bg-card/80 backdrop-blur-sm shadow-sm px-3.5 py-2 hover:bg-accent transition-all ${
               optionsClosing ? '' : 'animate-in fade-in slide-in-from-top-2 duration-200'
             }`}
