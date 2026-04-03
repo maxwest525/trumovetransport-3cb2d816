@@ -3,6 +3,7 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { PhoneOff, Loader2, X, Mic, Copy, Download, Check, Video, ChevronUp, Phone } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { trackPhoneCall } from '@/lib/gtag';
 import trudyAvatar from '@/assets/trudy-avatar.png';
 import { fetchElevenLabsConversationToken } from '@/lib/elevenlabsConversation';
 import VoiceWaveform from './VoiceWaveform';
