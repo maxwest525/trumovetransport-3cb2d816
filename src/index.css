@@ -31660,7 +31660,7 @@ gmp-map-3d-element .gmnoprint {
     aspect-ratio: 4/3 !important;
     height: auto !important;
     min-height: 200px !important;
-    max-height: 300px !important;
+    max-height: none !important;
     border: 2px solid hsl(var(--border)) !important;
   }
 
