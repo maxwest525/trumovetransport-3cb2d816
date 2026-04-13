@@ -17044,7 +17044,7 @@
 
 /* Image wrapper - compact height with tight padding */
 .features-carousel-card-image-wrapper {
-  height: 130px;
+  height: 180px;
   width: 100%;
   padding: 4px;
   background: hsl(var(--muted) / 0.3);
@@ -31660,7 +31660,7 @@ gmp-map-3d-element .gmnoprint {
     aspect-ratio: 4/3 !important;
     height: auto !important;
     min-height: 200px !important;
-    max-height: 300px !important;
+    max-height: none !important;
     border: 2px solid hsl(var(--border)) !important;
   }
 
