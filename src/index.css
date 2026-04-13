@@ -17044,7 +17044,7 @@
 
 /* Image wrapper - compact height with tight padding */
 .features-carousel-card-image-wrapper {
-  height: 130px;
+  height: 180px;
   width: 100%;
   padding: 4px;
   background: hsl(var(--muted) / 0.3);
