@@ -32692,7 +32692,7 @@ input[type="checkbox"][role="switch"]:not([data-ui-switch="true"]) {
 
   /* AI Scan scanner image */
   .tru-ai-live-scanner img {
-    max-height: 220px;
+    max-height: none;
     object-fit: cover;
   }
 
@@ -32902,7 +32902,7 @@ input[type="checkbox"][role="switch"]:not([data-ui-switch="true"]) {
 
   /* AI scan section items */
   .tru-ai-live-scanner img {
-    max-height: 180px;
+    max-height: none;
   }
 
   body,
