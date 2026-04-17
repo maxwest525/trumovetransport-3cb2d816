@@ -203,6 +203,13 @@ export default function ScanRoom() {
   // doesn't fire when the customer is just reorganizing folders.
   const [draggedPhotoId, setDraggedPhotoId] = useState<string | null>(null);
   const [dragOverFolder, setDragOverFolder] = useState<string | null>(null);
+  // Multi-select state for batch operations (drag many photos into a folder
+  // at once). `selectionMode` toggles persistent checkboxes; without it,
+  // shift-click on tiles still works to build an ad-hoc selection.
+  const [selectionMode, setSelectionMode] = useState(false);
+  const [selectedPhotoIds, setSelectedPhotoIds] = useState<Set<string>>(new Set());
+  // Anchor for shift-click range selection within the visible flat list.
+  const [lastSelectedPhotoId, setLastSelectedPhotoId] = useState<string | null>(null);
   // Customer-defined folders (e.g. "Garage Loft", "Office"). Stored separately
   // from photos so an empty folder still renders until removed. Seeded from
   // persisted state so the list survives a refresh.
