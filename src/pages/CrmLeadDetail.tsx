@@ -444,21 +444,38 @@ export default function CrmLeadDetail() {
                       <Camera className="w-4 h-4 text-primary" />
                       AI Room Scan Photos ({scanPhotos.length})
                     </CardTitle>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={handleSendResumeLink}
-                      disabled={generatingResumeLink}
-                      className="h-8 text-xs gap-1.5"
-                      title="Generate a one-time link the customer can open to resume their saved scan"
-                    >
-                      {generatingResumeLink ? (
-                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                      ) : (
+                    <div className="flex items-center gap-1.5">
+                      <Button
+                        size="sm"
+                        variant="default"
+                        onClick={() => handleSendResumeLink("email")}
+                        disabled={generatingResumeLink || !lead?.email}
+                        className="h-8 text-xs gap-1.5"
+                        title={
+                          lead?.email
+                            ? `Email a one-time resume link to ${lead.email}`
+                            : "Lead has no email on file"
+                        }
+                      >
+                        {generatingResumeLink ? (
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        ) : (
+                          <Mail className="w-3.5 h-3.5" />
+                        )}
+                        Email resume link
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleSendResumeLink("copy")}
+                        disabled={generatingResumeLink}
+                        className="h-8 text-xs gap-1.5"
+                        title="Generate a one-time link and copy it to your clipboard"
+                      >
                         <Link2 className="w-3.5 h-3.5" />
-                      )}
-                      Send resume link
-                    </Button>
+                        Copy link
+                      </Button>
+                    </div>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
