@@ -142,6 +142,10 @@ export default function ScanRoom() {
     // Customer-defined folder names. Persisted separately from photos so an
     // empty folder still survives a refresh until the user removes it.
     customFolders?: string[];
+    // Per-photo notes keyed by photo id (e.g. "fragile, do not stack").
+    // Persisted alongside the photos so notes survive a refresh and the
+    // server-side save sends them through to the CRM.
+    photoNotes?: Record<string, string>;
     savedAt?: number;
   };
   const loadPersisted = (): PersistedShape | null => {
