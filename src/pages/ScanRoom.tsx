@@ -194,7 +194,7 @@ export default function ScanRoom() {
     } else if (nextStep <= DEMO_TOTAL_STEPS) {
       // Steps 3+: Add items one by one
       const itemIndex = nextStep - 3;
-      setDetectedItems(prev => [...prev, DEMO_ITEMS[itemIndex]]);
+      setDetectedItems(prev => [...prev, { ...DEMO_ITEMS[itemIndex], quantity: 1 }]);
       setDemoStep(nextStep);
       if (nextStep === DEMO_TOTAL_STEPS) {
         setIsScanning(false);
