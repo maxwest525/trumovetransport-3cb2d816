@@ -714,11 +714,24 @@ export default function ScanRoom() {
     });
   };
 
-  // Run real Lovable AI vision detection on user uploaded photos
-  const runRealAiScan = async () => {
-    const realPhotos = uploadedPhotos.filter(p => p.id !== 'demo-photo' && !scannedPhotoIds.has(p.id));
+  // Run real Lovable AI vision detection on user uploaded photos.
+  // Optional `folderName` scopes the scan to a single folder (e.g. "Living Room"
+  // or a custom folder), which powers the per-folder "Scan this room" button.
+  // Without it, every unscanned real photo is processed.
+  const runRealAiScan = async (folderName?: string) => {
+    const realPhotos = uploadedPhotos.filter(p => {
+      if (p.id === 'demo-photo') return false;
+      if (scannedPhotoIds.has(p.id)) return false;
+      if (folderName && parseRoom(p.name) !== folderName) return false;
+      return true;
+    });
     if (realPhotos.length === 0) {
-      toast({ title: "No new photos to scan", description: "Upload room photos first." });
+      toast({
+        title: folderName ? `No new photos in "${folderName}"` : "No new photos to scan",
+        description: folderName
+          ? "Every photo in this folder has already been scanned, or the folder is empty."
+          : "Upload room photos first.",
+      });
       return;
     }
 
