@@ -112,8 +112,24 @@ export default function ScanRoom() {
   useScrollToTop();
   const navigate = useNavigate();
   // Inventory item shape (allows optional photoId + boxIndex from AI scans)
-  type InventoryItem = (typeof DEMO_ITEMS)[number] & { photoId?: string; boxIndex?: number };
+  type InventoryItem = (typeof DEMO_ITEMS)[number] & { quantity: number; photoId?: string; boxIndex?: number };
   const [detectedItems, setDetectedItems] = useState<InventoryItem[]>([]);
+
+  // Merge helper: if an item with same name+room already exists, bump quantity instead of adding a new row
+  const addOrMergeItem = (incoming: Omit<InventoryItem, "quantity"> & { quantity?: number }) => {
+    const addQty = incoming.quantity ?? 1;
+    setDetectedItems(prev => {
+      const key = (n: string, r: string) => `${n.trim().toLowerCase()}|${r.trim().toLowerCase()}`;
+      const targetKey = key(incoming.name, incoming.room);
+      const idx = prev.findIndex(i => key(i.name, i.room) === targetKey);
+      if (idx >= 0) {
+        const next = [...prev];
+        next[idx] = { ...next[idx], quantity: next[idx].quantity + addQty };
+        return next;
+      }
+      return [...prev, { ...incoming, quantity: addQty } as InventoryItem];
+    });
+  };
   const [isScanning, setIsScanning] = useState(false);
   const [showIntroModal, setShowIntroModal] = useState(false);
   const [showClearDialog, setShowClearDialog] = useState(false);
