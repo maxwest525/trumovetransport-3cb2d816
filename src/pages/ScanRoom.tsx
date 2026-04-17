@@ -114,18 +114,32 @@ export default function ScanRoom() {
   const navigate = useNavigate();
   // Inventory item shape (allows optional photoId + boxIndex + confidence from AI scans)
   type InventoryItem = (typeof DEMO_ITEMS)[number] & { quantity: number; photoId?: string; boxIndex?: number; confidence?: number };
+  type AiBox = { id: number; name: string; confidence: number; x: number; y: number; width: number; height: number };
 
-  // Persistent state — survives refresh, navigation, and tab close
+  // Persistent state — survives refresh, navigation, and tab close (auto-expires after 7 days)
   const STORAGE_KEY = "trumove_scan_room_state_v1";
-  const loadPersisted = () => {
+  const PERSIST_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
+  type PersistedScanPhoto = { id: string; url: string; name: string; boxes: AiBox[] };
+  type PersistedShape = {
+    detectedItems?: InventoryItem[];
+    isUnlocked?: boolean;
+    savedLeadId?: string | null;
+    scanHistory?: PersistedScanPhoto[];
+    uploadedPhotos?: { id: string; url: string; name: string }[];
+    scannedPhotoIds?: string[];
+    savedAt?: number;
+  };
+  const loadPersisted = (): PersistedShape | null => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) return null;
-      return JSON.parse(raw) as {
-        detectedItems?: InventoryItem[];
-        isUnlocked?: boolean;
-        savedLeadId?: string | null;
-      };
+      const parsed = JSON.parse(raw) as PersistedShape;
+      // Expire stale data so anonymous browser storage doesn't pile up
+      if (!parsed.savedAt || Date.now() - parsed.savedAt > PERSIST_TTL_MS) {
+        localStorage.removeItem(STORAGE_KEY);
+        return null;
+      }
+      return parsed;
     } catch {
       return null;
     }
@@ -266,12 +280,11 @@ export default function ScanRoom() {
   // Active photo being scanned (drives the live preview in the scanner panel)
   const [activeScanPhoto, setActiveScanPhoto] = useState<{ id: string; url: string; name: string } | null>(null);
   // AI-detected bounding boxes for the active photo (revealed progressively)
-  type AiBox = { id: number; name: string; confidence: number; x: number; y: number; width: number; height: number };
   const [aiBoxes, setAiBoxes] = useState<AiBox[]>([]);
   const [revealedBoxCount, setRevealedBoxCount] = useState(0);
   // History of every photo scanned by the AI (for thumbnails + per-item detection viewer)
   type ScannedPhotoEntry = { id: string; url: string; name: string; boxes: AiBox[] };
-  const [scanHistory, setScanHistory] = useState<ScannedPhotoEntry[]>([]);
+  const [scanHistory, setScanHistory] = useState<ScannedPhotoEntry[]>(persisted?.scanHistory ?? []);
   // Detection viewer modal state
   const [detectionView, setDetectionView] = useState<{ photo: ScannedPhotoEntry; boxId: number } | null>(null);
 
@@ -279,26 +292,71 @@ export default function ScanRoom() {
   const [autoSaveStatus, setAutoSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [savedLeadId, setSavedLeadId] = useState<string | null>(persisted?.savedLeadId ?? null);
 
+  // Resume banner — shown on initial load when persisted scan data was found
+  const [hasResumableScan, setHasResumableScan] = useState<boolean>(
+    !!persisted && (persisted.detectedItems?.length ?? 0) > 0
+  );
+
+  // Clear every trace of the previous scan from state + localStorage
+  const startFreshScan = () => {
+    localStorage.removeItem(STORAGE_KEY);
+    setDetectedItems([]);
+    setScanHistory([]);
+    setUploadedPhotos([]);
+    setScannedPhotoIds(new Set());
+    setActiveScanPhoto(null);
+    setAiBoxes([]);
+    setRevealedBoxCount(0);
+    setSavedLeadId(null);
+    setAutoSaveStatus("idle");
+    setHasResumableScan(false);
+    toast({ title: "Started a fresh scan", description: "Previous scan data was cleared." });
+  };
+
   // Persist key state across refreshes / navigation / tab close
   useEffect(() => {
     try {
-      // Strip volatile blob: URLs from items (they don't survive refresh anyway)
-      const slim = detectedItems.map(({ image, ...rest }) => ({
+      // Strip volatile blob: URLs from items (they don't survive refresh anyway).
+      // Permanent Supabase Storage URLs are kept so thumbnails reload after refresh.
+      const isVolatile = (u?: string) => !u || u.startsWith("blob:");
+      const slimItems = detectedItems.map(({ image, ...rest }) => ({
         ...rest,
-        image: image && image.startsWith("blob:") ? "" : image,
+        image: isVolatile(image) ? "" : image,
       }));
+      // Only keep scan-history entries whose photo URL survives a refresh (i.e. uploaded to Storage)
+      const slimHistory = scanHistory
+        .filter((p) => !isVolatile(p.url))
+        .map((p) => ({ id: p.id, url: p.url, name: p.name, boxes: p.boxes }));
+      const slimUploaded = uploadedPhotos
+        .filter((p) => !isVolatile(p.url) && p.id !== "demo-photo")
+        .map((p) => ({ id: p.id, url: p.url, name: p.name }));
       localStorage.setItem(
         STORAGE_KEY,
         JSON.stringify({
-          detectedItems: slim,
+          detectedItems: slimItems,
           isUnlocked,
           savedLeadId,
+          scanHistory: slimHistory,
+          uploadedPhotos: slimUploaded,
+          scannedPhotoIds: Array.from(scannedPhotoIds).filter((id) => id !== "demo-photo"),
+          savedAt: Date.now(),
         })
       );
     } catch {
       // Quota or serialization failure — non-fatal
     }
-  }, [detectedItems, isUnlocked, savedLeadId]);
+  }, [detectedItems, isUnlocked, savedLeadId, scanHistory, uploadedPhotos, scannedPhotoIds]);
+
+  // Rehydrate uploadedPhotos + scannedPhotoIds on mount (separate so they don't fight initial demo state)
+  useEffect(() => {
+    if (persisted?.uploadedPhotos?.length) {
+      setUploadedPhotos((prev) => (prev.length === 0 ? persisted.uploadedPhotos! : prev));
+    }
+    if (persisted?.scannedPhotoIds?.length) {
+      setScannedPhotoIds((prev) => (prev.size === 0 ? new Set(persisted.scannedPhotoIds) : prev));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Convert image URL (blob:) to base64 data URL for AI vision
   const urlToDataUrl = async (url: string): Promise<string> => {
@@ -569,6 +627,21 @@ export default function ScanRoom() {
 
       setSavedLeadId(data.leadId);
       setAutoSaveStatus("saved");
+
+      // Swap volatile blob: URLs for permanent Supabase Storage URLs so thumbnails + history
+      // survive a refresh. The edge function returns a localId -> publicUrl map.
+      const photoMap = (data.photoMap || {}) as Record<string, string>;
+      if (Object.keys(photoMap).length > 0) {
+        setScanHistory((prev) =>
+          prev.map((p) => (photoMap[p.id] ? { ...p, url: photoMap[p.id] } : p))
+        );
+        setUploadedPhotos((prev) =>
+          prev.map((p) => (photoMap[p.id] ? { ...p, url: photoMap[p.id] } : p))
+        );
+        if (activeScanPhoto && photoMap[activeScanPhoto.id]) {
+          setActiveScanPhoto({ ...activeScanPhoto, url: photoMap[activeScanPhoto.id] });
+        }
+      }
     } catch (e) {
       console.error("Auto-save scan to CRM failed:", e);
       setAutoSaveStatus("error");
@@ -806,6 +879,44 @@ export default function ScanRoom() {
             </div>
           </div>
         </section>
+
+        {/* Resume previous scan banner — appears when persisted scan data is detected on load */}
+        {hasResumableScan && (
+          <section className="px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto -mt-4 mb-6">
+              <div className="rounded-xl border border-primary/30 bg-primary/[0.06] backdrop-blur p-4 md:p-5 flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
+                <div className="flex items-center gap-3 flex-1 min-w-0">
+                  <div className="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
+                    <Clock className="w-5 h-5 text-primary" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-foreground">Welcome back - your previous scan is ready</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      {detectedItems.length} item{detectedItems.length === 1 ? "" : "s"} detected
+                      {scanHistory.length > 0 && ` across ${scanHistory.length} photo${scanHistory.length === 1 ? "" : "s"}`}
+                      . Saved scans expire after 7 days.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 w-full sm:w-auto">
+                  <button
+                    onClick={() => setHasResumableScan(false)}
+                    className="flex-1 sm:flex-none px-4 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 transition-colors"
+                  >
+                    Continue scan
+                  </button>
+                  <button
+                    onClick={startFreshScan}
+                    className="flex-1 sm:flex-none px-4 py-2 rounded-lg border border-border bg-background text-xs font-semibold text-foreground hover:bg-muted transition-colors flex items-center justify-center gap-1.5"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    Start fresh
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* Scan Intro Modal */}
         <ScanIntroModal 

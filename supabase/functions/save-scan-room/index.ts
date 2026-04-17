@@ -193,8 +193,19 @@ serve(async (req) => {
       });
     }
 
+    // Return the local-id -> permanent public URL mapping so the client can rebuild
+    // its scan history with URLs that survive a refresh.
+    const photoMap: Record<string, string> = {};
+    for (const [k, v] of photoIdToUrl.entries()) photoMap[k] = v;
+
     return new Response(
-      JSON.stringify({ success: true, leadId, uploaded: photoIdToUrl.size, items: items.length }),
+      JSON.stringify({
+        success: true,
+        leadId,
+        uploaded: photoIdToUrl.size,
+        items: items.length,
+        photoMap,
+      }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
