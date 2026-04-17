@@ -1306,11 +1306,11 @@ export default function ScanRoom() {
                       type="button"
                       onClick={() => {
                         // Save to localStorage for manual builder sync
-                        const inventoryForBuilder = detectedItems.map((item, idx) => ({
+                        const inventoryForBuilder = detectedItems.map((item) => ({
                           id: `scanned-${item.id}-${Date.now()}`,
                           name: item.name,
                           room: item.room,
-                          quantity: 1,
+                          quantity: item.quantity,
                           weightEach: item.weight,
                           cubicFeet: item.cuft,
                           imageUrl: item.image,
