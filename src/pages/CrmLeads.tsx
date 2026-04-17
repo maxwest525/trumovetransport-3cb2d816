@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import {
-  Search, ChevronRight, Users, ArrowLeft, Clock, AlertTriangle, TrendingUp
+  Search, ChevronRight, Users, ArrowLeft, Clock, AlertTriangle, TrendingUp, Camera
 } from "lucide-react";
 
 interface LeadRow {
@@ -23,6 +23,10 @@ interface LeadRow {
   origin_address: string | null;
   destination_address: string | null;
   assigned_agent_id: string | null;
+  // Stamped by save-scan-room every time the customer touches the room
+  // scanner (auto-save or final submit). Used to surface "fresh scan" badges
+  // so agents can pounce on warm activity.
+  last_scan_activity_at: string | null;
 }
 
 function formatElapsed(ms: number): string {
@@ -34,6 +38,22 @@ function formatElapsed(ms: number): string {
   if (hours < 24) return `${hours}h ${minutes % 60}m`;
   const days = Math.floor(hours / 24);
   return `${days}d ${hours % 24}h`;
+}
+
+// Compact relative-time formatter for the scan-activity badge. Optimized
+// for glanceability in a dense list: "just now" / "5m ago" / "2h ago" /
+// "3d ago" / "Mar 14". Crossing the 7-day threshold drops to a static date
+// because relative time loses meaning past a week of staleness.
+function formatRelativeShort(iso: string): string {
+  const ms = Date.now() - new Date(iso).getTime();
+  if (ms < 60_000) return "just now";
+  const m = Math.floor(ms / 60_000);
+  if (m < 60) return `${m}m ago`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h ago`;
+  const d = Math.floor(h / 24);
+  if (d < 7) return `${d}d ago`;
+  return new Date(iso).toLocaleDateString(undefined, { month: "short", day: "numeric" });
 }
 
 function ClaimTimer({ createdAt, claimed }: { createdAt: string; claimed: boolean }) {
@@ -85,7 +105,7 @@ export default function CrmLeads() {
     async function fetchLeads() {
       const { data } = await supabase
         .from("leads")
-        .select("id, first_name, last_name, email, phone, source, status, tags, created_at, updated_at, origin_address, destination_address, assigned_agent_id")
+        .select("id, first_name, last_name, email, phone, source, status, tags, created_at, updated_at, origin_address, destination_address, assigned_agent_id, last_scan_activity_at")
         .order("created_at", { ascending: false })
         .limit(200);
       if (data) setLeads(data as LeadRow[]);
@@ -233,7 +253,7 @@ export default function CrmLeads() {
 
                 {/* Info */}
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-0.5">
+                  <div className="flex items-center gap-2 mb-0.5 flex-wrap">
                     <p className="text-sm font-semibold text-foreground truncate">
                       {lead.first_name} {lead.last_name}
                     </p>
@@ -243,6 +263,29 @@ export default function CrmLeads() {
                     {lead.tags?.includes("anonymous") && (
                       <Badge variant="secondary" className="text-[10px]">Cookie Lead</Badge>
                     )}
+                    {/* Fresh-scan badge: surfaces save-scan-room activity at a
+                        glance. Highlighted in primary when the customer was
+                        active in the last 10 min so agents can pounce on
+                        warm leads; muted otherwise so older scans still show
+                        context without visual noise. */}
+                    {lead.last_scan_activity_at && (() => {
+                      const ageMs = Date.now() - new Date(lead.last_scan_activity_at).getTime();
+                      const isHot = ageMs < 10 * 60 * 1000;
+                      return (
+                        <Badge
+                          variant="outline"
+                          className={`text-[10px] inline-flex items-center gap-1 ${
+                            isHot
+                              ? "border-primary/40 bg-primary/10 text-primary"
+                              : "border-border text-muted-foreground"
+                          }`}
+                          title={`Last scan activity: ${new Date(lead.last_scan_activity_at).toLocaleString()}`}
+                        >
+                          <Camera className="w-2.5 h-2.5" />
+                          Scan {formatRelativeShort(lead.last_scan_activity_at)}
+                        </Badge>
+                      );
+                    })()}
                   </div>
                   <p className="text-xs text-muted-foreground truncate">
                     {lead.email || lead.phone || "No contact info"}
