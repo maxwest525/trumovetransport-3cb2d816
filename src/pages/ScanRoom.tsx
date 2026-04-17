@@ -244,6 +244,16 @@ export default function ScanRoom() {
   const [newFolderDraft, setNewFolderDraft] = useState("");
   const [renamingFolder, setRenamingFolder] = useState<string | null>(null);
   const [renameDraft, setRenameDraft] = useState("");
+  // Per-photo notes keyed by photo id. Free-text the customer types about a
+  // specific photo (e.g. "fragile, do not stack"). Seeded from persisted state
+  // so notes survive a refresh, and sent to the CRM via save-scan-room.
+  const [photoNotes, setPhotoNotes] = useState<Record<string, string>>(persisted?.photoNotes ?? {});
+  // Which tile currently has its note popover open. Drives the controlled
+  // Popover so we can also clear it after save.
+  const [openNotePhotoId, setOpenNotePhotoId] = useState<string | null>(null);
+  // Working draft inside the popover textarea (kept separate from photoNotes
+  // so cancelling doesn't lose the saved value).
+  const [noteDraft, setNoteDraft] = useState("");
   const roomUploadRef = useRef<HTMLInputElement>(null);
   const allUploadRef = useRef<HTMLInputElement>(null);
 
