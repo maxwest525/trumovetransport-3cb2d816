@@ -115,21 +115,36 @@ export default function ScanRoom() {
   // Inventory item shape (allows optional photoId + boxIndex + confidence from AI scans)
   type InventoryItem = (typeof DEMO_ITEMS)[number] & { quantity: number; photoId?: string; boxIndex?: number; confidence?: number };
 
-  // Persistent state — survives refresh, navigation, and tab close
+  // Persistent state — survives refresh, navigation, and tab close (auto-expires after 7 days)
   const STORAGE_KEY = "trumove_scan_room_state_v1";
-  const loadPersisted = () => {
+  const PERSIST_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
+  type PersistedScanPhoto = { id: string; url: string; name: string; boxes: AiBox[] };
+  type PersistedShape = {
+    detectedItems?: InventoryItem[];
+    isUnlocked?: boolean;
+    savedLeadId?: string | null;
+    scanHistory?: PersistedScanPhoto[];
+    uploadedPhotos?: { id: string; url: string; name: string }[];
+    scannedPhotoIds?: string[];
+    savedAt?: number;
+  };
+  const loadPersisted = (): PersistedShape | null => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) return null;
-      return JSON.parse(raw) as {
-        detectedItems?: InventoryItem[];
-        isUnlocked?: boolean;
-        savedLeadId?: string | null;
-      };
+      const parsed = JSON.parse(raw) as PersistedShape;
+      // Expire stale data so anonymous browser storage doesn't pile up
+      if (!parsed.savedAt || Date.now() - parsed.savedAt > PERSIST_TTL_MS) {
+        localStorage.removeItem(STORAGE_KEY);
+        return null;
+      }
+      return parsed;
     } catch {
       return null;
     }
   };
+  // AiBox needs to be in scope before persisted shape — declared again below for state, this mirror is fine
+  type AiBox = { id: number; name: string; confidence: number; x: number; y: number; width: number; height: number };
   const persisted = loadPersisted();
 
   const [detectedItems, setDetectedItems] = useState<InventoryItem[]>(
