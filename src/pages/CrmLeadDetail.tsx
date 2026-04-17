@@ -70,6 +70,12 @@ interface ResumeToken {
   created_at: string;
   expires_at: string;
   used_at: string | null;
+  verification_method: string | null;
+  phone_last4: string | null;
+  email_hint: string | null;
+  failed_attempts: number | null;
+  redeemed_ip: string | null;
+  redeemed_user_agent: string | null;
 }
 
 const statusColors: Record<string, string> = {
@@ -120,7 +126,9 @@ export default function CrmLeadDetail() {
     if (!leadId) return;
     const { data } = await supabase
       .from("scan_resume_tokens")
-      .select("id, token, created_at, expires_at, used_at")
+      .select(
+        "id, token, created_at, expires_at, used_at, verification_method, phone_last4, email_hint, failed_attempts, redeemed_ip, redeemed_user_agent",
+      )
       .eq("lead_id", leadId)
       .order("created_at", { ascending: false });
     if (data) setResumeTokens(data as ResumeToken[]);
