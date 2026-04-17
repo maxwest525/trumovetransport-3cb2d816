@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import {
   ArrowLeft, User, Mail, Phone, MapPin, Calendar, DollarSign,
   Weight, Tag, Clock, FileText, Truck, UserCheck, Camera, Sparkles, Package, X, Link2, Loader2,
-  Ban, CheckCircle2, AlertCircle, Copy, RefreshCw, FolderOpen,
+  Ban, CheckCircle2, AlertCircle, Copy, RefreshCw, FolderOpen, StickyNote,
 } from "lucide-react";
 import { toast } from "sonner";
 
