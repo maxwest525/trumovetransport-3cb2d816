@@ -196,6 +196,58 @@ export default function ScanRoom() {
   
   // Demo step state: 0=idle, 1=photo added to library, 2=photo in scanner, 3+=items detecting
   const [demoStep, setDemoStep] = useState(0);
+
+  // Resizable split: width of the photo library column in px. Persisted to
+  // localStorage so customers don't have to re-resize on every visit. Clamped
+  // between 320 (still usable) and 720 (don't crush the scanner).
+  const LIBRARY_MIN = 320;
+  const LIBRARY_MAX = 720;
+  const LIBRARY_DEFAULT = 440;
+  const [libraryWidth, setLibraryWidth] = useState<number>(() => {
+    if (typeof window === "undefined") return LIBRARY_DEFAULT;
+    const saved = Number(window.localStorage.getItem("tru-scan-library-width"));
+    if (!Number.isFinite(saved) || saved <= 0) return LIBRARY_DEFAULT;
+    return Math.min(LIBRARY_MAX, Math.max(LIBRARY_MIN, saved));
+  });
+  const splitContainerRef = useRef<HTMLDivElement>(null);
+  const isResizingRef = useRef(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    window.localStorage.setItem("tru-scan-library-width", String(libraryWidth));
+  }, [libraryWidth]);
+
+  const handleSplitPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    isResizingRef.current = true;
+    const container = splitContainerRef.current;
+    if (!container) return;
+    (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
+    document.body.style.cursor = "col-resize";
+    document.body.style.userSelect = "none";
+
+    const onMove = (ev: PointerEvent) => {
+      if (!isResizingRef.current) return;
+      const rect = container.getBoundingClientRect();
+      // Library is on the right; width = container right edge - pointer X
+      // Subtract a small gutter so the handle itself doesn't shift the column.
+      const next = rect.right - ev.clientX - 12;
+      const clamped = Math.min(LIBRARY_MAX, Math.max(LIBRARY_MIN, next));
+      setLibraryWidth(clamped);
+    };
+    const onUp = () => {
+      isResizingRef.current = false;
+      document.body.style.cursor = "";
+      document.body.style.userSelect = "";
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+    };
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp);
+  };
+
+  const resetLibraryWidth = () => setLibraryWidth(LIBRARY_DEFAULT);
+
   const [demoPlaying, setDemoPlaying] = useState(false);
   const isDemoActive = demoStep > 0;
   const DEMO_TOTAL_STEPS = 2 + DEMO_ITEMS.length;
@@ -1406,10 +1458,14 @@ export default function ScanRoom() {
         <section className="px-4 sm:px-6 lg:px-8 pb-10">
           <div className="max-w-7xl mx-auto">
             {/* Layout: shrink the room scanner column and give the photo
-                library the extra width. Library jumps from 280px to 440px
-                so customers see more thumbnails at once and have room for
-                the multi-select toolbar. */}
-            <div className="grid grid-cols-1 lg:grid-cols-[1fr_440px] gap-4 lg:gap-6">
+                library the extra width. The library column is user-resizable
+                via the drag handle - persisted in localStorage. On mobile we
+                fall back to a stacked single-column layout. */}
+            <div
+              ref={splitContainerRef}
+              className="grid grid-cols-1 gap-4 lg:gap-0 lg:grid-cols-[minmax(0,1fr)_8px_var(--tru-library-w)]"
+              style={{ ["--tru-library-w" as string]: `${libraryWidth}px` }}
+            >
 
               {/* Center: Demo & Actions */}
               <div className="flex flex-col items-center justify-center gap-4 border border-border rounded-2xl bg-background shadow-[0_4px_20px_-4px_hsl(var(--tm-ink)/0.08)] relative overflow-hidden">
@@ -1631,6 +1687,21 @@ export default function ScanRoom() {
                     </div>
                   </div>
                 )}
+              </div>
+
+              {/* Drag handle: only shown on lg+ where the split layout exists.
+                  Pointer events drive a px-perfect resize of the library
+                  column; double-click resets to the default width. */}
+              <div
+                role="separator"
+                aria-orientation="vertical"
+                aria-label="Resize photo library"
+                onPointerDown={handleSplitPointerDown}
+                onDoubleClick={resetLibraryWidth}
+                title="Drag to resize - double-click to reset"
+                className="hidden lg:flex group items-center justify-center cursor-col-resize select-none touch-none"
+              >
+                <div className="h-16 w-1 rounded-full bg-border group-hover:bg-primary/60 group-active:bg-primary transition-colors" />
               </div>
 
               {/* Right: Photo Library - Compact */}
