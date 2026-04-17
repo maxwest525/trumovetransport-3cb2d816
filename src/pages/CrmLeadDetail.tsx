@@ -126,25 +126,55 @@ export default function CrmLeadDetail() {
     if (data) setResumeTokens(data as ResumeToken[]);
   };
 
-  const handleSendResumeLink = async () => {
+  const handleSendResumeLink = async (deliveryMethod: "copy" | "email" = "copy") => {
     if (!leadId) return;
+    // Block email delivery early when the lead has no email on file so the agent
+    // gets immediate feedback instead of waiting for the function round-trip.
+    if (deliveryMethod === "email" && !lead?.email) {
+      toast.error("This lead has no email on file");
+      return;
+    }
     setGeneratingResumeLink(true);
     try {
       const { data, error } = await supabase.functions.invoke("create-scan-resume-link", {
-        body: { leadId },
+        body: {
+          leadId,
+          deliveryMethod,
+          // Send the public site URL so the email link points at the customer-facing domain
+          siteUrl: window.location.origin,
+        },
       });
       if (error || !data?.token) {
         toast.error(data?.error || error?.message || "Could not create resume link");
         return;
       }
-      const url = `${window.location.origin}/scan-room?resume=${data.token}`;
-      try {
-        await navigator.clipboard.writeText(url);
-        toast.success("Resume link copied to clipboard", {
-          description: "Single-use link expires in 24 hours.",
-        });
-      } catch {
-        toast.success("Resume link created", { description: url });
+      const url = data.resumeUrl || `${window.location.origin}/scan-room?resume=${data.token}`;
+
+      if (deliveryMethod === "email") {
+        if (data.emailDelivered) {
+          toast.success(`Resume link emailed to ${data.recipientEmail}`, {
+            description: "Single-use link expires in 24 hours.",
+          });
+        } else {
+          // Token was created but email failed — fall back to clipboard so the link isn't lost
+          try {
+            await navigator.clipboard.writeText(url);
+          } catch { /* clipboard may be blocked; link is still in toast */ }
+          toast.warning("Email could not be sent", {
+            description: data.emailError
+              ? `${data.emailError}. Link copied to clipboard instead.`
+              : "Link copied to clipboard instead.",
+          });
+        }
+      } else {
+        try {
+          await navigator.clipboard.writeText(url);
+          toast.success("Resume link copied to clipboard", {
+            description: "Single-use link expires in 24 hours.",
+          });
+        } catch {
+          toast.success("Resume link created", { description: url });
+        }
       }
       // Refresh the list so the new token appears immediately
       fetchResumeTokens();
