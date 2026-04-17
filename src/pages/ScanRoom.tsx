@@ -1689,6 +1689,21 @@ export default function ScanRoom() {
                 )}
               </div>
 
+              {/* Drag handle: only shown on lg+ where the split layout exists.
+                  Pointer events drive a px-perfect resize of the library
+                  column; double-click resets to the default width. */}
+              <div
+                role="separator"
+                aria-orientation="vertical"
+                aria-label="Resize photo library"
+                onPointerDown={handleSplitPointerDown}
+                onDoubleClick={resetLibraryWidth}
+                title="Drag to resize - double-click to reset"
+                className="hidden lg:flex group items-center justify-center cursor-col-resize select-none touch-none"
+              >
+                <div className="h-16 w-1 rounded-full bg-border group-hover:bg-primary/60 group-active:bg-primary transition-colors" />
+              </div>
+
               {/* Right: Photo Library - Compact */}
               <div
                 className={`tru-scan-library-panel tru-scan-library-compact relative transition-colors ${isDraggingFiles ? "ring-2 ring-primary ring-offset-2 ring-offset-background" : ""}`}
