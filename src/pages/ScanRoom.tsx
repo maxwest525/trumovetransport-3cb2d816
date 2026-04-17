@@ -2135,7 +2135,16 @@ export default function ScanRoom() {
                                               every other folder; current folder is excluded.
                                               Stops propagation so the trigger click doesn't
                                               toggle selection or start a drag. */}
-                                          <DropdownMenu>
+                                          <DropdownMenu
+                                            open={longPressMenuPhotoId === photo.id ? true : undefined}
+                                            onOpenChange={(open) => {
+                                              // Clear the long-press latch whenever the menu closes
+                                              // so a new long-press elsewhere can open its own menu.
+                                              if (!open && longPressMenuPhotoId === photo.id) {
+                                                setLongPressMenuPhotoId(null);
+                                              }
+                                            }}
+                                          >
                                             <DropdownMenuTrigger asChild>
                                               <button
                                                 type="button"
