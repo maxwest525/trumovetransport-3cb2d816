@@ -565,11 +565,11 @@ export default function ScanRoom() {
       '',
       item.name,
       item.room,
-      '1',
+      `${item.quantity}`,
       `${item.weight}`,
       `${item.cuft}`,
-      `${item.weight}`,
-      `${item.cuft}`
+      `${item.weight * item.quantity}`,
+      `${item.cuft * item.quantity}`
     ]);
     
     autoTable(doc, {
