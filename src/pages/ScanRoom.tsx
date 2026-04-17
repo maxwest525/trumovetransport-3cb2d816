@@ -111,8 +111,8 @@ const SAMPLE_PREVIEW_ITEMS = [
 export default function ScanRoom() {
   useScrollToTop();
   const navigate = useNavigate();
-  // Inventory item shape (allows optional photoId + boxIndex from AI scans)
-  type InventoryItem = (typeof DEMO_ITEMS)[number] & { quantity: number; photoId?: string; boxIndex?: number };
+  // Inventory item shape (allows optional photoId + boxIndex + confidence from AI scans)
+  type InventoryItem = (typeof DEMO_ITEMS)[number] & { quantity: number; photoId?: string; boxIndex?: number; confidence?: number };
   const [detectedItems, setDetectedItems] = useState<InventoryItem[]>([]);
 
   // Merge helper: if an item with same name+room already exists, bump quantity instead of adding a new row
@@ -124,7 +124,9 @@ export default function ScanRoom() {
       const idx = prev.findIndex(i => key(i.name, i.room) === targetKey);
       if (idx >= 0) {
         const next = [...prev];
-        next[idx] = { ...next[idx], quantity: next[idx].quantity + addQty };
+        // Keep highest confidence when merging duplicates
+        const mergedConfidence = Math.max(next[idx].confidence ?? 0, incoming.confidence ?? 0) || undefined;
+        next[idx] = { ...next[idx], quantity: next[idx].quantity + addQty, confidence: mergedConfidence };
         return next;
       }
       return [...prev, { ...incoming, quantity: addQty } as InventoryItem];
