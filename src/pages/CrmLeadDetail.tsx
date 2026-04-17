@@ -596,33 +596,87 @@ export default function CrmLeadDetail() {
                     );
                   })()}
 
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                    {scanPhotos.map((photo) => (
-                      <button
-                        key={photo.id}
-                        onClick={() => setPhotoViewer(photo)}
-                        className="group relative rounded-lg overflow-hidden border border-border/50 hover:border-primary transition-colors"
-                      >
-                        <img src={photo.photo_url} alt={photo.room_label || "Scan"} className="w-full h-28 object-cover" />
-                        <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/30 transition-colors" />
-                        {/* Note indicator: customer left a note about this
-                            photo. Click the tile to open the viewer and read
-                            the full note. */}
-                        {photo.note && (
-                          <div
-                            className="absolute top-1 right-1 inline-flex items-center justify-center w-5 h-5 rounded-md bg-primary text-primary-foreground shadow-sm"
-                            title={photo.note}
+                  {/* Group photos by folder so agents can scan the customer's
+                      organization at a glance. We use the customer's folder
+                      list as the canonical order, then append any "ad-hoc"
+                      labels that don't match a saved folder, then a final
+                      "Unfiled" bucket for photos with no room_label. Each
+                      group is a collapsible <details> — open by default so
+                      nothing is hidden, but agents can collapse big folders
+                      to focus on what matters. */}
+                  {(() => {
+                    const norm = (s: string | null | undefined) => (s || "").trim().toLowerCase();
+                    const groups = new Map<string, { label: string; photos: ScanPhoto[] }>();
+
+                    // Seed with customer-defined folders so empty folders still render.
+                    for (const f of customFolders) {
+                      groups.set(norm(f), { label: f, photos: [] });
+                    }
+                    // Bucket every photo by its room_label.
+                    for (const p of scanPhotos) {
+                      const key = norm(p.room_label) || "__unfiled__";
+                      const display = key === "__unfiled__" ? "Unfiled" : (p.room_label as string).trim();
+                      const existing = groups.get(key);
+                      if (existing) existing.photos.push(p);
+                      else groups.set(key, { label: display, photos: [p] });
+                    }
+
+                    const ordered = Array.from(groups.values());
+                    if (ordered.length === 0) return null;
+
+                    return (
+                      <div className="space-y-2">
+                        {ordered.map(({ label, photos }) => (
+                          <details
+                            key={label}
+                            open
+                            className="group/folder rounded-lg border border-border/50 bg-muted/20 overflow-hidden"
                           >
-                            <StickyNote className="w-3 h-3" />
-                          </div>
-                        )}
-                        <div className="absolute bottom-0 left-0 right-0 px-2 py-1 bg-foreground/70 text-background flex items-center justify-between">
-                          <span className="text-[10px] font-semibold truncate">{photo.room_label || "Room"}</span>
-                          <span className="text-[10px] flex items-center gap-0.5"><Sparkles className="w-2.5 h-2.5" />{photo.item_count}</span>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
+                            <summary className="flex items-center justify-between gap-2 px-3 py-2 cursor-pointer select-none hover:bg-muted/40 transition-colors list-none [&::-webkit-details-marker]:hidden">
+                              <div className="flex items-center gap-2 min-w-0">
+                                <FolderOpen className="w-3.5 h-3.5 text-primary shrink-0" />
+                                <span className="text-xs font-semibold text-foreground truncate">{label}</span>
+                                <span className="text-[10px] text-muted-foreground">
+                                  ({photos.length} photo{photos.length === 1 ? "" : "s"})
+                                </span>
+                              </div>
+                              <span className="text-[10px] text-muted-foreground transition-transform group-open/folder:rotate-180">▾</span>
+                            </summary>
+                            {photos.length > 0 ? (
+                              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 p-3 pt-2">
+                                {photos.map((photo) => (
+                                  <button
+                                    key={photo.id}
+                                    onClick={() => setPhotoViewer(photo)}
+                                    className="group relative rounded-lg overflow-hidden border border-border/50 hover:border-primary transition-colors"
+                                  >
+                                    <img src={photo.photo_url} alt={photo.room_label || "Scan"} className="w-full h-28 object-cover" />
+                                    <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/30 transition-colors" />
+                                    {photo.note && (
+                                      <div
+                                        className="absolute top-1 right-1 inline-flex items-center justify-center w-5 h-5 rounded-md bg-primary text-primary-foreground shadow-sm"
+                                        title={photo.note}
+                                      >
+                                        <StickyNote className="w-3 h-3" />
+                                      </div>
+                                    )}
+                                    <div className="absolute bottom-0 left-0 right-0 px-2 py-1 bg-foreground/70 text-background flex items-center justify-between">
+                                      <span className="text-[10px] font-semibold truncate">{photo.room_label || "Room"}</span>
+                                      <span className="text-[10px] flex items-center gap-0.5"><Sparkles className="w-2.5 h-2.5" />{photo.item_count}</span>
+                                    </div>
+                                  </button>
+                                ))}
+                              </div>
+                            ) : (
+                              <p className="px-3 pb-3 pt-1 text-[10px] italic text-muted-foreground">
+                                Empty folder — customer hasn't filed any photos here yet.
+                              </p>
+                            )}
+                          </details>
+                        ))}
+                      </div>
+                    );
+                  })()}
 
                   {/* Resume link history — agents can audit and revoke any active link */}
                   {resumeTokens.length > 0 && (
