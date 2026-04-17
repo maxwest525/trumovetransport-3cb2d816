@@ -277,7 +277,28 @@ export default function ScanRoom() {
 
   // Auto-save state — every AI scan automatically pushes to the CRM
   const [autoSaveStatus, setAutoSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
-  const [savedLeadId, setSavedLeadId] = useState<string | null>(null);
+  const [savedLeadId, setSavedLeadId] = useState<string | null>(persisted?.savedLeadId ?? null);
+
+  // Persist key state across refreshes / navigation / tab close
+  useEffect(() => {
+    try {
+      // Strip volatile blob: URLs from items (they don't survive refresh anyway)
+      const slim = detectedItems.map(({ image, ...rest }) => ({
+        ...rest,
+        image: image && image.startsWith("blob:") ? "" : image,
+      }));
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({
+          detectedItems: slim,
+          isUnlocked,
+          savedLeadId,
+        })
+      );
+    } catch {
+      // Quota or serialization failure — non-fatal
+    }
+  }, [detectedItems, isUnlocked, savedLeadId]);
 
   // Convert image URL (blob:) to base64 data URL for AI vision
   const urlToDataUrl = async (url: string): Promise<string> => {
