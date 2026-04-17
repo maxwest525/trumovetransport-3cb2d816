@@ -48,6 +48,9 @@ interface ScanPhoto {
   room_label: string | null;
   detected_boxes: Array<{ id?: number; name?: string; confidence?: number; x?: number; y?: number; width?: number; height?: number }>;
   item_count: number;
+  // Customer-supplied note about this photo (e.g. "fragile, do not stack").
+  // Optional - missing/empty for photos taken before the notes feature shipped.
+  note: string | null;
   created_at: string;
 }
 
