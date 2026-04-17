@@ -157,11 +157,19 @@ export default function CrmLeadDetail() {
         return;
       }
       const url = data.resumeUrl || `${window.location.origin}/scan-room?resume=${data.token}`;
+      // Tell the agent which challenge the customer will see so they can
+      // walk them through it on the phone if needed.
+      const challengeCopy =
+        data.verificationMethod === "phone_last4"
+          ? "Customer will be asked for the last 4 digits of their phone."
+          : data.verificationMethod === "email"
+          ? "Customer will be asked to confirm the email on file."
+          : "Customer will be asked to verify their identity.";
 
       if (deliveryMethod === "email") {
         if (data.emailDelivered) {
           toast.success(`Resume link emailed to ${data.recipientEmail}`, {
-            description: "Single-use link expires in 24 hours.",
+            description: `${challengeCopy} Single-use link expires in 24 hours.`,
           });
         } else {
           // Token was created but email failed — fall back to clipboard so the link isn't lost
@@ -178,7 +186,7 @@ export default function CrmLeadDetail() {
         try {
           await navigator.clipboard.writeText(url);
           toast.success("Resume link copied to clipboard", {
-            description: "Single-use link expires in 24 hours.",
+            description: `${challengeCopy} Single-use link expires in 24 hours.`,
           });
         } catch {
           toast.success("Resume link created", { description: url });
