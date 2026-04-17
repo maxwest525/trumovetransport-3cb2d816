@@ -1661,6 +1661,84 @@ export default function ScanRoom() {
                         </span>
                         {selectedPhotoIds.size > 0 && (
                           <>
+                            {/* Batch move: tap-friendly alternative to drag.
+                                Lists every existing folder (canonical rooms +
+                                customer-defined) plus "All" to unfile. Folders
+                                that would be a no-op (every selected photo is
+                                already there) are disabled to avoid confusion. */}
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <button
+                                  type="button"
+                                  className="inline-flex items-center gap-1 rounded-md border border-primary/30 bg-primary/[0.06] hover:bg-primary/[0.12] px-1.5 py-0.5 text-[10px] font-semibold text-primary uppercase tracking-wider transition-colors"
+                                  title="Move selected photos to a folder"
+                                >
+                                  <FolderInput className="w-3 h-3" />
+                                  Move to...
+                                </button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end" className="w-44">
+                                {(() => {
+                                  // Build the union of all folders that
+                                  // currently exist in the library so the
+                                  // menu mirrors what's on screen.
+                                  const folderSet = new Set<string>([
+                                    ...KNOWN_ROOMS,
+                                    ...customFolders,
+                                    ...uploadedPhotos.map((p) => parseRoom(p.name)),
+                                  ]);
+                                  folderSet.delete("All");
+                                  const folders = Array.from(folderSet).sort((a, b) => a.localeCompare(b));
+                                  // Snapshot current rooms of the selected
+                                  // photos so we can disable destinations
+                                  // where every selection already lives.
+                                  const selectedRooms = new Set(
+                                    uploadedPhotos
+                                      .filter((p) => selectedPhotoIds.has(p.id))
+                                      .map((p) => parseRoom(p.name))
+                                  );
+                                  const moveTo = (target: string) => {
+                                    const ids = new Set(selectedPhotoIds);
+                                    if (ids.size === 0) return;
+                                    reclassifyPhotosToFolder(ids, target);
+                                    toast({
+                                      title: target === "All"
+                                        ? `${ids.size} ${ids.size === 1 ? "photo" : "photos"} moved to All`
+                                        : `${ids.size} ${ids.size === 1 ? "photo" : "photos"} moved to ${target}`,
+                                    });
+                                    setSelectedPhotoIds(new Set());
+                                    setLastSelectedPhotoId(null);
+                                  };
+                                  return (
+                                    <>
+                                      <DropdownMenuItem
+                                        disabled={selectedRooms.size === 1 && selectedRooms.has("All")}
+                                        onSelect={() => moveTo("All")}
+                                        className="text-xs"
+                                      >
+                                        <FolderOpen className="w-3 h-3 mr-2" />
+                                        All (unfile)
+                                      </DropdownMenuItem>
+                                      {folders.length > 0 && <DropdownMenuSeparator />}
+                                      {folders.map((target) => {
+                                        const allAlreadyHere = selectedRooms.size === 1 && selectedRooms.has(target);
+                                        return (
+                                          <DropdownMenuItem
+                                            key={target}
+                                            disabled={allAlreadyHere}
+                                            onSelect={() => moveTo(target)}
+                                            className="text-xs"
+                                          >
+                                            <FolderOpen className="w-3 h-3 mr-2" />
+                                            {target}
+                                          </DropdownMenuItem>
+                                        );
+                                      })}
+                                    </>
+                                  );
+                                })()}
+                              </DropdownMenuContent>
+                            </DropdownMenu>
                             {/* Batch delete: opens an AlertDialog with the
                                 count so customers can't wipe many photos by
                                 accident. Snapshots the current selection so
