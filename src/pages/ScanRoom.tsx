@@ -1708,6 +1708,11 @@ export default function ScanRoom() {
                       const groups = new Map<string, typeof uploadedPhotos>();
                       // Seed All so it always renders first
                       groups.set("All", []);
+                      // Seed customer-defined folders so empty ones still render
+                      // (they survive a refresh via the persisted customFolders list).
+                      customFolders.forEach((f) => {
+                        if (!groups.has(f)) groups.set(f, []);
+                      });
                       uploadedPhotos.forEach((p) => {
                         const room = parseRoom(p.name);
                         if (!groups.has(room)) groups.set(room, []);
