@@ -237,18 +237,7 @@ export default function ScanRoom() {
   // "<Room> - <rest>" prefix that parseRoom() reads. This is what gets
   // persisted to localStorage in the autosave effect, so the new grouping
   // survives a refresh. Dropping into "All" strips the prefix entirely.
-  const reclassifyPhotoToFolder = (photoId: string, targetRoom: string) => {
-    setUploadedPhotos((prev) =>
-      prev.map((p) => {
-        if (p.id !== photoId) return p;
-        const sep = p.name.indexOf(" - ");
-        const baseName = sep === -1 ? p.name : p.name.slice(sep + 3);
-        const cleanBase = baseName.trim() || "photo";
-        const newName = targetRoom === "All" ? cleanBase : `${targetRoom} - ${cleanBase}`;
-        return { ...p, name: newName };
-      })
-    );
-  };
+  // (single-photo reclassify removed; reclassifyPhotosToFolder handles both)
 
   // Batch variant for moving many selected photos in a single drag op.
   // Done in one setState pass so localStorage autosave fires once.
