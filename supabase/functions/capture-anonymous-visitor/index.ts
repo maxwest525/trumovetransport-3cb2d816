@@ -10,7 +10,7 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { attribution } = await req.json();
+    const { attribution, contact, source } = await req.json();
 
     if (!attribution || typeof attribution !== "object") {
       return new Response(JSON.stringify({ error: "Attribution data required" }), {
@@ -22,16 +22,26 @@ serve(async (req) => {
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, serviceKey);
 
-    // 1. Create anonymous lead
+    // Build tag list — mark gated leads distinctly so CRM can filter
+    const tags = ["cookie-consent"];
+    if (contact?.email || contact?.phone) tags.push("contact-captured");
+    else tags.push("anonymous");
+    if (source) tags.push(String(source));
+
+    // 1. Create lead — populated with real contact when provided
     const { data: lead, error: leadErr } = await supabase
       .from("leads")
       .insert({
-        first_name: "Anonymous",
-        last_name: "Visitor",
+        first_name: contact?.firstName?.trim() || "Anonymous",
+        last_name: contact?.lastName?.trim() || "Visitor",
+        email: contact?.email?.trim() || null,
+        phone: contact?.phone?.trim() || null,
         source: "website",
         status: "new",
-        tags: ["cookie-consent", "anonymous"],
-        notes: `Anonymous visitor captured via cookie consent at ${new Date().toISOString()}`,
+        tags,
+        notes: contact?.email
+          ? `Lead captured via ${source || "website"} at ${new Date().toISOString()}`
+          : `Anonymous visitor captured via cookie consent at ${new Date().toISOString()}`,
       })
       .select("id")
       .single();
