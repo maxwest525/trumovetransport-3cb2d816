@@ -885,6 +885,21 @@ export default function CrmLeadDetail() {
                 );
               })}
             </div>
+            {photoViewer.note && (
+              <div className="px-4 py-3 border-t border-border bg-primary/5">
+                <div className="flex items-start gap-2">
+                  <StickyNote className="w-3.5 h-3.5 text-primary mt-0.5 shrink-0" />
+                  <div className="min-w-0">
+                    <p className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground mb-0.5">
+                      Customer note
+                    </p>
+                    <p className="text-xs text-foreground whitespace-pre-wrap break-words">
+                      {photoViewer.note}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
             <div className="px-4 py-3 border-t border-border text-xs text-muted-foreground">
               {photoViewer.item_count} items detected in this photo
             </div>
