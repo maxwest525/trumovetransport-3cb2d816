@@ -1,0 +1,1 @@
+ALTER TABLE public.leads ADD COLUMN IF NOT EXISTS custom_folders text[] NOT NULL DEFAULT ARRAY[]::text[];
