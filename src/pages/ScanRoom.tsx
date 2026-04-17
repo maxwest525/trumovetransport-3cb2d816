@@ -1040,6 +1040,10 @@ export default function ScanRoom() {
           items,
           totalWeight: totals.weight,
           totalCubicFeet: totals.cuft,
+          // Send the customer-defined folder list so it's mirrored on the lead
+          // row in the CRM. Empty folders the customer created (but hasn't
+          // filed photos into) still survive the round trip this way.
+          customFolders,
         },
       });
 

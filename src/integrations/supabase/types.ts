@@ -1059,6 +1059,7 @@ export type Database = {
         Row: {
           assigned_agent_id: string | null
           created_at: string
+          custom_folders: string[]
           destination_address: string | null
           email: string | null
           estimated_value: number | null
@@ -1080,6 +1081,7 @@ export type Database = {
         Insert: {
           assigned_agent_id?: string | null
           created_at?: string
+          custom_folders?: string[]
           destination_address?: string | null
           email?: string | null
           estimated_value?: number | null
@@ -1101,6 +1103,7 @@ export type Database = {
         Update: {
           assigned_agent_id?: string | null
           created_at?: string
+          custom_folders?: string[]
           destination_address?: string | null
           email?: string | null
           estimated_value?: number | null
