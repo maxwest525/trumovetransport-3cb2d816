@@ -449,6 +449,7 @@ export default function ScanRoom() {
           room: it.room,
           weight: it.weight,
           cubicFeet: it.cuft,
+          quantity: it.quantity,
           photoLocalId: it.photoId,
           detectionBox,
         };
