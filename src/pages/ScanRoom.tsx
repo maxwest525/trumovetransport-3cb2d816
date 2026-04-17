@@ -1416,27 +1416,80 @@ export default function ScanRoom() {
                       <p className="text-[10px] text-muted-foreground/40 flex items-center gap-1"><Video className="w-3 h-3" /> Photos or videos accepted</p>
                     </div>
                   ) : (
-                    uploadedPhotos.map(photo => {
-                      const isScanned = scannedPhotoIds.has(photo.id);
-                      return (
-                        <div key={photo.id} className={`tru-scan-library-item tru-scan-library-item-compact relative ${isScanned ? 'opacity-50 grayscale' : ''}`}>
-                          <img src={photo.url} alt={photo.name} />
-                          {isScanned && (
-                            <div className="absolute inset-0 flex items-center justify-center bg-foreground/20 rounded-[inherit]">
-                              <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center">
-                                <Check className="w-3 h-3 text-primary-foreground" />
-                              </div>
+                    (() => {
+                      // Group photos into folders by parsed room name. Anything
+                      // without a recognized room prefix lands in "Misc" — which
+                      // is always rendered as the default catch-all folder.
+                      const KNOWN_ROOMS = ["Living Room", "Bedroom", "Kitchen", "Bathroom", "Garage", "Storage"];
+                      const parseRoom = (name: string) => {
+                        const sep = name.indexOf(" - ");
+                        if (sep === -1) return "Misc";
+                        const candidate = name.slice(0, sep).trim();
+                        return candidate.length > 0 ? candidate : "Misc";
+                      };
+                      const groups = new Map<string, typeof uploadedPhotos>();
+                      // Seed Misc so it renders even when empty
+                      groups.set("Misc", []);
+                      uploadedPhotos.forEach((p) => {
+                        const room = parseRoom(p.name);
+                        if (!groups.has(room)) groups.set(room, []);
+                        groups.get(room)!.push(p);
+                      });
+                      // Order: known rooms first (in canonical order), then
+                      // any custom rooms alphabetically, with Misc pinned last
+                      const orderedKeys = [
+                        ...KNOWN_ROOMS.filter((r) => groups.has(r)),
+                        ...[...groups.keys()]
+                          .filter((k) => !KNOWN_ROOMS.includes(k) && k !== "Misc")
+                          .sort((a, b) => a.localeCompare(b)),
+                        "Misc",
+                      ];
+                      return orderedKeys.map((room) => {
+                        const photos = groups.get(room) ?? [];
+                        return (
+                          <div key={room} className="tru-scan-library-folder">
+                            <div className="flex items-center gap-1.5 px-1 pt-2 pb-1">
+                              <FolderOpen className="w-3 h-3 text-muted-foreground/70" />
+                              <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/70">
+                                {room}
+                              </span>
+                              <span className="text-[10px] text-muted-foreground/50">
+                                {photos.length}
+                              </span>
                             </div>
-                          )}
-                          <button
-                            onClick={() => setUploadedPhotos(prev => prev.filter(p => p.id !== photo.id))}
-                            className="tru-scan-library-remove tru-scan-library-remove-compact"
-                          >
-                            <X className="w-2.5 h-2.5" />
-                          </button>
-                        </div>
-                      );
-                    })
+                            {photos.length === 0 ? (
+                              <p className="text-[10px] text-muted-foreground/50 italic px-1 pb-2">
+                                Default folder - unsorted uploads land here
+                              </p>
+                            ) : (
+                              <div className="grid grid-cols-3 gap-1.5">
+                                {photos.map((photo) => {
+                                  const isScanned = scannedPhotoIds.has(photo.id);
+                                  return (
+                                    <div key={photo.id} className={`tru-scan-library-item tru-scan-library-item-compact relative ${isScanned ? 'opacity-50 grayscale' : ''}`}>
+                                      <img src={photo.url} alt={photo.name} />
+                                      {isScanned && (
+                                        <div className="absolute inset-0 flex items-center justify-center bg-foreground/20 rounded-[inherit]">
+                                          <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center">
+                                            <Check className="w-3 h-3 text-primary-foreground" />
+                                          </div>
+                                        </div>
+                                      )}
+                                      <button
+                                        onClick={() => setUploadedPhotos(prev => prev.filter(p => p.id !== photo.id))}
+                                        className="tru-scan-library-remove tru-scan-library-remove-compact"
+                                      >
+                                        <X className="w-2.5 h-2.5" />
+                                      </button>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      });
+                    })()
                   )}
                 </div>
                 <button
