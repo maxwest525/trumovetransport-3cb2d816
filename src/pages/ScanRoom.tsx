@@ -280,12 +280,11 @@ export default function ScanRoom() {
   // Active photo being scanned (drives the live preview in the scanner panel)
   const [activeScanPhoto, setActiveScanPhoto] = useState<{ id: string; url: string; name: string } | null>(null);
   // AI-detected bounding boxes for the active photo (revealed progressively)
-  type AiBox = { id: number; name: string; confidence: number; x: number; y: number; width: number; height: number };
   const [aiBoxes, setAiBoxes] = useState<AiBox[]>([]);
   const [revealedBoxCount, setRevealedBoxCount] = useState(0);
   // History of every photo scanned by the AI (for thumbnails + per-item detection viewer)
   type ScannedPhotoEntry = { id: string; url: string; name: string; boxes: AiBox[] };
-  const [scanHistory, setScanHistory] = useState<ScannedPhotoEntry[]>([]);
+  const [scanHistory, setScanHistory] = useState<ScannedPhotoEntry[]>(persisted?.scanHistory ?? []);
   // Detection viewer modal state
   const [detectionView, setDetectionView] = useState<{ photo: ScannedPhotoEntry; boxId: number } | null>(null);
 
@@ -293,26 +292,71 @@ export default function ScanRoom() {
   const [autoSaveStatus, setAutoSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [savedLeadId, setSavedLeadId] = useState<string | null>(persisted?.savedLeadId ?? null);
 
+  // Resume banner — shown on initial load when persisted scan data was found
+  const [hasResumableScan, setHasResumableScan] = useState<boolean>(
+    !!persisted && (persisted.detectedItems?.length ?? 0) > 0
+  );
+
+  // Clear every trace of the previous scan from state + localStorage
+  const startFreshScan = () => {
+    localStorage.removeItem(STORAGE_KEY);
+    setDetectedItems([]);
+    setScanHistory([]);
+    setUploadedPhotos([]);
+    setScannedPhotoIds(new Set());
+    setActiveScanPhoto(null);
+    setAiBoxes([]);
+    setRevealedBoxCount(0);
+    setSavedLeadId(null);
+    setAutoSaveStatus("idle");
+    setHasResumableScan(false);
+    toast({ title: "Started a fresh scan", description: "Previous scan data was cleared." });
+  };
+
   // Persist key state across refreshes / navigation / tab close
   useEffect(() => {
     try {
-      // Strip volatile blob: URLs from items (they don't survive refresh anyway)
-      const slim = detectedItems.map(({ image, ...rest }) => ({
+      // Strip volatile blob: URLs from items (they don't survive refresh anyway).
+      // Permanent Supabase Storage URLs are kept so thumbnails reload after refresh.
+      const isVolatile = (u?: string) => !u || u.startsWith("blob:");
+      const slimItems = detectedItems.map(({ image, ...rest }) => ({
         ...rest,
-        image: image && image.startsWith("blob:") ? "" : image,
+        image: isVolatile(image) ? "" : image,
       }));
+      // Only keep scan-history entries whose photo URL survives a refresh (i.e. uploaded to Storage)
+      const slimHistory = scanHistory
+        .filter((p) => !isVolatile(p.url))
+        .map((p) => ({ id: p.id, url: p.url, name: p.name, boxes: p.boxes }));
+      const slimUploaded = uploadedPhotos
+        .filter((p) => !isVolatile(p.url) && p.id !== "demo-photo")
+        .map((p) => ({ id: p.id, url: p.url, name: p.name }));
       localStorage.setItem(
         STORAGE_KEY,
         JSON.stringify({
-          detectedItems: slim,
+          detectedItems: slimItems,
           isUnlocked,
           savedLeadId,
+          scanHistory: slimHistory,
+          uploadedPhotos: slimUploaded,
+          scannedPhotoIds: Array.from(scannedPhotoIds).filter((id) => id !== "demo-photo"),
+          savedAt: Date.now(),
         })
       );
     } catch {
       // Quota or serialization failure — non-fatal
     }
-  }, [detectedItems, isUnlocked, savedLeadId]);
+  }, [detectedItems, isUnlocked, savedLeadId, scanHistory, uploadedPhotos, scannedPhotoIds]);
+
+  // Rehydrate uploadedPhotos + scannedPhotoIds on mount (separate so they don't fight initial demo state)
+  useEffect(() => {
+    if (persisted?.uploadedPhotos?.length) {
+      setUploadedPhotos((prev) => (prev.length === 0 ? persisted.uploadedPhotos! : prev));
+    }
+    if (persisted?.scannedPhotoIds?.length) {
+      setScannedPhotoIds((prev) => (prev.size === 0 ? new Set(persisted.scannedPhotoIds) : prev));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Convert image URL (blob:) to base64 data URL for AI vision
   const urlToDataUrl = async (url: string): Promise<string> => {
