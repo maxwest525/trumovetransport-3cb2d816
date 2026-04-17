@@ -219,6 +219,12 @@ export default function ScanRoom() {
   const [selectedPhotoIds, setSelectedPhotoIds] = useState<Set<string>>(new Set());
   // Anchor for shift-click range selection within the visible flat list.
   const [lastSelectedPhotoId, setLastSelectedPhotoId] = useState<string | null>(null);
+  // Mobile fallback for HTML5 drag (touch devices don't fire dragstart). A
+  // 500ms press on any tile opens the per-tile "Move to..." dropdown, giving
+  // phone users the same reclassify capability as desktop drag.
+  const [longPressMenuPhotoId, setLongPressMenuPhotoId] = useState<string | null>(null);
+  const longPressTimerRef = useRef<number | null>(null);
+  const longPressTriggeredRef = useRef(false);
   // Customer-defined folders (e.g. "Garage Loft", "Office"). Stored separately
   // from photos so an empty folder still renders until removed. Seeded from
   // persisted state so the list survives a refresh.
@@ -2051,8 +2057,56 @@ export default function ScanRoom() {
                                             setDraggedPhotoId(null);
                                             setDragOverFolder(null);
                                           }}
-                                          className={`tru-scan-library-item tru-scan-library-item-compact relative cursor-grab active:cursor-grabbing ${isScanned ? 'opacity-50 grayscale' : ''} ${isPartOfActiveDrag ? 'opacity-30' : ''} ${isSelected ? 'ring-2 ring-primary ring-offset-1 ring-offset-background rounded-md' : ''}`}
-                                          title={selectionMode ? "Click to select - drag any selected photo to move them all" : "Drag to another folder, or shift-click to select multiple"}
+                                          // ----- Mobile long-press fallback for drag-and-drop -----
+                                          // HTML5 drag events don't fire on touch devices, so we
+                                          // open the per-tile "Move to..." dropdown after a 500ms
+                                          // hold. Cancelled if the finger moves (scroll) or lifts
+                                          // before the timer fires. A small haptic pulse signals
+                                          // the menu is opening.
+                                          onTouchStart={() => {
+                                            longPressTriggeredRef.current = false;
+                                            if (longPressTimerRef.current) {
+                                              window.clearTimeout(longPressTimerRef.current);
+                                            }
+                                            longPressTimerRef.current = window.setTimeout(() => {
+                                              longPressTriggeredRef.current = true;
+                                              setLongPressMenuPhotoId(photo.id);
+                                              if (typeof navigator !== "undefined" && "vibrate" in navigator) {
+                                                try { navigator.vibrate?.(15); } catch { /* noop */ }
+                                              }
+                                            }, 500);
+                                          }}
+                                          onTouchMove={() => {
+                                            if (longPressTimerRef.current) {
+                                              window.clearTimeout(longPressTimerRef.current);
+                                              longPressTimerRef.current = null;
+                                            }
+                                          }}
+                                          onTouchEnd={(e) => {
+                                            if (longPressTimerRef.current) {
+                                              window.clearTimeout(longPressTimerRef.current);
+                                              longPressTimerRef.current = null;
+                                            }
+                                            // If long-press already fired, swallow the synthetic
+                                            // click that follows so it doesn't toggle selection.
+                                            if (longPressTriggeredRef.current) {
+                                              e.preventDefault();
+                                            }
+                                          }}
+                                          onTouchCancel={() => {
+                                            if (longPressTimerRef.current) {
+                                              window.clearTimeout(longPressTimerRef.current);
+                                              longPressTimerRef.current = null;
+                                            }
+                                          }}
+                                          // Suppress the OS context menu on long-press (iOS image
+                                          // preview, Android "Save image") so our menu wins.
+                                          onContextMenu={(e) => {
+                                            if (longPressTriggeredRef.current) e.preventDefault();
+                                          }}
+                                          className={`tru-scan-library-item tru-scan-library-item-compact relative cursor-grab active:cursor-grabbing select-none ${isScanned ? 'opacity-50 grayscale' : ''} ${isPartOfActiveDrag ? 'opacity-30' : ''} ${isSelected ? 'ring-2 ring-primary ring-offset-1 ring-offset-background rounded-md' : ''}`}
+                                          style={{ WebkitTouchCallout: "none" }}
+                                          title={selectionMode ? "Click to select - drag any selected photo to move them all" : "Drag (or long-press on mobile) to move to another folder"}
                                         >
                                           <img src={photo.url} alt={photo.name} draggable={false} />
                                           {/* Selection checkbox - shown in selection mode OR
@@ -2081,7 +2135,16 @@ export default function ScanRoom() {
                                               every other folder; current folder is excluded.
                                               Stops propagation so the trigger click doesn't
                                               toggle selection or start a drag. */}
-                                          <DropdownMenu>
+                                          <DropdownMenu
+                                            open={longPressMenuPhotoId === photo.id ? true : undefined}
+                                            onOpenChange={(open) => {
+                                              // Clear the long-press latch whenever the menu closes
+                                              // so a new long-press elsewhere can open its own menu.
+                                              if (!open && longPressMenuPhotoId === photo.id) {
+                                                setLongPressMenuPhotoId(null);
+                                              }
+                                            }}
+                                          >
                                             <DropdownMenuTrigger asChild>
                                               <button
                                                 type="button"
