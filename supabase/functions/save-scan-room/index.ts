@@ -117,6 +117,10 @@ serve(async (req) => {
         // in the CRM. We overwrite (not merge) because the client always sends
         // the full current list and the customer is the source of truth.
         updates.custom_folders = sanitizedFolders;
+        // Stamp the lead so the CRM list can surface "fresh scan activity" at
+        // a glance. Updated every time save-scan-room runs (auto-save or final
+        // submit), independent of updated_at which is touched by many flows.
+        updates.last_scan_activity_at = new Date().toISOString();
 
         await supabase.from("leads").update(updates).eq("id", leadId);
       }
