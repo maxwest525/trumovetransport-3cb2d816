@@ -55,7 +55,7 @@ export default function LeadGateModal({ isOpen, onClose, onUnlock }: LeadGateMod
     }
 
     // Mark attribution form completion so the CRM has accurate funnel data
-    try { markFormCompleted(); } catch { /* noop */ }
+    try { markFormComplete(); } catch { /* noop */ }
 
     // Push a lead to the CRM right now so every unlock = a real lead, even if
     // the user abandons the scan.
