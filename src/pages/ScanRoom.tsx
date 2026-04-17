@@ -2545,6 +2545,46 @@ export default function ScanRoom() {
           </AlertDialogContent>
         </AlertDialog>
 
+        {/* Custom Folder Delete Confirmation - only shown when the folder
+            still contains photos. The count tells the customer exactly how
+            many tiles will be unfiled back into "All". */}
+        <AlertDialog
+          open={pendingDeleteFolder !== null}
+          onOpenChange={(open) => { if (!open) setPendingDeleteFolder(null); }}
+        >
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete folder "{pendingDeleteFolder}"?</AlertDialogTitle>
+              <AlertDialogDescription>
+                {(() => {
+                  const count = pendingDeleteFolder
+                    ? uploadedPhotos.filter((p) => parseRoom(p.name) === pendingDeleteFolder).length
+                    : 0;
+                  return (
+                    <>
+                      <strong>{count}</strong> photo{count === 1 ? '' : 's'} will move back to <strong>All</strong> and lose this folder label. The photos themselves are kept - only the folder organization is removed.
+                    </>
+                  );
+                })()}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Keep folder</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => {
+                  if (pendingDeleteFolder) {
+                    removeCustomFolder(pendingDeleteFolder);
+                    setPendingDeleteFolder(null);
+                  }
+                }}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                Delete folder
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
         {/* Detection viewer modal - shows source photo with the item's box highlighted */}
         {detectionView && (
           <div
