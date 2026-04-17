@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   ArrowLeft, User, Mail, Phone, MapPin, Calendar, DollarSign,
-  Weight, Tag, Clock, FileText, Truck, UserCheck
+  Weight, Tag, Clock, FileText, Truck, UserCheck, Camera, Sparkles, Package, X,
 } from "lucide-react";
 import { toast } from "sonner";
 
