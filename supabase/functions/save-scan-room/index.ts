@@ -20,6 +20,7 @@ type IncomingItem = {
   room: string;
   weight: number;
   cubicFeet: number;
+  quantity?: number;
   confidence?: number;
   photoLocalId?: string;
   detectionBox?: { x: number; y: number; width: number; height: number };
@@ -136,7 +137,7 @@ serve(async (req) => {
         lead_id: leadId,
         item_name: it.name,
         room: it.room || "Living Room",
-        quantity: 1,
+        quantity: Math.max(1, it.quantity ?? 1),
         cubic_feet: it.cubicFeet || 0,
         weight: it.weight || 0,
         source: "ai-scan",

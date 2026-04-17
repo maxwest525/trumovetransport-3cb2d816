@@ -112,8 +112,24 @@ export default function ScanRoom() {
   useScrollToTop();
   const navigate = useNavigate();
   // Inventory item shape (allows optional photoId + boxIndex from AI scans)
-  type InventoryItem = (typeof DEMO_ITEMS)[number] & { photoId?: string; boxIndex?: number };
+  type InventoryItem = (typeof DEMO_ITEMS)[number] & { quantity: number; photoId?: string; boxIndex?: number };
   const [detectedItems, setDetectedItems] = useState<InventoryItem[]>([]);
+
+  // Merge helper: if an item with same name+room already exists, bump quantity instead of adding a new row
+  const addOrMergeItem = (incoming: Omit<InventoryItem, "quantity"> & { quantity?: number }) => {
+    const addQty = incoming.quantity ?? 1;
+    setDetectedItems(prev => {
+      const key = (n: string, r: string) => `${n.trim().toLowerCase()}|${r.trim().toLowerCase()}`;
+      const targetKey = key(incoming.name, incoming.room);
+      const idx = prev.findIndex(i => key(i.name, i.room) === targetKey);
+      if (idx >= 0) {
+        const next = [...prev];
+        next[idx] = { ...next[idx], quantity: next[idx].quantity + addQty };
+        return next;
+      }
+      return [...prev, { ...incoming, quantity: addQty } as InventoryItem];
+    });
+  };
   const [isScanning, setIsScanning] = useState(false);
   const [showIntroModal, setShowIntroModal] = useState(false);
   const [showClearDialog, setShowClearDialog] = useState(false);
@@ -178,7 +194,7 @@ export default function ScanRoom() {
     } else if (nextStep <= DEMO_TOTAL_STEPS) {
       // Steps 3+: Add items one by one
       const itemIndex = nextStep - 3;
-      setDetectedItems(prev => [...prev, DEMO_ITEMS[itemIndex]]);
+      addOrMergeItem({ ...DEMO_ITEMS[itemIndex] });
       setDemoStep(nextStep);
       if (nextStep === DEMO_TOTAL_STEPS) {
         setIsScanning(false);
@@ -304,45 +320,45 @@ export default function ScanRoom() {
           return [...without, { id: photo.id, url: photo.url, name: photo.name, boxes }];
         });
 
-        // Progressively reveal boxes one-by-one, then add the corresponding inventory rows
+        // Progressively reveal boxes one-by-one, then add/merge the corresponding inventory rows
         for (let b = 0; b < boxes.length; b++) {
           await new Promise(res => setTimeout(res, 350));
           setRevealedBoxCount(b + 1);
           const it = items[b];
           if (!it) continue;
-          for (let q = 0; q < it.quantity; q++) {
-            const row: InventoryItem = {
-              id: nextId++,
-              name: it.name,
-              room: it.room,
-              weight: it.weight,
-              cuft: it.cubicFeet,
-              image: '',
-              photoId: photo.id,
-              boxIndex: b,
-            };
-            allDetected.push(row);
-            setDetectedItems(prev => [...prev, row]);
-            totalDetectedCount++;
-          }
+          const qty = Math.max(1, it.quantity || 1);
+          const row: InventoryItem = {
+            id: nextId++,
+            name: it.name,
+            room: it.room,
+            weight: it.weight,
+            cuft: it.cubicFeet,
+            image: '',
+            quantity: qty,
+            photoId: photo.id,
+            boxIndex: b,
+          };
+          allDetected.push(row);
+          addOrMergeItem(row);
+          totalDetectedCount += qty;
         }
 
         // For any items without boxes (rare), still add them to inventory
         items.slice(boxes.length).forEach(it => {
-          for (let q = 0; q < it.quantity; q++) {
-            const row: InventoryItem = {
-              id: nextId++,
-              name: it.name,
-              room: it.room,
-              weight: it.weight,
-              cuft: it.cubicFeet,
-              image: '',
-              photoId: photo.id,
-            };
-            allDetected.push(row);
-            setDetectedItems(prev => [...prev, row]);
-            totalDetectedCount++;
-          }
+          const qty = Math.max(1, it.quantity || 1);
+          const row: InventoryItem = {
+            id: nextId++,
+            name: it.name,
+            room: it.room,
+            weight: it.weight,
+            cuft: it.cubicFeet,
+            image: '',
+            quantity: qty,
+            photoId: photo.id,
+          };
+          allDetected.push(row);
+          addOrMergeItem(row);
+          totalDetectedCount += qty;
         });
 
         setScannedPhotoIds(prev => new Set([...prev, photo.id]));
@@ -382,8 +398,8 @@ export default function ScanRoom() {
     setScannedPhotoIds(new Set(uploadedPhotos.map(p => p.id)));
   };
 
-  const totalWeight = detectedItems.reduce((sum, item) => sum + item.weight, 0);
-  const totalCuFt = detectedItems.reduce((sum, item) => sum + item.cuft, 0);
+  const totalWeight = detectedItems.reduce((sum, item) => sum + item.weight * item.quantity, 0);
+  const totalCuFt = detectedItems.reduce((sum, item) => sum + item.cuft * item.quantity, 0);
 
   const handlePrint = () => {
     window.print();
@@ -433,6 +449,7 @@ export default function ScanRoom() {
           room: it.room,
           weight: it.weight,
           cubicFeet: it.cuft,
+          quantity: it.quantity,
           photoLocalId: it.photoId,
           detectionBox,
         };
@@ -548,11 +565,11 @@ export default function ScanRoom() {
       '',
       item.name,
       item.room,
-      '1',
+      `${item.quantity}`,
       `${item.weight}`,
       `${item.cuft}`,
-      `${item.weight}`,
-      `${item.cuft}`
+      `${item.weight * item.quantity}`,
+      `${item.cuft * item.quantity}`
     ]);
     
     autoTable(doc, {
@@ -1176,23 +1193,28 @@ export default function ScanRoom() {
                             <td>
                               <div className={`tru-scan-qty-controls ${!isUnlocked ? 'tru-scan-qty-disabled' : ''}`}>
                                 <button 
-                                  onClick={() => isUnlocked && setDetectedItems(prev => prev.filter(i => i.id !== item.id))}
+                                  onClick={() => {
+                                    if (!isUnlocked) return;
+                                    setDetectedItems(prev => prev.flatMap(i => {
+                                      if (i.id !== item.id) return [i];
+                                      const next = i.quantity - 1;
+                                      return next <= 0 ? [] : [{ ...i, quantity: next }];
+                                    }));
+                                  }}
                                   className="tru-scan-qty-btn"
-                                  title={isUnlocked ? "Remove item" : "Unlock to edit"}
+                                  title={isUnlocked ? "Decrease quantity" : "Unlock to edit"}
                                   disabled={!isUnlocked}
                                 >
                                   <Minus className="w-3 h-3" />
                                 </button>
-                                <span className="tru-scan-qty-value">1</span>
+                                <span className="tru-scan-qty-value">{item.quantity}</span>
                                 <button 
                                   onClick={() => {
                                     if (!isUnlocked) return;
-                                    // Duplicate item with new ID
-                                    const newItem = { ...item, id: Date.now() + Math.random() };
-                                    setDetectedItems(prev => [...prev, newItem]);
+                                    setDetectedItems(prev => prev.map(i => i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i));
                                   }}
                                   className="tru-scan-qty-btn"
-                                  title={isUnlocked ? "Add another" : "Unlock to edit"}
+                                  title={isUnlocked ? "Increase quantity" : "Unlock to edit"}
                                   disabled={!isUnlocked}
                                 >
                                   <Plus className="w-3 h-3" />
@@ -1201,8 +1223,8 @@ export default function ScanRoom() {
                             </td>
                             <td>{item.weight}</td>
                             <td>{item.cuft}</td>
-                            <td className="tru-scan-table-total">{item.weight}</td>
-                            <td className="tru-scan-table-total">{item.cuft}</td>
+                            <td className="tru-scan-table-total">{item.weight * item.quantity}</td>
+                            <td className="tru-scan-table-total">{item.cuft * item.quantity}</td>
                             <td>
                               <div className="flex items-center gap-1">
                                 {item.photoId && (
@@ -1284,11 +1306,11 @@ export default function ScanRoom() {
                       type="button"
                       onClick={() => {
                         // Save to localStorage for manual builder sync
-                        const inventoryForBuilder = detectedItems.map((item, idx) => ({
+                        const inventoryForBuilder = detectedItems.map((item) => ({
                           id: `scanned-${item.id}-${Date.now()}`,
                           name: item.name,
                           room: item.room,
-                          quantity: 1,
+                          quantity: item.quantity,
                           weightEach: item.weight,
                           cubicFeet: item.cuft,
                           imageUrl: item.image,
