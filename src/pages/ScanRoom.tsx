@@ -296,6 +296,27 @@ export default function ScanRoom() {
   const [hasResumableScan, setHasResumableScan] = useState<boolean>(
     !!persisted && (persisted.detectedItems?.length ?? 0) > 0
   );
+  const [savedAtMs, setSavedAtMs] = useState<number | null>(persisted?.savedAt ?? null);
+  // Tick every minute so "Saved X ago" stays fresh while the page is open
+  const [nowTick, setNowTick] = useState(Date.now());
+  useEffect(() => {
+    if (!hasResumableScan) return;
+    const id = setInterval(() => setNowTick(Date.now()), 60_000);
+    return () => clearInterval(id);
+  }, [hasResumableScan]);
+
+  // Human friendly "Saved X ago" string from a timestamp
+  const formatSavedAgo = (ts: number) => {
+    const diffMs = Math.max(0, nowTick - ts);
+    const mins = Math.floor(diffMs / 60_000);
+    if (mins < 1) return "Saved just now";
+    if (mins < 60) return `Saved ${mins} minute${mins === 1 ? "" : "s"} ago`;
+    const hours = Math.floor(mins / 60);
+    if (hours < 24) return `Saved ${hours} hour${hours === 1 ? "" : "s"} ago`;
+    const days = Math.floor(hours / 24);
+    return `Saved ${days} day${days === 1 ? "" : "s"} ago`;
+  };
+
 
   // Clear every trace of the previous scan from state + localStorage
   const startFreshScan = () => {
