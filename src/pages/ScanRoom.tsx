@@ -405,27 +405,43 @@ export default function ScanRoom() {
     window.print();
   };
 
-  // Persist scanned photos + detected inventory to a new lead in the CRM
-  const handleSaveToCrm = async () => {
-    if (!savePayload.firstName.trim() || (!savePayload.email.trim() && !savePayload.phone.trim())) {
-      toast({ title: "Missing info", description: "First name and either email or phone are required.", variant: "destructive" });
-      return;
-    }
-    if (detectedItems.length === 0) {
-      toast({ title: "Nothing to save", description: "Scan at least one photo first.", variant: "destructive" });
-      return;
-    }
+  // Auto-persist scanned photos + detected inventory to a lead in the CRM (no UI prompt).
+  // Merges into the visitor's anonymous lead when present, otherwise creates a placeholder lead.
+  const autoSaveScanToCrm = async (
+    itemsSnapshot: InventoryItem[],
+    historySnapshot: ScannedPhotoEntry[],
+    totals: { weight: number; cuft: number }
+  ) => {
+    if (itemsSnapshot.length === 0) return;
+    setAutoSaveStatus("saving");
 
-    setIsSaving(true);
     try {
-      // Build photo payload from scan history (only AI-scanned photos persist)
-      const photoIds = Array.from(new Set(detectedItems.map((it) => it.photoId).filter(Boolean) as string[]));
-      const photoEntries = scanHistory.filter((p) => photoIds.includes(p.id));
+      // Pull contact info from any existing lead form data the visitor filled in
+      let contact: { firstName?: string; lastName?: string; email?: string; phone?: string } = {};
+      try {
+        const stored = localStorage.getItem("tm_lead");
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          contact = {
+            firstName: parsed.firstName || parsed.first_name,
+            lastName: parsed.lastName || parsed.last_name,
+            email: parsed.email,
+            phone: parsed.phone,
+          };
+        }
+      } catch {
+        // ignore parse errors
+      }
+      const anonymousLeadId = localStorage.getItem("tm_anonymous_lead_id") || undefined;
+
+      // Build photo payload from the AI scan history (only photos that produced inventory)
+      const photoIds = Array.from(new Set(itemsSnapshot.map((it) => it.photoId).filter(Boolean) as string[]));
+      const photoEntries = historySnapshot.filter((p) => photoIds.includes(p.id));
 
       const photos = await Promise.all(
         photoEntries.map(async (p) => {
           const dataUrl = await urlToDataUrl(p.url);
-          const itemCount = detectedItems.filter((it) => it.photoId === p.id).length;
+          const itemCount = itemsSnapshot.filter((it) => it.photoId === p.id).length;
           return {
             id: p.id,
             dataUrl,
@@ -437,10 +453,10 @@ export default function ScanRoom() {
         })
       );
 
-      const items = detectedItems.map((it) => {
+      const items = itemsSnapshot.map((it) => {
         let detectionBox: { x: number; y: number; width: number; height: number } | undefined;
         if (it.photoId && typeof it.boxIndex === "number") {
-          const photo = scanHistory.find((p) => p.id === it.photoId);
+          const photo = historySnapshot.find((p) => p.id === it.photoId);
           const box = photo?.boxes.find((b) => b.id === it.boxIndex);
           if (box) detectionBox = { x: box.x, y: box.y, width: box.width, height: box.height };
         }
@@ -450,6 +466,7 @@ export default function ScanRoom() {
           weight: it.weight,
           cubicFeet: it.cuft,
           quantity: it.quantity,
+          confidence: it.confidence,
           photoLocalId: it.photoId,
           detectionBox,
         };
@@ -457,14 +474,15 @@ export default function ScanRoom() {
 
       const { data, error } = await supabase.functions.invoke("save-scan-room", {
         body: {
-          firstName: savePayload.firstName.trim(),
-          lastName: savePayload.lastName.trim(),
-          email: savePayload.email.trim() || undefined,
-          phone: savePayload.phone.trim() || undefined,
+          anonymousLeadId,
+          firstName: contact.firstName,
+          lastName: contact.lastName,
+          email: contact.email,
+          phone: contact.phone,
           photos,
           items,
-          totalWeight,
-          totalCubicFeet: totalCuFt,
+          totalWeight: totals.weight,
+          totalCubicFeet: totals.cuft,
         },
       });
 
@@ -472,19 +490,10 @@ export default function ScanRoom() {
       if (!data?.success) throw new Error(data?.error || "Save failed");
 
       setSavedLeadId(data.leadId);
-      toast({
-        title: "Scan saved to CRM",
-        description: `${data.items} items and ${data.uploaded} photos saved. An agent will follow up.`,
-      });
+      setAutoSaveStatus("saved");
     } catch (e) {
-      console.error("Save to CRM error:", e);
-      toast({
-        title: "Save failed",
-        description: e instanceof Error ? e.message : "Could not save scan",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSaving(false);
+      console.error("Auto-save scan to CRM failed:", e);
+      setAutoSaveStatus("error");
     }
   };
 
