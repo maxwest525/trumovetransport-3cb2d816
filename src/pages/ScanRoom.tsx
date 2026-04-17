@@ -48,7 +48,7 @@ import {
   Ruler, Package, Printer, Download, Square, Trash2, ArrowRightLeft,
   Phone, Video, Minus, Plus, X, Upload, ImageIcon, FolderOpen, Lock, User, Mail,
   Sofa, BedDouble, UtensilsCrossed, Bath, Warehouse, Check, Pause, Play,
-  Camera, Layers, Info
+  Camera, Layers, Info, Eye
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -195,6 +195,8 @@ export default function ScanRoom() {
     setActiveScanPhoto(null);
     setAiBoxes([]);
     setRevealedBoxCount(0);
+    setScanHistory([]);
+    setDetectionView(null);
   };
 
   // Auto-advance demo when playing
@@ -1096,14 +1098,28 @@ export default function ScanRoom() {
                             <td className="tru-scan-table-total">{item.weight}</td>
                             <td className="tru-scan-table-total">{item.cuft}</td>
                             <td>
-                              <button
-                                onClick={() => isUnlocked && setDetectedItems(prev => prev.filter(i => i.id !== item.id))}
-                                className={`tru-scan-remove-btn ${!isUnlocked ? 'tru-scan-remove-disabled' : ''}`}
-                                title={isUnlocked ? "Remove item" : "Unlock to edit"}
-                                disabled={!isUnlocked}
-                              >
-                                <X className="w-4 h-4" />
-                              </button>
+                              <div className="flex items-center gap-1">
+                                {item.photoId && (
+                                  <button
+                                    onClick={() => {
+                                      const photo = scanHistory.find(p => p.id === item.photoId);
+                                      if (photo) setDetectionView({ photo, boxId: item.boxIndex ?? -1 });
+                                    }}
+                                    className="tru-scan-remove-btn"
+                                    title="View AI detection in source photo"
+                                  >
+                                    <Eye className="w-4 h-4" />
+                                  </button>
+                                )}
+                                <button
+                                  onClick={() => isUnlocked && setDetectedItems(prev => prev.filter(i => i.id !== item.id))}
+                                  className={`tru-scan-remove-btn ${!isUnlocked ? 'tru-scan-remove-disabled' : ''}`}
+                                  title={isUnlocked ? "Remove item" : "Unlock to edit"}
+                                  disabled={!isUnlocked}
+                                >
+                                  <X className="w-4 h-4" />
+                                </button>
+                              </div>
                             </td>
                           </tr>
                         ))}
