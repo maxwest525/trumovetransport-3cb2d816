@@ -2,3 +2,6 @@ project_id = "mkepbxcbilzvlkzvzual"
 
 [functions.process-email-queue]
 verify_jwt = true
+
+[functions.save-scan-room]
+verify_jwt = false
