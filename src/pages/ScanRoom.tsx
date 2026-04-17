@@ -785,6 +785,39 @@ export default function ScanRoom() {
                   </div>
                 )}
 
+                {/* Scanned-photo thumbnail strip - click to re-open detections */}
+                {scanHistory.length > 0 && (
+                  <div className="w-full px-4 pb-2">
+                    <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+                      Scanned Photos ({scanHistory.length})
+                    </p>
+                    <div className="flex gap-2 overflow-x-auto pb-1">
+                      {scanHistory.map(p => {
+                        const isActive = activeScanPhoto?.id === p.id;
+                        return (
+                          <button
+                            key={p.id}
+                            onClick={() => {
+                              setActiveScanPhoto(p);
+                              setAiBoxes(p.boxes);
+                              setRevealedBoxCount(p.boxes.length);
+                            }}
+                            title={`${p.name} - ${p.boxes.length} item${p.boxes.length === 1 ? '' : 's'} detected`}
+                            className={`relative flex-shrink-0 rounded-lg overflow-hidden border-2 transition-all ${
+                              isActive ? 'border-primary shadow-md' : 'border-border hover:border-primary/40'
+                            }`}
+                          >
+                            <img src={p.url} alt={p.name} className="w-16 h-12 object-cover" />
+                            <span className="absolute bottom-0 right-0 bg-foreground/80 text-background text-[9px] font-bold px-1 rounded-tl">
+                              {p.boxes.length}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
                 {/* Demo step info */}
                 {isDemoActive && (
                   <p className="text-[10px] font-semibold uppercase tracking-wider text-primary/70">
