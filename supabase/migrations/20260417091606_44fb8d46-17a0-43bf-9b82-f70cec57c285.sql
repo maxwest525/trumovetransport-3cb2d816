@@ -1,0 +1,1 @@
+ALTER TABLE public.lead_scan_photos ADD COLUMN IF NOT EXISTS note text;
