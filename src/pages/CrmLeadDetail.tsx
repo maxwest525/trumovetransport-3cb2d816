@@ -624,6 +624,23 @@ export default function CrmLeadDetail() {
                                       <Button
                                         size="sm"
                                         variant="ghost"
+                                        onClick={() => handleExtendResumeLink(t, 24)}
+                                        disabled={extendingTokenId === t.id}
+                                        className="h-7 px-2 text-[11px] gap-1 text-primary hover:text-primary hover:bg-primary/10"
+                                        title="Push this link's expiration out by 24 hours (capped at 7 days total)"
+                                      >
+                                        {extendingTokenId === t.id ? (
+                                          <Loader2 className="w-3 h-3 animate-spin" />
+                                        ) : (
+                                          <>
+                                            <RefreshCw className="w-3 h-3" />
+                                            +24h
+                                          </>
+                                        )}
+                                      </Button>
+                                      <Button
+                                        size="sm"
+                                        variant="ghost"
                                         onClick={() => handleRevokeResumeLink(t.id)}
                                         disabled={revokingTokenId === t.id}
                                         className="h-7 px-2 text-[11px] gap-1 text-red-400 hover:text-red-300 hover:bg-red-500/10"
