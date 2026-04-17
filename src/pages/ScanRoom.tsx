@@ -398,8 +398,8 @@ export default function ScanRoom() {
     setScannedPhotoIds(new Set(uploadedPhotos.map(p => p.id)));
   };
 
-  const totalWeight = detectedItems.reduce((sum, item) => sum + item.weight, 0);
-  const totalCuFt = detectedItems.reduce((sum, item) => sum + item.cuft, 0);
+  const totalWeight = detectedItems.reduce((sum, item) => sum + item.weight * item.quantity, 0);
+  const totalCuFt = detectedItems.reduce((sum, item) => sum + item.cuft * item.quantity, 0);
 
   const handlePrint = () => {
     window.print();
