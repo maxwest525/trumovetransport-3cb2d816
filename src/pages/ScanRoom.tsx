@@ -1821,6 +1821,12 @@ export default function ScanRoom() {
                           .filter((k) => !KNOWN_ROOMS.includes(k) && k !== "All")
                           .sort((a, b) => a.localeCompare(b)),
                       ];
+                      // Flat photo order across visible folders. Used for
+                      // shift-click range selection in the library grid.
+                      const flatPhotoOrder: string[] = [];
+                      orderedKeys.forEach((room) => {
+                        (groups.get(room) ?? []).forEach((p) => flatPhotoOrder.push(p.id));
+                      });
                       return (
                         <>
                           {/* Compact "add more" strip stays visible while photos exist */}
