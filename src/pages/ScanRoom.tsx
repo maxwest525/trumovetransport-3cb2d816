@@ -2221,6 +2221,106 @@ export default function ScanRoom() {
                                               every other folder; current folder is excluded.
                                               Stops propagation so the trigger click doesn't
                                               toggle selection or start a drag. */}
+                                          {/* Per-photo note popover. The icon
+                                              doubles as both the indicator
+                                              (filled when a note exists) and
+                                              the editor (click to open the
+                                              textarea). Stops propagation so
+                                              the trigger click doesn't toggle
+                                              selection or start a drag. */}
+                                          <Popover
+                                            open={openNotePhotoId === photo.id}
+                                            onOpenChange={(open) => {
+                                              if (open) {
+                                                setOpenNotePhotoId(photo.id);
+                                                setNoteDraft(photoNotes[photo.id] || "");
+                                              } else if (openNotePhotoId === photo.id) {
+                                                setOpenNotePhotoId(null);
+                                              }
+                                            }}
+                                          >
+                                            <PopoverTrigger asChild>
+                                              <button
+                                                type="button"
+                                                onClick={(e) => e.stopPropagation()}
+                                                onPointerDown={(e) => e.stopPropagation()}
+                                                onMouseDown={(e) => e.stopPropagation()}
+                                                className={`absolute bottom-1 right-7 z-10 inline-flex items-center justify-center w-5 h-5 rounded-md border shadow-sm transition-colors ${
+                                                  photoNotes[photo.id]
+                                                    ? "bg-primary/90 border-primary text-primary-foreground hover:bg-primary"
+                                                    : "bg-background/85 hover:bg-background border-border text-muted-foreground hover:text-foreground"
+                                                }`}
+                                                title={photoNotes[photo.id] ? "Edit note" : "Add a note about this photo"}
+                                                aria-label={photoNotes[photo.id] ? "Edit photo note" : "Add photo note"}
+                                              >
+                                                <StickyNote className="w-3 h-3" />
+                                              </button>
+                                            </PopoverTrigger>
+                                            <PopoverContent
+                                              align="end"
+                                              side="top"
+                                              className="w-64 p-3"
+                                              onClick={(e) => e.stopPropagation()}
+                                              onPointerDown={(e) => e.stopPropagation()}
+                                            >
+                                              <div className="flex items-center gap-1.5 mb-2">
+                                                <StickyNote className="w-3.5 h-3.5 text-primary" />
+                                                <p className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">
+                                                  Note for this photo
+                                                </p>
+                                              </div>
+                                              <Textarea
+                                                value={noteDraft}
+                                                onChange={(e) => setNoteDraft(e.target.value.slice(0, 500))}
+                                                placeholder='e.g. "fragile, do not stack" or "leave behind"'
+                                                rows={3}
+                                                maxLength={500}
+                                                className="text-xs resize-none"
+                                                autoFocus
+                                              />
+                                              <div className="flex items-center justify-between mt-2 gap-2">
+                                                <span className="text-[10px] text-muted-foreground">
+                                                  {noteDraft.length}/500 - visible to your moving team
+                                                </span>
+                                                <div className="flex items-center gap-1">
+                                                  {photoNotes[photo.id] && (
+                                                    <button
+                                                      type="button"
+                                                      onClick={() => {
+                                                        setPhotoNotes((prev) => {
+                                                          const next = { ...prev };
+                                                          delete next[photo.id];
+                                                          return next;
+                                                        });
+                                                        setNoteDraft("");
+                                                        setOpenNotePhotoId(null);
+                                                      }}
+                                                      className="text-[10px] text-destructive hover:underline px-1"
+                                                    >
+                                                      Remove
+                                                    </button>
+                                                  )}
+                                                  <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                      const trimmed = noteDraft.trim();
+                                                      setPhotoNotes((prev) => {
+                                                        const next = { ...prev };
+                                                        if (trimmed) next[photo.id] = trimmed;
+                                                        else delete next[photo.id];
+                                                        return next;
+                                                      });
+                                                      setOpenNotePhotoId(null);
+                                                    }}
+                                                    className="inline-flex items-center gap-1 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 px-2 py-1 text-[10px] font-semibold transition-colors"
+                                                  >
+                                                    <Check className="w-2.5 h-2.5" />
+                                                    Save
+                                                  </button>
+                                                </div>
+                                              </div>
+                                            </PopoverContent>
+                                          </Popover>
                                           <DropdownMenu
                                             open={longPressMenuPhotoId === photo.id ? true : undefined}
                                             onOpenChange={(open) => {
