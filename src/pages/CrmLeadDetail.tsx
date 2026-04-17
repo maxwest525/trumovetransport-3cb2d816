@@ -113,6 +113,10 @@ export default function CrmLeadDetail() {
   const [lead, setLead] = useState<Lead | null>(null);
   const [deals, setDeals] = useState<Deal[]>([]);
   const [scanPhotos, setScanPhotos] = useState<ScanPhoto[]>([]);
+  // Customer-defined folder names from the AI room scan. Persisted on the lead
+  // row by save-scan-room so agents see the same folder structure the customer
+  // built, including empty folders that have no photos yet.
+  const [customFolders, setCustomFolders] = useState<string[]>([]);
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
   const [photoViewer, setPhotoViewer] = useState<ScanPhoto | null>(null);
   const [loading, setLoading] = useState(true);

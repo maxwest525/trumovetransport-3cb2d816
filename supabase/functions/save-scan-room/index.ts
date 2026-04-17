@@ -110,6 +110,10 @@ serve(async (req) => {
         updates.tags = Array.from(tags);
         if (totalWeight) updates.estimated_weight = totalWeight;
         updates.notes = `AI room scan - ${items.length} items detected across ${photos.length} photo(s)`;
+        // Persist customer-defined folders so agents see the same organization
+        // in the CRM. We overwrite (not merge) because the client always sends
+        // the full current list and the customer is the source of truth.
+        updates.custom_folders = sanitizedFolders;
 
         await supabase.from("leads").update(updates).eq("id", leadId);
       }
@@ -129,6 +133,7 @@ serve(async (req) => {
           estimated_weight: totalWeight ?? null,
           notes: `AI room scan - ${items.length} items detected across ${photos.length} photo(s)`,
           tags: ["scan-room", "ai-detected"],
+          custom_folders: sanitizedFolders,
         })
         .select("id")
         .single();
