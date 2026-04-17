@@ -113,12 +113,26 @@ export default function CrmLeadDetail() {
   const [agentName, setAgentName] = useState<string | null>(null);
   const [claiming, setClaiming] = useState(false);
   const [generatingResumeLink, setGeneratingResumeLink] = useState(false);
+  const [resumeTokens, setResumeTokens] = useState<ResumeToken[]>([]);
+  const [revokingTokenId, setRevokingTokenId] = useState<string | null>(null);
+
+  const fetchResumeTokens = async () => {
+    if (!leadId) return;
+    const { data } = await supabase
+      .from("scan_resume_tokens")
+      .select("id, token, created_at, expires_at, used_at")
+      .eq("lead_id", leadId)
+      .order("created_at", { ascending: false });
+    if (data) setResumeTokens(data as ResumeToken[]);
+  };
 
   const handleSendResumeLink = async () => {
     if (!leadId) return;
     setGeneratingResumeLink(true);
     try {
       const { data, error } = await supabase.functions.invoke("create-scan-resume-link", {
+        body: { leadId },
+      });
         body: { leadId },
       });
       if (error || !data?.token) {
