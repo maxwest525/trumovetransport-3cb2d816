@@ -50,8 +50,17 @@ import {
   Ruler, Package, Printer, Download, Square, Trash2, ArrowRightLeft,
   Phone, Video, Minus, Plus, X, Upload, ImageIcon, FolderOpen, Lock, User, Mail,
   Sofa, BedDouble, UtensilsCrossed, Bath, Warehouse, Check, Pause, Play,
-  Camera, Layers, Info, Eye, Save, Loader2, AlertTriangle, Pencil, FolderPlus
+  Camera, Layers, Info, Eye, Save, Loader2, AlertTriangle, Pencil, FolderPlus,
+  MoreVertical, FolderInput
 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
