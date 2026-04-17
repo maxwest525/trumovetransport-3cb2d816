@@ -861,6 +861,28 @@ export default function ScanRoom() {
     });
   };
 
+  // Per-folder scan: same lead-gate as the global "Scan Your Home" button,
+  // but the AI detector only runs against photos inside this folder.
+  const handleScanFolderClick = (folderName: string) => {
+    if (isAiScanning) return;
+    const folderHasUnscanned = uploadedPhotos.some(
+      (p) => p.id !== 'demo-photo' && !scannedPhotoIds.has(p.id) && parseRoom(p.name) === folderName
+    );
+    if (!folderHasUnscanned) {
+      toast({
+        title: `Nothing new in "${folderName}"`,
+        description: "Add photos here or scan a different folder.",
+      });
+      return;
+    }
+    if (!isUnlocked) {
+      setPendingAction(() => () => runRealAiScan(folderName));
+      setShowLeadGate(true);
+      return;
+    }
+    runRealAiScan(folderName);
+  };
+
   const handleStartScanClick = () => {
     const hasRealPhotos = uploadedPhotos.some(p => p.id !== 'demo-photo' && !scannedPhotoIds.has(p.id));
     if (hasRealPhotos && !isDemoActive) {
