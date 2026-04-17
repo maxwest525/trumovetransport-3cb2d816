@@ -317,6 +317,11 @@ export default function CrmLeadDetail() {
 
       if (leadRes.data) {
         setLead(leadRes.data as Lead);
+        // Lift the customer-defined folder list off the lead row. The column
+        // is text[] with a default of {}, so a missing/empty value just means
+        // the customer never created any custom folders.
+        const folders = (leadRes.data as { custom_folders?: string[] | null }).custom_folders;
+        setCustomFolders(Array.isArray(folders) ? folders : []);
         if (leadRes.data.assigned_agent_id) {
           const { data: profile } = await supabase
             .from("profiles")
@@ -497,7 +502,7 @@ export default function CrmLeadDetail() {
             )}
 
             {/* AI Room Scan - Photos */}
-            {scanPhotos.length > 0 && (
+            {(scanPhotos.length > 0 || customFolders.length > 0) && (
               <Card>
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between gap-2 flex-wrap">
@@ -540,6 +545,54 @@ export default function CrmLeadDetail() {
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                  {/* Customer-defined folders pulled from the lead row. We
+                      surface ALL folders the customer created (including ones
+                      with zero photos) so agents see the same organization the
+                      customer built during the scan, not just folders that
+                      happen to contain a photo. */}
+                  {customFolders.length > 0 && (() => {
+                    // Map folder name -> photo count using room_label match
+                    // (case-insensitive, since folder names are user-typed).
+                    const counts = new Map<string, number>();
+                    for (const f of customFolders) counts.set(f, 0);
+                    for (const p of scanPhotos) {
+                      const label = (p.room_label || "").trim();
+                      for (const f of customFolders) {
+                        if (label.toLowerCase() === f.toLowerCase()) {
+                          counts.set(f, (counts.get(f) || 0) + 1);
+                          break;
+                        }
+                      }
+                    }
+                    return (
+                      <div className="rounded-lg border border-border/50 bg-muted/30 px-3 py-2.5">
+                        <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-1.5">
+                          Customer-defined folders
+                        </p>
+                        <div className="flex flex-wrap gap-1.5">
+                          {customFolders.map((f) => {
+                            const count = counts.get(f) || 0;
+                            return (
+                              <span
+                                key={f}
+                                className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs ${
+                                  count === 0
+                                    ? "border-dashed border-border text-muted-foreground bg-background"
+                                    : "border-primary/30 text-foreground bg-primary/5"
+                                }`}
+                                title={count === 0 ? "Empty folder (no photos filed yet)" : `${count} photo${count === 1 ? '' : 's'}`}
+                              >
+                                <FolderOpen className="w-3 h-3" />
+                                {f}
+                                <span className="text-muted-foreground">({count})</span>
+                              </span>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })()}
+
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                     {scanPhotos.map((photo) => (
                       <button
