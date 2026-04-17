@@ -114,7 +114,27 @@ export default function ScanRoom() {
   const navigate = useNavigate();
   // Inventory item shape (allows optional photoId + boxIndex + confidence from AI scans)
   type InventoryItem = (typeof DEMO_ITEMS)[number] & { quantity: number; photoId?: string; boxIndex?: number; confidence?: number };
-  const [detectedItems, setDetectedItems] = useState<InventoryItem[]>([]);
+
+  // Persistent state — survives refresh, navigation, and tab close
+  const STORAGE_KEY = "trumove_scan_room_state_v1";
+  const loadPersisted = () => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return null;
+      return JSON.parse(raw) as {
+        detectedItems?: InventoryItem[];
+        isUnlocked?: boolean;
+        savedLeadId?: string | null;
+      };
+    } catch {
+      return null;
+    }
+  };
+  const persisted = loadPersisted();
+
+  const [detectedItems, setDetectedItems] = useState<InventoryItem[]>(
+    persisted?.detectedItems ?? []
+  );
 
   // Merge helper: if an item with same name+room already exists, bump quantity instead of adding a new row
   const addOrMergeItem = (incoming: Omit<InventoryItem, "quantity"> & { quantity?: number }) => {
