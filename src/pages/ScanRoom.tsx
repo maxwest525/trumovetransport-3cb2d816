@@ -1458,10 +1458,14 @@ export default function ScanRoom() {
         <section className="px-4 sm:px-6 lg:px-8 pb-10">
           <div className="max-w-7xl mx-auto">
             {/* Layout: shrink the room scanner column and give the photo
-                library the extra width. Library jumps from 280px to 440px
-                so customers see more thumbnails at once and have room for
-                the multi-select toolbar. */}
-            <div className="grid grid-cols-1 lg:grid-cols-[1fr_440px] gap-4 lg:gap-6">
+                library the extra width. The library column is user-resizable
+                via the drag handle - persisted in localStorage. On mobile we
+                fall back to a stacked single-column layout. */}
+            <div
+              ref={splitContainerRef}
+              className="grid grid-cols-1 gap-4 lg:gap-0 lg:grid-cols-[minmax(0,1fr)_8px_var(--tru-library-w)]"
+              style={{ ["--tru-library-w" as string]: `${libraryWidth}px` }}
+            >
 
               {/* Center: Demo & Actions */}
               <div className="flex flex-col items-center justify-center gap-4 border border-border rounded-2xl bg-background shadow-[0_4px_20px_-4px_hsl(var(--tm-ink)/0.08)] relative overflow-hidden">
