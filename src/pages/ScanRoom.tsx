@@ -48,7 +48,7 @@ import {
   Ruler, Package, Printer, Download, Square, Trash2, ArrowRightLeft,
   Phone, Video, Minus, Plus, X, Upload, ImageIcon, FolderOpen, Lock, User, Mail,
   Sofa, BedDouble, UtensilsCrossed, Bath, Warehouse, Check, Pause, Play,
-  Camera, Layers, Info, Eye
+  Camera, Layers, Info, Eye, Save, Loader2
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -226,6 +226,12 @@ export default function ScanRoom() {
   const [scanHistory, setScanHistory] = useState<ScannedPhotoEntry[]>([]);
   // Detection viewer modal state
   const [detectionView, setDetectionView] = useState<{ photo: ScannedPhotoEntry; boxId: number } | null>(null);
+
+  // Save-to-CRM modal state
+  const [showSaveModal, setShowSaveModal] = useState(false);
+  const [savePayload, setSavePayload] = useState({ firstName: "", lastName: "", email: "", phone: "" });
+  const [isSaving, setIsSaving] = useState(false);
+  const [savedLeadId, setSavedLeadId] = useState<string | null>(null);
 
   // Convert image URL (blob:) to base64 data URL for AI vision
   const urlToDataUrl = async (url: string): Promise<string> => {
@@ -1064,7 +1070,25 @@ export default function ScanRoom() {
                             <td className="tru-scan-table-order">{idx + 1}</td>
                             <td className="tru-scan-table-item">
                               <img src={item.image} alt={item.name} />
-                              <span>{item.name}</span>
+                              <div className="flex items-center gap-1.5 flex-wrap">
+                                <span>{item.name}</span>
+                                {item.photoId ? (
+                                  <span
+                                    className="inline-flex items-center gap-0.5 rounded-full bg-primary/15 text-primary px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider leading-none"
+                                    title="Detected by AI vision"
+                                  >
+                                    <Sparkles className="w-2.5 h-2.5" />
+                                    AI
+                                  </span>
+                                ) : (
+                                  <span
+                                    className="inline-flex items-center rounded-full bg-muted text-muted-foreground px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider leading-none"
+                                    title="Added manually"
+                                  >
+                                    Manual
+                                  </span>
+                                )}
+                              </div>
                             </td>
                             <td>{item.room}</td>
                             <td>
