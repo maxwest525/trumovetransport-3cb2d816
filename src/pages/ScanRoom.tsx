@@ -337,6 +337,7 @@ export default function ScanRoom() {
             quantity: qty,
             photoId: photo.id,
             boxIndex: b,
+            confidence: typeof it.confidence === 'number' ? it.confidence : undefined,
           };
           allDetected.push(row);
           addOrMergeItem(row);
@@ -355,6 +356,7 @@ export default function ScanRoom() {
             image: '',
             quantity: qty,
             photoId: photo.id,
+            confidence: typeof it.confidence === 'number' ? it.confidence : undefined,
           };
           allDetected.push(row);
           addOrMergeItem(row);
@@ -375,6 +377,21 @@ export default function ScanRoom() {
     toast({
       title: `Scan complete!`,
       description: `Detected ${totalDetectedCount} items across ${realPhotos.length} photo(s).`,
+    });
+
+    // Auto-save the scan to the CRM in the background — silent, no UI prompt.
+    // We rebuild the latest snapshots since React state from inside this loop is stale.
+    setDetectedItems((current) => {
+      setScanHistory((history) => {
+        const totals = {
+          weight: current.reduce((s, i) => s + i.weight * i.quantity, 0),
+          cuft: current.reduce((s, i) => s + i.cuft * i.quantity, 0),
+        };
+        // Fire and forget
+        autoSaveScanToCrm(current, history, totals);
+        return history;
+      });
+      return current;
     });
   };
 
