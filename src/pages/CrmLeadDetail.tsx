@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import {
   ArrowLeft, User, Mail, Phone, MapPin, Calendar, DollarSign,
   Weight, Tag, Clock, FileText, Truck, UserCheck, Camera, Sparkles, Package, X, Link2, Loader2,
-  Ban, CheckCircle2, AlertCircle, Copy,
+  Ban, CheckCircle2, AlertCircle, Copy, RefreshCw,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -121,6 +121,47 @@ export default function CrmLeadDetail() {
   const [generatingResumeLink, setGeneratingResumeLink] = useState(false);
   const [resumeTokens, setResumeTokens] = useState<ResumeToken[]>([]);
   const [revokingTokenId, setRevokingTokenId] = useState<string | null>(null);
+  const [extendingTokenId, setExtendingTokenId] = useState<string | null>(null);
+
+  // Push out an active resume link's expiration so customers who need more time
+  // can still finish their scan without us having to mint (and verify) a brand
+  // new token. Default extension is 24 hours, capped at 168h total lifetime so
+  // a stale link can't live forever.
+  const handleExtendResumeLink = async (token: ResumeToken, addHours = 24) => {
+    const MAX_TOTAL_HOURS = 168; // 7 days, matches create-scan-resume-link cap
+    const createdMs = new Date(token.created_at).getTime();
+    const currentExpiresMs = new Date(token.expires_at).getTime();
+    const maxAllowedMs = createdMs + MAX_TOTAL_HOURS * 60 * 60 * 1000;
+    const requestedMs = currentExpiresMs + addHours * 60 * 60 * 1000;
+    const newExpiresMs = Math.min(requestedMs, maxAllowedMs);
+
+    if (newExpiresMs <= currentExpiresMs) {
+      toast.warning("This link is already at the 7-day maximum lifetime");
+      return;
+    }
+
+    setExtendingTokenId(token.id);
+    // Only extend links that are still active (not used/revoked). The
+    // .is("used_at", null) guard prevents racing with a revoke.
+    const { error } = await supabase
+      .from("scan_resume_tokens")
+      .update({ expires_at: new Date(newExpiresMs).toISOString() })
+      .eq("id", token.id)
+      .is("used_at", null);
+    setExtendingTokenId(null);
+
+    if (error) {
+      toast.error("Could not extend link: " + error.message);
+      return;
+    }
+    const cappedAtMax = newExpiresMs === maxAllowedMs && requestedMs > maxAllowedMs;
+    toast.success(`Resume link extended by ${addHours}h`, {
+      description: cappedAtMax
+        ? `Capped at the 7-day maximum lifetime. New expiry: ${new Date(newExpiresMs).toLocaleString()}`
+        : `New expiry: ${new Date(newExpiresMs).toLocaleString()}`,
+    });
+    fetchResumeTokens();
+  };
 
   const fetchResumeTokens = async () => {
     if (!leadId) return;
@@ -579,6 +620,23 @@ export default function CrmLeadDetail() {
                                         title="Copy link"
                                       >
                                         <Copy className="w-3 h-3" />
+                                      </Button>
+                                      <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        onClick={() => handleExtendResumeLink(t, 24)}
+                                        disabled={extendingTokenId === t.id}
+                                        className="h-7 px-2 text-[11px] gap-1 text-primary hover:text-primary hover:bg-primary/10"
+                                        title="Push this link's expiration out by 24 hours (capped at 7 days total)"
+                                      >
+                                        {extendingTokenId === t.id ? (
+                                          <Loader2 className="w-3 h-3 animate-spin" />
+                                        ) : (
+                                          <>
+                                            <RefreshCw className="w-3 h-3" />
+                                            +24h
+                                          </>
+                                        )}
                                       </Button>
                                       <Button
                                         size="sm"
