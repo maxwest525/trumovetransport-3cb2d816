@@ -194,7 +194,9 @@ export default function ScanRoom() {
   const [uploadedPhotos, setUploadedPhotos] = useState<{ id: string; url: string; name: string }[]>([]);
   const [scannedPhotoIds, setScannedPhotoIds] = useState<Set<string>>(new Set());
   const [pendingRoomLabel, setPendingRoomLabel] = useState<string>("");
+  const [isDraggingFiles, setIsDraggingFiles] = useState(false);
   const roomUploadRef = useRef<HTMLInputElement>(null);
+  const allUploadRef = useRef<HTMLInputElement>(null);
 
   const handleRoomClick = (roomLabel: string) => {
     // Gate uploads behind the lead capture form
@@ -210,19 +212,66 @@ export default function ScanRoom() {
     }
   };
 
-  const handleRoomUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files) {
-      Array.from(files).forEach(file => {
-        const url = URL.createObjectURL(file);
-        setUploadedPhotos(prev => [...prev, {
+  // Default upload path - dumps everything into the "All" folder
+  const handleAllUploadClick = () => {
+    if (!isUnlocked) {
+      setPendingAction(() => () => handleAllUploadClick());
+      setShowLeadGate(true);
+      return;
+    }
+    if (allUploadRef.current) {
+      allUploadRef.current.value = "";
+      allUploadRef.current.click();
+    }
+  };
+
+  const ingestFiles = (files: FileList | File[], roomLabel: string) => {
+    Array.from(files).forEach((file) => {
+      if (!file.type.startsWith("image/") && !file.type.startsWith("video/")) return;
+      const url = URL.createObjectURL(file);
+      setUploadedPhotos((prev) => [
+        ...prev,
+        {
           id: `photo-${Date.now()}-${Math.random()}`,
           url,
-          name: `${pendingRoomLabel} - ${file.name}`
-        }]);
-      });
-    }
+          name: `${roomLabel} - ${file.name}`,
+        },
+      ]);
+    });
+  };
+
+  const handleRoomUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files) ingestFiles(files, pendingRoomLabel || "All");
     setPendingRoomLabel("");
+  };
+
+  const handleAllUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files) ingestFiles(files, "All");
+  };
+
+  // Drag-and-drop handlers - dropped files always land in "All"
+  const handleLibraryDragOver = (e: React.DragEvent) => {
+    if (!e.dataTransfer.types.includes("Files")) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "copy";
+    if (!isDraggingFiles) setIsDraggingFiles(true);
+  };
+  const handleLibraryDragLeave = (e: React.DragEvent) => {
+    if (e.currentTarget === e.target) setIsDraggingFiles(false);
+  };
+  const handleLibraryDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDraggingFiles(false);
+    if (!isUnlocked) {
+      setPendingAction(() => () => handleAllUploadClick());
+      setShowLeadGate(true);
+      return;
+    }
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      ingestFiles(e.dataTransfer.files, "All");
+    }
   };
 
   // Demo step handler
@@ -1367,128 +1416,191 @@ export default function ScanRoom() {
               </div>
 
               {/* Right: Photo Library - Compact */}
-              <div className="tru-scan-library-panel tru-scan-library-compact">
+              <div
+                className={`tru-scan-library-panel tru-scan-library-compact relative transition-colors ${isDraggingFiles ? "ring-2 ring-primary ring-offset-2 ring-offset-background" : ""}`}
+                onDragOver={handleLibraryDragOver}
+                onDragLeave={handleLibraryDragLeave}
+                onDrop={handleLibraryDrop}
+              >
+                {/* Drag overlay - covers the whole panel while dragging files in */}
+                {isDraggingFiles && (
+                  <div className="absolute inset-0 z-20 rounded-[inherit] bg-primary/10 backdrop-blur-sm flex flex-col items-center justify-center gap-2 pointer-events-none">
+                    <Upload className="w-8 h-8 text-primary" />
+                    <p className="text-sm font-semibold text-foreground">Drop to add to All</p>
+                    <p className="text-[11px] text-muted-foreground">Photos & videos accepted</p>
+                  </div>
+                )}
+
                 <div className="tru-scan-library-header">
                   <FolderOpen className="w-3.5 h-3.5" />
                   <span>Library</span>
                   <span className="tru-scan-library-count">{uploadedPhotos.length}</span>
                 </div>
+
+                {/* Hidden inputs for both upload paths */}
+                <input
+                  ref={roomUploadRef}
+                  type="file"
+                  accept="image/*,video/*"
+                  multiple
+                  className="hidden"
+                  onChange={handleRoomUpload}
+                />
+                <input
+                  ref={allUploadRef}
+                  type="file"
+                  accept="image/*,video/*"
+                  multiple
+                  className="hidden"
+                  onChange={handleAllUpload}
+                />
+
                 <div className="tru-scan-library-grid tru-scan-library-grid-compact">
                   {uploadedPhotos.length === 0 ? (
-                    <div className="tru-scan-library-empty tru-scan-library-empty-compact flex flex-col items-center gap-3 py-4">
-                      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">Tap a room to upload</p>
-                      <input
-                        ref={roomUploadRef}
-                        type="file"
-                        accept="image/*,video/*"
-                        multiple
-                        className="hidden"
-                        onChange={handleRoomUpload}
-                      />
-                      <div className="grid grid-cols-3 gap-1.5 w-full px-1">
-                        {[
-                          { icon: Sofa, label: "Living", room: "Living Room" },
-                          { icon: BedDouble, label: "Bed", room: "Bedroom" },
-                          { icon: UtensilsCrossed, label: "Kitchen", room: "Kitchen" },
-                          { icon: Bath, label: "Bath", room: "Bathroom" },
-                          { icon: Warehouse, label: "Garage", room: "Garage" },
-                          { icon: Box, label: "Storage", room: "Storage" },
-                          { icon: Plus, label: "Other", room: "__other__" },
-                        ].map(({ icon: Icon, label, room }) => (
-                          <button
-                            key={label}
-                            type="button"
-                            onClick={() => {
-                              if (room === "__other__") {
-                                const custom = window.prompt("Enter room name:");
-                                if (custom?.trim()) handleRoomClick(custom.trim());
-                              } else {
-                                handleRoomClick(room);
-                              }
-                            }}
-                            className="flex flex-col items-center gap-1.5 rounded-lg border border-border bg-muted/30 px-3 py-3.5 text-xs font-medium text-muted-foreground/70 hover:bg-muted/60 hover:text-foreground hover:border-foreground/20 transition-colors cursor-pointer"
-                          >
-                            <Icon className="w-4 h-4 flex-shrink-0" />
-                            <span>{label}</span>
-                          </button>
-                        ))}
+                    <div className="tru-scan-library-empty tru-scan-library-empty-compact flex flex-col items-center gap-3 py-3">
+                      {/* Primary drop zone - the "easy path" */}
+                      <button
+                        type="button"
+                        onClick={handleAllUploadClick}
+                        className="w-full flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-primary/40 bg-primary/[0.04] hover:bg-primary/[0.08] hover:border-primary/60 transition-colors px-4 py-6 cursor-pointer group"
+                      >
+                        <div className="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center group-hover:bg-primary/25 transition-colors">
+                          <Upload className="w-5 h-5 text-primary" />
+                        </div>
+                        <p className="text-sm font-semibold text-foreground">Drop photos & videos here</p>
+                        <p className="text-[11px] text-muted-foreground">
+                          or <span className="text-primary font-semibold underline underline-offset-2">click to browse</span>
+                        </p>
+                        <p className="text-[10px] text-muted-foreground/70 flex items-center gap-1 mt-1">
+                          <FolderOpen className="w-3 h-3" /> Goes into "All" folder by default
+                        </p>
+                      </button>
+
+                      {/* Auto-save reassurance */}
+                      <div className="w-full flex items-center justify-center gap-1.5 text-[10px] text-muted-foreground/70">
+                        <Check className="w-3 h-3 text-primary" />
+                        <span>Auto-saved as you go - resume anytime within 7 days</span>
                       </div>
-                      <p className="text-[10px] text-muted-foreground/40 flex items-center gap-1"><Video className="w-3 h-3" /> Photos or videos accepted</p>
+
+                      {/* Optional room organization */}
+                      <div className="w-full">
+                        <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60 text-center mb-1.5">
+                          Or sort by room (optional)
+                        </p>
+                        <div className="grid grid-cols-3 gap-1.5 w-full px-1">
+                          {[
+                            { icon: Sofa, label: "Living", room: "Living Room" },
+                            { icon: BedDouble, label: "Bed", room: "Bedroom" },
+                            { icon: UtensilsCrossed, label: "Kitchen", room: "Kitchen" },
+                            { icon: Bath, label: "Bath", room: "Bathroom" },
+                            { icon: Warehouse, label: "Garage", room: "Garage" },
+                            { icon: Box, label: "Storage", room: "Storage" },
+                          ].map(({ icon: Icon, label, room }) => (
+                            <button
+                              key={label}
+                              type="button"
+                              onClick={() => handleRoomClick(room)}
+                              className="flex flex-col items-center gap-1 rounded-lg border border-border bg-muted/30 px-2 py-2.5 text-[11px] font-medium text-muted-foreground/70 hover:bg-muted/60 hover:text-foreground hover:border-foreground/20 transition-colors cursor-pointer"
+                            >
+                              <Icon className="w-3.5 h-3.5 flex-shrink-0" />
+                              <span>{label}</span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
                     </div>
                   ) : (
                     (() => {
-                      // Group photos into folders by parsed room name. Anything
-                      // without a recognized room prefix lands in "Misc" — which
-                      // is always rendered as the default catch-all folder.
+                      // Group photos by folder. "All" is the default landing
+                      // bucket and is always pinned to the top, even when empty,
+                      // so customers see a clear home for any new uploads.
                       const KNOWN_ROOMS = ["Living Room", "Bedroom", "Kitchen", "Bathroom", "Garage", "Storage"];
                       const parseRoom = (name: string) => {
                         const sep = name.indexOf(" - ");
-                        if (sep === -1) return "Misc";
+                        if (sep === -1) return "All";
                         const candidate = name.slice(0, sep).trim();
-                        return candidate.length > 0 ? candidate : "Misc";
+                        return candidate.length > 0 ? candidate : "All";
                       };
                       const groups = new Map<string, typeof uploadedPhotos>();
-                      // Seed Misc so it renders even when empty
-                      groups.set("Misc", []);
+                      // Seed All so it always renders first
+                      groups.set("All", []);
                       uploadedPhotos.forEach((p) => {
                         const room = parseRoom(p.name);
                         if (!groups.has(room)) groups.set(room, []);
                         groups.get(room)!.push(p);
                       });
-                      // Order: known rooms first (in canonical order), then
-                      // any custom rooms alphabetically, with Misc pinned last
+                      // Order: All first, then known rooms, then custom rooms alphabetically
                       const orderedKeys = [
+                        "All",
                         ...KNOWN_ROOMS.filter((r) => groups.has(r)),
                         ...[...groups.keys()]
-                          .filter((k) => !KNOWN_ROOMS.includes(k) && k !== "Misc")
+                          .filter((k) => !KNOWN_ROOMS.includes(k) && k !== "All")
                           .sort((a, b) => a.localeCompare(b)),
-                        "Misc",
                       ];
-                      return orderedKeys.map((room) => {
-                        const photos = groups.get(room) ?? [];
-                        return (
-                          <div key={room} className="tru-scan-library-folder">
-                            <div className="flex items-center gap-1.5 px-1 pt-2 pb-1">
-                              <FolderOpen className="w-3 h-3 text-muted-foreground/70" />
-                              <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/70">
-                                {room}
-                              </span>
-                              <span className="text-[10px] text-muted-foreground/50">
-                                {photos.length}
-                              </span>
-                            </div>
-                            {photos.length === 0 ? (
-                              <p className="text-[10px] text-muted-foreground/50 italic px-1 pb-2">
-                                Default folder - unsorted uploads land here
-                              </p>
-                            ) : (
-                              <div className="grid grid-cols-3 gap-1.5">
-                                {photos.map((photo) => {
-                                  const isScanned = scannedPhotoIds.has(photo.id);
-                                  return (
-                                    <div key={photo.id} className={`tru-scan-library-item tru-scan-library-item-compact relative ${isScanned ? 'opacity-50 grayscale' : ''}`}>
-                                      <img src={photo.url} alt={photo.name} />
-                                      {isScanned && (
-                                        <div className="absolute inset-0 flex items-center justify-center bg-foreground/20 rounded-[inherit]">
-                                          <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center">
-                                            <Check className="w-3 h-3 text-primary-foreground" />
-                                          </div>
+                      return (
+                        <>
+                          {/* Compact "add more" strip stays visible while photos exist */}
+                          <button
+                            type="button"
+                            onClick={handleAllUploadClick}
+                            className="w-full flex items-center justify-center gap-1.5 rounded-lg border border-dashed border-primary/40 bg-primary/[0.04] hover:bg-primary/[0.08] px-3 py-2 text-[11px] font-semibold text-primary transition-colors cursor-pointer"
+                          >
+                            <Upload className="w-3.5 h-3.5" />
+                            Add more (drop or click)
+                          </button>
+                          {orderedKeys.map((room) => {
+                            const photos = groups.get(room) ?? [];
+                            const isAllFolder = room === "All";
+                            return (
+                              <div key={room} className="tru-scan-library-folder">
+                                <div className="flex items-center gap-1.5 px-1 pt-2 pb-1">
+                                  <FolderOpen className={`w-3 h-3 ${isAllFolder ? "text-primary" : "text-muted-foreground/70"}`} />
+                                  <span className={`text-[10px] font-semibold uppercase tracking-wider ${isAllFolder ? "text-primary" : "text-muted-foreground/70"}`}>
+                                    {room}
+                                  </span>
+                                  <span className="text-[10px] text-muted-foreground/50">
+                                    {photos.length}
+                                  </span>
+                                  {isAllFolder && (
+                                    <span className="ml-auto text-[9px] uppercase tracking-wider text-primary/70 font-semibold">
+                                      Default
+                                    </span>
+                                  )}
+                                </div>
+                                {photos.length === 0 ? (
+                                  <p className="text-[10px] text-muted-foreground/50 italic px-1 pb-2">
+                                    Drop photos here - the easy way to keep them all together
+                                  </p>
+                                ) : (
+                                  <div className="grid grid-cols-3 gap-1.5">
+                                    {photos.map((photo) => {
+                                      const isScanned = scannedPhotoIds.has(photo.id);
+                                      return (
+                                        <div key={photo.id} className={`tru-scan-library-item tru-scan-library-item-compact relative ${isScanned ? 'opacity-50 grayscale' : ''}`}>
+                                          <img src={photo.url} alt={photo.name} />
+                                          {isScanned && (
+                                            <div className="absolute inset-0 flex items-center justify-center bg-foreground/20 rounded-[inherit]">
+                                              <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center">
+                                                <Check className="w-3 h-3 text-primary-foreground" />
+                                              </div>
+                                            </div>
+                                          )}
+                                          <button
+                                            onClick={() => setUploadedPhotos(prev => prev.filter(p => p.id !== photo.id))}
+                                            className="tru-scan-library-remove tru-scan-library-remove-compact"
+                                          >
+                                            <X className="w-2.5 h-2.5" />
+                                          </button>
                                         </div>
-                                      )}
-                                      <button
-                                        onClick={() => setUploadedPhotos(prev => prev.filter(p => p.id !== photo.id))}
-                                        className="tru-scan-library-remove tru-scan-library-remove-compact"
-                                      >
-                                        <X className="w-2.5 h-2.5" />
-                                      </button>
-                                    </div>
-                                  );
-                                })}
+                                      );
+                                    })}
+                                  </div>
+                                )}
                               </div>
-                            )}
-                          </div>
-                        );
-                      });
+                            );
+                          })}
+                        </>
+                      );
                     })()
                   )}
                 </div>
