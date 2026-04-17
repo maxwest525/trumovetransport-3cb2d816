@@ -2077,7 +2077,64 @@ export default function ScanRoom() {
                                 }}
                               >
                                 <div className="flex items-center gap-1.5 px-1 pt-2 pb-1 group/folderhead">
-                                  <FolderOpen className={`w-3 h-3 ${isAllFolder ? "text-primary" : "text-muted-foreground/70"}`} />
+                                  {/* Select-all-in-folder checkbox. Only visible
+                                      in multi-select mode and when the folder
+                                      actually has photos. Tri-state: empty
+                                      (none selected), dash (some selected),
+                                      check (all selected). Toggling adds or
+                                      removes every photo in this folder from
+                                      the active selection. */}
+                                  {selectionMode && photos.length > 0 ? (() => {
+                                    const folderPhotoIds = photos.map((p) => p.id);
+                                    const selectedInFolder = folderPhotoIds.filter((id) => selectedPhotoIds.has(id)).length;
+                                    const allSelected = selectedInFolder === folderPhotoIds.length;
+                                    const someSelected = selectedInFolder > 0 && !allSelected;
+                                    return (
+                                      <button
+                                        type="button"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          setSelectedPhotoIds((prev) => {
+                                            const next = new Set(prev);
+                                            // If every photo in this folder is
+                                            // already selected, deselect them all.
+                                            // Otherwise add the missing ones so
+                                            // partial state becomes "all".
+                                            if (allSelected) {
+                                              folderPhotoIds.forEach((id) => next.delete(id));
+                                            } else {
+                                              folderPhotoIds.forEach((id) => next.add(id));
+                                            }
+                                            return next;
+                                          });
+                                          // Anchor for shift-click range moves
+                                          // to the last photo in this folder.
+                                          setLastSelectedPhotoId(folderPhotoIds[folderPhotoIds.length - 1] ?? null);
+                                        }}
+                                        className={`inline-flex items-center justify-center w-3.5 h-3.5 rounded border transition-colors ${
+                                          allSelected
+                                            ? "bg-primary border-primary text-primary-foreground"
+                                            : someSelected
+                                              ? "bg-primary/30 border-primary text-primary-foreground"
+                                              : "bg-background border-border text-transparent hover:border-primary"
+                                        }`}
+                                        title={allSelected
+                                          ? `Deselect all ${photos.length} ${photos.length === 1 ? "photo" : "photos"} in ${room}`
+                                          : `Select all ${photos.length} ${photos.length === 1 ? "photo" : "photos"} in ${room}`}
+                                        aria-label={allSelected ? `Deselect all in ${room}` : `Select all in ${room}`}
+                                        aria-checked={allSelected ? true : someSelected ? "mixed" : false}
+                                        role="checkbox"
+                                      >
+                                        {allSelected ? (
+                                          <Check className="w-2.5 h-2.5" />
+                                        ) : someSelected ? (
+                                          <Minus className="w-2.5 h-2.5" />
+                                        ) : null}
+                                      </button>
+                                    );
+                                  })() : (
+                                    <FolderOpen className={`w-3 h-3 ${isAllFolder ? "text-primary" : "text-muted-foreground/70"}`} />
+                                  )}
                                   {renamingFolder === room ? (
                                     <input
                                       autoFocus
