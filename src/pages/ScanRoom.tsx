@@ -389,6 +389,88 @@ export default function ScanRoom() {
     window.print();
   };
 
+  // Persist scanned photos + detected inventory to a new lead in the CRM
+  const handleSaveToCrm = async () => {
+    if (!savePayload.firstName.trim() || (!savePayload.email.trim() && !savePayload.phone.trim())) {
+      toast({ title: "Missing info", description: "First name and either email or phone are required.", variant: "destructive" });
+      return;
+    }
+    if (detectedItems.length === 0) {
+      toast({ title: "Nothing to save", description: "Scan at least one photo first.", variant: "destructive" });
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      // Build photo payload from scan history (only AI-scanned photos persist)
+      const photoIds = Array.from(new Set(detectedItems.map((it) => it.photoId).filter(Boolean) as string[]));
+      const photoEntries = scanHistory.filter((p) => photoIds.includes(p.id));
+
+      const photos = await Promise.all(
+        photoEntries.map(async (p) => {
+          const dataUrl = await urlToDataUrl(p.url);
+          const itemCount = detectedItems.filter((it) => it.photoId === p.id).length;
+          return {
+            id: p.id,
+            dataUrl,
+            name: p.name,
+            roomLabel: p.name?.includes(" - ") ? p.name.split(" - ")[0] : p.name,
+            boxes: p.boxes,
+            itemCount,
+          };
+        })
+      );
+
+      const items = detectedItems.map((it) => {
+        let detectionBox: { x: number; y: number; width: number; height: number } | undefined;
+        if (it.photoId && typeof it.boxIndex === "number") {
+          const photo = scanHistory.find((p) => p.id === it.photoId);
+          const box = photo?.boxes.find((b) => b.id === it.boxIndex);
+          if (box) detectionBox = { x: box.x, y: box.y, width: box.width, height: box.height };
+        }
+        return {
+          name: it.name,
+          room: it.room,
+          weight: it.weight,
+          cubicFeet: it.cuft,
+          photoLocalId: it.photoId,
+          detectionBox,
+        };
+      });
+
+      const { data, error } = await supabase.functions.invoke("save-scan-room", {
+        body: {
+          firstName: savePayload.firstName.trim(),
+          lastName: savePayload.lastName.trim(),
+          email: savePayload.email.trim() || undefined,
+          phone: savePayload.phone.trim() || undefined,
+          photos,
+          items,
+          totalWeight,
+          totalCubicFeet: totalCuFt,
+        },
+      });
+
+      if (error) throw error;
+      if (!data?.success) throw new Error(data?.error || "Save failed");
+
+      setSavedLeadId(data.leadId);
+      toast({
+        title: "Scan saved to CRM",
+        description: `${data.items} items and ${data.uploaded} photos saved. An agent will follow up.`,
+      });
+    } catch (e) {
+      console.error("Save to CRM error:", e);
+      toast({
+        title: "Save failed",
+        description: e instanceof Error ? e.message : "Could not save scan",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const handleDownloadPDF = async () => {
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
