@@ -351,6 +351,7 @@ export default function ScanRoom() {
       const slimUploaded = uploadedPhotos
         .filter((p) => !isVolatile(p.url) && p.id !== "demo-photo")
         .map((p) => ({ id: p.id, url: p.url, name: p.name }));
+      const stamp = Date.now();
       localStorage.setItem(
         STORAGE_KEY,
         JSON.stringify({
@@ -360,9 +361,10 @@ export default function ScanRoom() {
           scanHistory: slimHistory,
           uploadedPhotos: slimUploaded,
           scannedPhotoIds: Array.from(scannedPhotoIds).filter((id) => id !== "demo-photo"),
-          savedAt: Date.now(),
+          savedAt: stamp,
         })
       );
+      setSavedAtMs(stamp);
     } catch {
       // Quota or serialization failure — non-fatal
     }
