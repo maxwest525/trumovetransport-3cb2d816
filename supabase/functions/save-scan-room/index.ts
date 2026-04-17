@@ -20,6 +20,7 @@ type IncomingItem = {
   room: string;
   weight: number;
   cubicFeet: number;
+  quantity?: number;
   confidence?: number;
   photoLocalId?: string;
   detectionBox?: { x: number; y: number; width: number; height: number };
