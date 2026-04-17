@@ -215,12 +215,14 @@ export default function CrmLeadDetail() {
     if (!leadId) return;
 
     async function fetchData() {
-      const [leadRes, dealsRes, photosRes, inventoryRes] = await Promise.all([
+      const [leadRes, dealsRes, photosRes, inventoryRes, tokensRes] = await Promise.all([
         supabase.from("leads").select("*").eq("id", leadId).single(),
         supabase.from("deals").select("id, stage, deal_value, expected_close_date, carrier_name, created_at").eq("lead_id", leadId),
         supabase.from("lead_scan_photos").select("*").eq("lead_id", leadId).order("created_at", { ascending: true }),
         supabase.from("lead_inventory").select("*").eq("lead_id", leadId).order("created_at", { ascending: true }),
+        supabase.from("scan_resume_tokens").select("id, token, created_at, expires_at, used_at").eq("lead_id", leadId).order("created_at", { ascending: false }),
       ]);
+      if (tokensRes.data) setResumeTokens(tokensRes.data as ResumeToken[]);
 
       if (leadRes.data) {
         setLead(leadRes.data as Lead);
