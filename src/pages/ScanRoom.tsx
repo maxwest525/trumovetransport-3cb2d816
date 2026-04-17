@@ -841,13 +841,18 @@ export default function ScanRoom() {
                 </div>
                 <button
                   onClick={() => {
-                    setShowIntroModal(true);
+                    const hasReal = uploadedPhotos.some(p => p.id !== 'demo-photo' && !scannedPhotoIds.has(p.id));
+                    if (hasReal) {
+                      runRealAiScan();
+                    } else {
+                      setShowIntroModal(true);
+                    }
                   }}
-                  disabled={isScanning || uploadedPhotos.length === 0 || uploadedPhotos.every(p => p.id === 'demo-photo')}
+                  disabled={isScanning || isAiScanning || uploadedPhotos.length === 0 || uploadedPhotos.every(p => p.id === 'demo-photo' || scannedPhotoIds.has(p.id))}
                   className="tru-scan-library-analyze-btn tru-scan-library-analyze-btn-compact"
                 >
                   <Sparkles className="w-3.5 h-3.5" />
-                  {isScanning ? "Scanning..." : "Start Scanning"}
+                  {isAiScanning ? "Analyzing..." : isScanning ? "Scanning..." : "Start Scanning"}
                 </button>
               </div>
             </div>
