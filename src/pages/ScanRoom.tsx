@@ -608,7 +608,7 @@ export default function ScanRoom() {
     } catch {
       // Quota or serialization failure — non-fatal
     }
-  }, [detectedItems, isUnlocked, savedLeadId, scanHistory, uploadedPhotos, scannedPhotoIds, customFolders]);
+  }, [detectedItems, isUnlocked, savedLeadId, scanHistory, uploadedPhotos, scannedPhotoIds, customFolders, photoNotes]);
 
   // Rehydrate uploadedPhotos + scannedPhotoIds on mount (separate so they don't fight initial demo state)
   useEffect(() => {
