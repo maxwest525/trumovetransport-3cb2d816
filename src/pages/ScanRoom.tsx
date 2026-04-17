@@ -203,8 +203,28 @@ export default function ScanRoom() {
   // doesn't fire when the customer is just reorganizing folders.
   const [draggedPhotoId, setDraggedPhotoId] = useState<string | null>(null);
   const [dragOverFolder, setDragOverFolder] = useState<string | null>(null);
+  // Customer-defined folders (e.g. "Garage Loft", "Office"). Stored separately
+  // from photos so an empty folder still renders until removed. Seeded from
+  // persisted state so the list survives a refresh.
+  const [customFolders, setCustomFolders] = useState<string[]>(persisted?.customFolders ?? []);
+  // Inline UI state for the header "+ Folder" affordance and per-folder rename.
+  const [isAddingFolder, setIsAddingFolder] = useState(false);
+  const [newFolderDraft, setNewFolderDraft] = useState("");
+  const [renamingFolder, setRenamingFolder] = useState<string | null>(null);
+  const [renameDraft, setRenameDraft] = useState("");
   const roomUploadRef = useRef<HTMLInputElement>(null);
   const allUploadRef = useRef<HTMLInputElement>(null);
+
+  // Folders the customer cannot rename or delete: "All" is the protected
+  // default bucket; KNOWN_ROOMS are canonical labels parsed from photo names.
+  const KNOWN_ROOMS = ["Living Room", "Bedroom", "Kitchen", "Bathroom", "Garage", "Storage"];
+  const PROTECTED_FOLDERS = new Set(["All", ...KNOWN_ROOMS]);
+  const parseRoom = (name: string) => {
+    const sep = name.indexOf(" - ");
+    if (sep === -1) return "All";
+    const candidate = name.slice(0, sep).trim();
+    return candidate.length > 0 ? candidate : "All";
+  };
 
   // Move a photo into a different folder by rewriting its `name` to the
   // "<Room> - <rest>" prefix that parseRoom() reads. This is what gets
@@ -221,6 +241,77 @@ export default function ScanRoom() {
         return { ...p, name: newName };
       })
     );
+  };
+
+  // Add a new custom folder. Names are normalized (trim + collapse spaces),
+  // case-insensitively de-duped against existing folders + photo-derived
+  // groups, and capped at 40 chars to keep the UI compact.
+  const addCustomFolder = (rawName: string) => {
+    const cleaned = rawName.trim().replace(/\s+/g, " ").slice(0, 40);
+    if (!cleaned) return;
+    const existing = new Set([
+      ...PROTECTED_FOLDERS,
+      ...customFolders,
+      ...uploadedPhotos.map((p) => parseRoom(p.name)),
+    ].map((n) => n.toLowerCase()));
+    if (existing.has(cleaned.toLowerCase())) {
+      toast({ title: "Folder already exists", description: `"${cleaned}" is already in your library.` });
+      return;
+    }
+    setCustomFolders((prev) => [...prev, cleaned]);
+    toast({ title: `Folder "${cleaned}" added`, description: "Drag photos here to organize them." });
+  };
+
+  // Rename a folder: update the customFolders list AND rewrite every photo's
+  // name prefix so the grouping moves with the rename. "All" and known rooms
+  // are protected to avoid accidentally orphaning canonical buckets.
+  const renameFolderTo = (oldName: string, rawNewName: string) => {
+    const cleaned = rawNewName.trim().replace(/\s+/g, " ").slice(0, 40);
+    if (!cleaned || cleaned === oldName) {
+      setRenamingFolder(null);
+      return;
+    }
+    if (PROTECTED_FOLDERS.has(oldName)) {
+      toast({ title: "This folder cannot be renamed", description: `"${oldName}" is a default folder.` });
+      setRenamingFolder(null);
+      return;
+    }
+    const conflict = new Set([
+      ...PROTECTED_FOLDERS,
+      ...customFolders.filter((n) => n !== oldName),
+      ...uploadedPhotos.map((p) => parseRoom(p.name)).filter((n) => n !== oldName),
+    ].map((n) => n.toLowerCase()));
+    if (conflict.has(cleaned.toLowerCase())) {
+      toast({ title: "Name already in use", description: `Pick a different name than "${cleaned}".` });
+      return;
+    }
+    setCustomFolders((prev) => prev.map((n) => (n === oldName ? cleaned : n)));
+    setUploadedPhotos((prev) =>
+      prev.map((p) => {
+        if (parseRoom(p.name) !== oldName) return p;
+        const sep = p.name.indexOf(" - ");
+        const baseName = sep === -1 ? p.name : p.name.slice(sep + 3);
+        return { ...p, name: `${cleaned} - ${baseName.trim() || "photo"}` };
+      })
+    );
+    setRenamingFolder(null);
+    toast({ title: `Renamed to "${cleaned}"`, description: "Photos in this folder were updated." });
+  };
+
+  // Remove a custom folder. If it still contains photos, those photos fall
+  // back into "All" by stripping their room prefix.
+  const removeCustomFolder = (name: string) => {
+    if (PROTECTED_FOLDERS.has(name)) return;
+    setCustomFolders((prev) => prev.filter((n) => n !== name));
+    setUploadedPhotos((prev) =>
+      prev.map((p) => {
+        if (parseRoom(p.name) !== name) return p;
+        const sep = p.name.indexOf(" - ");
+        const baseName = sep === -1 ? p.name : p.name.slice(sep + 3);
+        return { ...p, name: baseName.trim() || "photo" };
+      })
+    );
+    toast({ title: `Folder "${name}" removed`, description: "Any photos inside moved to All." });
   };
 
   const handleRoomClick = (roomLabel: string) => {
