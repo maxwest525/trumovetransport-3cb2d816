@@ -970,6 +970,7 @@ export type Database = {
           id: string
           item_count: number
           lead_id: string
+          note: string | null
           photo_url: string
           room_label: string | null
         }
@@ -979,6 +980,7 @@ export type Database = {
           id?: string
           item_count?: number
           lead_id: string
+          note?: string | null
           photo_url: string
           room_label?: string | null
         }
@@ -988,6 +990,7 @@ export type Database = {
           id?: string
           item_count?: number
           lead_id?: string
+          note?: string | null
           photo_url?: string
           room_label?: string | null
         }

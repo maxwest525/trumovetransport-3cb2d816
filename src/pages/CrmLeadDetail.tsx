@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import {
   ArrowLeft, User, Mail, Phone, MapPin, Calendar, DollarSign,
   Weight, Tag, Clock, FileText, Truck, UserCheck, Camera, Sparkles, Package, X, Link2, Loader2,
-  Ban, CheckCircle2, AlertCircle, Copy, RefreshCw, FolderOpen,
+  Ban, CheckCircle2, AlertCircle, Copy, RefreshCw, FolderOpen, StickyNote,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -48,6 +48,9 @@ interface ScanPhoto {
   room_label: string | null;
   detected_boxes: Array<{ id?: number; name?: string; confidence?: number; x?: number; y?: number; width?: number; height?: number }>;
   item_count: number;
+  // Customer-supplied note about this photo (e.g. "fragile, do not stack").
+  // Optional - missing/empty for photos taken before the notes feature shipped.
+  note: string | null;
   created_at: string;
 }
 
@@ -602,6 +605,17 @@ export default function CrmLeadDetail() {
                       >
                         <img src={photo.photo_url} alt={photo.room_label || "Scan"} className="w-full h-28 object-cover" />
                         <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/30 transition-colors" />
+                        {/* Note indicator: customer left a note about this
+                            photo. Click the tile to open the viewer and read
+                            the full note. */}
+                        {photo.note && (
+                          <div
+                            className="absolute top-1 right-1 inline-flex items-center justify-center w-5 h-5 rounded-md bg-primary text-primary-foreground shadow-sm"
+                            title={photo.note}
+                          >
+                            <StickyNote className="w-3 h-3" />
+                          </div>
+                        )}
                         <div className="absolute bottom-0 left-0 right-0 px-2 py-1 bg-foreground/70 text-background flex items-center justify-between">
                           <span className="text-[10px] font-semibold truncate">{photo.room_label || "Room"}</span>
                           <span className="text-[10px] flex items-center gap-0.5"><Sparkles className="w-2.5 h-2.5" />{photo.item_count}</span>
@@ -871,6 +885,21 @@ export default function CrmLeadDetail() {
                 );
               })}
             </div>
+            {photoViewer.note && (
+              <div className="px-4 py-3 border-t border-border bg-primary/5">
+                <div className="flex items-start gap-2">
+                  <StickyNote className="w-3.5 h-3.5 text-primary mt-0.5 shrink-0" />
+                  <div className="min-w-0">
+                    <p className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground mb-0.5">
+                      Customer note
+                    </p>
+                    <p className="text-xs text-foreground whitespace-pre-wrap break-words">
+                      {photoViewer.note}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
             <div className="px-4 py-3 border-t border-border text-xs text-muted-foreground">
               {photoViewer.item_count} items detected in this photo
             </div>
