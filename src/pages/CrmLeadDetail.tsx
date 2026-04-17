@@ -41,6 +41,28 @@ interface Deal {
   created_at: string;
 }
 
+interface ScanPhoto {
+  id: string;
+  photo_url: string;
+  room_label: string | null;
+  detected_boxes: Array<{ id?: number; name?: string; confidence?: number; x?: number; y?: number; width?: number; height?: number }>;
+  item_count: number;
+  created_at: string;
+}
+
+interface InventoryItem {
+  id: string;
+  item_name: string;
+  room: string;
+  quantity: number;
+  cubic_feet: number;
+  weight: number;
+  source: string;
+  source_photo_url: string | null;
+  detection_box: { x: number; y: number; width: number; height: number } | null;
+  confidence: number | null;
+}
+
 const statusColors: Record<string, string> = {
   new: "bg-blue-500/10 text-blue-400 border-blue-500/30",
   contacted: "bg-yellow-500/10 text-yellow-400 border-yellow-500/30",
