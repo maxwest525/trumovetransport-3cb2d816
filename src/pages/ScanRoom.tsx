@@ -50,7 +50,7 @@ import {
   Ruler, Package, Printer, Download, Square, Trash2, ArrowRightLeft,
   Phone, Video, Minus, Plus, X, Upload, ImageIcon, FolderOpen, Lock, User, Mail,
   Sofa, BedDouble, UtensilsCrossed, Bath, Warehouse, Check, Pause, Play,
-  Camera, Layers, Info, Eye, Save, Loader2
+  Camera, Layers, Info, Eye, Save, Loader2, AlertTriangle
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -317,6 +317,13 @@ export default function ScanRoom() {
     const days = Math.floor(hours / 24);
     return `Saved ${days} day${days === 1 ? "" : "s"} ago`;
   };
+
+  // Saved scans are auto-purged after 7 days. Warn the user once they pass 5.
+  const SCAN_TTL_DAYS = 7;
+  const SCAN_STALE_WARN_DAYS = 5;
+  const scanAgeDays = savedAtMs ? (nowTick - savedAtMs) / (1000 * 60 * 60 * 24) : 0;
+  const isScanStale = !!savedAtMs && scanAgeDays >= SCAN_STALE_WARN_DAYS;
+  const daysUntilExpiry = Math.max(0, Math.ceil(SCAN_TTL_DAYS - scanAgeDays));
 
 
   // Clear every trace of the previous scan from state + localStorage
@@ -1081,6 +1088,47 @@ export default function ScanRoom() {
                   <button
                     onClick={startFreshScan}
                     className="flex-1 sm:flex-none px-4 py-2 rounded-lg border border-border bg-background text-xs font-semibold text-foreground hover:bg-muted transition-colors flex items-center justify-center gap-1.5"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    Start fresh
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Stale-scan warning banner — appears once persisted data is older than 5 days */}
+        {isScanStale && detectedItems.length > 0 && (
+          <section className="px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto -mt-2 mb-6">
+              <div className="rounded-xl border border-amber-500/40 bg-amber-500/[0.08] backdrop-blur p-4 md:p-5 flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
+                <div className="flex items-center gap-3 flex-1 min-w-0">
+                  <div className="w-10 h-10 rounded-full bg-amber-500/15 flex items-center justify-center shrink-0">
+                    <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <p className="text-sm font-semibold text-foreground">
+                        Your saved scan is getting old
+                      </p>
+                      {savedAtMs && (
+                        <span className="text-[10px] uppercase tracking-wide font-semibold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-700 dark:text-amber-300">
+                          {formatSavedAgo(savedAtMs)}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      {daysUntilExpiry === 0
+                        ? "This scan expires today. Finish reviewing or start fresh before it auto-deletes."
+                        : `This scan auto-deletes in ${daysUntilExpiry} day${daysUntilExpiry === 1 ? "" : "s"}. Finish reviewing or start fresh to keep your inventory accurate.`}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 w-full sm:w-auto">
+                  <button
+                    onClick={startFreshScan}
+                    className="flex-1 sm:flex-none px-4 py-2 rounded-lg border border-amber-500/40 bg-background text-xs font-semibold text-foreground hover:bg-amber-500/10 transition-colors flex items-center justify-center gap-1.5"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                     Start fresh
