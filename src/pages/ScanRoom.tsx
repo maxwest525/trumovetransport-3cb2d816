@@ -194,7 +194,9 @@ export default function ScanRoom() {
   const [uploadedPhotos, setUploadedPhotos] = useState<{ id: string; url: string; name: string }[]>([]);
   const [scannedPhotoIds, setScannedPhotoIds] = useState<Set<string>>(new Set());
   const [pendingRoomLabel, setPendingRoomLabel] = useState<string>("");
+  const [isDraggingFiles, setIsDraggingFiles] = useState(false);
   const roomUploadRef = useRef<HTMLInputElement>(null);
+  const allUploadRef = useRef<HTMLInputElement>(null);
 
   const handleRoomClick = (roomLabel: string) => {
     // Gate uploads behind the lead capture form
@@ -210,19 +212,66 @@ export default function ScanRoom() {
     }
   };
 
-  const handleRoomUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files) {
-      Array.from(files).forEach(file => {
-        const url = URL.createObjectURL(file);
-        setUploadedPhotos(prev => [...prev, {
+  // Default upload path - dumps everything into the "All" folder
+  const handleAllUploadClick = () => {
+    if (!isUnlocked) {
+      setPendingAction(() => () => handleAllUploadClick());
+      setShowLeadGate(true);
+      return;
+    }
+    if (allUploadRef.current) {
+      allUploadRef.current.value = "";
+      allUploadRef.current.click();
+    }
+  };
+
+  const ingestFiles = (files: FileList | File[], roomLabel: string) => {
+    Array.from(files).forEach((file) => {
+      if (!file.type.startsWith("image/") && !file.type.startsWith("video/")) return;
+      const url = URL.createObjectURL(file);
+      setUploadedPhotos((prev) => [
+        ...prev,
+        {
           id: `photo-${Date.now()}-${Math.random()}`,
           url,
-          name: `${pendingRoomLabel} - ${file.name}`
-        }]);
-      });
-    }
+          name: `${roomLabel} - ${file.name}`,
+        },
+      ]);
+    });
+  };
+
+  const handleRoomUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files) ingestFiles(files, pendingRoomLabel || "All");
     setPendingRoomLabel("");
+  };
+
+  const handleAllUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files) ingestFiles(files, "All");
+  };
+
+  // Drag-and-drop handlers - dropped files always land in "All"
+  const handleLibraryDragOver = (e: React.DragEvent) => {
+    if (!e.dataTransfer.types.includes("Files")) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "copy";
+    if (!isDraggingFiles) setIsDraggingFiles(true);
+  };
+  const handleLibraryDragLeave = (e: React.DragEvent) => {
+    if (e.currentTarget === e.target) setIsDraggingFiles(false);
+  };
+  const handleLibraryDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDraggingFiles(false);
+    if (!isUnlocked) {
+      setPendingAction(() => () => handleAllUploadClick());
+      setShowLeadGate(true);
+      return;
+    }
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      ingestFiles(e.dataTransfer.files, "All");
+    }
   };
 
   // Demo step handler
