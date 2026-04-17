@@ -161,6 +161,12 @@ export default function ScanRoom() {
   const roomUploadRef = useRef<HTMLInputElement>(null);
 
   const handleRoomClick = (roomLabel: string) => {
+    // Gate uploads behind the lead capture form
+    if (!isUnlocked) {
+      setPendingAction(() => () => handleRoomClick(roomLabel));
+      setShowLeadGate(true);
+      return;
+    }
     setPendingRoomLabel(roomLabel);
     if (roomUploadRef.current) {
       roomUploadRef.current.value = "";
