@@ -253,7 +253,7 @@ export default function CrmLeads() {
 
                 {/* Info */}
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-0.5">
+                  <div className="flex items-center gap-2 mb-0.5 flex-wrap">
                     <p className="text-sm font-semibold text-foreground truncate">
                       {lead.first_name} {lead.last_name}
                     </p>
@@ -263,6 +263,29 @@ export default function CrmLeads() {
                     {lead.tags?.includes("anonymous") && (
                       <Badge variant="secondary" className="text-[10px]">Cookie Lead</Badge>
                     )}
+                    {/* Fresh-scan badge: surfaces save-scan-room activity at a
+                        glance. Highlighted in primary when the customer was
+                        active in the last 10 min so agents can pounce on
+                        warm leads; muted otherwise so older scans still show
+                        context without visual noise. */}
+                    {lead.last_scan_activity_at && (() => {
+                      const ageMs = Date.now() - new Date(lead.last_scan_activity_at).getTime();
+                      const isHot = ageMs < 10 * 60 * 1000;
+                      return (
+                        <Badge
+                          variant="outline"
+                          className={`text-[10px] inline-flex items-center gap-1 ${
+                            isHot
+                              ? "border-primary/40 bg-primary/10 text-primary"
+                              : "border-border text-muted-foreground"
+                          }`}
+                          title={`Last scan activity: ${new Date(lead.last_scan_activity_at).toLocaleString()}`}
+                        >
+                          <Camera className="w-2.5 h-2.5" />
+                          Scan {formatRelativeShort(lead.last_scan_activity_at)}
+                        </Badge>
+                      );
+                    })()}
                   </div>
                   <p className="text-xs text-muted-foreground truncate">
                     {lead.email || lead.phone || "No contact info"}
