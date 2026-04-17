@@ -436,6 +436,56 @@ export default function CrmLeadDetail() {
           </div>
         </div>
       </div>
+
+      {/* Photo viewer modal with detection overlays */}
+      {photoViewer && (
+        <div
+          className="fixed inset-0 z-[100] bg-foreground/80 backdrop-blur-sm flex items-center justify-center p-4"
+          onClick={() => setPhotoViewer(null)}
+        >
+          <div
+            className="relative max-w-4xl w-full bg-background rounded-2xl overflow-hidden shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">AI Scan Source</p>
+                <h3 className="text-sm font-semibold text-foreground">{photoViewer.room_label || "Room"}</h3>
+              </div>
+              <button onClick={() => setPhotoViewer(null)} className="rounded-full p-1.5 hover:bg-muted" aria-label="Close">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="relative bg-muted">
+              <img src={photoViewer.photo_url} alt={photoViewer.room_label || "Scan"} className="w-full max-h-[70vh] object-contain" />
+              {photoViewer.detected_boxes?.map((box, i) => {
+                if (box.x == null || box.y == null || box.width == null || box.height == null) return null;
+                return (
+                  <div
+                    key={i}
+                    className="absolute pointer-events-none border-2 border-primary rounded"
+                    style={{
+                      top: `${box.y * 100}%`,
+                      left: `${box.x * 100}%`,
+                      width: `${box.width * 100}%`,
+                      height: `${box.height * 100}%`,
+                    }}
+                  >
+                    {box.name && (
+                      <span className="absolute -top-6 left-0 bg-primary text-primary-foreground text-[10px] font-semibold px-1.5 py-0.5 rounded whitespace-nowrap">
+                        {box.name}{box.confidence != null ? ` ${box.confidence}%` : ''}
+                      </span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+            <div className="px-4 py-3 border-t border-border text-xs text-muted-foreground">
+              {photoViewer.item_count} items detected in this photo
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
