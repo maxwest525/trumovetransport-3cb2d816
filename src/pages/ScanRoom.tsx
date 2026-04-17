@@ -1978,9 +1978,20 @@ export default function ScanRoom() {
                                         </button>
                                         <button
                                           type="button"
-                                          onClick={() => removeCustomFolder(room)}
+                                          onClick={() => {
+                                            // If the folder still has photos, ask before destroying
+                                            // the customer's organization. Empty folders go straight
+                                            // through (nothing to lose).
+                                            if (photos.length > 0) {
+                                              setPendingDeleteFolder(room);
+                                            } else {
+                                              removeCustomFolder(room);
+                                            }
+                                          }}
                                           className="inline-flex items-center justify-center w-4 h-4 rounded text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
-                                          title="Remove folder (photos move to All)"
+                                          title={photos.length > 0
+                                            ? `Remove folder (${photos.length} photo${photos.length === 1 ? '' : 's'} will move to All)`
+                                            : "Remove folder"}
                                         >
                                           <X className="w-2.5 h-2.5" />
                                         </button>
