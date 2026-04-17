@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, type ReactNode } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 
 function ScrollFadeIn({ children, delay = 0 }: { children: ReactNode; delay?: number }) {
