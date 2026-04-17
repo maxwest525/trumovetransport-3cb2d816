@@ -687,18 +687,47 @@ export default function ScanRoom() {
                   </p>
                 )}
 
+                {/* AI Scanning indicator */}
+                {isAiScanning && (
+                  <div className="w-full max-w-[320px] px-4">
+                    <div className="flex items-center gap-2 rounded-lg border border-primary/30 bg-primary/5 px-3 py-2">
+                      <Sparkles className="w-3.5 h-3.5 text-primary animate-pulse" />
+                      <span className="text-xs font-semibold text-foreground">
+                        Analyzing photo {aiScanProgress.current} of {aiScanProgress.total}...
+                      </span>
+                    </div>
+                  </div>
+                )}
+
                 {/* Buttons */}
-                <div className="flex items-center gap-2 w-full max-w-[280px] px-4">
+                <div className="flex flex-col items-stretch gap-2 w-full max-w-[320px] px-4">
                   {!isDemoActive ? (
-                    <button
-                      onClick={handleStartScanClick}
-                      className="flex-1 flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold bg-foreground text-background hover:opacity-90 transition-opacity"
-                    >
-                      <Sparkles className="w-4 h-4" />
-                      {uploadedPhotos.length > 0 ? "Start Scanning" : "Watch Demo"}
-                    </button>
-                  ) : (
                     <>
+                      <button
+                        onClick={handleStartScanClick}
+                        disabled={isAiScanning}
+                        className="flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold bg-foreground text-background hover:opacity-90 transition-opacity disabled:opacity-50"
+                      >
+                        <Sparkles className="w-4 h-4" />
+                        {isAiScanning
+                          ? "Scanning..."
+                          : uploadedPhotos.some(p => p.id !== 'demo-photo' && !scannedPhotoIds.has(p.id))
+                            ? "Scan Your Home"
+                            : uploadedPhotos.length > 0
+                              ? "Start Scanning"
+                              : "Watch Demo"}
+                      </button>
+                      <button
+                        onClick={() => navigate('/online-estimate')}
+                        disabled={isAiScanning}
+                        className="flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold border border-border bg-background text-foreground hover:border-primary/40 hover:bg-muted/40 transition-colors disabled:opacity-50"
+                      >
+                        <Plus className="w-4 h-4" />
+                        Add Items Manually
+                      </button>
+                    </>
+                  ) : (
+                    <div className="flex items-center gap-2 w-full">
                       {demoStep < DEMO_TOTAL_STEPS && (
                         <button
                           onClick={() => setDemoPlaying(prev => !prev)}
@@ -715,18 +744,22 @@ export default function ScanRoom() {
                         <X className="w-3.5 h-3.5" />
                         Stop
                       </button>
-                    </>
+                    </div>
                   )}
                 </div>
 
 
                 {/* Progress Bar */}
-                {isDemoActive && (
-                  <div className="w-full max-w-[280px] px-4">
+                {(isDemoActive || isAiScanning) && (
+                  <div className="w-full max-w-[320px] px-4">
                     <div className="tru-scan-progress-bar">
                       <div 
                         className="tru-scan-progress-fill"
-                        style={{ width: `${(demoStep / DEMO_TOTAL_STEPS) * 100}%` }}
+                        style={{
+                          width: isAiScanning && aiScanProgress.total > 0
+                            ? `${(aiScanProgress.current / aiScanProgress.total) * 100}%`
+                            : `${(demoStep / DEMO_TOTAL_STEPS) * 100}%`
+                        }}
                       />
                     </div>
                   </div>
