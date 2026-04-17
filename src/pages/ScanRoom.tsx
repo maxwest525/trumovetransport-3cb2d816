@@ -1272,6 +1272,16 @@ export default function ScanRoom() {
                     </button>
                     <button
                       type="button"
+                      onClick={() => setShowSaveModal(true)}
+                      disabled={detectedItems.length === 0}
+                      className="tru-scan-action-btn"
+                      title="Save scan + photos to a lead record an agent can review"
+                    >
+                      <Save className="w-4 h-4" />
+                      Save Scan to CRM
+                    </button>
+                    <button
+                      type="button"
                       onClick={() => {
                         // Save to localStorage for manual builder sync
                         const inventoryForBuilder = detectedItems.map((item, idx) => ({
