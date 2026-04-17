@@ -41,6 +41,7 @@ import SiteShell from "@/components/layout/SiteShell";
 import ScanIntroModal from "@/components/estimate/ScanIntroModal";
 import EstimatorNavToggle from "@/components/estimate/EstimatorNavToggle";
 import LeadGateModal from "@/components/scan/LeadGateModal";
+import ResumeVerifyModal from "@/components/scan/ResumeVerifyModal";
 
 import logoImg from "@/assets/logo.png";
 import { 
@@ -381,8 +382,17 @@ export default function ScanRoom() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // If the visitor arrived via a one-time resume link (?resume=<token>),
-  // redeem it and rehydrate their saved scan into local state + storage.
+  // Resume-link redemption is now a two-step flow:
+  //   1. Hit the function with just the token to learn what verification
+  //      challenge to render (last-4 of phone, or email on file).
+  //   2. Show the modal, collect the answer, and call the function again
+  //      with { token, verification }. On success, rehydrate state.
+  const [resumeToken, setResumeToken] = useState<string | null>(null);
+  const [resumeChallenge, setResumeChallenge] = useState<"phone_last4" | "email" | null>(null);
+  const [resumeEmailHint, setResumeEmailHint] = useState<string | null>(null);
+  const [resumeVerifying, setResumeVerifying] = useState(false);
+  const [resumeError, setResumeError] = useState<string | null>(null);
+
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const token = params.get("resume");
@@ -391,7 +401,6 @@ export default function ScanRoom() {
     let cancelled = false;
     (async () => {
       try {
-        toast({ title: "Restoring your saved scan...", description: "One moment." });
         const { data, error } = await supabase.functions.invoke(
           "redeem-scan-resume-token",
           { body: { token } },
@@ -403,58 +412,19 @@ export default function ScanRoom() {
             description: data?.error || error?.message || "Link is invalid or expired.",
             variant: "destructive",
           });
+          // Strip the bad token so refreshing doesn't retry endlessly
+          const url = new URL(window.location.href);
+          url.searchParams.delete("resume");
+          window.history.replaceState({}, "", url.toString());
           return;
         }
-
-        // Map the server payload into the local state shapes
-        const restoredItems: InventoryItem[] = (data.inventory ?? []).map(
-          (it: any, idx: number) => ({
-            id: 1_000_000 + idx,
-            name: it.item_name,
-            room: it.room || "Living Room",
-            weight: Number(it.weight) || 0,
-            cuft: Number(it.cubic_feet) || 0,
-            image: "",
-            quantity: Number(it.quantity) || 1,
-            confidence: it.confidence ?? undefined,
-          }),
-        );
-
-        const restoredHistory: ScannedPhotoEntry[] = (data.photos ?? []).map(
-          (p: any) => ({
-            id: p.id,
-            url: p.photo_url,
-            name: p.room_label || "Room",
-            boxes: Array.isArray(p.detected_boxes) ? p.detected_boxes : [],
-          }),
-        );
-
-        const restoredUploaded = (data.photos ?? []).map((p: any) => ({
-          id: p.id,
-          url: p.photo_url,
-          name: p.room_label || "Room",
-        }));
-
-        setDetectedItems(restoredItems);
-        setScanHistory(restoredHistory);
-        setUploadedPhotos(restoredUploaded);
-        setScannedPhotoIds(new Set(restoredUploaded.map((p) => p.id)));
-        setSavedLeadId(data.leadId ?? null);
-        setIsUnlocked(true);
-        setHasResumableScan(restoredItems.length > 0);
-        setSavedAtMs(Date.now());
-
-        // Strip the token from the URL so it can't be shared/refreshed
-        const url = new URL(window.location.href);
-        url.searchParams.delete("resume");
-        window.history.replaceState({}, "", url.toString());
-
-        toast({
-          title: "Scan restored",
-          description: `${restoredItems.length} item${restoredItems.length === 1 ? "" : "s"} loaded from your saved session.`,
-        });
+        if (data.challenge) {
+          setResumeToken(token);
+          setResumeChallenge(data.challenge);
+          setResumeEmailHint(data.emailHintMasked || null);
+        }
       } catch (e) {
-        console.error("Resume token redemption failed:", e);
+        console.error("Resume challenge fetch failed:", e);
         if (!cancelled) {
           toast({
             title: "Could not restore scan",
@@ -470,6 +440,89 @@ export default function ScanRoom() {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Phase 2 of resume: customer answered the verification challenge. Re-call
+  // the redeem function with the answer; on success, rehydrate the scan.
+  const handleResumeVerify = async (answer: string) => {
+    if (!resumeToken) return;
+    setResumeVerifying(true);
+    setResumeError(null);
+    try {
+      const { data, error } = await supabase.functions.invoke(
+        "redeem-scan-resume-token",
+        { body: { token: resumeToken, verification: answer } },
+      );
+      if (error || !data || data.error) {
+        setResumeError(data?.error || error?.message || "Verification failed.");
+        return;
+      }
+
+      const restoredItems: InventoryItem[] = (data.inventory ?? []).map(
+        (it: any, idx: number) => ({
+          id: 1_000_000 + idx,
+          name: it.item_name,
+          room: it.room || "Living Room",
+          weight: Number(it.weight) || 0,
+          cuft: Number(it.cubic_feet) || 0,
+          image: "",
+          quantity: Number(it.quantity) || 1,
+          confidence: it.confidence ?? undefined,
+        }),
+      );
+
+      const restoredHistory: ScannedPhotoEntry[] = (data.photos ?? []).map(
+        (p: any) => ({
+          id: p.id,
+          url: p.photo_url,
+          name: p.room_label || "Room",
+          boxes: Array.isArray(p.detected_boxes) ? p.detected_boxes : [],
+        }),
+      );
+
+      const restoredUploaded = (data.photos ?? []).map((p: any) => ({
+        id: p.id,
+        url: p.photo_url,
+        name: p.room_label || "Room",
+      }));
+
+      setDetectedItems(restoredItems);
+      setScanHistory(restoredHistory);
+      setUploadedPhotos(restoredUploaded);
+      setScannedPhotoIds(new Set(restoredUploaded.map((p) => p.id)));
+      setSavedLeadId(data.leadId ?? null);
+      setIsUnlocked(true);
+      setHasResumableScan(restoredItems.length > 0);
+      setSavedAtMs(Date.now());
+
+      // Tear down the modal + strip the token from the URL
+      setResumeToken(null);
+      setResumeChallenge(null);
+      setResumeEmailHint(null);
+      const url = new URL(window.location.href);
+      url.searchParams.delete("resume");
+      window.history.replaceState({}, "", url.toString());
+
+      toast({
+        title: "Scan restored",
+        description: `${restoredItems.length} item${restoredItems.length === 1 ? "" : "s"} loaded from your saved session.`,
+      });
+    } catch (e) {
+      console.error("Resume verification failed:", e);
+      setResumeError("Could not verify. Please try again.");
+    } finally {
+      setResumeVerifying(false);
+    }
+  };
+
+  const handleResumeCancel = () => {
+    setResumeToken(null);
+    setResumeChallenge(null);
+    setResumeEmailHint(null);
+    setResumeError(null);
+    const url = new URL(window.location.href);
+    url.searchParams.delete("resume");
+    window.history.replaceState({}, "", url.toString());
+  };
 
   // Convert image URL (blob:) to base64 data URL for AI vision
   const urlToDataUrl = async (url: string): Promise<string> => {
@@ -1734,6 +1787,19 @@ export default function ScanRoom() {
             setTimeout(() => { try { action?.(); } catch (e) { console.error(e); } }, 50);
           }}
         />
+
+        {/* Verification gate for resume links — proves the visitor owns the lead */}
+        {resumeToken && resumeChallenge && (
+          <ResumeVerifyModal
+            open={!!resumeToken}
+            challenge={resumeChallenge}
+            emailHintMasked={resumeEmailHint}
+            loading={resumeVerifying}
+            errorMessage={resumeError}
+            onSubmit={handleResumeVerify}
+            onCancel={handleResumeCancel}
+          />
+        )}
       </div>
     </SiteShell>
   );

@@ -8,8 +8,10 @@ const corsHeaders = {
 };
 
 // Generates a one-time resume token bound to a lead. Only authenticated staff
-// who can already access the lead through RLS may create a token. Optionally
-// emails the resume link directly to the lead's contact address via Resend.
+// who can already access the lead through RLS may create a token. The token
+// requires a verification challenge before it can be redeemed:
+//   - phone_last4: customer must enter the last 4 digits of the phone on file
+//   - email:      fallback when no phone exists; customer enters email on file
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -20,7 +22,6 @@ serve(async (req) => {
     const ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
     const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
-    // Use the caller's JWT so RLS validates that they have access to this lead.
     const authHeader = req.headers.get("Authorization") ?? "";
     const userClient = createClient(SUPABASE_URL, ANON_KEY, {
       global: { headers: { Authorization: authHeader } },
@@ -41,7 +42,6 @@ serve(async (req) => {
     const leadId: string | undefined = body?.leadId;
     const deliveryMethod: "copy" | "email" =
       body?.deliveryMethod === "email" ? "email" : "copy";
-    // Optional public site URL the customer should land on. Falls back to the request origin.
     const siteUrl: string =
       typeof body?.siteUrl === "string" && body.siteUrl.startsWith("http")
         ? body.siteUrl.replace(/\/+$/, "")
@@ -58,10 +58,11 @@ serve(async (req) => {
       });
     }
 
-    // Confirm the caller can read this lead (RLS will enforce it).
+    // Confirm the caller can read this lead (RLS will enforce it) and pull
+    // phone/email so we can lock the link to a verification challenge.
     const { data: lead, error: leadErr } = await userClient
       .from("leads")
-      .select("id, first_name, last_name, email")
+      .select("id, first_name, last_name, email, phone")
       .eq("id", leadId)
       .maybeSingle();
 
@@ -75,7 +76,6 @@ serve(async (req) => {
       );
     }
 
-    // If the caller wants email delivery, we need a recipient on file.
     if (deliveryMethod === "email" && !lead.email) {
       return new Response(
         JSON.stringify({ error: "Lead has no email on file" }),
@@ -86,8 +86,35 @@ serve(async (req) => {
       );
     }
 
-    // Use the service role to insert the token row so the policy bypass also
-    // gives us a clean, atomic insert with the canonical creator id.
+    // Pick a verification method. Prefer phone_last4 (lower friction, harder
+    // to socially engineer than an email address). Fall back to email if no
+    // phone is on file.
+    const phoneDigits = (lead.phone || "").replace(/\D/g, "");
+    let verificationMethod: "phone_last4" | "email";
+    let phoneLast4: string | null = null;
+    let emailHint: string | null = null;
+
+    if (phoneDigits.length >= 4) {
+      verificationMethod = "phone_last4";
+      phoneLast4 = phoneDigits.slice(-4);
+    } else if (lead.email) {
+      verificationMethod = "email";
+      emailHint = lead.email.trim().toLowerCase();
+    } else {
+      // No phone, no email — we can't verify the recipient. Refuse so we don't
+      // create a bearer-only link by accident.
+      return new Response(
+        JSON.stringify({
+          error:
+            "Lead needs a phone or email on file before a resume link can be generated.",
+        }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        },
+      );
+    }
+
     const adminClient = createClient(SUPABASE_URL, SERVICE_KEY);
     const token = crypto.randomUUID().replace(/-/g, "");
     const expiresAt = new Date(Date.now() + ttlHours * 60 * 60 * 1000).toISOString();
@@ -99,6 +126,9 @@ serve(async (req) => {
         lead_id: leadId,
         created_by: user.id,
         expires_at: expiresAt,
+        verification_method: verificationMethod,
+        phone_last4: phoneLast4,
+        email_hint: emailHint,
       });
 
     if (insertErr) {
@@ -116,7 +146,12 @@ serve(async (req) => {
     let emailDelivered = false;
     let emailError: string | null = null;
 
-    // Optional: deliver the link via email so the customer can resume in one tap.
+    // Human-readable description of the challenge the customer will face.
+    const verificationCopy =
+      verificationMethod === "phone_last4"
+        ? "you'll be asked to enter the last 4 digits of the phone number on your account"
+        : "you'll be asked to confirm your email address on your account";
+
     if (deliveryMethod === "email") {
       const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
       if (!RESEND_API_KEY) {
@@ -136,7 +171,7 @@ serve(async (req) => {
         <tr><td style="padding:32px;">
           <h1 style="margin:0 0 12px;font-size:22px;color:#0f172a;line-height:1.3;">Resume your room scan, ${escapeHtml(firstName)}</h1>
           <p style="margin:0 0 20px;font-size:15px;color:#334155;line-height:1.55;">
-            Your TruMove specialist saved your AI room scan. Click the button below to pick up where you left off and review the items we detected.
+            Your TruMove specialist saved your AI room scan. Click the button below to pick up where you left off and review the items we detected. For your security, ${verificationCopy}.
           </p>
           <p style="margin:24px 0;text-align:center;">
             <a href="${resumeUrl}" style="display:inline-block;background:#0ea5e9;color:#ffffff;text-decoration:none;padding:13px 24px;border-radius:8px;font-weight:600;font-size:15px;">
@@ -195,6 +230,7 @@ serve(async (req) => {
         emailDelivered,
         emailError,
         recipientEmail: deliveryMethod === "email" ? lead.email : null,
+        verificationMethod, // staff UI shows this so they know what to tell the customer
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
@@ -212,7 +248,6 @@ serve(async (req) => {
   }
 });
 
-// Minimal HTML escaping for values interpolated into the template.
 function escapeHtml(input: string): string {
   return input
     .replace(/&/g, "&amp;")

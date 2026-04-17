@@ -70,6 +70,12 @@ interface ResumeToken {
   created_at: string;
   expires_at: string;
   used_at: string | null;
+  verification_method: string | null;
+  phone_last4: string | null;
+  email_hint: string | null;
+  failed_attempts: number | null;
+  redeemed_ip: string | null;
+  redeemed_user_agent: string | null;
 }
 
 const statusColors: Record<string, string> = {
@@ -120,7 +126,9 @@ export default function CrmLeadDetail() {
     if (!leadId) return;
     const { data } = await supabase
       .from("scan_resume_tokens")
-      .select("id, token, created_at, expires_at, used_at")
+      .select(
+        "id, token, created_at, expires_at, used_at, verification_method, phone_last4, email_hint, failed_attempts, redeemed_ip, redeemed_user_agent",
+      )
       .eq("lead_id", leadId)
       .order("created_at", { ascending: false });
     if (data) setResumeTokens(data as ResumeToken[]);
@@ -149,11 +157,19 @@ export default function CrmLeadDetail() {
         return;
       }
       const url = data.resumeUrl || `${window.location.origin}/scan-room?resume=${data.token}`;
+      // Tell the agent which challenge the customer will see so they can
+      // walk them through it on the phone if needed.
+      const challengeCopy =
+        data.verificationMethod === "phone_last4"
+          ? "Customer will be asked for the last 4 digits of their phone."
+          : data.verificationMethod === "email"
+          ? "Customer will be asked to confirm the email on file."
+          : "Customer will be asked to verify their identity.";
 
       if (deliveryMethod === "email") {
         if (data.emailDelivered) {
           toast.success(`Resume link emailed to ${data.recipientEmail}`, {
-            description: "Single-use link expires in 24 hours.",
+            description: `${challengeCopy} Single-use link expires in 24 hours.`,
           });
         } else {
           // Token was created but email failed — fall back to clipboard so the link isn't lost
@@ -170,7 +186,7 @@ export default function CrmLeadDetail() {
         try {
           await navigator.clipboard.writeText(url);
           toast.success("Resume link copied to clipboard", {
-            description: "Single-use link expires in 24 hours.",
+            description: `${challengeCopy} Single-use link expires in 24 hours.`,
           });
         } catch {
           toast.success("Resume link created", { description: url });
@@ -519,58 +535,91 @@ export default function CrmLeadDetail() {
                           }[status];
                           const StatusIcon = status === "active" ? CheckCircle2 : status === "expired" ? AlertCircle : Ban;
 
+                          // Human-readable verification challenge so the agent
+                          // knows what to coach the customer through.
+                          const verifyLabel =
+                            t.verification_method === "phone_last4"
+                              ? `Phone ••${t.phone_last4 ?? "??"}`
+                              : t.verification_method === "email"
+                              ? `Email: ${t.email_hint ?? "on file"}`
+                              : "Verification on file";
+
                           return (
                             <div
                               key={t.id}
-                              className="flex items-center gap-2 p-2.5 rounded-lg border border-border/50 bg-muted/20 text-xs"
+                              className="flex flex-col gap-1.5 p-2.5 rounded-lg border border-border/50 bg-muted/20 text-xs"
                             >
-                              <Badge variant="outline" className={`${statusStyles} gap-1 capitalize text-[10px] py-0`}>
-                                <StatusIcon className="w-3 h-3" />
-                                {status}
-                              </Badge>
-                              <div className="flex-1 min-w-0 grid grid-cols-1 sm:grid-cols-3 gap-x-3 gap-y-0.5">
-                                <span className="text-muted-foreground truncate">
-                                  <span className="text-foreground/70">Created:</span> {new Date(t.created_at).toLocaleString()}
-                                </span>
-                                <span className="text-muted-foreground truncate">
-                                  <span className="text-foreground/70">Expires:</span> {new Date(t.expires_at).toLocaleString()}
-                                </span>
-                                <span className="text-muted-foreground truncate">
-                                  <span className="text-foreground/70">Used:</span> {t.used_at ? new Date(t.used_at).toLocaleString() : "—"}
-                                </span>
+                              <div className="flex items-center gap-2">
+                                <Badge variant="outline" className={`${statusStyles} gap-1 capitalize text-[10px] py-0`}>
+                                  <StatusIcon className="w-3 h-3" />
+                                  {status}
+                                </Badge>
+                                <Badge variant="outline" className="text-[10px] py-0 gap-1 text-muted-foreground border-border">
+                                  {verifyLabel}
+                                </Badge>
+                                <div className="flex-1 min-w-0 grid grid-cols-1 sm:grid-cols-3 gap-x-3 gap-y-0.5">
+                                  <span className="text-muted-foreground truncate">
+                                    <span className="text-foreground/70">Created:</span> {new Date(t.created_at).toLocaleString()}
+                                  </span>
+                                  <span className="text-muted-foreground truncate">
+                                    <span className="text-foreground/70">Expires:</span> {new Date(t.expires_at).toLocaleString()}
+                                  </span>
+                                  <span className="text-muted-foreground truncate">
+                                    <span className="text-foreground/70">Used:</span> {t.used_at ? new Date(t.used_at).toLocaleString() : "—"}
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-1 shrink-0">
+                                  {status === "active" && (
+                                    <>
+                                      <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        onClick={() => handleCopyResumeLink(t.token)}
+                                        className="h-7 px-2 text-[11px] gap-1"
+                                        title="Copy link"
+                                      >
+                                        <Copy className="w-3 h-3" />
+                                      </Button>
+                                      <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        onClick={() => handleRevokeResumeLink(t.id)}
+                                        disabled={revokingTokenId === t.id}
+                                        className="h-7 px-2 text-[11px] gap-1 text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                                        title="Revoke link"
+                                      >
+                                        {revokingTokenId === t.id ? (
+                                          <Loader2 className="w-3 h-3 animate-spin" />
+                                        ) : (
+                                          <>
+                                            <Ban className="w-3 h-3" />
+                                            Revoke
+                                          </>
+                                        )}
+                                      </Button>
+                                    </>
+                                  )}
+                                </div>
                               </div>
-                              <div className="flex items-center gap-1 shrink-0">
-                                {status === "active" && (
-                                  <>
-                                    <Button
-                                      size="sm"
-                                      variant="ghost"
-                                      onClick={() => handleCopyResumeLink(t.token)}
-                                      className="h-7 px-2 text-[11px] gap-1"
-                                      title="Copy link"
-                                    >
-                                      <Copy className="w-3 h-3" />
-                                    </Button>
-                                    <Button
-                                      size="sm"
-                                      variant="ghost"
-                                      onClick={() => handleRevokeResumeLink(t.id)}
-                                      disabled={revokingTokenId === t.id}
-                                      className="h-7 px-2 text-[11px] gap-1 text-red-400 hover:text-red-300 hover:bg-red-500/10"
-                                      title="Revoke link"
-                                    >
-                                      {revokingTokenId === t.id ? (
-                                        <Loader2 className="w-3 h-3 animate-spin" />
-                                      ) : (
-                                        <>
-                                          <Ban className="w-3 h-3" />
-                                          Revoke
-                                        </>
-                                      )}
-                                    </Button>
-                                  </>
-                                )}
-                              </div>
+
+                              {/* Audit row — only shown once the link has been redeemed */}
+                              {(t.redeemed_ip || t.redeemed_user_agent || (t.failed_attempts ?? 0) > 0) && (
+                                <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 pl-1 text-[10px] text-muted-foreground border-t border-border/30 pt-1.5">
+                                  {t.redeemed_ip && (
+                                    <span><span className="text-foreground/60">IP:</span> {t.redeemed_ip}</span>
+                                  )}
+                                  {t.redeemed_user_agent && (
+                                    <span className="truncate max-w-[260px]" title={t.redeemed_user_agent}>
+                                      <span className="text-foreground/60">Device:</span> {t.redeemed_user_agent}
+                                    </span>
+                                  )}
+                                  {(t.failed_attempts ?? 0) > 0 && (
+                                    <span className="text-amber-400">
+                                      {t.failed_attempts} failed verification {t.failed_attempts === 1 ? "attempt" : "attempts"}
+                                    </span>
+                                  )}
+                                </div>
+                              )}
                             </div>
                           );
                         })}
