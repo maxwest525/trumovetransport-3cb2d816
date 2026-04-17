@@ -250,6 +250,22 @@ export default function ScanRoom() {
     );
   };
 
+  // Batch variant for moving many selected photos in a single drag op.
+  // Done in one setState pass so localStorage autosave fires once.
+  const reclassifyPhotosToFolder = (photoIds: Set<string>, targetRoom: string) => {
+    if (photoIds.size === 0) return;
+    setUploadedPhotos((prev) =>
+      prev.map((p) => {
+        if (!photoIds.has(p.id)) return p;
+        const sep = p.name.indexOf(" - ");
+        const baseName = sep === -1 ? p.name : p.name.slice(sep + 3);
+        const cleanBase = baseName.trim() || "photo";
+        const newName = targetRoom === "All" ? cleanBase : `${targetRoom} - ${cleanBase}`;
+        return { ...p, name: newName };
+      })
+    );
+  };
+
   // Add a new custom folder. Names are normalized (trim + collapse spaces),
   // case-insensitively de-duped against existing folders + photo-derived
   // groups, and capped at 40 chars to keep the UI compact.
