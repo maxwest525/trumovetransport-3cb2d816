@@ -1318,16 +1318,7 @@ export default function ScanRoom() {
                       <Trash2 className="w-4 h-4" />
                       Clear All
                     </button>
-                    <button
-                      type="button"
-                      onClick={() => setShowSaveModal(true)}
-                      disabled={detectedItems.length === 0}
-                      className="tru-scan-action-btn"
-                      title="Save scan + photos to a lead record an agent can review"
-                    >
-                      <Save className="w-4 h-4" />
-                      Save Scan to CRM
-                    </button>
+                    {/* Save to CRM is automatic in the background — no customer-facing button. */}
                     <button
                       type="button"
                       onClick={() => {
