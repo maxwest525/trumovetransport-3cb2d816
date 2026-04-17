@@ -1184,6 +1184,7 @@ export default function ScanRoom() {
                           <th>QTY</th>
                           <th>WEIGHT (LBS)</th>
                           <th>CU FT</th>
+                          <th>CONFIDENCE</th>
                           <th>TOTAL WEIGHT</th>
                           <th>TOTAL CU FT</th>
                           <th></th>
@@ -1249,6 +1250,24 @@ export default function ScanRoom() {
                             </td>
                             <td>{item.weight}</td>
                             <td>{item.cuft}</td>
+                            <td>
+                              {typeof item.confidence === 'number' ? (
+                                <span
+                                  className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold leading-none ${
+                                    item.confidence >= 85
+                                      ? 'bg-primary/15 text-primary'
+                                      : item.confidence >= 65
+                                      ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400'
+                                      : 'bg-destructive/15 text-destructive'
+                                  }`}
+                                  title={`AI confidence: ${item.confidence}%`}
+                                >
+                                  {item.confidence}%
+                                </span>
+                              ) : (
+                                <span className="text-[10px] text-muted-foreground">—</span>
+                              )}
+                            </td>
                             <td className="tru-scan-table-total">{item.weight * item.quantity}</td>
                             <td className="tru-scan-table-total">{item.cuft * item.quantity}</td>
                             <td>
@@ -1280,11 +1299,11 @@ export default function ScanRoom() {
                       </tbody>
                       <tfoot>
                         <tr>
-                          <td colSpan={5}></td>
+                          <td colSpan={6}></td>
                           <td className="tru-scan-table-footer-label">Totals:</td>
-                          <td>-</td>
                           <td className="tru-scan-table-footer-value">{totalWeight.toLocaleString()} lbs</td>
                           <td className="tru-scan-table-footer-value">{totalCuFt} cu ft</td>
+                          <td></td>
                         </tr>
                       </tfoot>
                     </table>
