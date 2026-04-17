@@ -1871,11 +1871,23 @@ export default function ScanRoom() {
                                   e.preventDefault();
                                   e.stopPropagation();
                                   if (canAcceptDrop) {
-                                    reclassifyPhotoToFolder(draggedPhotoId, room);
+                                    // If the dragged photo is part of an active
+                                    // multi-selection, move the entire batch in
+                                    // one update so the user can drop many at once.
+                                    const batch = selectedPhotoIds.has(draggedPhotoId) && selectedPhotoIds.size > 1
+                                      ? selectedPhotoIds
+                                      : new Set([draggedPhotoId]);
+                                    reclassifyPhotosToFolder(batch, room);
                                     toast({
-                                      title: `Moved to ${room}`,
+                                      title: batch.size > 1
+                                        ? `Moved ${batch.size} photos to ${room}`
+                                        : `Moved to ${room}`,
                                       description: "Folder updated - your scan is auto-saved.",
                                     });
+                                    if (batch.size > 1) {
+                                      setSelectedPhotoIds(new Set());
+                                      setLastSelectedPhotoId(null);
+                                    }
                                   }
                                   setDraggedPhotoId(null);
                                   setDragOverFolder(null);
