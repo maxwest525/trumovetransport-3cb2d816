@@ -183,6 +183,10 @@ export default function ScanRoom() {
   const [isScanning, setIsScanning] = useState(false);
   const [showIntroModal, setShowIntroModal] = useState(false);
   const [showClearDialog, setShowClearDialog] = useState(false);
+  // Confirmation gate for deleting a custom folder that still has photos.
+  // Holds the folder name pending confirmation; null when no dialog is open.
+  // Empty folders bypass this and delete immediately (nothing to lose).
+  const [pendingDeleteFolder, setPendingDeleteFolder] = useState<string | null>(null);
   
   // Demo step state: 0=idle, 1=photo added to library, 2=photo in scanner, 3+=items detecting
   const [demoStep, setDemoStep] = useState(0);
@@ -1974,9 +1978,20 @@ export default function ScanRoom() {
                                         </button>
                                         <button
                                           type="button"
-                                          onClick={() => removeCustomFolder(room)}
+                                          onClick={() => {
+                                            // If the folder still has photos, ask before destroying
+                                            // the customer's organization. Empty folders go straight
+                                            // through (nothing to lose).
+                                            if (photos.length > 0) {
+                                              setPendingDeleteFolder(room);
+                                            } else {
+                                              removeCustomFolder(room);
+                                            }
+                                          }}
                                           className="inline-flex items-center justify-center w-4 h-4 rounded text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
-                                          title="Remove folder (photos move to All)"
+                                          title={photos.length > 0
+                                            ? `Remove folder (${photos.length} photo${photos.length === 1 ? '' : 's'} will move to All)`
+                                            : "Remove folder"}
                                         >
                                           <X className="w-2.5 h-2.5" />
                                         </button>
@@ -2525,6 +2540,46 @@ export default function ScanRoom() {
                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               >
                 Clear All
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        {/* Custom Folder Delete Confirmation - only shown when the folder
+            still contains photos. The count tells the customer exactly how
+            many tiles will be unfiled back into "All". */}
+        <AlertDialog
+          open={pendingDeleteFolder !== null}
+          onOpenChange={(open) => { if (!open) setPendingDeleteFolder(null); }}
+        >
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete folder "{pendingDeleteFolder}"?</AlertDialogTitle>
+              <AlertDialogDescription>
+                {(() => {
+                  const count = pendingDeleteFolder
+                    ? uploadedPhotos.filter((p) => parseRoom(p.name) === pendingDeleteFolder).length
+                    : 0;
+                  return (
+                    <>
+                      <strong>{count}</strong> photo{count === 1 ? '' : 's'} will move back to <strong>All</strong> and lose this folder label. The photos themselves are kept - only the folder organization is removed.
+                    </>
+                  );
+                })()}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Keep folder</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => {
+                  if (pendingDeleteFolder) {
+                    removeCustomFolder(pendingDeleteFolder);
+                    setPendingDeleteFolder(null);
+                  }
+                }}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                Delete folder
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
