@@ -142,8 +142,11 @@ export default function ScanRoom() {
   const isDemoActive = demoStep > 0;
   const DEMO_TOTAL_STEPS = 2 + DEMO_ITEMS.length;
   
-  // Lead capture state
-  const [isUnlocked, setIsUnlocked] = useState(true);
+  // Lead capture state — AI scan is locked until visitor provides contact info
+  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [showLeadGate, setShowLeadGate] = useState(false);
+  // Action to perform once the gate is unlocked (e.g. open uploader, start scan)
+  const [pendingAction, setPendingAction] = useState<null | (() => void)>(null);
   
   // Sample room photos for the library demo
   const samplePhotos = [
