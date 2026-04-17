@@ -605,6 +605,17 @@ export default function CrmLeadDetail() {
                       >
                         <img src={photo.photo_url} alt={photo.room_label || "Scan"} className="w-full h-28 object-cover" />
                         <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/30 transition-colors" />
+                        {/* Note indicator: customer left a note about this
+                            photo. Click the tile to open the viewer and read
+                            the full note. */}
+                        {photo.note && (
+                          <div
+                            className="absolute top-1 right-1 inline-flex items-center justify-center w-5 h-5 rounded-md bg-primary text-primary-foreground shadow-sm"
+                            title={photo.note}
+                          >
+                            <StickyNote className="w-3 h-3" />
+                          </div>
+                        )}
                         <div className="absolute bottom-0 left-0 right-0 px-2 py-1 bg-foreground/70 text-background flex items-center justify-between">
                           <span className="text-[10px] font-semibold truncate">{photo.room_label || "Room"}</span>
                           <span className="text-[10px] flex items-center gap-0.5"><Sparkles className="w-2.5 h-2.5" />{photo.item_count}</span>
