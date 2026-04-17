@@ -5,3 +5,6 @@ verify_jwt = true
 
 [functions.save-scan-room]
 verify_jwt = false
+
+[functions.redeem-scan-resume-token]
+verify_jwt = false
