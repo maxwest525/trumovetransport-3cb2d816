@@ -183,6 +183,10 @@ export default function ScanRoom() {
   const [isScanning, setIsScanning] = useState(false);
   const [showIntroModal, setShowIntroModal] = useState(false);
   const [showClearDialog, setShowClearDialog] = useState(false);
+  // Confirmation gate for deleting a custom folder that still has photos.
+  // Holds the folder name pending confirmation; null when no dialog is open.
+  // Empty folders bypass this and delete immediately (nothing to lose).
+  const [pendingDeleteFolder, setPendingDeleteFolder] = useState<string | null>(null);
   
   // Demo step state: 0=idle, 1=photo added to library, 2=photo in scanner, 3+=items detecting
   const [demoStep, setDemoStep] = useState(0);
