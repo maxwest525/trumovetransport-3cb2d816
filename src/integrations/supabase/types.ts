@@ -1659,29 +1659,50 @@ export type Database = {
         Row: {
           created_at: string
           created_by: string | null
+          email_hint: string | null
           expires_at: string
+          failed_attempts: number
           id: string
+          last_attempt_at: string | null
           lead_id: string
+          phone_last4: string | null
+          redeemed_ip: string | null
+          redeemed_user_agent: string | null
           token: string
           used_at: string | null
+          verification_method: string
         }
         Insert: {
           created_at?: string
           created_by?: string | null
+          email_hint?: string | null
           expires_at?: string
+          failed_attempts?: number
           id?: string
+          last_attempt_at?: string | null
           lead_id: string
+          phone_last4?: string | null
+          redeemed_ip?: string | null
+          redeemed_user_agent?: string | null
           token: string
           used_at?: string | null
+          verification_method?: string
         }
         Update: {
           created_at?: string
           created_by?: string | null
+          email_hint?: string | null
           expires_at?: string
+          failed_attempts?: number
           id?: string
+          last_attempt_at?: string | null
           lead_id?: string
+          phone_last4?: string | null
+          redeemed_ip?: string | null
+          redeemed_user_agent?: string | null
           token?: string
           used_at?: string | null
+          verification_method?: string
         }
         Relationships: []
       }
