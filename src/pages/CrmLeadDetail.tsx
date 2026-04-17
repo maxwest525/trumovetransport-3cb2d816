@@ -64,6 +64,14 @@ interface InventoryItem {
   confidence: number | null;
 }
 
+interface ResumeToken {
+  id: string;
+  token: string;
+  created_at: string;
+  expires_at: string;
+  used_at: string | null;
+}
+
 const statusColors: Record<string, string> = {
   new: "bg-blue-500/10 text-blue-400 border-blue-500/30",
   contacted: "bg-yellow-500/10 text-yellow-400 border-yellow-500/30",
