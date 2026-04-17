@@ -241,10 +241,15 @@ export default function ScanRoom() {
 
     let nextId = Date.now();
     const allDetected: typeof DEMO_ITEMS = [];
+    let totalDetectedCount = 0;
 
     for (let i = 0; i < realPhotos.length; i++) {
       const photo = realPhotos[i];
       setAiScanProgress({ current: i + 1, total: realPhotos.length });
+      // Show this photo in the scanner panel + reset boxes
+      setActiveScanPhoto({ url: photo.url, name: photo.name });
+      setAiBoxes([]);
+      setRevealedBoxCount(0);
       try {
         // Photo name often starts with "Living Room - filename.jpg"
         const roomHint = photo.name.includes(' - ') ? photo.name.split(' - ')[0] : undefined;
@@ -259,23 +264,63 @@ export default function ScanRoom() {
           continue;
         }
 
-        const items = (data?.items || []) as Array<{ name: string; room: string; quantity: number; cubicFeet: number; weight: number; confidence: number }>;
-        items.forEach(it => {
-          // Expand quantity into individual rows so existing UI can edit per-item
+        const items = (data?.items || []) as Array<{ name: string; room: string; quantity: number; cubicFeet: number; weight: number; confidence: number; box?: { x: number; y: number; width: number; height: number } }>;
+
+        // Build the bounding boxes list (one box per detected item, regardless of quantity)
+        const boxes: AiBox[] = items
+          .filter(it => it.box && it.box.width > 0 && it.box.height > 0)
+          .map((it, idx) => ({
+            id: idx,
+            name: it.name,
+            confidence: it.confidence,
+            x: it.box!.x,
+            y: it.box!.y,
+            width: it.box!.width,
+            height: it.box!.height,
+          }));
+        setAiBoxes(boxes);
+
+        // Progressively reveal boxes one-by-one, then add the corresponding inventory rows
+        for (let b = 0; b < boxes.length; b++) {
+          await new Promise(res => setTimeout(res, 350));
+          setRevealedBoxCount(b + 1);
+          const it = items[b];
+          if (!it) continue;
           for (let q = 0; q < it.quantity; q++) {
-            allDetected.push({
+            const row = {
               id: nextId++,
               name: it.name,
               room: it.room,
               weight: it.weight,
               cuft: it.cubicFeet,
               image: '',
-            });
+            };
+            allDetected.push(row);
+            setDetectedItems(prev => [...prev, row]);
+            totalDetectedCount++;
+          }
+        }
+
+        // For any items without boxes (rare), still add them to inventory
+        items.slice(boxes.length).forEach(it => {
+          for (let q = 0; q < it.quantity; q++) {
+            const row = {
+              id: nextId++,
+              name: it.name,
+              room: it.room,
+              weight: it.weight,
+              cuft: it.cubicFeet,
+              image: '',
+            };
+            allDetected.push(row);
+            setDetectedItems(prev => [...prev, row]);
+            totalDetectedCount++;
           }
         });
 
-        setDetectedItems(prev => [...prev, ...allDetected.slice(allDetected.length - items.reduce((s, x) => s + x.quantity, 0))]);
         setScannedPhotoIds(prev => new Set([...prev, photo.id]));
+        // Brief pause so the user can see the completed boxes before next photo
+        await new Promise(res => setTimeout(res, 600));
       } catch (e) {
         console.error('Scan exception', e);
         toast({ title: "Scan error", description: "Something went wrong analyzing this photo.", variant: "destructive" });
@@ -286,7 +331,7 @@ export default function ScanRoom() {
     setIsScanning(false);
     toast({
       title: `Scan complete!`,
-      description: `Detected ${allDetected.length} items across ${realPhotos.length} photo(s).`,
+      description: `Detected ${totalDetectedCount} items across ${realPhotos.length} photo(s).`,
     });
   };
 
