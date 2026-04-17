@@ -179,12 +179,21 @@ serve(async (req) => {
         photoIdToUrl.set(photo.id, publicUrl);
 
         // Record this scan photo for the lead
+        // Sanitize note: trim, drop control chars, cap length. Notes render
+        // for agents in the CRM so we don't trust client length.
+        const cleanedNote = (() => {
+          const raw = typeof photo.note === "string" ? photo.note : "";
+          // eslint-disable-next-line no-control-regex
+          const stripped = raw.replace(/[\u0000-\u001F\u007F]/g, " ").trim();
+          return stripped ? stripped.slice(0, 500) : null;
+        })();
         await supabase.from("lead_scan_photos").insert({
           lead_id: leadId,
           photo_url: publicUrl,
           room_label: photo.roomLabel || photo.name || null,
           detected_boxes: photo.boxes || [],
           item_count: photo.itemCount ?? 0,
+          note: cleanedNote,
         });
       } catch (e) {
         console.error("Photo processing error:", e);
