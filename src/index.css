@@ -949,7 +949,9 @@
 }
 
 .tru-scan-library-grid-compact {
-  grid-template-columns: repeat(3, 1fr);
+  /* Library column is wider now (440px on lg), so fit 4 thumbs per row
+     instead of 3 to show more photos at a glance. */
+  grid-template-columns: repeat(4, 1fr);
   gap: 0.375rem;
   overflow: hidden;
 }
