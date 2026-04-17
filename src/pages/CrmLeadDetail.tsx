@@ -357,10 +357,27 @@ export default function CrmLeadDetail() {
             {scanPhotos.length > 0 && (
               <Card>
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-base flex items-center gap-2">
-                    <Camera className="w-4 h-4 text-primary" />
-                    AI Room Scan Photos ({scanPhotos.length})
-                  </CardTitle>
+                  <div className="flex items-center justify-between gap-2 flex-wrap">
+                    <CardTitle className="text-base flex items-center gap-2">
+                      <Camera className="w-4 h-4 text-primary" />
+                      AI Room Scan Photos ({scanPhotos.length})
+                    </CardTitle>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={handleSendResumeLink}
+                      disabled={generatingResumeLink}
+                      className="h-8 text-xs gap-1.5"
+                      title="Generate a one-time link the customer can open to resume their saved scan"
+                    >
+                      {generatingResumeLink ? (
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      ) : (
+                        <Link2 className="w-3.5 h-3.5" />
+                      )}
+                      Send resume link
+                    </Button>
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
