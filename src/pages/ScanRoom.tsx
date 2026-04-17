@@ -114,6 +114,7 @@ export default function ScanRoom() {
   const navigate = useNavigate();
   // Inventory item shape (allows optional photoId + boxIndex + confidence from AI scans)
   type InventoryItem = (typeof DEMO_ITEMS)[number] & { quantity: number; photoId?: string; boxIndex?: number; confidence?: number };
+  type AiBox = { id: number; name: string; confidence: number; x: number; y: number; width: number; height: number };
 
   // Persistent state — survives refresh, navigation, and tab close (auto-expires after 7 days)
   const STORAGE_KEY = "trumove_scan_room_state_v1";
@@ -143,8 +144,6 @@ export default function ScanRoom() {
       return null;
     }
   };
-  // AiBox needs to be in scope before persisted shape — declared again below for state, this mirror is fine
-  type AiBox = { id: number; name: string; confidence: number; x: number; y: number; width: number; height: number };
   const persisted = loadPersisted();
 
   const [detectedItems, setDetectedItems] = useState<InventoryItem[]>(
