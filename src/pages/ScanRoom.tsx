@@ -203,6 +203,13 @@ export default function ScanRoom() {
   // doesn't fire when the customer is just reorganizing folders.
   const [draggedPhotoId, setDraggedPhotoId] = useState<string | null>(null);
   const [dragOverFolder, setDragOverFolder] = useState<string | null>(null);
+  // Multi-select state for batch operations (drag many photos into a folder
+  // at once). `selectionMode` toggles persistent checkboxes; without it,
+  // shift-click on tiles still works to build an ad-hoc selection.
+  const [selectionMode, setSelectionMode] = useState(false);
+  const [selectedPhotoIds, setSelectedPhotoIds] = useState<Set<string>>(new Set());
+  // Anchor for shift-click range selection within the visible flat list.
+  const [lastSelectedPhotoId, setLastSelectedPhotoId] = useState<string | null>(null);
   // Customer-defined folders (e.g. "Garage Loft", "Office"). Stored separately
   // from photos so an empty folder still renders until removed. Seeded from
   // persisted state so the list survives a refresh.
@@ -230,10 +237,15 @@ export default function ScanRoom() {
   // "<Room> - <rest>" prefix that parseRoom() reads. This is what gets
   // persisted to localStorage in the autosave effect, so the new grouping
   // survives a refresh. Dropping into "All" strips the prefix entirely.
-  const reclassifyPhotoToFolder = (photoId: string, targetRoom: string) => {
+  // (single-photo reclassify removed; reclassifyPhotosToFolder handles both)
+
+  // Batch variant for moving many selected photos in a single drag op.
+  // Done in one setState pass so localStorage autosave fires once.
+  const reclassifyPhotosToFolder = (photoIds: Set<string>, targetRoom: string) => {
+    if (photoIds.size === 0) return;
     setUploadedPhotos((prev) =>
       prev.map((p) => {
-        if (p.id !== photoId) return p;
+        if (!photoIds.has(p.id)) return p;
         const sep = p.name.indexOf(" - ");
         const baseName = sep === -1 ? p.name : p.name.slice(sep + 3);
         const cleanBase = baseName.trim() || "photo";
@@ -1581,6 +1593,54 @@ export default function ScanRoom() {
                   <FolderOpen className="w-3.5 h-3.5" />
                   <span>Library</span>
                   <span className="tru-scan-library-count">{uploadedPhotos.length}</span>
+                  {/* Multi-select toggle. When on, every tile shows a checkbox
+                      and click toggles selection (shift-click extends a range
+                      from the last anchor across the visible flat list).
+                      Selected photos drag together into any folder. */}
+                  {uploadedPhotos.length > 0 && (
+                    selectionMode ? (
+                      <div className="ml-auto flex items-center gap-1">
+                        <span className="text-[10px] font-semibold text-primary uppercase tracking-wider">
+                          {selectedPhotoIds.size} selected
+                        </span>
+                        {selectedPhotoIds.size > 0 && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSelectedPhotoIds(new Set());
+                              setLastSelectedPhotoId(null);
+                            }}
+                            className="inline-flex items-center justify-center rounded-md border border-border bg-background hover:bg-muted px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider transition-colors"
+                            title="Clear selection"
+                          >
+                            Clear
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSelectionMode(false);
+                            setSelectedPhotoIds(new Set());
+                            setLastSelectedPhotoId(null);
+                          }}
+                          className="inline-flex items-center justify-center rounded-md border border-primary/30 bg-primary/[0.06] hover:bg-primary/[0.12] px-1.5 py-0.5 text-[10px] font-semibold text-primary uppercase tracking-wider transition-colors"
+                          title="Exit multi-select"
+                        >
+                          Done
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => setSelectionMode(true)}
+                        className="ml-auto inline-flex items-center gap-1 rounded-md border border-border bg-background hover:bg-muted px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider transition-colors"
+                        title="Select multiple photos to drag together"
+                      >
+                        <Check className="w-3 h-3" />
+                        Select
+                      </button>
+                    )
+                  )}
                   {/* Inline "+ Folder" affordance. Toggles a tiny input row so
                       customers can name a custom folder without leaving the
                       library. Persisted with the saved scan. */}
@@ -1591,7 +1651,7 @@ export default function ScanRoom() {
                         setIsAddingFolder(true);
                         setNewFolderDraft("");
                       }}
-                      className="ml-auto inline-flex items-center gap-1 rounded-md border border-primary/30 bg-primary/[0.06] hover:bg-primary/[0.12] px-1.5 py-0.5 text-[10px] font-semibold text-primary uppercase tracking-wider transition-colors"
+                      className={`${uploadedPhotos.length > 0 ? "" : "ml-auto"} inline-flex items-center gap-1 rounded-md border border-primary/30 bg-primary/[0.06] hover:bg-primary/[0.12] px-1.5 py-0.5 text-[10px] font-semibold text-primary uppercase tracking-wider transition-colors`}
                       title="Create a custom folder"
                     >
                       <FolderPlus className="w-3 h-3" />
@@ -1750,6 +1810,12 @@ export default function ScanRoom() {
                           .filter((k) => !KNOWN_ROOMS.includes(k) && k !== "All")
                           .sort((a, b) => a.localeCompare(b)),
                       ];
+                      // Flat photo order across visible folders. Used for
+                      // shift-click range selection in the library grid.
+                      const flatPhotoOrder: string[] = [];
+                      orderedKeys.forEach((room) => {
+                        (groups.get(room) ?? []).forEach((p) => flatPhotoOrder.push(p.id));
+                      });
                       return (
                         <>
                           {/* Compact "add more" strip stays visible while photos exist */}
@@ -1800,11 +1866,23 @@ export default function ScanRoom() {
                                   e.preventDefault();
                                   e.stopPropagation();
                                   if (canAcceptDrop) {
-                                    reclassifyPhotoToFolder(draggedPhotoId, room);
+                                    // If the dragged photo is part of an active
+                                    // multi-selection, move the entire batch in
+                                    // one update so the user can drop many at once.
+                                    const batch = selectedPhotoIds.has(draggedPhotoId) && selectedPhotoIds.size > 1
+                                      ? selectedPhotoIds
+                                      : new Set([draggedPhotoId]);
+                                    reclassifyPhotosToFolder(batch, room);
                                     toast({
-                                      title: `Moved to ${room}`,
+                                      title: batch.size > 1
+                                        ? `Moved ${batch.size} photos to ${room}`
+                                        : `Moved to ${room}`,
                                       description: "Folder updated - your scan is auto-saved.",
                                     });
+                                    if (batch.size > 1) {
+                                      setSelectedPhotoIds(new Set());
+                                      setLastSelectedPhotoId(null);
+                                    }
                                   }
                                   setDraggedPhotoId(null);
                                   setDragOverFolder(null);
@@ -1901,12 +1979,60 @@ export default function ScanRoom() {
                                   <div className="grid grid-cols-3 gap-1.5">
                                     {photos.map((photo) => {
                                       const isScanned = scannedPhotoIds.has(photo.id);
-                                      const isBeingDragged = draggedPhotoId === photo.id;
+                                      const isSelected = selectedPhotoIds.has(photo.id);
+                                      // While dragging a multi-selection, dim every selected
+                                      // tile (not just the one the OS attached the ghost to).
+                                      const isPartOfActiveDrag = draggedPhotoId === photo.id
+                                        || (draggedPhotoId !== null && isSelected && selectedPhotoIds.has(draggedPhotoId) && selectedPhotoIds.size > 1);
+
+                                      // Toggle / range-select handler. Shift-click extends from
+                                      // the last anchor across the flat ordering of all visible
+                                      // folders. Plain click in selectionMode toggles a single tile.
+                                      const handleTileClick = (e: React.MouseEvent) => {
+                                        const usingShift = e.shiftKey;
+                                        if (!selectionMode && !usingShift) return; // tile click is a no-op outside multi-select
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        if (usingShift && lastSelectedPhotoId && lastSelectedPhotoId !== photo.id) {
+                                          const start = flatPhotoOrder.indexOf(lastSelectedPhotoId);
+                                          const end = flatPhotoOrder.indexOf(photo.id);
+                                          if (start !== -1 && end !== -1) {
+                                            const [a, b] = start < end ? [start, end] : [end, start];
+                                            const range = flatPhotoOrder.slice(a, b + 1);
+                                            setSelectedPhotoIds((prev) => {
+                                              const next = new Set(prev);
+                                              range.forEach((id) => next.add(id));
+                                              return next;
+                                            });
+                                            // Shift-click implies the user wants multi-select even
+                                            // if they hadn't toggled the mode yet.
+                                            if (!selectionMode) setSelectionMode(true);
+                                            setLastSelectedPhotoId(photo.id);
+                                            return;
+                                          }
+                                        }
+                                        setSelectedPhotoIds((prev) => {
+                                          const next = new Set(prev);
+                                          if (next.has(photo.id)) next.delete(photo.id);
+                                          else next.add(photo.id);
+                                          return next;
+                                        });
+                                        setLastSelectedPhotoId(photo.id);
+                                      };
+
                                       return (
                                         <div
                                           key={photo.id}
                                           draggable
+                                          onClick={handleTileClick}
                                           onDragStart={(e) => {
+                                            // If user starts dragging an unselected tile while
+                                            // a selection exists, treat the drag as a single-photo
+                                            // move (don't silently drag the unrelated selection).
+                                            if (selectedPhotoIds.size > 0 && !selectedPhotoIds.has(photo.id)) {
+                                              setSelectedPhotoIds(new Set());
+                                              setLastSelectedPhotoId(null);
+                                            }
                                             setDraggedPhotoId(photo.id);
                                             e.dataTransfer.effectAllowed = "move";
                                             // Required for Firefox to actually start the drag
@@ -1916,10 +2042,24 @@ export default function ScanRoom() {
                                             setDraggedPhotoId(null);
                                             setDragOverFolder(null);
                                           }}
-                                          className={`tru-scan-library-item tru-scan-library-item-compact relative cursor-grab active:cursor-grabbing ${isScanned ? 'opacity-50 grayscale' : ''} ${isBeingDragged ? 'opacity-30' : ''}`}
-                                          title="Drag to another folder to reclassify"
+                                          className={`tru-scan-library-item tru-scan-library-item-compact relative cursor-grab active:cursor-grabbing ${isScanned ? 'opacity-50 grayscale' : ''} ${isPartOfActiveDrag ? 'opacity-30' : ''} ${isSelected ? 'ring-2 ring-primary ring-offset-1 ring-offset-background rounded-md' : ''}`}
+                                          title={selectionMode ? "Click to select - drag any selected photo to move them all" : "Drag to another folder, or shift-click to select multiple"}
                                         >
                                           <img src={photo.url} alt={photo.name} draggable={false} />
+                                          {/* Selection checkbox - shown in selection mode OR
+                                              when the photo is already part of an ad-hoc
+                                              shift-click selection. */}
+                                          {(selectionMode || isSelected) && (
+                                            <div
+                                              className={`absolute top-1 left-1 w-4 h-4 rounded-sm border-2 flex items-center justify-center transition-colors ${
+                                                isSelected
+                                                  ? "bg-primary border-primary text-primary-foreground"
+                                                  : "bg-background/80 border-border"
+                                              }`}
+                                            >
+                                              {isSelected && <Check className="w-2.5 h-2.5" />}
+                                            </div>
+                                          )}
                                           {isScanned && (
                                             <div className="absolute inset-0 flex items-center justify-center bg-foreground/20 rounded-[inherit]">
                                               <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center">
@@ -1928,7 +2068,16 @@ export default function ScanRoom() {
                                             </div>
                                           )}
                                           <button
-                                            onClick={() => setUploadedPhotos(prev => prev.filter(p => p.id !== photo.id))}
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              setUploadedPhotos(prev => prev.filter(p => p.id !== photo.id));
+                                              setSelectedPhotoIds((prev) => {
+                                                if (!prev.has(photo.id)) return prev;
+                                                const next = new Set(prev);
+                                                next.delete(photo.id);
+                                                return next;
+                                              });
+                                            }}
                                             className="tru-scan-library-remove tru-scan-library-remove-compact"
                                           >
                                             <X className="w-2.5 h-2.5" />
