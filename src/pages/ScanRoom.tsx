@@ -250,9 +250,8 @@ export default function ScanRoom() {
     setAiScanProgress({ current: 0, total: realPhotos.length });
 
     let nextId = Date.now();
-    const allDetected: typeof DEMO_ITEMS = [];
+    const allDetected: InventoryItem[] = [];
     let totalDetectedCount = 0;
-    const allDetectedTyped: InventoryItem[] = [];
 
     for (let i = 0; i < realPhotos.length; i++) {
       const photo = realPhotos[i];
