@@ -111,7 +111,9 @@ const SAMPLE_PREVIEW_ITEMS = [
 export default function ScanRoom() {
   useScrollToTop();
   const navigate = useNavigate();
-  const [detectedItems, setDetectedItems] = useState<typeof DEMO_ITEMS>([]);
+  // Inventory item shape (allows optional photoId + boxIndex from AI scans)
+  type InventoryItem = (typeof DEMO_ITEMS)[number] & { photoId?: string; boxIndex?: number };
+  const [detectedItems, setDetectedItems] = useState<InventoryItem[]>([]);
   const [isScanning, setIsScanning] = useState(false);
   const [showIntroModal, setShowIntroModal] = useState(false);
   const [showClearDialog, setShowClearDialog] = useState(false);
@@ -250,12 +252,13 @@ export default function ScanRoom() {
     let nextId = Date.now();
     const allDetected: typeof DEMO_ITEMS = [];
     let totalDetectedCount = 0;
+    const allDetectedTyped: InventoryItem[] = [];
 
     for (let i = 0; i < realPhotos.length; i++) {
       const photo = realPhotos[i];
       setAiScanProgress({ current: i + 1, total: realPhotos.length });
       // Show this photo in the scanner panel + reset boxes
-      setActiveScanPhoto({ url: photo.url, name: photo.name });
+      setActiveScanPhoto({ id: photo.id, url: photo.url, name: photo.name });
       setAiBoxes([]);
       setRevealedBoxCount(0);
       try {
@@ -288,6 +291,12 @@ export default function ScanRoom() {
           }));
         setAiBoxes(boxes);
 
+        // Save to scan history (so user can re-open this photo's detections)
+        setScanHistory(prev => {
+          const without = prev.filter(p => p.id !== photo.id);
+          return [...without, { id: photo.id, url: photo.url, name: photo.name, boxes }];
+        });
+
         // Progressively reveal boxes one-by-one, then add the corresponding inventory rows
         for (let b = 0; b < boxes.length; b++) {
           await new Promise(res => setTimeout(res, 350));
@@ -295,13 +304,15 @@ export default function ScanRoom() {
           const it = items[b];
           if (!it) continue;
           for (let q = 0; q < it.quantity; q++) {
-            const row = {
+            const row: InventoryItem = {
               id: nextId++,
               name: it.name,
               room: it.room,
               weight: it.weight,
               cuft: it.cubicFeet,
               image: '',
+              photoId: photo.id,
+              boxIndex: b,
             };
             allDetected.push(row);
             setDetectedItems(prev => [...prev, row]);
@@ -312,13 +323,14 @@ export default function ScanRoom() {
         // For any items without boxes (rare), still add them to inventory
         items.slice(boxes.length).forEach(it => {
           for (let q = 0; q < it.quantity; q++) {
-            const row = {
+            const row: InventoryItem = {
               id: nextId++,
               name: it.name,
               room: it.room,
               weight: it.weight,
               cuft: it.cubicFeet,
               image: '',
+              photoId: photo.id,
             };
             allDetected.push(row);
             setDetectedItems(prev => [...prev, row]);
