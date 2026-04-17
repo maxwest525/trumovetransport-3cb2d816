@@ -255,6 +255,10 @@ export default function ScanRoom() {
   // so cancelling doesn't lose the saved value).
   const [noteDraft, setNoteDraft] = useState("");
   const roomUploadRef = useRef<HTMLInputElement>(null);
+  // Confirmation gate for the batch "Delete selected" action in the
+  // multi-select toolbar. Holds the snapshot of ids to delete so the user
+  // can keep adjusting the selection until they actually confirm.
+  const [pendingBatchDelete, setPendingBatchDelete] = useState<Set<string> | null>(null);
   const allUploadRef = useRef<HTMLInputElement>(null);
 
   // Folders the customer cannot rename or delete: "All" is the protected
