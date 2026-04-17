@@ -5,8 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { formatPhoneNumber, isValidPhoneNumber } from "@/lib/phoneFormat";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/hooks/use-toast";
-import { getAttributionData, markFormStart, markFormCompleted } from "@/lib/leadAttribution";
+import { getAttributionData, markFormStart, markFormComplete } from "@/lib/leadAttribution";
 
 interface LeadGateModalProps {
   isOpen: boolean;
