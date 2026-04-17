@@ -1023,6 +1023,10 @@ export default function ScanRoom() {
         photoEntries.map(async (p) => {
           const dataUrl = await urlToDataUrl(p.url);
           const itemCount = itemsSnapshot.filter((it) => it.photoId === p.id).length;
+          // Attach the customer's note for this photo (if any) so the edge
+          // function can persist it on lead_scan_photos. Trim + cap defensively
+          // even though we also clean on the server.
+          const rawNote = (photoNotes[p.id] || "").trim().slice(0, 500);
           return {
             id: p.id,
             dataUrl,
@@ -1030,6 +1034,7 @@ export default function ScanRoom() {
             roomLabel: p.name?.includes(" - ") ? p.name.split(" - ")[0] : p.name,
             boxes: p.boxes,
             itemCount,
+            note: rawNote || undefined,
           };
         })
       );
