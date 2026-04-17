@@ -50,7 +50,7 @@ import {
   Ruler, Package, Printer, Download, Square, Trash2, ArrowRightLeft,
   Phone, Video, Minus, Plus, X, Upload, ImageIcon, FolderOpen, Lock, User, Mail,
   Sofa, BedDouble, UtensilsCrossed, Bath, Warehouse, Check, Pause, Play,
-  Camera, Layers, Info, Eye, Save, Loader2, AlertTriangle
+  Camera, Layers, Info, Eye, Save, Loader2, AlertTriangle, Pencil, FolderPlus
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -551,6 +551,11 @@ export default function ScanRoom() {
     }
     if (persisted?.scannedPhotoIds?.length) {
       setScannedPhotoIds((prev) => (prev.size === 0 ? new Set(persisted.scannedPhotoIds) : prev));
+    }
+    // customFolders is already seeded from persisted via useState initializer,
+    // but if rehydration ever happens after mount we ensure it's not blown away.
+    if (persisted?.customFolders?.length) {
+      setCustomFolders((prev) => (prev.length === 0 ? persisted.customFolders! : prev));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -1552,6 +1557,68 @@ export default function ScanRoom() {
                   <FolderOpen className="w-3.5 h-3.5" />
                   <span>Library</span>
                   <span className="tru-scan-library-count">{uploadedPhotos.length}</span>
+                  {/* Inline "+ Folder" affordance. Toggles a tiny input row so
+                      customers can name a custom folder without leaving the
+                      library. Persisted with the saved scan. */}
+                  {!isAddingFolder ? (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsAddingFolder(true);
+                        setNewFolderDraft("");
+                      }}
+                      className="ml-auto inline-flex items-center gap-1 rounded-md border border-primary/30 bg-primary/[0.06] hover:bg-primary/[0.12] px-1.5 py-0.5 text-[10px] font-semibold text-primary uppercase tracking-wider transition-colors"
+                      title="Create a custom folder"
+                    >
+                      <FolderPlus className="w-3 h-3" />
+                      Folder
+                    </button>
+                  ) : (
+                    <div className="ml-auto flex items-center gap-1">
+                      <input
+                        autoFocus
+                        type="text"
+                        value={newFolderDraft}
+                        onChange={(e) => setNewFolderDraft(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            addCustomFolder(newFolderDraft);
+                            setIsAddingFolder(false);
+                            setNewFolderDraft("");
+                          } else if (e.key === "Escape") {
+                            setIsAddingFolder(false);
+                            setNewFolderDraft("");
+                          }
+                        }}
+                        placeholder="Folder name"
+                        maxLength={40}
+                        className="h-6 w-28 rounded-md border border-primary/40 bg-background px-1.5 text-[11px] text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          addCustomFolder(newFolderDraft);
+                          setIsAddingFolder(false);
+                          setNewFolderDraft("");
+                        }}
+                        className="inline-flex items-center justify-center w-5 h-5 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+                        title="Add folder"
+                      >
+                        <Check className="w-3 h-3" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsAddingFolder(false);
+                          setNewFolderDraft("");
+                        }}
+                        className="inline-flex items-center justify-center w-5 h-5 rounded-md bg-muted text-muted-foreground hover:bg-muted/70 transition-colors"
+                        title="Cancel"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 {/* Hidden inputs for both upload paths */}
