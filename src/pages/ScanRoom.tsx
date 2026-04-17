@@ -1098,6 +1098,47 @@ export default function ScanRoom() {
           </section>
         )}
 
+        {/* Stale-scan warning banner — appears once persisted data is older than 5 days */}
+        {isScanStale && detectedItems.length > 0 && (
+          <section className="px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto -mt-2 mb-6">
+              <div className="rounded-xl border border-amber-500/40 bg-amber-500/[0.08] backdrop-blur p-4 md:p-5 flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
+                <div className="flex items-center gap-3 flex-1 min-w-0">
+                  <div className="w-10 h-10 rounded-full bg-amber-500/15 flex items-center justify-center shrink-0">
+                    <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <p className="text-sm font-semibold text-foreground">
+                        Your saved scan is getting old
+                      </p>
+                      {savedAtMs && (
+                        <span className="text-[10px] uppercase tracking-wide font-semibold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-700 dark:text-amber-300">
+                          {formatSavedAgo(savedAtMs)}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      {daysUntilExpiry === 0
+                        ? "This scan expires today. Finish reviewing or start fresh before it auto-deletes."
+                        : `This scan auto-deletes in ${daysUntilExpiry} day${daysUntilExpiry === 1 ? "" : "s"}. Finish reviewing or start fresh to keep your inventory accurate.`}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 w-full sm:w-auto">
+                  <button
+                    onClick={startFreshScan}
+                    className="flex-1 sm:flex-none px-4 py-2 rounded-lg border border-amber-500/40 bg-background text-xs font-semibold text-foreground hover:bg-amber-500/10 transition-colors flex items-center justify-center gap-1.5"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    Start fresh
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
         {/* Main scan workspace */}
         <section className="px-4 sm:px-6 lg:px-8 pb-10">
           <div className="max-w-7xl mx-auto">
