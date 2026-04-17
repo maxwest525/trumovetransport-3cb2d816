@@ -114,7 +114,27 @@ export default function ScanRoom() {
   const navigate = useNavigate();
   // Inventory item shape (allows optional photoId + boxIndex + confidence from AI scans)
   type InventoryItem = (typeof DEMO_ITEMS)[number] & { quantity: number; photoId?: string; boxIndex?: number; confidence?: number };
-  const [detectedItems, setDetectedItems] = useState<InventoryItem[]>([]);
+
+  // Persistent state — survives refresh, navigation, and tab close
+  const STORAGE_KEY = "trumove_scan_room_state_v1";
+  const loadPersisted = () => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return null;
+      return JSON.parse(raw) as {
+        detectedItems?: InventoryItem[];
+        isUnlocked?: boolean;
+        savedLeadId?: string | null;
+      };
+    } catch {
+      return null;
+    }
+  };
+  const persisted = loadPersisted();
+
+  const [detectedItems, setDetectedItems] = useState<InventoryItem[]>(
+    persisted?.detectedItems ?? []
+  );
 
   // Merge helper: if an item with same name+room already exists, bump quantity instead of adding a new row
   const addOrMergeItem = (incoming: Omit<InventoryItem, "quantity"> & { quantity?: number }) => {
@@ -144,7 +164,7 @@ export default function ScanRoom() {
   const DEMO_TOTAL_STEPS = 2 + DEMO_ITEMS.length;
   
   // Lead capture state — AI scan is locked until visitor provides contact info
-  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [isUnlocked, setIsUnlocked] = useState(persisted?.isUnlocked ?? false);
   const [showLeadGate, setShowLeadGate] = useState(false);
   // Action to perform once the gate is unlocked (e.g. open uploader, start scan)
   const [pendingAction, setPendingAction] = useState<null | (() => void)>(null);
@@ -257,7 +277,28 @@ export default function ScanRoom() {
 
   // Auto-save state — every AI scan automatically pushes to the CRM
   const [autoSaveStatus, setAutoSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
-  const [savedLeadId, setSavedLeadId] = useState<string | null>(null);
+  const [savedLeadId, setSavedLeadId] = useState<string | null>(persisted?.savedLeadId ?? null);
+
+  // Persist key state across refreshes / navigation / tab close
+  useEffect(() => {
+    try {
+      // Strip volatile blob: URLs from items (they don't survive refresh anyway)
+      const slim = detectedItems.map(({ image, ...rest }) => ({
+        ...rest,
+        image: image && image.startsWith("blob:") ? "" : image,
+      }));
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({
+          detectedItems: slim,
+          isUnlocked,
+          savedLeadId,
+        })
+      );
+    } catch {
+      // Quota or serialization failure — non-fatal
+    }
+  }, [detectedItems, isUnlocked, savedLeadId]);
 
   // Convert image URL (blob:) to base64 data URL for AI vision
   const urlToDataUrl = async (url: string): Promise<string> => {
