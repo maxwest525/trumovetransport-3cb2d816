@@ -1573,8 +1573,52 @@ export default function ScanRoom() {
                           {orderedKeys.map((room) => {
                             const photos = groups.get(room) ?? [];
                             const isAllFolder = room === "All";
+                            const isDropTarget = dragOverFolder === room;
+                            // A photo can't be dropped into the folder it's already in.
+                            const draggedPhoto = draggedPhotoId
+                              ? uploadedPhotos.find((p) => p.id === draggedPhotoId)
+                              : null;
+                            const draggedPhotoCurrentRoom = draggedPhoto ? parseRoom(draggedPhoto.name) : null;
+                            const canAcceptDrop = draggedPhotoId !== null && draggedPhotoCurrentRoom !== room;
+
                             return (
-                              <div key={room} className="tru-scan-library-folder">
+                              <div
+                                key={room}
+                                className={`tru-scan-library-folder transition-colors rounded-lg ${
+                                  isDropTarget && canAcceptDrop
+                                    ? "ring-2 ring-primary bg-primary/[0.06]"
+                                    : draggedPhotoId && canAcceptDrop
+                                      ? "ring-1 ring-dashed ring-primary/30"
+                                      : ""
+                                }`}
+                                onDragOver={(e) => {
+                                  if (!draggedPhotoId) return;
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  e.dataTransfer.dropEffect = canAcceptDrop ? "move" : "none";
+                                  if (canAcceptDrop && dragOverFolder !== room) setDragOverFolder(room);
+                                }}
+                                onDragLeave={(e) => {
+                                  // Only clear when leaving the folder element entirely, not when
+                                  // moving across child tiles inside it.
+                                  if (e.currentTarget.contains(e.relatedTarget as Node)) return;
+                                  if (dragOverFolder === room) setDragOverFolder(null);
+                                }}
+                                onDrop={(e) => {
+                                  if (!draggedPhotoId) return;
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  if (canAcceptDrop) {
+                                    reclassifyPhotoToFolder(draggedPhotoId, room);
+                                    toast({
+                                      title: `Moved to ${room}`,
+                                      description: "Folder updated - your scan is auto-saved.",
+                                    });
+                                  }
+                                  setDraggedPhotoId(null);
+                                  setDragOverFolder(null);
+                                }}
+                              >
                                 <div className="flex items-center gap-1.5 px-1 pt-2 pb-1">
                                   <FolderOpen className={`w-3 h-3 ${isAllFolder ? "text-primary" : "text-muted-foreground/70"}`} />
                                   <span className={`text-[10px] font-semibold uppercase tracking-wider ${isAllFolder ? "text-primary" : "text-muted-foreground/70"}`}>
@@ -1591,15 +1635,33 @@ export default function ScanRoom() {
                                 </div>
                                 {photos.length === 0 ? (
                                   <p className="text-[10px] text-muted-foreground/50 italic px-1 pb-2">
-                                    Drop photos here - the easy way to keep them all together
+                                    {draggedPhotoId && canAcceptDrop
+                                      ? `Drop here to move into ${room}`
+                                      : "Drop photos here - or drag from another folder"}
                                   </p>
                                 ) : (
                                   <div className="grid grid-cols-3 gap-1.5">
                                     {photos.map((photo) => {
                                       const isScanned = scannedPhotoIds.has(photo.id);
+                                      const isBeingDragged = draggedPhotoId === photo.id;
                                       return (
-                                        <div key={photo.id} className={`tru-scan-library-item tru-scan-library-item-compact relative ${isScanned ? 'opacity-50 grayscale' : ''}`}>
-                                          <img src={photo.url} alt={photo.name} />
+                                        <div
+                                          key={photo.id}
+                                          draggable
+                                          onDragStart={(e) => {
+                                            setDraggedPhotoId(photo.id);
+                                            e.dataTransfer.effectAllowed = "move";
+                                            // Required for Firefox to actually start the drag
+                                            try { e.dataTransfer.setData("text/plain", photo.id); } catch { /* noop */ }
+                                          }}
+                                          onDragEnd={() => {
+                                            setDraggedPhotoId(null);
+                                            setDragOverFolder(null);
+                                          }}
+                                          className={`tru-scan-library-item tru-scan-library-item-compact relative cursor-grab active:cursor-grabbing ${isScanned ? 'opacity-50 grayscale' : ''} ${isBeingDragged ? 'opacity-30' : ''}`}
+                                          title="Drag to another folder to reclassify"
+                                        >
+                                          <img src={photo.url} alt={photo.name} draggable={false} />
                                           {isScanned && (
                                             <div className="absolute inset-0 flex items-center justify-center bg-foreground/20 rounded-[inherit]">
                                               <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center">
