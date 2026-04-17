@@ -1845,6 +1845,30 @@ export default function ScanRoom() {
                                   <span className="text-[10px] text-muted-foreground/50">
                                     {photos.length}
                                   </span>
+                                  {/* Per-folder "Scan this room" — only shown when the folder
+                                      has at least one unscanned real photo. For the "All" bucket
+                                      we still scope the run to its own photos, which matches
+                                      what the customer sees in this group. Hidden during an
+                                      active scan to avoid kicking off overlapping runs. */}
+                                  {(() => {
+                                    if (renamingFolder === room) return null;
+                                    const unscannedCount = photos.filter(
+                                      (p) => p.id !== 'demo-photo' && !scannedPhotoIds.has(p.id)
+                                    ).length;
+                                    if (unscannedCount === 0) return null;
+                                    return (
+                                      <button
+                                        type="button"
+                                        onClick={() => handleScanFolderClick(room)}
+                                        disabled={isAiScanning}
+                                        className="ml-1 inline-flex items-center gap-1 rounded-md border border-primary/30 bg-primary/[0.06] hover:bg-primary/[0.12] disabled:opacity-50 disabled:cursor-not-allowed px-1.5 py-0.5 text-[9px] font-semibold text-primary uppercase tracking-wider transition-colors"
+                                        title={`Scan ${unscannedCount} unscanned photo${unscannedCount === 1 ? '' : 's'} in ${room}`}
+                                      >
+                                        <Sparkles className="w-2.5 h-2.5" />
+                                        Scan
+                                      </button>
+                                    );
+                                  })()}
                                   {isAllFolder ? (
                                     <span className="ml-auto text-[9px] uppercase tracking-wider text-primary/70 font-semibold">
                                       Default
