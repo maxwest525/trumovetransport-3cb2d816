@@ -1515,6 +1515,21 @@ export default function ScanRoom() {
         )}
 
         {/* Save Scan to CRM is now automatic — runs after every AI scan, no UI. */}
+
+        {/* Lead capture gate — required before AI scanning */}
+        <LeadGateModal
+          isOpen={showLeadGate}
+          onClose={() => { setShowLeadGate(false); setPendingAction(null); }}
+          onUnlock={() => {
+            setIsUnlocked(true);
+            setShowLeadGate(false);
+            toast({ title: "AI Scan Unlocked", description: "Your lead has been saved. Continue with your room scan." });
+            const action = pendingAction;
+            setPendingAction(null);
+            // Defer so state flushes (isUnlocked) before re-running the gated action
+            setTimeout(() => { try { action?.(); } catch (e) { console.error(e); } }, 50);
+          }}
+        />
       </div>
     </SiteShell>
   );
