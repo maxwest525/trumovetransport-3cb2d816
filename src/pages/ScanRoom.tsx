@@ -1660,17 +1660,33 @@ export default function ScanRoom() {
                           {selectedPhotoIds.size} selected
                         </span>
                         {selectedPhotoIds.size > 0 && (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setSelectedPhotoIds(new Set());
-                              setLastSelectedPhotoId(null);
-                            }}
-                            className="inline-flex items-center justify-center rounded-md border border-border bg-background hover:bg-muted px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider transition-colors"
-                            title="Clear selection"
-                          >
-                            Clear
-                          </button>
+                          <>
+                            {/* Batch delete: opens an AlertDialog with the
+                                count so customers can't wipe many photos by
+                                accident. Snapshots the current selection so
+                                further selection changes don't affect the
+                                pending action. */}
+                            <button
+                              type="button"
+                              onClick={() => setPendingBatchDelete(new Set(selectedPhotoIds))}
+                              className="inline-flex items-center gap-1 rounded-md border border-destructive/40 bg-destructive/[0.06] hover:bg-destructive/[0.12] px-1.5 py-0.5 text-[10px] font-semibold text-destructive uppercase tracking-wider transition-colors"
+                              title={`Delete ${selectedPhotoIds.size} selected ${selectedPhotoIds.size === 1 ? "photo" : "photos"}`}
+                            >
+                              <Trash2 className="w-3 h-3" />
+                              Delete
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setSelectedPhotoIds(new Set());
+                                setLastSelectedPhotoId(null);
+                              }}
+                              className="inline-flex items-center justify-center rounded-md border border-border bg-background hover:bg-muted px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider transition-colors"
+                              title="Clear selection"
+                            >
+                              Clear
+                            </button>
+                          </>
                         )}
                         <button
                           type="button"
@@ -2755,6 +2771,49 @@ export default function ScanRoom() {
                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               >
                 Delete folder
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        {/* Batch photo delete confirmation - triggered from the multi-select
+            toolbar so customers can wipe many photos in one action. Mirrors
+            the per-tile X behavior (also clears them from selection). */}
+        <AlertDialog
+          open={pendingBatchDelete !== null}
+          onOpenChange={(open) => { if (!open) setPendingBatchDelete(null); }}
+        >
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>
+                Delete {pendingBatchDelete?.size ?? 0} {(pendingBatchDelete?.size ?? 0) === 1 ? "photo" : "photos"}?
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                These photos will be removed from your library. Items already added to your inventory from these photos will stay. This action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Keep photos</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => {
+                  const ids = pendingBatchDelete;
+                  if (!ids || ids.size === 0) { setPendingBatchDelete(null); return; }
+                  setUploadedPhotos((prev) => prev.filter((p) => !ids.has(p.id)));
+                  setSelectedPhotoIds((prev) => {
+                    const next = new Set(prev);
+                    ids.forEach((id) => next.delete(id));
+                    return next;
+                  });
+                  setLastSelectedPhotoId(null);
+                  setPendingBatchDelete(null);
+                  toast({
+                    title: `${ids.size} ${ids.size === 1 ? "photo" : "photos"} removed`,
+                    description: "Your selection has been cleared.",
+                  });
+                }}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                Delete
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
