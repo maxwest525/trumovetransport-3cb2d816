@@ -103,6 +103,35 @@ export default function CrmLeadDetail() {
   const [loading, setLoading] = useState(true);
   const [agentName, setAgentName] = useState<string | null>(null);
   const [claiming, setClaiming] = useState(false);
+  const [generatingResumeLink, setGeneratingResumeLink] = useState(false);
+
+  const handleSendResumeLink = async () => {
+    if (!leadId) return;
+    setGeneratingResumeLink(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-scan-resume-link", {
+        body: { leadId },
+      });
+      if (error || !data?.token) {
+        toast.error(data?.error || error?.message || "Could not create resume link");
+        return;
+      }
+      const url = `${window.location.origin}/scan-room?resume=${data.token}`;
+      try {
+        await navigator.clipboard.writeText(url);
+        toast.success("Resume link copied to clipboard", {
+          description: "Single-use link expires in 24 hours.",
+        });
+      } catch {
+        toast.success("Resume link created", { description: url });
+      }
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Could not create resume link");
+    } finally {
+      setGeneratingResumeLink(false);
+    }
+  };
+
 
   const handleClaimLead = async () => {
     if (!lead || !leadId) return;
