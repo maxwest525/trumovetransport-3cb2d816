@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, type ReactNode } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 
 function ScrollFadeIn({ children, delay = 0 }: { children: ReactNode; delay?: number }) {
@@ -205,8 +206,90 @@ export default function ScanRoom() {
     }
   }, [demoPlaying, demoStep]);
 
+  const [isAiScanning, setIsAiScanning] = useState(false);
+  const [aiScanProgress, setAiScanProgress] = useState({ current: 0, total: 0 });
+
+  // Convert image URL (blob:) to base64 data URL for AI vision
+  const urlToDataUrl = async (url: string): Promise<string> => {
+    const res = await fetch(url);
+    const blob = await res.blob();
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  };
+
+  // Run real Lovable AI vision detection on user uploaded photos
+  const runRealAiScan = async () => {
+    const realPhotos = uploadedPhotos.filter(p => p.id !== 'demo-photo' && !scannedPhotoIds.has(p.id));
+    if (realPhotos.length === 0) {
+      toast({ title: "No new photos to scan", description: "Upload room photos first." });
+      return;
+    }
+
+    setIsAiScanning(true);
+    setIsScanning(true);
+    setAiScanProgress({ current: 0, total: realPhotos.length });
+
+    let nextId = Date.now();
+    const allDetected: typeof DEMO_ITEMS = [];
+
+    for (let i = 0; i < realPhotos.length; i++) {
+      const photo = realPhotos[i];
+      setAiScanProgress({ current: i + 1, total: realPhotos.length });
+      try {
+        // Photo name often starts with "Living Room - filename.jpg"
+        const roomHint = photo.name.includes(' - ') ? photo.name.split(' - ')[0] : undefined;
+        const dataUrl = await urlToDataUrl(photo.url);
+        const { data, error } = await supabase.functions.invoke('detect-inventory', {
+          body: { imageUrl: dataUrl, roomHint },
+        });
+
+        if (error) {
+          console.error('AI scan error', error);
+          toast({ title: "Scan failed", description: error.message || "Could not analyze photo", variant: "destructive" });
+          continue;
+        }
+
+        const items = (data?.items || []) as Array<{ name: string; room: string; quantity: number; cubicFeet: number; weight: number; confidence: number }>;
+        items.forEach(it => {
+          // Expand quantity into individual rows so existing UI can edit per-item
+          for (let q = 0; q < it.quantity; q++) {
+            allDetected.push({
+              id: nextId++,
+              name: it.name,
+              room: it.room,
+              weight: it.weight,
+              cuft: it.cubicFeet,
+              image: '',
+            });
+          }
+        });
+
+        setDetectedItems(prev => [...prev, ...allDetected.slice(allDetected.length - items.reduce((s, x) => s + x.quantity, 0))]);
+        setScannedPhotoIds(prev => new Set([...prev, photo.id]));
+      } catch (e) {
+        console.error('Scan exception', e);
+        toast({ title: "Scan error", description: "Something went wrong analyzing this photo.", variant: "destructive" });
+      }
+    }
+
+    setIsAiScanning(false);
+    setIsScanning(false);
+    toast({
+      title: `Scan complete!`,
+      description: `Detected ${allDetected.length} items across ${realPhotos.length} photo(s).`,
+    });
+  };
+
   const handleStartScanClick = () => {
-    if (uploadedPhotos.length > 0 && !isDemoActive) {
+    const hasRealPhotos = uploadedPhotos.some(p => p.id !== 'demo-photo' && !scannedPhotoIds.has(p.id));
+    if (hasRealPhotos && !isDemoActive) {
+      // Real AI scan path
+      runRealAiScan();
+    } else if (uploadedPhotos.length > 0 && !isDemoActive) {
       setShowIntroModal(true);
     } else {
       // Start demo in auto-play mode
@@ -417,6 +500,28 @@ export default function ScanRoom() {
               <p className="text-muted-foreground max-w-xl mx-auto text-base md:text-lg font-light leading-relaxed mt-4">
                 Simply scan your rooms and our AI will identify, measure, and catalog every item automatically.
               </p>
+
+              {/* How it works - 3 step micro-flow */}
+              <div className="mt-6 flex flex-wrap items-center justify-center gap-2 md:gap-3">
+                {[
+                  { num: "1", icon: Camera, label: "Point camera" },
+                  { num: "2", icon: Sparkles, label: "AI detects" },
+                  { num: "3", icon: Package, label: "Get estimate" },
+                ].map((step, idx, arr) => (
+                  <div key={step.num} className="flex items-center gap-2 md:gap-3">
+                    <div className="flex items-center gap-2 rounded-full border border-border bg-background/60 backdrop-blur px-3 py-1.5">
+                      <span className="flex items-center justify-center w-5 h-5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold">
+                        {step.num}
+                      </span>
+                      <step.icon className="w-3.5 h-3.5 text-primary" />
+                      <span className="text-xs font-semibold text-foreground">{step.label}</span>
+                    </div>
+                    {idx < arr.length - 1 && (
+                      <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/40" />
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
 
             <EstimatorNavToggle />
@@ -582,18 +687,47 @@ export default function ScanRoom() {
                   </p>
                 )}
 
+                {/* AI Scanning indicator */}
+                {isAiScanning && (
+                  <div className="w-full max-w-[320px] px-4">
+                    <div className="flex items-center gap-2 rounded-lg border border-primary/30 bg-primary/5 px-3 py-2">
+                      <Sparkles className="w-3.5 h-3.5 text-primary animate-pulse" />
+                      <span className="text-xs font-semibold text-foreground">
+                        Analyzing photo {aiScanProgress.current} of {aiScanProgress.total}...
+                      </span>
+                    </div>
+                  </div>
+                )}
+
                 {/* Buttons */}
-                <div className="flex items-center gap-2 w-full max-w-[280px] px-4">
+                <div className="flex flex-col items-stretch gap-2 w-full max-w-[320px] px-4">
                   {!isDemoActive ? (
-                    <button
-                      onClick={handleStartScanClick}
-                      className="flex-1 flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold bg-foreground text-background hover:opacity-90 transition-opacity"
-                    >
-                      <Sparkles className="w-4 h-4" />
-                      {uploadedPhotos.length > 0 ? "Start Scanning" : "Watch Demo"}
-                    </button>
-                  ) : (
                     <>
+                      <button
+                        onClick={handleStartScanClick}
+                        disabled={isAiScanning}
+                        className="flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold bg-foreground text-background hover:opacity-90 transition-opacity disabled:opacity-50"
+                      >
+                        <Sparkles className="w-4 h-4" />
+                        {isAiScanning
+                          ? "Scanning..."
+                          : uploadedPhotos.some(p => p.id !== 'demo-photo' && !scannedPhotoIds.has(p.id))
+                            ? "Scan Your Home"
+                            : uploadedPhotos.length > 0
+                              ? "Start Scanning"
+                              : "Watch Demo"}
+                      </button>
+                      <button
+                        onClick={() => navigate('/online-estimate')}
+                        disabled={isAiScanning}
+                        className="flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold border border-border bg-background text-foreground hover:border-primary/40 hover:bg-muted/40 transition-colors disabled:opacity-50"
+                      >
+                        <Plus className="w-4 h-4" />
+                        Add Items Manually
+                      </button>
+                    </>
+                  ) : (
+                    <div className="flex items-center gap-2 w-full">
                       {demoStep < DEMO_TOTAL_STEPS && (
                         <button
                           onClick={() => setDemoPlaying(prev => !prev)}
@@ -610,18 +744,22 @@ export default function ScanRoom() {
                         <X className="w-3.5 h-3.5" />
                         Stop
                       </button>
-                    </>
+                    </div>
                   )}
                 </div>
 
 
                 {/* Progress Bar */}
-                {isDemoActive && (
-                  <div className="w-full max-w-[280px] px-4">
+                {(isDemoActive || isAiScanning) && (
+                  <div className="w-full max-w-[320px] px-4">
                     <div className="tru-scan-progress-bar">
                       <div 
                         className="tru-scan-progress-fill"
-                        style={{ width: `${(demoStep / DEMO_TOTAL_STEPS) * 100}%` }}
+                        style={{
+                          width: isAiScanning && aiScanProgress.total > 0
+                            ? `${(aiScanProgress.current / aiScanProgress.total) * 100}%`
+                            : `${(demoStep / DEMO_TOTAL_STEPS) * 100}%`
+                        }}
                       />
                     </div>
                   </div>
@@ -703,13 +841,18 @@ export default function ScanRoom() {
                 </div>
                 <button
                   onClick={() => {
-                    setShowIntroModal(true);
+                    const hasReal = uploadedPhotos.some(p => p.id !== 'demo-photo' && !scannedPhotoIds.has(p.id));
+                    if (hasReal) {
+                      runRealAiScan();
+                    } else {
+                      setShowIntroModal(true);
+                    }
                   }}
-                  disabled={isScanning || uploadedPhotos.length === 0 || uploadedPhotos.every(p => p.id === 'demo-photo')}
+                  disabled={isScanning || isAiScanning || uploadedPhotos.length === 0 || uploadedPhotos.every(p => p.id === 'demo-photo' || scannedPhotoIds.has(p.id))}
                   className="tru-scan-library-analyze-btn tru-scan-library-analyze-btn-compact"
                 >
                   <Sparkles className="w-3.5 h-3.5" />
-                  {isScanning ? "Scanning..." : "Start Scanning"}
+                  {isAiScanning ? "Analyzing..." : isScanning ? "Scanning..." : "Start Scanning"}
                 </button>
               </div>
             </div>
