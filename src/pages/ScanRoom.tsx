@@ -48,7 +48,7 @@ import {
   Ruler, Package, Printer, Download, Square, Trash2, ArrowRightLeft,
   Phone, Video, Minus, Plus, X, Upload, ImageIcon, FolderOpen, Lock, User, Mail,
   Sofa, BedDouble, UtensilsCrossed, Bath, Warehouse, Check, Pause, Play,
-  Camera, Layers, Info
+  Camera, Layers, Info, Eye
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -111,7 +111,9 @@ const SAMPLE_PREVIEW_ITEMS = [
 export default function ScanRoom() {
   useScrollToTop();
   const navigate = useNavigate();
-  const [detectedItems, setDetectedItems] = useState<typeof DEMO_ITEMS>([]);
+  // Inventory item shape (allows optional photoId + boxIndex from AI scans)
+  type InventoryItem = (typeof DEMO_ITEMS)[number] & { photoId?: string; boxIndex?: number };
+  const [detectedItems, setDetectedItems] = useState<InventoryItem[]>([]);
   const [isScanning, setIsScanning] = useState(false);
   const [showIntroModal, setShowIntroModal] = useState(false);
   const [showClearDialog, setShowClearDialog] = useState(false);
@@ -193,6 +195,8 @@ export default function ScanRoom() {
     setActiveScanPhoto(null);
     setAiBoxes([]);
     setRevealedBoxCount(0);
+    setScanHistory([]);
+    setDetectionView(null);
   };
 
   // Auto-advance demo when playing
@@ -212,11 +216,16 @@ export default function ScanRoom() {
   const [isAiScanning, setIsAiScanning] = useState(false);
   const [aiScanProgress, setAiScanProgress] = useState({ current: 0, total: 0 });
   // Active photo being scanned (drives the live preview in the scanner panel)
-  const [activeScanPhoto, setActiveScanPhoto] = useState<{ url: string; name: string } | null>(null);
+  const [activeScanPhoto, setActiveScanPhoto] = useState<{ id: string; url: string; name: string } | null>(null);
   // AI-detected bounding boxes for the active photo (revealed progressively)
   type AiBox = { id: number; name: string; confidence: number; x: number; y: number; width: number; height: number };
   const [aiBoxes, setAiBoxes] = useState<AiBox[]>([]);
   const [revealedBoxCount, setRevealedBoxCount] = useState(0);
+  // History of every photo scanned by the AI (for thumbnails + per-item detection viewer)
+  type ScannedPhotoEntry = { id: string; url: string; name: string; boxes: AiBox[] };
+  const [scanHistory, setScanHistory] = useState<ScannedPhotoEntry[]>([]);
+  // Detection viewer modal state
+  const [detectionView, setDetectionView] = useState<{ photo: ScannedPhotoEntry; boxId: number } | null>(null);
 
   // Convert image URL (blob:) to base64 data URL for AI vision
   const urlToDataUrl = async (url: string): Promise<string> => {
@@ -243,14 +252,14 @@ export default function ScanRoom() {
     setAiScanProgress({ current: 0, total: realPhotos.length });
 
     let nextId = Date.now();
-    const allDetected: typeof DEMO_ITEMS = [];
+    const allDetected: InventoryItem[] = [];
     let totalDetectedCount = 0;
 
     for (let i = 0; i < realPhotos.length; i++) {
       const photo = realPhotos[i];
       setAiScanProgress({ current: i + 1, total: realPhotos.length });
       // Show this photo in the scanner panel + reset boxes
-      setActiveScanPhoto({ url: photo.url, name: photo.name });
+      setActiveScanPhoto({ id: photo.id, url: photo.url, name: photo.name });
       setAiBoxes([]);
       setRevealedBoxCount(0);
       try {
@@ -283,6 +292,12 @@ export default function ScanRoom() {
           }));
         setAiBoxes(boxes);
 
+        // Save to scan history (so user can re-open this photo's detections)
+        setScanHistory(prev => {
+          const without = prev.filter(p => p.id !== photo.id);
+          return [...without, { id: photo.id, url: photo.url, name: photo.name, boxes }];
+        });
+
         // Progressively reveal boxes one-by-one, then add the corresponding inventory rows
         for (let b = 0; b < boxes.length; b++) {
           await new Promise(res => setTimeout(res, 350));
@@ -290,13 +305,15 @@ export default function ScanRoom() {
           const it = items[b];
           if (!it) continue;
           for (let q = 0; q < it.quantity; q++) {
-            const row = {
+            const row: InventoryItem = {
               id: nextId++,
               name: it.name,
               room: it.room,
               weight: it.weight,
               cuft: it.cubicFeet,
               image: '',
+              photoId: photo.id,
+              boxIndex: b,
             };
             allDetected.push(row);
             setDetectedItems(prev => [...prev, row]);
@@ -307,13 +324,14 @@ export default function ScanRoom() {
         // For any items without boxes (rare), still add them to inventory
         items.slice(boxes.length).forEach(it => {
           for (let q = 0; q < it.quantity; q++) {
-            const row = {
+            const row: InventoryItem = {
               id: nextId++,
               name: it.name,
               room: it.room,
               weight: it.weight,
               cuft: it.cubicFeet,
               image: '',
+              photoId: photo.id,
             };
             allDetected.push(row);
             setDetectedItems(prev => [...prev, row]);
@@ -769,6 +787,39 @@ export default function ScanRoom() {
                   </div>
                 )}
 
+                {/* Scanned-photo thumbnail strip - click to re-open detections */}
+                {scanHistory.length > 0 && (
+                  <div className="w-full px-4 pb-2">
+                    <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+                      Scanned Photos ({scanHistory.length})
+                    </p>
+                    <div className="flex gap-2 overflow-x-auto pb-1">
+                      {scanHistory.map(p => {
+                        const isActive = activeScanPhoto?.id === p.id;
+                        return (
+                          <button
+                            key={p.id}
+                            onClick={() => {
+                              setActiveScanPhoto(p);
+                              setAiBoxes(p.boxes);
+                              setRevealedBoxCount(p.boxes.length);
+                            }}
+                            title={`${p.name} - ${p.boxes.length} item${p.boxes.length === 1 ? '' : 's'} detected`}
+                            className={`relative flex-shrink-0 rounded-lg overflow-hidden border-2 transition-all ${
+                              isActive ? 'border-primary shadow-md' : 'border-border hover:border-primary/40'
+                            }`}
+                          >
+                            <img src={p.url} alt={p.name} className="w-16 h-12 object-cover" />
+                            <span className="absolute bottom-0 right-0 bg-foreground/80 text-background text-[9px] font-bold px-1 rounded-tl">
+                              {p.boxes.length}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
                 {/* Demo step info */}
                 {isDemoActive && (
                   <p className="text-[10px] font-semibold uppercase tracking-wider text-primary/70">
@@ -1047,14 +1098,28 @@ export default function ScanRoom() {
                             <td className="tru-scan-table-total">{item.weight}</td>
                             <td className="tru-scan-table-total">{item.cuft}</td>
                             <td>
-                              <button
-                                onClick={() => isUnlocked && setDetectedItems(prev => prev.filter(i => i.id !== item.id))}
-                                className={`tru-scan-remove-btn ${!isUnlocked ? 'tru-scan-remove-disabled' : ''}`}
-                                title={isUnlocked ? "Remove item" : "Unlock to edit"}
-                                disabled={!isUnlocked}
-                              >
-                                <X className="w-4 h-4" />
-                              </button>
+                              <div className="flex items-center gap-1">
+                                {item.photoId && (
+                                  <button
+                                    onClick={() => {
+                                      const photo = scanHistory.find(p => p.id === item.photoId);
+                                      if (photo) setDetectionView({ photo, boxId: item.boxIndex ?? -1 });
+                                    }}
+                                    className="tru-scan-remove-btn"
+                                    title="View AI detection in source photo"
+                                  >
+                                    <Eye className="w-4 h-4" />
+                                  </button>
+                                )}
+                                <button
+                                  onClick={() => isUnlocked && setDetectedItems(prev => prev.filter(i => i.id !== item.id))}
+                                  className={`tru-scan-remove-btn ${!isUnlocked ? 'tru-scan-remove-disabled' : ''}`}
+                                  title={isUnlocked ? "Remove item" : "Unlock to edit"}
+                                  disabled={!isUnlocked}
+                                >
+                                  <X className="w-4 h-4" />
+                                </button>
+                              </div>
                             </td>
                           </tr>
                         ))}
@@ -1182,6 +1247,78 @@ export default function ScanRoom() {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
+
+        {/* Detection viewer modal - shows source photo with the item's box highlighted */}
+        {detectionView && (
+          <div
+            className="fixed inset-0 z-[100] bg-foreground/80 backdrop-blur-sm flex items-center justify-center p-4"
+            onClick={() => setDetectionView(null)}
+          >
+            <div
+              className="relative max-w-4xl w-full bg-background rounded-2xl overflow-hidden shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    AI Detection Source
+                  </p>
+                  <h3 className="text-sm font-semibold text-foreground">{detectionView.photo.name}</h3>
+                </div>
+                <button
+                  onClick={() => setDetectionView(null)}
+                  className="rounded-full p-1.5 hover:bg-muted transition-colors"
+                  aria-label="Close"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+              <div className="relative bg-muted">
+                <img
+                  src={detectionView.photo.url}
+                  alt={detectionView.photo.name}
+                  className="w-full max-h-[70vh] object-contain"
+                />
+                {detectionView.photo.boxes.map((box) => {
+                  const isTarget = box.id === detectionView.boxId;
+                  return (
+                    <div
+                      key={box.id}
+                      className="absolute pointer-events-none"
+                      style={{
+                        top: `${box.y * 100}%`,
+                        left: `${box.x * 100}%`,
+                        width: `${box.width * 100}%`,
+                        height: `${box.height * 100}%`,
+                        border: isTarget ? '3px solid hsl(var(--primary))' : '1px solid hsl(var(--foreground) / 0.3)',
+                        boxShadow: isTarget ? '0 0 0 9999px hsl(var(--foreground) / 0.5)' : 'none',
+                        borderRadius: '4px',
+                        transition: 'all 200ms',
+                      }}
+                    >
+                      {isTarget && (
+                        <span
+                          className="absolute -top-7 left-0 bg-primary text-primary-foreground text-xs font-semibold px-2 py-0.5 rounded whitespace-nowrap"
+                        >
+                          {box.name} - {box.confidence}%
+                        </span>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="px-4 py-3 border-t border-border flex items-center justify-between text-xs text-muted-foreground">
+                <span>{detectionView.photo.boxes.length} items detected in this photo</span>
+                <button
+                  onClick={() => setDetectionView(null)}
+                  className="rounded-full px-3 py-1 bg-foreground text-background text-xs font-semibold hover:opacity-90"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </SiteShell>
   );
