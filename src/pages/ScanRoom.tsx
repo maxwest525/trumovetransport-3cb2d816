@@ -1990,12 +1990,60 @@ export default function ScanRoom() {
                                   <div className="grid grid-cols-3 gap-1.5">
                                     {photos.map((photo) => {
                                       const isScanned = scannedPhotoIds.has(photo.id);
-                                      const isBeingDragged = draggedPhotoId === photo.id;
+                                      const isSelected = selectedPhotoIds.has(photo.id);
+                                      // While dragging a multi-selection, dim every selected
+                                      // tile (not just the one the OS attached the ghost to).
+                                      const isPartOfActiveDrag = draggedPhotoId === photo.id
+                                        || (draggedPhotoId !== null && isSelected && selectedPhotoIds.has(draggedPhotoId) && selectedPhotoIds.size > 1);
+
+                                      // Toggle / range-select handler. Shift-click extends from
+                                      // the last anchor across the flat ordering of all visible
+                                      // folders. Plain click in selectionMode toggles a single tile.
+                                      const handleTileClick = (e: React.MouseEvent) => {
+                                        const usingShift = e.shiftKey;
+                                        if (!selectionMode && !usingShift) return; // tile click is a no-op outside multi-select
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        if (usingShift && lastSelectedPhotoId && lastSelectedPhotoId !== photo.id) {
+                                          const start = flatPhotoOrder.indexOf(lastSelectedPhotoId);
+                                          const end = flatPhotoOrder.indexOf(photo.id);
+                                          if (start !== -1 && end !== -1) {
+                                            const [a, b] = start < end ? [start, end] : [end, start];
+                                            const range = flatPhotoOrder.slice(a, b + 1);
+                                            setSelectedPhotoIds((prev) => {
+                                              const next = new Set(prev);
+                                              range.forEach((id) => next.add(id));
+                                              return next;
+                                            });
+                                            // Shift-click implies the user wants multi-select even
+                                            // if they hadn't toggled the mode yet.
+                                            if (!selectionMode) setSelectionMode(true);
+                                            setLastSelectedPhotoId(photo.id);
+                                            return;
+                                          }
+                                        }
+                                        setSelectedPhotoIds((prev) => {
+                                          const next = new Set(prev);
+                                          if (next.has(photo.id)) next.delete(photo.id);
+                                          else next.add(photo.id);
+                                          return next;
+                                        });
+                                        setLastSelectedPhotoId(photo.id);
+                                      };
+
                                       return (
                                         <div
                                           key={photo.id}
                                           draggable
+                                          onClick={handleTileClick}
                                           onDragStart={(e) => {
+                                            // If user starts dragging an unselected tile while
+                                            // a selection exists, treat the drag as a single-photo
+                                            // move (don't silently drag the unrelated selection).
+                                            if (selectedPhotoIds.size > 0 && !selectedPhotoIds.has(photo.id)) {
+                                              setSelectedPhotoIds(new Set());
+                                              setLastSelectedPhotoId(null);
+                                            }
                                             setDraggedPhotoId(photo.id);
                                             e.dataTransfer.effectAllowed = "move";
                                             // Required for Firefox to actually start the drag
@@ -2005,10 +2053,24 @@ export default function ScanRoom() {
                                             setDraggedPhotoId(null);
                                             setDragOverFolder(null);
                                           }}
-                                          className={`tru-scan-library-item tru-scan-library-item-compact relative cursor-grab active:cursor-grabbing ${isScanned ? 'opacity-50 grayscale' : ''} ${isBeingDragged ? 'opacity-30' : ''}`}
-                                          title="Drag to another folder to reclassify"
+                                          className={`tru-scan-library-item tru-scan-library-item-compact relative cursor-grab active:cursor-grabbing ${isScanned ? 'opacity-50 grayscale' : ''} ${isPartOfActiveDrag ? 'opacity-30' : ''} ${isSelected ? 'ring-2 ring-primary ring-offset-1 ring-offset-background rounded-md' : ''}`}
+                                          title={selectionMode ? "Click to select - drag any selected photo to move them all" : "Drag to another folder, or shift-click to select multiple"}
                                         >
                                           <img src={photo.url} alt={photo.name} draggable={false} />
+                                          {/* Selection checkbox - shown in selection mode OR
+                                              when the photo is already part of an ad-hoc
+                                              shift-click selection. */}
+                                          {(selectionMode || isSelected) && (
+                                            <div
+                                              className={`absolute top-1 left-1 w-4 h-4 rounded-sm border-2 flex items-center justify-center transition-colors ${
+                                                isSelected
+                                                  ? "bg-primary border-primary text-primary-foreground"
+                                                  : "bg-background/80 border-border"
+                                              }`}
+                                            >
+                                              {isSelected && <Check className="w-2.5 h-2.5" />}
+                                            </div>
+                                          )}
                                           {isScanned && (
                                             <div className="absolute inset-0 flex items-center justify-center bg-foreground/20 rounded-[inherit]">
                                               <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center">
@@ -2017,7 +2079,16 @@ export default function ScanRoom() {
                                             </div>
                                           )}
                                           <button
-                                            onClick={() => setUploadedPhotos(prev => prev.filter(p => p.id !== photo.id))}
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              setUploadedPhotos(prev => prev.filter(p => p.id !== photo.id));
+                                              setSelectedPhotoIds((prev) => {
+                                                if (!prev.has(photo.id)) return prev;
+                                                const next = new Set(prev);
+                                                next.delete(photo.id);
+                                                return next;
+                                              });
+                                            }}
                                             className="tru-scan-library-remove tru-scan-library-remove-compact"
                                           >
                                             <X className="w-2.5 h-2.5" />
