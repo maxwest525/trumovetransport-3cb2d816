@@ -141,6 +141,9 @@ serve(async (req) => {
           notes: `AI room scan - ${items.length} items detected across ${photos.length} photo(s)`,
           tags: ["scan-room", "ai-detected"],
           custom_folders: sanitizedFolders,
+          // Initial scan activity stamp — surfaces in the CRM list as "just now"
+          // so agents can spot fresh scans without opening the lead.
+          last_scan_activity_at: new Date().toISOString(),
         })
         .select("id")
         .single();
