@@ -136,9 +136,11 @@ export default function CrmLeadDetail() {
     if (!leadId) return;
 
     async function fetchData() {
-      const [leadRes, dealsRes] = await Promise.all([
+      const [leadRes, dealsRes, photosRes, inventoryRes] = await Promise.all([
         supabase.from("leads").select("*").eq("id", leadId).single(),
         supabase.from("deals").select("id, stage, deal_value, expected_close_date, carrier_name, created_at").eq("lead_id", leadId),
+        supabase.from("lead_scan_photos").select("*").eq("lead_id", leadId).order("created_at", { ascending: true }),
+        supabase.from("lead_inventory").select("*").eq("lead_id", leadId).order("created_at", { ascending: true }),
       ]);
 
       if (leadRes.data) {
@@ -153,6 +155,8 @@ export default function CrmLeadDetail() {
         }
       }
       if (dealsRes.data) setDeals(dealsRes.data as Deal[]);
+      if (photosRes.data) setScanPhotos(photosRes.data as unknown as ScanPhoto[]);
+      if (inventoryRes.data) setInventory(inventoryRes.data as unknown as InventoryItem[]);
       setLoading(false);
     }
 
