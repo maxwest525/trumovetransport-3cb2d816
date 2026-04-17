@@ -1604,6 +1604,54 @@ export default function ScanRoom() {
                   <FolderOpen className="w-3.5 h-3.5" />
                   <span>Library</span>
                   <span className="tru-scan-library-count">{uploadedPhotos.length}</span>
+                  {/* Multi-select toggle. When on, every tile shows a checkbox
+                      and click toggles selection (shift-click extends a range
+                      from the last anchor across the visible flat list).
+                      Selected photos drag together into any folder. */}
+                  {uploadedPhotos.length > 0 && (
+                    selectionMode ? (
+                      <div className="ml-auto flex items-center gap-1">
+                        <span className="text-[10px] font-semibold text-primary uppercase tracking-wider">
+                          {selectedPhotoIds.size} selected
+                        </span>
+                        {selectedPhotoIds.size > 0 && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSelectedPhotoIds(new Set());
+                              setLastSelectedPhotoId(null);
+                            }}
+                            className="inline-flex items-center justify-center rounded-md border border-border bg-background hover:bg-muted px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider transition-colors"
+                            title="Clear selection"
+                          >
+                            Clear
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSelectionMode(false);
+                            setSelectedPhotoIds(new Set());
+                            setLastSelectedPhotoId(null);
+                          }}
+                          className="inline-flex items-center justify-center rounded-md border border-primary/30 bg-primary/[0.06] hover:bg-primary/[0.12] px-1.5 py-0.5 text-[10px] font-semibold text-primary uppercase tracking-wider transition-colors"
+                          title="Exit multi-select"
+                        >
+                          Done
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => setSelectionMode(true)}
+                        className="ml-auto inline-flex items-center gap-1 rounded-md border border-border bg-background hover:bg-muted px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider transition-colors"
+                        title="Select multiple photos to drag together"
+                      >
+                        <Check className="w-3 h-3" />
+                        Select
+                      </button>
+                    )
+                  )}
                   {/* Inline "+ Folder" affordance. Toggles a tiny input row so
                       customers can name a custom folder without leaving the
                       library. Persisted with the saved scan. */}
@@ -1614,7 +1662,7 @@ export default function ScanRoom() {
                         setIsAddingFolder(true);
                         setNewFolderDraft("");
                       }}
-                      className="ml-auto inline-flex items-center gap-1 rounded-md border border-primary/30 bg-primary/[0.06] hover:bg-primary/[0.12] px-1.5 py-0.5 text-[10px] font-semibold text-primary uppercase tracking-wider transition-colors"
+                      className={`${uploadedPhotos.length > 0 ? "" : "ml-auto"} inline-flex items-center gap-1 rounded-md border border-primary/30 bg-primary/[0.06] hover:bg-primary/[0.12] px-1.5 py-0.5 text-[10px] font-semibold text-primary uppercase tracking-wider transition-colors`}
                       title="Create a custom folder"
                     >
                       <FolderPlus className="w-3 h-3" />
