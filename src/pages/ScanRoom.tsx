@@ -1247,6 +1247,78 @@ export default function ScanRoom() {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
+
+        {/* Detection viewer modal - shows source photo with the item's box highlighted */}
+        {detectionView && (
+          <div
+            className="fixed inset-0 z-[100] bg-foreground/80 backdrop-blur-sm flex items-center justify-center p-4"
+            onClick={() => setDetectionView(null)}
+          >
+            <div
+              className="relative max-w-4xl w-full bg-background rounded-2xl overflow-hidden shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    AI Detection Source
+                  </p>
+                  <h3 className="text-sm font-semibold text-foreground">{detectionView.photo.name}</h3>
+                </div>
+                <button
+                  onClick={() => setDetectionView(null)}
+                  className="rounded-full p-1.5 hover:bg-muted transition-colors"
+                  aria-label="Close"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+              <div className="relative bg-muted">
+                <img
+                  src={detectionView.photo.url}
+                  alt={detectionView.photo.name}
+                  className="w-full max-h-[70vh] object-contain"
+                />
+                {detectionView.photo.boxes.map((box) => {
+                  const isTarget = box.id === detectionView.boxId;
+                  return (
+                    <div
+                      key={box.id}
+                      className="absolute pointer-events-none"
+                      style={{
+                        top: `${box.y * 100}%`,
+                        left: `${box.x * 100}%`,
+                        width: `${box.width * 100}%`,
+                        height: `${box.height * 100}%`,
+                        border: isTarget ? '3px solid hsl(var(--primary))' : '1px solid hsl(var(--foreground) / 0.3)',
+                        boxShadow: isTarget ? '0 0 0 9999px hsl(var(--foreground) / 0.5)' : 'none',
+                        borderRadius: '4px',
+                        transition: 'all 200ms',
+                      }}
+                    >
+                      {isTarget && (
+                        <span
+                          className="absolute -top-7 left-0 bg-primary text-primary-foreground text-xs font-semibold px-2 py-0.5 rounded whitespace-nowrap"
+                        >
+                          {box.name} - {box.confidence}%
+                        </span>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="px-4 py-3 border-t border-border flex items-center justify-between text-xs text-muted-foreground">
+                <span>{detectionView.photo.boxes.length} items detected in this photo</span>
+                <button
+                  onClick={() => setDetectionView(null)}
+                  className="rounded-full px-3 py-1 bg-foreground text-background text-xs font-semibold hover:opacity-90"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </SiteShell>
   );
