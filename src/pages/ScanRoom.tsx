@@ -1017,8 +1017,29 @@ export default function ScanRoom() {
                       . Saved scans expire after 7 days.
                     </p>
                   </div>
+                </div>
+                <div className="flex items-center gap-2 w-full sm:w-auto">
+                  <button
+                    onClick={() => setHasResumableScan(false)}
+                    className="flex-1 sm:flex-none px-4 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 transition-colors"
+                  >
+                    Continue scan
+                  </button>
+                  <button
+                    onClick={startFreshScan}
+                    className="flex-1 sm:flex-none px-4 py-2 rounded-lg border border-border bg-background text-xs font-semibold text-foreground hover:bg-muted transition-colors flex items-center justify-center gap-1.5"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    Start fresh
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
 
               {/* Center: Demo & Actions */}
+
               <div className="flex flex-col items-center justify-center gap-4 border border-border rounded-2xl bg-background shadow-[0_4px_20px_-4px_hsl(var(--tm-ink)/0.08)] relative overflow-hidden">
                 {/* Scanner content - show image when demo is active OR live AI scan running */}
                 {(demoStep >= 2 || activeScanPhoto) ? (
