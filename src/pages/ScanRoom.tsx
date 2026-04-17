@@ -582,6 +582,13 @@ export default function ScanRoom() {
       const slimUploaded = uploadedPhotos
         .filter((p) => !isVolatile(p.url) && p.id !== "demo-photo")
         .map((p) => ({ id: p.id, url: p.url, name: p.name }));
+      // Only persist notes for photos that still exist in the library, so
+      // removing a photo also retires its note.
+      const livePhotoIds = new Set(slimUploaded.map((p) => p.id));
+      const slimNotes: Record<string, string> = {};
+      for (const [pid, note] of Object.entries(photoNotes)) {
+        if (livePhotoIds.has(pid) && note.trim()) slimNotes[pid] = note;
+      }
       const stamp = Date.now();
       localStorage.setItem(
         STORAGE_KEY,
@@ -593,6 +600,7 @@ export default function ScanRoom() {
           uploadedPhotos: slimUploaded,
           scannedPhotoIds: Array.from(scannedPhotoIds).filter((id) => id !== "demo-photo"),
           customFolders,
+          photoNotes: slimNotes,
           savedAt: stamp,
         })
       );
