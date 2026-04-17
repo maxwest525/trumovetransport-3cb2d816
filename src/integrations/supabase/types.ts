@@ -1070,6 +1070,7 @@ export type Database = {
           first_name: string
           id: string
           last_name: string
+          last_scan_activity_at: string | null
           move_date: string | null
           notes: string | null
           origin_address: string | null
@@ -1092,6 +1093,7 @@ export type Database = {
           first_name: string
           id?: string
           last_name: string
+          last_scan_activity_at?: string | null
           move_date?: string | null
           notes?: string | null
           origin_address?: string | null
@@ -1114,6 +1116,7 @@ export type Database = {
           first_name?: string
           id?: string
           last_name?: string
+          last_scan_activity_at?: string | null
           move_date?: string | null
           notes?: string | null
           origin_address?: string | null

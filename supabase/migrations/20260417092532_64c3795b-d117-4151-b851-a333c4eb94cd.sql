@@ -1,0 +1,2 @@
+ALTER TABLE public.leads ADD COLUMN IF NOT EXISTS last_scan_activity_at timestamp with time zone;
+CREATE INDEX IF NOT EXISTS idx_leads_last_scan_activity_at ON public.leads (last_scan_activity_at DESC NULLS LAST);
