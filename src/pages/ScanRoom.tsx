@@ -245,10 +245,8 @@ export default function ScanRoom() {
   // Detection viewer modal state
   const [detectionView, setDetectionView] = useState<{ photo: ScannedPhotoEntry; boxId: number } | null>(null);
 
-  // Save-to-CRM modal state
-  const [showSaveModal, setShowSaveModal] = useState(false);
-  const [savePayload, setSavePayload] = useState({ firstName: "", lastName: "", email: "", phone: "" });
-  const [isSaving, setIsSaving] = useState(false);
+  // Auto-save state — every AI scan automatically pushes to the CRM
+  const [autoSaveStatus, setAutoSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [savedLeadId, setSavedLeadId] = useState<string | null>(null);
 
   // Convert image URL (blob:) to base64 data URL for AI vision
