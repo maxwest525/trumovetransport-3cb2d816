@@ -381,6 +381,96 @@ export default function ScanRoom() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // If the visitor arrived via a one-time resume link (?resume=<token>),
+  // redeem it and rehydrate their saved scan into local state + storage.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("resume");
+    if (!token) return;
+
+    let cancelled = false;
+    (async () => {
+      try {
+        toast({ title: "Restoring your saved scan...", description: "One moment." });
+        const { data, error } = await supabase.functions.invoke(
+          "redeem-scan-resume-token",
+          { body: { token } },
+        );
+        if (cancelled) return;
+        if (error || !data || data.error) {
+          toast({
+            title: "Could not restore scan",
+            description: data?.error || error?.message || "Link is invalid or expired.",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        // Map the server payload into the local state shapes
+        const restoredItems: InventoryItem[] = (data.inventory ?? []).map(
+          (it: any, idx: number) => ({
+            id: 1_000_000 + idx,
+            name: it.item_name,
+            room: it.room || "Living Room",
+            weight: Number(it.weight) || 0,
+            cuft: Number(it.cubic_feet) || 0,
+            image: "",
+            quantity: Number(it.quantity) || 1,
+            confidence: it.confidence ?? undefined,
+          }),
+        );
+
+        const restoredHistory: ScannedPhotoEntry[] = (data.photos ?? []).map(
+          (p: any) => ({
+            id: p.id,
+            url: p.photo_url,
+            name: p.room_label || "Room",
+            boxes: Array.isArray(p.detected_boxes) ? p.detected_boxes : [],
+          }),
+        );
+
+        const restoredUploaded = (data.photos ?? []).map((p: any) => ({
+          id: p.id,
+          url: p.photo_url,
+          name: p.room_label || "Room",
+        }));
+
+        setDetectedItems(restoredItems);
+        setScanHistory(restoredHistory);
+        setUploadedPhotos(restoredUploaded);
+        setScannedPhotoIds(new Set(restoredUploaded.map((p) => p.id)));
+        setSavedLeadId(data.leadId ?? null);
+        setIsUnlocked(true);
+        setHasResumableScan(restoredItems.length > 0);
+        setSavedAtMs(Date.now());
+
+        // Strip the token from the URL so it can't be shared/refreshed
+        const url = new URL(window.location.href);
+        url.searchParams.delete("resume");
+        window.history.replaceState({}, "", url.toString());
+
+        toast({
+          title: "Scan restored",
+          description: `${restoredItems.length} item${restoredItems.length === 1 ? "" : "s"} loaded from your saved session.`,
+        });
+      } catch (e) {
+        console.error("Resume token redemption failed:", e);
+        if (!cancelled) {
+          toast({
+            title: "Could not restore scan",
+            description: "Please try the link again or contact your agent.",
+            variant: "destructive",
+          });
+        }
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Convert image URL (blob:) to base64 data URL for AI vision
   const urlToDataUrl = async (url: string): Promise<string> => {
     const res = await fetch(url);
