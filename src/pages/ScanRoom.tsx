@@ -320,45 +320,45 @@ export default function ScanRoom() {
           return [...without, { id: photo.id, url: photo.url, name: photo.name, boxes }];
         });
 
-        // Progressively reveal boxes one-by-one, then add the corresponding inventory rows
+        // Progressively reveal boxes one-by-one, then add/merge the corresponding inventory rows
         for (let b = 0; b < boxes.length; b++) {
           await new Promise(res => setTimeout(res, 350));
           setRevealedBoxCount(b + 1);
           const it = items[b];
           if (!it) continue;
-          for (let q = 0; q < it.quantity; q++) {
-            const row: InventoryItem = {
-              id: nextId++,
-              name: it.name,
-              room: it.room,
-              weight: it.weight,
-              cuft: it.cubicFeet,
-              image: '',
-              photoId: photo.id,
-              boxIndex: b,
-            };
-            allDetected.push(row);
-            setDetectedItems(prev => [...prev, row]);
-            totalDetectedCount++;
-          }
+          const qty = Math.max(1, it.quantity || 1);
+          const row: InventoryItem = {
+            id: nextId++,
+            name: it.name,
+            room: it.room,
+            weight: it.weight,
+            cuft: it.cubicFeet,
+            image: '',
+            quantity: qty,
+            photoId: photo.id,
+            boxIndex: b,
+          };
+          allDetected.push(row);
+          addOrMergeItem(row);
+          totalDetectedCount += qty;
         }
 
         // For any items without boxes (rare), still add them to inventory
         items.slice(boxes.length).forEach(it => {
-          for (let q = 0; q < it.quantity; q++) {
-            const row: InventoryItem = {
-              id: nextId++,
-              name: it.name,
-              room: it.room,
-              weight: it.weight,
-              cuft: it.cubicFeet,
-              image: '',
-              photoId: photo.id,
-            };
-            allDetected.push(row);
-            setDetectedItems(prev => [...prev, row]);
-            totalDetectedCount++;
-          }
+          const qty = Math.max(1, it.quantity || 1);
+          const row: InventoryItem = {
+            id: nextId++,
+            name: it.name,
+            room: it.room,
+            weight: it.weight,
+            cuft: it.cubicFeet,
+            image: '',
+            quantity: qty,
+            photoId: photo.id,
+          };
+          allDetected.push(row);
+          addOrMergeItem(row);
+          totalDetectedCount += qty;
         });
 
         setScannedPhotoIds(prev => new Set([...prev, photo.id]));
