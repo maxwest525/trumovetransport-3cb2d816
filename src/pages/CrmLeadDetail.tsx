@@ -97,6 +97,9 @@ export default function CrmLeadDetail() {
   const navigate = useNavigate();
   const [lead, setLead] = useState<Lead | null>(null);
   const [deals, setDeals] = useState<Deal[]>([]);
+  const [scanPhotos, setScanPhotos] = useState<ScanPhoto[]>([]);
+  const [inventory, setInventory] = useState<InventoryItem[]>([]);
+  const [photoViewer, setPhotoViewer] = useState<ScanPhoto | null>(null);
   const [loading, setLoading] = useState(true);
   const [agentName, setAgentName] = useState<string | null>(null);
   const [claiming, setClaiming] = useState(false);
