@@ -627,6 +627,21 @@ export default function ScanRoom() {
 
       setSavedLeadId(data.leadId);
       setAutoSaveStatus("saved");
+
+      // Swap volatile blob: URLs for permanent Supabase Storage URLs so thumbnails + history
+      // survive a refresh. The edge function returns a localId -> publicUrl map.
+      const photoMap = (data.photoMap || {}) as Record<string, string>;
+      if (Object.keys(photoMap).length > 0) {
+        setScanHistory((prev) =>
+          prev.map((p) => (photoMap[p.id] ? { ...p, url: photoMap[p.id] } : p))
+        );
+        setUploadedPhotos((prev) =>
+          prev.map((p) => (photoMap[p.id] ? { ...p, url: photoMap[p.id] } : p))
+        );
+        if (activeScanPhoto && photoMap[activeScanPhoto.id]) {
+          setActiveScanPhoto({ ...activeScanPhoto, url: photoMap[activeScanPhoto.id] });
+        }
+      }
     } catch (e) {
       console.error("Auto-save scan to CRM failed:", e);
       setAutoSaveStatus("error");
