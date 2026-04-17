@@ -903,40 +903,52 @@ export type Database = {
       }
       lead_inventory: {
         Row: {
+          confidence: number | null
           created_at: string
           cubic_feet: number
+          detection_box: Json | null
           id: string
           image_url: string | null
           item_name: string
           lead_id: string
           quantity: number
           room: string
+          source: string
+          source_photo_url: string | null
           special_handling: boolean
           updated_at: string
           weight: number
         }
         Insert: {
+          confidence?: number | null
           created_at?: string
           cubic_feet?: number
+          detection_box?: Json | null
           id?: string
           image_url?: string | null
           item_name: string
           lead_id: string
           quantity?: number
           room?: string
+          source?: string
+          source_photo_url?: string | null
           special_handling?: boolean
           updated_at?: string
           weight?: number
         }
         Update: {
+          confidence?: number | null
           created_at?: string
           cubic_feet?: number
+          detection_box?: Json | null
           id?: string
           image_url?: string | null
           item_name?: string
           lead_id?: string
           quantity?: number
           room?: string
+          source?: string
+          source_photo_url?: string | null
           special_handling?: boolean
           updated_at?: string
           weight?: number
@@ -944,6 +956,44 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "lead_inventory_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lead_scan_photos: {
+        Row: {
+          created_at: string
+          detected_boxes: Json
+          id: string
+          item_count: number
+          lead_id: string
+          photo_url: string
+          room_label: string | null
+        }
+        Insert: {
+          created_at?: string
+          detected_boxes?: Json
+          id?: string
+          item_count?: number
+          lead_id: string
+          photo_url: string
+          room_label?: string | null
+        }
+        Update: {
+          created_at?: string
+          detected_boxes?: Json
+          id?: string
+          item_count?: number
+          lead_id?: string
+          photo_url?: string
+          room_label?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_scan_photos_lead_id_fkey"
             columns: ["lead_id"]
             isOneToOne: false
             referencedRelation: "leads"

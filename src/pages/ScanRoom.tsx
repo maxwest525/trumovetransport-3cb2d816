@@ -48,7 +48,7 @@ import {
   Ruler, Package, Printer, Download, Square, Trash2, ArrowRightLeft,
   Phone, Video, Minus, Plus, X, Upload, ImageIcon, FolderOpen, Lock, User, Mail,
   Sofa, BedDouble, UtensilsCrossed, Bath, Warehouse, Check, Pause, Play,
-  Camera, Layers, Info, Eye
+  Camera, Layers, Info, Eye, Save, Loader2
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -227,6 +227,12 @@ export default function ScanRoom() {
   // Detection viewer modal state
   const [detectionView, setDetectionView] = useState<{ photo: ScannedPhotoEntry; boxId: number } | null>(null);
 
+  // Save-to-CRM modal state
+  const [showSaveModal, setShowSaveModal] = useState(false);
+  const [savePayload, setSavePayload] = useState({ firstName: "", lastName: "", email: "", phone: "" });
+  const [isSaving, setIsSaving] = useState(false);
+  const [savedLeadId, setSavedLeadId] = useState<string | null>(null);
+
   // Convert image URL (blob:) to base64 data URL for AI vision
   const urlToDataUrl = async (url: string): Promise<string> => {
     const res = await fetch(url);
@@ -381,6 +387,88 @@ export default function ScanRoom() {
 
   const handlePrint = () => {
     window.print();
+  };
+
+  // Persist scanned photos + detected inventory to a new lead in the CRM
+  const handleSaveToCrm = async () => {
+    if (!savePayload.firstName.trim() || (!savePayload.email.trim() && !savePayload.phone.trim())) {
+      toast({ title: "Missing info", description: "First name and either email or phone are required.", variant: "destructive" });
+      return;
+    }
+    if (detectedItems.length === 0) {
+      toast({ title: "Nothing to save", description: "Scan at least one photo first.", variant: "destructive" });
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      // Build photo payload from scan history (only AI-scanned photos persist)
+      const photoIds = Array.from(new Set(detectedItems.map((it) => it.photoId).filter(Boolean) as string[]));
+      const photoEntries = scanHistory.filter((p) => photoIds.includes(p.id));
+
+      const photos = await Promise.all(
+        photoEntries.map(async (p) => {
+          const dataUrl = await urlToDataUrl(p.url);
+          const itemCount = detectedItems.filter((it) => it.photoId === p.id).length;
+          return {
+            id: p.id,
+            dataUrl,
+            name: p.name,
+            roomLabel: p.name?.includes(" - ") ? p.name.split(" - ")[0] : p.name,
+            boxes: p.boxes,
+            itemCount,
+          };
+        })
+      );
+
+      const items = detectedItems.map((it) => {
+        let detectionBox: { x: number; y: number; width: number; height: number } | undefined;
+        if (it.photoId && typeof it.boxIndex === "number") {
+          const photo = scanHistory.find((p) => p.id === it.photoId);
+          const box = photo?.boxes.find((b) => b.id === it.boxIndex);
+          if (box) detectionBox = { x: box.x, y: box.y, width: box.width, height: box.height };
+        }
+        return {
+          name: it.name,
+          room: it.room,
+          weight: it.weight,
+          cubicFeet: it.cuft,
+          photoLocalId: it.photoId,
+          detectionBox,
+        };
+      });
+
+      const { data, error } = await supabase.functions.invoke("save-scan-room", {
+        body: {
+          firstName: savePayload.firstName.trim(),
+          lastName: savePayload.lastName.trim(),
+          email: savePayload.email.trim() || undefined,
+          phone: savePayload.phone.trim() || undefined,
+          photos,
+          items,
+          totalWeight,
+          totalCubicFeet: totalCuFt,
+        },
+      });
+
+      if (error) throw error;
+      if (!data?.success) throw new Error(data?.error || "Save failed");
+
+      setSavedLeadId(data.leadId);
+      toast({
+        title: "Scan saved to CRM",
+        description: `${data.items} items and ${data.uploaded} photos saved. An agent will follow up.`,
+      });
+    } catch (e) {
+      console.error("Save to CRM error:", e);
+      toast({
+        title: "Save failed",
+        description: e instanceof Error ? e.message : "Could not save scan",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleDownloadPDF = async () => {
@@ -1064,7 +1152,25 @@ export default function ScanRoom() {
                             <td className="tru-scan-table-order">{idx + 1}</td>
                             <td className="tru-scan-table-item">
                               <img src={item.image} alt={item.name} />
-                              <span>{item.name}</span>
+                              <div className="flex items-center gap-1.5 flex-wrap">
+                                <span>{item.name}</span>
+                                {item.photoId ? (
+                                  <span
+                                    className="inline-flex items-center gap-0.5 rounded-full bg-primary/15 text-primary px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider leading-none"
+                                    title="Detected by AI vision"
+                                  >
+                                    <Sparkles className="w-2.5 h-2.5" />
+                                    AI
+                                  </span>
+                                ) : (
+                                  <span
+                                    className="inline-flex items-center rounded-full bg-muted text-muted-foreground px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider leading-none"
+                                    title="Added manually"
+                                  >
+                                    Manual
+                                  </span>
+                                )}
+                              </div>
                             </td>
                             <td>{item.room}</td>
                             <td>
@@ -1163,6 +1269,16 @@ export default function ScanRoom() {
                     >
                       <Trash2 className="w-4 h-4" />
                       Clear All
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setShowSaveModal(true)}
+                      disabled={detectedItems.length === 0}
+                      className="tru-scan-action-btn"
+                      title="Save scan + photos to a lead record an agent can review"
+                    >
+                      <Save className="w-4 h-4" />
+                      Save Scan to CRM
                     </button>
                     <button
                       type="button"
@@ -1316,6 +1432,148 @@ export default function ScanRoom() {
                   Close
                 </button>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Save Scan to CRM modal */}
+        {showSaveModal && (
+          <div
+            className="fixed inset-0 z-[110] bg-foreground/80 backdrop-blur-sm flex items-center justify-center p-4"
+            onClick={() => !isSaving && setShowSaveModal(false)}
+          >
+            <div
+              className="relative max-w-md w-full bg-background rounded-2xl overflow-hidden shadow-2xl border border-border"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between px-5 py-4 border-b border-border">
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-wider text-primary">
+                    Save to CRM
+                  </p>
+                  <h3 className="text-base font-semibold text-foreground">
+                    {savedLeadId ? "Scan saved" : "Send your scan to an agent"}
+                  </h3>
+                </div>
+                <button
+                  onClick={() => !isSaving && setShowSaveModal(false)}
+                  disabled={isSaving}
+                  className="rounded-full p-1.5 hover:bg-muted transition-colors disabled:opacity-40"
+                  aria-label="Close"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              {savedLeadId ? (
+                <div className="px-5 py-6 space-y-4">
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center flex-shrink-0">
+                      <Check className="w-5 h-5 text-primary" />
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      Your {detectedItems.length}-item scan and source photos have been saved.
+                      A TruMove agent will review your inventory and reach out shortly.
+                    </div>
+                  </div>
+                  <div className="flex justify-end">
+                    <button
+                      onClick={() => {
+                        setShowSaveModal(false);
+                        setSavedLeadId(null);
+                        setSavePayload({ firstName: "", lastName: "", email: "", phone: "" });
+                      }}
+                      className="rounded-full px-4 py-2 bg-foreground text-background text-sm font-semibold hover:opacity-90"
+                    >
+                      Done
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="px-5 py-5 space-y-4">
+                  <p className="text-xs text-muted-foreground">
+                    We'll save your {detectedItems.length} detected items and {scanHistory.length} scanned photos
+                    to a lead record so an agent can build your estimate.
+                  </p>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="save-first" className="text-xs font-semibold">First name *</Label>
+                      <Input
+                        id="save-first"
+                        value={savePayload.firstName}
+                        onChange={(e) => setSavePayload((p) => ({ ...p, firstName: e.target.value }))}
+                        disabled={isSaving}
+                        autoComplete="given-name"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="save-last" className="text-xs font-semibold">Last name</Label>
+                      <Input
+                        id="save-last"
+                        value={savePayload.lastName}
+                        onChange={(e) => setSavePayload((p) => ({ ...p, lastName: e.target.value }))}
+                        disabled={isSaving}
+                        autoComplete="family-name"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label htmlFor="save-email" className="text-xs font-semibold">Email</Label>
+                    <Input
+                      id="save-email"
+                      type="email"
+                      value={savePayload.email}
+                      onChange={(e) => setSavePayload((p) => ({ ...p, email: e.target.value }))}
+                      disabled={isSaving}
+                      autoComplete="email"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label htmlFor="save-phone" className="text-xs font-semibold">Phone</Label>
+                    <Input
+                      id="save-phone"
+                      type="tel"
+                      value={savePayload.phone}
+                      onChange={(e) => setSavePayload((p) => ({ ...p, phone: e.target.value }))}
+                      disabled={isSaving}
+                      autoComplete="tel"
+                    />
+                    <p className="text-[10px] text-muted-foreground">Email or phone is required.</p>
+                  </div>
+
+                  <div className="flex items-center justify-end gap-2 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => setShowSaveModal(false)}
+                      disabled={isSaving}
+                      className="rounded-full px-4 py-2 text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors disabled:opacity-40"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleSaveToCrm}
+                      disabled={isSaving}
+                      className="inline-flex items-center gap-2 rounded-full px-4 py-2 bg-primary text-primary-foreground text-sm font-semibold hover:opacity-90 disabled:opacity-50"
+                    >
+                      {isSaving ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          Saving...
+                        </>
+                      ) : (
+                        <>
+                          <Save className="w-4 h-4" />
+                          Save Scan
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}
