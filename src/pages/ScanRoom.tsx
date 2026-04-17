@@ -128,6 +128,9 @@ export default function ScanRoom() {
     scanHistory?: PersistedScanPhoto[];
     uploadedPhotos?: { id: string; url: string; name: string }[];
     scannedPhotoIds?: string[];
+    // Customer-defined folder names. Persisted separately from photos so an
+    // empty folder still survives a refresh until the user removes it.
+    customFolders?: string[];
     savedAt?: number;
   };
   const loadPersisted = (): PersistedShape | null => {
