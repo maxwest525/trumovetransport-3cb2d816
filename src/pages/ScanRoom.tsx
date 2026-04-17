@@ -407,12 +407,22 @@ export default function ScanRoom() {
   const handleStartScanClick = () => {
     const hasRealPhotos = uploadedPhotos.some(p => p.id !== 'demo-photo' && !scannedPhotoIds.has(p.id));
     if (hasRealPhotos && !isDemoActive) {
-      // Real AI scan path
+      // Real AI scan path — gate behind lead capture
+      if (!isUnlocked) {
+        setPendingAction(() => () => runRealAiScan());
+        setShowLeadGate(true);
+        return;
+      }
       runRealAiScan();
     } else if (uploadedPhotos.length > 0 && !isDemoActive) {
+      if (!isUnlocked) {
+        setPendingAction(() => () => setShowIntroModal(true));
+        setShowLeadGate(true);
+        return;
+      }
       setShowIntroModal(true);
     } else {
-      // Start demo in auto-play mode
+      // Demo stays free — no gate so visitors can preview the experience
       setDemoPlaying(true);
       handleNextDemoStep();
     }
