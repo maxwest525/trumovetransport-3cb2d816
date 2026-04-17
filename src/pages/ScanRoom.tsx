@@ -50,7 +50,7 @@ import {
   Ruler, Package, Printer, Download, Square, Trash2, ArrowRightLeft,
   Phone, Video, Minus, Plus, X, Upload, ImageIcon, FolderOpen, Lock, User, Mail,
   Sofa, BedDouble, UtensilsCrossed, Bath, Warehouse, Check, Pause, Play,
-  Camera, Layers, Info, Eye, Save, Loader2, AlertTriangle
+  Camera, Layers, Info, Eye, Save, Loader2, AlertTriangle, Pencil, FolderPlus
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -128,6 +128,9 @@ export default function ScanRoom() {
     scanHistory?: PersistedScanPhoto[];
     uploadedPhotos?: { id: string; url: string; name: string }[];
     scannedPhotoIds?: string[];
+    // Customer-defined folder names. Persisted separately from photos so an
+    // empty folder still survives a refresh until the user removes it.
+    customFolders?: string[];
     savedAt?: number;
   };
   const loadPersisted = (): PersistedShape | null => {
@@ -200,8 +203,28 @@ export default function ScanRoom() {
   // doesn't fire when the customer is just reorganizing folders.
   const [draggedPhotoId, setDraggedPhotoId] = useState<string | null>(null);
   const [dragOverFolder, setDragOverFolder] = useState<string | null>(null);
+  // Customer-defined folders (e.g. "Garage Loft", "Office"). Stored separately
+  // from photos so an empty folder still renders until removed. Seeded from
+  // persisted state so the list survives a refresh.
+  const [customFolders, setCustomFolders] = useState<string[]>(persisted?.customFolders ?? []);
+  // Inline UI state for the header "+ Folder" affordance and per-folder rename.
+  const [isAddingFolder, setIsAddingFolder] = useState(false);
+  const [newFolderDraft, setNewFolderDraft] = useState("");
+  const [renamingFolder, setRenamingFolder] = useState<string | null>(null);
+  const [renameDraft, setRenameDraft] = useState("");
   const roomUploadRef = useRef<HTMLInputElement>(null);
   const allUploadRef = useRef<HTMLInputElement>(null);
+
+  // Folders the customer cannot rename or delete: "All" is the protected
+  // default bucket; KNOWN_ROOMS are canonical labels parsed from photo names.
+  const KNOWN_ROOMS = ["Living Room", "Bedroom", "Kitchen", "Bathroom", "Garage", "Storage"];
+  const PROTECTED_FOLDERS = new Set(["All", ...KNOWN_ROOMS]);
+  const parseRoom = (name: string) => {
+    const sep = name.indexOf(" - ");
+    if (sep === -1) return "All";
+    const candidate = name.slice(0, sep).trim();
+    return candidate.length > 0 ? candidate : "All";
+  };
 
   // Move a photo into a different folder by rewriting its `name` to the
   // "<Room> - <rest>" prefix that parseRoom() reads. This is what gets
@@ -218,6 +241,77 @@ export default function ScanRoom() {
         return { ...p, name: newName };
       })
     );
+  };
+
+  // Add a new custom folder. Names are normalized (trim + collapse spaces),
+  // case-insensitively de-duped against existing folders + photo-derived
+  // groups, and capped at 40 chars to keep the UI compact.
+  const addCustomFolder = (rawName: string) => {
+    const cleaned = rawName.trim().replace(/\s+/g, " ").slice(0, 40);
+    if (!cleaned) return;
+    const existing = new Set([
+      ...PROTECTED_FOLDERS,
+      ...customFolders,
+      ...uploadedPhotos.map((p) => parseRoom(p.name)),
+    ].map((n) => n.toLowerCase()));
+    if (existing.has(cleaned.toLowerCase())) {
+      toast({ title: "Folder already exists", description: `"${cleaned}" is already in your library.` });
+      return;
+    }
+    setCustomFolders((prev) => [...prev, cleaned]);
+    toast({ title: `Folder "${cleaned}" added`, description: "Drag photos here to organize them." });
+  };
+
+  // Rename a folder: update the customFolders list AND rewrite every photo's
+  // name prefix so the grouping moves with the rename. "All" and known rooms
+  // are protected to avoid accidentally orphaning canonical buckets.
+  const renameFolderTo = (oldName: string, rawNewName: string) => {
+    const cleaned = rawNewName.trim().replace(/\s+/g, " ").slice(0, 40);
+    if (!cleaned || cleaned === oldName) {
+      setRenamingFolder(null);
+      return;
+    }
+    if (PROTECTED_FOLDERS.has(oldName)) {
+      toast({ title: "This folder cannot be renamed", description: `"${oldName}" is a default folder.` });
+      setRenamingFolder(null);
+      return;
+    }
+    const conflict = new Set([
+      ...PROTECTED_FOLDERS,
+      ...customFolders.filter((n) => n !== oldName),
+      ...uploadedPhotos.map((p) => parseRoom(p.name)).filter((n) => n !== oldName),
+    ].map((n) => n.toLowerCase()));
+    if (conflict.has(cleaned.toLowerCase())) {
+      toast({ title: "Name already in use", description: `Pick a different name than "${cleaned}".` });
+      return;
+    }
+    setCustomFolders((prev) => prev.map((n) => (n === oldName ? cleaned : n)));
+    setUploadedPhotos((prev) =>
+      prev.map((p) => {
+        if (parseRoom(p.name) !== oldName) return p;
+        const sep = p.name.indexOf(" - ");
+        const baseName = sep === -1 ? p.name : p.name.slice(sep + 3);
+        return { ...p, name: `${cleaned} - ${baseName.trim() || "photo"}` };
+      })
+    );
+    setRenamingFolder(null);
+    toast({ title: `Renamed to "${cleaned}"`, description: "Photos in this folder were updated." });
+  };
+
+  // Remove a custom folder. If it still contains photos, those photos fall
+  // back into "All" by stripping their room prefix.
+  const removeCustomFolder = (name: string) => {
+    if (PROTECTED_FOLDERS.has(name)) return;
+    setCustomFolders((prev) => prev.filter((n) => n !== name));
+    setUploadedPhotos((prev) =>
+      prev.map((p) => {
+        if (parseRoom(p.name) !== name) return p;
+        const sep = p.name.indexOf(" - ");
+        const baseName = sep === -1 ? p.name : p.name.slice(sep + 3);
+        return { ...p, name: baseName.trim() || "photo" };
+      })
+    );
+    toast({ title: `Folder "${name}" removed`, description: "Any photos inside moved to All." });
   };
 
   const handleRoomClick = (roomLabel: string) => {
@@ -440,6 +534,7 @@ export default function ScanRoom() {
           scanHistory: slimHistory,
           uploadedPhotos: slimUploaded,
           scannedPhotoIds: Array.from(scannedPhotoIds).filter((id) => id !== "demo-photo"),
+          customFolders,
           savedAt: stamp,
         })
       );
@@ -447,7 +542,7 @@ export default function ScanRoom() {
     } catch {
       // Quota or serialization failure — non-fatal
     }
-  }, [detectedItems, isUnlocked, savedLeadId, scanHistory, uploadedPhotos, scannedPhotoIds]);
+  }, [detectedItems, isUnlocked, savedLeadId, scanHistory, uploadedPhotos, scannedPhotoIds, customFolders]);
 
   // Rehydrate uploadedPhotos + scannedPhotoIds on mount (separate so they don't fight initial demo state)
   useEffect(() => {
@@ -456,6 +551,11 @@ export default function ScanRoom() {
     }
     if (persisted?.scannedPhotoIds?.length) {
       setScannedPhotoIds((prev) => (prev.size === 0 ? new Set(persisted.scannedPhotoIds) : prev));
+    }
+    // customFolders is already seeded from persisted via useState initializer,
+    // but if rehydration ever happens after mount we ensure it's not blown away.
+    if (persisted?.customFolders?.length) {
+      setCustomFolders((prev) => (prev.length === 0 ? persisted.customFolders! : prev));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -1457,6 +1557,68 @@ export default function ScanRoom() {
                   <FolderOpen className="w-3.5 h-3.5" />
                   <span>Library</span>
                   <span className="tru-scan-library-count">{uploadedPhotos.length}</span>
+                  {/* Inline "+ Folder" affordance. Toggles a tiny input row so
+                      customers can name a custom folder without leaving the
+                      library. Persisted with the saved scan. */}
+                  {!isAddingFolder ? (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsAddingFolder(true);
+                        setNewFolderDraft("");
+                      }}
+                      className="ml-auto inline-flex items-center gap-1 rounded-md border border-primary/30 bg-primary/[0.06] hover:bg-primary/[0.12] px-1.5 py-0.5 text-[10px] font-semibold text-primary uppercase tracking-wider transition-colors"
+                      title="Create a custom folder"
+                    >
+                      <FolderPlus className="w-3 h-3" />
+                      Folder
+                    </button>
+                  ) : (
+                    <div className="ml-auto flex items-center gap-1">
+                      <input
+                        autoFocus
+                        type="text"
+                        value={newFolderDraft}
+                        onChange={(e) => setNewFolderDraft(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            addCustomFolder(newFolderDraft);
+                            setIsAddingFolder(false);
+                            setNewFolderDraft("");
+                          } else if (e.key === "Escape") {
+                            setIsAddingFolder(false);
+                            setNewFolderDraft("");
+                          }
+                        }}
+                        placeholder="Folder name"
+                        maxLength={40}
+                        className="h-6 w-28 rounded-md border border-primary/40 bg-background px-1.5 text-[11px] text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          addCustomFolder(newFolderDraft);
+                          setIsAddingFolder(false);
+                          setNewFolderDraft("");
+                        }}
+                        className="inline-flex items-center justify-center w-5 h-5 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+                        title="Add folder"
+                      >
+                        <Check className="w-3 h-3" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsAddingFolder(false);
+                          setNewFolderDraft("");
+                        }}
+                        className="inline-flex items-center justify-center w-5 h-5 rounded-md bg-muted text-muted-foreground hover:bg-muted/70 transition-colors"
+                        title="Cancel"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 {/* Hidden inputs for both upload paths */}
@@ -1546,6 +1708,11 @@ export default function ScanRoom() {
                       const groups = new Map<string, typeof uploadedPhotos>();
                       // Seed All so it always renders first
                       groups.set("All", []);
+                      // Seed customer-defined folders so empty ones still render
+                      // (they survive a refresh via the persisted customFolders list).
+                      customFolders.forEach((f) => {
+                        if (!groups.has(f)) groups.set(f, []);
+                      });
                       uploadedPhotos.forEach((p) => {
                         const room = parseRoom(p.name);
                         if (!groups.has(room)) groups.set(room, []);
@@ -1619,18 +1786,61 @@ export default function ScanRoom() {
                                   setDragOverFolder(null);
                                 }}
                               >
-                                <div className="flex items-center gap-1.5 px-1 pt-2 pb-1">
+                                <div className="flex items-center gap-1.5 px-1 pt-2 pb-1 group/folderhead">
                                   <FolderOpen className={`w-3 h-3 ${isAllFolder ? "text-primary" : "text-muted-foreground/70"}`} />
-                                  <span className={`text-[10px] font-semibold uppercase tracking-wider ${isAllFolder ? "text-primary" : "text-muted-foreground/70"}`}>
-                                    {room}
-                                  </span>
+                                  {renamingFolder === room ? (
+                                    <input
+                                      autoFocus
+                                      type="text"
+                                      value={renameDraft}
+                                      onChange={(e) => setRenameDraft(e.target.value)}
+                                      onBlur={() => renameFolderTo(room, renameDraft)}
+                                      onKeyDown={(e) => {
+                                        if (e.key === "Enter") renameFolderTo(room, renameDraft);
+                                        else if (e.key === "Escape") setRenamingFolder(null);
+                                      }}
+                                      maxLength={40}
+                                      className="h-5 flex-1 min-w-0 rounded border border-primary/40 bg-background px-1 text-[10px] font-semibold uppercase tracking-wider text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                                    />
+                                  ) : (
+                                    <span className={`text-[10px] font-semibold uppercase tracking-wider ${isAllFolder ? "text-primary" : "text-muted-foreground/70"}`}>
+                                      {room}
+                                    </span>
+                                  )}
                                   <span className="text-[10px] text-muted-foreground/50">
                                     {photos.length}
                                   </span>
-                                  {isAllFolder && (
+                                  {isAllFolder ? (
                                     <span className="ml-auto text-[9px] uppercase tracking-wider text-primary/70 font-semibold">
                                       Default
                                     </span>
+                                  ) : (
+                                    // Rename + delete are only available on customer-defined folders
+                                    // and inferred custom rooms (anything not in PROTECTED_FOLDERS).
+                                    // Hidden until hover so the folder header stays clean.
+                                    !PROTECTED_FOLDERS.has(room) && renamingFolder !== room && (
+                                      <div className="ml-auto flex items-center gap-0.5 opacity-0 group-hover/folderhead:opacity-100 transition-opacity">
+                                        <button
+                                          type="button"
+                                          onClick={() => {
+                                            setRenamingFolder(room);
+                                            setRenameDraft(room);
+                                          }}
+                                          className="inline-flex items-center justify-center w-4 h-4 rounded text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+                                          title="Rename folder"
+                                        >
+                                          <Pencil className="w-2.5 h-2.5" />
+                                        </button>
+                                        <button
+                                          type="button"
+                                          onClick={() => removeCustomFolder(room)}
+                                          className="inline-flex items-center justify-center w-4 h-4 rounded text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                                          title="Remove folder (photos move to All)"
+                                        >
+                                          <X className="w-2.5 h-2.5" />
+                                        </button>
+                                      </div>
+                                    )
                                   )}
                                 </div>
                                 {photos.length === 0 ? (
