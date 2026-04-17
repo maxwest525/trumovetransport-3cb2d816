@@ -342,18 +342,29 @@ export default function ScanRoom() {
   };
 
   const ingestFiles = (files: FileList | File[], roomLabel: string) => {
+    // Count what we actually accepted (image/video only) so the toast reflects
+    // reality, not the raw file count which may include unsupported types.
+    let acceptedCount = 0;
+    const targetFolder = roomLabel || "All";
     Array.from(files).forEach((file) => {
       if (!file.type.startsWith("image/") && !file.type.startsWith("video/")) return;
+      acceptedCount += 1;
       const url = URL.createObjectURL(file);
       setUploadedPhotos((prev) => [
         ...prev,
         {
           id: `photo-${Date.now()}-${Math.random()}`,
           url,
-          name: `${roomLabel} - ${file.name}`,
+          name: `${targetFolder} - ${file.name}`,
         },
       ]);
     });
+    if (acceptedCount > 0) {
+      toast({
+        title: `Saved ${acceptedCount} ${acceptedCount === 1 ? "photo" : "photos"} to ${targetFolder}`,
+        description: "Your upload is captured and ready to scan.",
+      });
+    }
   };
 
   const handleRoomUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
