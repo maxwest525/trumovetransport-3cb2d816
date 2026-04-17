@@ -195,8 +195,30 @@ export default function ScanRoom() {
   const [scannedPhotoIds, setScannedPhotoIds] = useState<Set<string>>(new Set());
   const [pendingRoomLabel, setPendingRoomLabel] = useState<string>("");
   const [isDraggingFiles, setIsDraggingFiles] = useState(false);
+  // Tracks an in-app drag of an existing library photo (not an OS file drop).
+  // We use a separate flag from isDraggingFiles so the file-drop overlay
+  // doesn't fire when the customer is just reorganizing folders.
+  const [draggedPhotoId, setDraggedPhotoId] = useState<string | null>(null);
+  const [dragOverFolder, setDragOverFolder] = useState<string | null>(null);
   const roomUploadRef = useRef<HTMLInputElement>(null);
   const allUploadRef = useRef<HTMLInputElement>(null);
+
+  // Move a photo into a different folder by rewriting its `name` to the
+  // "<Room> - <rest>" prefix that parseRoom() reads. This is what gets
+  // persisted to localStorage in the autosave effect, so the new grouping
+  // survives a refresh. Dropping into "All" strips the prefix entirely.
+  const reclassifyPhotoToFolder = (photoId: string, targetRoom: string) => {
+    setUploadedPhotos((prev) =>
+      prev.map((p) => {
+        if (p.id !== photoId) return p;
+        const sep = p.name.indexOf(" - ");
+        const baseName = sep === -1 ? p.name : p.name.slice(sep + 3);
+        const cleanBase = baseName.trim() || "photo";
+        const newName = targetRoom === "All" ? cleanBase : `${targetRoom} - ${cleanBase}`;
+        return { ...p, name: newName };
+      })
+    );
+  };
 
   const handleRoomClick = (roomLabel: string) => {
     // Gate uploads behind the lead capture form
