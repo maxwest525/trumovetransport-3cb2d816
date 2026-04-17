@@ -50,7 +50,7 @@ import {
   Ruler, Package, Printer, Download, Square, Trash2, ArrowRightLeft,
   Phone, Video, Minus, Plus, X, Upload, ImageIcon, FolderOpen, Lock, User, Mail,
   Sofa, BedDouble, UtensilsCrossed, Bath, Warehouse, Check, Pause, Play,
-  Camera, Layers, Info, Eye, Save, Loader2
+  Camera, Layers, Info, Eye, Save, Loader2, AlertTriangle
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
