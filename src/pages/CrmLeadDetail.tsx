@@ -323,6 +323,103 @@ export default function CrmLeadDetail() {
                 </CardContent>
               </Card>
             )}
+
+            {/* AI Room Scan - Photos */}
+            {scanPhotos.length > 0 && (
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <Camera className="w-4 h-4 text-primary" />
+                    AI Room Scan Photos ({scanPhotos.length})
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    {scanPhotos.map((photo) => (
+                      <button
+                        key={photo.id}
+                        onClick={() => setPhotoViewer(photo)}
+                        className="group relative rounded-lg overflow-hidden border border-border/50 hover:border-primary transition-colors"
+                      >
+                        <img src={photo.photo_url} alt={photo.room_label || "Scan"} className="w-full h-28 object-cover" />
+                        <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/30 transition-colors" />
+                        <div className="absolute bottom-0 left-0 right-0 px-2 py-1 bg-foreground/70 text-background flex items-center justify-between">
+                          <span className="text-[10px] font-semibold truncate">{photo.room_label || "Room"}</span>
+                          <span className="text-[10px] flex items-center gap-0.5"><Sparkles className="w-2.5 h-2.5" />{photo.item_count}</span>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Inventory (AI + Manual) */}
+            {inventory.length > 0 && (
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <Package className="w-4 h-4 text-primary" />
+                    Inventory ({inventory.length})
+                    <span className="ml-2 text-[10px] font-normal text-muted-foreground">
+                      {inventory.filter(i => i.source === 'ai-scan').length} AI / {inventory.filter(i => i.source !== 'ai-scan').length} Manual
+                    </span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="text-[10px] uppercase tracking-wider text-muted-foreground border-b border-border/50">
+                          <th className="text-left py-2 font-semibold">Item</th>
+                          <th className="text-left py-2 font-semibold">Room</th>
+                          <th className="text-center py-2 font-semibold">Qty</th>
+                          <th className="text-right py-2 font-semibold">Wt</th>
+                          <th className="text-right py-2 font-semibold">CuFt</th>
+                          <th className="text-right py-2 font-semibold">Conf</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {inventory.map((item) => {
+                          const isAi = item.source === 'ai-scan';
+                          return (
+                            <tr key={item.id} className="border-b border-border/30 last:border-0">
+                              <td className="py-2">
+                                <div className="flex items-center gap-1.5 flex-wrap">
+                                  <span className="font-medium text-foreground">{item.item_name}</span>
+                                  {isAi ? (
+                                    <span className="inline-flex items-center gap-0.5 rounded-full bg-primary/15 text-primary px-1.5 py-0.5 text-[9px] font-bold uppercase leading-none">
+                                      <Sparkles className="w-2.5 h-2.5" />AI
+                                    </span>
+                                  ) : (
+                                    <span className="inline-flex items-center rounded-full bg-muted text-muted-foreground px-1.5 py-0.5 text-[9px] font-bold uppercase leading-none">
+                                      Manual
+                                    </span>
+                                  )}
+                                </div>
+                              </td>
+                              <td className="py-2 text-muted-foreground">{item.room}</td>
+                              <td className="py-2 text-center">{item.quantity}</td>
+                              <td className="py-2 text-right">{item.weight}</td>
+                              <td className="py-2 text-right">{item.cubic_feet}</td>
+                              <td className="py-2 text-right">
+                                {item.confidence != null ? (
+                                  <span className={`text-[10px] font-bold ${item.confidence >= 85 ? 'text-primary' : item.confidence >= 65 ? 'text-amber-500' : 'text-destructive'}`}>
+                                    {item.confidence}%
+                                  </span>
+                                ) : (
+                                  <span className="text-[10px] text-muted-foreground">-</span>
+                                )}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
 
           {/* Right column - Attribution Panel */}
