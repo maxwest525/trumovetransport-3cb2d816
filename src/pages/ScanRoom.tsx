@@ -196,6 +196,58 @@ export default function ScanRoom() {
   
   // Demo step state: 0=idle, 1=photo added to library, 2=photo in scanner, 3+=items detecting
   const [demoStep, setDemoStep] = useState(0);
+
+  // Resizable split: width of the photo library column in px. Persisted to
+  // localStorage so customers don't have to re-resize on every visit. Clamped
+  // between 320 (still usable) and 720 (don't crush the scanner).
+  const LIBRARY_MIN = 320;
+  const LIBRARY_MAX = 720;
+  const LIBRARY_DEFAULT = 440;
+  const [libraryWidth, setLibraryWidth] = useState<number>(() => {
+    if (typeof window === "undefined") return LIBRARY_DEFAULT;
+    const saved = Number(window.localStorage.getItem("tru-scan-library-width"));
+    if (!Number.isFinite(saved) || saved <= 0) return LIBRARY_DEFAULT;
+    return Math.min(LIBRARY_MAX, Math.max(LIBRARY_MIN, saved));
+  });
+  const splitContainerRef = useRef<HTMLDivElement>(null);
+  const isResizingRef = useRef(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    window.localStorage.setItem("tru-scan-library-width", String(libraryWidth));
+  }, [libraryWidth]);
+
+  const handleSplitPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    isResizingRef.current = true;
+    const container = splitContainerRef.current;
+    if (!container) return;
+    (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
+    document.body.style.cursor = "col-resize";
+    document.body.style.userSelect = "none";
+
+    const onMove = (ev: PointerEvent) => {
+      if (!isResizingRef.current) return;
+      const rect = container.getBoundingClientRect();
+      // Library is on the right; width = container right edge - pointer X
+      // Subtract a small gutter so the handle itself doesn't shift the column.
+      const next = rect.right - ev.clientX - 12;
+      const clamped = Math.min(LIBRARY_MAX, Math.max(LIBRARY_MIN, next));
+      setLibraryWidth(clamped);
+    };
+    const onUp = () => {
+      isResizingRef.current = false;
+      document.body.style.cursor = "";
+      document.body.style.userSelect = "";
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+    };
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp);
+  };
+
+  const resetLibraryWidth = () => setLibraryWidth(LIBRARY_DEFAULT);
+
   const [demoPlaying, setDemoPlaying] = useState(false);
   const isDemoActive = demoStep > 0;
   const DEMO_TOTAL_STEPS = 2 + DEMO_ITEMS.length;
