@@ -47,6 +47,7 @@ serve(async (req) => {
       items = [],
       totalWeight,
       totalCubicFeet,
+      customFolders = [],
     }: {
       anonymousLeadId?: string;
       firstName?: string;
@@ -57,7 +58,30 @@ serve(async (req) => {
       items: IncomingItem[];
       totalWeight?: number;
       totalCubicFeet?: number;
+      // Customer-defined folder names (e.g. "Garage", "Nursery"). Persisted on
+      // the lead row so agents see the same organization in the CRM, including
+      // empty folders the customer created but hasn't filed photos into yet.
+      customFolders?: string[];
     } = body;
+
+    // Normalize: trim, drop empties, dedupe (case-insensitive), cap length.
+    // Defensive sanitation - the client is untrusted and folder names render
+    // in the CRM UI for agents.
+    const sanitizedFolders: string[] = (() => {
+      const seen = new Set<string>();
+      const out: string[] = [];
+      for (const raw of customFolders) {
+        if (typeof raw !== "string") continue;
+        const cleaned = raw.trim().slice(0, 60);
+        if (!cleaned) continue;
+        const key = cleaned.toLowerCase();
+        if (seen.has(key)) continue;
+        seen.add(key);
+        out.push(cleaned);
+        if (out.length >= 50) break;
+      }
+      return out;
+    })();
 
     let leadId: string | null = null;
 
