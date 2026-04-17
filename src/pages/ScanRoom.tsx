@@ -1227,28 +1227,6 @@ export default function ScanRoom() {
               <p className="text-muted-foreground max-w-xl mx-auto text-base md:text-lg font-light leading-relaxed mt-4">
                 Simply scan your rooms and our AI will identify, measure, and catalog every item automatically.
               </p>
-
-              {/* How it works - 3 step micro-flow */}
-              <div className="mt-6 flex flex-wrap items-center justify-center gap-2 md:gap-3">
-                {[
-                  { num: "1", icon: Camera, label: "Point camera" },
-                  { num: "2", icon: Sparkles, label: "AI detects" },
-                  { num: "3", icon: Package, label: "Get estimate" },
-                ].map((step, idx, arr) => (
-                  <div key={step.num} className="flex items-center gap-2 md:gap-3">
-                    <div className="flex items-center gap-2 rounded-full border border-border bg-background/60 backdrop-blur px-3 py-1.5">
-                      <span className="flex items-center justify-center w-5 h-5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold">
-                        {step.num}
-                      </span>
-                      <step.icon className="w-3.5 h-3.5 text-primary" />
-                      <span className="text-xs font-semibold text-foreground">{step.label}</span>
-                    </div>
-                    {idx < arr.length - 1 && (
-                      <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/40" />
-                    )}
-                  </div>
-                ))}
-              </div>
             </div>
 
             <EstimatorNavToggle />
