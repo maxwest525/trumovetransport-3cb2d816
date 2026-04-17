@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   ArrowLeft, User, Mail, Phone, MapPin, Calendar, DollarSign,
-  Weight, Tag, Clock, FileText, Truck, UserCheck, Camera, Sparkles, Package, X,
+  Weight, Tag, Clock, FileText, Truck, UserCheck, Camera, Sparkles, Package, X, Link2, Loader2,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -103,6 +103,35 @@ export default function CrmLeadDetail() {
   const [loading, setLoading] = useState(true);
   const [agentName, setAgentName] = useState<string | null>(null);
   const [claiming, setClaiming] = useState(false);
+  const [generatingResumeLink, setGeneratingResumeLink] = useState(false);
+
+  const handleSendResumeLink = async () => {
+    if (!leadId) return;
+    setGeneratingResumeLink(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-scan-resume-link", {
+        body: { leadId },
+      });
+      if (error || !data?.token) {
+        toast.error(data?.error || error?.message || "Could not create resume link");
+        return;
+      }
+      const url = `${window.location.origin}/scan-room?resume=${data.token}`;
+      try {
+        await navigator.clipboard.writeText(url);
+        toast.success("Resume link copied to clipboard", {
+          description: "Single-use link expires in 24 hours.",
+        });
+      } catch {
+        toast.success("Resume link created", { description: url });
+      }
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Could not create resume link");
+    } finally {
+      setGeneratingResumeLink(false);
+    }
+  };
+
 
   const handleClaimLead = async () => {
     if (!lead || !leadId) return;
@@ -328,10 +357,27 @@ export default function CrmLeadDetail() {
             {scanPhotos.length > 0 && (
               <Card>
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-base flex items-center gap-2">
-                    <Camera className="w-4 h-4 text-primary" />
-                    AI Room Scan Photos ({scanPhotos.length})
-                  </CardTitle>
+                  <div className="flex items-center justify-between gap-2 flex-wrap">
+                    <CardTitle className="text-base flex items-center gap-2">
+                      <Camera className="w-4 h-4 text-primary" />
+                      AI Room Scan Photos ({scanPhotos.length})
+                    </CardTitle>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={handleSendResumeLink}
+                      disabled={generatingResumeLink}
+                      className="h-8 text-xs gap-1.5"
+                      title="Generate a one-time link the customer can open to resume their saved scan"
+                    >
+                      {generatingResumeLink ? (
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      ) : (
+                        <Link2 className="w-3.5 h-3.5" />
+                      )}
+                      Send resume link
+                    </Button>
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">

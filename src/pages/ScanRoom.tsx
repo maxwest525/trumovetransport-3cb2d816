@@ -296,6 +296,27 @@ export default function ScanRoom() {
   const [hasResumableScan, setHasResumableScan] = useState<boolean>(
     !!persisted && (persisted.detectedItems?.length ?? 0) > 0
   );
+  const [savedAtMs, setSavedAtMs] = useState<number | null>(persisted?.savedAt ?? null);
+  // Tick every minute so "Saved X ago" stays fresh while the page is open
+  const [nowTick, setNowTick] = useState(Date.now());
+  useEffect(() => {
+    if (!hasResumableScan) return;
+    const id = setInterval(() => setNowTick(Date.now()), 60_000);
+    return () => clearInterval(id);
+  }, [hasResumableScan]);
+
+  // Human friendly "Saved X ago" string from a timestamp
+  const formatSavedAgo = (ts: number) => {
+    const diffMs = Math.max(0, nowTick - ts);
+    const mins = Math.floor(diffMs / 60_000);
+    if (mins < 1) return "Saved just now";
+    if (mins < 60) return `Saved ${mins} minute${mins === 1 ? "" : "s"} ago`;
+    const hours = Math.floor(mins / 60);
+    if (hours < 24) return `Saved ${hours} hour${hours === 1 ? "" : "s"} ago`;
+    const days = Math.floor(hours / 24);
+    return `Saved ${days} day${days === 1 ? "" : "s"} ago`;
+  };
+
 
   // Clear every trace of the previous scan from state + localStorage
   const startFreshScan = () => {
@@ -330,6 +351,7 @@ export default function ScanRoom() {
       const slimUploaded = uploadedPhotos
         .filter((p) => !isVolatile(p.url) && p.id !== "demo-photo")
         .map((p) => ({ id: p.id, url: p.url, name: p.name }));
+      const stamp = Date.now();
       localStorage.setItem(
         STORAGE_KEY,
         JSON.stringify({
@@ -339,9 +361,10 @@ export default function ScanRoom() {
           scanHistory: slimHistory,
           uploadedPhotos: slimUploaded,
           scannedPhotoIds: Array.from(scannedPhotoIds).filter((id) => id !== "demo-photo"),
-          savedAt: Date.now(),
+          savedAt: stamp,
         })
       );
+      setSavedAtMs(stamp);
     } catch {
       // Quota or serialization failure — non-fatal
     }
@@ -355,6 +378,96 @@ export default function ScanRoom() {
     if (persisted?.scannedPhotoIds?.length) {
       setScannedPhotoIds((prev) => (prev.size === 0 ? new Set(persisted.scannedPhotoIds) : prev));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // If the visitor arrived via a one-time resume link (?resume=<token>),
+  // redeem it and rehydrate their saved scan into local state + storage.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("resume");
+    if (!token) return;
+
+    let cancelled = false;
+    (async () => {
+      try {
+        toast({ title: "Restoring your saved scan...", description: "One moment." });
+        const { data, error } = await supabase.functions.invoke(
+          "redeem-scan-resume-token",
+          { body: { token } },
+        );
+        if (cancelled) return;
+        if (error || !data || data.error) {
+          toast({
+            title: "Could not restore scan",
+            description: data?.error || error?.message || "Link is invalid or expired.",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        // Map the server payload into the local state shapes
+        const restoredItems: InventoryItem[] = (data.inventory ?? []).map(
+          (it: any, idx: number) => ({
+            id: 1_000_000 + idx,
+            name: it.item_name,
+            room: it.room || "Living Room",
+            weight: Number(it.weight) || 0,
+            cuft: Number(it.cubic_feet) || 0,
+            image: "",
+            quantity: Number(it.quantity) || 1,
+            confidence: it.confidence ?? undefined,
+          }),
+        );
+
+        const restoredHistory: ScannedPhotoEntry[] = (data.photos ?? []).map(
+          (p: any) => ({
+            id: p.id,
+            url: p.photo_url,
+            name: p.room_label || "Room",
+            boxes: Array.isArray(p.detected_boxes) ? p.detected_boxes : [],
+          }),
+        );
+
+        const restoredUploaded = (data.photos ?? []).map((p: any) => ({
+          id: p.id,
+          url: p.photo_url,
+          name: p.room_label || "Room",
+        }));
+
+        setDetectedItems(restoredItems);
+        setScanHistory(restoredHistory);
+        setUploadedPhotos(restoredUploaded);
+        setScannedPhotoIds(new Set(restoredUploaded.map((p) => p.id)));
+        setSavedLeadId(data.leadId ?? null);
+        setIsUnlocked(true);
+        setHasResumableScan(restoredItems.length > 0);
+        setSavedAtMs(Date.now());
+
+        // Strip the token from the URL so it can't be shared/refreshed
+        const url = new URL(window.location.href);
+        url.searchParams.delete("resume");
+        window.history.replaceState({}, "", url.toString());
+
+        toast({
+          title: "Scan restored",
+          description: `${restoredItems.length} item${restoredItems.length === 1 ? "" : "s"} loaded from your saved session.`,
+        });
+      } catch (e) {
+        console.error("Resume token redemption failed:", e);
+        if (!cancelled) {
+          toast({
+            title: "Could not restore scan",
+            description: "Please try the link again or contact your agent.",
+            variant: "destructive",
+          });
+        }
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -890,7 +1003,14 @@ export default function ScanRoom() {
                     <Clock className="w-5 h-5 text-primary" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-sm font-semibold text-foreground">Welcome back - your previous scan is ready</p>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <p className="text-sm font-semibold text-foreground">Welcome back - your previous scan is ready</p>
+                      {savedAtMs && (
+                        <span className="text-[10px] uppercase tracking-wide font-semibold px-2 py-0.5 rounded-full bg-primary/15 text-primary">
+                          {formatSavedAgo(savedAtMs)}
+                        </span>
+                      )}
+                    </div>
                     <p className="text-xs text-muted-foreground mt-0.5">
                       {detectedItems.length} item{detectedItems.length === 1 ? "" : "s"} detected
                       {scanHistory.length > 0 && ` across ${scanHistory.length} photo${scanHistory.length === 1 ? "" : "s"}`}
@@ -918,78 +1038,10 @@ export default function ScanRoom() {
           </section>
         )}
 
-        {/* Scan Intro Modal */}
-        <ScanIntroModal 
-          isOpen={showIntroModal}
-          onClose={() => setShowIntroModal(false)}
-          onStartScan={startDemo}
-        />
-
-        {/* Room Inventory Analysis Section */}
-        <section className="tru-scan-split-demo">
-          <div className="container max-w-7xl mx-auto px-4">
-
-            {/* Three Column Layout: Upload | Scanner | Photo Library */}
-            <div className="tru-scan-analysis-grid">
-              {/* Left: Upload Area */}
-              <div className="tru-scan-upload-panel">
-                <div className="tru-scan-upload-header">
-                  <Upload className="w-4 h-4" />
-                  <span>Upload Photos or Videos</span>
-                </div>
-                <div className="tru-scan-upload-zone">
-                  <input
-                    type="file"
-                    id="photo-upload"
-                    accept="image/*,video/*"
-                    multiple
-                    className="hidden"
-                    onChange={(e) => {
-                      const files = e.target.files;
-                      if (files) {
-                        Array.from(files).forEach(file => {
-                          const url = URL.createObjectURL(file);
-                          setUploadedPhotos(prev => [...prev, {
-                            id: `photo-${Date.now()}-${Math.random()}`,
-                            url,
-                            name: file.name
-                          }]);
-                        });
-                      }
-                    }}
-                  />
-                  <label htmlFor="photo-upload" className="tru-scan-upload-dropzone">
-                    <div className="tru-scan-upload-icon">
-                      <ImageIcon className="w-8 h-8" />
-                    </div>
-                    <p className="tru-scan-upload-text">
-                      Drag & drop photos or videos here
-                    </p>
-                    <span className="tru-scan-upload-hint">or click to browse</span>
-                    <span className="tru-scan-upload-formats">JPG, PNG, HEIC, MP4, MOV</span>
-                  </label>
-                </div>
-                <div className="tru-scan-upload-tips mt-4 space-y-3">
-                  <div className="flex items-center gap-2 text-[10px] text-muted-foreground uppercase tracking-wide font-medium">
-                    <Info className="w-3 h-3" />
-                    <span>Quick Tips</span>
-                  </div>
-                  <div className="space-y-2 pl-1">
-                    <div className="flex items-center gap-2.5 text-xs text-muted-foreground/90">
-                      <Camera className="w-3.5 h-3.5 text-primary/70 shrink-0" />
-                      <span>Capture entire rooms</span>
-                    </div>
-                    <div className="flex items-center gap-2.5 text-xs text-muted-foreground/90">
-                      <Zap className="w-3.5 h-3.5 text-primary/70 shrink-0" />
-                      <span>Good lighting helps</span>
-                    </div>
-                    <div className="flex items-center gap-2.5 text-xs text-muted-foreground/90">
-                      <Layers className="w-3.5 h-3.5 text-primary/70 shrink-0" />
-                      <span>Multiple angles work best</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+        {/* Main scan workspace */}
+        <section className="px-4 sm:px-6 lg:px-8 pb-10">
+          <div className="max-w-7xl mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-4 lg:gap-6">
 
               {/* Center: Demo & Actions */}
               <div className="flex flex-col items-center justify-center gap-4 border border-border rounded-2xl bg-background shadow-[0_4px_20px_-4px_hsl(var(--tm-ink)/0.08)] relative overflow-hidden">
