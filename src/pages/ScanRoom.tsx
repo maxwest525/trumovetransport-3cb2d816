@@ -1786,18 +1786,61 @@ export default function ScanRoom() {
                                   setDragOverFolder(null);
                                 }}
                               >
-                                <div className="flex items-center gap-1.5 px-1 pt-2 pb-1">
+                                <div className="flex items-center gap-1.5 px-1 pt-2 pb-1 group/folderhead">
                                   <FolderOpen className={`w-3 h-3 ${isAllFolder ? "text-primary" : "text-muted-foreground/70"}`} />
-                                  <span className={`text-[10px] font-semibold uppercase tracking-wider ${isAllFolder ? "text-primary" : "text-muted-foreground/70"}`}>
-                                    {room}
-                                  </span>
+                                  {renamingFolder === room ? (
+                                    <input
+                                      autoFocus
+                                      type="text"
+                                      value={renameDraft}
+                                      onChange={(e) => setRenameDraft(e.target.value)}
+                                      onBlur={() => renameFolderTo(room, renameDraft)}
+                                      onKeyDown={(e) => {
+                                        if (e.key === "Enter") renameFolderTo(room, renameDraft);
+                                        else if (e.key === "Escape") setRenamingFolder(null);
+                                      }}
+                                      maxLength={40}
+                                      className="h-5 flex-1 min-w-0 rounded border border-primary/40 bg-background px-1 text-[10px] font-semibold uppercase tracking-wider text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                                    />
+                                  ) : (
+                                    <span className={`text-[10px] font-semibold uppercase tracking-wider ${isAllFolder ? "text-primary" : "text-muted-foreground/70"}`}>
+                                      {room}
+                                    </span>
+                                  )}
                                   <span className="text-[10px] text-muted-foreground/50">
                                     {photos.length}
                                   </span>
-                                  {isAllFolder && (
+                                  {isAllFolder ? (
                                     <span className="ml-auto text-[9px] uppercase tracking-wider text-primary/70 font-semibold">
                                       Default
                                     </span>
+                                  ) : (
+                                    // Rename + delete are only available on customer-defined folders
+                                    // and inferred custom rooms (anything not in PROTECTED_FOLDERS).
+                                    // Hidden until hover so the folder header stays clean.
+                                    !PROTECTED_FOLDERS.has(room) && renamingFolder !== room && (
+                                      <div className="ml-auto flex items-center gap-0.5 opacity-0 group-hover/folderhead:opacity-100 transition-opacity">
+                                        <button
+                                          type="button"
+                                          onClick={() => {
+                                            setRenamingFolder(room);
+                                            setRenameDraft(room);
+                                          }}
+                                          className="inline-flex items-center justify-center w-4 h-4 rounded text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+                                          title="Rename folder"
+                                        >
+                                          <Pencil className="w-2.5 h-2.5" />
+                                        </button>
+                                        <button
+                                          type="button"
+                                          onClick={() => removeCustomFolder(room)}
+                                          className="inline-flex items-center justify-center w-4 h-4 rounded text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                                          title="Remove folder (photos move to All)"
+                                        >
+                                          <X className="w-2.5 h-2.5" />
+                                        </button>
+                                      </div>
+                                    )
                                   )}
                                 </div>
                                 {photos.length === 0 ? (
