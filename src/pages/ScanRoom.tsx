@@ -318,6 +318,13 @@ export default function ScanRoom() {
     return `Saved ${days} day${days === 1 ? "" : "s"} ago`;
   };
 
+  // Saved scans are auto-purged after 7 days. Warn the user once they pass 5.
+  const SCAN_TTL_DAYS = 7;
+  const SCAN_STALE_WARN_DAYS = 5;
+  const scanAgeDays = savedAtMs ? (nowTick - savedAtMs) / (1000 * 60 * 60 * 24) : 0;
+  const isScanStale = !!savedAtMs && scanAgeDays >= SCAN_STALE_WARN_DAYS;
+  const daysUntilExpiry = Math.max(0, Math.ceil(SCAN_TTL_DAYS - scanAgeDays));
+
 
   // Clear every trace of the previous scan from state + localStorage
   const startFreshScan = () => {
