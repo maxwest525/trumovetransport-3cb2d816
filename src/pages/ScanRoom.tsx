@@ -890,7 +890,7 @@ export default function ScanRoom() {
                     <Clock className="w-5 h-5 text-primary" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-sm font-semibold text-foreground">Welcome back — your previous scan is ready</p>
+                    <p className="text-sm font-semibold text-foreground">Welcome back - your previous scan is ready</p>
                     <p className="text-xs text-muted-foreground mt-0.5">
                       {detectedItems.length} item{detectedItems.length === 1 ? "" : "s"} detected
                       {scanHistory.length > 0 && ` across ${scanHistory.length} photo${scanHistory.length === 1 ? "" : "s"}`}
