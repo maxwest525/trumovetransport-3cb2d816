@@ -1193,23 +1193,28 @@ export default function ScanRoom() {
                             <td>
                               <div className={`tru-scan-qty-controls ${!isUnlocked ? 'tru-scan-qty-disabled' : ''}`}>
                                 <button 
-                                  onClick={() => isUnlocked && setDetectedItems(prev => prev.filter(i => i.id !== item.id))}
+                                  onClick={() => {
+                                    if (!isUnlocked) return;
+                                    setDetectedItems(prev => prev.flatMap(i => {
+                                      if (i.id !== item.id) return [i];
+                                      const next = i.quantity - 1;
+                                      return next <= 0 ? [] : [{ ...i, quantity: next }];
+                                    }));
+                                  }}
                                   className="tru-scan-qty-btn"
-                                  title={isUnlocked ? "Remove item" : "Unlock to edit"}
+                                  title={isUnlocked ? "Decrease quantity" : "Unlock to edit"}
                                   disabled={!isUnlocked}
                                 >
                                   <Minus className="w-3 h-3" />
                                 </button>
-                                <span className="tru-scan-qty-value">1</span>
+                                <span className="tru-scan-qty-value">{item.quantity}</span>
                                 <button 
                                   onClick={() => {
                                     if (!isUnlocked) return;
-                                    // Duplicate item with new ID
-                                    const newItem = { ...item, id: Date.now() + Math.random() };
-                                    setDetectedItems(prev => [...prev, newItem]);
+                                    setDetectedItems(prev => prev.map(i => i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i));
                                   }}
                                   className="tru-scan-qty-btn"
-                                  title={isUnlocked ? "Add another" : "Unlock to edit"}
+                                  title={isUnlocked ? "Increase quantity" : "Unlock to edit"}
                                   disabled={!isUnlocked}
                                 >
                                   <Plus className="w-3 h-3" />
@@ -1218,8 +1223,8 @@ export default function ScanRoom() {
                             </td>
                             <td>{item.weight}</td>
                             <td>{item.cuft}</td>
-                            <td className="tru-scan-table-total">{item.weight}</td>
-                            <td className="tru-scan-table-total">{item.cuft}</td>
+                            <td className="tru-scan-table-total">{item.weight * item.quantity}</td>
+                            <td className="tru-scan-table-total">{item.cuft * item.quantity}</td>
                             <td>
                               <div className="flex items-center gap-1">
                                 {item.photoId && (
