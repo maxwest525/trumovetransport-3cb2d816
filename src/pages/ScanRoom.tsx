@@ -190,6 +190,9 @@ export default function ScanRoom() {
     setIsScanning(false);
     setUploadedPhotos(prev => prev.filter(p => p.id !== 'demo-photo'));
     setScannedPhotoIds(new Set());
+    setActiveScanPhoto(null);
+    setAiBoxes([]);
+    setRevealedBoxCount(0);
   };
 
   // Auto-advance demo when playing
