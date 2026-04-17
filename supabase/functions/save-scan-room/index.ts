@@ -38,6 +38,7 @@ serve(async (req) => {
 
     const body = await req.json();
     const {
+      anonymousLeadId,
       firstName,
       lastName,
       email,
@@ -47,8 +48,9 @@ serve(async (req) => {
       totalWeight,
       totalCubicFeet,
     }: {
-      firstName: string;
-      lastName: string;
+      anonymousLeadId?: string;
+      firstName?: string;
+      lastName?: string;
       email?: string;
       phone?: string;
       photos: IncomingPhoto[];
@@ -57,39 +59,65 @@ serve(async (req) => {
       totalCubicFeet?: number;
     } = body;
 
-    if (!firstName || (!email && !phone)) {
-      return new Response(
-        JSON.stringify({ error: "First name and either email or phone are required" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+    let leadId: string | null = null;
+
+    // 1a. Try to use existing anonymous lead (auto-save flow)
+    if (anonymousLeadId) {
+      const { data: existing } = await supabase
+        .from("leads")
+        .select("id, first_name, last_name, email, phone, tags")
+        .eq("id", anonymousLeadId)
+        .maybeSingle();
+
+      if (existing) {
+        leadId = existing.id;
+        // Upgrade the anonymous lead with any contact info we have
+        const updates: Record<string, unknown> = {};
+        if (firstName && firstName.trim() && existing.first_name === "Anonymous") {
+          updates.first_name = firstName.trim();
+        }
+        if (lastName && lastName.trim() && (!existing.last_name || existing.last_name === "Visitor")) {
+          updates.last_name = lastName.trim();
+        }
+        if (email && email.trim() && !existing.email) updates.email = email.trim();
+        if (phone && phone.trim() && !existing.phone) updates.phone = phone.trim();
+
+        const tags = new Set([...(existing.tags || []), "scan-room", "ai-detected"]);
+        updates.tags = Array.from(tags);
+        if (totalWeight) updates.estimated_weight = totalWeight;
+        updates.notes = `AI room scan - ${items.length} items detected across ${photos.length} photo(s)`;
+
+        await supabase.from("leads").update(updates).eq("id", leadId);
+      }
     }
 
-    // 1. Create the lead
-    const { data: lead, error: leadErr } = await supabase
-      .from("leads")
-      .insert({
-        first_name: firstName,
-        last_name: lastName || "-",
-        email: email || null,
-        phone: phone || null,
-        source: "website",
-        status: "new",
-        estimated_weight: totalWeight ?? null,
-        notes: `AI room scan - ${items.length} items detected across ${photos.length} photo(s)`,
-        tags: ["scan-room", "ai-detected"],
-      })
-      .select("id")
-      .single();
+    // 1b. Otherwise create a fresh lead (visitor with no consent / no anonymous id yet)
+    if (!leadId) {
+      const { data: lead, error: leadErr } = await supabase
+        .from("leads")
+        .insert({
+          first_name: firstName?.trim() || "Anonymous",
+          last_name: lastName?.trim() || "Scan",
+          email: email?.trim() || null,
+          phone: phone?.trim() || null,
+          source: "website",
+          status: "new",
+          estimated_weight: totalWeight ?? null,
+          notes: `AI room scan - ${items.length} items detected across ${photos.length} photo(s)`,
+          tags: ["scan-room", "ai-detected"],
+        })
+        .select("id")
+        .single();
 
-    if (leadErr || !lead) {
-      console.error("Lead insert error:", leadErr);
-      return new Response(
-        JSON.stringify({ error: "Could not create lead", detail: leadErr?.message }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      if (leadErr || !lead) {
+        console.error("Lead insert error:", leadErr);
+        return new Response(
+          JSON.stringify({ error: "Could not create lead", detail: leadErr?.message }),
+          { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      leadId = lead.id;
     }
-
-    const leadId = lead.id;
 
     // 2. Upload each photo to storage and remember the public URL keyed by local id
     const photoIdToUrl = new Map<string, string>();
@@ -149,12 +177,21 @@ serve(async (req) => {
       if (invErr) console.error("Inventory insert error:", invErr);
     }
 
-    // 4. Create a deal so it shows up in the pipeline
-    await supabase.from("deals").insert({
-      lead_id: leadId,
-      stage: "new_lead",
-      deal_value: 0,
-    });
+    // 4. Ensure a deal exists for this lead (don't duplicate if already created)
+    const { data: existingDeal } = await supabase
+      .from("deals")
+      .select("id")
+      .eq("lead_id", leadId)
+      .limit(1)
+      .maybeSingle();
+
+    if (!existingDeal) {
+      await supabase.from("deals").insert({
+        lead_id: leadId,
+        stage: "new_lead",
+        deal_value: 0,
+      });
+    }
 
     return new Response(
       JSON.stringify({ success: true, leadId, uploaded: photoIdToUrl.size, items: items.length }),

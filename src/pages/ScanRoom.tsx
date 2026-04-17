@@ -111,8 +111,8 @@ const SAMPLE_PREVIEW_ITEMS = [
 export default function ScanRoom() {
   useScrollToTop();
   const navigate = useNavigate();
-  // Inventory item shape (allows optional photoId + boxIndex from AI scans)
-  type InventoryItem = (typeof DEMO_ITEMS)[number] & { quantity: number; photoId?: string; boxIndex?: number };
+  // Inventory item shape (allows optional photoId + boxIndex + confidence from AI scans)
+  type InventoryItem = (typeof DEMO_ITEMS)[number] & { quantity: number; photoId?: string; boxIndex?: number; confidence?: number };
   const [detectedItems, setDetectedItems] = useState<InventoryItem[]>([]);
 
   // Merge helper: if an item with same name+room already exists, bump quantity instead of adding a new row
@@ -124,7 +124,9 @@ export default function ScanRoom() {
       const idx = prev.findIndex(i => key(i.name, i.room) === targetKey);
       if (idx >= 0) {
         const next = [...prev];
-        next[idx] = { ...next[idx], quantity: next[idx].quantity + addQty };
+        // Keep highest confidence when merging duplicates
+        const mergedConfidence = Math.max(next[idx].confidence ?? 0, incoming.confidence ?? 0) || undefined;
+        next[idx] = { ...next[idx], quantity: next[idx].quantity + addQty, confidence: mergedConfidence };
         return next;
       }
       return [...prev, { ...incoming, quantity: addQty } as InventoryItem];
@@ -243,10 +245,8 @@ export default function ScanRoom() {
   // Detection viewer modal state
   const [detectionView, setDetectionView] = useState<{ photo: ScannedPhotoEntry; boxId: number } | null>(null);
 
-  // Save-to-CRM modal state
-  const [showSaveModal, setShowSaveModal] = useState(false);
-  const [savePayload, setSavePayload] = useState({ firstName: "", lastName: "", email: "", phone: "" });
-  const [isSaving, setIsSaving] = useState(false);
+  // Auto-save state — every AI scan automatically pushes to the CRM
+  const [autoSaveStatus, setAutoSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [savedLeadId, setSavedLeadId] = useState<string | null>(null);
 
   // Convert image URL (blob:) to base64 data URL for AI vision
@@ -337,6 +337,7 @@ export default function ScanRoom() {
             quantity: qty,
             photoId: photo.id,
             boxIndex: b,
+            confidence: typeof it.confidence === 'number' ? it.confidence : undefined,
           };
           allDetected.push(row);
           addOrMergeItem(row);
@@ -355,6 +356,7 @@ export default function ScanRoom() {
             image: '',
             quantity: qty,
             photoId: photo.id,
+            confidence: typeof it.confidence === 'number' ? it.confidence : undefined,
           };
           allDetected.push(row);
           addOrMergeItem(row);
@@ -375,6 +377,21 @@ export default function ScanRoom() {
     toast({
       title: `Scan complete!`,
       description: `Detected ${totalDetectedCount} items across ${realPhotos.length} photo(s).`,
+    });
+
+    // Auto-save the scan to the CRM in the background — silent, no UI prompt.
+    // We rebuild the latest snapshots since React state from inside this loop is stale.
+    setDetectedItems((current) => {
+      setScanHistory((history) => {
+        const totals = {
+          weight: current.reduce((s, i) => s + i.weight * i.quantity, 0),
+          cuft: current.reduce((s, i) => s + i.cuft * i.quantity, 0),
+        };
+        // Fire and forget
+        autoSaveScanToCrm(current, history, totals);
+        return history;
+      });
+      return current;
     });
   };
 
@@ -405,27 +422,43 @@ export default function ScanRoom() {
     window.print();
   };
 
-  // Persist scanned photos + detected inventory to a new lead in the CRM
-  const handleSaveToCrm = async () => {
-    if (!savePayload.firstName.trim() || (!savePayload.email.trim() && !savePayload.phone.trim())) {
-      toast({ title: "Missing info", description: "First name and either email or phone are required.", variant: "destructive" });
-      return;
-    }
-    if (detectedItems.length === 0) {
-      toast({ title: "Nothing to save", description: "Scan at least one photo first.", variant: "destructive" });
-      return;
-    }
+  // Auto-persist scanned photos + detected inventory to a lead in the CRM (no UI prompt).
+  // Merges into the visitor's anonymous lead when present, otherwise creates a placeholder lead.
+  const autoSaveScanToCrm = async (
+    itemsSnapshot: InventoryItem[],
+    historySnapshot: ScannedPhotoEntry[],
+    totals: { weight: number; cuft: number }
+  ) => {
+    if (itemsSnapshot.length === 0) return;
+    setAutoSaveStatus("saving");
 
-    setIsSaving(true);
     try {
-      // Build photo payload from scan history (only AI-scanned photos persist)
-      const photoIds = Array.from(new Set(detectedItems.map((it) => it.photoId).filter(Boolean) as string[]));
-      const photoEntries = scanHistory.filter((p) => photoIds.includes(p.id));
+      // Pull contact info from any existing lead form data the visitor filled in
+      let contact: { firstName?: string; lastName?: string; email?: string; phone?: string } = {};
+      try {
+        const stored = localStorage.getItem("tm_lead");
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          contact = {
+            firstName: parsed.firstName || parsed.first_name,
+            lastName: parsed.lastName || parsed.last_name,
+            email: parsed.email,
+            phone: parsed.phone,
+          };
+        }
+      } catch {
+        // ignore parse errors
+      }
+      const anonymousLeadId = localStorage.getItem("tm_anonymous_lead_id") || undefined;
+
+      // Build photo payload from the AI scan history (only photos that produced inventory)
+      const photoIds = Array.from(new Set(itemsSnapshot.map((it) => it.photoId).filter(Boolean) as string[]));
+      const photoEntries = historySnapshot.filter((p) => photoIds.includes(p.id));
 
       const photos = await Promise.all(
         photoEntries.map(async (p) => {
           const dataUrl = await urlToDataUrl(p.url);
-          const itemCount = detectedItems.filter((it) => it.photoId === p.id).length;
+          const itemCount = itemsSnapshot.filter((it) => it.photoId === p.id).length;
           return {
             id: p.id,
             dataUrl,
@@ -437,10 +470,10 @@ export default function ScanRoom() {
         })
       );
 
-      const items = detectedItems.map((it) => {
+      const items = itemsSnapshot.map((it) => {
         let detectionBox: { x: number; y: number; width: number; height: number } | undefined;
         if (it.photoId && typeof it.boxIndex === "number") {
-          const photo = scanHistory.find((p) => p.id === it.photoId);
+          const photo = historySnapshot.find((p) => p.id === it.photoId);
           const box = photo?.boxes.find((b) => b.id === it.boxIndex);
           if (box) detectionBox = { x: box.x, y: box.y, width: box.width, height: box.height };
         }
@@ -450,6 +483,7 @@ export default function ScanRoom() {
           weight: it.weight,
           cubicFeet: it.cuft,
           quantity: it.quantity,
+          confidence: it.confidence,
           photoLocalId: it.photoId,
           detectionBox,
         };
@@ -457,14 +491,15 @@ export default function ScanRoom() {
 
       const { data, error } = await supabase.functions.invoke("save-scan-room", {
         body: {
-          firstName: savePayload.firstName.trim(),
-          lastName: savePayload.lastName.trim(),
-          email: savePayload.email.trim() || undefined,
-          phone: savePayload.phone.trim() || undefined,
+          anonymousLeadId,
+          firstName: contact.firstName,
+          lastName: contact.lastName,
+          email: contact.email,
+          phone: contact.phone,
           photos,
           items,
-          totalWeight,
-          totalCubicFeet: totalCuFt,
+          totalWeight: totals.weight,
+          totalCubicFeet: totals.cuft,
         },
       });
 
@@ -472,19 +507,10 @@ export default function ScanRoom() {
       if (!data?.success) throw new Error(data?.error || "Save failed");
 
       setSavedLeadId(data.leadId);
-      toast({
-        title: "Scan saved to CRM",
-        description: `${data.items} items and ${data.uploaded} photos saved. An agent will follow up.`,
-      });
+      setAutoSaveStatus("saved");
     } catch (e) {
-      console.error("Save to CRM error:", e);
-      toast({
-        title: "Save failed",
-        description: e instanceof Error ? e.message : "Could not save scan",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSaving(false);
+      console.error("Auto-save scan to CRM failed:", e);
+      setAutoSaveStatus("error");
     }
   };
 
@@ -1158,6 +1184,7 @@ export default function ScanRoom() {
                           <th>QTY</th>
                           <th>WEIGHT (LBS)</th>
                           <th>CU FT</th>
+                          <th>CONFIDENCE</th>
                           <th>TOTAL WEIGHT</th>
                           <th>TOTAL CU FT</th>
                           <th></th>
@@ -1223,6 +1250,24 @@ export default function ScanRoom() {
                             </td>
                             <td>{item.weight}</td>
                             <td>{item.cuft}</td>
+                            <td>
+                              {typeof item.confidence === 'number' ? (
+                                <span
+                                  className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold leading-none ${
+                                    item.confidence >= 85
+                                      ? 'bg-primary/15 text-primary'
+                                      : item.confidence >= 65
+                                      ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400'
+                                      : 'bg-destructive/15 text-destructive'
+                                  }`}
+                                  title={`AI confidence: ${item.confidence}%`}
+                                >
+                                  {item.confidence}%
+                                </span>
+                              ) : (
+                                <span className="text-[10px] text-muted-foreground">—</span>
+                              )}
+                            </td>
                             <td className="tru-scan-table-total">{item.weight * item.quantity}</td>
                             <td className="tru-scan-table-total">{item.cuft * item.quantity}</td>
                             <td>
@@ -1254,11 +1299,11 @@ export default function ScanRoom() {
                       </tbody>
                       <tfoot>
                         <tr>
-                          <td colSpan={5}></td>
+                          <td colSpan={6}></td>
                           <td className="tru-scan-table-footer-label">Totals:</td>
-                          <td>-</td>
                           <td className="tru-scan-table-footer-value">{totalWeight.toLocaleString()} lbs</td>
                           <td className="tru-scan-table-footer-value">{totalCuFt} cu ft</td>
+                          <td></td>
                         </tr>
                       </tfoot>
                     </table>
@@ -1292,16 +1337,7 @@ export default function ScanRoom() {
                       <Trash2 className="w-4 h-4" />
                       Clear All
                     </button>
-                    <button
-                      type="button"
-                      onClick={() => setShowSaveModal(true)}
-                      disabled={detectedItems.length === 0}
-                      className="tru-scan-action-btn"
-                      title="Save scan + photos to a lead record an agent can review"
-                    >
-                      <Save className="w-4 h-4" />
-                      Save Scan to CRM
-                    </button>
+                    {/* Save to CRM is automatic in the background — no customer-facing button. */}
                     <button
                       type="button"
                       onClick={() => {
@@ -1458,147 +1494,7 @@ export default function ScanRoom() {
           </div>
         )}
 
-        {/* Save Scan to CRM modal */}
-        {showSaveModal && (
-          <div
-            className="fixed inset-0 z-[110] bg-foreground/80 backdrop-blur-sm flex items-center justify-center p-4"
-            onClick={() => !isSaving && setShowSaveModal(false)}
-          >
-            <div
-              className="relative max-w-md w-full bg-background rounded-2xl overflow-hidden shadow-2xl border border-border"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex items-center justify-between px-5 py-4 border-b border-border">
-                <div>
-                  <p className="text-[10px] font-semibold uppercase tracking-wider text-primary">
-                    Save to CRM
-                  </p>
-                  <h3 className="text-base font-semibold text-foreground">
-                    {savedLeadId ? "Scan saved" : "Send your scan to an agent"}
-                  </h3>
-                </div>
-                <button
-                  onClick={() => !isSaving && setShowSaveModal(false)}
-                  disabled={isSaving}
-                  className="rounded-full p-1.5 hover:bg-muted transition-colors disabled:opacity-40"
-                  aria-label="Close"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-
-              {savedLeadId ? (
-                <div className="px-5 py-6 space-y-4">
-                  <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center flex-shrink-0">
-                      <Check className="w-5 h-5 text-primary" />
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      Your {detectedItems.length}-item scan and source photos have been saved.
-                      A TruMove agent will review your inventory and reach out shortly.
-                    </div>
-                  </div>
-                  <div className="flex justify-end">
-                    <button
-                      onClick={() => {
-                        setShowSaveModal(false);
-                        setSavedLeadId(null);
-                        setSavePayload({ firstName: "", lastName: "", email: "", phone: "" });
-                      }}
-                      className="rounded-full px-4 py-2 bg-foreground text-background text-sm font-semibold hover:opacity-90"
-                    >
-                      Done
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div className="px-5 py-5 space-y-4">
-                  <p className="text-xs text-muted-foreground">
-                    We'll save your {detectedItems.length} detected items and {scanHistory.length} scanned photos
-                    to a lead record so an agent can build your estimate.
-                  </p>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="space-y-1.5">
-                      <Label htmlFor="save-first" className="text-xs font-semibold">First name *</Label>
-                      <Input
-                        id="save-first"
-                        value={savePayload.firstName}
-                        onChange={(e) => setSavePayload((p) => ({ ...p, firstName: e.target.value }))}
-                        disabled={isSaving}
-                        autoComplete="given-name"
-                      />
-                    </div>
-                    <div className="space-y-1.5">
-                      <Label htmlFor="save-last" className="text-xs font-semibold">Last name</Label>
-                      <Input
-                        id="save-last"
-                        value={savePayload.lastName}
-                        onChange={(e) => setSavePayload((p) => ({ ...p, lastName: e.target.value }))}
-                        disabled={isSaving}
-                        autoComplete="family-name"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <Label htmlFor="save-email" className="text-xs font-semibold">Email</Label>
-                    <Input
-                      id="save-email"
-                      type="email"
-                      value={savePayload.email}
-                      onChange={(e) => setSavePayload((p) => ({ ...p, email: e.target.value }))}
-                      disabled={isSaving}
-                      autoComplete="email"
-                    />
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <Label htmlFor="save-phone" className="text-xs font-semibold">Phone</Label>
-                    <Input
-                      id="save-phone"
-                      type="tel"
-                      value={savePayload.phone}
-                      onChange={(e) => setSavePayload((p) => ({ ...p, phone: e.target.value }))}
-                      disabled={isSaving}
-                      autoComplete="tel"
-                    />
-                    <p className="text-[10px] text-muted-foreground">Email or phone is required.</p>
-                  </div>
-
-                  <div className="flex items-center justify-end gap-2 pt-2">
-                    <button
-                      type="button"
-                      onClick={() => setShowSaveModal(false)}
-                      disabled={isSaving}
-                      className="rounded-full px-4 py-2 text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors disabled:opacity-40"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleSaveToCrm}
-                      disabled={isSaving}
-                      className="inline-flex items-center gap-2 rounded-full px-4 py-2 bg-primary text-primary-foreground text-sm font-semibold hover:opacity-90 disabled:opacity-50"
-                    >
-                      {isSaving ? (
-                        <>
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                          Saving...
-                        </>
-                      ) : (
-                        <>
-                          <Save className="w-4 h-4" />
-                          Save Scan
-                        </>
-                      )}
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
+        {/* Save Scan to CRM is now automatic — runs after every AI scan, no UI. */}
       </div>
     </SiteShell>
   );

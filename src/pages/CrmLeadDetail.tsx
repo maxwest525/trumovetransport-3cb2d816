@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   ArrowLeft, User, Mail, Phone, MapPin, Calendar, DollarSign,
-  Weight, Tag, Clock, FileText, Truck, UserCheck
+  Weight, Tag, Clock, FileText, Truck, UserCheck, Camera, Sparkles, Package, X,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -39,6 +39,28 @@ interface Deal {
   expected_close_date: string | null;
   carrier_name: string | null;
   created_at: string;
+}
+
+interface ScanPhoto {
+  id: string;
+  photo_url: string;
+  room_label: string | null;
+  detected_boxes: Array<{ id?: number; name?: string; confidence?: number; x?: number; y?: number; width?: number; height?: number }>;
+  item_count: number;
+  created_at: string;
+}
+
+interface InventoryItem {
+  id: string;
+  item_name: string;
+  room: string;
+  quantity: number;
+  cubic_feet: number;
+  weight: number;
+  source: string;
+  source_photo_url: string | null;
+  detection_box: { x: number; y: number; width: number; height: number } | null;
+  confidence: number | null;
 }
 
 const statusColors: Record<string, string> = {
@@ -75,6 +97,9 @@ export default function CrmLeadDetail() {
   const navigate = useNavigate();
   const [lead, setLead] = useState<Lead | null>(null);
   const [deals, setDeals] = useState<Deal[]>([]);
+  const [scanPhotos, setScanPhotos] = useState<ScanPhoto[]>([]);
+  const [inventory, setInventory] = useState<InventoryItem[]>([]);
+  const [photoViewer, setPhotoViewer] = useState<ScanPhoto | null>(null);
   const [loading, setLoading] = useState(true);
   const [agentName, setAgentName] = useState<string | null>(null);
   const [claiming, setClaiming] = useState(false);
@@ -111,9 +136,11 @@ export default function CrmLeadDetail() {
     if (!leadId) return;
 
     async function fetchData() {
-      const [leadRes, dealsRes] = await Promise.all([
+      const [leadRes, dealsRes, photosRes, inventoryRes] = await Promise.all([
         supabase.from("leads").select("*").eq("id", leadId).single(),
         supabase.from("deals").select("id, stage, deal_value, expected_close_date, carrier_name, created_at").eq("lead_id", leadId),
+        supabase.from("lead_scan_photos").select("*").eq("lead_id", leadId).order("created_at", { ascending: true }),
+        supabase.from("lead_inventory").select("*").eq("lead_id", leadId).order("created_at", { ascending: true }),
       ]);
 
       if (leadRes.data) {
@@ -128,6 +155,8 @@ export default function CrmLeadDetail() {
         }
       }
       if (dealsRes.data) setDeals(dealsRes.data as Deal[]);
+      if (photosRes.data) setScanPhotos(photosRes.data as unknown as ScanPhoto[]);
+      if (inventoryRes.data) setInventory(inventoryRes.data as unknown as InventoryItem[]);
       setLoading(false);
     }
 
@@ -294,6 +323,103 @@ export default function CrmLeadDetail() {
                 </CardContent>
               </Card>
             )}
+
+            {/* AI Room Scan - Photos */}
+            {scanPhotos.length > 0 && (
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <Camera className="w-4 h-4 text-primary" />
+                    AI Room Scan Photos ({scanPhotos.length})
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    {scanPhotos.map((photo) => (
+                      <button
+                        key={photo.id}
+                        onClick={() => setPhotoViewer(photo)}
+                        className="group relative rounded-lg overflow-hidden border border-border/50 hover:border-primary transition-colors"
+                      >
+                        <img src={photo.photo_url} alt={photo.room_label || "Scan"} className="w-full h-28 object-cover" />
+                        <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/30 transition-colors" />
+                        <div className="absolute bottom-0 left-0 right-0 px-2 py-1 bg-foreground/70 text-background flex items-center justify-between">
+                          <span className="text-[10px] font-semibold truncate">{photo.room_label || "Room"}</span>
+                          <span className="text-[10px] flex items-center gap-0.5"><Sparkles className="w-2.5 h-2.5" />{photo.item_count}</span>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Inventory (AI + Manual) */}
+            {inventory.length > 0 && (
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <Package className="w-4 h-4 text-primary" />
+                    Inventory ({inventory.length})
+                    <span className="ml-2 text-[10px] font-normal text-muted-foreground">
+                      {inventory.filter(i => i.source === 'ai-scan').length} AI / {inventory.filter(i => i.source !== 'ai-scan').length} Manual
+                    </span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="text-[10px] uppercase tracking-wider text-muted-foreground border-b border-border/50">
+                          <th className="text-left py-2 font-semibold">Item</th>
+                          <th className="text-left py-2 font-semibold">Room</th>
+                          <th className="text-center py-2 font-semibold">Qty</th>
+                          <th className="text-right py-2 font-semibold">Wt</th>
+                          <th className="text-right py-2 font-semibold">CuFt</th>
+                          <th className="text-right py-2 font-semibold">Conf</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {inventory.map((item) => {
+                          const isAi = item.source === 'ai-scan';
+                          return (
+                            <tr key={item.id} className="border-b border-border/30 last:border-0">
+                              <td className="py-2">
+                                <div className="flex items-center gap-1.5 flex-wrap">
+                                  <span className="font-medium text-foreground">{item.item_name}</span>
+                                  {isAi ? (
+                                    <span className="inline-flex items-center gap-0.5 rounded-full bg-primary/15 text-primary px-1.5 py-0.5 text-[9px] font-bold uppercase leading-none">
+                                      <Sparkles className="w-2.5 h-2.5" />AI
+                                    </span>
+                                  ) : (
+                                    <span className="inline-flex items-center rounded-full bg-muted text-muted-foreground px-1.5 py-0.5 text-[9px] font-bold uppercase leading-none">
+                                      Manual
+                                    </span>
+                                  )}
+                                </div>
+                              </td>
+                              <td className="py-2 text-muted-foreground">{item.room}</td>
+                              <td className="py-2 text-center">{item.quantity}</td>
+                              <td className="py-2 text-right">{item.weight}</td>
+                              <td className="py-2 text-right">{item.cubic_feet}</td>
+                              <td className="py-2 text-right">
+                                {item.confidence != null ? (
+                                  <span className={`text-[10px] font-bold ${item.confidence >= 85 ? 'text-primary' : item.confidence >= 65 ? 'text-amber-500' : 'text-destructive'}`}>
+                                    {item.confidence}%
+                                  </span>
+                                ) : (
+                                  <span className="text-[10px] text-muted-foreground">-</span>
+                                )}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
 
           {/* Right column - Attribution Panel */}
@@ -310,6 +436,56 @@ export default function CrmLeadDetail() {
           </div>
         </div>
       </div>
+
+      {/* Photo viewer modal with detection overlays */}
+      {photoViewer && (
+        <div
+          className="fixed inset-0 z-[100] bg-foreground/80 backdrop-blur-sm flex items-center justify-center p-4"
+          onClick={() => setPhotoViewer(null)}
+        >
+          <div
+            className="relative max-w-4xl w-full bg-background rounded-2xl overflow-hidden shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">AI Scan Source</p>
+                <h3 className="text-sm font-semibold text-foreground">{photoViewer.room_label || "Room"}</h3>
+              </div>
+              <button onClick={() => setPhotoViewer(null)} className="rounded-full p-1.5 hover:bg-muted" aria-label="Close">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="relative bg-muted">
+              <img src={photoViewer.photo_url} alt={photoViewer.room_label || "Scan"} className="w-full max-h-[70vh] object-contain" />
+              {photoViewer.detected_boxes?.map((box, i) => {
+                if (box.x == null || box.y == null || box.width == null || box.height == null) return null;
+                return (
+                  <div
+                    key={i}
+                    className="absolute pointer-events-none border-2 border-primary rounded"
+                    style={{
+                      top: `${box.y * 100}%`,
+                      left: `${box.x * 100}%`,
+                      width: `${box.width * 100}%`,
+                      height: `${box.height * 100}%`,
+                    }}
+                  >
+                    {box.name && (
+                      <span className="absolute -top-6 left-0 bg-primary text-primary-foreground text-[10px] font-semibold px-1.5 py-0.5 rounded whitespace-nowrap">
+                        {box.name}{box.confidence != null ? ` ${box.confidence}%` : ''}
+                      </span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+            <div className="px-4 py-3 border-t border-border text-xs text-muted-foreground">
+              {photoViewer.item_count} items detected in this photo
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
