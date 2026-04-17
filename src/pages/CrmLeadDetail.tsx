@@ -133,8 +133,6 @@ export default function CrmLeadDetail() {
       const { data, error } = await supabase.functions.invoke("create-scan-resume-link", {
         body: { leadId },
       });
-        body: { leadId },
-      });
       if (error || !data?.token) {
         toast.error(data?.error || error?.message || "Could not create resume link");
         return;
@@ -148,11 +146,40 @@ export default function CrmLeadDetail() {
       } catch {
         toast.success("Resume link created", { description: url });
       }
+      // Refresh the list so the new token appears immediately
+      fetchResumeTokens();
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Could not create resume link");
     } finally {
       setGeneratingResumeLink(false);
     }
+  };
+
+  const handleCopyResumeLink = async (token: string) => {
+    const url = `${window.location.origin}/scan-room?resume=${token}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      toast.success("Resume link copied");
+    } catch {
+      toast.error("Could not copy link");
+    }
+  };
+
+  const handleRevokeResumeLink = async (tokenId: string) => {
+    setRevokingTokenId(tokenId);
+    // Marking used_at flips the link to revoked so redemption is blocked
+    const { error } = await supabase
+      .from("scan_resume_tokens")
+      .update({ used_at: new Date().toISOString() })
+      .eq("id", tokenId)
+      .is("used_at", null);
+    setRevokingTokenId(null);
+    if (error) {
+      toast.error("Could not revoke link: " + error.message);
+      return;
+    }
+    toast.success("Resume link revoked");
+    fetchResumeTokens();
   };
 
 
