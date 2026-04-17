@@ -206,8 +206,90 @@ export default function ScanRoom() {
     }
   }, [demoPlaying, demoStep]);
 
+  const [isAiScanning, setIsAiScanning] = useState(false);
+  const [aiScanProgress, setAiScanProgress] = useState({ current: 0, total: 0 });
+
+  // Convert image URL (blob:) to base64 data URL for AI vision
+  const urlToDataUrl = async (url: string): Promise<string> => {
+    const res = await fetch(url);
+    const blob = await res.blob();
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  };
+
+  // Run real Lovable AI vision detection on user uploaded photos
+  const runRealAiScan = async () => {
+    const realPhotos = uploadedPhotos.filter(p => p.id !== 'demo-photo' && !scannedPhotoIds.has(p.id));
+    if (realPhotos.length === 0) {
+      toast({ title: "No new photos to scan", description: "Upload room photos first." });
+      return;
+    }
+
+    setIsAiScanning(true);
+    setIsScanning(true);
+    setAiScanProgress({ current: 0, total: realPhotos.length });
+
+    let nextId = Date.now();
+    const allDetected: typeof DEMO_ITEMS = [];
+
+    for (let i = 0; i < realPhotos.length; i++) {
+      const photo = realPhotos[i];
+      setAiScanProgress({ current: i + 1, total: realPhotos.length });
+      try {
+        // Photo name often starts with "Living Room - filename.jpg"
+        const roomHint = photo.name.includes(' - ') ? photo.name.split(' - ')[0] : undefined;
+        const dataUrl = await urlToDataUrl(photo.url);
+        const { data, error } = await supabase.functions.invoke('detect-inventory', {
+          body: { imageUrl: dataUrl, roomHint },
+        });
+
+        if (error) {
+          console.error('AI scan error', error);
+          toast({ title: "Scan failed", description: error.message || "Could not analyze photo", variant: "destructive" });
+          continue;
+        }
+
+        const items = (data?.items || []) as Array<{ name: string; room: string; quantity: number; cubicFeet: number; weight: number; confidence: number }>;
+        items.forEach(it => {
+          // Expand quantity into individual rows so existing UI can edit per-item
+          for (let q = 0; q < it.quantity; q++) {
+            allDetected.push({
+              id: nextId++,
+              name: it.name,
+              room: it.room,
+              weight: it.weight,
+              cuft: it.cubicFeet,
+              image: '',
+            });
+          }
+        });
+
+        setDetectedItems(prev => [...prev, ...allDetected.slice(allDetected.length - items.reduce((s, x) => s + x.quantity, 0))]);
+        setScannedPhotoIds(prev => new Set([...prev, photo.id]));
+      } catch (e) {
+        console.error('Scan exception', e);
+        toast({ title: "Scan error", description: "Something went wrong analyzing this photo.", variant: "destructive" });
+      }
+    }
+
+    setIsAiScanning(false);
+    setIsScanning(false);
+    toast({
+      title: `Scan complete!`,
+      description: `Detected ${allDetected.length} items across ${realPhotos.length} photo(s).`,
+    });
+  };
+
   const handleStartScanClick = () => {
-    if (uploadedPhotos.length > 0 && !isDemoActive) {
+    const hasRealPhotos = uploadedPhotos.some(p => p.id !== 'demo-photo' && !scannedPhotoIds.has(p.id));
+    if (hasRealPhotos && !isDemoActive) {
+      // Real AI scan path
+      runRealAiScan();
+    } else if (uploadedPhotos.length > 0 && !isDemoActive) {
       setShowIntroModal(true);
     } else {
       // Start demo in auto-play mode
