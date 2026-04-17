@@ -13,6 +13,9 @@ type IncomingPhoto = {
   roomLabel?: string;
   boxes?: Array<{ id: number; name: string; confidence: number; x: number; y: number; width: number; height: number }>;
   itemCount?: number;
+  // Optional free-text customer note about this photo (e.g.
+  // "fragile, do not stack"). Sanitized before persisting.
+  note?: string;
 };
 
 type IncomingItem = {
