@@ -17,13 +17,14 @@ For each detected item, provide:
 - cubicFeet: Realistic cubic feet for that item (use moving industry standards - e.g. sofa 50, queen bed 65, dining chair 5, coffee table 5, refrigerator 60, dresser 40, nightstand 5, tv 15, lamp 3)
 - weight: Realistic weight in lbs (use cubicFeet * 7 as default)
 - confidence: 0-100 score for how confident you are
+- box: A normalized bounding box {x, y, width, height} where each value is 0-1 relative to the image dimensions (x,y = top-left corner). Be tight around the visible item.
 
 Skip:
 - Small decor items (books, picture frames, vases, plants under 2ft)
 - Items inside drawers/cabinets
 - Built-in fixtures (cabinets, sinks, ceiling lights)
 
-Return ONLY items you can clearly see. Be thorough but accurate.`;
+Return ONLY items you can clearly see. Be thorough but accurate. ALWAYS provide a bounding box for each item.`;
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -46,8 +47,8 @@ serve(async (req) => {
     }
 
     const userText = roomHint
-      ? `This photo is from the ${roomHint}. Identify every movable item you can see.`
-      : "Identify every movable item you can see in this photo.";
+      ? `This photo is from the ${roomHint}. Identify every movable item you can see and provide a normalized bounding box (0-1) for each.`
+      : "Identify every movable item you can see in this photo and provide a normalized bounding box (0-1) for each.";
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -72,7 +73,7 @@ serve(async (req) => {
             type: "function",
             function: {
               name: "report_detected_items",
-              description: "Report all movable items detected in the photo",
+              description: "Report all movable items detected in the photo with bounding boxes",
               parameters: {
                 type: "object",
                 properties: {
@@ -87,8 +88,20 @@ serve(async (req) => {
                         cubicFeet: { type: "number" },
                         weight: { type: "number" },
                         confidence: { type: "number" },
+                        box: {
+                          type: "object",
+                          description: "Normalized bounding box (0-1) of the item in the image",
+                          properties: {
+                            x: { type: "number", description: "Left edge (0-1)" },
+                            y: { type: "number", description: "Top edge (0-1)" },
+                            width: { type: "number", description: "Width (0-1)" },
+                            height: { type: "number", description: "Height (0-1)" },
+                          },
+                          required: ["x", "y", "width", "height"],
+                          additionalProperties: false,
+                        },
                       },
-                      required: ["name", "room", "quantity", "cubicFeet", "weight", "confidence"],
+                      required: ["name", "room", "quantity", "cubicFeet", "weight", "confidence", "box"],
                       additionalProperties: false,
                     },
                   },
@@ -127,7 +140,7 @@ serve(async (req) => {
     const data = await response.json();
     const toolCall = data.choices?.[0]?.message?.tool_calls?.[0];
 
-    let items: Array<{ name: string; room: string; quantity: number; cubicFeet: number; weight: number; confidence: number }> = [];
+    let items: Array<{ name: string; room: string; quantity: number; cubicFeet: number; weight: number; confidence: number; box?: { x: number; y: number; width: number; height: number } }> = [];
 
     if (toolCall?.function?.arguments) {
       try {
@@ -138,10 +151,25 @@ serve(async (req) => {
       }
     }
 
-    // Sanitize - ensure realistic values
+    // Sanitize - ensure realistic values + clamp box to 0-1
+    const clamp01 = (n: number) => Math.max(0, Math.min(1, n));
     items = items.map((it) => {
       const cuft = Math.max(1, Math.round(it.cubicFeet || 5));
       const wt = Math.max(5, Math.round(it.weight || cuft * DENSITY));
+      let box = it.box;
+      if (box && typeof box.x === "number") {
+        const x = clamp01(box.x);
+        const y = clamp01(box.y);
+        const width = clamp01(box.width);
+        const height = clamp01(box.height);
+        // Ensure box stays inside image bounds
+        box = {
+          x,
+          y,
+          width: Math.min(width, 1 - x),
+          height: Math.min(height, 1 - y),
+        };
+      }
       return {
         name: String(it.name || "Unknown item").slice(0, 80),
         room: String(it.room || roomHint || "Other").slice(0, 40),
@@ -149,6 +177,7 @@ serve(async (req) => {
         cubicFeet: cuft,
         weight: wt,
         confidence: Math.max(0, Math.min(100, Math.round(it.confidence || 80))),
+        box,
       };
     });
 

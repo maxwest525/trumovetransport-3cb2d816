@@ -190,6 +190,9 @@ export default function ScanRoom() {
     setIsScanning(false);
     setUploadedPhotos(prev => prev.filter(p => p.id !== 'demo-photo'));
     setScannedPhotoIds(new Set());
+    setActiveScanPhoto(null);
+    setAiBoxes([]);
+    setRevealedBoxCount(0);
   };
 
   // Auto-advance demo when playing
@@ -208,6 +211,12 @@ export default function ScanRoom() {
 
   const [isAiScanning, setIsAiScanning] = useState(false);
   const [aiScanProgress, setAiScanProgress] = useState({ current: 0, total: 0 });
+  // Active photo being scanned (drives the live preview in the scanner panel)
+  const [activeScanPhoto, setActiveScanPhoto] = useState<{ url: string; name: string } | null>(null);
+  // AI-detected bounding boxes for the active photo (revealed progressively)
+  type AiBox = { id: number; name: string; confidence: number; x: number; y: number; width: number; height: number };
+  const [aiBoxes, setAiBoxes] = useState<AiBox[]>([]);
+  const [revealedBoxCount, setRevealedBoxCount] = useState(0);
 
   // Convert image URL (blob:) to base64 data URL for AI vision
   const urlToDataUrl = async (url: string): Promise<string> => {
@@ -235,10 +244,15 @@ export default function ScanRoom() {
 
     let nextId = Date.now();
     const allDetected: typeof DEMO_ITEMS = [];
+    let totalDetectedCount = 0;
 
     for (let i = 0; i < realPhotos.length; i++) {
       const photo = realPhotos[i];
       setAiScanProgress({ current: i + 1, total: realPhotos.length });
+      // Show this photo in the scanner panel + reset boxes
+      setActiveScanPhoto({ url: photo.url, name: photo.name });
+      setAiBoxes([]);
+      setRevealedBoxCount(0);
       try {
         // Photo name often starts with "Living Room - filename.jpg"
         const roomHint = photo.name.includes(' - ') ? photo.name.split(' - ')[0] : undefined;
@@ -253,23 +267,63 @@ export default function ScanRoom() {
           continue;
         }
 
-        const items = (data?.items || []) as Array<{ name: string; room: string; quantity: number; cubicFeet: number; weight: number; confidence: number }>;
-        items.forEach(it => {
-          // Expand quantity into individual rows so existing UI can edit per-item
+        const items = (data?.items || []) as Array<{ name: string; room: string; quantity: number; cubicFeet: number; weight: number; confidence: number; box?: { x: number; y: number; width: number; height: number } }>;
+
+        // Build the bounding boxes list (one box per detected item, regardless of quantity)
+        const boxes: AiBox[] = items
+          .filter(it => it.box && it.box.width > 0 && it.box.height > 0)
+          .map((it, idx) => ({
+            id: idx,
+            name: it.name,
+            confidence: it.confidence,
+            x: it.box!.x,
+            y: it.box!.y,
+            width: it.box!.width,
+            height: it.box!.height,
+          }));
+        setAiBoxes(boxes);
+
+        // Progressively reveal boxes one-by-one, then add the corresponding inventory rows
+        for (let b = 0; b < boxes.length; b++) {
+          await new Promise(res => setTimeout(res, 350));
+          setRevealedBoxCount(b + 1);
+          const it = items[b];
+          if (!it) continue;
           for (let q = 0; q < it.quantity; q++) {
-            allDetected.push({
+            const row = {
               id: nextId++,
               name: it.name,
               room: it.room,
               weight: it.weight,
               cuft: it.cubicFeet,
               image: '',
-            });
+            };
+            allDetected.push(row);
+            setDetectedItems(prev => [...prev, row]);
+            totalDetectedCount++;
+          }
+        }
+
+        // For any items without boxes (rare), still add them to inventory
+        items.slice(boxes.length).forEach(it => {
+          for (let q = 0; q < it.quantity; q++) {
+            const row = {
+              id: nextId++,
+              name: it.name,
+              room: it.room,
+              weight: it.weight,
+              cuft: it.cubicFeet,
+              image: '',
+            };
+            allDetected.push(row);
+            setDetectedItems(prev => [...prev, row]);
+            totalDetectedCount++;
           }
         });
 
-        setDetectedItems(prev => [...prev, ...allDetected.slice(allDetected.length - items.reduce((s, x) => s + x.quantity, 0))]);
         setScannedPhotoIds(prev => new Set([...prev, photo.id]));
+        // Brief pause so the user can see the completed boxes before next photo
+        await new Promise(res => setTimeout(res, 600));
       } catch (e) {
         console.error('Scan exception', e);
         toast({ title: "Scan error", description: "Something went wrong analyzing this photo.", variant: "destructive" });
@@ -280,7 +334,7 @@ export default function ScanRoom() {
     setIsScanning(false);
     toast({
       title: `Scan complete!`,
-      description: `Detected ${allDetected.length} items across ${realPhotos.length} photo(s).`,
+      description: `Detected ${totalDetectedCount} items across ${realPhotos.length} photo(s).`,
     });
   };
 
@@ -618,18 +672,44 @@ export default function ScanRoom() {
 
               {/* Center: Demo & Actions */}
               <div className="flex flex-col items-center justify-center gap-4 border border-border rounded-2xl bg-background shadow-[0_4px_20px_-4px_hsl(var(--tm-ink)/0.08)] relative overflow-hidden">
-                {/* Scanner content - show image when demo step >= 2 */}
-                {demoStep >= 2 ? (
+                {/* Scanner content - show image when demo is active OR live AI scan running */}
+                {(demoStep >= 2 || activeScanPhoto) ? (
                   <div className="flex flex-col items-center gap-2 w-full">
                     <div className="relative w-full flex-1 overflow-hidden rounded-t-2xl">
-                      <img src={sampleRoomLiving} alt="Scanning room" className="w-full h-full object-cover" />
+                      <img
+                        src={activeScanPhoto ? activeScanPhoto.url : sampleRoomLiving}
+                        alt="Scanning room"
+                        className="w-full h-full object-cover"
+                      />
                       {isScanning && (
                         <div className="tru-ai-scanner-overlay">
                           <div className="tru-ai-scanner-line" />
                         </div>
                       )}
-                      {/* Detection bounding boxes - appear as items are detected */}
-                      {DEMO_FURNITURE_POSITIONS.slice(0, Math.max(0, demoStep - 2)).map((item) => (
+                      {/* Live AI bounding boxes (real Gemini detections) */}
+                      {activeScanPhoto && aiBoxes.slice(0, revealedBoxCount).map((item) => (
+                        <div
+                          key={item.id}
+                          className="tru-ai-detection-box"
+                          style={{
+                            top: `${item.y * 100}%`,
+                            left: `${item.x * 100}%`,
+                            width: `${item.width * 100}%`,
+                            height: `${item.height * 100}%`,
+                          }}
+                        >
+                          <span className="tru-ai-detection-corner tru-ai-corner-tl" />
+                          <span className="tru-ai-detection-corner tru-ai-corner-tr" />
+                          <span className="tru-ai-detection-corner tru-ai-corner-bl" />
+                          <span className="tru-ai-detection-corner tru-ai-corner-br" />
+                          <span className="tru-ai-detection-label">
+                            {item.name}
+                            <span className="tru-ai-detection-confidence">{item.confidence}%</span>
+                          </span>
+                        </div>
+                      ))}
+                      {/* Demo bounding boxes - only when running scripted demo */}
+                      {!activeScanPhoto && DEMO_FURNITURE_POSITIONS.slice(0, Math.max(0, demoStep - 2)).map((item) => (
                         <div
                           key={item.id}
                           className="tru-ai-detection-box"
@@ -656,11 +736,24 @@ export default function ScanRoom() {
                           {isScanning ? "Scanning..." : "Complete"}
                         </span>
                       </div>
+                      {activeScanPhoto && aiScanProgress.total > 1 && (
+                        <div className="absolute top-2 right-2 bg-foreground/80 text-background rounded-full px-2.5 py-1 z-20">
+                          <span className="text-[10px] font-semibold">
+                            Photo {aiScanProgress.current} / {aiScanProgress.total}
+                          </span>
+                        </div>
+                      )}
                     </div>
                     <p className="text-xs text-muted-foreground text-center px-4">
-                      {isScanning 
-                        ? `Detected ${detectedItems.length} of ${DEMO_ITEMS.length} items...`
-                        : `Found ${detectedItems.length} items`
+                      {activeScanPhoto
+                        ? (isAiScanning
+                            ? (revealedBoxCount === 0
+                                ? "Gemini is analyzing the photo..."
+                                : `Detected ${revealedBoxCount} of ${aiBoxes.length} items in this photo...`)
+                            : `Found ${aiBoxes.length} items in this photo`)
+                        : (isScanning
+                            ? `Detected ${detectedItems.length} of ${DEMO_ITEMS.length} items...`
+                            : `Found ${detectedItems.length} items`)
                       }
                     </p>
                   </div>
