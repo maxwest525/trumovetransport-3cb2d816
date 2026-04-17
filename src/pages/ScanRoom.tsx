@@ -714,11 +714,24 @@ export default function ScanRoom() {
     });
   };
 
-  // Run real Lovable AI vision detection on user uploaded photos
-  const runRealAiScan = async () => {
-    const realPhotos = uploadedPhotos.filter(p => p.id !== 'demo-photo' && !scannedPhotoIds.has(p.id));
+  // Run real Lovable AI vision detection on user uploaded photos.
+  // Optional `folderName` scopes the scan to a single folder (e.g. "Living Room"
+  // or a custom folder), which powers the per-folder "Scan this room" button.
+  // Without it, every unscanned real photo is processed.
+  const runRealAiScan = async (folderName?: string) => {
+    const realPhotos = uploadedPhotos.filter(p => {
+      if (p.id === 'demo-photo') return false;
+      if (scannedPhotoIds.has(p.id)) return false;
+      if (folderName && parseRoom(p.name) !== folderName) return false;
+      return true;
+    });
     if (realPhotos.length === 0) {
-      toast({ title: "No new photos to scan", description: "Upload room photos first." });
+      toast({
+        title: folderName ? `No new photos in "${folderName}"` : "No new photos to scan",
+        description: folderName
+          ? "Every photo in this folder has already been scanned, or the folder is empty."
+          : "Upload room photos first.",
+      });
       return;
     }
 
@@ -846,6 +859,28 @@ export default function ScanRoom() {
       });
       return current;
     });
+  };
+
+  // Per-folder scan: same lead-gate as the global "Scan Your Home" button,
+  // but the AI detector only runs against photos inside this folder.
+  const handleScanFolderClick = (folderName: string) => {
+    if (isAiScanning) return;
+    const folderHasUnscanned = uploadedPhotos.some(
+      (p) => p.id !== 'demo-photo' && !scannedPhotoIds.has(p.id) && parseRoom(p.name) === folderName
+    );
+    if (!folderHasUnscanned) {
+      toast({
+        title: `Nothing new in "${folderName}"`,
+        description: "Add photos here or scan a different folder.",
+      });
+      return;
+    }
+    if (!isUnlocked) {
+      setPendingAction(() => () => runRealAiScan(folderName));
+      setShowLeadGate(true);
+      return;
+    }
+    runRealAiScan(folderName);
   };
 
   const handleStartScanClick = () => {
@@ -1810,6 +1845,30 @@ export default function ScanRoom() {
                                   <span className="text-[10px] text-muted-foreground/50">
                                     {photos.length}
                                   </span>
+                                  {/* Per-folder "Scan this room" — only shown when the folder
+                                      has at least one unscanned real photo. For the "All" bucket
+                                      we still scope the run to its own photos, which matches
+                                      what the customer sees in this group. Hidden during an
+                                      active scan to avoid kicking off overlapping runs. */}
+                                  {(() => {
+                                    if (renamingFolder === room) return null;
+                                    const unscannedCount = photos.filter(
+                                      (p) => p.id !== 'demo-photo' && !scannedPhotoIds.has(p.id)
+                                    ).length;
+                                    if (unscannedCount === 0) return null;
+                                    return (
+                                      <button
+                                        type="button"
+                                        onClick={() => handleScanFolderClick(room)}
+                                        disabled={isAiScanning}
+                                        className="ml-1 inline-flex items-center gap-1 rounded-md border border-primary/30 bg-primary/[0.06] hover:bg-primary/[0.12] disabled:opacity-50 disabled:cursor-not-allowed px-1.5 py-0.5 text-[9px] font-semibold text-primary uppercase tracking-wider transition-colors"
+                                        title={`Scan ${unscannedCount} unscanned photo${unscannedCount === 1 ? '' : 's'} in ${room}`}
+                                      >
+                                        <Sparkles className="w-2.5 h-2.5" />
+                                        Scan
+                                      </button>
+                                    );
+                                  })()}
                                   {isAllFolder ? (
                                     <span className="ml-auto text-[9px] uppercase tracking-wider text-primary/70 font-semibold">
                                       Default
