@@ -212,11 +212,16 @@ export default function ScanRoom() {
   const [isAiScanning, setIsAiScanning] = useState(false);
   const [aiScanProgress, setAiScanProgress] = useState({ current: 0, total: 0 });
   // Active photo being scanned (drives the live preview in the scanner panel)
-  const [activeScanPhoto, setActiveScanPhoto] = useState<{ url: string; name: string } | null>(null);
+  const [activeScanPhoto, setActiveScanPhoto] = useState<{ id: string; url: string; name: string } | null>(null);
   // AI-detected bounding boxes for the active photo (revealed progressively)
   type AiBox = { id: number; name: string; confidence: number; x: number; y: number; width: number; height: number };
   const [aiBoxes, setAiBoxes] = useState<AiBox[]>([]);
   const [revealedBoxCount, setRevealedBoxCount] = useState(0);
+  // History of every photo scanned by the AI (for thumbnails + per-item detection viewer)
+  type ScannedPhotoEntry = { id: string; url: string; name: string; boxes: AiBox[] };
+  const [scanHistory, setScanHistory] = useState<ScannedPhotoEntry[]>([]);
+  // Detection viewer modal state
+  const [detectionView, setDetectionView] = useState<{ photo: ScannedPhotoEntry; boxId: number } | null>(null);
 
   // Convert image URL (blob:) to base64 data URL for AI vision
   const urlToDataUrl = async (url: string): Promise<string> => {
