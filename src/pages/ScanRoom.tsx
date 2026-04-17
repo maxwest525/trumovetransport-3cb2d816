@@ -40,6 +40,7 @@ import { useNavigate, Link } from "react-router-dom";
 import SiteShell from "@/components/layout/SiteShell";
 import ScanIntroModal from "@/components/estimate/ScanIntroModal";
 import EstimatorNavToggle from "@/components/estimate/EstimatorNavToggle";
+import LeadGateModal from "@/components/scan/LeadGateModal";
 
 import logoImg from "@/assets/logo.png";
 import { 
@@ -142,8 +143,11 @@ export default function ScanRoom() {
   const isDemoActive = demoStep > 0;
   const DEMO_TOTAL_STEPS = 2 + DEMO_ITEMS.length;
   
-  // Lead capture state
-  const [isUnlocked, setIsUnlocked] = useState(true);
+  // Lead capture state — AI scan is locked until visitor provides contact info
+  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [showLeadGate, setShowLeadGate] = useState(false);
+  // Action to perform once the gate is unlocked (e.g. open uploader, start scan)
+  const [pendingAction, setPendingAction] = useState<null | (() => void)>(null);
   
   // Sample room photos for the library demo
   const samplePhotos = [
@@ -158,6 +162,12 @@ export default function ScanRoom() {
   const roomUploadRef = useRef<HTMLInputElement>(null);
 
   const handleRoomClick = (roomLabel: string) => {
+    // Gate uploads behind the lead capture form
+    if (!isUnlocked) {
+      setPendingAction(() => () => handleRoomClick(roomLabel));
+      setShowLeadGate(true);
+      return;
+    }
     setPendingRoomLabel(roomLabel);
     if (roomUploadRef.current) {
       roomUploadRef.current.value = "";
@@ -398,12 +408,22 @@ export default function ScanRoom() {
   const handleStartScanClick = () => {
     const hasRealPhotos = uploadedPhotos.some(p => p.id !== 'demo-photo' && !scannedPhotoIds.has(p.id));
     if (hasRealPhotos && !isDemoActive) {
-      // Real AI scan path
+      // Real AI scan path — gate behind lead capture
+      if (!isUnlocked) {
+        setPendingAction(() => () => runRealAiScan());
+        setShowLeadGate(true);
+        return;
+      }
       runRealAiScan();
     } else if (uploadedPhotos.length > 0 && !isDemoActive) {
+      if (!isUnlocked) {
+        setPendingAction(() => () => setShowIntroModal(true));
+        setShowLeadGate(true);
+        return;
+      }
       setShowIntroModal(true);
     } else {
-      // Start demo in auto-play mode
+      // Demo stays free — no gate so visitors can preview the experience
       setDemoPlaying(true);
       handleNextDemoStep();
     }
@@ -1495,6 +1515,21 @@ export default function ScanRoom() {
         )}
 
         {/* Save Scan to CRM is now automatic — runs after every AI scan, no UI. */}
+
+        {/* Lead capture gate — required before AI scanning */}
+        <LeadGateModal
+          isOpen={showLeadGate}
+          onClose={() => { setShowLeadGate(false); setPendingAction(null); }}
+          onUnlock={() => {
+            setIsUnlocked(true);
+            setShowLeadGate(false);
+            toast({ title: "AI Scan Unlocked", description: "Your lead has been saved. Continue with your room scan." });
+            const action = pendingAction;
+            setPendingAction(null);
+            // Defer so state flushes (isUnlocked) before re-running the gated action
+            setTimeout(() => { try { action?.(); } catch (e) { console.error(e); } }, 50);
+          }}
+        />
       </div>
     </SiteShell>
   );
