@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import {
-  Search, ChevronRight, Users, ArrowLeft, Clock, AlertTriangle, TrendingUp
+  Search, ChevronRight, Users, ArrowLeft, Clock, AlertTriangle, TrendingUp, Camera
 } from "lucide-react";
 
 interface LeadRow {
@@ -23,6 +23,10 @@ interface LeadRow {
   origin_address: string | null;
   destination_address: string | null;
   assigned_agent_id: string | null;
+  // Stamped by save-scan-room every time the customer touches the room
+  // scanner (auto-save or final submit). Used to surface "fresh scan" badges
+  // so agents can pounce on warm activity.
+  last_scan_activity_at: string | null;
 }
 
 function formatElapsed(ms: number): string {
