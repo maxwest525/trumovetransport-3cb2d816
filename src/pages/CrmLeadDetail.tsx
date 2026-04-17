@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import {
   ArrowLeft, User, Mail, Phone, MapPin, Calendar, DollarSign,
   Weight, Tag, Clock, FileText, Truck, UserCheck, Camera, Sparkles, Package, X, Link2, Loader2,
+  Ban, CheckCircle2, AlertCircle, Copy,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -63,6 +64,14 @@ interface InventoryItem {
   confidence: number | null;
 }
 
+interface ResumeToken {
+  id: string;
+  token: string;
+  created_at: string;
+  expires_at: string;
+  used_at: string | null;
+}
+
 const statusColors: Record<string, string> = {
   new: "bg-blue-500/10 text-blue-400 border-blue-500/30",
   contacted: "bg-yellow-500/10 text-yellow-400 border-yellow-500/30",
@@ -104,6 +113,18 @@ export default function CrmLeadDetail() {
   const [agentName, setAgentName] = useState<string | null>(null);
   const [claiming, setClaiming] = useState(false);
   const [generatingResumeLink, setGeneratingResumeLink] = useState(false);
+  const [resumeTokens, setResumeTokens] = useState<ResumeToken[]>([]);
+  const [revokingTokenId, setRevokingTokenId] = useState<string | null>(null);
+
+  const fetchResumeTokens = async () => {
+    if (!leadId) return;
+    const { data } = await supabase
+      .from("scan_resume_tokens")
+      .select("id, token, created_at, expires_at, used_at")
+      .eq("lead_id", leadId)
+      .order("created_at", { ascending: false });
+    if (data) setResumeTokens(data as ResumeToken[]);
+  };
 
   const handleSendResumeLink = async () => {
     if (!leadId) return;
@@ -125,11 +146,40 @@ export default function CrmLeadDetail() {
       } catch {
         toast.success("Resume link created", { description: url });
       }
+      // Refresh the list so the new token appears immediately
+      fetchResumeTokens();
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Could not create resume link");
     } finally {
       setGeneratingResumeLink(false);
     }
+  };
+
+  const handleCopyResumeLink = async (token: string) => {
+    const url = `${window.location.origin}/scan-room?resume=${token}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      toast.success("Resume link copied");
+    } catch {
+      toast.error("Could not copy link");
+    }
+  };
+
+  const handleRevokeResumeLink = async (tokenId: string) => {
+    setRevokingTokenId(tokenId);
+    // Marking used_at flips the link to revoked so redemption is blocked
+    const { error } = await supabase
+      .from("scan_resume_tokens")
+      .update({ used_at: new Date().toISOString() })
+      .eq("id", tokenId)
+      .is("used_at", null);
+    setRevokingTokenId(null);
+    if (error) {
+      toast.error("Could not revoke link: " + error.message);
+      return;
+    }
+    toast.success("Resume link revoked");
+    fetchResumeTokens();
   };
 
 
@@ -165,12 +215,14 @@ export default function CrmLeadDetail() {
     if (!leadId) return;
 
     async function fetchData() {
-      const [leadRes, dealsRes, photosRes, inventoryRes] = await Promise.all([
+      const [leadRes, dealsRes, photosRes, inventoryRes, tokensRes] = await Promise.all([
         supabase.from("leads").select("*").eq("id", leadId).single(),
         supabase.from("deals").select("id, stage, deal_value, expected_close_date, carrier_name, created_at").eq("lead_id", leadId),
         supabase.from("lead_scan_photos").select("*").eq("lead_id", leadId).order("created_at", { ascending: true }),
         supabase.from("lead_inventory").select("*").eq("lead_id", leadId).order("created_at", { ascending: true }),
+        supabase.from("scan_resume_tokens").select("id, token, created_at, expires_at, used_at").eq("lead_id", leadId).order("created_at", { ascending: false }),
       ]);
+      if (tokensRes.data) setResumeTokens(tokensRes.data as ResumeToken[]);
 
       if (leadRes.data) {
         setLead(leadRes.data as Lead);
@@ -379,7 +431,7 @@ export default function CrmLeadDetail() {
                     </Button>
                   </div>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="space-y-4">
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                     {scanPhotos.map((photo) => (
                       <button
@@ -396,6 +448,88 @@ export default function CrmLeadDetail() {
                       </button>
                     ))}
                   </div>
+
+                  {/* Resume link history — agents can audit and revoke any active link */}
+                  {resumeTokens.length > 0 && (
+                    <div className="pt-4 border-t border-border/40">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Link2 className="w-3.5 h-3.5 text-muted-foreground" />
+                        <h4 className="text-xs font-semibold text-foreground uppercase tracking-wider">
+                          Resume Links ({resumeTokens.length})
+                        </h4>
+                      </div>
+                      <div className="space-y-2">
+                        {resumeTokens.map((t) => {
+                          const now = Date.now();
+                          const expired = new Date(t.expires_at).getTime() < now;
+                          const used = !!t.used_at;
+                          // Status: revoked/used > expired > active
+                          const status = used ? "revoked" : expired ? "expired" : "active";
+                          const statusStyles = {
+                            active: "text-green-400 bg-green-500/10 border-green-500/30",
+                            expired: "text-muted-foreground bg-muted/40 border-border",
+                            revoked: "text-red-400 bg-red-500/10 border-red-500/30",
+                          }[status];
+                          const StatusIcon = status === "active" ? CheckCircle2 : status === "expired" ? AlertCircle : Ban;
+
+                          return (
+                            <div
+                              key={t.id}
+                              className="flex items-center gap-2 p-2.5 rounded-lg border border-border/50 bg-muted/20 text-xs"
+                            >
+                              <Badge variant="outline" className={`${statusStyles} gap-1 capitalize text-[10px] py-0`}>
+                                <StatusIcon className="w-3 h-3" />
+                                {status}
+                              </Badge>
+                              <div className="flex-1 min-w-0 grid grid-cols-1 sm:grid-cols-3 gap-x-3 gap-y-0.5">
+                                <span className="text-muted-foreground truncate">
+                                  <span className="text-foreground/70">Created:</span> {new Date(t.created_at).toLocaleString()}
+                                </span>
+                                <span className="text-muted-foreground truncate">
+                                  <span className="text-foreground/70">Expires:</span> {new Date(t.expires_at).toLocaleString()}
+                                </span>
+                                <span className="text-muted-foreground truncate">
+                                  <span className="text-foreground/70">Used:</span> {t.used_at ? new Date(t.used_at).toLocaleString() : "—"}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-1 shrink-0">
+                                {status === "active" && (
+                                  <>
+                                    <Button
+                                      size="sm"
+                                      variant="ghost"
+                                      onClick={() => handleCopyResumeLink(t.token)}
+                                      className="h-7 px-2 text-[11px] gap-1"
+                                      title="Copy link"
+                                    >
+                                      <Copy className="w-3 h-3" />
+                                    </Button>
+                                    <Button
+                                      size="sm"
+                                      variant="ghost"
+                                      onClick={() => handleRevokeResumeLink(t.id)}
+                                      disabled={revokingTokenId === t.id}
+                                      className="h-7 px-2 text-[11px] gap-1 text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                                      title="Revoke link"
+                                    >
+                                      {revokingTokenId === t.id ? (
+                                        <Loader2 className="w-3 h-3 animate-spin" />
+                                      ) : (
+                                        <>
+                                          <Ban className="w-3 h-3" />
+                                          Revoke
+                                        </>
+                                      )}
+                                    </Button>
+                                  </>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             )}
