@@ -40,6 +40,22 @@ function formatElapsed(ms: number): string {
   return `${days}d ${hours % 24}h`;
 }
 
+// Compact relative-time formatter for the scan-activity badge. Optimized
+// for glanceability in a dense list: "just now" / "5m ago" / "2h ago" /
+// "3d ago" / "Mar 14". Crossing the 7-day threshold drops to a static date
+// because relative time loses meaning past a week of staleness.
+function formatRelativeShort(iso: string): string {
+  const ms = Date.now() - new Date(iso).getTime();
+  if (ms < 60_000) return "just now";
+  const m = Math.floor(ms / 60_000);
+  if (m < 60) return `${m}m ago`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h ago`;
+  const d = Math.floor(h / 24);
+  if (d < 7) return `${d}d ago`;
+  return new Date(iso).toLocaleDateString(undefined, { month: "short", day: "numeric" });
+}
+
 function ClaimTimer({ createdAt, claimed }: { createdAt: string; claimed: boolean }) {
   const [now, setNow] = useState(Date.now());
 
