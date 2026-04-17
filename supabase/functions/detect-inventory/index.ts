@@ -146,9 +146,18 @@ serve(async (req) => {
       try {
         const parsed = JSON.parse(toolCall.function.arguments);
         items = Array.isArray(parsed.items) ? parsed.items : [];
+        // Debug log raw boxes from Gemini so we can verify normalization
+        console.log(
+          "[detect-inventory] Gemini returned",
+          items.length,
+          "items. Boxes:",
+          JSON.stringify(items.map((it) => ({ name: it.name, box: it.box })))
+        );
       } catch (e) {
         console.error("Failed to parse tool args:", e);
       }
+    } else {
+      console.warn("[detect-inventory] No tool call returned. Raw response:", JSON.stringify(data).slice(0, 500));
     }
 
     // Sanitize - ensure realistic values + clamp box to 0-1
