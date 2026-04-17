@@ -1655,6 +1655,36 @@ export type Database = {
           },
         ]
       }
+      scan_resume_tokens: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          expires_at: string
+          id: string
+          lead_id: string
+          token: string
+          used_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string
+          id?: string
+          lead_id: string
+          token: string
+          used_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string
+          id?: string
+          lead_id?: string
+          token?: string
+          used_at?: string | null
+        }
+        Relationships: []
+      }
       support_tickets: {
         Row: {
           created_at: string
