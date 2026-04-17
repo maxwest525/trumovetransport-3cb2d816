@@ -669,18 +669,44 @@ export default function ScanRoom() {
 
               {/* Center: Demo & Actions */}
               <div className="flex flex-col items-center justify-center gap-4 border border-border rounded-2xl bg-background shadow-[0_4px_20px_-4px_hsl(var(--tm-ink)/0.08)] relative overflow-hidden">
-                {/* Scanner content - show image when demo step >= 2 */}
-                {demoStep >= 2 ? (
+                {/* Scanner content - show image when demo is active OR live AI scan running */}
+                {(demoStep >= 2 || activeScanPhoto) ? (
                   <div className="flex flex-col items-center gap-2 w-full">
                     <div className="relative w-full flex-1 overflow-hidden rounded-t-2xl">
-                      <img src={sampleRoomLiving} alt="Scanning room" className="w-full h-full object-cover" />
+                      <img
+                        src={activeScanPhoto ? activeScanPhoto.url : sampleRoomLiving}
+                        alt="Scanning room"
+                        className="w-full h-full object-cover"
+                      />
                       {isScanning && (
                         <div className="tru-ai-scanner-overlay">
                           <div className="tru-ai-scanner-line" />
                         </div>
                       )}
-                      {/* Detection bounding boxes - appear as items are detected */}
-                      {DEMO_FURNITURE_POSITIONS.slice(0, Math.max(0, demoStep - 2)).map((item) => (
+                      {/* Live AI bounding boxes (real Gemini detections) */}
+                      {activeScanPhoto && aiBoxes.slice(0, revealedBoxCount).map((item) => (
+                        <div
+                          key={item.id}
+                          className="tru-ai-detection-box"
+                          style={{
+                            top: `${item.y * 100}%`,
+                            left: `${item.x * 100}%`,
+                            width: `${item.width * 100}%`,
+                            height: `${item.height * 100}%`,
+                          }}
+                        >
+                          <span className="tru-ai-detection-corner tru-ai-corner-tl" />
+                          <span className="tru-ai-detection-corner tru-ai-corner-tr" />
+                          <span className="tru-ai-detection-corner tru-ai-corner-bl" />
+                          <span className="tru-ai-detection-corner tru-ai-corner-br" />
+                          <span className="tru-ai-detection-label">
+                            {item.name}
+                            <span className="tru-ai-detection-confidence">{item.confidence}%</span>
+                          </span>
+                        </div>
+                      ))}
+                      {/* Demo bounding boxes - only when running scripted demo */}
+                      {!activeScanPhoto && DEMO_FURNITURE_POSITIONS.slice(0, Math.max(0, demoStep - 2)).map((item) => (
                         <div
                           key={item.id}
                           className="tru-ai-detection-box"
@@ -707,11 +733,24 @@ export default function ScanRoom() {
                           {isScanning ? "Scanning..." : "Complete"}
                         </span>
                       </div>
+                      {activeScanPhoto && aiScanProgress.total > 1 && (
+                        <div className="absolute top-2 right-2 bg-foreground/80 text-background rounded-full px-2.5 py-1 z-20">
+                          <span className="text-[10px] font-semibold">
+                            Photo {aiScanProgress.current} / {aiScanProgress.total}
+                          </span>
+                        </div>
+                      )}
                     </div>
                     <p className="text-xs text-muted-foreground text-center px-4">
-                      {isScanning 
-                        ? `Detected ${detectedItems.length} of ${DEMO_ITEMS.length} items...`
-                        : `Found ${detectedItems.length} items`
+                      {activeScanPhoto
+                        ? (isAiScanning
+                            ? (revealedBoxCount === 0
+                                ? "Gemini is analyzing the photo..."
+                                : `Detected ${revealedBoxCount} of ${aiBoxes.length} items in this photo...`)
+                            : `Found ${aiBoxes.length} items in this photo`)
+                        : (isScanning
+                            ? `Detected ${detectedItems.length} of ${DEMO_ITEMS.length} items...`
+                            : `Found ${detectedItems.length} items`)
                       }
                     </p>
                   </div>
