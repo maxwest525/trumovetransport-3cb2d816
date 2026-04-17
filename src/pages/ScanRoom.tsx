@@ -1038,8 +1038,12 @@ export default function ScanRoom() {
           </section>
         )}
 
-              {/* Center: Demo & Actions */}
+        {/* Main scan workspace */}
+        <section className="px-4 sm:px-6 lg:px-8 pb-10">
+          <div className="max-w-7xl mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-4 lg:gap-6">
 
+              {/* Center: Demo & Actions */}
               <div className="flex flex-col items-center justify-center gap-4 border border-border rounded-2xl bg-background shadow-[0_4px_20px_-4px_hsl(var(--tm-ink)/0.08)] relative overflow-hidden">
                 {/* Scanner content - show image when demo is active OR live AI scan running */}
                 {(demoStep >= 2 || activeScanPhoto) ? (
