@@ -1516,7 +1516,9 @@ export default function ScanRoom() {
                 fall back to a stacked single-column layout. */}
             <div
               ref={splitContainerRef}
-              className="grid grid-cols-1 gap-4 lg:gap-0 lg:grid-cols-[minmax(0,1fr)_8px_var(--tru-library-w)]"
+              className={`grid grid-cols-1 gap-4 lg:gap-0 lg:grid-cols-[minmax(0,1fr)_8px_var(--tru-library-w)] ${
+                animateSplit ? "[transition:grid-template-columns_200ms_ease-out]" : ""
+              }`}
               style={{ ["--tru-library-w" as string]: `${libraryWidth}px` }}
             >
 
