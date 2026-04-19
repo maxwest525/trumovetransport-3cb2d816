@@ -1364,7 +1364,7 @@ export default function ScanRoom() {
       <div className="tru-scan-page">
 
         {/* Hero */}
-        <section className="py-10 md:py-14 relative overflow-hidden">
+        <section className="py-6 sm:py-10 md:py-14 relative overflow-hidden">
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full bg-primary/[0.06] blur-[120px]" />
             <div className="absolute bottom-0 left-0 w-[500px] h-[500px] rounded-full bg-primary/[0.04] blur-[100px]" />
@@ -1380,10 +1380,10 @@ export default function ScanRoom() {
                 <span className="w-1.5 h-1.5 rounded-full bg-primary/60" />
                 <span className="h-px w-8 bg-primary/40" />
               </div>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground tracking-tight leading-[1.1]">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground tracking-tight leading-[1.1]">
                 AI Room <span className="text-primary">Scan</span>
               </h1>
-              <p className="text-muted-foreground max-w-xl mx-auto text-base md:text-lg font-light leading-relaxed mt-4">
+              <p className="text-muted-foreground max-w-xl mx-auto text-sm sm:text-base md:text-lg font-light leading-relaxed mt-3 sm:mt-4 px-2 sm:px-0">
                 Simply scan your rooms and our AI will identify, measure, and catalog every item automatically.
               </p>
             </div>
@@ -1391,15 +1391,15 @@ export default function ScanRoom() {
             <EstimatorNavToggle />
 
             {/* Trust strip */}
-            <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6 mt-6">
+            <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 sm:gap-4 md:gap-6 mt-4 sm:mt-6">
               {[
                 { icon: Camera, label: "Photo & Video Upload" },
                 { icon: Sparkles, label: "AI Detection" },
                 { icon: Layers, label: "Auto Inventory" },
                 { icon: Shield, label: "Instant Quote" },
               ].map((item) => (
-                <div key={item.label} className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-                  <item.icon className="w-3.5 h-3.5 text-primary" />
+                <div key={item.label} className="flex items-center gap-1.5 text-[10px] sm:text-[11px] text-muted-foreground">
+                  <item.icon className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-primary" />
                   <span className="font-medium">{item.label}</span>
                 </div>
               ))}
@@ -1494,7 +1494,7 @@ export default function ScanRoom() {
         )}
 
         {/* Main scan workspace */}
-        <section className="px-4 sm:px-6 lg:px-8 pb-10">
+        <section className="px-3 sm:px-6 lg:px-8 pb-8 sm:pb-10">
           <div className="max-w-7xl mx-auto">
             {/* Layout: shrink the room scanner column and give the photo
                 library the extra width. The library column is user-resizable
