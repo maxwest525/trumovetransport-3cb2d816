@@ -442,7 +442,7 @@ function ShipmentTrackerSection({ navigate }: {navigate: (path: string) => void;
         <div className="flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-16 w-full">
           {/* Lifestyle image - left */}
           <div className="flex items-center justify-center flex-shrink-0 w-full lg:w-auto">
-            <div className="rounded-xl overflow-hidden w-full max-w-sm lg:max-w-none">
+            <div className="rounded-xl overflow-hidden w-full max-w-xs lg:max-w-md">
               <img src={trackingLifestyleImg} alt="Customer tracking their move in real-time" className="h-auto block w-full rounded-xl" style={{ objectFit: 'cover' }} />
             </div>
           </div>
