@@ -273,17 +273,31 @@ export default function ScanRoom() {
     }
   };
 
+  // Animate the split only when the width changes via toggles/keyboard, not
+  // during pointer drag (where every frame would fight the cursor). We flip
+  // this flag on for ~220ms whenever a programmatic resize fires.
+  const [animateSplit, setAnimateSplit] = useState(false);
+  const animateTimerRef = useRef<number | null>(null);
+  const triggerSplitAnimation = () => {
+    setAnimateSplit(true);
+    if (animateTimerRef.current) window.clearTimeout(animateTimerRef.current);
+    animateTimerRef.current = window.setTimeout(() => setAnimateSplit(false), 220);
+  };
+
   const maximizeScanner = () => {
     if (libraryWidth > LIBRARY_MIN && libraryWidth < LIBRARY_MAX) rememberSplit(libraryWidth);
+    triggerSplitAnimation();
     setLibraryWidth(LIBRARY_MIN);
   };
   const maximizeLibrary = () => {
     if (libraryWidth < LIBRARY_MAX && libraryWidth > LIBRARY_MIN) rememberSplit(libraryWidth);
+    triggerSplitAnimation();
     setLibraryWidth(LIBRARY_MAX);
   };
   const restoreSplit = () => {
     const prev = prevLibraryWidthRef.current;
     const safe = Math.min(LIBRARY_MAX - 1, Math.max(LIBRARY_MIN + 1, prev || LIBRARY_DEFAULT));
+    triggerSplitAnimation();
     setLibraryWidth(safe);
   };
 
@@ -1502,7 +1516,9 @@ export default function ScanRoom() {
                 fall back to a stacked single-column layout. */}
             <div
               ref={splitContainerRef}
-              className="grid grid-cols-1 gap-4 lg:gap-0 lg:grid-cols-[minmax(0,1fr)_8px_var(--tru-library-w)]"
+              className={`grid grid-cols-1 gap-4 lg:gap-0 lg:grid-cols-[minmax(0,1fr)_8px_var(--tru-library-w)] ${
+                animateSplit ? "[transition:grid-template-columns_200ms_ease-out]" : ""
+              }`}
               style={{ ["--tru-library-w" as string]: `${libraryWidth}px` }}
             >
 
@@ -1753,15 +1769,18 @@ export default function ScanRoom() {
                       case "ArrowLeft":
                         // Left shrinks the library (scanner grows)
                         e.preventDefault();
+                        triggerSplitAnimation();
                         setLibraryWidth((w) => Math.max(LIBRARY_MIN, w - STEP));
                         break;
                       case "ArrowRight":
                         // Right grows the library
                         e.preventDefault();
+                        triggerSplitAnimation();
                         setLibraryWidth((w) => Math.min(LIBRARY_MAX, w + STEP));
                         break;
                       case "Home":
                         e.preventDefault();
+                        triggerSplitAnimation();
                         resetLibraryWidth();
                         break;
                       case "PageUp":
