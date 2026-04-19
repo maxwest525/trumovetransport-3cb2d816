@@ -273,17 +273,31 @@ export default function ScanRoom() {
     }
   };
 
+  // Animate the split only when the width changes via toggles/keyboard, not
+  // during pointer drag (where every frame would fight the cursor). We flip
+  // this flag on for ~220ms whenever a programmatic resize fires.
+  const [animateSplit, setAnimateSplit] = useState(false);
+  const animateTimerRef = useRef<number | null>(null);
+  const triggerSplitAnimation = () => {
+    setAnimateSplit(true);
+    if (animateTimerRef.current) window.clearTimeout(animateTimerRef.current);
+    animateTimerRef.current = window.setTimeout(() => setAnimateSplit(false), 220);
+  };
+
   const maximizeScanner = () => {
     if (libraryWidth > LIBRARY_MIN && libraryWidth < LIBRARY_MAX) rememberSplit(libraryWidth);
+    triggerSplitAnimation();
     setLibraryWidth(LIBRARY_MIN);
   };
   const maximizeLibrary = () => {
     if (libraryWidth < LIBRARY_MAX && libraryWidth > LIBRARY_MIN) rememberSplit(libraryWidth);
+    triggerSplitAnimation();
     setLibraryWidth(LIBRARY_MAX);
   };
   const restoreSplit = () => {
     const prev = prevLibraryWidthRef.current;
     const safe = Math.min(LIBRARY_MAX - 1, Math.max(LIBRARY_MIN + 1, prev || LIBRARY_DEFAULT));
+    triggerSplitAnimation();
     setLibraryWidth(safe);
   };
 
