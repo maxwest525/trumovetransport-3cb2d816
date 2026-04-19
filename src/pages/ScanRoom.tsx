@@ -250,18 +250,35 @@ export default function ScanRoom() {
 
   // One-click maximize: collapse one side fully. We track the previous width
   // so toggling back restores the user's preferred split instead of the default.
-  const prevLibraryWidthRef = useRef<number>(LIBRARY_DEFAULT);
+  // Persisted in localStorage so the "restore" action survives a page reload
+  // when the user previously maximized one side.
+  const PREV_WIDTH_KEY = "tru-scan-library-prev-width";
+  const prevLibraryWidthRef = useRef<number>(
+    (() => {
+      if (typeof window === "undefined") return LIBRARY_DEFAULT;
+      const saved = Number(window.localStorage.getItem(PREV_WIDTH_KEY));
+      if (!Number.isFinite(saved) || saved <= 0) return LIBRARY_DEFAULT;
+      return Math.min(LIBRARY_MAX - 1, Math.max(LIBRARY_MIN + 1, saved));
+    })()
+  );
   const maximizedSide: "scanner" | "library" | null =
     libraryWidth <= LIBRARY_MIN ? "scanner"
     : libraryWidth >= LIBRARY_MAX ? "library"
     : null;
 
+  const rememberSplit = (w: number) => {
+    prevLibraryWidthRef.current = w;
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem(PREV_WIDTH_KEY, String(w));
+    }
+  };
+
   const maximizeScanner = () => {
-    if (libraryWidth > LIBRARY_MIN) prevLibraryWidthRef.current = libraryWidth;
+    if (libraryWidth > LIBRARY_MIN && libraryWidth < LIBRARY_MAX) rememberSplit(libraryWidth);
     setLibraryWidth(LIBRARY_MIN);
   };
   const maximizeLibrary = () => {
-    if (libraryWidth < LIBRARY_MAX) prevLibraryWidthRef.current = libraryWidth;
+    if (libraryWidth < LIBRARY_MAX && libraryWidth > LIBRARY_MIN) rememberSplit(libraryWidth);
     setLibraryWidth(LIBRARY_MAX);
   };
   const restoreSplit = () => {
