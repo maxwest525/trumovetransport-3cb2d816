@@ -1769,15 +1769,18 @@ export default function ScanRoom() {
                       case "ArrowLeft":
                         // Left shrinks the library (scanner grows)
                         e.preventDefault();
+                        triggerSplitAnimation();
                         setLibraryWidth((w) => Math.max(LIBRARY_MIN, w - STEP));
                         break;
                       case "ArrowRight":
                         // Right grows the library
                         e.preventDefault();
+                        triggerSplitAnimation();
                         setLibraryWidth((w) => Math.min(LIBRARY_MAX, w + STEP));
                         break;
                       case "Home":
                         e.preventDefault();
+                        triggerSplitAnimation();
                         resetLibraryWidth();
                         break;
                       case "PageUp":
