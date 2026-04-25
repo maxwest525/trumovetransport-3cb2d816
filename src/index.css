@@ -32406,7 +32406,7 @@ input[type="checkbox"][role="switch"]:not([data-ui-switch="true"]) {
     min-height: 44px;
     padding: 12px 14px !important;
     font-size: 14px !important;
-    gap: 10px;
+    gap: 12px;
   }
 
 
