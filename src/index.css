@@ -33075,6 +33075,14 @@ input[type="checkbox"][role="switch"]:not([data-ui-switch="true"]) {
   color: hsl(var(--muted-foreground));
 }
 
+.header-mobile-spacing-hint {
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0;
+  opacity: 0.75;
+  font-size: 11px;
+}
+
 .header-mobile-spacing-options {
   display: inline-flex;
   padding: 2px;
