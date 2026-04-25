@@ -19,36 +19,110 @@ const NAV_ITEMS: NavItem[] = [
 ];
 
 type MobileSpacing = "comfortable" | "compact";
+type SpacingMode = MobileSpacing | "auto";
 const SPACING_STORAGE_KEY = "header:mobileSpacing";
+const SPACING_MODE_STORAGE_KEY = "header:mobileSpacingMode";
+
+/**
+ * Detect whether the user's device/system prefers larger, more accessible spacing.
+ * Considers:
+ *  - Browser root font-size scaled above the default 16px (Android "Font size" / desktop zoom).
+ *  - iOS/macOS Dynamic Type via -webkit-text-size-adjust feedback (root em > 16).
+ *  - prefers-reduced-motion: reduce — often correlates with accessibility-tuned setups.
+ *  - Coarse pointer + small viewport — touch devices benefit from larger tap targets.
+ */
+function detectPreferredSpacing(): MobileSpacing {
+  if (typeof window === "undefined") return "comfortable";
+  try {
+    const rootFontPx = parseFloat(
+      getComputedStyle(document.documentElement).fontSize || "16"
+    );
+    // Larger-than-default text → comfortable for readability & tap accuracy
+    if (rootFontPx > 17) return "comfortable";
+
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reducedMotion) return "comfortable";
+
+    const coarsePointer = window.matchMedia("(pointer: coarse)").matches;
+    const veryNarrow = window.matchMedia("(max-width: 360px)").matches;
+    // Tiny touch screens default to compact so all links fit without scrolling
+    if (coarsePointer && veryNarrow) return "compact";
+
+    return "comfortable";
+  } catch {
+    return "comfortable";
+  }
+}
 
 export default function Header() {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileSpacing, setMobileSpacing] = useState<MobileSpacing>("comfortable");
+  // "auto" = follow system/accessibility preference; otherwise = user override
+  const [spacingMode, setSpacingMode] = useState<SpacingMode>("auto");
 
-  // Load persisted spacing preference once on mount
+  // Load persisted preferences and resolve initial spacing
   useEffect(() => {
+    let mode: SpacingMode = "auto";
     try {
-      const stored = localStorage.getItem(SPACING_STORAGE_KEY);
-      if (stored === "comfortable" || stored === "compact") {
-        setMobileSpacing(stored);
+      const storedMode = localStorage.getItem(SPACING_MODE_STORAGE_KEY);
+      if (storedMode === "auto" || storedMode === "comfortable" || storedMode === "compact") {
+        mode = storedMode;
+      } else {
+        // Backward compatibility: previous versions only stored an explicit value
+        const legacy = localStorage.getItem(SPACING_STORAGE_KEY);
+        if (legacy === "comfortable" || legacy === "compact") {
+          mode = legacy;
+        }
       }
     } catch {
-      // localStorage unavailable — fall back to default
+      // localStorage unavailable — fall back to auto
     }
+    setSpacingMode(mode);
+    setMobileSpacing(mode === "auto" ? detectPreferredSpacing() : mode);
   }, []);
 
-  const toggleMobileSpacing = () => {
-    setMobileSpacing((prev) => {
-      const next: MobileSpacing = prev === "comfortable" ? "compact" : "comfortable";
-      try {
-        localStorage.setItem(SPACING_STORAGE_KEY, next);
-      } catch {
-        // ignore persistence failure
+  // When in auto mode, react to live changes in system/accessibility preferences
+  useEffect(() => {
+    if (spacingMode !== "auto" || typeof window === "undefined") return;
+
+    const update = () => setMobileSpacing(detectPreferredSpacing());
+    update();
+
+    const motionMq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const pointerMq = window.matchMedia("(pointer: coarse)");
+    const widthMq = window.matchMedia("(max-width: 360px)");
+    motionMq.addEventListener?.("change", update);
+    pointerMq.addEventListener?.("change", update);
+    widthMq.addEventListener?.("change", update);
+    window.addEventListener("resize", update);
+
+    return () => {
+      motionMq.removeEventListener?.("change", update);
+      pointerMq.removeEventListener?.("change", update);
+      widthMq.removeEventListener?.("change", update);
+      window.removeEventListener("resize", update);
+    };
+  }, [spacingMode]);
+
+  const selectSpacingMode = (mode: SpacingMode) => {
+    setSpacingMode(mode);
+    try {
+      localStorage.setItem(SPACING_MODE_STORAGE_KEY, mode);
+      if (mode === "auto") {
+        localStorage.removeItem(SPACING_STORAGE_KEY);
+      } else {
+        localStorage.setItem(SPACING_STORAGE_KEY, mode);
       }
-      return next;
-    });
+    } catch {
+      // ignore persistence failure
+    }
+    if (mode !== "auto") {
+      setMobileSpacing(mode);
+    } else {
+      setMobileSpacing(detectPreferredSpacing());
+    }
   };
 
   useEffect(() => {
@@ -128,21 +202,37 @@ export default function Header() {
 
             {/* Spacing variant toggle */}
             <div className="header-mobile-spacing-toggle" role="group" aria-label="Menu spacing">
-              <span className="header-mobile-spacing-label">Spacing</span>
+              <span className="header-mobile-spacing-label">
+                Spacing
+                {spacingMode === "auto" && (
+                  <span className="header-mobile-spacing-hint">
+                    {" "}· Auto ({mobileSpacing})
+                  </span>
+                )}
+              </span>
               <div className="header-mobile-spacing-options">
                 <button
                   type="button"
-                  className={`header-mobile-spacing-option ${mobileSpacing === "comfortable" ? "is-active" : ""}`}
-                  onClick={() => mobileSpacing !== "comfortable" && toggleMobileSpacing()}
-                  aria-pressed={mobileSpacing === "comfortable"}
+                  className={`header-mobile-spacing-option ${spacingMode === "auto" ? "is-active" : ""}`}
+                  onClick={() => selectSpacingMode("auto")}
+                  aria-pressed={spacingMode === "auto"}
+                  title="Match your device accessibility settings"
+                >
+                  Auto
+                </button>
+                <button
+                  type="button"
+                  className={`header-mobile-spacing-option ${spacingMode === "comfortable" ? "is-active" : ""}`}
+                  onClick={() => selectSpacingMode("comfortable")}
+                  aria-pressed={spacingMode === "comfortable"}
                 >
                   Comfortable
                 </button>
                 <button
                   type="button"
-                  className={`header-mobile-spacing-option ${mobileSpacing === "compact" ? "is-active" : ""}`}
-                  onClick={() => mobileSpacing !== "compact" && toggleMobileSpacing()}
-                  aria-pressed={mobileSpacing === "compact"}
+                  className={`header-mobile-spacing-option ${spacingMode === "compact" ? "is-active" : ""}`}
+                  onClick={() => selectSpacingMode("compact")}
+                  aria-pressed={spacingMode === "compact"}
                 >
                   Compact
                 </button>
