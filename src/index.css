@@ -32998,3 +32998,83 @@ input[type="checkbox"][role="switch"]:not([data-ui-switch="true"]) {
     padding-bottom: calc(12px + env(safe-area-inset-bottom));
   }
 }
+
+/* =============================================
+   MOBILE HEADER SPACING VARIANTS
+   Driven by [data-mobile-spacing] on .header-main
+   "comfortable" = current defaults (no override needed)
+   "compact"     = tighter padding + smaller icon-to-text gap
+   Selectors are scoped to the header so they win over the
+   existing media-query overrides without modifying them.
+   ============================================= */
+.header-main[data-mobile-spacing="compact"] .header-mobile-link {
+  padding: 8px 12px !important;
+  gap: 8px !important;
+  min-height: 38px !important;
+  font-size: 14px !important;
+  border-radius: 8px;
+}
+
+.header-main[data-mobile-spacing="compact"] .header-mobile-nav {
+  gap: 2px !important;
+  margin-bottom: 12px !important;
+}
+
+.header-main[data-mobile-spacing="compact"] .header-mobile-menu {
+  padding: 10px 16px 16px !important;
+}
+
+/* Spacing variant toggle UI inside the mobile menu */
+.header-mobile-spacing-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: hsl(var(--muted) / 0.4);
+  border: 1px solid hsl(var(--border));
+}
+
+.dark .header-mobile-spacing-toggle,
+@media (max-width: 768px) {
+  .header-mobile-spacing-toggle {
+    background: hsl(0 0% 100% / 0.04);
+    border-color: hsl(0 0% 100% / 0.08);
+  }
+}
+
+.header-mobile-spacing-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: hsl(var(--muted-foreground));
+}
+
+.header-mobile-spacing-options {
+  display: inline-flex;
+  padding: 2px;
+  border-radius: 999px;
+  background: hsl(var(--background) / 0.6);
+  border: 1px solid hsl(var(--border));
+}
+
+.header-mobile-spacing-option {
+  appearance: none;
+  border: none;
+  background: transparent;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: hsl(var(--foreground) / 0.7);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+
+.header-mobile-spacing-option.is-active {
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+}
