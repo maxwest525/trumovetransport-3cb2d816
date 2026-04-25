@@ -31178,6 +31178,7 @@ gmp-map-3d-element .gmnoprint {
     align-items: center;
     gap: 12px;
     padding: 12px 14px;
+    min-height: 44px;
     font-size: 15px;
     font-weight: 700;
     color: hsl(0 0% 100% / 0.85);
