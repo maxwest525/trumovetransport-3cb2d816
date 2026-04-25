@@ -18,10 +18,38 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/book", label: "Contact Us", icon: Phone },
 ];
 
+type MobileSpacing = "comfortable" | "compact";
+const SPACING_STORAGE_KEY = "header:mobileSpacing";
+
 export default function Header() {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [mobileSpacing, setMobileSpacing] = useState<MobileSpacing>("comfortable");
+
+  // Load persisted spacing preference once on mount
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(SPACING_STORAGE_KEY);
+      if (stored === "comfortable" || stored === "compact") {
+        setMobileSpacing(stored);
+      }
+    } catch {
+      // localStorage unavailable — fall back to default
+    }
+  }, []);
+
+  const toggleMobileSpacing = () => {
+    setMobileSpacing((prev) => {
+      const next: MobileSpacing = prev === "comfortable" ? "compact" : "comfortable";
+      try {
+        localStorage.setItem(SPACING_STORAGE_KEY, next);
+      } catch {
+        // ignore persistence failure
+      }
+      return next;
+    });
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -33,7 +61,10 @@ export default function Header() {
 
   return (
     <>
-      <header className={`header-main header-floating ${isScrolled ? "is-scrolled" : ""} ${location.pathname === "/" ? "header-home-glow" : ""}`}>
+      <header
+        className={`header-main header-floating ${isScrolled ? "is-scrolled" : ""} ${location.pathname === "/" ? "header-home-glow" : ""}`}
+        data-mobile-spacing={mobileSpacing}
+      >
         <div className="header-inner">
           {/* Logo - left */}
           <Link to="/" className="header-logo shrink-0" aria-label="TruMove Home">
@@ -94,6 +125,29 @@ export default function Header() {
                 );
               })}
             </nav>
+
+            {/* Spacing variant toggle */}
+            <div className="header-mobile-spacing-toggle" role="group" aria-label="Menu spacing">
+              <span className="header-mobile-spacing-label">Spacing</span>
+              <div className="header-mobile-spacing-options">
+                <button
+                  type="button"
+                  className={`header-mobile-spacing-option ${mobileSpacing === "comfortable" ? "is-active" : ""}`}
+                  onClick={() => mobileSpacing !== "comfortable" && toggleMobileSpacing()}
+                  aria-pressed={mobileSpacing === "comfortable"}
+                >
+                  Comfortable
+                </button>
+                <button
+                  type="button"
+                  className={`header-mobile-spacing-option ${mobileSpacing === "compact" ? "is-active" : ""}`}
+                  onClick={() => mobileSpacing !== "compact" && toggleMobileSpacing()}
+                  aria-pressed={mobileSpacing === "compact"}
+                >
+                  Compact
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </header>
