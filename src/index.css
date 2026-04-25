@@ -32262,6 +32262,8 @@ gmp-map-3d-element .gmnoprint {
   .header-mobile-link {
     font-size: 15px;
     padding: 12px 14px;
+    gap: 12px;
+    min-height: 44px;
   }
 
   .tru-vetting-headline {
