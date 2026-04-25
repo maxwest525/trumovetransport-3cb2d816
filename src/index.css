@@ -32672,11 +32672,12 @@ input[type="checkbox"][role="switch"]:not([data-ui-switch="true"]) {
   }
 
   .header-mobile-link {
-    padding: 14px 16px;
+    padding: 12px 14px;
+    min-height: 44px;
     font-size: 15px;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
   }
 
   /* Section headings globally */
