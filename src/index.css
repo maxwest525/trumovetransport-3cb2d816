@@ -12126,13 +12126,17 @@
 }
 
 .header-mobile-link {
-  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
   font-size: 15px;
   font-weight: 600;
   color: hsl(var(--foreground) / 0.8);
   text-decoration: none;
   border-radius: 10px;
   transition: all 150ms ease;
+  line-height: 1.2;
 }
 
 .header-mobile-link:hover,
@@ -31164,17 +31168,21 @@ gmp-map-3d-element .gmnoprint {
   }
 
   .header-mobile-nav {
-    gap: 2px;
+    gap: 4px;
     margin-bottom: 16px;
   }
 
   .header-mobile-link {
-    padding: 14px 16px;
-    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    font-size: 15px;
     font-weight: 700;
     color: hsl(0 0% 100% / 0.85);
     border-radius: 12px;
     letter-spacing: -0.01em;
+    line-height: 1.2;
   }
 
   .header-mobile-link:hover,
@@ -32396,6 +32404,7 @@ input[type="checkbox"][role="switch"]:not([data-ui-switch="true"]) {
     min-height: 44px;
     padding: 12px 14px !important;
     font-size: 14px !important;
+    gap: 10px;
   }
 
 
