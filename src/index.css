@@ -33037,11 +33037,30 @@ input[type="checkbox"][role="switch"]:not([data-ui-switch="true"]) {
   border: 1px solid hsl(var(--border));
 }
 
-.dark .header-mobile-spacing-toggle,
+.dark .header-mobile-spacing-toggle {
+  background: hsl(0 0% 100% / 0.04);
+  border-color: hsl(0 0% 100% / 0.08);
+}
+
+/* Mobile menu is dark-styled at <=768px regardless of theme,
+   so match the toggle chrome at that breakpoint too. */
 @media (max-width: 768px) {
   .header-mobile-spacing-toggle {
     background: hsl(0 0% 100% / 0.04);
     border-color: hsl(0 0% 100% / 0.08);
+  }
+
+  .header-mobile-spacing-label {
+    color: hsl(0 0% 100% / 0.6);
+  }
+
+  .header-mobile-spacing-options {
+    background: hsl(0 0% 0% / 0.35);
+    border-color: hsl(0 0% 100% / 0.08);
+  }
+
+  .header-mobile-spacing-option {
+    color: hsl(0 0% 100% / 0.75);
   }
 }
 
