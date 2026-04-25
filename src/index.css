@@ -10780,7 +10780,7 @@
     0 12px 32px hsl(0 0% 0% / 0.25);
   transition: box-shadow 300ms ease;
   z-index: 100;
-  width: 100%;
+  width: auto;
   box-sizing: border-box;
   overflow: visible;
 }
@@ -12183,14 +12183,15 @@
   }
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1280px) {
   .header-nav,
   .header-contact-group {
     display: none !important;
+    visibility: hidden !important;
   }
   
   .header-mobile-toggle {
-    display: flex;
+    display: flex !important;
   }
   
   .header-inner {
@@ -12198,7 +12199,9 @@
   }
   
   .header-main.header-floating {
+    width: auto !important;
     margin: 8px 16px 0;
+    max-width: calc(100% - 32px);
   }
 }
 
