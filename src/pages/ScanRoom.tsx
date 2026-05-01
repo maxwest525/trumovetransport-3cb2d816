@@ -1934,32 +1934,32 @@ export default function ScanRoom() {
                           <button
                             type="button"
                             onClick={() => setShowScannerPopout(true)}
-                            className="inline-flex items-center gap-2 rounded-full bg-background/90 text-foreground border border-border px-3.5 py-2 text-xs font-bold uppercase tracking-wider shadow-[0_4px_14px_-4px_hsl(var(--tm-ink)/0.4)] hover:bg-background transition-colors backdrop-blur-sm"
+                            className="inline-flex items-center justify-center gap-2 rounded-full bg-background/90 text-foreground border border-border px-6 py-3.5 text-base font-semibold shadow-[0_4px_14px_-4px_hsl(var(--tm-ink)/0.4)] hover:bg-background transition-colors backdrop-blur-sm"
                             title="Open the scanner in a larger pop-out with size controls"
                           >
-                            <Maximize2 className="w-3.5 h-3.5" />
+                            <Maximize2 className="w-5 h-5" />
                             Pop Out
                           </button>
                           <button
                             type="button"
                             onClick={handleEnhanceImage}
                             disabled={isEnhancing || enhancedPhotoIds.has(activeScanPhoto.id)}
-                            className="inline-flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-4 py-2 text-xs font-bold uppercase tracking-wider shadow-[0_6px_20px_-4px_hsl(var(--primary)/0.6)] hover:scale-[1.03] active:scale-[0.97] transition-transform disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
+                            className="inline-flex items-center justify-center gap-2 rounded-full bg-primary text-primary-foreground px-6 py-3.5 text-base font-semibold shadow-[0_6px_20px_-4px_hsl(var(--primary)/0.6)] hover:scale-[1.03] active:scale-[0.97] transition-transform disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
                             title="Use AI to upscale and sharpen this photo for a better scan"
                           >
                             {isEnhancing ? (
                               <>
-                                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                <Loader2 className="w-5 h-5 animate-spin" />
                                 Enhancing...
                               </>
                             ) : enhancedPhotoIds.has(activeScanPhoto.id) ? (
                               <>
-                                <Check className="w-3.5 h-3.5" />
+                                <Check className="w-5 h-5" />
                                 Enhanced
                               </>
                             ) : (
                               <>
-                                <Wand2 className="w-3.5 h-3.5" />
+                                <Wand2 className="w-5 h-5" />
                                 Enhance Image Resolution
                               </>
                             )}
