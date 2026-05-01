@@ -1704,18 +1704,32 @@ export default function ScanRoom() {
                 {(demoStep >= 2 || activeScanPhoto) ? (
                   <div className="flex flex-col items-center gap-2 w-full h-full flex-1">
                     <div className="relative w-full flex-1 min-h-0 overflow-hidden rounded-t-2xl bg-foreground/95 flex items-center justify-center">
-                      <img
-                        src={activeScanPhoto ? activeScanPhoto.url : sampleRoomLiving}
-                        alt="Scanning room"
-                        className="max-w-full max-h-full w-auto h-auto object-contain"
-                      />
-                      {isScanning && (
-                        <div className="tru-ai-scanner-overlay">
-                          <div className="tru-ai-scanner-line" />
-                        </div>
-                      )}
-                      {/* Live AI bounding boxes (real Gemini detections) */}
-                      {activeScanPhoto && aiBoxes.slice(0, revealedBoxCount).map((item) => (
+                      <div
+                        className="relative max-w-full max-h-full"
+                        style={{
+                          aspectRatio: scannerAspect ? `${scannerAspect}` : "16 / 10",
+                          width: scannerAspect && scannerAspect >= 1 ? "100%" : "auto",
+                          height: scannerAspect && scannerAspect < 1 ? "100%" : "auto",
+                        }}
+                      >
+                        <img
+                          src={activeScanPhoto ? activeScanPhoto.url : sampleRoomLiving}
+                          alt="Scanning room"
+                          onLoad={(e) => {
+                            const img = e.currentTarget;
+                            if (img.naturalWidth && img.naturalHeight) {
+                              setScannerAspect(img.naturalWidth / img.naturalHeight);
+                            }
+                          }}
+                          className="absolute inset-0 w-full h-full object-contain"
+                        />
+                        {isScanning && (
+                          <div className="tru-ai-scanner-overlay">
+                            <div className="tru-ai-scanner-line" />
+                          </div>
+                        )}
+                        {/* Live AI bounding boxes (real Gemini detections) */}
+                        {activeScanPhoto && aiBoxes.slice(0, revealedBoxCount).map((item) => (
                         <div
                           key={item.id}
                           className="tru-ai-detection-box"
@@ -1736,8 +1750,8 @@ export default function ScanRoom() {
                           </span>
                         </div>
                       ))}
-                      {/* Demo bounding boxes - only when running scripted demo */}
-                      {!activeScanPhoto && DEMO_FURNITURE_POSITIONS.slice(0, Math.max(0, demoStep - 2)).map((item) => (
+                        {/* Demo bounding boxes - only when running scripted demo */}
+                        {!activeScanPhoto && DEMO_FURNITURE_POSITIONS.slice(0, Math.max(0, demoStep - 2)).map((item) => (
                         <div
                           key={item.id}
                           className="tru-ai-detection-box"
@@ -1758,6 +1772,7 @@ export default function ScanRoom() {
                           </span>
                         </div>
                       ))}
+                      </div>
                       <div className="absolute top-2 left-2 flex items-center gap-1.5 bg-foreground/80 text-background rounded-full px-2.5 py-1 z-20">
                         <Scan className="w-3 h-3" />
                         <span className="text-[10px] font-semibold">
