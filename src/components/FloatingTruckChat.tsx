@@ -56,6 +56,11 @@ export default function FloatingTruckChat() {
   const [isScrollMinimized, setIsScrollMinimized] = useState(false);
   const isCurrentlyMinimized = isMinimized || isScrollMinimized;
 
+  // Proactive speech bubble (currently used on the AI Room Scan page).
+  // Shows once per session, after a randomized delay, and auto-dismisses
+  // so it never feels spammy.
+  const [showProactiveBubble, setShowProactiveBubble] = useState(false);
+
   // Voice state
   const [isConnecting, setIsConnecting] = useState(false);
   const [showTranscript, setShowTranscript] = useState(false);
@@ -157,6 +162,36 @@ export default function FloatingTruckChat() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [isScrollMinimized]);
 
+  // Proactive bubble: trigger only on the AI Room Scan page, once per
+  // session, after a randomized 8-15s delay. Auto-hides after 12s.
+  useEffect(() => {
+    if (!location.pathname.startsWith('/scan-room')) return;
+    if (sessionStorage.getItem('tm_trudy_scan_bubble_shown') === 'true') return;
+    const delay = 8000 + Math.random() * 7000;
+    const showTimer = setTimeout(() => {
+      setShowProactiveBubble(true);
+      sessionStorage.setItem('tm_trudy_scan_bubble_shown', 'true');
+      // Make sure the pill is visible when the bubble pops
+      setIsMinimized(false);
+      setIsScrollMinimized(false);
+      localStorage.removeItem('tm_ai_helper_minimized');
+    }, delay);
+    return () => clearTimeout(showTimer);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (!showProactiveBubble) return;
+    const hideTimer = setTimeout(() => setShowProactiveBubble(false), 12000);
+    return () => clearTimeout(hideTimer);
+  }, [showProactiveBubble]);
+
+  // Hide the bubble the moment the user starts/ends a conversation
+  useEffect(() => {
+    if (isConnecting || conversation.status === 'connected') {
+      setShowProactiveBubble(false);
+    }
+  }, [isConnecting, conversation.status]);
+
   const handleMinimize = (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsMinimized(true);
@@ -238,6 +273,28 @@ export default function FloatingTruckChat() {
 
   return (
     <div className="tru-floating-truck-chat fixed bottom-20 right-3 z-[9999] flex flex-col items-end gap-2 sm:bottom-5 sm:right-5 md:bottom-20">
+      {/* Proactive speech bubble (ScanRoom only) */}
+      {showProactiveBubble && !isConnected && !isConnecting && (
+        <div className="relative max-w-[260px] animate-in fade-in slide-in-from-bottom-2 duration-300">
+          <button
+            type="button"
+            onClick={() => setShowProactiveBubble(false)}
+            aria-label="Dismiss"
+            className="absolute -top-2 -left-2 w-6 h-6 rounded-full bg-card border border-border shadow-sm flex items-center justify-center hover:bg-accent transition-colors z-10"
+          >
+            <X className="w-3 h-3 text-muted-foreground" />
+          </button>
+          <div className="rounded-2xl rounded-br-sm bg-card border border-border shadow-xl px-4 py-3">
+            <p className="text-xs font-bold text-foreground mb-0.5">Trudy</p>
+            <p className="text-sm leading-snug text-foreground">
+              Need help? Ask me anything. I've seen plenty of messy bedrooms.
+            </p>
+          </div>
+          {/* Tail pointing down toward the pill */}
+          <div className="absolute -bottom-1.5 right-6 w-3 h-3 bg-card border-r border-b border-border rotate-45" />
+        </div>
+      )}
+
       {/* Post-call transcript */}
       {showPostCall && !isConnected && savedTranscript.length > 0 && (
         <div className={`${panelClasses} animate-in fade-in slide-in-from-bottom-2 duration-200`}>
