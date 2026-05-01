@@ -330,7 +330,20 @@ export default function InventoryBuilder({
     return counts;
   }, [inventoryItems]);
 
-  const suggestions = ROOM_SUGGESTIONS[activeRoom] || [];
+  // For "All" tab, derive suggestion-shaped entries from items the user has actually added
+  const allInventorySuggestions = useMemo(() => {
+    return inventoryItems.map(inv => ({
+      name: inv.name,
+      defaultWeight: inv.weightEach,
+      cubicFeet: inv.cubicFeet,
+      imageUrl: inv.imageUrl,
+      _room: inv.room,
+    }));
+  }, [inventoryItems]);
+
+  const suggestions = activeRoom === 'All'
+    ? allInventorySuggestions
+    : (ROOM_SUGGESTIONS[activeRoom] || []);
   
   // Pagination
   const totalPages = Math.ceil(suggestions.length / itemsPerPage);
