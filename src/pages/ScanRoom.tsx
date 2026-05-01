@@ -1930,11 +1930,11 @@ export default function ScanRoom() {
                         </div>
                       )}
                       {activeScanPhoto && !isAiScanning && !isScanning && (
-                        <div className="absolute bottom-3 right-3 z-20 flex items-center gap-2">
+                        <div className="absolute bottom-3 right-3 left-3 z-20 flex flex-wrap items-center justify-end gap-2 sm:gap-3">
                           <button
                             type="button"
                             onClick={() => setShowScannerPopout(true)}
-                            className="inline-flex items-center justify-center gap-2 rounded-full bg-background/90 text-foreground border border-border px-6 py-3.5 text-base font-semibold shadow-[0_4px_14px_-4px_hsl(var(--tm-ink)/0.4)] hover:bg-background transition-colors backdrop-blur-sm"
+                            className="inline-flex items-center justify-center gap-2 rounded-full bg-background/90 text-foreground border border-border px-6 py-3.5 text-base font-semibold shadow-[0_4px_14px_-4px_hsl(var(--tm-ink)/0.4)] hover:bg-background transition-colors backdrop-blur-sm shrink-0 whitespace-nowrap"
                             title="Open the scanner in a larger pop-out with size controls"
                           >
                             <Maximize2 className="w-5 h-5" />
@@ -1944,7 +1944,7 @@ export default function ScanRoom() {
                             type="button"
                             onClick={handleEnhanceImage}
                             disabled={isEnhancing || enhancedPhotoIds.has(activeScanPhoto.id)}
-                            className="inline-flex items-center justify-center gap-2 rounded-full bg-primary text-primary-foreground px-6 py-3.5 text-base font-semibold shadow-[0_6px_20px_-4px_hsl(var(--primary)/0.6)] hover:scale-[1.03] active:scale-[0.97] transition-transform disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
+                            className="inline-flex items-center justify-center gap-2 rounded-full bg-primary text-primary-foreground px-6 py-3.5 text-base font-semibold shadow-[0_6px_20px_-4px_hsl(var(--primary)/0.6)] hover:scale-[1.03] active:scale-[0.97] transition-transform disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100 shrink-0 whitespace-nowrap"
                             title="Use AI to upscale and sharpen this photo for a better scan"
                           >
                             {isEnhancing ? (
@@ -2742,11 +2742,11 @@ export default function ScanRoom() {
                                         type="button"
                                         onClick={() => handleScanFolderClick(room)}
                                         disabled={isAiScanning}
-                                        className="ml-1 inline-flex items-center gap-1 rounded-md border border-primary/30 bg-primary/[0.06] hover:bg-primary/[0.12] disabled:opacity-50 disabled:cursor-not-allowed px-1.5 py-0.5 text-[9px] font-semibold text-primary uppercase tracking-wider transition-colors"
+                                        className="ml-1 inline-flex items-center justify-center gap-2 rounded-full border border-primary/30 bg-primary/[0.08] hover:bg-primary/[0.15] disabled:opacity-50 disabled:cursor-not-allowed px-4 py-2 text-sm font-semibold text-primary transition-colors"
                                         title={`Scan ${unscannedCount} unscanned photo${unscannedCount === 1 ? '' : 's'} in ${room}`}
                                       >
-                                        <Sparkles className="w-2.5 h-2.5" />
-                                        Scan
+                                        <Sparkles className="w-4 h-4" />
+                                        Scan Folder
                                       </button>
                                     );
                                   })()}
@@ -3144,7 +3144,7 @@ export default function ScanRoom() {
                   disabled={isScanning || isAiScanning || uploadedPhotos.length === 0 || uploadedPhotos.every(p => p.id === 'demo-photo' || scannedPhotoIds.has(p.id))}
                   className="tru-scan-library-analyze-btn tru-scan-library-analyze-btn-compact"
                 >
-                  <Sparkles className="w-4 h-4" />
+                  <Sparkles className="w-5 h-5" />
                   {isAiScanning ? "Analyzing..." : isScanning ? "Scanning..." : "Start Scanning"}
                 </button>
               </div>
