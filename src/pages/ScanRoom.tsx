@@ -3251,30 +3251,6 @@ export default function ScanRoom() {
           </div>
         </section>
 
-        {/* Bottom CTA */}
-        <section className="tru-scan-bottom-cta">
-          <div className="tru-scan-bottom-buttons">
-            <button
-              onClick={() => navigate("/online-estimate")}
-              className="tru-scan-alt-btn"
-            >
-              <Sparkles className="w-4 h-4" />
-              Build Inventory Manually
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-          <div className="tru-scan-bottom-secondary">
-            <a href="tel:1-800-555-0123" className="tru-secondary-action-btn">
-              <Phone className="w-4 h-4" />
-              Prefer to talk?
-            </a>
-            <Link to="/book" className="tru-secondary-action-btn">
-              <Video className="w-4 h-4" />
-              Book Video Consult
-            </Link>
-          </div>
-        </section>
-
         {/* Clear All Confirmation Dialog */}
         <AlertDialog open={showClearDialog} onOpenChange={setShowClearDialog}>
           <AlertDialogContent>
