@@ -1229,6 +1229,12 @@ export default function ScanRoom() {
       description: `Detected ${totalDetectedCount} items across ${realPhotos.length} photo(s).`,
     });
 
+    // Offer the user the chance to fine-tune detection boxes (training feedback).
+    // Honors the "skip all" preference and only prompts when there are real boxes.
+    if (!accuracyPromptSkippedAll && totalDetectedCount > 0) {
+      window.setTimeout(() => setShowAccuracyPrompt(true), 600);
+    }
+
     // Auto-save the scan to the CRM in the background — silent, no UI prompt.
     // We rebuild the latest snapshots since React state from inside this loop is stale.
     setDetectedItems((current) => {
