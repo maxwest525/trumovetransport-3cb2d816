@@ -1120,8 +1120,7 @@ export default function ScanRoom() {
       return;
     }
     if (!isUnlocked) {
-      setPendingAction(() => () => runRealAiScan(folderName));
-      setShowLeadGate(true);
+      openLeadGate(() => runRealAiScan(folderName));
       return;
     }
     runRealAiScan(folderName);
@@ -1132,15 +1131,13 @@ export default function ScanRoom() {
     if (hasRealPhotos && !isDemoActive) {
       // Real AI scan path — gate behind lead capture
       if (!isUnlocked) {
-        setPendingAction(() => () => runRealAiScan());
-        setShowLeadGate(true);
+        openLeadGate(() => runRealAiScan());
         return;
       }
       runRealAiScan();
     } else if (uploadedPhotos.length > 0 && !isDemoActive) {
       if (!isUnlocked) {
-        setPendingAction(() => () => setShowIntroModal(true));
-        setShowLeadGate(true);
+        openLeadGate(() => setShowIntroModal(true));
         return;
       }
       setShowIntroModal(true);
