@@ -168,7 +168,7 @@ export default function ElevenLabsTrudyWidget() {
         </button>
       </div>
       {showWaveform && (
-        <div className="px-3 pb-2">
+        <div className="pb-2">
           <VoiceWaveform isActive={isConnected} isSpeaking={conversation.isSpeaking} />
         </div>
       )}
