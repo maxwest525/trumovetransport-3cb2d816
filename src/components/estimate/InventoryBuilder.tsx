@@ -92,6 +92,7 @@ interface InventoryBuilderProps {
 }
 
 const ROOM_CONFIG = [
+  { id: 'All', label: 'All', icon: Layers },
   { id: 'Living Room', label: 'Living Room', icon: Sofa },
   { id: 'Bedroom', label: 'Bedroom', icon: Bed },
   { id: 'Dining Room', label: 'Dining Room', icon: UtensilsCrossed },
