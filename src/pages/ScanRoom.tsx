@@ -2194,7 +2194,7 @@ export default function ScanRoom() {
                   </div>
                 )}
 
-                <div className="tru-scan-library-header">
+                <div className="tru-scan-library-header order-last mt-3 [border-bottom:0] border-t pt-2">
                   <FolderOpen className="w-3.5 h-3.5" />
                   <span>Library</span>
                   <span className="tru-scan-library-count">{uploadedPhotos.length}</span>
@@ -2362,68 +2362,6 @@ export default function ScanRoom() {
                       </button>
                     )
                   )}
-                  {/* Inline "+ Folder" affordance. Toggles a tiny input row so
-                      customers can name a custom folder without leaving the
-                      library. Persisted with the saved scan. */}
-                  {!isAddingFolder ? (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setIsAddingFolder(true);
-                        setNewFolderDraft("");
-                      }}
-                      className={`${uploadedPhotos.length > 0 ? "" : "ml-auto"} inline-flex items-center gap-1 rounded-md border border-primary/30 bg-primary/[0.06] hover:bg-primary/[0.12] px-1.5 py-0.5 text-[10px] font-semibold text-primary uppercase tracking-wider transition-colors`}
-                      title="Create a custom folder"
-                    >
-                      <FolderPlus className="w-3 h-3" />
-                      Folder
-                    </button>
-                  ) : (
-                    <div className="ml-auto flex items-center gap-1">
-                      <input
-                        autoFocus
-                        type="text"
-                        value={newFolderDraft}
-                        onChange={(e) => setNewFolderDraft(e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            addCustomFolder(newFolderDraft);
-                            setIsAddingFolder(false);
-                            setNewFolderDraft("");
-                          } else if (e.key === "Escape") {
-                            setIsAddingFolder(false);
-                            setNewFolderDraft("");
-                          }
-                        }}
-                        placeholder="Folder name"
-                        maxLength={40}
-                        className="h-6 w-28 rounded-md border border-primary/40 bg-background px-1.5 text-[11px] text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => {
-                          addCustomFolder(newFolderDraft);
-                          setIsAddingFolder(false);
-                          setNewFolderDraft("");
-                        }}
-                        className="inline-flex items-center justify-center w-5 h-5 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
-                        title="Add folder"
-                      >
-                        <Check className="w-3 h-3" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setIsAddingFolder(false);
-                          setNewFolderDraft("");
-                        }}
-                        className="inline-flex items-center justify-center w-5 h-5 rounded-md bg-muted text-muted-foreground hover:bg-muted/70 transition-colors"
-                        title="Cancel"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-                    </div>
-                  )}
                 </div>
 
 
@@ -2445,7 +2383,7 @@ export default function ScanRoom() {
                   onChange={handleAllUpload}
                 />
 
-                <div className="tru-scan-library-grid tru-scan-library-grid-compact">
+                <div className="tru-scan-library-grid tru-scan-library-grid-compact order-first">
                   {uploadedPhotos.length === 0 ? (
                     <div className="tru-scan-library-empty tru-scan-library-empty-compact flex flex-col items-center gap-3 py-3">
                       {/* Primary drop zone - the "easy path" */}
@@ -2457,7 +2395,7 @@ export default function ScanRoom() {
                         <div className="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center group-hover:bg-primary/25 transition-colors">
                           <Upload className="w-5 h-5 text-primary" />
                         </div>
-                        <p className="text-sm font-semibold text-foreground">Drop photos & videos here</p>
+                        <p className="text-sm font-semibold text-foreground">Upload your images here</p>
                         <p className="text-[11px] text-muted-foreground">
                           or <span className="text-primary font-semibold underline underline-offset-2">click to browse</span>
                         </p>
@@ -2470,6 +2408,54 @@ export default function ScanRoom() {
                       <div className="w-full flex items-center justify-center gap-1.5 text-[10px] text-muted-foreground/70">
                         <Check className="w-3 h-3 text-primary" />
                         <span>Auto-saved as you go - resume anytime within 7 days</span>
+                      </div>
+
+                      {/* Add folder - first action so users see it before scrolling */}
+                      <div className="w-full">
+                        {!isAddingFolder ? (
+                          <button
+                            type="button"
+                            onClick={() => { setIsAddingFolder(true); setNewFolderDraft(""); }}
+                            className="w-full flex items-center justify-center gap-1.5 rounded-lg border border-dashed border-primary/40 bg-primary/[0.04] hover:bg-primary/[0.08] px-3 py-2 text-[11px] font-semibold text-primary uppercase tracking-wider transition-colors"
+                            title="Create a custom folder"
+                          >
+                            <FolderPlus className="w-3.5 h-3.5" />
+                            Add folder
+                          </button>
+                        ) : (
+                          <div className="w-full flex items-center gap-1 rounded-lg border border-primary/40 bg-primary/[0.04] px-2 py-1.5">
+                            <FolderPlus className="w-3.5 h-3.5 text-primary shrink-0" />
+                            <input
+                              autoFocus
+                              type="text"
+                              value={newFolderDraft}
+                              onChange={(e) => setNewFolderDraft(e.target.value)}
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter") { addCustomFolder(newFolderDraft); setIsAddingFolder(false); setNewFolderDraft(""); }
+                                else if (e.key === "Escape") { setIsAddingFolder(false); setNewFolderDraft(""); }
+                              }}
+                              placeholder="Folder name"
+                              maxLength={40}
+                              className="flex-1 h-6 rounded-md border border-primary/40 bg-background px-1.5 text-[11px] text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => { addCustomFolder(newFolderDraft); setIsAddingFolder(false); setNewFolderDraft(""); }}
+                              className="inline-flex items-center justify-center w-5 h-5 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+                              title="Add folder"
+                            >
+                              <Check className="w-3 h-3" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => { setIsAddingFolder(false); setNewFolderDraft(""); }}
+                              className="inline-flex items-center justify-center w-5 h-5 rounded-md bg-muted text-muted-foreground hover:bg-muted/70 transition-colors"
+                              title="Cancel"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          </div>
+                        )}
                       </div>
 
                       {/* Optional room organization */}
@@ -2549,6 +2535,51 @@ export default function ScanRoom() {
                             <Upload className="w-3.5 h-3.5 shrink-0" />
                             <span className="whitespace-nowrap">Add more (drop or click)</span>
                           </button>
+                          {/* Add folder - lives at the top of the folder list as the first item */}
+                          {!isAddingFolder ? (
+                            <button
+                              type="button"
+                              onClick={() => { setIsAddingFolder(true); setNewFolderDraft(""); }}
+                              className="w-full shrink-0 flex items-center justify-center gap-1.5 rounded-lg border border-dashed border-primary/40 bg-primary/[0.04] hover:bg-primary/[0.08] px-3 py-2 text-[11px] leading-none font-semibold text-primary transition-colors cursor-pointer whitespace-nowrap min-h-[36px]"
+                              title="Create a custom folder"
+                            >
+                              <FolderPlus className="w-3.5 h-3.5 shrink-0" />
+                              <span className="whitespace-nowrap">Add folder</span>
+                            </button>
+                          ) : (
+                            <div className="w-full shrink-0 flex items-center gap-1 rounded-lg border border-primary/40 bg-primary/[0.04] px-2 py-1.5">
+                              <FolderPlus className="w-3.5 h-3.5 text-primary shrink-0" />
+                              <input
+                                autoFocus
+                                type="text"
+                                value={newFolderDraft}
+                                onChange={(e) => setNewFolderDraft(e.target.value)}
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter") { addCustomFolder(newFolderDraft); setIsAddingFolder(false); setNewFolderDraft(""); }
+                                  else if (e.key === "Escape") { setIsAddingFolder(false); setNewFolderDraft(""); }
+                                }}
+                                placeholder="Folder name"
+                                maxLength={40}
+                                className="flex-1 h-6 rounded-md border border-primary/40 bg-background px-1.5 text-[11px] text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => { addCustomFolder(newFolderDraft); setIsAddingFolder(false); setNewFolderDraft(""); }}
+                                className="inline-flex items-center justify-center w-5 h-5 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+                                title="Add folder"
+                              >
+                                <Check className="w-3 h-3" />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => { setIsAddingFolder(false); setNewFolderDraft(""); }}
+                                className="inline-flex items-center justify-center w-5 h-5 rounded-md bg-muted text-muted-foreground hover:bg-muted/70 transition-colors"
+                                title="Cancel"
+                              >
+                                <X className="w-3 h-3" />
+                              </button>
+                            </div>
+                          )}
                           {orderedKeys.map((room) => {
                             const photos = groups.get(room) ?? [];
                             const isAllFolder = room === "All";
