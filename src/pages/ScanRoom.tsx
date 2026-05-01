@@ -2004,8 +2004,8 @@ export default function ScanRoom() {
                   </div>
                 ) : (
                   <div className="flex flex-col items-center justify-center gap-4 text-center flex-1 px-4 py-10">
-                    <div className="w-20 h-20 rounded-2xl bg-primary/10 border border-primary/30 flex items-center justify-center">
-                      <Scan className="w-10 h-10 text-primary" />
+                    <div className="w-24 h-24 rounded-2xl border-2 border-primary flex items-center justify-center">
+                      <Scan className="w-12 h-12 text-primary" strokeWidth={2} />
                     </div>
                     {/* Title + subtitle wrapped in 4 corner brackets */}
                     <div className="relative inline-block px-5 py-3 max-w-[280px]">
