@@ -1660,15 +1660,15 @@ export default function ScanRoom() {
             <EstimatorNavToggle />
 
             {/* Trust strip */}
-            <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 sm:gap-4 md:gap-6 mt-4 sm:mt-6">
+            <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2.5 sm:gap-6 md:gap-8 mt-5 sm:mt-7">
               {[
                 { icon: Camera, label: "Photo & Video Upload" },
                 { icon: Sparkles, label: "AI Detection" },
                 { icon: Layers, label: "Auto Inventory" },
                 { icon: Shield, label: "Instant Quote" },
               ].map((item) => (
-                <div key={item.label} className="flex items-center gap-1.5 text-[10px] sm:text-[11px] text-muted-foreground">
-                  <item.icon className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-primary" />
+                <div key={item.label} className="flex items-center gap-2 text-sm sm:text-base text-muted-foreground">
+                  <item.icon className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                   <span className="font-medium">{item.label}</span>
                 </div>
               ))}
