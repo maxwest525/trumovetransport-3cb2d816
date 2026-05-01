@@ -2004,14 +2004,6 @@ export default function ScanRoom() {
                               ? "Start Scanning"
                               : "Watch Demo"}
                       </button>
-                      <button
-                        onClick={() => navigate('/online-estimate')}
-                        disabled={isAiScanning}
-                        className="flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold border border-border bg-background text-foreground hover:border-primary/40 hover:bg-muted/40 transition-colors disabled:opacity-50"
-                      >
-                        <Plus className="w-4 h-4" />
-                        Add Items Manually
-                      </button>
                     </>
                   ) : (
                     <div className="flex items-center gap-2 w-full">
