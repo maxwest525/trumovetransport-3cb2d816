@@ -255,6 +255,11 @@ export default function ScanRoom() {
   const [isScanning, setIsScanning] = useState(false);
   const [showIntroModal, setShowIntroModal] = useState(false);
   const [showClearDialog, setShowClearDialog] = useState(false);
+  // Accuracy-feedback prompt shown after a scan completes
+  const [showAccuracyPrompt, setShowAccuracyPrompt] = useState(false);
+  const [accuracyPromptSkippedAll, setAccuracyPromptSkippedAll] = useState<boolean>(() => {
+    try { return localStorage.getItem("trumove_accuracy_prompt_skipall") === "1"; } catch { return false; }
+  });
   // Confirmation gate for deleting a custom folder that still has photos.
   // Holds the folder name pending confirmation; null when no dialog is open.
   // Empty folders bypass this and delete immediately (nothing to lose).
@@ -1223,6 +1228,12 @@ export default function ScanRoom() {
       title: `Scan complete!`,
       description: `Detected ${totalDetectedCount} items across ${realPhotos.length} photo(s).`,
     });
+
+    // Offer the user the chance to fine-tune detection boxes (training feedback).
+    // Honors the "skip all" preference and only prompts when there are real boxes.
+    if (!accuracyPromptSkippedAll && totalDetectedCount > 0) {
+      window.setTimeout(() => setShowAccuracyPrompt(true), 600);
+    }
 
     // Auto-save the scan to the CRM in the background — silent, no UI prompt.
     // We rebuild the latest snapshots since React state from inside this loop is stale.
@@ -3650,6 +3661,66 @@ export default function ScanRoom() {
               >
                 Clear All
               </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        {/* Accuracy Feedback Prompt - shown after a scan to invite the user
+            to fine-tune detection boxes. Inventory totals are not affected. */}
+        <AlertDialog open={showAccuracyPrompt} onOpenChange={setShowAccuracyPrompt}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle className="flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-primary" />
+                Help us improve accuracy
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                You can adjust the detection boxes to accurately be on the item.
+                Your inventory will not be affected.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter className="flex-col-reverse gap-2 sm:flex-row sm:justify-between sm:gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  try { localStorage.setItem("trumove_accuracy_prompt_skipall", "1"); } catch {}
+                  setAccuracyPromptSkippedAll(true);
+                  setShowAccuracyPrompt(false);
+                }}
+                className="text-xs font-semibold uppercase tracking-wider text-muted-foreground hover:text-foreground underline-offset-2 hover:underline px-2 py-2"
+              >
+                Skip All
+              </button>
+              <div className="flex flex-col sm:flex-row gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowAccuracyPrompt(false)}
+                  className="rounded-md border border-border bg-background text-foreground px-3 py-2 text-xs font-bold uppercase tracking-wider hover:bg-muted transition-colors"
+                >
+                  Skip
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowAccuracyPrompt(false);
+                    setShowScannerPopout(true);
+                  }}
+                  className="rounded-md border border-border bg-background text-foreground px-3 py-2 text-xs font-bold uppercase tracking-wider hover:bg-muted transition-colors"
+                >
+                  OK, Just This Image
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowAccuracyPrompt(false);
+                    setShowScannerPopout(true);
+                  }}
+                  className="inline-flex items-center justify-center gap-1.5 rounded-md bg-primary text-primary-foreground px-3 py-2 text-xs font-bold uppercase tracking-wider hover:opacity-90 transition-opacity"
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                  Help
+                </button>
+              </div>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
