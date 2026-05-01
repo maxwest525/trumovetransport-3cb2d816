@@ -1505,6 +1505,29 @@ export default function ScanRoom() {
         </div>
       )}
 
+      {/* Confirm before exiting fullscreen mid-scan to prevent accidental dismiss */}
+      <AlertDialog open={confirmHideScanOpen} onOpenChange={setConfirmHideScanOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Hide the scan stage?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Your AI scan is still running. It will keep working in the background and detected items will still be added to your inventory. You can reopen the stage anytime.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Keep watching</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                setScanStageOpen(false);
+                setConfirmHideScanOpen(false);
+              }}
+            >
+              Hide stage
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <div className="tru-scan-page">
 
         {/* Hero */}
