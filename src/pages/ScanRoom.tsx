@@ -3901,6 +3901,49 @@ export default function ScanRoom() {
             onCancel={handleResumeCancel}
           />
         )}
+
+        {/* Movable, resizable scanner window. Hosts the Add Photo uploader
+            with drag-and-drop and a live preview pill (lbs / cu.ft / cycling
+            recent detections + a "Back to inventory" button). The underlying
+            inline split-pane scanner is the source of truth - this window
+            calls the same upload + drop handlers. */}
+        <FloatingScannerWindow
+          open={showFloatingScanner}
+          onClose={() => setShowFloatingScanner(false)}
+          title="AI Scanner"
+          onUploadClick={handleAllUploadClick}
+          onFilesDrop={handleLibraryDrop}
+          header={
+            <ScannerPreviewPill
+              totalWeight={totalWeight}
+              totalCuFt={totalCuFt}
+              detectedCount={detectedItems.length}
+              recentItems={detectedItems
+                .slice()
+                .reverse()
+                .slice(0, Math.max(3, Math.min(detectedItems.length, 12)))
+                .map((item) => ({
+                  id: item.id,
+                  name: item.name,
+                  quantity: item.quantity,
+                }))}
+              onBackToInventory={() => {
+                setShowFloatingScanner(false);
+                // Bring the inventory list into view.
+                requestAnimationFrame(() => {
+                  const el = document.querySelector('[data-inventory-anchor="true"]')
+                    ?? document.querySelector('.tru-inventory-list')
+                    ?? document.querySelector('.tru-scan-page');
+                  if (el && 'scrollIntoView' in el) {
+                    (el as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  } else {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }
+                });
+              }}
+            />
+          }
+        />
       </div>
     </SiteShell>
   );
