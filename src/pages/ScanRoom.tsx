@@ -634,6 +634,29 @@ export default function ScanRoom() {
   const [hasResumableScan, setHasResumableScan] = useState<boolean>(
     !!persisted && (persisted.detectedItems?.length ?? 0) > 0
   );
+
+  // Auto-open the fullscreen Scan Stage when AI scan kicks off.
+  // Auto-collapse 1.4s after scan completes so the user gets a beat to see
+  // the final boxes, then returns to the workspace for the next room.
+  useEffect(() => {
+    if (isAiScanning) {
+      setScanStageOpen(true);
+      return;
+    }
+    if (scanStageOpen) {
+      const t = window.setTimeout(() => setScanStageOpen(false), 1400);
+      return () => window.clearTimeout(t);
+    }
+  }, [isAiScanning, scanStageOpen]);
+
+  // Lock body scroll while the Scan Stage is up
+  useEffect(() => {
+    if (!scanStageOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = prev; };
+  }, [scanStageOpen]);
+
   const [savedAtMs, setSavedAtMs] = useState<number | null>(persisted?.savedAt ?? null);
   // Tick every minute so "Saved X ago" stays fresh while the page is open
   const [nowTick, setNowTick] = useState(Date.now());
