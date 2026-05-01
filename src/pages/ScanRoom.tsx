@@ -3399,40 +3399,82 @@ export default function ScanRoom() {
         {/* Pop-out scanner modal: large preview + size sliders */}
         {showScannerPopout && (
           <div
-            className="fixed inset-0 z-[80] flex flex-col bg-foreground/95 backdrop-blur-sm"
+            className="fixed inset-0 z-[80] flex items-center justify-center bg-foreground/70 backdrop-blur-sm p-4"
             role="dialog"
             aria-modal="true"
             aria-label="Scanner pop-out"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) setShowScannerPopout(false);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Escape") setShowScannerPopout(false);
+            }}
+            tabIndex={-1}
           >
+            <div
+              className="relative flex flex-col bg-background text-foreground rounded-2xl shadow-[0_30px_80px_-20px_hsl(0_0%_0%/0.7)] overflow-hidden border border-border"
+              style={{
+                width: "min(1100px, 92vw)",
+                height: "min(720px, 88vh)",
+                minWidth: 480,
+                minHeight: 380,
+                resize: "both",
+                overflow: "hidden",
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
             {/* Top bar */}
-            <div className="flex items-center justify-between gap-3 px-4 sm:px-6 py-3 border-b border-background/10">
-              <div className="flex items-center gap-2 text-background">
+            <div className="flex items-center justify-between gap-3 px-4 sm:px-5 py-2.5 border-b border-border bg-muted/40">
+              <div className="flex items-center gap-2 text-foreground min-w-0">
                 <Scan className="w-4 h-4 text-primary" />
-                <span className="text-sm font-bold uppercase tracking-wider">
+                <span className="text-xs sm:text-sm font-bold uppercase tracking-wider">
                   Scanner Pop-out
                 </span>
                 {activeScanPhoto && (
-                  <span className="text-xs text-background/70 truncate max-w-[40vw]">
+                  <span className="text-xs text-muted-foreground truncate max-w-[40vw]">
                     {activeScanPhoto.name}
                   </span>
                 )}
               </div>
-              <button
-                type="button"
-                onClick={() => setShowScannerPopout(false)}
-                className="inline-flex items-center gap-2 rounded-full bg-background text-foreground px-4 py-2 text-xs font-bold uppercase tracking-wider hover:scale-[1.03] active:scale-[0.97] transition-transform"
-              >
-                <X className="w-3.5 h-3.5" />
-                Close
-              </button>
+              <div className="flex items-center gap-2">
+                <label
+                  className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider cursor-pointer hover:bg-muted transition-colors"
+                  title="Add photos to your library"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  Add Photo
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    className="hidden"
+                    onChange={(e) => {
+                      if (e.target.files && e.target.files.length > 0) {
+                        ingestFiles(e.target.files, "All");
+                        e.target.value = "";
+                      }
+                    }}
+                  />
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setShowScannerPopout(false)}
+                  className="inline-flex items-center gap-1.5 rounded-full bg-foreground text-background px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider hover:opacity-90 transition-opacity"
+                  aria-label="Close pop-out"
+                >
+                  <X className="w-3.5 h-3.5" />
+                  Close
+                </button>
+              </div>
             </div>
 
             {/* Main stage */}
-            <div className="flex-1 min-h-0 overflow-auto p-4 sm:p-6 flex items-center justify-center">
+            <div className="flex-1 min-h-0 overflow-auto p-3 sm:p-5 flex items-center justify-center bg-foreground/95">
               <div
                 className="relative shadow-[0_20px_60px_-20px_hsl(0_0%_0%/0.6)] rounded-xl overflow-hidden bg-foreground"
                 style={{
-                  width: `min(${Math.round(95 * popoutImageZoom)}vw, ${Math.round(1600 * popoutImageZoom)}px)`,
+                  width: `${Math.round(100 * popoutImageZoom)}%`,
+                  maxWidth: "100%",
                   aspectRatio: "16 / 10",
                 }}
               >
@@ -3490,12 +3532,39 @@ export default function ScanRoom() {
               </div>
             </div>
 
+            {/* Library strip - quick photo switcher inside the modal */}
+            {uploadedPhotos.length > 0 && (
+              <div className="border-t border-border bg-muted/30 px-3 sm:px-5 py-2">
+                <div className="flex items-center gap-2 overflow-x-auto">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground shrink-0 pr-1">
+                    Library ({uploadedPhotos.length})
+                  </span>
+                  {uploadedPhotos.map((p) => {
+                    const isActive = activeScanPhoto?.id === p.id;
+                    return (
+                      <button
+                        key={p.id}
+                        type="button"
+                        onClick={() => setActiveScanPhoto({ id: p.id, url: p.url, name: p.name })}
+                        title={p.name}
+                        className={`relative shrink-0 rounded-md overflow-hidden border-2 transition-all ${
+                          isActive ? "border-primary shadow-md" : "border-border hover:border-primary/40"
+                        }`}
+                      >
+                        <img src={p.url} alt={p.name} className="w-14 h-10 object-cover" />
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             {/* Controls */}
-            <div className="border-t border-background/10 bg-foreground px-4 sm:px-6 py-4">
+            <div className="border-t border-border bg-background px-4 sm:px-5 py-3">
               <div className="max-w-3xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <label className="text-[11px] font-bold uppercase tracking-wider text-background/80">
+                    <label className="text-[11px] font-bold uppercase tracking-wider text-foreground">
                       Image Size
                     </label>
                     <span className="text-[11px] font-mono text-primary">
@@ -3515,7 +3584,7 @@ export default function ScanRoom() {
                 </div>
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <label className="text-[11px] font-bold uppercase tracking-wider text-background/80">
+                    <label className="text-[11px] font-bold uppercase tracking-wider text-foreground">
                       Detection Box Size
                     </label>
                     <span className="text-[11px] font-mono text-primary">
@@ -3534,15 +3603,16 @@ export default function ScanRoom() {
                   />
                 </div>
               </div>
-              <div className="max-w-3xl mx-auto mt-3 flex items-center justify-center gap-2">
+              <div className="max-w-3xl mx-auto mt-2 flex items-center justify-center gap-2">
                 <button
                   type="button"
                   onClick={() => { setPopoutImageZoom(1); setPopoutBoxScale(1); }}
-                  className="text-[11px] font-bold uppercase tracking-wider text-background/70 hover:text-background underline-offset-2 hover:underline"
+                  className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground hover:text-foreground underline-offset-2 hover:underline"
                 >
                   Reset sizes
                 </button>
               </div>
+            </div>
             </div>
           </div>
         )}
