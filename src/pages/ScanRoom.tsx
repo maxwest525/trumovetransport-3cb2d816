@@ -2577,10 +2577,10 @@ export default function ScanRoom() {
                           <button
                             type="button"
                             onClick={handleAllUploadClick}
-                            className="w-full flex items-center justify-center gap-1.5 rounded-lg border border-dashed border-primary/40 bg-primary/[0.04] hover:bg-primary/[0.08] px-3 py-2 text-[11px] font-semibold text-primary transition-colors cursor-pointer"
+                            className="w-full shrink-0 flex items-center justify-center gap-1.5 rounded-lg border border-dashed border-primary/40 bg-primary/[0.04] hover:bg-primary/[0.08] px-3 py-2 text-[11px] leading-none font-semibold text-primary transition-colors cursor-pointer whitespace-nowrap min-h-[36px]"
                           >
-                            <Upload className="w-3.5 h-3.5" />
-                            Add more (drop or click)
+                            <Upload className="w-3.5 h-3.5 shrink-0" />
+                            <span className="whitespace-nowrap">Add more (drop or click)</span>
                           </button>
                           {orderedKeys.map((room) => {
                             const photos = groups.get(room) ?? [];
