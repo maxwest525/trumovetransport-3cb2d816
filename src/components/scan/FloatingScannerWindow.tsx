@@ -335,7 +335,7 @@ export function FloatingScannerWindow({
               <Upload className="w-6 h-6 text-primary" />
             </div>
             <p className="text-sm font-semibold text-foreground">
-              {isDraggingFiles ? "Drop to add to All" : "Add Photo"}
+              {isDraggingFiles ? "Drop to add to All" : "Upload your Images and Videos"}
             </p>
             <p className="text-[11px] text-muted-foreground">
               Drag & drop or{" "}
