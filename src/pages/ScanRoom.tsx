@@ -1710,7 +1710,7 @@ export default function ScanRoom() {
                 <span className="h-px w-8 bg-primary/40" />
               </div>
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground tracking-tight leading-[1.1]">
-                AI Room <span className="text-primary">Scan</span>
+                AI Inventory Detection <span className="text-primary">Scan</span>
               </h1>
               <p className="text-muted-foreground max-w-xl mx-auto text-sm sm:text-base md:text-lg font-light leading-relaxed mt-3 sm:mt-4 px-2 sm:px-0">
                 Simply scan your rooms and our AI will identify, measure, and catalog every item automatically.
