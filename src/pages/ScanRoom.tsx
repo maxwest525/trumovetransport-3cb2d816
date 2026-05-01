@@ -2390,43 +2390,6 @@ export default function ScanRoom() {
                   )}
                 </div>
 
-                {/* Suggested folders: one-tap chips for common rooms beyond the
-                    canonical six (Living Room/Bedroom/Kitchen/Bathroom/Garage/
-                    Storage). We hide any suggestion that already exists as a
-                    custom folder OR as a parsed photo group, so the row shrinks
-                    as the customer's library grows and disappears entirely
-                    once they've added them all. */}
-                {(() => {
-                  const SUGGESTED = ["Office", "Garage Loft", "Patio", "Basement"];
-                  const taken = new Set(
-                    [
-                      ...PROTECTED_FOLDERS,
-                      ...customFolders,
-                      ...uploadedPhotos.map((p) => parseRoom(p.name)),
-                    ].map((n) => n.toLowerCase())
-                  );
-                  const remaining = SUGGESTED.filter((s) => !taken.has(s.toLowerCase()));
-                  if (remaining.length === 0) return null;
-                  return (
-                    <div className="mt-2 flex items-center gap-1.5 flex-wrap">
-                      <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                        Suggested
-                      </span>
-                      {remaining.map((name) => (
-                        <button
-                          key={name}
-                          type="button"
-                          onClick={() => addCustomFolder(name)}
-                          className="inline-flex items-center gap-1 rounded-full border border-border/60 bg-background hover:bg-primary/[0.08] hover:border-primary/40 hover:text-primary px-2 py-0.5 text-[11px] text-muted-foreground transition-colors"
-                          title={`Add "${name}" folder`}
-                        >
-                          <Plus className="w-2.5 h-2.5" />
-                          {name}
-                        </button>
-                      ))}
-                    </div>
-                  );
-                })()}
 
                 {/* Hidden inputs for both upload paths */}
                 <input
