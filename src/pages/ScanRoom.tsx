@@ -134,6 +134,45 @@ const FURNITURE_IMAGE_LOOKUP: Record<string, string> = (() => {
   };
   addAll(DEMO_ITEMS as { name: string; image: string }[]);
   addAll(SAMPLE_PREVIEW_ITEMS as { name: string; image: string }[]);
+  // Hand-built fallbacks so common AI-detected names always render a thumbnail.
+  const extras: Record<string, string> = {
+    desk: "/inventory/office/desk.png",
+    "desk chair": "/inventory/office/office-chair.png",
+    "office chair": "/inventory/office/office-chair.png",
+    "computer desk": "/inventory/office/desk-computer.png",
+    "file cabinet": "/inventory/office/file-cabinet.png",
+    computer: "/inventory/office/computer.png",
+    printer: "/inventory/office/printer.png",
+    bookcase: "/inventory/living-room/bookcase-medium.png",
+    bookshelf: "/inventory/living-room/bookcase-medium.png",
+    sofa: "/inventory/living-room/sofa-3-cushion.png",
+    couch: "/inventory/living-room/sofa-3-cushion.png",
+    loveseat: "/inventory/living-room/sofa-loveseat.png",
+    sectional: "/inventory/living-room/sofa-sectional.png",
+    ottoman: "/inventory/living-room/ottoman.png",
+    "end table": "/inventory/living-room/end-table.png",
+    "side table": "/inventory/living-room/end-table.png",
+    "floor lamp": "/inventory/living-room/lamp-floor.png",
+    "table lamp": "/inventory/living-room/lamp-table.png",
+    lamp: "/inventory/living-room/lamp-table.png",
+    rug: "/inventory/living-room/rug-large.png",
+    tv: "/inventory/living-room/tv-plasma.png",
+    television: "/inventory/living-room/tv-plasma.png",
+    "king bed": "/inventory/bedroom/bed-king.png",
+    "double bed": "/inventory/bedroom/bed-double.png",
+    "single bed": "/inventory/bedroom/bed-single.png",
+    "twin bed": "/inventory/bedroom/bed-single.png",
+    bed: "/inventory/bedroom/bed-queen.png",
+    headboard: "/inventory/bedroom/headboard.png",
+    wardrobe: "/inventory/bedroom/wardrobe.png",
+    chair: "/inventory/living-room/chair-straight.png",
+    armchair: "/inventory/living-room/armchair.png",
+    rocker: "/inventory/living-room/chair-rocker.png",
+    "rocking chair": "/inventory/living-room/chair-rocker.png",
+  };
+  for (const [k, v] of Object.entries(extras)) {
+    if (!map[k]) map[k] = v;
+  }
   return map;
 })();
 
@@ -3153,7 +3192,35 @@ export default function ScanRoom() {
                           <tr key={item.id} style={{ animationDelay: `${idx * 0.05}s` }}>
                             <td className="tru-scan-table-order">{idx + 1}</td>
                             <td className="tru-scan-table-item">
-                              <img src={item.image} alt={item.name} />
+                              {(() => {
+                                const src = item.image || lookupItemImage(item.name);
+                                return src ? (
+                                  <img
+                                    src={src}
+                                    alt={item.name}
+                                    onError={(e) => {
+                                      (e.currentTarget as HTMLImageElement).style.display = "none";
+                                    }}
+                                  />
+                                ) : (
+                                  <div
+                                    aria-hidden
+                                    style={{
+                                      width: 56,
+                                      height: 56,
+                                      borderRadius: 8,
+                                      background: "hsl(var(--muted))",
+                                      border: "1px solid hsl(var(--border))",
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "center",
+                                      flexShrink: 0,
+                                    }}
+                                  >
+                                    <Package className="w-6 h-6 text-muted-foreground" />
+                                  </div>
+                                );
+                              })()}
                               <div className="flex items-center gap-1.5 flex-wrap">
                                 <span>{item.name}</span>
                                 {item.photoId ? (
