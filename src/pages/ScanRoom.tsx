@@ -1407,6 +1407,79 @@ export default function ScanRoom() {
 
   return (
     <SiteShell hideTrustStrip>
+      {/* Fullscreen Scan Stage - active while AI is detecting items in a photo.
+          Mirrors the inline scanner panel (photo + bounding boxes + sweep effect)
+          but at full viewport so the moment feels premium. Auto-closes after the
+          scan finishes; the user can also tap Done to exit early. */}
+      {scanStageOpen && activeScanPhoto && (
+        <div
+          className="tru-scan-stage"
+          role="dialog"
+          aria-label="AI room scan in progress"
+        >
+          <button
+            type="button"
+            className="tru-scan-stage-close"
+            onClick={() => setScanStageOpen(false)}
+          >
+            <X className="w-3.5 h-3.5" />
+            {isAiScanning ? "Hide" : "Done"}
+          </button>
+
+          <div className="tru-scan-stage-photo-wrap">
+            <div className="tru-scan-stage-photo-frame">
+              <img src={activeScanPhoto.url} alt="Scanning room" />
+
+              {isAiScanning && (
+                <div className="tru-ai-scanner-overlay" key={activeScanPhoto.id} />
+              )}
+
+              {aiBoxes.slice(0, revealedBoxCount).map((item) => (
+                <div
+                  key={item.id}
+                  className="tru-ai-detection-box"
+                  style={{
+                    top: `${item.y * 100}%`,
+                    left: `${item.x * 100}%`,
+                    width: `${item.width * 100}%`,
+                    height: `${item.height * 100}%`,
+                  }}
+                >
+                  <span className="tru-ai-detection-corner tru-ai-corner-tl" />
+                  <span className="tru-ai-detection-corner tru-ai-corner-tr" />
+                  <span className="tru-ai-detection-corner tru-ai-corner-bl" />
+                  <span className="tru-ai-detection-corner tru-ai-corner-br" />
+                  <span className="tru-ai-detection-label">{item.name}</span>
+                </div>
+              ))}
+
+              <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-foreground/85 text-background rounded-full px-3 py-1.5 z-20">
+                <Scan className="w-3.5 h-3.5" />
+                <span className="text-[11px] font-semibold uppercase tracking-wide">
+                  {isAiScanning ? "Scanning" : "Complete"}
+                </span>
+              </div>
+
+              {aiScanProgress.total > 1 && (
+                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-foreground/85 text-background rounded-full px-3 py-1.5 z-20">
+                  <span className="text-[11px] font-semibold">
+                    Photo {aiScanProgress.current} / {aiScanProgress.total}
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="tru-scan-stage-statusbar">
+            {isAiScanning
+              ? (revealedBoxCount === 0
+                  ? "Analyzing the photo..."
+                  : `Detected ${revealedBoxCount} of ${aiBoxes.length} items in this photo`)
+              : `Found ${aiBoxes.length} item${aiBoxes.length === 1 ? "" : "s"} in this photo`}
+          </div>
+        </div>
+      )}
+
       <div className="tru-scan-page">
 
         {/* Hero */}
