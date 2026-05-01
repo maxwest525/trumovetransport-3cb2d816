@@ -393,18 +393,11 @@ export default function OnlineEstimate() {
       <div className="min-h-[80vh] flex flex-col items-center justify-center px-6 bg-background">
         <div className="w-full max-w-[1440px] mx-auto">
 
-          {/* Conditional Layout: 3-column when locked, 2-column when unlocked */}
+          {/* Conditional Layout: 2-column when locked or unlocked - move details pre-captured from homepage form */}
           {!wizardComplete ?
-          // LOCKED STATE: Three-Column Layout - Form (left) | Inventory (expanded center) | Summary (right)
-          <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr_240px] gap-4 items-start">
-            {/* Left Column - Wizard */}
-            <div className="space-y-4">
-              <div className="tru-floating-form-card tru-floating-form-compact tru-estimate-card-frame">
-                <EstimateWizard onComplete={handleWizardComplete} initialDetails={extendedDetails} />
-              </div>
-            </div>
-
-            {/* Center Column - Inventory Builder (browse freely, but nudge to complete form) */}
+          // LOCKED STATE: Two-Column Layout - Inventory (left) | Summary (right)
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-6 items-start">
+            {/* Left Column - Inventory Builder */}
             <div className="relative w-full min-w-0">
               <div className="rounded-2xl border border-border/60 bg-card shadow-lg w-full overflow-hidden tru-estimate-card-frame">
                 <div className="tru-summary-header-large border-b border-border/40">
@@ -416,17 +409,6 @@ export default function OnlineEstimate() {
                   </div>
                 </div>
 
-                {/* Nudge banner - complete form to save & get quote */}
-                {(!extendedDetails?.fromLocation || !extendedDetails?.toLocation) && (
-                  <div className="mx-4 mt-4 flex items-center gap-3 rounded-lg border border-primary/30 bg-primary/5 px-4 py-3">
-                    <Lock className="w-4 h-4 text-primary flex-shrink-0" />
-                    <p className="text-xs text-foreground leading-snug">
-                      <span className="font-bold">Start adding items now!</span>{" "}
-                      Fill in your <span className="font-semibold text-primary">From</span> and <span className="font-semibold text-primary">To</span> addresses on the left to save your inventory and get an accurate quote.
-                    </p>
-                  </div>
-                )}
-                
                 <div className="p-5">
                   <InventoryBuilder
                     onAddItem={handleAddItem}
