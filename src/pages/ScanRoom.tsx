@@ -612,6 +612,11 @@ export default function ScanRoom() {
   const [aiScanProgress, setAiScanProgress] = useState({ current: 0, total: 0 });
   // Active photo being scanned (drives the live preview in the scanner panel)
   const [activeScanPhoto, setActiveScanPhoto] = useState<{ id: string; url: string; name: string } | null>(null);
+  // Fullscreen "Scan Stage" overlay - auto-opens when AI scan starts so the
+  // photo + boxes get the whole screen. User can dismiss early via Done button;
+  // otherwise it auto-closes shortly after the scan finishes so they can grab
+  // the next room without an extra tap.
+  const [scanStageOpen, setScanStageOpen] = useState(false);
   // AI-detected bounding boxes for the active photo (revealed progressively)
   const [aiBoxes, setAiBoxes] = useState<AiBox[]>([]);
   const [revealedBoxCount, setRevealedBoxCount] = useState(0);
