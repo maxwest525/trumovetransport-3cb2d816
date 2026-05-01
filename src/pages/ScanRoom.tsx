@@ -51,7 +51,7 @@ import {
   Minus, Plus, X, Upload, ImageIcon, FolderOpen, Lock, User, Mail,
   Sofa, BedDouble, UtensilsCrossed, Bath, Warehouse, Check, Pause, Play,
   Camera, Layers, Info, Eye, Save, Loader2, AlertTriangle, Pencil, FolderPlus,
-  MoreVertical, FolderInput, StickyNote, ChevronLeft, Wand2
+  MoreVertical, FolderInput, StickyNote, ChevronLeft, Wand2, Maximize2
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -662,6 +662,11 @@ export default function ScanRoom() {
   // an already-upgraded image and can show a clear in-progress / done indicator.
   const [isEnhancing, setIsEnhancing] = useState(false);
   const [enhancedPhotoIds, setEnhancedPhotoIds] = useState<Set<string>>(new Set());
+  // Pop-out scanner modal: lets the user see the photo larger and adjust
+  // the image zoom + detection-box scale with sliders.
+  const [showScannerPopout, setShowScannerPopout] = useState(false);
+  const [popoutImageZoom, setPopoutImageZoom] = useState(1);   // 0.5 - 3
+  const [popoutBoxScale, setPopoutBoxScale] = useState(1);     // 0.5 - 2 (visual size of corners + labels)
   // Natural aspect ratio of the photo currently shown in the scanner panel.
   // Lets us size the inner frame to the image so bounding boxes stay aligned
   // and portrait/landscape uploads don't get stretched or letterboxed weirdly.
@@ -1785,23 +1790,18 @@ export default function ScanRoom() {
                 {(demoStep >= 2 || activeScanPhoto) ? (
                   <div className="flex flex-col items-center gap-2 w-full h-full flex-1">
                     <div className="relative w-full flex-1 min-h-0 overflow-hidden rounded-t-2xl bg-foreground/95 flex items-center justify-center">
+                      {/* Uniform 16:10 scanner frame so every photo, regardless of
+                          its native aspect ratio, fits the exact same area. The
+                          image uses object-contain so portraits are letterboxed
+                          rather than stretched, and bounding boxes stay aligned
+                          to the frame's percentage coordinates. */}
                       <div
-                        className="relative max-w-full max-h-full"
-                        style={{
-                          aspectRatio: scannerAspect ? `${scannerAspect}` : "16 / 10",
-                          width: scannerAspect && scannerAspect >= 1 ? "100%" : "auto",
-                          height: scannerAspect && scannerAspect < 1 ? "100%" : "auto",
-                        }}
+                        className="relative max-w-full max-h-full w-full h-full"
+                        style={{ aspectRatio: "16 / 10" }}
                       >
                         <img
                           src={activeScanPhoto ? activeScanPhoto.url : sampleRoomLiving}
                           alt="Scanning room"
-                          onLoad={(e) => {
-                            const img = e.currentTarget;
-                            if (img.naturalWidth && img.naturalHeight) {
-                              setScannerAspect(img.naturalWidth / img.naturalHeight);
-                            }
-                          }}
                           className="absolute inset-0 w-full h-full object-contain"
                         />
                         {isScanning && (
@@ -1868,30 +1868,41 @@ export default function ScanRoom() {
                         </div>
                       )}
                       {activeScanPhoto && !isAiScanning && !isScanning && (
-                        <button
-                          type="button"
-                          onClick={handleEnhanceImage}
-                          disabled={isEnhancing || enhancedPhotoIds.has(activeScanPhoto.id)}
-                          className="absolute bottom-3 right-3 z-20 inline-flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-4 py-2 text-xs font-bold uppercase tracking-wider shadow-[0_6px_20px_-4px_hsl(var(--primary)/0.6)] hover:scale-[1.03] active:scale-[0.97] transition-transform disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
-                          title="Use AI to upscale and sharpen this photo for a better scan"
-                        >
-                          {isEnhancing ? (
-                            <>
-                              <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                              Enhancing...
-                            </>
-                          ) : enhancedPhotoIds.has(activeScanPhoto.id) ? (
-                            <>
-                              <Check className="w-3.5 h-3.5" />
-                              Enhanced
-                            </>
-                          ) : (
-                            <>
-                              <Wand2 className="w-3.5 h-3.5" />
-                              Enhance Image Resolution
-                            </>
-                          )}
-                        </button>
+                        <div className="absolute bottom-3 right-3 z-20 flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setShowScannerPopout(true)}
+                            className="inline-flex items-center gap-2 rounded-full bg-background/90 text-foreground border border-border px-3.5 py-2 text-xs font-bold uppercase tracking-wider shadow-[0_4px_14px_-4px_hsl(var(--tm-ink)/0.4)] hover:bg-background transition-colors backdrop-blur-sm"
+                            title="Open the scanner in a larger pop-out with size controls"
+                          >
+                            <Maximize2 className="w-3.5 h-3.5" />
+                            Pop Out
+                          </button>
+                          <button
+                            type="button"
+                            onClick={handleEnhanceImage}
+                            disabled={isEnhancing || enhancedPhotoIds.has(activeScanPhoto.id)}
+                            className="inline-flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-4 py-2 text-xs font-bold uppercase tracking-wider shadow-[0_6px_20px_-4px_hsl(var(--primary)/0.6)] hover:scale-[1.03] active:scale-[0.97] transition-transform disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
+                            title="Use AI to upscale and sharpen this photo for a better scan"
+                          >
+                            {isEnhancing ? (
+                              <>
+                                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                Enhancing...
+                              </>
+                            ) : enhancedPhotoIds.has(activeScanPhoto.id) ? (
+                              <>
+                                <Check className="w-3.5 h-3.5" />
+                                Enhanced
+                              </>
+                            ) : (
+                              <>
+                                <Wand2 className="w-3.5 h-3.5" />
+                                Enhance Image Resolution
+                              </>
+                            )}
+                          </button>
+                        </div>
                       )}
                     </div>
                     <p className="text-xs text-muted-foreground text-center px-4">
@@ -3323,6 +3334,157 @@ export default function ScanRoom() {
             </div>
           </div>
         </section>
+
+        {/* Pop-out scanner modal: large preview + size sliders */}
+        {showScannerPopout && (
+          <div
+            className="fixed inset-0 z-[80] flex flex-col bg-foreground/95 backdrop-blur-sm"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Scanner pop-out"
+          >
+            {/* Top bar */}
+            <div className="flex items-center justify-between gap-3 px-4 sm:px-6 py-3 border-b border-background/10">
+              <div className="flex items-center gap-2 text-background">
+                <Scan className="w-4 h-4 text-primary" />
+                <span className="text-sm font-bold uppercase tracking-wider">
+                  Scanner Pop-out
+                </span>
+                {activeScanPhoto && (
+                  <span className="text-xs text-background/70 truncate max-w-[40vw]">
+                    {activeScanPhoto.name}
+                  </span>
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowScannerPopout(false)}
+                className="inline-flex items-center gap-2 rounded-full bg-background text-foreground px-4 py-2 text-xs font-bold uppercase tracking-wider hover:scale-[1.03] active:scale-[0.97] transition-transform"
+              >
+                <X className="w-3.5 h-3.5" />
+                Close
+              </button>
+            </div>
+
+            {/* Main stage */}
+            <div className="flex-1 min-h-0 overflow-auto p-4 sm:p-6 flex items-center justify-center">
+              <div
+                className="relative shadow-[0_20px_60px_-20px_hsl(0_0%_0%/0.6)] rounded-xl overflow-hidden bg-foreground"
+                style={{
+                  width: `min(${Math.round(95 * popoutImageZoom)}vw, ${Math.round(1600 * popoutImageZoom)}px)`,
+                  aspectRatio: "16 / 10",
+                }}
+              >
+                <img
+                  src={activeScanPhoto ? activeScanPhoto.url : sampleRoomLiving}
+                  alt="Scanning room"
+                  className="absolute inset-0 w-full h-full object-contain"
+                />
+                {/* Live AI bounding boxes */}
+                {activeScanPhoto && aiBoxes.slice(0, revealedBoxCount).map((item) => (
+                  <div
+                    key={`pop-${item.id}`}
+                    className="tru-ai-detection-box"
+                    style={{
+                      top: `${item.y * 100}%`,
+                      left: `${item.x * 100}%`,
+                      width: `${item.width * 100}%`,
+                      height: `${item.height * 100}%`,
+                      ["--tru-box-scale" as string]: popoutBoxScale,
+                    }}
+                  >
+                    <span className="tru-ai-detection-corner tru-ai-corner-tl" />
+                    <span className="tru-ai-detection-corner tru-ai-corner-tr" />
+                    <span className="tru-ai-detection-corner tru-ai-corner-bl" />
+                    <span className="tru-ai-detection-corner tru-ai-corner-br" />
+                    <span className="tru-ai-detection-label">
+                      {item.name}
+                      <span className="tru-ai-detection-confidence">{item.confidence}%</span>
+                    </span>
+                  </div>
+                ))}
+                {/* Demo bounding boxes */}
+                {!activeScanPhoto && DEMO_FURNITURE_POSITIONS.slice(0, Math.max(0, demoStep - 2)).map((item) => (
+                  <div
+                    key={`pop-demo-${item.id}`}
+                    className="tru-ai-detection-box"
+                    style={{
+                      top: item.top,
+                      left: item.left,
+                      width: item.width,
+                      height: item.height,
+                      ["--tru-box-scale" as string]: popoutBoxScale,
+                    }}
+                  >
+                    <span className="tru-ai-detection-corner tru-ai-corner-tl" />
+                    <span className="tru-ai-detection-corner tru-ai-corner-tr" />
+                    <span className="tru-ai-detection-corner tru-ai-corner-bl" />
+                    <span className="tru-ai-detection-corner tru-ai-corner-br" />
+                    <span className="tru-ai-detection-label">
+                      {item.name}
+                      <span className="tru-ai-detection-confidence">{item.confidence}%</span>
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Controls */}
+            <div className="border-t border-background/10 bg-foreground px-4 sm:px-6 py-4">
+              <div className="max-w-3xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="text-[11px] font-bold uppercase tracking-wider text-background/80">
+                      Image Size
+                    </label>
+                    <span className="text-[11px] font-mono text-primary">
+                      {Math.round(popoutImageZoom * 100)}%
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min={0.5}
+                    max={3}
+                    step={0.05}
+                    value={popoutImageZoom}
+                    onChange={(e) => setPopoutImageZoom(parseFloat(e.target.value))}
+                    className="w-full accent-primary"
+                    aria-label="Image size"
+                  />
+                </div>
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="text-[11px] font-bold uppercase tracking-wider text-background/80">
+                      Detection Box Size
+                    </label>
+                    <span className="text-[11px] font-mono text-primary">
+                      {Math.round(popoutBoxScale * 100)}%
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min={0.5}
+                    max={2}
+                    step={0.05}
+                    value={popoutBoxScale}
+                    onChange={(e) => setPopoutBoxScale(parseFloat(e.target.value))}
+                    className="w-full accent-primary"
+                    aria-label="Detection box size"
+                  />
+                </div>
+              </div>
+              <div className="max-w-3xl mx-auto mt-3 flex items-center justify-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => { setPopoutImageZoom(1); setPopoutBoxScale(1); }}
+                  className="text-[11px] font-bold uppercase tracking-wider text-background/70 hover:text-background underline-offset-2 hover:underline"
+                >
+                  Reset sizes
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Clear All Confirmation Dialog */}
         <AlertDialog open={showClearDialog} onOpenChange={setShowClearDialog}>
