@@ -368,6 +368,7 @@ export default function InventoryBuilder({
   const handleRoomChange = (roomId: string) => {
     setActiveRoom(roomId);
     setCurrentPage(1);
+    setAllFilterQuery('');
   };
 
   const getItemQuantity = (itemName: string, room: string) => {
