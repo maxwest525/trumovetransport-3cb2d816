@@ -3031,6 +3031,32 @@ export default function ScanRoom() {
                                                     </DropdownMenuItem>
                                                   ))
                                               )}
+                                              <DropdownMenuSeparator />
+                                              <DropdownMenuItem
+                                                onSelect={() => {
+                                                  const raw = window.prompt("New folder name");
+                                                  if (!raw) return;
+                                                  const cleaned = raw.trim().replace(/\s+/g, " ").slice(0, 40);
+                                                  if (!cleaned) return;
+                                                  const exists = new Set([
+                                                    ...PROTECTED_FOLDERS,
+                                                    ...customFolders,
+                                                    ...uploadedPhotos.map((p) => parseRoom(p.name)),
+                                                  ].map((n) => n.toLowerCase())).has(cleaned.toLowerCase());
+                                                  if (!exists) {
+                                                    setCustomFolders((prev) => [...prev, cleaned]);
+                                                  }
+                                                  reclassifyPhotosToFolder(new Set([photo.id]), cleaned);
+                                                  toast({
+                                                    title: `Moved to ${cleaned}`,
+                                                    description: exists ? "Folder updated." : "New folder created.",
+                                                  });
+                                                }}
+                                                className="text-xs cursor-pointer text-primary"
+                                              >
+                                                <Plus className="w-3.5 h-3.5 mr-2" />
+                                                New folder...
+                                              </DropdownMenuItem>
                                             </DropdownMenuContent>
                                           </DropdownMenu>
                                           <button
