@@ -3082,7 +3082,7 @@ export default function ScanRoom() {
                   disabled={isScanning || isAiScanning || uploadedPhotos.length === 0 || uploadedPhotos.every(p => p.id === 'demo-photo' || scannedPhotoIds.has(p.id))}
                   className="tru-scan-library-analyze-btn tru-scan-library-analyze-btn-compact"
                 >
-                  <Sparkles className="w-3.5 h-3.5" />
+                  <Sparkles className="w-4 h-4" />
                   {isAiScanning ? "Analyzing..." : isScanning ? "Scanning..." : "Start Scanning"}
                 </button>
               </div>
