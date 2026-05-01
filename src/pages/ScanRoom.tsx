@@ -3210,7 +3210,7 @@ export default function ScanRoom() {
 
 
             {/* Inventory Table Below Video */}
-            <div className="tru-scan-table-panel">
+            <div className="tru-scan-table-panel" data-inventory-anchor="true">
               <div className="tru-scan-table-header">
                 <h3>Your Move <span className="tru-scan-headline-accent">Inventory</span></h3>
               </div>
