@@ -1981,7 +1981,7 @@ export default function ScanRoom() {
                     </p>
                   </div>
                 ) : (
-                  <div className="flex flex-col items-center gap-3 text-center">
+                  <div className="flex flex-col items-center justify-center gap-3 text-center flex-1 px-4 py-10">
                     <div className="w-16 h-16 rounded-2xl bg-muted/50 border border-border flex items-center justify-center">
                       <Scan className="w-8 h-8 text-muted-foreground" />
                     </div>
