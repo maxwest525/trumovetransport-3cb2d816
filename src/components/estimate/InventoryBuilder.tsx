@@ -860,8 +860,14 @@ export default function InventoryBuilder({
             ) : (
               <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
                 <Package className="w-10 h-10 mb-3 opacity-40" />
-                <p className="text-sm font-medium">No items in this room</p>
-                <p className="text-xs mt-1">Try searching or select another room</p>
+                <p className="text-sm font-medium">
+                  {activeRoom === 'All' ? 'No items added yet' : 'No items in this room'}
+                </p>
+                <p className="text-xs mt-1">
+                  {activeRoom === 'All'
+                    ? 'Pick a room to start building your inventory'
+                    : 'Try searching or select another room'}
+                </p>
               </div>
             )}
           </>
