@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Trash2, Printer, Download, GripVertical } from "lucide-react";
+import { Trash2, Printer, Download, GripVertical, Package } from "lucide-react";
 import { type InventoryItem, calculateTotalWeight, calculateTotalCubicFeet, DENSITY_FACTOR } from "@/lib/priceCalculator";
+import { InventoryItemImage } from "./InventoryItemImage";
 import { format } from "date-fns";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -84,18 +85,14 @@ function SortableRow({ item, index, onUpdateItem, onRemoveItem }: SortableRowPro
       <td className="px-4 py-3">
         <div className="flex items-center gap-3">
           {/* Larger thumbnail */}
-          <div className="w-10 h-10 flex-shrink-0 rounded-lg overflow-hidden bg-muted/30 border border-border/30">
-            {item.imageUrl ? (
-              <img 
-                src={item.imageUrl} 
-                alt={item.name} 
-                className="w-full h-full object-contain p-0.5"
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center">
-                <span className="text-base text-muted-foreground">📦</span>
-              </div>
-            )}
+          <div className="w-10 h-10 flex-shrink-0 rounded-lg overflow-hidden bg-muted/30 border border-border/30 flex items-center justify-center">
+            <InventoryItemImage
+              src={item.imageUrl}
+              alt={item.name}
+              fallbackIcon={Package}
+              className="w-full h-full p-0.5"
+              iconClassName="w-5 h-5 text-muted-foreground"
+            />
           </div>
           <span className="font-medium text-foreground">{item.name}</span>
         </div>
