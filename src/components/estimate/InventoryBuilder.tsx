@@ -40,6 +40,7 @@ import {
   Camera,
   Wand2,
   Car,
+  Layers,
   type LucideIcon
 } from "lucide-react";
 import { ROOM_SUGGESTIONS, type InventoryItem, type ItemDefinition } from "@/lib/priceCalculator";
