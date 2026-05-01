@@ -658,6 +658,10 @@ export default function ScanRoom() {
   const [aiScanProgress, setAiScanProgress] = useState({ current: 0, total: 0 });
   // Active photo being scanned (drives the live preview in the scanner panel)
   const [activeScanPhoto, setActiveScanPhoto] = useState<{ id: string; url: string; name: string } | null>(null);
+  // Image enhancement state - tracks per-photo enhancement so we don't re-enhance
+  // an already-upgraded image and can show a clear in-progress / done indicator.
+  const [isEnhancing, setIsEnhancing] = useState(false);
+  const [enhancedPhotoIds, setEnhancedPhotoIds] = useState<Set<string>>(new Set());
   // Natural aspect ratio of the photo currently shown in the scanner panel.
   // Lets us size the inner frame to the image so bounding boxes stay aligned
   // and portrait/landscape uploads don't get stretched or letterboxed weirdly.
