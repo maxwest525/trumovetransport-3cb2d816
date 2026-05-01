@@ -3153,7 +3153,35 @@ export default function ScanRoom() {
                           <tr key={item.id} style={{ animationDelay: `${idx * 0.05}s` }}>
                             <td className="tru-scan-table-order">{idx + 1}</td>
                             <td className="tru-scan-table-item">
-                              <img src={item.image} alt={item.name} />
+                              {(() => {
+                                const src = item.image || lookupItemImage(item.name);
+                                return src ? (
+                                  <img
+                                    src={src}
+                                    alt={item.name}
+                                    onError={(e) => {
+                                      (e.currentTarget as HTMLImageElement).style.display = "none";
+                                    }}
+                                  />
+                                ) : (
+                                  <div
+                                    aria-hidden
+                                    style={{
+                                      width: 56,
+                                      height: 56,
+                                      borderRadius: 8,
+                                      background: "hsl(var(--muted))",
+                                      border: "1px solid hsl(var(--border))",
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "center",
+                                      flexShrink: 0,
+                                    }}
+                                  >
+                                    <Package className="w-6 h-6 text-muted-foreground" />
+                                  </div>
+                                );
+                              })()}
                               <div className="flex items-center gap-1.5 flex-wrap">
                                 <span>{item.name}</span>
                                 {item.photoId ? (
