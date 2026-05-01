@@ -25,7 +25,7 @@ export default function VoiceWaveform({ isActive, isSpeaking, className = '' }: 
     };
     resize();
 
-    const barCount = 32;
+    const barCount = 48;
     const barWidth = 2.5;
     const gap = 1.5;
 
@@ -36,7 +36,7 @@ export default function VoiceWaveform({ isActive, isSpeaking, className = '' }: 
       ctx.clearRect(0, 0, w, h);
 
       if (!isActive) {
-        ctx.fillStyle = `hsla(142, 71%, 45%, 0.12)`;
+        ctx.fillStyle = `hsla(0, 0%, 0%, 0.25)`;
         const totalW = barCount * (barWidth + gap) - gap;
         const startX = (w - totalW) / 2;
         for (let i = 0; i < barCount; i++) {
@@ -76,8 +76,8 @@ export default function VoiceWaveform({ isActive, isSpeaking, className = '' }: 
         const barH = Math.max(2, amplitude * (h * 0.92));
         const y = (h - barH) / 2;
 
-        const alpha = isSpeaking ? 0.5 + amplitude * 0.5 : 0.15 + amplitude * 0.3;
-        ctx.fillStyle = `hsla(142, 71%, 45%, ${alpha})`;
+        const alpha = isSpeaking ? 0.6 + amplitude * 0.4 : 0.25 + amplitude * 0.35;
+        ctx.fillStyle = `hsla(0, 0%, 0%, ${alpha})`;
         ctx.beginPath();
         ctx.roundRect(x, y, barWidth, barH, 1.25);
         ctx.fill();
