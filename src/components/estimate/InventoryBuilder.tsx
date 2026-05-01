@@ -743,16 +743,18 @@ export default function InventoryBuilder({
             {viewMode === 'grid' ? (
                   <div className="grid grid-cols-4 gap-2">
                     {paginatedSuggestions.map((item) => {
-                      const key = `${activeRoom}-${item.name}`;
+                      const itemRoom = (item as any)._room || activeRoom;
+                      const key = `${itemRoom}-${item.name}`;
                       return (
                         <ItemCard
-                          key={item.name}
+                          key={key}
                           item={item}
-                          room={activeRoom}
-                          quantity={getItemQuantity(item.name, activeRoom)}
-                          onAdd={() => handleQuantityChange(item, activeRoom, 1)}
-                          onRemove={() => handleQuantityChange(item, activeRoom, -1)}
-                          icon={getItemIcon(item.name, activeRoom)}
+                          room={itemRoom}
+                          showRoom={activeRoom === 'All'}
+                          quantity={getItemQuantity(item.name, itemRoom)}
+                          onAdd={() => handleQuantityChange(item, itemRoom, 1)}
+                          onRemove={() => handleQuantityChange(item, itemRoom, -1)}
+                          icon={getItemIcon(item.name, itemRoom)}
                           isAnimating={recentlyUpdated === key}
                         />
                       );
@@ -773,16 +775,17 @@ export default function InventoryBuilder({
                 ) : (
                   <div className="space-y-2">
                     {paginatedSuggestions.map((item) => {
-                      const key = `${activeRoom}-${item.name}`;
+                      const itemRoom = (item as any)._room || activeRoom;
+                      const key = `${itemRoom}-${item.name}`;
                       return (
                         <ItemListRow
-                          key={item.name}
+                          key={key}
                           item={item}
-                          room={activeRoom}
-                          quantity={getItemQuantity(item.name, activeRoom)}
-                          onAdd={() => handleQuantityChange(item, activeRoom, 1)}
-                          onRemove={() => handleQuantityChange(item, activeRoom, -1)}
-                          icon={getItemIcon(item.name, activeRoom)}
+                          room={itemRoom}
+                          quantity={getItemQuantity(item.name, itemRoom)}
+                          onAdd={() => handleQuantityChange(item, itemRoom, 1)}
+                          onRemove={() => handleQuantityChange(item, itemRoom, -1)}
+                          icon={getItemIcon(item.name, itemRoom)}
                           isAnimating={recentlyUpdated === key}
                         />
                       );
