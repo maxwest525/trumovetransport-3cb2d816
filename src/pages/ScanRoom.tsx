@@ -631,6 +631,13 @@ export default function ScanRoom() {
   const [aiScanProgress, setAiScanProgress] = useState({ current: 0, total: 0 });
   // Active photo being scanned (drives the live preview in the scanner panel)
   const [activeScanPhoto, setActiveScanPhoto] = useState<{ id: string; url: string; name: string } | null>(null);
+  // Natural aspect ratio of the photo currently shown in the scanner panel.
+  // Lets us size the inner frame to the image so bounding boxes stay aligned
+  // and portrait/landscape uploads don't get stretched or letterboxed weirdly.
+  const [scannerAspect, setScannerAspect] = useState<number | null>(null);
+  useEffect(() => {
+    setScannerAspect(null);
+  }, [activeScanPhoto?.id]);
   // Fullscreen "Scan Stage" overlay - auto-opens when AI scan starts so the
   // photo + boxes get the whole screen. User can dismiss early via Done button;
   // otherwise it auto-closes shortly after the scan finishes so they can grab
