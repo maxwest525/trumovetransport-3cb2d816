@@ -1839,9 +1839,7 @@ export default function ScanRoom() {
 
               {/* Center: Demo & Actions */}
               <div
-                className={`flex flex-col items-stretch gap-4 border border-border rounded-2xl bg-background shadow-[0_4px_20px_-4px_hsl(var(--tm-ink)/0.08)] relative overflow-hidden ${
-                  (demoStep >= 2 || activeScanPhoto) ? "justify-start" : "justify-center py-8"
-                }`}
+                className="flex flex-col items-stretch gap-4 border border-border rounded-2xl bg-background shadow-[0_4px_20px_-4px_hsl(var(--tm-ink)/0.08)] relative overflow-hidden justify-start"
                 style={{
                   minHeight: (demoStep >= 2 || activeScanPhoto)
                     ? "min(900px, 82vh)"
@@ -1981,7 +1979,7 @@ export default function ScanRoom() {
                     </p>
                   </div>
                 ) : (
-                  <div className="flex flex-col items-center gap-3 text-center">
+                  <div className="flex flex-col items-center justify-center gap-3 text-center flex-1 px-4 py-10">
                     <div className="w-16 h-16 rounded-2xl bg-muted/50 border border-border flex items-center justify-center">
                       <Scan className="w-8 h-8 text-muted-foreground" />
                     </div>
