@@ -300,6 +300,7 @@ export default function InventoryBuilder({
   const [presetDialogOpen, setPresetDialogOpen] = useState(false);
   const [selectedPreset, setSelectedPreset] = useState<string | null>(null);
   const prevTotalRef = useRef(0);
+  const [allFilterQuery, setAllFilterQuery] = useState('');
 
   // Get all items for search with room info
   const allItemsWithRoom = useMemo(() => {
@@ -341,9 +342,20 @@ export default function InventoryBuilder({
     }));
   }, [inventoryItems]);
 
-  const suggestions = activeRoom === 'All'
+  const baseSuggestions = activeRoom === 'All'
     ? allInventorySuggestions
     : (ROOM_SUGGESTIONS[activeRoom] || []);
+
+  // Apply in-tab filter when on the "All" tab
+  const suggestions = useMemo(() => {
+    if (activeRoom !== 'All' || !allFilterQuery.trim()) return baseSuggestions;
+    const q = allFilterQuery.toLowerCase();
+    return baseSuggestions.filter((item: any) => {
+      const name = (item.name || '').toLowerCase();
+      const room = (item._room || '').toLowerCase();
+      return name.includes(q) || room.includes(q);
+    });
+  }, [baseSuggestions, activeRoom, allFilterQuery]);
   
   // Pagination
   const totalPages = Math.ceil(suggestions.length / itemsPerPage);
