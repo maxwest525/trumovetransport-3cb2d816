@@ -1692,11 +1692,18 @@ export default function ScanRoom() {
             >
 
               {/* Center: Demo & Actions */}
-              <div className="flex flex-col items-center justify-center gap-4 border border-border rounded-2xl bg-background shadow-[0_4px_20px_-4px_hsl(var(--tm-ink)/0.08)] relative overflow-hidden">
+              <div
+                className="flex flex-col items-center justify-center gap-4 border border-border rounded-2xl bg-background shadow-[0_4px_20px_-4px_hsl(var(--tm-ink)/0.08)] relative overflow-hidden min-h-[520px] lg:min-h-[680px]"
+                style={{
+                  minHeight: (demoStep >= 2 || activeScanPhoto)
+                    ? "min(820px, 78vh)"
+                    : undefined,
+                }}
+              >
                 {/* Scanner content - show image when demo is active OR live AI scan running */}
                 {(demoStep >= 2 || activeScanPhoto) ? (
-                  <div className="flex flex-col items-center gap-2 w-full">
-                    <div className="relative w-full flex-1 overflow-hidden rounded-t-2xl">
+                  <div className="flex flex-col items-center gap-2 w-full h-full flex-1">
+                    <div className="relative w-full flex-1 min-h-0 overflow-hidden rounded-t-2xl">
                       <img
                         src={activeScanPhoto ? activeScanPhoto.url : sampleRoomLiving}
                         alt="Scanning room"
