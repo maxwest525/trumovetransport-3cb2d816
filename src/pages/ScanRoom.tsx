@@ -2008,11 +2008,11 @@ export default function ScanRoom() {
                       <Scan className="w-12 h-12 text-primary" strokeWidth={2} />
                     </div>
                     {/* Title + subtitle wrapped in 4 corner brackets */}
-                    <div className="relative inline-block px-5 py-3 max-w-[280px]">
-                      <span aria-hidden="true" className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-primary rounded-tl-md" />
-                      <span aria-hidden="true" className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-primary rounded-tr-md" />
-                      <span aria-hidden="true" className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-primary rounded-bl-md" />
-                      <span aria-hidden="true" className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-primary rounded-br-md" />
+                    <div className="relative inline-block px-4 sm:px-5 md:px-6 py-2.5 sm:py-3 md:py-4 max-w-[260px] sm:max-w-[320px] md:max-w-[380px]">
+                      <span aria-hidden="true" className="absolute top-0 left-0 w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 border-t-2 border-l-2 border-primary rounded-tl-md" />
+                      <span aria-hidden="true" className="absolute top-0 right-0 w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 border-t-2 border-r-2 border-primary rounded-tr-md" />
+                      <span aria-hidden="true" className="absolute bottom-0 left-0 w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 border-b-2 border-l-2 border-primary rounded-bl-md" />
+                      <span aria-hidden="true" className="absolute bottom-0 right-0 w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 border-b-2 border-r-2 border-primary rounded-br-md" />
                       <h3 className="text-lg font-semibold text-foreground">AI Detection Inventory Scanner</h3>
                       <p className="text-sm text-muted-foreground mt-1.5">
                         Upload your room photos or videos and our AI will detect every item automatically.
