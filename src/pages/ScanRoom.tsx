@@ -2003,14 +2003,21 @@ export default function ScanRoom() {
                     </p>
                   </div>
                 ) : (
-                  <div className="flex flex-col items-center justify-center gap-3 text-center flex-1 px-4 py-10">
-                    <div className="w-16 h-16 rounded-2xl bg-muted/50 border border-border flex items-center justify-center">
-                      <Scan className="w-8 h-8 text-muted-foreground" />
+                  <div className="flex flex-col items-center justify-center gap-4 text-center flex-1 px-4 py-10">
+                    <div className="w-20 h-20 rounded-2xl bg-primary/10 border border-primary/30 flex items-center justify-center">
+                      <Scan className="w-10 h-10 text-primary" />
                     </div>
-                    <h3 className="text-lg font-semibold text-foreground">AI Detection Inventory Scanner</h3>
-                    <p className="text-sm text-muted-foreground max-w-[240px]">
-                      Upload your room photos or videos and our AI will detect every item automatically.
-                    </p>
+                    {/* Title + subtitle wrapped in 4 corner brackets */}
+                    <div className="relative inline-block px-5 py-3 max-w-[280px]">
+                      <span aria-hidden="true" className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-primary rounded-tl-md" />
+                      <span aria-hidden="true" className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-primary rounded-tr-md" />
+                      <span aria-hidden="true" className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-primary rounded-bl-md" />
+                      <span aria-hidden="true" className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-primary rounded-br-md" />
+                      <h3 className="text-lg font-semibold text-foreground">AI Detection Inventory Scanner</h3>
+                      <p className="text-sm text-muted-foreground mt-1.5">
+                        Upload your room photos or videos and our AI will detect every item automatically.
+                      </p>
+                    </div>
                   </div>
                 )}
 
