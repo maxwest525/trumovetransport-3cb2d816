@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Package, Weight, ArrowLeft, Sparkles } from "lucide-react";
 
 export interface ScannerPreviewItem {
-  id: string;
+  id: string | number;
   name: string;
   quantity: number;
 }
