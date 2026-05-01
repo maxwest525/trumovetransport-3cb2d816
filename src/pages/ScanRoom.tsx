@@ -48,7 +48,7 @@ import {
   Scan, Sparkles, ArrowRight, 
   Smartphone, Box, Clock, Shield, Zap, ChevronRight,
   Ruler, Package, Printer, Download, Square, Trash2, ArrowRightLeft,
-  Phone, Video, Minus, Plus, X, Upload, ImageIcon, FolderOpen, Lock, User, Mail,
+  Minus, Plus, X, Upload, ImageIcon, FolderOpen, Lock, User, Mail,
   Sofa, BedDouble, UtensilsCrossed, Bath, Warehouse, Check, Pause, Play,
   Camera, Layers, Info, Eye, Save, Loader2, AlertTriangle, Pencil, FolderPlus,
   MoreVertical, FolderInput, StickyNote, ChevronLeft
