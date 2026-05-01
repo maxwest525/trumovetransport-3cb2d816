@@ -1936,6 +1936,15 @@ export default function ScanRoom() {
                         <div className="absolute bottom-3 right-3 left-3 z-20 flex flex-wrap items-center justify-end gap-2 sm:gap-3">
                           <button
                             type="button"
+                            onClick={() => setShowFloatingScanner(true)}
+                            className="inline-flex items-center justify-center gap-2 rounded-full bg-background/90 text-foreground border border-primary/40 px-6 py-3.5 text-base font-semibold shadow-[0_4px_14px_-4px_hsl(var(--primary)/0.4)] hover:bg-primary/[0.08] transition-colors backdrop-blur-sm shrink-0 whitespace-nowrap"
+                            title="Open a movable, resizable scanner window with Add Photo and live totals"
+                          >
+                            <Maximize2 className="w-5 h-5 text-primary" />
+                            Scanner Window
+                          </button>
+                          <button
+                            type="button"
                             onClick={() => setShowScannerPopout(true)}
                             className="inline-flex items-center justify-center gap-2 rounded-full bg-background/90 text-foreground border border-border px-6 py-3.5 text-base font-semibold shadow-[0_4px_14px_-4px_hsl(var(--tm-ink)/0.4)] hover:bg-background transition-colors backdrop-blur-sm shrink-0 whitespace-nowrap"
                             title="Open the scanner in a larger pop-out with size controls"
