@@ -961,6 +961,14 @@
   min-height: 0;
 }
 
+.tru-scan-library-folder {
+  width: 100%;
+  border: 1px solid hsl(var(--border));
+  background: hsl(var(--background));
+  border-radius: 0.5rem;
+  padding: 0.25rem 0.5rem 0.5rem;
+}
+
 .tru-scan-library-item-compact {
   border-radius: 0.375rem;
 }
