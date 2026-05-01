@@ -121,6 +121,33 @@ const SAMPLE_PREVIEW_ITEMS = [
   { id: 105, name: "TV Stand", room: "Living Room", weight: 80, cuft: 12, image: "/inventory/living-room/tv-stand.png" },
 ];
 
+// Best-effort thumbnail lookup for AI-detected items so the inventory table
+// shows a real picture next to each row instead of a blank box. Matches by a
+// loose, normalized name (case + punctuation insensitive, plurals stripped).
+const FURNITURE_IMAGE_LOOKUP: Record<string, string> = (() => {
+  const map: Record<string, string> = {};
+  const addAll = (list: { name: string; image: string }[]) => {
+    for (const it of list) {
+      const key = it.name.toLowerCase().replace(/[^a-z0-9 ]/g, "").replace(/s\b/g, "").trim();
+      if (key && !map[key]) map[key] = it.image;
+    }
+  };
+  addAll(DEMO_ITEMS as { name: string; image: string }[]);
+  addAll(SAMPLE_PREVIEW_ITEMS as { name: string; image: string }[]);
+  return map;
+})();
+
+const lookupItemImage = (name: string): string => {
+  if (!name) return "";
+  const key = name.toLowerCase().replace(/[^a-z0-9 ]/g, "").replace(/s\b/g, "").trim();
+  if (FURNITURE_IMAGE_LOOKUP[key]) return FURNITURE_IMAGE_LOOKUP[key];
+  // Try partial contains for things like "leather sofa" -> "sofa"
+  for (const k of Object.keys(FURNITURE_IMAGE_LOOKUP)) {
+    if (key.includes(k) || k.includes(key)) return FURNITURE_IMAGE_LOOKUP[k];
+  }
+  return "";
+};
+
 export default function ScanRoom() {
   useScrollToTop();
   const navigate = useNavigate();
