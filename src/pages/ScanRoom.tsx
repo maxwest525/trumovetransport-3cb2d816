@@ -2162,38 +2162,6 @@ export default function ScanRoom() {
                   <div className="h-16 w-1 rounded-full bg-border group-hover:bg-primary/60 group-active:bg-primary group-focus-visible:bg-primary transition-colors" />
                 </div>
 
-                {/* Floating maximize toggles - sit on top of the bar but
-                    don't intercept the drag area outside the buttons. */}
-                <div className="pointer-events-none absolute inset-y-0 left-1/2 -translate-x-1/2 flex flex-col items-center justify-center gap-1.5">
-                  <button
-                    type="button"
-                    onClick={maximizedSide === "scanner" ? restoreSplit : maximizeScanner}
-                    aria-pressed={maximizedSide === "scanner"}
-                    aria-label={maximizedSide === "scanner" ? "Restore split view" : "Maximize scanner"}
-                    title={maximizedSide === "scanner" ? "Restore split" : "Maximize scanner"}
-                    className={`pointer-events-auto flex h-6 w-6 items-center justify-center rounded-full border bg-background shadow-sm transition-colors ${
-                      maximizedSide === "scanner"
-                        ? "border-primary/60 text-primary"
-                        : "border-border text-muted-foreground hover:border-primary/40 hover:text-foreground"
-                    }`}
-                  >
-                    <ChevronLeft className="h-3.5 w-3.5" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={maximizedSide === "library" ? restoreSplit : maximizeLibrary}
-                    aria-pressed={maximizedSide === "library"}
-                    aria-label={maximizedSide === "library" ? "Restore split view" : "Maximize library"}
-                    title={maximizedSide === "library" ? "Restore split" : "Maximize library"}
-                    className={`pointer-events-auto flex h-6 w-6 items-center justify-center rounded-full border bg-background shadow-sm transition-colors ${
-                      maximizedSide === "library"
-                        ? "border-primary/60 text-primary"
-                        : "border-border text-muted-foreground hover:border-primary/40 hover:text-foreground"
-                    }`}
-                  >
-                    <ChevronLeft className="h-3.5 w-3.5 rotate-180" />
-                  </button>
-                </div>
               </div>
 
               {/* Right: Photo Library - Compact */}
