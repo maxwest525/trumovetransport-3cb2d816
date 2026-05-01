@@ -255,6 +255,11 @@ export default function ScanRoom() {
   const [isScanning, setIsScanning] = useState(false);
   const [showIntroModal, setShowIntroModal] = useState(false);
   const [showClearDialog, setShowClearDialog] = useState(false);
+  // Accuracy-feedback prompt shown after a scan completes
+  const [showAccuracyPrompt, setShowAccuracyPrompt] = useState(false);
+  const [accuracyPromptSkippedAll, setAccuracyPromptSkippedAll] = useState<boolean>(() => {
+    try { return localStorage.getItem("trumove_accuracy_prompt_skipall") === "1"; } catch { return false; }
+  });
   // Confirmation gate for deleting a custom folder that still has photos.
   // Holds the folder name pending confirmation; null when no dialog is open.
   // Empty folders bypass this and delete immediately (nothing to lose).
