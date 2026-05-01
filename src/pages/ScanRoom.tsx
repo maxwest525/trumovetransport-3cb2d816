@@ -657,6 +657,16 @@ export default function ScanRoom() {
     return () => { document.body.style.overflow = prev; };
   }, [scanStageOpen]);
 
+  // ESC key dismisses the Scan Stage instantly
+  useEffect(() => {
+    if (!scanStageOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setScanStageOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [scanStageOpen]);
+
   const [savedAtMs, setSavedAtMs] = useState<number | null>(persisted?.savedAt ?? null);
   // Tick every minute so "Saved X ago" stays fresh while the page is open
   const [nowTick, setNowTick] = useState(Date.now());
@@ -1421,9 +1431,10 @@ export default function ScanRoom() {
             type="button"
             className="tru-scan-stage-close"
             onClick={() => setScanStageOpen(false)}
+            aria-label={isAiScanning ? "Hide scan stage and continue in background" : "Close scan stage"}
           >
             <X className="w-3.5 h-3.5" />
-            {isAiScanning ? "Hide" : "Done"}
+            {isAiScanning ? "Hide Stage" : "Done"}
           </button>
 
           <div className="tru-scan-stage-photo-wrap">
