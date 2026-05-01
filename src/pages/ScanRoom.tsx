@@ -1790,23 +1790,18 @@ export default function ScanRoom() {
                 {(demoStep >= 2 || activeScanPhoto) ? (
                   <div className="flex flex-col items-center gap-2 w-full h-full flex-1">
                     <div className="relative w-full flex-1 min-h-0 overflow-hidden rounded-t-2xl bg-foreground/95 flex items-center justify-center">
+                      {/* Uniform 16:10 scanner frame so every photo, regardless of
+                          its native aspect ratio, fits the exact same area. The
+                          image uses object-contain so portraits are letterboxed
+                          rather than stretched, and bounding boxes stay aligned
+                          to the frame's percentage coordinates. */}
                       <div
-                        className="relative max-w-full max-h-full"
-                        style={{
-                          aspectRatio: scannerAspect ? `${scannerAspect}` : "16 / 10",
-                          width: scannerAspect && scannerAspect >= 1 ? "100%" : "auto",
-                          height: scannerAspect && scannerAspect < 1 ? "100%" : "auto",
-                        }}
+                        className="relative max-w-full max-h-full w-full h-full"
+                        style={{ aspectRatio: "16 / 10" }}
                       >
                         <img
                           src={activeScanPhoto ? activeScanPhoto.url : sampleRoomLiving}
                           alt="Scanning room"
-                          onLoad={(e) => {
-                            const img = e.currentTarget;
-                            if (img.naturalWidth && img.naturalHeight) {
-                              setScannerAspect(img.naturalWidth / img.naturalHeight);
-                            }
-                          }}
                           className="absolute inset-0 w-full h-full object-contain"
                         />
                         {isScanning && (
