@@ -42,6 +42,8 @@ import ScanIntroModal from "@/components/estimate/ScanIntroModal";
 import EstimatorNavToggle from "@/components/estimate/EstimatorNavToggle";
 import LeadGateModal from "@/components/scan/LeadGateModal";
 import ResumeVerifyModal from "@/components/scan/ResumeVerifyModal";
+import FloatingScannerWindow from "@/components/scan/FloatingScannerWindow";
+import ScannerPreviewPill from "@/components/scan/ScannerPreviewPill";
 
 import logoImg from "@/assets/logo.png";
 import { 
@@ -709,6 +711,9 @@ export default function ScanRoom() {
   // Pop-out scanner modal: lets the user see the photo larger and adjust
   // the image zoom + detection-box scale with sliders.
   const [showScannerPopout, setShowScannerPopout] = useState(false);
+  // Resizable/movable scanner window. Independent of the legacy "Pop Out" modal -
+  // this one houses the Add Photo uploader plus a live preview pill.
+  const [showFloatingScanner, setShowFloatingScanner] = useState(false);
   const [popoutImageZoom, setPopoutImageZoom] = useState(1);   // 0.5 - 3
   const [popoutBoxScale, setPopoutBoxScale] = useState(1);     // 0.5 - 2 (visual size of corners + labels)
   // Natural aspect ratio of the photo currently shown in the scanner panel.
@@ -1929,6 +1934,15 @@ export default function ScanRoom() {
                       )}
                       {activeScanPhoto && !isAiScanning && !isScanning && (
                         <div className="absolute bottom-3 right-3 left-3 z-20 flex flex-wrap items-center justify-end gap-2 sm:gap-3">
+                          <button
+                            type="button"
+                            onClick={() => setShowFloatingScanner(true)}
+                            className="inline-flex items-center justify-center gap-2 rounded-full bg-background/90 text-foreground border border-primary/40 px-6 py-3.5 text-base font-semibold shadow-[0_4px_14px_-4px_hsl(var(--primary)/0.4)] hover:bg-primary/[0.08] transition-colors backdrop-blur-sm shrink-0 whitespace-nowrap"
+                            title="Open a movable, resizable scanner window with Add Photo and live totals"
+                          >
+                            <Maximize2 className="w-5 h-5 text-primary" />
+                            Scanner Window
+                          </button>
                           <button
                             type="button"
                             onClick={() => setShowScannerPopout(true)}
@@ -3887,6 +3901,49 @@ export default function ScanRoom() {
             onCancel={handleResumeCancel}
           />
         )}
+
+        {/* Movable, resizable scanner window. Hosts the Add Photo uploader
+            with drag-and-drop and a live preview pill (lbs / cu.ft / cycling
+            recent detections + a "Back to inventory" button). The underlying
+            inline split-pane scanner is the source of truth - this window
+            calls the same upload + drop handlers. */}
+        <FloatingScannerWindow
+          open={showFloatingScanner}
+          onClose={() => setShowFloatingScanner(false)}
+          title="AI Scanner"
+          onUploadClick={handleAllUploadClick}
+          onFilesDrop={handleLibraryDrop}
+          header={
+            <ScannerPreviewPill
+              totalWeight={totalWeight}
+              totalCuFt={totalCuFt}
+              detectedCount={detectedItems.length}
+              recentItems={detectedItems
+                .slice()
+                .reverse()
+                .slice(0, Math.max(3, Math.min(detectedItems.length, 12)))
+                .map((item) => ({
+                  id: item.id,
+                  name: item.name,
+                  quantity: item.quantity,
+                }))}
+              onBackToInventory={() => {
+                setShowFloatingScanner(false);
+                // Bring the inventory list into view.
+                requestAnimationFrame(() => {
+                  const el = document.querySelector('[data-inventory-anchor="true"]')
+                    ?? document.querySelector('.tru-inventory-list')
+                    ?? document.querySelector('.tru-scan-page');
+                  if (el && 'scrollIntoView' in el) {
+                    (el as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  } else {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }
+                });
+              }}
+            />
+          }
+        />
       </div>
     </SiteShell>
   );

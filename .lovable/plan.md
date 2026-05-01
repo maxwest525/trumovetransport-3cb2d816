@@ -1,81 +1,61 @@
-# Room Scanner - Cinematic Polish + Fullscreen Scan Stage
-
 ## Goal
 
-Make the existing scan moment feel premium without changing the flow, adding taps, increasing AI cost, or blocking the multi-room workflow. Four focused upgrades on `src/pages/ScanRoom.tsx` and `src/index.css`.
+Turn the AI scanner panel into an expandable, resizable, movable window. Inside that window, surface the photo upload library card with drag-and-drop, plus a live preview pill (total lbs, total cu.ft, and the 3 most recent detected items cycling). Keep the full inventory accessible via a "Back to inventory" button.
 
-## What stays the same
+## What this is NOT
 
-- Same upload/scan flow
-- Same Gemini 2.5 Flash detection (no model change, no cost change)
-- Same auto-merge into the inventory list
-- Same per-photo reveal sequence (`revealedBoxCount` ticking up)
-- Same handoff to manual inventory after the scan
-- No confidence colors, no tap-to-dismiss, no slide-up summary card
+This is not adding a new modal. The Custom Item modal stays as-is. Drag-and-drop file upload already exists in the scanner - we're not rebuilding it, we're re-housing it inside the new floating window and adding the preview header.
 
 ## What changes
 
-### 1. Replace the cheesy scan line with a "depth sweep" effect
+### 1. New floating scanner window (`src/components/scan/FloatingScannerWindow.tsx`)
 
-The current `tru-ai-scanner-line` is a hard horizontal bar. Replace it with one of these (will pick the cleanest in implementation):
+A new wrapper component, modeled on the existing `DraggableModal`:
 
-- **Soft radial spotlight** that drifts diagonally across the photo once, with a faint grid/noise texture only inside the spotlight. Reads as "AI is examining" instead of "Star Trek tricorder."
-- Single 1.2s pass, runs once per photo, then disappears. No looping.
-- Uses `var(--primary)` at low opacity so it matches brand without screaming.
+- Movable: drag by the title bar.
+- Resizable: edge + corner handles, viewport-clamped (cannot be dragged or resized off-screen).
+- Window controls in the title bar: Expand / Restore / Close.
+- "Expand" maximizes to ~95vw x 90vh; "Restore" returns to the last user size.
+- Sensible min size (e.g. 480 x 520) and a default size that fits a laptop screen.
+- Position + size persisted in `localStorage` so it remembers across sessions.
+- Mobile: full-screen sheet behavior (no drag/resize on small viewports).
 
-If the spotlight still feels cheesy, fall back to a simple corner-to-corner shimmer (gradient sweep at ~8% opacity). Either way: subtle, one-shot, premium.
+### 2. Live preview header (inside the window, above the upload card)
 
-### 2. Animated bracket draw-in for each detection box
+A single horizontal pill row that always shows:
 
-Right now boxes appear instantly when `revealedBoxCount` increments. Add CSS keyframes so each new box:
+- Total weight (lbs) of detected inventory.
+- Total volume (cu.ft) of detected inventory.
+- A rotating slot showing 3 most recently detected items (cycles every ~2.5s if more than 3 exist).
+- A "Back to inventory" button on the right that closes the floating window and returns the user to the full inventory view.
 
-- Corner brackets scale in from 0 to full size (180ms, ease-out)
-- Label pill fades + slides up 4px (220ms, 80ms delay)
-- Whole box gets a one-shot soft glow pulse on appear (400ms, then settles)
+Counts come from the existing `detectedItems` state already in `ScanRoom.tsx`.
 
-Pure CSS via `animation` on `.tru-ai-detection-box` when it mounts. No JS timing changes needed - the existing stagger from `revealedBoxCount` already drives it.
+### 3. Upload card moved into the window
 
-### 3. Mobile haptic tick on each box reveal
+The existing Library panel (the right-hand column at `ScanRoom.tsx` ~line 2167) is lifted out and rendered inside the new floating window. All existing behavior is preserved:
 
-In the existing reveal loop (around line 965), add:
+- Click to upload.
+- Drag-and-drop files onto the card (already wired via `handleLibraryDrop`).
+- Folders, multi-select, batch move, scan triggers - unchanged.
 
-```ts
-if ("vibrate" in navigator) navigator.vibrate(8);
-```
+### 4. Trigger to open the window
 
-8ms is a barely-perceptible tap, not a buzz. Fires once per detected item as it appears. Desktop ignores it. Free perceived-quality bump.
-
-### 4. Fullscreen "Scan Stage" mode
-
-When a scan kicks off (`isAiScanning` becomes true), the scanner panel expands to a fullscreen overlay so the photo + boxes get the whole screen. When the photo finishes (or user taps Done), it collapses back to the normal split layout so they can shoot the next room.
-
-Behavior:
-- Triggered automatically when `isAiScanning` flips true
-- Renders a fixed `inset-0 z-50` overlay containing the active photo, boxes, scan effect, and the existing tally text
-- Top-right close button ("Done" / X icon) - tap to exit early
-- Auto-collapses 1.2s after the last box of the **final** photo lands (so the user sees the completed result, then returns to the workspace to scan the next room)
-- Between photos in a multi-photo batch, stays fullscreen (smoother than popping in/out)
-- Body scroll locked while open (same pattern as existing modals)
-- Respects `prefers-reduced-motion` - skips the bracket animations and scan effect, just shows boxes statically
-
-Mobile: fills the viewport edge-to-edge, photo uses `object-contain` so nothing is cropped. Desktop: same overlay, photo centered with max dimensions so it doesn't get absurdly stretched.
-
-This solves your "go full screen for it too" without blocking the multi-room flow - they finish the scan, hit Done (or it auto-closes), and they're right back in the workspace ready for the next photo.
+Add an "Open scanner" / "Expand scanner" button on the scan page. When clicked, the floating window mounts. The existing inline split-pane layout still works for users who prefer it; the floating window is an additional view, not a replacement, so we don't break the current flow.
 
 ## Files touched
 
-- `src/pages/ScanRoom.tsx` - add fullscreen overlay component, vibrate call in reveal loop, prefers-reduced-motion check
-- `src/index.css` - new keyframes for bracket draw-in + glow pulse, replace `tru-ai-scanner-line` with the depth-sweep effect, fullscreen overlay styles
+- New: `src/components/scan/FloatingScannerWindow.tsx`
+- New: `src/components/scan/ScannerPreviewPill.tsx` (the lbs/cu.ft + cycling items header)
+- Edit: `src/pages/ScanRoom.tsx` - add the open button, mount the floating window, pass `detectedItems` and the existing library handlers in as props. No logic rewrites.
 
-## Out of scope
+## Technical notes
 
-- No backend changes
-- No edge function changes
-- No model upgrade
-- No new user steps or decisions
-- No changes to the inventory list, manual builder, or post-scan handoff
-- Confidence-color coding stays off (already removed from plan)
+- Reuse drag/resize math from `src/components/ui/DraggableModal.tsx` (already viewport-clamped and battle-tested) instead of writing new geometry code.
+- Cycling preview uses a `setInterval` with a 3-item window over `detectedItems`, cleared on unmount.
+- All colors via semantic tokens (`var(--primary)`, `var(--background)`), per project rules. No em dashes in copy.
+- No backend changes, no new tables, no new edge functions.
 
-## Risk
+## Open question (non-blocking, can decide during build)
 
-Low. All changes are presentational and additive. Worst case the fullscreen overlay feels off and we revert to inline-only - the underlying scan logic is untouched.
+Should opening the floating window auto-collapse the inline split-pane scanner so there's only one scanner UI visible at a time? Default plan: yes, hide the inline scanner while the floating window is open, restore it on close.
