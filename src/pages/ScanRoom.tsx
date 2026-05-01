@@ -42,6 +42,8 @@ import ScanIntroModal from "@/components/estimate/ScanIntroModal";
 import EstimatorNavToggle from "@/components/estimate/EstimatorNavToggle";
 import LeadGateModal from "@/components/scan/LeadGateModal";
 import ResumeVerifyModal from "@/components/scan/ResumeVerifyModal";
+import FloatingScannerWindow from "@/components/scan/FloatingScannerWindow";
+import ScannerPreviewPill from "@/components/scan/ScannerPreviewPill";
 
 import logoImg from "@/assets/logo.png";
 import { 
