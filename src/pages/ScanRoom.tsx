@@ -965,6 +965,10 @@ export default function ScanRoom() {
         for (let b = 0; b < boxes.length; b++) {
           await new Promise(res => setTimeout(res, 350));
           setRevealedBoxCount(b + 1);
+          // Subtle haptic tick on mobile as each box lands. No-op on desktop.
+          if (typeof navigator !== "undefined" && "vibrate" in navigator) {
+            try { navigator.vibrate(8); } catch { /* ignore */ }
+          }
           const it = items[b];
           if (!it) continue;
           const qty = Math.max(1, it.quantity || 1);
