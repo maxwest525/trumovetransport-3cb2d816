@@ -51,7 +51,7 @@ import {
   Minus, Plus, X, Upload, ImageIcon, FolderOpen, Lock, User, Mail,
   Sofa, BedDouble, UtensilsCrossed, Bath, Warehouse, Check, Pause, Play,
   Camera, Layers, Info, Eye, Save, Loader2, AlertTriangle, Pencil, FolderPlus,
-  MoreVertical, FolderInput, StickyNote, ChevronLeft, Wand2
+  MoreVertical, FolderInput, StickyNote, ChevronLeft, Wand2, Maximize2
 } from "lucide-react";
 import {
   DropdownMenu,
