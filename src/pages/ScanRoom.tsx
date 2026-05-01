@@ -992,6 +992,49 @@ export default function ScanRoom() {
     });
   };
 
+  // Enhance the photo currently shown in the scanner panel by upscaling it
+  // through Lovable AI. Replaces the photo's URL in uploadedPhotos so the
+  // higher-resolution version is what gets scanned next.
+  const handleEnhanceImage = async () => {
+    if (!activeScanPhoto) return;
+    if (isEnhancing) return;
+    if (enhancedPhotoIds.has(activeScanPhoto.id)) {
+      toast({ title: "Already enhanced", description: "This photo is already in high resolution." });
+      return;
+    }
+    if (activeScanPhoto.id === 'demo-photo') {
+      toast({ title: "Sample photo", description: "Upload your own photo to enhance its resolution." });
+      return;
+    }
+    setIsEnhancing(true);
+    try {
+      const dataUrl = await urlToDataUrl(activeScanPhoto.url);
+      const { data, error } = await supabase.functions.invoke('enhance-image', {
+        body: { imageUrl: dataUrl },
+      });
+      if (error) throw error;
+      const enhancedUrl: string | undefined = data?.enhancedUrl;
+      if (!enhancedUrl) throw new Error("No enhanced image returned");
+      const photoId = activeScanPhoto.id;
+      setUploadedPhotos((prev) =>
+        prev.map((p) => (p.id === photoId ? { ...p, url: enhancedUrl } : p)),
+      );
+      setActiveScanPhoto((prev) => (prev && prev.id === photoId ? { ...prev, url: enhancedUrl } : prev));
+      setEnhancedPhotoIds((prev) => new Set([...prev, photoId]));
+      setScannerAspect(null); // re-measure new image
+      toast({
+        title: "Image enhanced",
+        description: "Higher-resolution version ready. Scan again for better detection.",
+      });
+    } catch (e) {
+      console.error('enhance-image error', e);
+      const msg = e instanceof Error ? e.message : "Could not enhance image";
+      toast({ title: "Enhance failed", description: msg, variant: "destructive" });
+    } finally {
+      setIsEnhancing(false);
+    }
+  };
+
   // Run real Lovable AI vision detection on user uploaded photos.
   // Optional `folderName` scopes the scan to a single folder (e.g. "Living Room"
   // or a custom folder), which powers the per-folder "Scan this room" button.
