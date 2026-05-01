@@ -2007,7 +2007,7 @@ export default function ScanRoom() {
                     <div className="w-16 h-16 rounded-2xl bg-muted/50 border border-border flex items-center justify-center">
                       <Scan className="w-8 h-8 text-muted-foreground" />
                     </div>
-                    <h3 className="text-lg font-semibold text-foreground">AI Inventory Detection Scan</h3>
+                    <h3 className="text-lg font-semibold text-foreground">AI Detection Inventory Scanner</h3>
                     <p className="text-sm text-muted-foreground max-w-[240px]">
                       Upload your room photos or videos and our AI will detect every item automatically.
                     </p>
