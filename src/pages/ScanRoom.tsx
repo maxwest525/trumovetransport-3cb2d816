@@ -1726,27 +1726,23 @@ export default function ScanRoom() {
 
             <EstimatorNavToggle />
 
-            {/* Process steps - dashed connectors between 4 stages */}
-            <div className="flex items-center justify-center mt-5 sm:mt-7 px-2">
+            {/* Process steps - compact, dashed connectors between stages */}
+            <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 mt-5 sm:mt-7">
               {[
                 { icon: Camera, label: "Photo & Video Upload" },
                 { icon: Sparkles, label: "AI Detection" },
                 { icon: Layers, label: "Auto Inventory" },
                 { icon: Shield, label: "Instant Quote" },
               ].map((item, idx, arr) => (
-                <div key={item.label} className="flex items-center flex-1 min-w-0 last:flex-none">
-                  <div className="flex flex-col sm:flex-row items-center gap-1.5 sm:gap-2 text-muted-foreground shrink-0">
-                    <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-primary/40 bg-primary/10 flex items-center justify-center">
-                      <item.icon className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-primary" />
-                    </div>
-                    <span className="text-[10px] sm:text-xs md:text-sm font-medium text-center sm:text-left whitespace-nowrap">
-                      {item.label}
-                    </span>
+                <div key={item.label} className="flex items-center gap-3">
+                  <div className="flex items-center gap-2 text-sm sm:text-base text-muted-foreground">
+                    <item.icon className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+                    <span className="font-medium">{item.label}</span>
                   </div>
                   {idx < arr.length - 1 && (
-                    <div
+                    <span
                       aria-hidden="true"
-                      className="flex-1 mx-2 sm:mx-3 border-t border-dashed border-primary/30 min-w-[12px]"
+                      className="hidden sm:block w-8 border-t border-dashed border-primary/40"
                     />
                   )}
                 </div>
