@@ -397,8 +397,8 @@ export default function OnlineEstimate() {
           {!wizardComplete ?
           // LOCKED STATE: Two-Column Layout - Inventory (left) | Summary (right)
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-6 items-start">
-            {/* Left Column - Inventory Builder */}
-            <div className="relative w-full min-w-0">
+            {/* Left Column - Inventory Builder + Inventory Table */}
+            <div className="relative w-full min-w-0 space-y-6">
               <div className="rounded-2xl border border-border/60 bg-card shadow-lg w-full overflow-hidden tru-estimate-card-frame">
                 <div className="tru-summary-header-large border-b border-border/40">
                   <div className="text-center flex-1">
@@ -428,6 +428,18 @@ export default function OnlineEstimate() {
                   
                 </div>
               </div>
+
+              {/* Inventory Table - shows below Build Inventory once items are added */}
+              {items.length > 0 && (
+                <div ref={tableRef} className="tru-estimate-card-frame rounded-2xl overflow-hidden">
+                  <InventoryTable
+                    items={items}
+                    onUpdateItem={handleUpdateItem}
+                    onRemoveItem={handleRemoveItem}
+                    onClear={handleClearAll}
+                    onReorder={handleReorder} />
+                </div>
+              )}
             </div>
 
             {/* Right Column - Summary (far right) */}

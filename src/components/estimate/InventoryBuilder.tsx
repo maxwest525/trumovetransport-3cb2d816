@@ -40,6 +40,7 @@ import {
   Camera,
   Wand2,
   Car,
+  Layers,
   type LucideIcon
 } from "lucide-react";
 import { ROOM_SUGGESTIONS, type InventoryItem, type ItemDefinition } from "@/lib/priceCalculator";
@@ -91,6 +92,7 @@ interface InventoryBuilderProps {
 }
 
 const ROOM_CONFIG = [
+  { id: 'All', label: 'All', icon: Layers },
   { id: 'Living Room', label: 'Living Room', icon: Sofa },
   { id: 'Bedroom', label: 'Bedroom', icon: Bed },
   { id: 'Dining Room', label: 'Dining Room', icon: UtensilsCrossed },
@@ -286,11 +288,11 @@ export default function InventoryBuilder({
   onPackingServiceChange
 }: InventoryBuilderProps) {
   const navigate = useNavigate();
-  const [activeRoom, setActiveRoom] = useState('Living Room');
+  const [activeRoom, setActiveRoom] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [itemQuantities, setItemQuantities] = useState<Record<string, number>>({});
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [itemsPerPage, setItemsPerPage] = useState(8);
+  const [itemsPerPage, setItemsPerPage] = useState(12);
   const [currentPage, setCurrentPage] = useState(1);
   const [customModalOpen, setCustomModalOpen] = useState(false);
   const [recentlyUpdated, setRecentlyUpdated] = useState<string | null>(null);
@@ -328,7 +330,20 @@ export default function InventoryBuilder({
     return counts;
   }, [inventoryItems]);
 
-  const suggestions = ROOM_SUGGESTIONS[activeRoom] || [];
+  // For "All" tab, derive suggestion-shaped entries from items the user has actually added
+  const allInventorySuggestions = useMemo(() => {
+    return inventoryItems.map(inv => ({
+      name: inv.name,
+      defaultWeight: inv.weightEach,
+      cubicFeet: inv.cubicFeet,
+      imageUrl: inv.imageUrl,
+      _room: inv.room,
+    }));
+  }, [inventoryItems]);
+
+  const suggestions = activeRoom === 'All'
+    ? allInventorySuggestions
+    : (ROOM_SUGGESTIONS[activeRoom] || []);
   
   // Pagination
   const totalPages = Math.ceil(suggestions.length / itemsPerPage);
@@ -728,16 +743,18 @@ export default function InventoryBuilder({
             {viewMode === 'grid' ? (
                   <div className="grid grid-cols-4 gap-2">
                     {paginatedSuggestions.map((item) => {
-                      const key = `${activeRoom}-${item.name}`;
+                      const itemRoom = (item as any)._room || activeRoom;
+                      const key = `${itemRoom}-${item.name}`;
                       return (
                         <ItemCard
-                          key={item.name}
+                          key={key}
                           item={item}
-                          room={activeRoom}
-                          quantity={getItemQuantity(item.name, activeRoom)}
-                          onAdd={() => handleQuantityChange(item, activeRoom, 1)}
-                          onRemove={() => handleQuantityChange(item, activeRoom, -1)}
-                          icon={getItemIcon(item.name, activeRoom)}
+                          room={itemRoom}
+                          showRoom={activeRoom === 'All'}
+                          quantity={getItemQuantity(item.name, itemRoom)}
+                          onAdd={() => handleQuantityChange(item, itemRoom, 1)}
+                          onRemove={() => handleQuantityChange(item, itemRoom, -1)}
+                          icon={getItemIcon(item.name, itemRoom)}
                           isAnimating={recentlyUpdated === key}
                         />
                       );
@@ -758,16 +775,17 @@ export default function InventoryBuilder({
                 ) : (
                   <div className="space-y-2">
                     {paginatedSuggestions.map((item) => {
-                      const key = `${activeRoom}-${item.name}`;
+                      const itemRoom = (item as any)._room || activeRoom;
+                      const key = `${itemRoom}-${item.name}`;
                       return (
                         <ItemListRow
-                          key={item.name}
+                          key={key}
                           item={item}
-                          room={activeRoom}
-                          quantity={getItemQuantity(item.name, activeRoom)}
-                          onAdd={() => handleQuantityChange(item, activeRoom, 1)}
-                          onRemove={() => handleQuantityChange(item, activeRoom, -1)}
-                          icon={getItemIcon(item.name, activeRoom)}
+                          room={itemRoom}
+                          quantity={getItemQuantity(item.name, itemRoom)}
+                          onAdd={() => handleQuantityChange(item, itemRoom, 1)}
+                          onRemove={() => handleQuantityChange(item, itemRoom, -1)}
+                          icon={getItemIcon(item.name, itemRoom)}
                           isAnimating={recentlyUpdated === key}
                         />
                       );
@@ -842,8 +860,14 @@ export default function InventoryBuilder({
             ) : (
               <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
                 <Package className="w-10 h-10 mb-3 opacity-40" />
-                <p className="text-sm font-medium">No items in this room</p>
-                <p className="text-xs mt-1">Try searching or select another room</p>
+                <p className="text-sm font-medium">
+                  {activeRoom === 'All' ? 'No items added yet' : 'No items in this room'}
+                </p>
+                <p className="text-xs mt-1">
+                  {activeRoom === 'All'
+                    ? 'Pick a room to start building your inventory'
+                    : 'Try searching or select another room'}
+                </p>
               </div>
             )}
           </>
