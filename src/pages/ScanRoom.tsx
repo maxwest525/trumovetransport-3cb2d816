@@ -48,7 +48,7 @@ import {
   Scan, Sparkles, ArrowRight, 
   Smartphone, Box, Clock, Shield, Zap, ChevronRight,
   Ruler, Package, Printer, Download, Square, Trash2, ArrowRightLeft,
-  Phone, Video, Minus, Plus, X, Upload, ImageIcon, FolderOpen, Lock, User, Mail,
+  Minus, Plus, X, Upload, ImageIcon, FolderOpen, Lock, User, Mail,
   Sofa, BedDouble, UtensilsCrossed, Bath, Warehouse, Check, Pause, Play,
   Camera, Layers, Info, Eye, Save, Loader2, AlertTriangle, Pencil, FolderPlus,
   MoreVertical, FolderInput, StickyNote, ChevronLeft
@@ -120,6 +120,33 @@ const SAMPLE_PREVIEW_ITEMS = [
   { id: 104, name: "Armchair", room: "Living Room", weight: 85, cuft: 18, image: "/inventory/living-room/armchair.png" },
   { id: 105, name: "TV Stand", room: "Living Room", weight: 80, cuft: 12, image: "/inventory/living-room/tv-stand.png" },
 ];
+
+// Best-effort thumbnail lookup for AI-detected items so the inventory table
+// shows a real picture next to each row instead of a blank box. Matches by a
+// loose, normalized name (case + punctuation insensitive, plurals stripped).
+const FURNITURE_IMAGE_LOOKUP: Record<string, string> = (() => {
+  const map: Record<string, string> = {};
+  const addAll = (list: { name: string; image: string }[]) => {
+    for (const it of list) {
+      const key = it.name.toLowerCase().replace(/[^a-z0-9 ]/g, "").replace(/s\b/g, "").trim();
+      if (key && !map[key]) map[key] = it.image;
+    }
+  };
+  addAll(DEMO_ITEMS as { name: string; image: string }[]);
+  addAll(SAMPLE_PREVIEW_ITEMS as { name: string; image: string }[]);
+  return map;
+})();
+
+const lookupItemImage = (name: string): string => {
+  if (!name) return "";
+  const key = name.toLowerCase().replace(/[^a-z0-9 ]/g, "").replace(/s\b/g, "").trim();
+  if (FURNITURE_IMAGE_LOOKUP[key]) return FURNITURE_IMAGE_LOOKUP[key];
+  // Try partial contains for things like "leather sofa" -> "sofa"
+  for (const k of Object.keys(FURNITURE_IMAGE_LOOKUP)) {
+    if (key.includes(k) || k.includes(key)) return FURNITURE_IMAGE_LOOKUP[k];
+  }
+  return "";
+};
 
 export default function ScanRoom() {
   useScrollToTop();
@@ -631,6 +658,13 @@ export default function ScanRoom() {
   const [aiScanProgress, setAiScanProgress] = useState({ current: 0, total: 0 });
   // Active photo being scanned (drives the live preview in the scanner panel)
   const [activeScanPhoto, setActiveScanPhoto] = useState<{ id: string; url: string; name: string } | null>(null);
+  // Natural aspect ratio of the photo currently shown in the scanner panel.
+  // Lets us size the inner frame to the image so bounding boxes stay aligned
+  // and portrait/landscape uploads don't get stretched or letterboxed weirdly.
+  const [scannerAspect, setScannerAspect] = useState<number | null>(null);
+  useEffect(() => {
+    setScannerAspect(null);
+  }, [activeScanPhoto?.id]);
   // Fullscreen "Scan Stage" overlay - auto-opens when AI scan starts so the
   // photo + boxes get the whole screen. User can dismiss early via Done button;
   // otherwise it auto-closes shortly after the scan finishes so they can grab
@@ -1043,7 +1077,7 @@ export default function ScanRoom() {
             room: it.room,
             weight: it.weight,
             cuft: it.cubicFeet,
-            image: '',
+            image: lookupItemImage(it.name),
             quantity: qty,
             photoId: photo.id,
             boxIndex: b,
@@ -1063,7 +1097,7 @@ export default function ScanRoom() {
             room: it.room,
             weight: it.weight,
             cuft: it.cubicFeet,
-            image: '',
+            image: lookupItemImage(it.name),
             quantity: qty,
             photoId: photo.id,
             confidence: typeof it.confidence === 'number' ? it.confidence : undefined,
@@ -1693,29 +1727,43 @@ export default function ScanRoom() {
 
               {/* Center: Demo & Actions */}
               <div
-                className="flex flex-col items-center justify-center gap-4 border border-border rounded-2xl bg-background shadow-[0_4px_20px_-4px_hsl(var(--tm-ink)/0.08)] relative overflow-hidden min-h-[520px] lg:min-h-[680px]"
+                className="flex flex-col items-stretch justify-start gap-4 border border-border rounded-2xl bg-background shadow-[0_4px_20px_-4px_hsl(var(--tm-ink)/0.08)] relative overflow-hidden"
                 style={{
                   minHeight: (demoStep >= 2 || activeScanPhoto)
-                    ? "min(820px, 78vh)"
-                    : undefined,
+                    ? "min(900px, 82vh)"
+                    : "560px",
                 }}
               >
                 {/* Scanner content - show image when demo is active OR live AI scan running */}
                 {(demoStep >= 2 || activeScanPhoto) ? (
                   <div className="flex flex-col items-center gap-2 w-full h-full flex-1">
-                    <div className="relative w-full flex-1 min-h-0 overflow-hidden rounded-t-2xl">
-                      <img
-                        src={activeScanPhoto ? activeScanPhoto.url : sampleRoomLiving}
-                        alt="Scanning room"
-                        className="w-full h-full object-cover"
-                      />
-                      {isScanning && (
-                        <div className="tru-ai-scanner-overlay">
-                          <div className="tru-ai-scanner-line" />
-                        </div>
-                      )}
-                      {/* Live AI bounding boxes (real Gemini detections) */}
-                      {activeScanPhoto && aiBoxes.slice(0, revealedBoxCount).map((item) => (
+                    <div className="relative w-full flex-1 min-h-0 overflow-hidden rounded-t-2xl bg-foreground/95 flex items-center justify-center">
+                      <div
+                        className="relative max-w-full max-h-full"
+                        style={{
+                          aspectRatio: scannerAspect ? `${scannerAspect}` : "16 / 10",
+                          width: scannerAspect && scannerAspect >= 1 ? "100%" : "auto",
+                          height: scannerAspect && scannerAspect < 1 ? "100%" : "auto",
+                        }}
+                      >
+                        <img
+                          src={activeScanPhoto ? activeScanPhoto.url : sampleRoomLiving}
+                          alt="Scanning room"
+                          onLoad={(e) => {
+                            const img = e.currentTarget;
+                            if (img.naturalWidth && img.naturalHeight) {
+                              setScannerAspect(img.naturalWidth / img.naturalHeight);
+                            }
+                          }}
+                          className="absolute inset-0 w-full h-full object-contain"
+                        />
+                        {isScanning && (
+                          <div className="tru-ai-scanner-overlay">
+                            <div className="tru-ai-scanner-line" />
+                          </div>
+                        )}
+                        {/* Live AI bounding boxes (real Gemini detections) */}
+                        {activeScanPhoto && aiBoxes.slice(0, revealedBoxCount).map((item) => (
                         <div
                           key={item.id}
                           className="tru-ai-detection-box"
@@ -1736,8 +1784,8 @@ export default function ScanRoom() {
                           </span>
                         </div>
                       ))}
-                      {/* Demo bounding boxes - only when running scripted demo */}
-                      {!activeScanPhoto && DEMO_FURNITURE_POSITIONS.slice(0, Math.max(0, demoStep - 2)).map((item) => (
+                        {/* Demo bounding boxes - only when running scripted demo */}
+                        {!activeScanPhoto && DEMO_FURNITURE_POSITIONS.slice(0, Math.max(0, demoStep - 2)).map((item) => (
                         <div
                           key={item.id}
                           className="tru-ai-detection-box"
@@ -1758,6 +1806,7 @@ export default function ScanRoom() {
                           </span>
                         </div>
                       ))}
+                      </div>
                       <div className="absolute top-2 left-2 flex items-center gap-1.5 bg-foreground/80 text-background rounded-full px-2.5 py-1 z-20">
                         <Scan className="w-3 h-3" />
                         <span className="text-[10px] font-semibold">
@@ -3199,30 +3248,6 @@ export default function ScanRoom() {
                 </>
               )}
             </div>
-          </div>
-        </section>
-
-        {/* Bottom CTA */}
-        <section className="tru-scan-bottom-cta">
-          <div className="tru-scan-bottom-buttons">
-            <button
-              onClick={() => navigate("/online-estimate")}
-              className="tru-scan-alt-btn"
-            >
-              <Sparkles className="w-4 h-4" />
-              Build Inventory Manually
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-          <div className="tru-scan-bottom-secondary">
-            <a href="tel:1-800-555-0123" className="tru-secondary-action-btn">
-              <Phone className="w-4 h-4" />
-              Prefer to talk?
-            </a>
-            <Link to="/book" className="tru-secondary-action-btn">
-              <Video className="w-4 h-4" />
-              Book Video Consult
-            </Link>
           </div>
         </section>
 
