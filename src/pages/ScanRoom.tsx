@@ -760,6 +760,16 @@ export default function ScanRoom() {
     return () => { document.body.style.overflow = prev; };
   }, [scanStageOpen]);
 
+  // ESC closes the Scanner Pop-out modal
+  useEffect(() => {
+    if (!showScannerPopout) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setShowScannerPopout(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [showScannerPopout]);
+
   // ESC key dismisses the Scan Stage instantly
   useEffect(() => {
     if (!scanStageOpen) return;
