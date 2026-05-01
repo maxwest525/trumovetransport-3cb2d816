@@ -3406,10 +3406,11 @@ export default function ScanRoom() {
         {/* Lead capture gate — required before AI scanning */}
         <LeadGateModal
           isOpen={showLeadGate}
-          onClose={() => { setShowLeadGate(false); setPendingAction(null); }}
+          onClose={() => { closeLeadGate(); setPendingAction(null); }}
           onUnlock={() => {
+            isUnlockedRef.current = true;
             setIsUnlocked(true);
-            setShowLeadGate(false);
+            closeLeadGate();
             toast({ title: "AI Scan Unlocked", description: "Your lead has been saved. Continue with your room scan." });
             const action = pendingAction;
             setPendingAction(null);
