@@ -662,6 +662,11 @@ export default function ScanRoom() {
   // an already-upgraded image and can show a clear in-progress / done indicator.
   const [isEnhancing, setIsEnhancing] = useState(false);
   const [enhancedPhotoIds, setEnhancedPhotoIds] = useState<Set<string>>(new Set());
+  // Pop-out scanner modal: lets the user see the photo larger and adjust
+  // the image zoom + detection-box scale with sliders.
+  const [showScannerPopout, setShowScannerPopout] = useState(false);
+  const [popoutImageZoom, setPopoutImageZoom] = useState(1);   // 0.5 - 3
+  const [popoutBoxScale, setPopoutBoxScale] = useState(1);     // 0.5 - 2 (visual size of corners + labels)
   // Natural aspect ratio of the photo currently shown in the scanner panel.
   // Lets us size the inner frame to the image so bounding boxes stay aligned
   // and portrait/landscape uploads don't get stretched or letterboxed weirdly.
