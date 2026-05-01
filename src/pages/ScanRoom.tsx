@@ -51,7 +51,7 @@ import {
   Minus, Plus, X, Upload, ImageIcon, FolderOpen, Lock, User, Mail,
   Sofa, BedDouble, UtensilsCrossed, Bath, Warehouse, Check, Pause, Play,
   Camera, Layers, Info, Eye, Save, Loader2, AlertTriangle, Pencil, FolderPlus,
-  MoreVertical, FolderInput, StickyNote, ChevronLeft
+  MoreVertical, FolderInput, StickyNote, ChevronLeft, Wand2
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -658,6 +658,10 @@ export default function ScanRoom() {
   const [aiScanProgress, setAiScanProgress] = useState({ current: 0, total: 0 });
   // Active photo being scanned (drives the live preview in the scanner panel)
   const [activeScanPhoto, setActiveScanPhoto] = useState<{ id: string; url: string; name: string } | null>(null);
+  // Image enhancement state - tracks per-photo enhancement so we don't re-enhance
+  // an already-upgraded image and can show a clear in-progress / done indicator.
+  const [isEnhancing, setIsEnhancing] = useState(false);
+  const [enhancedPhotoIds, setEnhancedPhotoIds] = useState<Set<string>>(new Set());
   // Natural aspect ratio of the photo currently shown in the scanner panel.
   // Lets us size the inner frame to the image so bounding boxes stay aligned
   // and portrait/landscape uploads don't get stretched or letterboxed weirdly.
@@ -986,6 +990,49 @@ export default function ScanRoom() {
       reader.onerror = reject;
       reader.readAsDataURL(blob);
     });
+  };
+
+  // Enhance the photo currently shown in the scanner panel by upscaling it
+  // through Lovable AI. Replaces the photo's URL in uploadedPhotos so the
+  // higher-resolution version is what gets scanned next.
+  const handleEnhanceImage = async () => {
+    if (!activeScanPhoto) return;
+    if (isEnhancing) return;
+    if (enhancedPhotoIds.has(activeScanPhoto.id)) {
+      toast({ title: "Already enhanced", description: "This photo is already in high resolution." });
+      return;
+    }
+    if (activeScanPhoto.id === 'demo-photo') {
+      toast({ title: "Sample photo", description: "Upload your own photo to enhance its resolution." });
+      return;
+    }
+    setIsEnhancing(true);
+    try {
+      const dataUrl = await urlToDataUrl(activeScanPhoto.url);
+      const { data, error } = await supabase.functions.invoke('enhance-image', {
+        body: { imageUrl: dataUrl },
+      });
+      if (error) throw error;
+      const enhancedUrl: string | undefined = data?.enhancedUrl;
+      if (!enhancedUrl) throw new Error("No enhanced image returned");
+      const photoId = activeScanPhoto.id;
+      setUploadedPhotos((prev) =>
+        prev.map((p) => (p.id === photoId ? { ...p, url: enhancedUrl } : p)),
+      );
+      setActiveScanPhoto((prev) => (prev && prev.id === photoId ? { ...prev, url: enhancedUrl } : prev));
+      setEnhancedPhotoIds((prev) => new Set([...prev, photoId]));
+      setScannerAspect(null); // re-measure new image
+      toast({
+        title: "Image enhanced",
+        description: "Higher-resolution version ready. Scan again for better detection.",
+      });
+    } catch (e) {
+      console.error('enhance-image error', e);
+      const msg = e instanceof Error ? e.message : "Could not enhance image";
+      toast({ title: "Enhance failed", description: msg, variant: "destructive" });
+    } finally {
+      setIsEnhancing(false);
+    }
   };
 
   // Run real Lovable AI vision detection on user uploaded photos.
@@ -1819,6 +1866,32 @@ export default function ScanRoom() {
                             Photo {aiScanProgress.current} / {aiScanProgress.total}
                           </span>
                         </div>
+                      )}
+                      {activeScanPhoto && !isAiScanning && !isScanning && (
+                        <button
+                          type="button"
+                          onClick={handleEnhanceImage}
+                          disabled={isEnhancing || enhancedPhotoIds.has(activeScanPhoto.id)}
+                          className="absolute bottom-3 right-3 z-20 inline-flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-4 py-2 text-xs font-bold uppercase tracking-wider shadow-[0_6px_20px_-4px_hsl(var(--primary)/0.6)] hover:scale-[1.03] active:scale-[0.97] transition-transform disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
+                          title="Use AI to upscale and sharpen this photo for a better scan"
+                        >
+                          {isEnhancing ? (
+                            <>
+                              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                              Enhancing...
+                            </>
+                          ) : enhancedPhotoIds.has(activeScanPhoto.id) ? (
+                            <>
+                              <Check className="w-3.5 h-3.5" />
+                              Enhanced
+                            </>
+                          ) : (
+                            <>
+                              <Wand2 className="w-3.5 h-3.5" />
+                              Enhance Image Resolution
+                            </>
+                          )}
+                        </button>
                       )}
                     </div>
                     <p className="text-xs text-muted-foreground text-center px-4">
