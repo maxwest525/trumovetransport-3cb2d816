@@ -1779,7 +1779,9 @@ export default function ScanRoom() {
 
               {/* Center: Demo & Actions */}
               <div
-                className="flex flex-col items-stretch justify-start gap-4 border border-border rounded-2xl bg-background shadow-[0_4px_20px_-4px_hsl(var(--tm-ink)/0.08)] relative overflow-hidden"
+                className={`flex flex-col items-stretch gap-4 border border-border rounded-2xl bg-background shadow-[0_4px_20px_-4px_hsl(var(--tm-ink)/0.08)] relative overflow-hidden ${
+                  (demoStep >= 2 || activeScanPhoto) ? "justify-start" : "justify-center py-8"
+                }`}
                 style={{
                   minHeight: (demoStep >= 2 || activeScanPhoto)
                     ? "min(900px, 82vh)"
@@ -1932,11 +1934,11 @@ export default function ScanRoom() {
 
                 {/* Scanned-photo thumbnail strip - click to re-open detections */}
                 {scanHistory.length > 0 && (
-                  <div className="w-full px-4 pb-2">
-                    <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+                  <div className="w-full max-w-[380px] mx-auto px-4 pb-2">
+                    <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-2 text-center">
                       Scanned Photos ({scanHistory.length})
                     </p>
-                    <div className="flex gap-2 overflow-x-auto pb-1">
+                    <div className="flex gap-2 overflow-x-auto pb-1 justify-center">
                       {scanHistory.map(p => {
                         const isActive = activeScanPhoto?.id === p.id;
                         return (
@@ -1987,7 +1989,7 @@ export default function ScanRoom() {
                 )}
 
                 {/* Buttons */}
-                <div className="flex flex-col items-stretch gap-2 w-full max-w-[380px] px-4">
+                <div className="flex flex-col items-stretch gap-2 w-full max-w-[380px] mx-auto px-4 pb-6">
                   {!isDemoActive ? (
                     <>
                       <button
