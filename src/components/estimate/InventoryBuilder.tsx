@@ -300,6 +300,7 @@ export default function InventoryBuilder({
   const [presetDialogOpen, setPresetDialogOpen] = useState(false);
   const [selectedPreset, setSelectedPreset] = useState<string | null>(null);
   const prevTotalRef = useRef(0);
+  const [allFilterQuery, setAllFilterQuery] = useState('');
 
   // Get all items for search with room info
   const allItemsWithRoom = useMemo(() => {
@@ -341,9 +342,20 @@ export default function InventoryBuilder({
     }));
   }, [inventoryItems]);
 
-  const suggestions = activeRoom === 'All'
+  const baseSuggestions = activeRoom === 'All'
     ? allInventorySuggestions
     : (ROOM_SUGGESTIONS[activeRoom] || []);
+
+  // Apply in-tab filter when on the "All" tab
+  const suggestions = useMemo(() => {
+    if (activeRoom !== 'All' || !allFilterQuery.trim()) return baseSuggestions;
+    const q = allFilterQuery.toLowerCase();
+    return baseSuggestions.filter((item: any) => {
+      const name = (item.name || '').toLowerCase();
+      const room = (item._room || '').toLowerCase();
+      return name.includes(q) || room.includes(q);
+    });
+  }, [baseSuggestions, activeRoom, allFilterQuery]);
   
   // Pagination
   const totalPages = Math.ceil(suggestions.length / itemsPerPage);
@@ -356,6 +368,7 @@ export default function InventoryBuilder({
   const handleRoomChange = (roomId: string) => {
     setActiveRoom(roomId);
     setCurrentPage(1);
+    setAllFilterQuery('');
   };
 
   const getItemQuantity = (itemName: string, room: string) => {
@@ -693,6 +706,36 @@ export default function InventoryBuilder({
               
               {/* View Toggle & Items Per Page */}
               <div className="flex items-center gap-2 ml-3">
+                {/* Filter input - only on "All" tab */}
+                {activeRoom === 'All' && allInventorySuggestions.length > 0 && (
+                  <div className="relative">
+                    <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-muted-foreground pointer-events-none" />
+                    <input
+                      type="text"
+                      value={allFilterQuery}
+                      onChange={(e) => {
+                        setAllFilterQuery(e.target.value);
+                        setCurrentPage(1);
+                      }}
+                      placeholder="Filter my inventory..."
+                      className="h-7 pl-7 pr-7 text-[11px] font-medium rounded-md border border-border/60 bg-muted/30 text-foreground placeholder:text-muted-foreground/70 focus:outline-none focus:ring-1 focus:ring-primary/40 w-[180px]"
+                    />
+                    {allFilterQuery && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setAllFilterQuery('');
+                          setCurrentPage(1);
+                        }}
+                        className="absolute right-1.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                        aria-label="Clear filter"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    )}
+                  </div>
+                )}
+
                 {/* View Mode Toggle */}
                 <div className="flex rounded-lg border border-border/60 bg-muted/30 p-0.5">
                   <button
