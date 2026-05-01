@@ -288,11 +288,11 @@ export default function InventoryBuilder({
   onPackingServiceChange
 }: InventoryBuilderProps) {
   const navigate = useNavigate();
-  const [activeRoom, setActiveRoom] = useState('Living Room');
+  const [activeRoom, setActiveRoom] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [itemQuantities, setItemQuantities] = useState<Record<string, number>>({});
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [itemsPerPage, setItemsPerPage] = useState(8);
+  const [itemsPerPage, setItemsPerPage] = useState(12);
   const [currentPage, setCurrentPage] = useState(1);
   const [customModalOpen, setCustomModalOpen] = useState(false);
   const [recentlyUpdated, setRecentlyUpdated] = useState<string | null>(null);
