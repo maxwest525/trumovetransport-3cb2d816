@@ -617,6 +617,8 @@ export default function ScanRoom() {
   // otherwise it auto-closes shortly after the scan finishes so they can grab
   // the next room without an extra tap.
   const [scanStageOpen, setScanStageOpen] = useState(false);
+  // Confirmation prompt when user taps Hide mid-scan to prevent accidental exit
+  const [confirmHideScanOpen, setConfirmHideScanOpen] = useState(false);
   // AI-detected bounding boxes for the active photo (revealed progressively)
   const [aiBoxes, setAiBoxes] = useState<AiBox[]>([]);
   const [revealedBoxCount, setRevealedBoxCount] = useState(0);
@@ -661,11 +663,17 @@ export default function ScanRoom() {
   useEffect(() => {
     if (!scanStageOpen) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setScanStageOpen(false);
+      if (e.key === "Escape") {
+        if (isAiScanning) {
+          setConfirmHideScanOpen(true);
+        } else {
+          setScanStageOpen(false);
+        }
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [scanStageOpen]);
+  }, [scanStageOpen, isAiScanning]);
 
   const [savedAtMs, setSavedAtMs] = useState<number | null>(persisted?.savedAt ?? null);
   // Tick every minute so "Saved X ago" stays fresh while the page is open
@@ -1430,7 +1438,13 @@ export default function ScanRoom() {
           <button
             type="button"
             className="tru-scan-stage-close"
-            onClick={() => setScanStageOpen(false)}
+            onClick={() => {
+              if (isAiScanning) {
+                setConfirmHideScanOpen(true);
+              } else {
+                setScanStageOpen(false);
+              }
+            }}
             aria-label={isAiScanning ? "Hide scan stage and continue in background" : "Close scan stage"}
           >
             <X className="w-3.5 h-3.5" />
@@ -1490,6 +1504,29 @@ export default function ScanRoom() {
           </div>
         </div>
       )}
+
+      {/* Confirm before exiting fullscreen mid-scan to prevent accidental dismiss */}
+      <AlertDialog open={confirmHideScanOpen} onOpenChange={setConfirmHideScanOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Hide the scan stage?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Your AI scan is still running. It will keep working in the background and detected items will still be added to your inventory. You can reopen the stage anytime.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Keep watching</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                setScanStageOpen(false);
+                setConfirmHideScanOpen(false);
+              }}
+            >
+              Hide stage
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <div className="tru-scan-page">
 
