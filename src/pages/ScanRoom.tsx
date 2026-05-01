@@ -308,8 +308,30 @@ export default function ScanRoom() {
   // Lead capture state — AI scan is locked until visitor provides contact info
   const [isUnlocked, setIsUnlocked] = useState(persisted?.isUnlocked ?? false);
   const [showLeadGate, setShowLeadGate] = useState(false);
+  const isUnlockedRef = useRef(isUnlocked);
+  const showLeadGateRef = useRef(showLeadGate);
   // Action to perform once the gate is unlocked (e.g. open uploader, start scan)
   const [pendingAction, setPendingAction] = useState<null | (() => void)>(null);
+
+  useEffect(() => {
+    isUnlockedRef.current = isUnlocked;
+  }, [isUnlocked]);
+
+  useEffect(() => {
+    showLeadGateRef.current = showLeadGate;
+  }, [showLeadGate]);
+
+  const openLeadGate = (action: () => void) => {
+    setPendingAction(() => action);
+    if (showLeadGateRef.current) return;
+    showLeadGateRef.current = true;
+    setShowLeadGate(true);
+  };
+
+  const closeLeadGate = () => {
+    showLeadGateRef.current = false;
+    setShowLeadGate(false);
+  };
   
   // Sample room photos for the library demo
   const samplePhotos = [
@@ -472,9 +494,8 @@ export default function ScanRoom() {
 
   const handleRoomClick = (roomLabel: string) => {
     // Gate uploads behind the lead capture form
-    if (!isUnlocked) {
-      setPendingAction(() => () => handleRoomClick(roomLabel));
-      setShowLeadGate(true);
+    if (!isUnlockedRef.current) {
+      openLeadGate(() => handleRoomClick(roomLabel));
       return;
     }
     setPendingRoomLabel(roomLabel);
@@ -486,9 +507,8 @@ export default function ScanRoom() {
 
   // Default upload path - dumps everything into the "All" folder
   const handleAllUploadClick = () => {
-    if (!isUnlocked) {
-      setPendingAction(() => () => handleAllUploadClick());
-      setShowLeadGate(true);
+    if (!isUnlockedRef.current) {
+      openLeadGate(() => handleAllUploadClick());
       return;
     }
     if (allUploadRef.current) {
@@ -547,9 +567,8 @@ export default function ScanRoom() {
   const handleLibraryDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDraggingFiles(false);
-    if (!isUnlocked) {
-      setPendingAction(() => () => handleAllUploadClick());
-      setShowLeadGate(true);
+    if (!isUnlockedRef.current) {
+      openLeadGate(() => handleAllUploadClick());
       return;
     }
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
@@ -1101,8 +1120,7 @@ export default function ScanRoom() {
       return;
     }
     if (!isUnlocked) {
-      setPendingAction(() => () => runRealAiScan(folderName));
-      setShowLeadGate(true);
+      openLeadGate(() => runRealAiScan(folderName));
       return;
     }
     runRealAiScan(folderName);
@@ -1113,15 +1131,13 @@ export default function ScanRoom() {
     if (hasRealPhotos && !isDemoActive) {
       // Real AI scan path — gate behind lead capture
       if (!isUnlocked) {
-        setPendingAction(() => () => runRealAiScan());
-        setShowLeadGate(true);
+        openLeadGate(() => runRealAiScan());
         return;
       }
       runRealAiScan();
     } else if (uploadedPhotos.length > 0 && !isDemoActive) {
       if (!isUnlocked) {
-        setPendingAction(() => () => setShowIntroModal(true));
-        setShowLeadGate(true);
+        openLeadGate(() => setShowIntroModal(true));
         return;
       }
       setShowIntroModal(true);
@@ -3390,10 +3406,11 @@ export default function ScanRoom() {
         {/* Lead capture gate — required before AI scanning */}
         <LeadGateModal
           isOpen={showLeadGate}
-          onClose={() => { setShowLeadGate(false); setPendingAction(null); }}
+          onClose={() => { closeLeadGate(); setPendingAction(null); }}
           onUnlock={() => {
+            isUnlockedRef.current = true;
             setIsUnlocked(true);
-            setShowLeadGate(false);
+            closeLeadGate();
             toast({ title: "AI Scan Unlocked", description: "Your lead has been saved. Continue with your room scan." });
             const action = pendingAction;
             setPendingAction(null);
