@@ -2162,38 +2162,6 @@ export default function ScanRoom() {
                   <div className="h-16 w-1 rounded-full bg-border group-hover:bg-primary/60 group-active:bg-primary group-focus-visible:bg-primary transition-colors" />
                 </div>
 
-                {/* Floating maximize toggles - sit on top of the bar but
-                    don't intercept the drag area outside the buttons. */}
-                <div className="pointer-events-none absolute inset-y-0 left-1/2 -translate-x-1/2 flex flex-col items-center justify-center gap-1.5">
-                  <button
-                    type="button"
-                    onClick={maximizedSide === "scanner" ? restoreSplit : maximizeScanner}
-                    aria-pressed={maximizedSide === "scanner"}
-                    aria-label={maximizedSide === "scanner" ? "Restore split view" : "Maximize scanner"}
-                    title={maximizedSide === "scanner" ? "Restore split" : "Maximize scanner"}
-                    className={`pointer-events-auto flex h-6 w-6 items-center justify-center rounded-full border bg-background shadow-sm transition-colors ${
-                      maximizedSide === "scanner"
-                        ? "border-primary/60 text-primary"
-                        : "border-border text-muted-foreground hover:border-primary/40 hover:text-foreground"
-                    }`}
-                  >
-                    <ChevronLeft className="h-3.5 w-3.5" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={maximizedSide === "library" ? restoreSplit : maximizeLibrary}
-                    aria-pressed={maximizedSide === "library"}
-                    aria-label={maximizedSide === "library" ? "Restore split view" : "Maximize library"}
-                    title={maximizedSide === "library" ? "Restore split" : "Maximize library"}
-                    className={`pointer-events-auto flex h-6 w-6 items-center justify-center rounded-full border bg-background shadow-sm transition-colors ${
-                      maximizedSide === "library"
-                        ? "border-primary/60 text-primary"
-                        : "border-border text-muted-foreground hover:border-primary/40 hover:text-foreground"
-                    }`}
-                  >
-                    <ChevronLeft className="h-3.5 w-3.5 rotate-180" />
-                  </button>
-                </div>
               </div>
 
               {/* Right: Photo Library - Compact */}
@@ -2577,10 +2545,10 @@ export default function ScanRoom() {
                           <button
                             type="button"
                             onClick={handleAllUploadClick}
-                            className="w-full flex items-center justify-center gap-1.5 rounded-lg border border-dashed border-primary/40 bg-primary/[0.04] hover:bg-primary/[0.08] px-3 py-2 text-[11px] font-semibold text-primary transition-colors cursor-pointer"
+                            className="w-full shrink-0 flex items-center justify-center gap-1.5 rounded-lg border border-dashed border-primary/40 bg-primary/[0.04] hover:bg-primary/[0.08] px-3 py-2 text-[11px] leading-none font-semibold text-primary transition-colors cursor-pointer whitespace-nowrap min-h-[36px]"
                           >
-                            <Upload className="w-3.5 h-3.5" />
-                            Add more (drop or click)
+                            <Upload className="w-3.5 h-3.5 shrink-0" />
+                            <span className="whitespace-nowrap">Add more (drop or click)</span>
                           </button>
                           {orderedKeys.map((room) => {
                             const photos = groups.get(room) ?? [];
