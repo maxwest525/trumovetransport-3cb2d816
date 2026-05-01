@@ -355,21 +355,7 @@ export function FloatingScannerWindow({
       {/* Resize handles - hidden on mobile/maximized */}
       {!isMobile && !maximized && (
         <>
-          {/* Edges */}
-          <div
-            onPointerDown={(e) => startResize(e, { left: false, right: true, top: false, bottom: false })}
-            onPointerMove={onResizeMove}
-            onPointerUp={endResize}
-            onPointerCancel={endResize}
-            className="absolute top-0 right-0 h-full w-1.5 cursor-ew-resize"
-          />
-          <div
-            onPointerDown={(e) => startResize(e, { left: true, right: false, top: false, bottom: false })}
-            onPointerMove={onResizeMove}
-            onPointerUp={endResize}
-            onPointerCancel={endResize}
-            className="absolute top-0 left-0 h-full w-1.5 cursor-ew-resize"
-          />
+          {/* Edges - left/right adjusters removed; only top/bottom remain. */}
           <div
             onPointerDown={(e) => startResize(e, { left: false, right: false, top: false, bottom: true })}
             onPointerMove={onResizeMove}
