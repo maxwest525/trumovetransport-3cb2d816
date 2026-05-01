@@ -2742,11 +2742,11 @@ export default function ScanRoom() {
                                         type="button"
                                         onClick={() => handleScanFolderClick(room)}
                                         disabled={isAiScanning}
-                                        className="ml-1 inline-flex items-center gap-1 rounded-md border border-primary/30 bg-primary/[0.06] hover:bg-primary/[0.12] disabled:opacity-50 disabled:cursor-not-allowed px-1.5 py-0.5 text-[9px] font-semibold text-primary uppercase tracking-wider transition-colors"
+                                        className="ml-1 inline-flex items-center justify-center gap-2 rounded-full border border-primary/30 bg-primary/[0.08] hover:bg-primary/[0.15] disabled:opacity-50 disabled:cursor-not-allowed px-4 py-2 text-sm font-semibold text-primary transition-colors"
                                         title={`Scan ${unscannedCount} unscanned photo${unscannedCount === 1 ? '' : 's'} in ${room}`}
                                       >
-                                        <Sparkles className="w-2.5 h-2.5" />
-                                        Scan
+                                        <Sparkles className="w-4 h-4" />
+                                        Scan Folder
                                       </button>
                                     );
                                   })()}
