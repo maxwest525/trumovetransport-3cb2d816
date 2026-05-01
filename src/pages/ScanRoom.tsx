@@ -1714,26 +1714,14 @@ export default function ScanRoom() {
                 <span className="w-1.5 h-1.5 rounded-full bg-primary/60" />
                 <span className="h-px w-8 bg-primary/40" />
               </div>
-              {/* Title + subtitle wrapped in 4 corner brackets */}
-              <div className="relative inline-block px-6 sm:px-10 py-4 sm:py-6 max-w-3xl mx-auto">
-                {/* Top-left */}
-                <span aria-hidden="true" className="absolute top-0 left-0 w-5 h-5 sm:w-7 sm:h-7 border-t-2 border-l-2 border-primary rounded-tl-md" />
-                {/* Top-right */}
-                <span aria-hidden="true" className="absolute top-0 right-0 w-5 h-5 sm:w-7 sm:h-7 border-t-2 border-r-2 border-primary rounded-tr-md" />
-                {/* Bottom-left */}
-                <span aria-hidden="true" className="absolute bottom-0 left-0 w-5 h-5 sm:w-7 sm:h-7 border-b-2 border-l-2 border-primary rounded-bl-md" />
-                {/* Bottom-right */}
-                <span aria-hidden="true" className="absolute bottom-0 right-0 w-5 h-5 sm:w-7 sm:h-7 border-b-2 border-r-2 border-primary rounded-br-md" />
-
-                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground tracking-tight leading-[1.1]">
-                  AI Detection
-                  <br />
-                  <span className="text-primary">Inventory Scanner</span>
-                </h1>
-                <p className="text-muted-foreground max-w-xl mx-auto text-sm sm:text-base md:text-lg font-light leading-relaxed mt-3 sm:mt-4 px-2 sm:px-0">
-                  Simply scan your rooms and our AI will identify, measure, and catalog every item automatically.
-                </p>
-              </div>
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground tracking-tight leading-[1.1]">
+                AI Detection
+                <br />
+                <span className="text-primary">Inventory Scanner</span>
+              </h1>
+              <p className="text-muted-foreground max-w-xl mx-auto text-sm sm:text-base md:text-lg font-light leading-relaxed mt-3 sm:mt-4 px-2 sm:px-0">
+                Simply scan your rooms and our AI will identify, measure, and catalog every item automatically.
+              </p>
             </div>
 
             <EstimatorNavToggle />
@@ -2015,14 +2003,21 @@ export default function ScanRoom() {
                     </p>
                   </div>
                 ) : (
-                  <div className="flex flex-col items-center justify-center gap-3 text-center flex-1 px-4 py-10">
-                    <div className="w-16 h-16 rounded-2xl bg-muted/50 border border-border flex items-center justify-center">
-                      <Scan className="w-8 h-8 text-muted-foreground" />
+                  <div className="flex flex-col items-center justify-center gap-4 text-center flex-1 px-4 py-10">
+                    <div className="w-20 h-20 rounded-2xl bg-primary/10 border border-primary/30 flex items-center justify-center">
+                      <Scan className="w-10 h-10 text-primary" />
                     </div>
-                    <h3 className="text-lg font-semibold text-foreground">AI Detection Inventory Scanner</h3>
-                    <p className="text-sm text-muted-foreground max-w-[240px]">
-                      Upload your room photos or videos and our AI will detect every item automatically.
-                    </p>
+                    {/* Title + subtitle wrapped in 4 corner brackets */}
+                    <div className="relative inline-block px-5 py-3 max-w-[280px]">
+                      <span aria-hidden="true" className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-primary rounded-tl-md" />
+                      <span aria-hidden="true" className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-primary rounded-tr-md" />
+                      <span aria-hidden="true" className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-primary rounded-bl-md" />
+                      <span aria-hidden="true" className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-primary rounded-br-md" />
+                      <h3 className="text-lg font-semibold text-foreground">AI Detection Inventory Scanner</h3>
+                      <p className="text-sm text-muted-foreground mt-1.5">
+                        Upload your room photos or videos and our AI will detect every item automatically.
+                      </p>
+                    </div>
                   </div>
                 )}
 
