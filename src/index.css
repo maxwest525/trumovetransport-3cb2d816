@@ -2229,6 +2229,7 @@
   justify-content: center;
   background: transparent;
   pointer-events: none;
+  overflow: hidden;
 }
 
 .tru-ai-scanner-line {
@@ -2240,13 +2241,47 @@
   50% { top: 90%; }
 }
 
+/* Subtle "depth sweep" - a soft radial spotlight drifting once across the photo.
+   Replaces the old hard scan-line. Reads as "AI is examining" not "tricorder". */
+.tru-ai-scanner-overlay::before {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  background: radial-gradient(
+    circle at var(--sweep-x, 30%) var(--sweep-y, 30%),
+    hsl(var(--primary) / 0.18) 0%,
+    hsl(var(--primary) / 0.06) 18%,
+    transparent 38%
+  );
+  animation: tru-ai-depth-sweep 1.6s ease-in-out 1 forwards;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+@keyframes tru-ai-depth-sweep {
+  0%   { --sweep-x: 15%;  --sweep-y: 20%; opacity: 0; }
+  15%  { opacity: 1; }
+  100% { --sweep-x: 90%;  --sweep-y: 85%; opacity: 0; }
+}
+
+@property --sweep-x {
+  syntax: "<percentage>";
+  initial-value: 30%;
+  inherits: false;
+}
+@property --sweep-y {
+  syntax: "<percentage>";
+  initial-value: 30%;
+  inherits: false;
+}
+
 /* Furniture detection box styling - authentic CV look */
 .tru-ai-detection-box {
   position: absolute;
   border: none;
   border-radius: 0;
   background: transparent;
-  animation: detection-appear 0.5s ease-out;
+  animation: tru-ai-box-glow 0.5s ease-out;
   pointer-events: none;
   z-index: 10;
 }
@@ -2259,6 +2294,25 @@
   border-color: hsl(0 0% 100% / 0.7);
   border-style: solid;
   border-width: 0;
+  transform-origin: center;
+  animation: tru-ai-bracket-in 220ms cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+}
+
+.tru-ai-corner-tl { transform-origin: top left; }
+.tru-ai-corner-tr { transform-origin: top right; }
+.tru-ai-corner-bl { transform-origin: bottom left; }
+.tru-ai-corner-br { transform-origin: bottom right; }
+
+@keyframes tru-ai-bracket-in {
+  0%   { opacity: 0; transform: scale(0.2); }
+  60%  { opacity: 1; transform: scale(1.15); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes tru-ai-box-glow {
+  0%   { box-shadow: 0 0 0 0 hsl(var(--primary) / 0); }
+  40%  { box-shadow: 0 0 18px 2px hsl(var(--primary) / 0.45); }
+  100% { box-shadow: 0 0 0 0 hsl(var(--primary) / 0); }
 }
 
 .tru-ai-corner-tl {
@@ -2314,6 +2368,100 @@
   letter-spacing: 0.03em;
   text-transform: uppercase;
   white-space: nowrap;
+  animation: tru-ai-label-in 260ms ease-out 80ms both;
+}
+
+@keyframes tru-ai-label-in {
+  0%   { opacity: 0; transform: translateY(4px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================
+   Fullscreen Scan Stage
+   Activated while AI scan is running so the photo + boxes get
+   the whole screen. Auto-collapses when scan completes.
+============================================================ */
+.tru-scan-stage {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: hsl(var(--background) / 0.96);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column;
+  animation: tru-scan-stage-in 220ms ease-out;
+}
+
+@keyframes tru-scan-stage-in {
+  from { opacity: 0; transform: scale(0.98); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.tru-scan-stage-photo-wrap {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.tru-scan-stage-photo-frame {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  max-width: 1100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tru-scan-stage-photo-frame > img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 12px;
+}
+
+.tru-scan-stage-close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 10;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: 999px;
+  background: hsl(var(--foreground) / 0.85);
+  color: hsl(var(--background));
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border: none;
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+.tru-scan-stage-close:hover { background: hsl(var(--foreground)); }
+
+.tru-scan-stage-statusbar {
+  flex-shrink: 0;
+  padding: 0.75rem 1rem 1rem;
+  text-align: center;
+  font-size: 0.8rem;
+  color: hsl(var(--muted-foreground));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tru-scan-stage,
+  .tru-ai-detection-corner,
+  .tru-ai-detection-label,
+  .tru-ai-detection-box {
+    animation: none !important;
+  }
+  .tru-ai-scanner-overlay::before { display: none; }
 }
 
 .tru-ai-detection-confidence {

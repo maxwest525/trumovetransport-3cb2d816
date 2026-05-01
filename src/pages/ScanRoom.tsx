@@ -612,6 +612,11 @@ export default function ScanRoom() {
   const [aiScanProgress, setAiScanProgress] = useState({ current: 0, total: 0 });
   // Active photo being scanned (drives the live preview in the scanner panel)
   const [activeScanPhoto, setActiveScanPhoto] = useState<{ id: string; url: string; name: string } | null>(null);
+  // Fullscreen "Scan Stage" overlay - auto-opens when AI scan starts so the
+  // photo + boxes get the whole screen. User can dismiss early via Done button;
+  // otherwise it auto-closes shortly after the scan finishes so they can grab
+  // the next room without an extra tap.
+  const [scanStageOpen, setScanStageOpen] = useState(false);
   // AI-detected bounding boxes for the active photo (revealed progressively)
   const [aiBoxes, setAiBoxes] = useState<AiBox[]>([]);
   const [revealedBoxCount, setRevealedBoxCount] = useState(0);
@@ -629,6 +634,29 @@ export default function ScanRoom() {
   const [hasResumableScan, setHasResumableScan] = useState<boolean>(
     !!persisted && (persisted.detectedItems?.length ?? 0) > 0
   );
+
+  // Auto-open the fullscreen Scan Stage when AI scan kicks off.
+  // Auto-collapse 1.4s after scan completes so the user gets a beat to see
+  // the final boxes, then returns to the workspace for the next room.
+  useEffect(() => {
+    if (isAiScanning) {
+      setScanStageOpen(true);
+      return;
+    }
+    if (scanStageOpen) {
+      const t = window.setTimeout(() => setScanStageOpen(false), 1400);
+      return () => window.clearTimeout(t);
+    }
+  }, [isAiScanning, scanStageOpen]);
+
+  // Lock body scroll while the Scan Stage is up
+  useEffect(() => {
+    if (!scanStageOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = prev; };
+  }, [scanStageOpen]);
+
   const [savedAtMs, setSavedAtMs] = useState<number | null>(persisted?.savedAt ?? null);
   // Tick every minute so "Saved X ago" stays fresh while the page is open
   const [nowTick, setNowTick] = useState(Date.now());
@@ -965,6 +993,10 @@ export default function ScanRoom() {
         for (let b = 0; b < boxes.length; b++) {
           await new Promise(res => setTimeout(res, 350));
           setRevealedBoxCount(b + 1);
+          // Subtle haptic tick on mobile as each box lands. No-op on desktop.
+          if (typeof navigator !== "undefined" && "vibrate" in navigator) {
+            try { navigator.vibrate(8); } catch { /* ignore */ }
+          }
           const it = items[b];
           if (!it) continue;
           const qty = Math.max(1, it.quantity || 1);
@@ -1375,6 +1407,79 @@ export default function ScanRoom() {
 
   return (
     <SiteShell hideTrustStrip>
+      {/* Fullscreen Scan Stage - active while AI is detecting items in a photo.
+          Mirrors the inline scanner panel (photo + bounding boxes + sweep effect)
+          but at full viewport so the moment feels premium. Auto-closes after the
+          scan finishes; the user can also tap Done to exit early. */}
+      {scanStageOpen && activeScanPhoto && (
+        <div
+          className="tru-scan-stage"
+          role="dialog"
+          aria-label="AI room scan in progress"
+        >
+          <button
+            type="button"
+            className="tru-scan-stage-close"
+            onClick={() => setScanStageOpen(false)}
+          >
+            <X className="w-3.5 h-3.5" />
+            {isAiScanning ? "Hide" : "Done"}
+          </button>
+
+          <div className="tru-scan-stage-photo-wrap">
+            <div className="tru-scan-stage-photo-frame">
+              <img src={activeScanPhoto.url} alt="Scanning room" />
+
+              {isAiScanning && (
+                <div className="tru-ai-scanner-overlay" key={activeScanPhoto.id} />
+              )}
+
+              {aiBoxes.slice(0, revealedBoxCount).map((item) => (
+                <div
+                  key={item.id}
+                  className="tru-ai-detection-box"
+                  style={{
+                    top: `${item.y * 100}%`,
+                    left: `${item.x * 100}%`,
+                    width: `${item.width * 100}%`,
+                    height: `${item.height * 100}%`,
+                  }}
+                >
+                  <span className="tru-ai-detection-corner tru-ai-corner-tl" />
+                  <span className="tru-ai-detection-corner tru-ai-corner-tr" />
+                  <span className="tru-ai-detection-corner tru-ai-corner-bl" />
+                  <span className="tru-ai-detection-corner tru-ai-corner-br" />
+                  <span className="tru-ai-detection-label">{item.name}</span>
+                </div>
+              ))}
+
+              <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-foreground/85 text-background rounded-full px-3 py-1.5 z-20">
+                <Scan className="w-3.5 h-3.5" />
+                <span className="text-[11px] font-semibold uppercase tracking-wide">
+                  {isAiScanning ? "Scanning" : "Complete"}
+                </span>
+              </div>
+
+              {aiScanProgress.total > 1 && (
+                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-foreground/85 text-background rounded-full px-3 py-1.5 z-20">
+                  <span className="text-[11px] font-semibold">
+                    Photo {aiScanProgress.current} / {aiScanProgress.total}
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="tru-scan-stage-statusbar">
+            {isAiScanning
+              ? (revealedBoxCount === 0
+                  ? "Analyzing the photo..."
+                  : `Detected ${revealedBoxCount} of ${aiBoxes.length} items in this photo`)
+              : `Found ${aiBoxes.length} item${aiBoxes.length === 1 ? "" : "s"} in this photo`}
+          </div>
+        </div>
+      )}
+
       <div className="tru-scan-page">
 
         {/* Hero */}
