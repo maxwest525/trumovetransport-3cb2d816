@@ -57,27 +57,27 @@ export default function CookieConsent() {
   if (!visible) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-[9999] p-4 animate-in slide-in-from-bottom-4 duration-500">
-      <div className="max-w-2xl mx-auto rounded-xl border border-border bg-card shadow-2xl overflow-hidden">
-        <div className="p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4">
-          <div className="flex items-start gap-3 flex-1 min-w-0">
-            <Shield className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-            <p className="text-sm text-foreground leading-relaxed">
-              We use cookies and similar tracking technologies to personalize your experience, remember your preferences, analyze how you use our site, measure ad performance, and improve our services. By clicking &ldquo;Accept All,&rdquo; you consent to our full use of cookies as described in our{" "}
+    <div className="fixed bottom-0 left-0 right-0 z-[9999] p-3 animate-in slide-in-from-bottom-4 duration-500">
+      <div className="max-w-xl mx-auto rounded-lg border border-border bg-card shadow-2xl overflow-hidden">
+        <div className="p-3 flex flex-col sm:flex-row items-start sm:items-center gap-3">
+          <div className="flex items-start gap-2 flex-1 min-w-0">
+            <Shield className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+            <p className="text-[11px] text-muted-foreground leading-snug">
+              We use cookies to personalize your experience, analyze usage, and improve our services. See our{" "}
               <a href="/privacy" className="text-primary underline underline-offset-2 hover:text-primary/80">
                 Privacy Policy
               </a>.
             </p>
           </div>
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto">
             <button
               onClick={handleDecline}
-              className="rounded-lg border border-border px-4 py-2 text-xs font-medium text-muted-foreground hover:bg-muted transition-colors">
+              className="flex-1 sm:flex-none rounded-lg border border-border px-5 py-2.5 text-sm font-semibold text-foreground hover:bg-muted transition-colors">
               Decline
             </button>
             <button
               onClick={handleAccept}
-              className="rounded-lg bg-primary px-5 py-2 text-xs font-semibold text-primary-foreground hover:bg-primary/90 transition-colors">
+              className="flex-1 sm:flex-none rounded-lg bg-primary px-6 py-2.5 text-sm font-bold text-primary-foreground hover:bg-primary/90 transition-colors">
               Accept All
             </button>
           </div>
