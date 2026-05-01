@@ -1867,6 +1867,32 @@ export default function ScanRoom() {
                           </span>
                         </div>
                       )}
+                      {activeScanPhoto && !isAiScanning && !isScanning && (
+                        <button
+                          type="button"
+                          onClick={handleEnhanceImage}
+                          disabled={isEnhancing || enhancedPhotoIds.has(activeScanPhoto.id)}
+                          className="absolute bottom-3 right-3 z-20 inline-flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-4 py-2 text-xs font-bold uppercase tracking-wider shadow-[0_6px_20px_-4px_hsl(var(--primary)/0.6)] hover:scale-[1.03] active:scale-[0.97] transition-transform disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
+                          title="Use AI to upscale and sharpen this photo for a better scan"
+                        >
+                          {isEnhancing ? (
+                            <>
+                              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                              Enhancing...
+                            </>
+                          ) : enhancedPhotoIds.has(activeScanPhoto.id) ? (
+                            <>
+                              <Check className="w-3.5 h-3.5" />
+                              Enhanced
+                            </>
+                          ) : (
+                            <>
+                              <Wand2 className="w-3.5 h-3.5" />
+                              Enhance Image Resolution
+                            </>
+                          )}
+                        </button>
+                      )}
                     </div>
                     <p className="text-xs text-muted-foreground text-center px-4">
                       {activeScanPhoto
