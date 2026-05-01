@@ -3191,6 +3191,15 @@ export default function ScanRoom() {
                 <span className="tru-scan-floating-bar-value">{totalCuFt}</span>
                 <span className="tru-scan-floating-bar-label">cu ft</span>
               </div>
+              <button
+                type="button"
+                onClick={() => setShowFloatingScanner(true)}
+                className="tru-scan-floating-bar-btn"
+                title="Open the AI scanner in a movable, resizable window"
+              >
+                <Maximize2 className="w-4 h-4" />
+                Expand Scanner
+              </button>
               {detectedItems.length > 0 && (
                 <Link to="/online-estimate" className="tru-scan-floating-bar-btn">
                   <ArrowRight className="w-4 h-4" />
