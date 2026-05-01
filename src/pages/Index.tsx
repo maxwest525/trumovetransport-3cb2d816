@@ -450,18 +450,18 @@ function ShipmentTrackerSection({ navigate }: {navigate: (path: string) => void;
           {/* Headline + CTA - center */}
           <div className="flex flex-col items-center text-center gap-4">
             <div>
-              <p className="text-[11px] uppercase tracking-[0.3em] text-primary font-semibold mb-3">Live GPS Tracking</p>
+              <p className="text-[11px] uppercase tracking-[0.3em] text-primary font-semibold mb-3">Start Your Move Plan</p>
               <div className="flex items-center justify-center gap-2 mb-4">
                 <span className="h-px w-8 bg-primary/40" />
                 <span className="w-1.5 h-1.5 rounded-full bg-primary/60" />
                 <span className="h-px w-8 bg-primary/40" />
               </div>
               <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground tracking-tight leading-[1.1]">
-                Real-Time<br />
-                <span className="text-primary">Shipment Tracking.</span>
+                Shipment Route<br />
+                <span className="text-primary">Tracking Plan.</span>
               </h2>
               <p className="text-muted-foreground max-w-xl mx-auto text-sm sm:text-base md:text-lg font-light leading-relaxed mt-4">
-                Stay up to date and track your belongings across the country with real-time GPS tracking of your goods.
+                Ready to Move?
               </p>
             </div>
             
