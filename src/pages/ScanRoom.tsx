@@ -67,6 +67,13 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import jsPDF from "jspdf";
@@ -444,6 +451,8 @@ export default function ScanRoom() {
   const [newFolderDraft, setNewFolderDraft] = useState("");
   const [renamingFolder, setRenamingFolder] = useState<string | null>(null);
   const [renameDraft, setRenameDraft] = useState("");
+  // "View all folders" modal for the empty-state library quick-pick grid.
+  const [showAllFoldersModal, setShowAllFoldersModal] = useState(false);
   // Per-photo notes keyed by photo id. Free-text the customer types about a
   // specific photo (e.g. "fragile, do not stack"). Seeded from persisted state
   // so notes survive a refresh, and sent to the CRM via save-scan-room.
@@ -2430,26 +2439,111 @@ export default function ScanRoom() {
                           <span>Library</span>
                           <span className="tru-scan-library-count">{uploadedPhotos.length}</span>
                         </div>
-                        <div className="grid grid-cols-3 gap-1.5 w-full px-1">
-                          {[
+                        {(() => {
+                          const defaultRooms = [
                             { icon: Sofa, label: "Living", room: "Living Room" },
                             { icon: BedDouble, label: "Bed", room: "Bedroom" },
                             { icon: UtensilsCrossed, label: "Kitchen", room: "Kitchen" },
                             { icon: Bath, label: "Bath", room: "Bathroom" },
                             { icon: Warehouse, label: "Garage", room: "Garage" },
                             { icon: Box, label: "Storage", room: "Storage" },
-                          ].map(({ icon: Icon, label, room }) => (
-                            <button
-                              key={label}
-                              type="button"
-                              onClick={() => handleRoomClick(room)}
-                              className="flex flex-col items-center gap-1 rounded-lg border border-border bg-muted/30 px-2 py-2.5 text-[11px] font-medium text-muted-foreground/70 hover:bg-muted/60 hover:text-foreground hover:border-foreground/20 transition-colors cursor-pointer"
-                            >
-                              <Icon className="w-3.5 h-3.5 flex-shrink-0" />
-                              <span>{label}</span>
-                            </button>
-                          ))}
-                        </div>
+                          ];
+                          const customAsRooms = customFolders.map((name) => ({
+                            icon: FolderOpen,
+                            label: name.length > 8 ? `${name.slice(0, 8)}…` : name,
+                            room: name,
+                          }));
+                          // Custom folders the customer just added show first so
+                          // they're easy to find; defaults follow.
+                          const allRooms = [...customAsRooms, ...defaultRooms];
+                          const VISIBLE = 5; // 5 + Add folder tile = 6 total
+                          const visibleRooms = allRooms.slice(0, VISIBLE);
+                          const hasMore = allRooms.length > VISIBLE;
+                          return (
+                            <>
+                              <div className="grid grid-cols-3 gap-1.5 w-full px-1">
+                                {/* Add folder tile - always first */}
+                                {isAddingFolder ? (
+                                  <div className="col-span-3 flex items-center gap-1.5 rounded-lg border border-primary/40 bg-primary/[0.04] px-2 py-2">
+                                    <Input
+                                      autoFocus
+                                      value={newFolderDraft}
+                                      onChange={(e) => setNewFolderDraft(e.target.value)}
+                                      onKeyDown={(e) => {
+                                        if (e.key === "Enter") {
+                                          e.preventDefault();
+                                          if (newFolderDraft.trim()) {
+                                            addCustomFolder(newFolderDraft);
+                                            setNewFolderDraft("");
+                                            setIsAddingFolder(false);
+                                          }
+                                        } else if (e.key === "Escape") {
+                                          setNewFolderDraft("");
+                                          setIsAddingFolder(false);
+                                        }
+                                      }}
+                                      placeholder="Folder name"
+                                      className="h-7 text-xs"
+                                    />
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        if (newFolderDraft.trim()) {
+                                          addCustomFolder(newFolderDraft);
+                                          setNewFolderDraft("");
+                                          setIsAddingFolder(false);
+                                        }
+                                      }}
+                                      className="text-[11px] font-semibold text-primary hover:underline px-1"
+                                    >
+                                      Add
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        setNewFolderDraft("");
+                                        setIsAddingFolder(false);
+                                      }}
+                                      className="text-muted-foreground hover:text-foreground"
+                                      aria-label="Cancel"
+                                    >
+                                      <X className="w-3.5 h-3.5" />
+                                    </button>
+                                  </div>
+                                ) : (
+                                  <button
+                                    type="button"
+                                    onClick={() => setIsAddingFolder(true)}
+                                    className="flex flex-col items-center gap-1 rounded-lg border border-dashed border-primary/40 bg-primary/[0.04] px-2 py-2.5 text-[11px] font-semibold text-primary hover:bg-primary/[0.08] hover:border-primary/60 transition-colors cursor-pointer"
+                                  >
+                                    <FolderPlus className="w-3.5 h-3.5 flex-shrink-0" />
+                                    <span>Add folder</span>
+                                  </button>
+                                )}
+                                {visibleRooms.map(({ icon: Icon, label, room }) => (
+                                  <button
+                                    key={room}
+                                    type="button"
+                                    onClick={() => handleRoomClick(room)}
+                                    className="flex flex-col items-center gap-1 rounded-lg border border-border bg-muted/30 px-2 py-2.5 text-[11px] font-medium text-muted-foreground/70 hover:bg-muted/60 hover:text-foreground hover:border-foreground/20 transition-colors cursor-pointer"
+                                  >
+                                    <Icon className="w-3.5 h-3.5 flex-shrink-0" />
+                                    <span className="truncate max-w-full">{label}</span>
+                                  </button>
+                                ))}
+                              </div>
+                              {hasMore && (
+                                <button
+                                  type="button"
+                                  onClick={() => setShowAllFoldersModal(true)}
+                                  className="mt-2 w-full text-[11px] font-semibold text-primary hover:underline py-1.5"
+                                >
+                                  View all ({allRooms.length})
+                                </button>
+                              )}
+                            </>
+                          );
+                        })()}
                       </div>
                     </div>
                   ) : (
@@ -4215,6 +4309,69 @@ export default function ScanRoom() {
           })()}
         </FloatingScannerWindow>
       </div>
+      {/* All-folders modal: triggered from the empty-state library "View all" link. */}
+      <Dialog open={showAllFoldersModal} onOpenChange={setShowAllFoldersModal}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>All folders</DialogTitle>
+            <DialogDescription>
+              Pick a folder to add photos, or create a new one.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex items-center gap-2">
+            <Input
+              value={newFolderDraft}
+              onChange={(e) => setNewFolderDraft(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && newFolderDraft.trim()) {
+                  e.preventDefault();
+                  addCustomFolder(newFolderDraft);
+                  setNewFolderDraft("");
+                }
+              }}
+              placeholder="New folder name"
+              className="h-9 text-sm"
+            />
+            <button
+              type="button"
+              onClick={() => {
+                if (newFolderDraft.trim()) {
+                  addCustomFolder(newFolderDraft);
+                  setNewFolderDraft("");
+                }
+              }}
+              className="inline-flex items-center gap-1.5 h-9 px-3 rounded-md bg-foreground text-background text-sm font-semibold hover:bg-foreground/85 transition-colors"
+            >
+              <FolderPlus className="w-4 h-4" />
+              Add
+            </button>
+          </div>
+          <div className="grid grid-cols-3 gap-2 max-h-[50vh] overflow-y-auto">
+            {[
+              { icon: Sofa, label: "Living", room: "Living Room" },
+              { icon: BedDouble, label: "Bed", room: "Bedroom" },
+              { icon: UtensilsCrossed, label: "Kitchen", room: "Kitchen" },
+              { icon: Bath, label: "Bath", room: "Bathroom" },
+              { icon: Warehouse, label: "Garage", room: "Garage" },
+              { icon: Box, label: "Storage", room: "Storage" },
+              ...customFolders.map((name) => ({ icon: FolderOpen, label: name, room: name })),
+            ].map(({ icon: Icon, label, room }) => (
+              <button
+                key={room}
+                type="button"
+                onClick={() => {
+                  setShowAllFoldersModal(false);
+                  handleRoomClick(room);
+                }}
+                className="flex flex-col items-center gap-1 rounded-lg border border-border bg-muted/30 px-2 py-3 text-xs font-medium text-foreground hover:bg-muted/60 hover:border-primary/40 transition-colors cursor-pointer"
+              >
+                <Icon className="w-4 h-4 flex-shrink-0" />
+                <span className="truncate max-w-full">{label}</span>
+              </button>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
     </SiteShell>
   );
 }
