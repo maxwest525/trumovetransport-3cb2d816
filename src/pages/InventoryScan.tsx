@@ -597,34 +597,14 @@ function ScannerCanvas({
           />
           {/* Detection boxes */}
           {photo.status === "scanned" && photo.detections.map((d, i) => (
-            <motion.div
+            <DetectionBox
               key={d.id}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: i * 0.08, duration: 0.25 }}
-              className="absolute pointer-events-none"
-              style={{
-                left: `${d.bbox.x * 100}%`,
-                top: `${d.bbox.y * 100}%`,
-                width: `${d.bbox.width * 100}%`,
-                height: `${d.bbox.height * 100}%`,
-                border: `1.5px ${d.confidence < 70 ? "dashed" : "solid"} ${confidenceColor(d.confidence)}`,
-                borderRadius: "2px",
-              }}
-            >
-              <div
-                className="absolute -top-5 left-0 px-1.5 py-0.5 text-[9px] font-medium whitespace-nowrap rounded-sm"
-                style={{
-                  background: confidenceColor(d.confidence),
-                  color: "#000",
-                  maxWidth: "100px",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                }}
-              >
-                {d.itemName} · {Math.round(d.confidence)}%
-              </div>
-            </motion.div>
+              bbox={d.bbox}
+              label={d.itemName}
+              confidence={d.confidence}
+              color={confidenceColor(d.confidence)}
+              index={i}
+            />
           ))}
 
           {photo.status === "scanning" && (
