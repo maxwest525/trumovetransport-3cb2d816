@@ -8,7 +8,11 @@ const corsHeaders = {
 // Industry-standard density factor (lbs per cubic foot)
 const DENSITY = 7;
 
-const SYSTEM_PROMPT = `You are a professional moving inventory specialist analyzing room photos. Identify every visible piece of furniture, appliance, and large item that a moving company would need to transport.
+const SYSTEM_PROMPT = `You are a professional moving inventory specialist analyzing room photos. Identify every visible piece of furniture, appliance, and large item that a moving company would need to transport, AND classify the room.
+
+Also classify the room:
+- room: pick the most likely room from: Living Room, Bedroom, Kitchen, Dining Room, Office, Bathroom, Garage, Nursery, Basement, Other
+- roomConfidence: 0-1 score for how confident you are. Use < 0.6 for ambiguous spaces (hallway, closet, mixed-use).
 
 For each detected item, provide:
 - name: A clear, common name (e.g. "3-Seat Sofa", "Queen Bed", "Refrigerator", "Dining Chair", "Coffee Table")
@@ -73,10 +77,22 @@ serve(async (req) => {
             type: "function",
             function: {
               name: "report_detected_items",
-              description: "Report all movable items detected in the photo with bounding boxes",
+              description: "Report the room type and all movable items detected in the photo with bounding boxes",
               parameters: {
                 type: "object",
                 properties: {
+                  room: {
+                    type: "string",
+                    description: "Most likely room type for this photo",
+                    enum: [
+                      "Living Room", "Bedroom", "Kitchen", "Dining Room",
+                      "Office", "Bathroom", "Garage", "Nursery", "Basement", "Other",
+                    ],
+                  },
+                  roomConfidence: {
+                    type: "number",
+                    description: "0-1 confidence in the room classification",
+                  },
                   items: {
                     type: "array",
                     items: {
@@ -106,7 +122,7 @@ serve(async (req) => {
                     },
                   },
                 },
-                required: ["items"],
+                required: ["room", "roomConfidence", "items"],
                 additionalProperties: false,
               },
             },
@@ -141,17 +157,22 @@ serve(async (req) => {
     const toolCall = data.choices?.[0]?.message?.tool_calls?.[0];
 
     let items: Array<{ name: string; room: string; quantity: number; cubicFeet: number; weight: number; confidence: number; box?: { x: number; y: number; width: number; height: number } }> = [];
+    let room: string | null = null;
+    let roomConfidence: number = 0;
 
     if (toolCall?.function?.arguments) {
       try {
         const parsed = JSON.parse(toolCall.function.arguments);
         items = Array.isArray(parsed.items) ? parsed.items : [];
+        if (typeof parsed.room === "string") room = parsed.room;
+        if (typeof parsed.roomConfidence === "number") {
+          roomConfidence = Math.max(0, Math.min(1, parsed.roomConfidence));
+        }
         // Debug log raw boxes from Gemini so we can verify normalization
         console.log(
           "[detect-inventory] Gemini returned",
           items.length,
-          "items. Boxes:",
-          JSON.stringify(items.map((it) => ({ name: it.name, box: it.box })))
+          "items. Room:", room, "conf:", roomConfidence
         );
       } catch (e) {
         console.error("Failed to parse tool args:", e);
@@ -191,7 +212,7 @@ serve(async (req) => {
     });
 
     return new Response(
-      JSON.stringify({ success: true, items }),
+      JSON.stringify({ success: true, room, roomConfidence, items }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
