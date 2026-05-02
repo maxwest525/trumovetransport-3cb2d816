@@ -891,14 +891,24 @@ function ScannerCanvas({
 }
 
 function CanvasBracket({ pos }: { pos: "tl" | "tr" | "bl" | "br" }) {
-  const base = "absolute w-3 h-3 pointer-events-none z-10";
+  const base = "absolute w-3 h-3 lg:w-[18px] lg:h-[18px] pointer-events-none z-10";
   const map = {
-    tl: "top-2 left-2 border-t-[1.5px] border-l-[1.5px]",
-    tr: "top-2 right-2 border-t-[1.5px] border-r-[1.5px]",
-    bl: "bottom-2 left-2 border-b-[1.5px] border-l-[1.5px]",
-    br: "bottom-2 right-2 border-b-[1.5px] border-r-[1.5px]",
+    tl: "top-2 left-2 border-t-[1.5px] border-l-[1.5px] lg:border-t-[2.5px] lg:border-l-[2.5px]",
+    tr: "top-2 right-2 border-t-[1.5px] border-r-[1.5px] lg:border-t-[2.5px] lg:border-r-[2.5px]",
+    bl: "bottom-2 left-2 border-b-[1.5px] border-l-[1.5px] lg:border-b-[2.5px] lg:border-l-[2.5px]",
+    br: "bottom-2 right-2 border-b-[1.5px] border-r-[1.5px] lg:border-b-[2.5px] lg:border-r-[2.5px]",
   };
-  return <div className={cn(base, map[pos])} style={{ borderColor: "#00ff88" }} />;
+  return (
+    <motion.div
+      animate={{ opacity: [0.7, 1, 0.7] }}
+      transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+      className={cn(base, map[pos])}
+      style={{
+        borderColor: "#00ff88",
+        filter: "drop-shadow(0 0 8px rgba(0,255,136,0.4))",
+      }}
+    />
+  );
 }
 
 /* ============================================================
