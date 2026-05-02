@@ -1207,6 +1207,7 @@ export default function InventoryScan() {
   const [scanProgress, setScanProgress] = useState<ScanProgress>({ current: 0, total: 0 });
   const cancelScanRef = useRef(false);
   const [confirmAllOpen, setConfirmAllOpen] = useState(false);
+  const [showBrackets, setShowBrackets] = useState(true);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -1519,16 +1520,31 @@ export default function InventoryScan() {
         />
 
         {/* CENTER: Scanner stage */}
-        <section className="flex-1 min-w-0 flex flex-col p-6 gap-4 overflow-y-auto">
-          <div>
-            <h1 className="text-[26px] font-semibold leading-tight">
-              Inventory <span className="text-[#00ff88]">Scanner</span>
-            </h1>
-            <p className="text-sm text-white/50 mt-1">
-              {activeRoomId === ""
-                ? "Showing all rooms — pick a folder to focus."
-                : `Active room: ${activeRoomName}. Upload, organize, scan.`}
-            </p>
+        <section className="flex-1 min-w-0 flex flex-col p-6 gap-6 overflow-y-auto">
+          <div className="flex items-end justify-between gap-4 flex-wrap">
+            <div className="min-w-0">
+              <h1 className="text-[26px] font-semibold leading-tight">
+                Inventory <span className="text-[#00ff88]">Scanner</span>
+              </h1>
+              {activeRoomId === "" ? (
+                <p className="text-[13px] text-white/50 mt-1">Showing all rooms — pick a folder to focus.</p>
+              ) : (
+                <div className="mt-1.5 flex items-center gap-2">
+                  <span className="text-[10px] uppercase tracking-[0.15em] text-white/40 font-semibold">Active room</span>
+                  <span
+                    className="w-1.5 h-1.5 rounded-full"
+                    style={{ background: COLOR_TINT[(rooms.find((r) => r.id === activeRoomId)?.color) || "blue"] }}
+                  />
+                  <span className="text-[18px] text-white font-medium leading-none">{activeRoomName}</span>
+                </div>
+              )}
+            </div>
+            <button
+              onClick={() => setHowOpen(true)}
+              className="flex items-center gap-1.5 text-[12px] text-white/60 hover:text-[#00ff88] px-2.5 py-1.5 rounded-md hover:bg-white/5 transition-colors"
+            >
+              <HelpCircle className="w-3.5 h-3.5" /> How it works
+            </button>
           </div>
 
           {activePhoto?.qualityFlag === "low" && !activePhoto.enhancedUrl && (
@@ -1579,7 +1595,8 @@ export default function InventoryScan() {
             onClickDetection={handleDetectionClick}
             onDrop={(files) => handleFiles(files)}
             isScanning={isScanning}
-            onHelp={() => setHowOpen(true)}
+            activeRoomName={activeRoomName}
+            showBrackets={showBrackets}
           />
 
           <input
@@ -1603,6 +1620,8 @@ export default function InventoryScan() {
               editMode={editMode}
               onToggleEdit={() => setEditMode((v) => !v)}
               hasActivePhoto={!!activePhoto}
+              showBrackets={showBrackets}
+              onToggleBrackets={() => setShowBrackets((v) => !v)}
             />
             <ScanControls
               scanState={scanState}
@@ -1613,6 +1632,8 @@ export default function InventoryScan() {
               onScanRoom={scanThisRoom}
               onScanAll={() => setConfirmAllOpen(true)}
               onCancel={cancelScan}
+              photosInRoom={photosInActiveRoom.length}
+              totalUnscanned={unscannedAll.length}
             />
           </div>
 
