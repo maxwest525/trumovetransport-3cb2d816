@@ -17,6 +17,7 @@ import Terms from "./pages/Terms";
 import SmsConsent from "./pages/SmsConsent";
 import PropertyLookup from "./pages/PropertyLookup";
 import ScanRoom from "./pages/ScanRoom";
+import InventoryScan from "./pages/InventoryScan";
 import Classic from "./pages/Classic";
 import LiveTracking from "./pages/LiveTracking";
 import AutoTransport from "./pages/AutoTransport";
@@ -64,6 +65,8 @@ const App = () => (
             <Route path="/sms-consent" element={<SmsConsent />} />
             <Route path="/property-lookup" element={<PropertyLookup />} />
             <Route path="/scan-room" element={<ScanRoom />} />
+            <Route path="/inventory/scan" element={<InventoryScan />} />
+            <Route path="/scanner" element={<InventoryScan />} />
             <Route path="/classic" element={<Classic />} />
             <Route path="/track" element={<LiveTracking />} />
             <Route path="/auto-transport" element={<AutoTransport />} />
