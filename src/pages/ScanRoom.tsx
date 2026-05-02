@@ -4058,18 +4058,46 @@ export default function ScanRoom() {
                 Inventory ({detectedItems.length})
               </span>
               {detectedItems.length > 3 && (
-                <span className="text-[10px] text-muted-foreground/70">
-                  Showing 3 of {detectedItems.length}
-                </span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowFloatingScanner(false);
+                    requestAnimationFrame(() => {
+                      const el = document.querySelector('[data-inventory-anchor="true"]')
+                        ?? document.querySelector('.tru-inventory-list')
+                        ?? document.querySelector('.tru-scan-page');
+                      if (el && 'scrollIntoView' in el) {
+                        (el as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'start' });
+                      } else {
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }
+                    });
+                  }}
+                  className="text-[10px] font-semibold uppercase tracking-wider text-primary hover:underline underline-offset-2"
+                >
+                  View all ({detectedItems.length})
+                </button>
               )}
             </div>
-            {detectedItems.length === 0 ? (
-              <p className="text-[11px] text-muted-foreground/70 italic">
-                Scanned items will appear here.
-              </p>
-            ) : (
-              <ul className="space-y-1.5">
-                {detectedItems.slice(-3).reverse().map((item) => (
+            {/* Always render exactly 3 rows. Empty slots show a placeholder so
+                the list height stays consistent regardless of detection count. */}
+            <ul className="space-y-1.5">
+              {Array.from({ length: 3 }).map((_, i) => {
+                const recent = detectedItems.slice(-3).reverse();
+                const item = recent[i];
+                if (!item) {
+                  return (
+                    <li
+                      key={`placeholder-${i}`}
+                      className="flex items-center gap-2 rounded-md border border-dashed border-border/60 bg-background/40 px-2 py-1.5"
+                    >
+                      <p className="text-[11px] text-muted-foreground/60 italic">
+                        Awaiting detection...
+                      </p>
+                    </li>
+                  );
+                }
+                return (
                   <li
                     key={item.id}
                     className="flex items-center justify-between gap-2 rounded-md border border-border bg-background px-2 py-1.5"
@@ -4088,9 +4116,9 @@ export default function ScanRoom() {
                       </span>
                     )}
                   </li>
-                ))}
-              </ul>
-            )}
+                );
+              })}
+            </ul>
           </div>
         </FloatingScannerWindow>
       </div>
