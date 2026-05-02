@@ -377,6 +377,129 @@ function StatusBar({
 /* ============================================================
    Room chips
 ============================================================ */
+function MiniDropzone({
+  uploaded, scanned, onFiles,
+}: {
+  uploaded: number;
+  scanned: number;
+  onFiles: (files: File[]) => void;
+}) {
+  const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
+    accept: { "image/*": [], "video/*": [] },
+    multiple: true,
+    noClick: true,
+    noKeyboard: true,
+    onDrop: (accepted) => {
+      if (accepted.length === 0) return;
+      onFiles(accepted);
+      toast({ title: `Added ${accepted.length} ${accepted.length === 1 ? "photo" : "photos"} to queue` });
+    },
+  });
+  return (
+    <div
+      {...getRootProps()}
+      onClick={open}
+      className="rounded-lg flex items-center justify-between cursor-pointer transition-colors"
+      style={{
+        height: 48,
+        padding: "8px 16px",
+        border: isDragActive
+          ? "1px solid rgba(0,255,136,0.7)"
+          : "1px dashed rgba(0,255,136,0.25)",
+        background: isDragActive ? "rgba(0,255,136,0.06)" : "rgba(0,255,136,0.02)",
+      }}
+    >
+      <input {...getInputProps()} />
+      <div className="flex items-center gap-2.5">
+        <div
+          className="relative w-6 h-6 rounded flex items-center justify-center flex-shrink-0"
+          style={{ background: "rgba(0,255,136,0.1)" }}
+        >
+          <ImageIcon className="w-3.5 h-3.5 text-[#00ff88]" strokeWidth={1.75} />
+          <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-[#00ff88] flex items-center justify-center">
+            <Sparkles className="w-1.5 h-1.5 text-black" strokeWidth={3} />
+          </span>
+        </div>
+        <span className="text-[12px] text-white font-medium">
+          {isDragActive ? "Drop to add to queue" : "Drop more photos"}
+        </span>
+        <span className="text-[11px] text-white/50">or click to browse</span>
+      </div>
+      <span className="text-[11px] text-white/50">
+        {uploaded} uploaded · {scanned} scanned
+      </span>
+    </div>
+  );
+}
+
+/* ============================================================
+   Corner-bracket detection box
+============================================================ */
+function DetectionBox({
+  bbox, label, confidence, color, index,
+}: {
+  bbox: { x: number; y: number; width: number; height: number };
+  label: string;
+  confidence: number;
+  color: string;
+  index: number;
+}) {
+  const cornerBase: React.CSSProperties = {
+    position: "absolute",
+    width: 12,
+    height: 12,
+    borderColor: color,
+    borderStyle: "solid",
+    filter: `drop-shadow(0 0 4px ${color}66)`,
+  };
+  const corners: Array<{ key: string; style: React.CSSProperties }> = [
+    { key: "tl", style: { top: -1, left: -1, borderTopWidth: 2, borderLeftWidth: 2, borderRightWidth: 0, borderBottomWidth: 0 } },
+    { key: "tr", style: { top: -1, right: -1, borderTopWidth: 2, borderRightWidth: 2, borderLeftWidth: 0, borderBottomWidth: 0 } },
+    { key: "br", style: { bottom: -1, right: -1, borderBottomWidth: 2, borderRightWidth: 2, borderLeftWidth: 0, borderTopWidth: 0 } },
+    { key: "bl", style: { bottom: -1, left: -1, borderBottomWidth: 2, borderLeftWidth: 2, borderRightWidth: 0, borderTopWidth: 0 } },
+  ];
+  const baseDelay = index * 0.08;
+  return (
+    <div
+      className="absolute group"
+      style={{
+        left: `${bbox.x * 100}%`,
+        top: `${bbox.y * 100}%`,
+        width: `${bbox.width * 100}%`,
+        height: `${bbox.height * 100}%`,
+        pointerEvents: "auto",
+      }}
+    >
+      {/* hover full outline */}
+      <div
+        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+        style={{ border: `0.5px solid ${color}`, opacity: 0.3 }}
+      />
+      {corners.map((c, i) => (
+        <motion.div
+          key={c.key}
+          initial={{ opacity: 0, scale: 0.6 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: baseDelay + i * 0.03, duration: 0.18, ease: "easeOut" }}
+          style={{ ...cornerBase, ...c.style }}
+        />
+      ))}
+      <motion.div
+        initial={{ opacity: 0, y: 2 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: baseDelay + 0.22, duration: 0.15 }}
+        className="absolute -top-[22px] left-0 px-1.5 py-0.5 text-[10px] font-semibold whitespace-nowrap rounded-[3px] pointer-events-none"
+        style={{ background: color, color: "#000", maxWidth: "120px", overflow: "hidden", textOverflow: "ellipsis" }}
+      >
+        {label} · {Math.round(confidence)}%
+      </motion.div>
+    </div>
+  );
+}
+
+/* ============================================================
+   Room chips
+============================================================ */
 function RoomChips({
   rooms, items, activeRoomId, onPick, onAdd,
 }: {
@@ -474,34 +597,14 @@ function ScannerCanvas({
           />
           {/* Detection boxes */}
           {photo.status === "scanned" && photo.detections.map((d, i) => (
-            <motion.div
+            <DetectionBox
               key={d.id}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: i * 0.08, duration: 0.25 }}
-              className="absolute pointer-events-none"
-              style={{
-                left: `${d.bbox.x * 100}%`,
-                top: `${d.bbox.y * 100}%`,
-                width: `${d.bbox.width * 100}%`,
-                height: `${d.bbox.height * 100}%`,
-                border: `1.5px ${d.confidence < 70 ? "dashed" : "solid"} ${confidenceColor(d.confidence)}`,
-                borderRadius: "2px",
-              }}
-            >
-              <div
-                className="absolute -top-5 left-0 px-1.5 py-0.5 text-[9px] font-medium whitespace-nowrap rounded-sm"
-                style={{
-                  background: confidenceColor(d.confidence),
-                  color: "#000",
-                  maxWidth: "100px",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                }}
-              >
-                {d.itemName} · {Math.round(d.confidence)}%
-              </div>
-            </motion.div>
+              bbox={d.bbox}
+              label={d.itemName}
+              confidence={d.confidence}
+              color={confidenceColor(d.confidence)}
+              index={i}
+            />
           ))}
 
           {photo.status === "scanning" && (
@@ -1138,6 +1241,12 @@ export default function InventoryScan() {
               total={totalPhotos}
               itemsFound={itemsFound}
               etaSec={etaSec}
+            />
+
+            <MiniDropzone
+              uploaded={totalPhotos}
+              scanned={photos.filter((p) => p.status === "scanned").length}
+              onFiles={handleFiles}
             />
 
             <div className="grid gap-3" style={{ gridTemplateColumns: "1fr 240px" }}>
