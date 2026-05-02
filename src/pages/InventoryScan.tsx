@@ -72,6 +72,8 @@ const ROOM_PALETTE = [
   { id: "office",      name: "Office",      color: "#14b8a6" },
   { id: "bathroom",    name: "Bathroom",    color: "#22c55e" },
   { id: "garage",      name: "Garage",      color: "#9ca3af" },
+  { id: "nursery",     name: "Nursery",     color: "#f472b6" },
+  { id: "basement",    name: "Basement",    color: "#64748b" },
   { id: "other",       name: "Other",       color: "#ec4899" },
 ];
 
@@ -906,7 +908,19 @@ export default function InventoryScan() {
       if (error) throw error;
       const raw: any[] = data?.items || [];
       const itemNames = raw.map((r) => r.name);
-      const { roomId, auto } = detectRoomFromItems(itemNames);
+
+      // Prefer Gemini's room classification when confident enough; otherwise fall back to keyword heuristic.
+      const geminiRoom: string | null = typeof data?.room === "string" ? data.room : null;
+      const geminiRoomConf: number = typeof data?.roomConfidence === "number" ? data.roomConfidence : 0;
+      let roomId: string;
+      let auto = true;
+      if (geminiRoom && geminiRoomConf >= 0.6) {
+        roomId = roomNameToId(geminiRoom);
+      } else {
+        const fallback = detectRoomFromItems(itemNames);
+        roomId = fallback.roomId;
+        auto = fallback.auto;
+      }
       ensureRoom(roomId);
 
       const detections: Detection[] = raw.map((it) => ({
