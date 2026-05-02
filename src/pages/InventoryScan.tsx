@@ -811,14 +811,14 @@ function RoomSidebar({
 ============================================================ */
 function ScannerTrustStrip() {
   const items = [
-    { icon: Cpu, title: "AI-Powered Detection", body: "Our AI identifies and counts your items automatically." },
+    { icon: Brain, title: "AI-Powered Detection", body: "Our AI identifies and counts your items automatically." },
     { icon: ShieldCheck, title: "100% Private & Secure", body: "Your photos and data are never shared or stored." },
     { icon: Headphones, title: "Need Help?", body: "Our moving experts are here to help you 24/7." },
   ];
   return (
-    <div className="grid grid-cols-3 gap-0 rounded-lg border border-white/[0.06] bg-[#0a0e1a] overflow-hidden divide-x divide-white/[0.06]">
+    <div className="grid grid-cols-3 gap-0 rounded-lg border border-white/[0.06] bg-[#0a0e1a] overflow-hidden divide-x divide-white/[0.08]">
       {items.map((it) => (
-        <div key={it.title} className="px-4 py-3 flex items-start gap-3">
+        <div key={it.title} className="px-4 py-2.5 flex items-start gap-3">
           <div className="w-8 h-8 rounded-md bg-[#00ff88]/10 border border-[#00ff88]/20 flex items-center justify-center flex-shrink-0">
             <it.icon className="w-4 h-4 text-[#00ff88]" />
           </div>
