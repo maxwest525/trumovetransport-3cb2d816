@@ -474,20 +474,17 @@ function DetectionBox({
   const baseDelay = index * 0.08;
   return (
     <div
-      className="absolute group"
+      className="absolute"
       style={{
         left: `${bbox.x * 100}%`,
         top: `${bbox.y * 100}%`,
         width: `${bbox.width * 100}%`,
         height: `${bbox.height * 100}%`,
-        pointerEvents: "auto",
+        pointerEvents: "none",
+        border: "none",
+        background: "transparent",
       }}
     >
-      {/* hover full outline */}
-      <div
-        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
-        style={{ border: `0.5px solid ${color}`, opacity: 0.3 }}
-      />
       {corners.map((c, i) => (
         <motion.div
           key={c.key}
