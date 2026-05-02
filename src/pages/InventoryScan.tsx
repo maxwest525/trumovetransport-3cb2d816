@@ -1710,13 +1710,6 @@ export default function InventoryScan() {
 
   const itemsFound = items.reduce((s, i) => s + i.quantity, 0);
 
-  // Status string for header
-  const headerStatus = useMemo(() => {
-    if (state === "empty") return "Step 1 — Building your inventory";
-    if (scanComplete) return "Step 1 — Inventory ready to review";
-    return `Step 1 — Scanning your photos (${scanCursor}/${totalPhotos})`;
-  }, [state, scanComplete, scanCursor, totalPhotos]);
-
   // Auto-fade scan-complete card to a slim "Ready to review" strip after 3s
   const [completeSlim, setCompleteSlim] = useState(false);
   const [completeDismissed, setCompleteDismissed] = useState(false);
