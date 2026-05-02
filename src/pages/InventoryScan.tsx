@@ -828,21 +828,30 @@ function ScannerCanvas({
             </div>
           )}
 
-          {/* Top-center pill */}
+          {/* Top-center photo info pill */}
           <div className="absolute top-3 left-1/2 -translate-x-1/2">
             <Popover>
               <PopoverTrigger asChild>
                 <button
-                  className="flex items-center gap-1.5 px-2 py-1 rounded-xl text-[10px] text-white hover:bg-black/85 transition-colors"
-                  style={{ background: "rgba(0,0,0,0.7)", border: "0.5px solid rgba(255,255,255,0.1)" }}
+                  className="flex items-center gap-2 rounded-full text-white hover:bg-black/85 transition-colors"
+                  style={{
+                    background: "rgba(0,0,0,0.7)",
+                    border: "0.5px solid rgba(255,255,255,0.12)",
+                    padding: "6px 14px",
+                    fontSize: 13,
+                    backdropFilter: "blur(8px)",
+                  }}
                 >
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#00ff88]" />
-                  Photo {photoIndex + 1} of {totalPhotos}
-                  <span className="text-white/50">·</span>
-                  <span className="text-white/70">
-                    {photo.autoTagged ? "auto-tagged" : "manually tagged"} {room?.name?.toLowerCase() || "—"}
+                  <span className="w-[6px] h-[6px] rounded-full bg-[#00ff88]" />
+                  <span className="text-white font-medium">
+                    Photo {photoIndex + 1} of {totalPhotos}
                   </span>
-                  <ChevronDown className="w-3 h-3 text-white/50" />
+                  <span className="text-white/40">·</span>
+                  <span className="text-[#00ff88]/90">
+                    {photo.autoTagged ? "auto-tagged" : "tagged"}
+                  </span>
+                  <span className="text-white">{room?.name?.toLowerCase() || "—"}</span>
+                  <ChevronDown className="w-3.5 h-3.5 text-white/60" />
                 </button>
               </PopoverTrigger>
               <PopoverContent className="w-44 p-1 bg-black border-white/10" align="center">
