@@ -4100,21 +4100,79 @@ export default function ScanRoom() {
                 return (
                   <li
                     key={item.id}
-                    className="flex items-center justify-between gap-2 rounded-md border border-border bg-background px-2 py-1.5"
+                    className="group flex items-center justify-between gap-2 rounded-md border border-border bg-background px-2 py-1.5 hover:border-primary/50 hover:bg-primary/[0.04] transition-colors"
                   >
-                    <div className="min-w-0 flex-1">
-                      <p className="text-[12px] font-semibold text-foreground truncate">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        // Open details: close the floating window, scroll to
+                        // the matching row in the inventory table, and flash
+                        // it briefly so the customer can see what they picked.
+                        setShowFloatingScanner(false);
+                        const targetId = String(item.id);
+                        requestAnimationFrame(() => {
+                          const row = document.querySelector<HTMLElement>(
+                            `tr[data-item-id="${targetId}"]`
+                          );
+                          if (row) {
+                            row.scrollIntoView({ behavior: "smooth", block: "center" });
+                            row.classList.remove("tru-scan-row-flash");
+                            // Force reflow so the animation can re-trigger.
+                            void row.offsetWidth;
+                            row.classList.add("tru-scan-row-flash");
+                            row.addEventListener(
+                              "animationend",
+                              () => row.classList.remove("tru-scan-row-flash"),
+                              { once: true }
+                            );
+                          }
+                        });
+                      }}
+                      className="min-w-0 flex-1 text-left"
+                      title="View details"
+                    >
+                      <p className="text-[12px] font-semibold text-foreground truncate group-hover:text-primary transition-colors">
                         {item.name}
                       </p>
                       <p className="text-[10px] text-muted-foreground truncate">
                         {item.room} · {Math.round(item.weight * item.quantity)} lbs · {Math.round(item.cuft * item.quantity)} cu.ft
                       </p>
-                    </div>
+                    </button>
                     {item.quantity > 1 && (
                       <span className="shrink-0 rounded-full bg-primary/15 text-primary px-2 py-0.5 text-[10px] font-bold">
                         x{item.quantity}
                       </span>
                     )}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        // Start estimate: same migration flow as the main
+                        // "Migrate to Manual Builder" button below the table.
+                        const inventoryForBuilder = detectedItems.map((it) => ({
+                          id: `scanned-${it.id}-${Date.now()}`,
+                          name: it.name,
+                          room: it.room,
+                          quantity: it.quantity,
+                          weightEach: it.weight,
+                          cubicFeet: it.cuft,
+                          imageUrl: it.image,
+                        }));
+                        localStorage.setItem(
+                          "tm_scanned_inventory",
+                          JSON.stringify(inventoryForBuilder)
+                        );
+                        toast({
+                          title: "Inventory Migrated Successfully!",
+                          description: `${detectedItems.length} items have been synced to the manual builder.`,
+                        });
+                        setShowFloatingScanner(false);
+                        navigate("/online-estimate");
+                      }}
+                      className="shrink-0 inline-flex items-center gap-1 rounded-md border border-primary/40 bg-primary/[0.06] hover:bg-primary/15 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-primary transition-colors"
+                      title="Start estimate with this inventory"
+                    >
+                      Estimate
+                    </button>
                   </li>
                 );
               })}
