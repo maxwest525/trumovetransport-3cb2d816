@@ -1436,6 +1436,9 @@ export default function InventoryScan() {
   const cancelScanRef = useRef(false);
   const [confirmAllOpen, setConfirmAllOpen] = useState(false);
   const [showBrackets, setShowBrackets] = useState(true);
+  const [scanJustCompleted, setScanJustCompleted] = useState(false);
+  const [suggestion, setSuggestion] = useState<{ fromRoomId: string; toRoomId: string; toRoomName: string } | null>(null);
+  const [dismissedSuggestions, setDismissedSuggestions] = useState<Set<string>>(new Set());
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -1515,7 +1518,7 @@ export default function InventoryScan() {
       if (error) throw error;
       const rawItems: any[] = data?.items || [];
 
-      const detections: Detection[] = rawItems.map((it) => ({
+      const rawDetections: Detection[] = rawItems.map((it) => ({
         id: uid(),
         itemName: it.name,
         confidence: it.confidence ?? 80,
@@ -1525,22 +1528,60 @@ export default function InventoryScan() {
         photoId: photo.id,
         roomId: photo.roomId,
       }));
+      // De-duplicate overlapping boxes
+      const detections = dedupeDetections(rawDetections);
 
       setPhotos((prev) => prev.map((p) =>
         p.id === photo.id ? { ...p, status: "scanned", detections, dataUrl } : p
       ));
 
-      const newItems: InventoryItem[] = rawItems.map((it) => ({
-        id: uid(),
-        name: it.name,
-        quantity: Math.max(1, Math.round(it.quantity || 1)),
-        cubicFeet: it.cubicFeet || 5,
-        weight: it.weight || 35,
-        roomId: photo.roomId,
-        sourcePhotoId: photo.id,
-        confidence: it.confidence ?? 80,
-      }));
-      setItems((prev) => [...prev, ...newItems]);
+      // Build items from de-duped detections, then merge with existing same-name items in same room
+      setItems((prev) => {
+        const next = [...prev];
+        for (const d of detections) {
+          const existingIdx = next.findIndex(
+            (i) => i.roomId === photo.roomId && i.name.toLowerCase() === d.itemName.toLowerCase()
+          );
+          if (existingIdx >= 0) {
+            next[existingIdx] = {
+              ...next[existingIdx],
+              quantity: next[existingIdx].quantity + 1,
+              confidence: Math.max(next[existingIdx].confidence, d.confidence),
+            };
+          } else {
+            next.push({
+              id: uid(),
+              name: d.itemName,
+              quantity: 1,
+              cubicFeet: d.cubicFeet,
+              weight: d.weight,
+              roomId: photo.roomId,
+              sourcePhotoId: photo.id,
+              confidence: d.confidence,
+            });
+          }
+        }
+        return next;
+      });
+
+      // Smart room suggestion
+      const itemNames = detections.map((d) => d.itemName);
+      const suggested = suggestRoomForItems(itemNames);
+      const suggestionKey = `${photo.roomId}->${suggested}`;
+      if (
+        suggested &&
+        suggested !== photo.roomId &&
+        !dismissedSuggestions.has(suggestionKey)
+      ) {
+        const targetRoom = rooms.find((r) => r.id === suggested);
+        if (targetRoom) {
+          setSuggestion({
+            fromRoomId: photo.roomId,
+            toRoomId: suggested,
+            toRoomName: targetRoom.name,
+          });
+        }
+      }
     } catch (err: any) {
       console.error("scan failed", err);
       const msg = err?.message?.includes("429") ? "Rate limited. Wait a moment and try again."
@@ -1567,6 +1608,9 @@ export default function InventoryScan() {
     }
     setScanState("idle");
     setScanProgress({ current: 0, total: 0 });
+    // Trigger celebration moment
+    setScanJustCompleted(true);
+    setTimeout(() => setScanJustCompleted(false), 2200);
   };
 
   const scanThisRoom = () => {
