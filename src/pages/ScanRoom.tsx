@@ -4417,6 +4417,123 @@ export default function ScanRoom() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Folder browser modal: opens when the customer taps a folder tile.
+          Left rail switches between folders (incl. "All"); right pane shows
+          every photo currently in the selected folder with quick actions. */}
+      <Dialog open={folderBrowser !== null} onOpenChange={(open) => !open && setFolderBrowser(null)}>
+        <DialogContent className="max-w-4xl p-0 overflow-hidden">
+          <DialogHeader className="px-5 pt-5 pb-3 border-b border-border">
+            <DialogTitle className="flex items-center gap-2">
+              <FolderOpen className="w-4 h-4 text-primary" />
+              {folderBrowser || "Folder"}
+            </DialogTitle>
+            <DialogDescription>
+              Browse photos by folder. Use the side rail to jump between rooms.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid grid-cols-[180px_1fr] max-h-[70vh]">
+            {/* Sidebar: All + canonical rooms + custom folders */}
+            <aside className="border-r border-border bg-muted/20 overflow-y-auto py-2">
+              {(() => {
+                const rail: { label: string; room: string; icon: typeof FolderOpen }[] = [
+                  { label: "All", room: "All", icon: Layers },
+                  { label: "Living Room", room: "Living Room", icon: Sofa },
+                  { label: "Bedroom", room: "Bedroom", icon: BedDouble },
+                  { label: "Kitchen", room: "Kitchen", icon: UtensilsCrossed },
+                  { label: "Bathroom", room: "Bathroom", icon: Bath },
+                  { label: "Garage", room: "Garage", icon: Warehouse },
+                  { label: "Storage", room: "Storage", icon: Box },
+                  ...customFolders.map((name) => ({ label: name, room: name, icon: FolderOpen })),
+                ];
+                return rail.map(({ label, room, icon: Icon }) => {
+                  const count = room === "All"
+                    ? uploadedPhotos.length
+                    : uploadedPhotos.filter((p) => parseRoom(p.name) === room).length;
+                  const active = folderBrowser === room;
+                  return (
+                    <button
+                      key={room}
+                      type="button"
+                      onClick={() => setFolderBrowser(room)}
+                      className={`w-full flex items-center gap-2 px-3 py-2 text-xs text-left transition-colors ${
+                        active
+                          ? "bg-primary/10 text-primary border-l-2 border-primary font-semibold"
+                          : "text-muted-foreground hover:bg-muted/50 hover:text-foreground border-l-2 border-transparent"
+                      }`}
+                    >
+                      <Icon className="w-3.5 h-3.5 flex-shrink-0" />
+                      <span className="truncate flex-1">{label}</span>
+                      <span className="text-[10px] tabular-nums opacity-70">{count}</span>
+                    </button>
+                  );
+                });
+              })()}
+            </aside>
+
+            {/* Photo grid for the active folder */}
+            <div className="overflow-y-auto p-4">
+              {(() => {
+                const photos = folderBrowser === "All"
+                  ? uploadedPhotos
+                  : uploadedPhotos.filter((p) => parseRoom(p.name) === folderBrowser);
+
+                if (photos.length === 0) {
+                  return (
+                    <div className="h-full min-h-[260px] flex flex-col items-center justify-center text-center gap-3 py-10">
+                      <ImageIcon className="w-10 h-10 text-muted-foreground/40" />
+                      <p className="text-sm text-muted-foreground">
+                        No photos in <span className="font-semibold text-foreground">{folderBrowser}</span> yet.
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const target = folderBrowser;
+                          setFolderBrowser(null);
+                          if (target) handleRoomClick(target);
+                        }}
+                        className="inline-flex items-center gap-1.5 h-9 px-3 rounded-md bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 transition-colors"
+                      >
+                        <Upload className="w-3.5 h-3.5" />
+                        Add photos to this folder
+                      </button>
+                    </div>
+                  );
+                }
+
+                return (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                    {photos.map((p) => {
+                      const sep = p.name.indexOf(" - ");
+                      const baseName = sep === -1 ? p.name : p.name.slice(sep + 3);
+                      return (
+                        <div key={p.id} className="relative group rounded-lg overflow-hidden border border-border bg-muted/30 aspect-square">
+                          <img
+                            src={p.url}
+                            alt={baseName}
+                            className="w-full h-full object-cover"
+                            loading="lazy"
+                          />
+                          <div className="absolute inset-x-0 bottom-0 px-2 py-1 bg-gradient-to-t from-black/70 to-transparent">
+                            <p className="text-[10px] text-white truncate" title={baseName}>
+                              {baseName}
+                            </p>
+                          </div>
+                          {scannedPhotoIds.has(p.id) && (
+                            <span className="absolute top-1 left-1 inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-primary/90 text-primary-foreground text-[9px] font-bold uppercase tracking-wide">
+                              <Check className="w-2.5 h-2.5" /> Scanned
+                            </span>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              })()}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </SiteShell>
   );
 }
