@@ -1671,12 +1671,39 @@ export default function InventoryScan() {
   };
 
   const itemsFound = items.reduce((s, i) => s + i.quantity, 0);
-  const activeStep = state === "empty" || state === "scanning" ? 0 : 1;
+
+  // Status string for header
+  const headerStatus = useMemo(() => {
+    if (state === "empty") return "Step 1 — Building your inventory";
+    if (scanComplete) return "Step 1 — Inventory ready to review";
+    return `Step 1 — Scanning your photos (${scanCursor}/${totalPhotos})`;
+  }, [state, scanComplete, scanCursor, totalPhotos]);
+
+  // Auto-fade scan-complete card to a slim "Ready to review" strip after 3s
+  const [completeSlim, setCompleteSlim] = useState(false);
+  const [completeDismissed, setCompleteDismissed] = useState(false);
+  useEffect(() => {
+    if (!scanComplete) {
+      setCompleteSlim(false);
+      setCompleteDismissed(false);
+      return;
+    }
+    const t = window.setTimeout(() => setCompleteSlim(true), 3000);
+    return () => window.clearTimeout(t);
+  }, [scanComplete]);
+
+  const handleRescan = () => {
+    setPhotos((prev) => prev.map((p) => ({ ...p, status: "pending", detections: [] })));
+    setItems([]);
+    setScanCursor(0);
+    setCompleteSlim(false);
+    setCompleteDismissed(false);
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-black text-white">
       <TopBar
-        activeStep={activeStep}
+        statusLabel={headerStatus}
         onSaveExit={() => navigate("/")}
       />
 
@@ -1699,70 +1726,90 @@ export default function InventoryScan() {
       )}
 
       {state === "scanning" && (
-        <div className="flex-1 overflow-auto px-6 py-4">
-          <div className="max-w-[1100px] mx-auto space-y-3">
-            <StatusBar
-              current={Math.min(scanCursor + (scanComplete ? 0 : 1), totalPhotos)}
-              total={totalPhotos}
-              itemsFound={itemsFound}
-              etaSec={etaSec}
-            />
+        <div className="flex-1 overflow-auto px-6 lg:px-8 py-4 lg:py-6">
+          <div className="max-w-[1100px] lg:max-w-[1200px] mx-auto">
+            <PageHeading />
 
-            <MiniDropzone
-              uploaded={totalPhotos}
-              scanned={photos.filter((p) => p.status === "scanned").length}
-              onFiles={handleFiles}
-            />
-
-            <div className="grid gap-3" style={{ gridTemplateColumns: "1fr 240px" }}>
-              {/* LEFT */}
-              <div className="space-y-2 min-w-0">
-                <div className="flex items-center justify-between gap-2">
-                  <RoomChips
-                    rooms={rooms}
-                    items={items}
-                    activeRoomId={activeRoomId}
-                    onPick={setActiveRoomId}
-                    onAdd={handleAddRoom}
+            <div className="space-y-3 lg:space-y-0">
+              {/* Status bar */}
+              <div className="lg:mb-3">
+                {!completeDismissed && (
+                  <StatusBar
+                    current={Math.min(scanCursor + (scanComplete ? 0 : 1), totalPhotos)}
+                    total={totalPhotos}
+                    itemsFound={itemsFound}
+                    etaSec={etaSec}
+                    complete={scanComplete}
+                    roomCount={rooms.length}
+                    slim={completeSlim}
+                    onRescan={scanComplete ? handleRescan : undefined}
+                    onDismiss={scanComplete && !completeSlim ? () => setCompleteSlim(true) : undefined}
                   />
-                  <button className="text-[10px] text-white/40 hover:text-white/70 flex items-center gap-1 flex-shrink-0">
-                    <HelpCircle className="w-3 h-3" /> How it works
-                  </button>
-                </div>
+                )}
+              </div>
 
-                <ScannerCanvas
-                  photo={activePhoto}
-                  photoIndex={activePhoto ? photos.findIndex((p) => p.id === activePhoto.id) : 0}
-                  totalPhotos={totalPhotos}
-                  room={rooms.find((r) => r.id === activePhoto?.roomId)}
-                  onChangeRoom={(rid) => activePhoto && reassignPhoto(activePhoto.id, rid)}
-                  allRooms={rooms}
-                  onEnhance={enhancePhoto}
-                  onDismissQuality={dismissQuality}
-                />
-
-                <PhotoStrip
-                  photos={photos}
-                  activeId={activePhotoId}
-                  onPick={setActivePhotoId}
-                  onAddMore={triggerAddMore}
+              {/* Mini dropzone */}
+              <div className="lg:mb-5">
+                <MiniDropzone
+                  uploaded={totalPhotos}
+                  scanned={photos.filter((p) => p.status === "scanned").length}
+                  onFiles={handleFiles}
                 />
               </div>
 
-              {/* RIGHT */}
-              <LiveInventoryFeed
-                rooms={rooms}
-                items={items}
-                activeRoomId={activeRoomId ?? activePhoto?.roomId ?? null}
-                onPickRoom={setActiveRoomId}
-              />
-            </div>
+              {/* Room chips */}
+              <div className="lg:mb-4 flex items-center justify-between gap-3">
+                <RoomChips
+                  rooms={rooms}
+                  items={items}
+                  activeRoomId={activeRoomId}
+                  onPick={setActiveRoomId}
+                  onAdd={handleAddRoom}
+                />
+              </div>
 
-            <StatsBar
-              items={items}
-              onReview={handleReview}
-              disabled={!scanComplete}
-            />
+              {/* Canvas + right panel */}
+              <div
+                className="grid gap-3 lg:gap-6"
+                style={{ gridTemplateColumns: "1fr 380px" }}
+              >
+                <div className="space-y-3 min-w-0">
+                  <ScannerCanvas
+                    photo={activePhoto}
+                    photoIndex={activePhoto ? photos.findIndex((p) => p.id === activePhoto.id) : 0}
+                    totalPhotos={totalPhotos}
+                    room={rooms.find((r) => r.id === activePhoto?.roomId)}
+                    onChangeRoom={(rid) => activePhoto && reassignPhoto(activePhoto.id, rid)}
+                    allRooms={rooms}
+                    onEnhance={enhancePhoto}
+                    onDismissQuality={dismissQuality}
+                  />
+                  <PhotoStrip
+                    photos={photos}
+                    activeId={activePhotoId}
+                    onPick={setActivePhotoId}
+                    onAddMore={triggerAddMore}
+                  />
+                </div>
+
+                <LiveInventoryFeed
+                  rooms={rooms}
+                  items={items}
+                  activeRoomId={activeRoomId ?? activePhoto?.roomId ?? null}
+                  onPickRoom={setActiveRoomId}
+                  photos={photos}
+                />
+              </div>
+
+              <div className="lg:mt-4 mt-3">
+                <StatsBar
+                  items={items}
+                  roomCount={rooms.length}
+                  onReview={handleReview}
+                  disabled={!scanComplete}
+                />
+              </div>
+            </div>
           </div>
         </div>
       )}
