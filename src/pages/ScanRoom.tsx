@@ -714,6 +714,9 @@ export default function ScanRoom() {
   // Resizable/movable scanner window. Independent of the legacy "Pop Out" modal -
   // this one houses the Add Photo uploader plus a live preview pill.
   const [showFloatingScanner, setShowFloatingScanner] = useState(false);
+  // Folder filter applied to the inventory preview inside the floating
+  // scanner window. `null` = show all detected items.
+  const [scannerFolderFilter, setScannerFolderFilter] = useState<string | null>(null);
   const [popoutImageZoom, setPopoutImageZoom] = useState(1);   // 0.5 - 3
   const [popoutBoxScale, setPopoutBoxScale] = useState(1);     // 0.5 - 2 (visual size of corners + labels)
   // Natural aspect ratio of the photo currently shown in the scanner panel.
