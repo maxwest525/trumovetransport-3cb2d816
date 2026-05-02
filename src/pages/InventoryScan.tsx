@@ -505,12 +505,15 @@ function PhotoStrip({
 ============================================================ */
 function ActionToolbar({
   onUpload, onEnhance, editMode, onToggleEdit, hasActivePhoto,
+  showBrackets, onToggleBrackets,
 }: {
   onUpload: () => void;
   onEnhance: () => void;
   editMode: boolean;
   onToggleEdit: () => void;
   hasActivePhoto: boolean;
+  showBrackets: boolean;
+  onToggleBrackets: () => void;
 }) {
   const RoundBtn = ({ icon: Icon, onClick, active, disabled, label }:
     { icon: any; onClick: () => void; active?: boolean; disabled?: boolean; label: string }) => (
@@ -522,11 +525,11 @@ function ActionToolbar({
             disabled={disabled}
             aria-label={label}
             className={cn(
-              "w-11 h-11 rounded-full border flex items-center justify-center transition-all",
+              "w-11 h-11 rounded-full border flex items-center justify-center transition-all duration-150",
               active
-                ? "border-[#00ff88] bg-[#00ff88]/10 text-[#00ff88]"
-                : "border-white/10 bg-[#111827] text-white/70 hover:border-[#00ff88]/40 hover:text-white",
-              disabled && "opacity-40 cursor-not-allowed"
+                ? "border-[#00ff88] bg-[#00ff88] text-black shadow-[0_0_12px_rgba(0,255,136,0.35)]"
+                : "border-white/10 bg-[#111827] text-white/70 hover:border-[#00ff88] hover:text-white hover:scale-[1.05]",
+              disabled && "opacity-30 cursor-not-allowed hover:scale-100 hover:border-white/10"
             )}
           >
             <Icon className="w-4 h-4" />
@@ -539,9 +542,10 @@ function ActionToolbar({
 
   return (
     <div className="flex items-center gap-2">
-      <RoundBtn icon={Upload} onClick={onUpload} label="Upload more photos" />
+      <RoundBtn icon={Upload} onClick={onUpload} label="Upload photos" />
       <RoundBtn icon={Sparkles} onClick={onEnhance} disabled={!hasActivePhoto} label="Enhance current photo" />
-      <RoundBtn icon={Trash2} onClick={onToggleEdit} active={editMode} disabled={!hasActivePhoto} label="Edit photos" />
+      <RoundBtn icon={Trash2} onClick={onToggleEdit} active={editMode} disabled={!hasActivePhoto} label="Edit / delete photos" />
+      <RoundBtn icon={showBrackets ? Eye : EyeOff} onClick={onToggleBrackets} active={!showBrackets} disabled={!hasActivePhoto} label={showBrackets ? "Hide detection brackets" : "Show detection brackets"} />
     </div>
   );
 }
