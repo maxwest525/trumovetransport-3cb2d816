@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Camera, Sparkles, ImageIcon, Check, LogOut, Loader2,
   ShieldCheck, Clock, ChevronDown, Plus, X, HelpCircle,
-  CheckCircle2, RotateCcw, Pencil,
+  CheckCircle2, RotateCcw, Pencil, Upload, Wand2, Package,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
@@ -185,91 +185,164 @@ function roomNameToId(name: string): string {
 }
 
 /* ============================================================
-   Top Bar — TruMove header (desktop polish)
+   Page chrome — Hero + Mode toggle + Section header
+   (Renders above page body. The global TruMove navbar lives
+   outside this page; this is the in-page hero section.)
 ============================================================ */
-function TopBar({ statusLabel, onSaveExit }: { statusLabel: string; onSaveExit: () => void }) {
+function HeroBlock() {
   return (
-    <header
-      className="h-12 lg:h-16 flex items-center px-5 lg:px-8 flex-shrink-0 relative"
-      style={{
-        background:
-          "linear-gradient(180deg, rgba(0,255,136,0.03) 0%, transparent 100%), #000",
-        borderBottom: "0.5px solid rgba(0,255,136,0.15)",
-      }}
-    >
-      {/* Left — wordmark */}
-      <div className="flex items-center gap-1 flex-shrink-0">
-        <span className="text-[13px] lg:text-[20px] tracking-[0.18em] lg:tracking-[0.14em] font-semibold text-white">
-          TRUMOVE
-        </span>
-        <span className="text-[9px] lg:text-[10px] text-[#00ff88] font-bold -mt-2 lg:-mt-3">™</span>
+    <div className="text-center mb-7 lg:mb-8">
+      <div
+        className="text-[11px] font-bold uppercase mb-2"
+        style={{ color: "#00b369", letterSpacing: "1.5px" }}
+      >
+        Virtual Inventory
       </div>
-
-      {/* Center — single status string (desktop only) */}
-      <div className="hidden lg:flex flex-1 items-center justify-center">
-        <div className="flex items-center gap-2">
-          <span
-            className="w-[6px] h-[6px] rounded-full bg-[#00ff88]"
-            style={{ boxShadow: "0 0 8px rgba(0,255,136,0.6)" }}
-          />
-          <span className="text-[13px] text-white/90 font-normal">{statusLabel}</span>
-        </div>
-      </div>
-
-      <div className="flex-1 lg:flex-none lg:w-auto flex justify-end ml-auto">
-        <button
-          onClick={onSaveExit}
-          className="flex items-center gap-1.5 text-[11px] lg:text-[13px] text-white/50 hover:text-white transition-colors"
-        >
-          <LogOut className="w-3 h-3 lg:w-3.5 lg:h-3.5" />
-          Save & exit
-        </button>
-      </div>
-    </header>
+      <h1
+        className="text-[24px] lg:text-[28px] font-bold leading-tight"
+        style={{ color: "#0f1115", letterSpacing: "-0.5px" }}
+      >
+        Build Your <span style={{ color: "#00b369" }}>Inventory</span>
+      </h1>
+      <p className="text-[13px] mt-1.5" style={{ color: "#6b7280" }}>
+        Scan with AI, build manually, or both. Switch anytime.
+      </p>
+    </div>
   );
 }
 
-/* ============================================================
-   Page heading row (desktop only)
-============================================================ */
-function PageHeading() {
+function ModeTogglePill({
+  mode,
+  onChange,
+}: {
+  mode: "ai" | "manual";
+  onChange: (m: "ai" | "manual") => void;
+}) {
+  const segBase =
+    "flex items-center gap-2 px-4 lg:px-5 py-2 rounded-full text-[13px] font-semibold transition-colors select-none";
   return (
-    <div className="hidden lg:flex items-end justify-between mb-6">
-      <div>
-        <h1 className="text-[28px] font-medium text-white tracking-[-0.4px] leading-tight">
-          Inventory <span className="text-[#00ff88]">Scanner</span>
-        </h1>
-        <p className="text-[14px] text-[#a8b3c0] mt-1.5">
-          Drop photos. Our AI builds your moving inventory in seconds.
-        </p>
-      </div>
-      <div className="flex items-center gap-3">
-        <button className="flex items-center gap-1.5 text-[12px] text-[#a8b3c0] hover:text-white transition-colors px-2.5 py-1.5 rounded-md hover:bg-white/[0.04]">
-          <HelpCircle className="w-3.5 h-3.5" /> How it works
-        </button>
-        <div
-          className="flex items-center gap-2 px-2.5 py-1.5 rounded-full"
-          style={{
-            background: "rgba(255,255,255,0.03)",
-            border: "0.5px solid rgba(255,255,255,0.08)",
-          }}
+    <div className="flex justify-center mb-7 lg:mb-8">
+      <div
+        className="inline-flex items-center p-1 rounded-full"
+        style={{
+          background: "#ffffff",
+          border: "1px solid #e5e7eb",
+          boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+        }}
+      >
+        <button
+          type="button"
+          onClick={() => onChange("ai")}
+          className={cn(segBase)}
+          style={
+            mode === "ai"
+              ? { background: "#0f1115", color: "#ffffff" }
+              : { background: "transparent", color: "#6b7280" }
+          }
         >
-          <span
-            className="w-[6px] h-[6px] rounded-full bg-[#00ff88]"
-            style={{ boxShadow: "0 0 6px rgba(0,255,136,0.6)" }}
+          <Sparkles
+            className="w-3.5 h-3.5"
+            style={{ color: mode === "ai" ? "#00d97e" : "#9ca3af" }}
           />
-          <span className="text-[10px] uppercase tracking-[0.12em] text-[#7d8694] font-medium">
-            AI Engine
+          AI Room Scan
+          <span
+            className="ml-1 text-[9px] font-bold px-1.5 py-[1px] rounded"
+            style={{
+              background: mode === "ai" ? "rgba(0,217,126,0.2)" : "#f0fdf5",
+              color: mode === "ai" ? "#00d97e" : "#00b369",
+              letterSpacing: "0.5px",
+            }}
+          >
+            BETA
           </span>
-          <span className="text-[10px] text-white/80 font-mono">Gemini Vision</span>
-        </div>
+        </button>
+        <button
+          type="button"
+          onClick={() => onChange("manual")}
+          className={cn(segBase)}
+          style={
+            mode === "manual"
+              ? { background: "#0f1115", color: "#ffffff" }
+              : { background: "transparent", color: "#6b7280" }
+          }
+        >
+          <Package
+            className="w-3.5 h-3.5"
+            style={{ color: mode === "manual" ? "#00d97e" : "#9ca3af" }}
+          />
+          Build Manually
+        </button>
       </div>
     </div>
   );
 }
 
+function ScannerSectionHeader({
+  onAddPhotos,
+  onSample,
+}: {
+  onAddPhotos: () => void;
+  onSample?: () => void;
+}) {
+  return (
+    <div className="flex items-end justify-between gap-3 px-1 pb-3">
+      <div>
+        <h2
+          className="text-[18px] font-bold leading-tight"
+          style={{ color: "#0f1115", letterSpacing: "-0.3px" }}
+        >
+          AI Room <span style={{ color: "#00b369" }}>Scanner</span>
+        </h2>
+        <p className="text-[12px] mt-0.5" style={{ color: "#6b7280" }}>
+          Drop photos. We detect every item automatically.
+        </p>
+      </div>
+      <div className="flex items-center gap-3">
+        {onSample && (
+          <button
+            type="button"
+            onClick={onSample}
+            className="text-[12px] font-semibold transition-colors hover:underline"
+            style={{ color: "#6b7280" }}
+          >
+            Try with sample
+          </button>
+        )}
+        <button
+          type="button"
+          onClick={onAddPhotos}
+          className="inline-flex items-center gap-2 font-bold transition-transform hover:scale-[1.02] active:scale-[0.98]"
+          style={{
+            background: "#00d97e",
+            color: "#0f1115",
+            border: "none",
+            padding: "10px 18px",
+            borderRadius: "100px",
+            fontSize: "13px",
+          }}
+        >
+          <Upload className="w-3.5 h-3.5" strokeWidth={2.5} />
+          Add photos
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* Kept for backwards-compat with the scanning state below.
+   Phase 2 will fold this into the new section-header pattern. */
+function PageHeading() {
+  return null;
+}
+
+/* No-op shim so existing render code that imports TopBar still compiles
+   while we rebuild upward. */
+function TopBar(_: { statusLabel: string; onSaveExit: () => void }) {
+  return null;
+}
+
 /* ============================================================
-   Empty state
+   Empty state — scanner-shaped layout with overlay
 ============================================================ */
 function EmptyState({
   onFiles, onSample,
@@ -286,128 +359,93 @@ function EmptyState({
   });
 
   return (
-    <div className="flex-1 overflow-auto px-6 py-8">
-      <div className="max-w-[1100px] mx-auto">
-        {/* Heading */}
-        <div className="text-center mb-6">
-          <h1 className="text-[22px] font-medium text-white tracking-[-0.3px]">
-            Show us what you're moving
-          </h1>
-          <p className="text-[13px] text-white/50 mt-1.5">
-            Upload photos of every room. Our AI handles the rest.
-          </p>
-        </div>
+    <div
+      {...getRootProps()}
+      className="grid gap-3 items-stretch"
+      style={{ gridTemplateColumns: "1fr 220px" }}
+    >
+      <input {...getInputProps()} />
 
-        {/* Hero dropzone */}
+      {/* Scanner canvas (empty) */}
+      <div
+        onClick={open}
+        className="relative cursor-pointer overflow-hidden"
+        style={{
+          background:
+            "linear-gradient(135deg, #2d2620 0%, #1a1812 50%, #0c0a08 100%)",
+          borderRadius: "12px",
+          aspectRatio: "16 / 10",
+        }}
+      >
+        {/* Outer corner brackets */}
+        <Bracket pos="tl" />
+        <Bracket pos="tr" />
+        <Bracket pos="bl" />
+        <Bracket pos="br" />
+
+        {/* Inner dashed brand-green frame */}
         <div
-          {...getRootProps()}
           className={cn(
-            "relative rounded-lg transition-all duration-200 cursor-pointer",
-            "py-8 px-5",
-            isDragActive ? "scale-[1.01]" : ""
+            "absolute inset-4 rounded-lg flex items-center justify-center transition-colors",
           )}
           style={{
-            background: isDragActive ? "rgba(0,255,136,0.06)" : "rgba(0,255,136,0.02)",
             border: isDragActive
-              ? "1px solid rgba(0,255,136,0.7)"
-              : "1px dashed rgba(0,255,136,0.35)",
+              ? "2px dashed rgba(0,255,136,0.85)"
+              : "1.5px dashed rgba(0,255,136,0.45)",
+            background: isDragActive ? "rgba(0,255,136,0.06)" : "transparent",
           }}
         >
-          <input {...getInputProps()} />
-          {/* corner brackets */}
-          <Bracket pos="tl" />
-          <Bracket pos="tr" />
-          <Bracket pos="bl" />
-          <Bracket pos="br" />
-
-          <div className="flex items-center justify-center gap-4">
+          <div className="text-center px-6">
             <motion.div
               animate={{ scale: [1, 1.05, 1] }}
               transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-              className="relative w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0"
-              style={{ background: "rgba(0,255,136,0.08)", border: "0.5px solid rgba(0,255,136,0.2)" }}
+              className="mx-auto mb-3 w-14 h-14 rounded-xl flex items-center justify-center"
+              style={{
+                background: "rgba(0,255,136,0.08)",
+                border: "1px solid rgba(0,255,136,0.25)",
+              }}
             >
-              <ImageIcon className="w-5 h-5 text-[#00ff88]" strokeWidth={1.5} />
-              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#00ff88] flex items-center justify-center">
-                <Sparkles className="w-2.5 h-2.5 text-black" strokeWidth={2.5} />
-              </span>
+              <Upload className="w-6 h-6" style={{ color: "#00ff88" }} strokeWidth={1.75} />
             </motion.div>
-
-            <div className="text-left">
-              <div className="text-[16px] text-white font-medium">
-                {isDragActive ? "Drop to start scanning" : "Drop photos and videos anywhere"}
-              </div>
-              <div className="text-[12px] text-white/50 mt-0.5">
-                JPG, PNG, HEIC, MP4 — up to 50 files at once
-              </div>
+            <div className="text-[16px] font-semibold text-white">
+              {isDragActive ? "Drop to start scanning" : "Drop photos here"}
             </div>
-          </div>
-
-          <div className="flex items-center justify-center gap-2 mt-5">
-            <button
-              type="button"
-              onClick={(e) => { e.stopPropagation(); open(); }}
-              className="px-3 py-1.5 rounded-md bg-[#00ff88] text-black text-[12px] font-medium hover:bg-[#00ff88]/90 transition-colors"
-            >
-              Browse files
-            </button>
-            <button
-              type="button"
-              onClick={(e) => { e.stopPropagation(); open(); }}
-              className="px-3 py-1.5 rounded-md border border-white/15 text-white/80 text-[12px] hover:border-white/30 hover:text-white transition-colors flex items-center gap-1.5"
-            >
-              <Camera className="w-3 h-3" /> Use camera
-            </button>
+            <div className="text-[12px] mt-1" style={{ color: "rgba(255,255,255,0.55)" }}>
+              or click <span style={{ color: "#00ff88" }}>Add photos</span> above
+            </div>
             <button
               type="button"
               onClick={(e) => { e.stopPropagation(); onSample(); }}
-              className="px-3 py-1.5 rounded-md border border-white/10 text-white/60 text-[12px] hover:border-white/20 hover:text-white/90 transition-colors"
+              className="mt-4 text-[11px] font-semibold underline-offset-2 hover:underline"
+              style={{ color: "rgba(255,255,255,0.55)" }}
             >
               Try with sample
             </button>
           </div>
         </div>
+      </div>
 
-        {/* Process strip */}
-        <div className="grid grid-cols-3 gap-3 mt-4">
-          {[
-            { n: 1, t: "Upload anything", d: "All rooms, all at once. No sorting needed." },
-            { n: 2, t: "AI sorts by room", d: "Detects furniture and groups automatically." },
-            { n: 3, t: "Review & continue", d: "Edit anything wrong, then get your quote." },
-          ].map((s) => (
-            <div
-              key={s.n}
-              className="rounded-lg p-3"
-              style={{ background: "rgba(255,255,255,0.02)", border: "0.5px solid rgba(255,255,255,0.06)" }}
-            >
-              <div className="flex items-center gap-2 mb-1">
-                <span
-                  className="w-[18px] h-[18px] rounded text-[10px] font-semibold flex items-center justify-center"
-                  style={{ background: "rgba(0,255,136,0.12)", color: "#00ff88" }}
-                >
-                  {s.n}
-                </span>
-                <span className="text-[11px] text-white font-medium">{s.t}</span>
-              </div>
-              <p className="text-[10px] text-white/50 leading-relaxed pl-[26px]">{s.d}</p>
-            </div>
-          ))}
-        </div>
-
-        {/* Trust strip */}
+      {/* Just Detected (empty) */}
+      <div
+        className="flex flex-col items-center justify-center text-center p-4"
+        style={{
+          background: "#ffffff",
+          border: "1px solid #e5e7eb",
+          borderRadius: "12px",
+        }}
+      >
         <div
-          className="mt-5 rounded-md p-2.5 flex items-center justify-between"
-          style={{ background: "rgba(255,255,255,0.02)" }}
+          className="w-9 h-9 rounded-full flex items-center justify-center mb-2"
+          style={{ background: "#f0fdf5", border: "1px solid #86efac" }}
         >
-          <div className="flex items-center gap-1.5 text-[11px] text-white/50">
-            <ShieldCheck className="w-3 h-3 text-[#00ff88]" />
-            Photos never leave our servers · Encrypted in transit
-          </div>
-          <div className="flex items-center gap-1.5 text-[11px] text-white/50">
-            <Clock className="w-3 h-3" />
-            Avg time: 3 min for a 2-bed apartment
-          </div>
+          <Wand2 className="w-4 h-4" style={{ color: "#00b369" }} />
         </div>
+        <div className="text-[11px] font-bold uppercase mb-1" style={{ color: "#0f1115", letterSpacing: "0.5px" }}>
+          Just detected
+        </div>
+        <p className="text-[11px] leading-snug" style={{ color: "#6b7280" }}>
+          No items yet — upload photos to begin
+        </p>
       </div>
     </div>
   );
@@ -1672,13 +1710,6 @@ export default function InventoryScan() {
 
   const itemsFound = items.reduce((s, i) => s + i.quantity, 0);
 
-  // Status string for header
-  const headerStatus = useMemo(() => {
-    if (state === "empty") return "Step 1 — Building your inventory";
-    if (scanComplete) return "Step 1 — Inventory ready to review";
-    return `Step 1 — Scanning your photos (${scanCursor}/${totalPhotos})`;
-  }, [state, scanComplete, scanCursor, totalPhotos]);
-
   // Auto-fade scan-complete card to a slim "Ready to review" strip after 3s
   const [completeSlim, setCompleteSlim] = useState(false);
   const [completeDismissed, setCompleteDismissed] = useState(false);
@@ -1701,12 +1732,10 @@ export default function InventoryScan() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-black text-white">
-      <TopBar
-        statusLabel={headerStatus}
-        onSaveExit={() => navigate("/")}
-      />
-
+    <div
+      className="min-h-screen"
+      style={{ background: "#f8faf9", color: "#0f1115" }}
+    >
       {/* hidden file input for "add more" */}
       <input
         ref={fileInputRef}
@@ -1721,15 +1750,23 @@ export default function InventoryScan() {
         }}
       />
 
-      {state === "empty" && (
-        <EmptyState onFiles={handleFiles} onSample={loadSample} />
-      )}
+      <div className="px-5 lg:px-8 pt-6 lg:pt-10 pb-10">
+        <div className="max-w-[1100px] lg:max-w-[1200px] mx-auto">
+          <HeroBlock />
+          <ModeTogglePill
+            mode="ai"
+            onChange={(m) => { if (m === "manual") navigate("/online-estimate"); }}
+          />
+          <ScannerSectionHeader
+            onAddPhotos={triggerAddMore}
+            onSample={state === "empty" ? loadSample : undefined}
+          />
 
-      {state === "scanning" && (
-        <div className="flex-1 overflow-auto px-6 lg:px-8 py-4 lg:py-6">
-          <div className="max-w-[1100px] lg:max-w-[1200px] mx-auto">
-            <PageHeading />
+          {state === "empty" && (
+            <EmptyState onFiles={handleFiles} onSample={loadSample} />
+          )}
 
+          {state === "scanning" && (
             <div className="space-y-3 lg:space-y-0">
               {/* Status bar */}
               <div className="lg:mb-3">
@@ -1810,9 +1847,9 @@ export default function InventoryScan() {
                 />
               </div>
             </div>
-          </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 }
