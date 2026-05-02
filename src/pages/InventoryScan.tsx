@@ -1906,6 +1906,7 @@ export default function InventoryScan() {
               onDelete={deletePhoto}
               onAdd={() => fileInputRef.current?.click()}
               onPhotoDragStart={(id) => { draggedPhotoIdRef.current = id; }}
+              detectionCounts={detectionCounts}
             />
           )}
 
@@ -1919,6 +1920,10 @@ export default function InventoryScan() {
             isScanning={isScanning}
             activeRoomName={activeRoomName}
             showBrackets={showBrackets}
+            photoIndex={activePhotoIdx >= 0 ? activePhotoIdx + 1 : 0}
+            photoTotal={visiblePhotos.length}
+            detectedCount={activeDetectedCount}
+            scanJustCompleted={scanJustCompleted}
           />
 
           <input
@@ -1951,11 +1956,13 @@ export default function InventoryScan() {
               canScanRoom={canScanRoom}
               canScanAll={canScanAll}
               activeRoomName={activeRoomId === "" ? "this room" : `this ${activeRoomName}`}
-              onScanRoom={scanThisRoom}
+              onScanRoom={handleScanRoomClick}
               onScanAll={() => setConfirmAllOpen(true)}
               onCancel={cancelScan}
               photosInRoom={photosInActiveRoom.length}
               totalUnscanned={unscannedAll.length}
+              roomAlreadyScanned={roomAlreadyScanned}
+              allScanned={allScanned}
             />
           </div>
 
@@ -1986,6 +1993,9 @@ export default function InventoryScan() {
           onContinue={continueToReview}
           collapsedRooms={collapsedRooms}
           toggleRoom={toggleRoom}
+          suggestion={suggestion}
+          onAcceptSuggestion={acceptSuggestion}
+          onDismissSuggestion={dismissSuggestion}
         />
       </main>
 
