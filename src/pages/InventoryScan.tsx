@@ -1739,12 +1739,10 @@ export default function InventoryScan() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-black text-white">
-      <TopBar
-        statusLabel={headerStatus}
-        onSaveExit={() => navigate("/")}
-      />
-
+    <div
+      className="min-h-screen"
+      style={{ background: "#f8faf9", color: "#0f1115" }}
+    >
       {/* hidden file input for "add more" */}
       <input
         ref={fileInputRef}
@@ -1759,15 +1757,23 @@ export default function InventoryScan() {
         }}
       />
 
-      {state === "empty" && (
-        <EmptyState onFiles={handleFiles} onSample={loadSample} />
-      )}
+      <div className="px-5 lg:px-8 pt-6 lg:pt-10 pb-10">
+        <div className="max-w-[1100px] lg:max-w-[1200px] mx-auto">
+          <HeroBlock />
+          <ModeTogglePill
+            mode="ai"
+            onChange={(m) => { if (m === "manual") navigate("/online-estimate"); }}
+          />
+          <ScannerSectionHeader
+            onAddPhotos={triggerAddMore}
+            onSample={state === "empty" ? loadSample : undefined}
+          />
 
-      {state === "scanning" && (
-        <div className="flex-1 overflow-auto px-6 lg:px-8 py-4 lg:py-6">
-          <div className="max-w-[1100px] lg:max-w-[1200px] mx-auto">
-            <PageHeading />
+          {state === "empty" && (
+            <EmptyState onFiles={handleFiles} onSample={loadSample} />
+          )}
 
+          {state === "scanning" && (
             <div className="space-y-3 lg:space-y-0">
               {/* Status bar */}
               <div className="lg:mb-3">
@@ -1848,9 +1854,9 @@ export default function InventoryScan() {
                 />
               </div>
             </div>
-          </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 }
