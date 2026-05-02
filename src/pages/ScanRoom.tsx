@@ -717,6 +717,10 @@ export default function ScanRoom() {
   // Folder filter applied to the inventory preview inside the floating
   // scanner window. `null` = show all detected items.
   const [scannerFolderFilter, setScannerFolderFilter] = useState<string | null>(null);
+  // Short-lived counter of photos currently being ingested. URL.createObjectURL
+  // is synchronous, but flashing a "Saving N photos..." chip gives the user
+  // visible feedback that their drop/select was received.
+  const [uploadingCount, setUploadingCount] = useState(0);
   const [popoutImageZoom, setPopoutImageZoom] = useState(1);   // 0.5 - 3
   const [popoutBoxScale, setPopoutBoxScale] = useState(1);     // 0.5 - 2 (visual size of corners + labels)
   // Natural aspect ratio of the photo currently shown in the scanner panel.
