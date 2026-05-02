@@ -448,9 +448,9 @@ export default function OnlineEstimate() {
             </div>
           </div> : (
 
-          /* UNLOCKED STATE: Two-Column Layout - Inventory Builder | Sidebar */
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-6 items-start">
-            {/* Left Column - Expanded Inventory Builder + Inventory List with thumbnails */}
+          /* UNLOCKED STATE: Single-Column Layout - Inventory Builder */
+          <div className="grid grid-cols-1 gap-6 items-start">
+            {/* Inventory Builder + Inventory List with thumbnails */}
             <div className="space-y-6">
               
               {/* Inventory Builder */}
@@ -496,55 +496,6 @@ export default function OnlineEstimate() {
                   onReorder={handleReorder} />
                 
                 </div>
-              }
-            </div>
-
-            {/* Right Column - Move Summary (details) + Weather + Inventory Summary (room counts) + Finalize */}
-            <div className="space-y-4 lg:sticky lg:top-6">
-              {/* Move Summary - Full details from customer */}
-              <QuoteSnapshotVertical items={items} moveDetails={moveDetails} extendedDetails={extendedDetails} onEdit={() => setWizardComplete(false)} />
-
-
-              {/* Finalize Section */}
-              {items.length > 0 &&
-              <section className="rounded-xl border border-border/60 bg-card overflow-hidden shadow-sm tru-estimate-card-frame">
-                  {/* Header - Enlarged and Centered */}
-                  <div className="tru-summary-header-large border-b border-border/40">
-                    <div className="text-center flex-1">
-                      <h3 className="text-lg font-black text-foreground">
-                        Finalize Your <span className="tru-qb-title-accent">Estimate</span>
-                      </h3>
-                    </div>
-                  </div>
-                  <div className="p-4 space-y-3">
-                    <button
-                    type="button"
-                    onClick={handleSubmit}
-                    disabled={isSubmitting}
-                    className="tru-qb-continue w-full disabled:opacity-60">
-                    
-                      {isSubmitting ? "Submitting…" : "Send My Estimate Request →"}
-                    </button>
-                    
-                    {/* View Route Button */}
-                    {extendedDetails?.fromLocation && extendedDetails?.toLocation &&
-                  <button
-                    type="button"
-                    className="w-full py-2.5 text-sm text-muted-foreground hover:text-primary border border-dashed border-border/50 hover:border-primary/50 rounded-lg transition-colors flex items-center justify-center gap-2"
-                    onClick={() => {
-                      localStorage.setItem('trumove_pending_route', JSON.stringify({
-                        originAddress: extendedDetails.fromLocation,
-                        destAddress: extendedDetails.toLocation
-                      }));
-                      navigate('/track');
-                    }}>
-                    
-                        <Truck className="w-4 h-4" />
-                        <span>View Route on Map</span>
-                      </button>
-                  }
-                  </div>
-                </section>
               }
             </div>
           </div>)
