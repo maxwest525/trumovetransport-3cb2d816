@@ -4000,7 +4000,99 @@ export default function ScanRoom() {
               }}
             />
           }
-        />
+        >
+          {/* Folders summary - union of customer-defined folders and folders
+              derived from uploaded photo names. */}
+          {(() => {
+            const folderSet = new Set<string>([
+              ...customFolders,
+              ...uploadedPhotos.map((p) => parseRoom(p.name)),
+            ]);
+            const folders = Array.from(folderSet)
+              .filter(Boolean)
+              .sort((a, b) => a.localeCompare(b));
+            return (
+              <div className="rounded-xl border border-border bg-muted/20 p-3">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                    Folders ({folders.length})
+                  </span>
+                  <span className="text-[10px] text-muted-foreground/70">
+                    {uploadedPhotos.length} photo{uploadedPhotos.length === 1 ? "" : "s"}
+                  </span>
+                </div>
+                {folders.length === 0 ? (
+                  <p className="text-[11px] text-muted-foreground/70 italic">
+                    No folders yet. Uploads land in "All".
+                  </p>
+                ) : (
+                  <div className="flex flex-wrap gap-1.5">
+                    {folders.slice(0, 12).map((name) => {
+                      const count = uploadedPhotos.filter((p) => parseRoom(p.name) === name).length;
+                      return (
+                        <span
+                          key={name}
+                          className="inline-flex items-center gap-1 rounded-full border border-border bg-background px-2 py-0.5 text-[11px] font-medium text-foreground"
+                          title={`${name} - ${count} photo${count === 1 ? "" : "s"}`}
+                        >
+                          <span className="truncate max-w-[120px]">{name}</span>
+                          <span className="text-primary font-bold">{count}</span>
+                        </span>
+                      );
+                    })}
+                    {folders.length > 12 && (
+                      <span className="inline-flex items-center rounded-full bg-muted px-2 py-0.5 text-[11px] text-muted-foreground">
+                        +{folders.length - 12} more
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })()}
+
+          {/* Inventory preview - top 3 most recent detected items. */}
+          <div className="rounded-xl border border-border bg-muted/20 p-3">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                Inventory ({detectedItems.length})
+              </span>
+              {detectedItems.length > 3 && (
+                <span className="text-[10px] text-muted-foreground/70">
+                  Showing 3 of {detectedItems.length}
+                </span>
+              )}
+            </div>
+            {detectedItems.length === 0 ? (
+              <p className="text-[11px] text-muted-foreground/70 italic">
+                Scanned items will appear here.
+              </p>
+            ) : (
+              <ul className="space-y-1.5">
+                {detectedItems.slice(-3).reverse().map((item) => (
+                  <li
+                    key={item.id}
+                    className="flex items-center justify-between gap-2 rounded-md border border-border bg-background px-2 py-1.5"
+                  >
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[12px] font-semibold text-foreground truncate">
+                        {item.name}
+                      </p>
+                      <p className="text-[10px] text-muted-foreground truncate">
+                        {item.room} · {Math.round(item.weight * item.quantity)} lbs · {Math.round(item.cuft * item.quantity)} cu.ft
+                      </p>
+                    </div>
+                    {item.quantity > 1 && (
+                      <span className="shrink-0 rounded-full bg-primary/15 text-primary px-2 py-0.5 text-[10px] font-bold">
+                        x{item.quantity}
+                      </span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </FloatingScannerWindow>
       </div>
     </SiteShell>
   );
