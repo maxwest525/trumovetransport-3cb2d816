@@ -4389,7 +4389,7 @@ export default function ScanRoom() {
                   type="button"
                   onClick={() => {
                     setShowAllFoldersModal(false);
-                    handleRoomClick(room);
+                    setFolderBrowser(room);
                   }}
                   className="w-full flex flex-col items-center gap-1 rounded-lg border border-border bg-muted/30 px-2 py-3 text-xs font-medium text-foreground hover:bg-muted/60 hover:border-primary/40 transition-colors cursor-pointer"
                 >
