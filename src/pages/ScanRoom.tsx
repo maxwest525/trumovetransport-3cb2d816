@@ -595,8 +595,18 @@ export default function ScanRoom() {
     // reality, not the raw file count which may include unsupported types.
     let acceptedCount = 0;
     const targetFolder = roomLabel || "All";
-    Array.from(files).forEach((file) => {
-      if (!file.type.startsWith("image/") && !file.type.startsWith("video/")) return;
+    const accepted = Array.from(files).filter(
+      (f) => f.type.startsWith("image/") || f.type.startsWith("video/")
+    );
+    if (accepted.length > 0) {
+      setUploadingCount((n) => n + accepted.length);
+      // Clear the indicator on the next frame after state flush so the chip
+      // is visible long enough to register, then disappears on its own.
+      window.setTimeout(() => {
+        setUploadingCount((n) => Math.max(0, n - accepted.length));
+      }, 700);
+    }
+    accepted.forEach((file) => {
       acceptedCount += 1;
       const url = URL.createObjectURL(file);
       setUploadedPhotos((prev) => [
@@ -717,6 +727,10 @@ export default function ScanRoom() {
   // Folder filter applied to the inventory preview inside the floating
   // scanner window. `null` = show all detected items.
   const [scannerFolderFilter, setScannerFolderFilter] = useState<string | null>(null);
+  // Short-lived counter of photos currently being ingested. URL.createObjectURL
+  // is synchronous, but flashing a "Saving N photos..." chip gives the user
+  // visible feedback that their drop/select was received.
+  const [uploadingCount, setUploadingCount] = useState(0);
   const [popoutImageZoom, setPopoutImageZoom] = useState(1);   // 0.5 - 3
   const [popoutBoxScale, setPopoutBoxScale] = useState(1);     // 0.5 - 2 (visual size of corners + labels)
   // Natural aspect ratio of the photo currently shown in the scanner panel.
@@ -4004,6 +4018,83 @@ export default function ScanRoom() {
             />
           }
         >
+          {/* Live status banner - surfaces uploading and detection progress
+              so customers can see what the scanner is doing in real time. */}
+          {(() => {
+            const isUploading = uploadingCount > 0;
+            const isDetecting = isAiScanning || isScanning;
+            if (!isUploading && !isDetecting) return null;
+
+            const total = aiScanProgress.total;
+            const current = aiScanProgress.current;
+            const pct = total > 0 ? Math.min(100, Math.round((current / total) * 100)) : 0;
+
+            return (
+              <div
+                role="status"
+                aria-live="polite"
+                className="rounded-xl border border-primary/40 bg-primary/[0.06] p-3 space-y-2"
+              >
+                {isUploading && (
+                  <div className="flex items-center gap-2">
+                    <span
+                      aria-hidden="true"
+                      className="inline-block w-3.5 h-3.5 rounded-full border-2 border-primary border-t-transparent animate-spin"
+                    />
+                    <span className="text-[12px] font-semibold text-primary">
+                      Saving {uploadingCount} photo{uploadingCount === 1 ? "" : "s"}...
+                    </span>
+                  </div>
+                )}
+                {isDetecting && (
+                  <>
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span
+                          aria-hidden="true"
+                          className="inline-block w-3.5 h-3.5 rounded-full border-2 border-primary border-t-transparent animate-spin shrink-0"
+                        />
+                        <span className="text-[12px] font-semibold text-primary truncate">
+                          {isAiScanning ? "Detecting items..." : "Scanning..."}
+                        </span>
+                      </div>
+                      {total > 0 && (
+                        <span className="text-[11px] font-bold text-primary tabular-nums shrink-0">
+                          {current} / {total}
+                        </span>
+                      )}
+                    </div>
+                    {/* Progress bar - determinate when we know the total,
+                        otherwise an indeterminate shimmer. */}
+                    {total > 0 ? (
+                      <div
+                        className="h-1.5 w-full rounded-full bg-primary/15 overflow-hidden"
+                        role="progressbar"
+                        aria-valuenow={pct}
+                        aria-valuemin={0}
+                        aria-valuemax={100}
+                      >
+                        <div
+                          className="h-full bg-primary transition-all duration-300 ease-out"
+                          style={{ width: `${pct}%` }}
+                        />
+                      </div>
+                    ) : (
+                      <div className="h-1.5 w-full rounded-full bg-primary/15 overflow-hidden">
+                        <div className="h-full w-1/3 bg-primary/70 animate-[shimmer-sweep_1.4s_ease-in-out_infinite]" />
+                      </div>
+                    )}
+                    {detectedItems.length > 0 && (
+                      <p className="text-[11px] text-primary/80">
+                        Found {detectedItems.length} item{detectedItems.length === 1 ? "" : "s"} so far
+                      </p>
+                    )}
+                  </>
+                )}
+              </div>
+            );
+          })()}
+
           {/* Folders summary - union of customer-defined folders and folders
               derived from uploaded photo names. */}
           {(() => {
