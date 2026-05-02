@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Camera, Sparkles, ImageIcon, Check, LogOut, Loader2,
   ShieldCheck, Clock, ChevronDown, Plus, X, HelpCircle,
+  CheckCircle2, RotateCcw, Pencil,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
@@ -100,8 +101,6 @@ const ROOM_KEYWORDS: Record<string, string[]> = {
   garage: ["lawn mower", "tool chest", "workbench", "bike", "bicycle"],
 };
 
-const STEPS = ["Upload", "Review", "Quote"] as const;
-
 const uid = () => Math.random().toString(36).slice(2, 10);
 
 const fileToDataUrl = (file: File): Promise<string> =>
@@ -186,64 +185,86 @@ function roomNameToId(name: string): string {
 }
 
 /* ============================================================
-   Top Bar — dot-style progress
+   Top Bar — TruMove header (desktop polish)
 ============================================================ */
-function TopBar({ activeStep, onSaveExit }: { activeStep: number; onSaveExit: () => void }) {
+function TopBar({ statusLabel, onSaveExit }: { statusLabel: string; onSaveExit: () => void }) {
   return (
-    <header className="h-12 border-b border-white/[0.06] bg-black flex items-center px-5 flex-shrink-0">
-      <div className="flex items-center gap-1 w-[180px]">
-        <span className="text-[13px] tracking-[0.18em] font-semibold text-white">TRUMOVE</span>
-        <span className="text-[9px] text-[#00ff88] font-bold -mt-2">™</span>
+    <header
+      className="h-12 lg:h-16 flex items-center px-5 lg:px-8 flex-shrink-0 relative"
+      style={{
+        background:
+          "linear-gradient(180deg, rgba(0,255,136,0.03) 0%, transparent 100%), #000",
+        borderBottom: "0.5px solid rgba(0,255,136,0.15)",
+      }}
+    >
+      {/* Left — wordmark */}
+      <div className="flex items-center gap-1 flex-shrink-0">
+        <span className="text-[13px] lg:text-[20px] tracking-[0.18em] lg:tracking-[0.14em] font-semibold text-white">
+          TRUMOVE
+        </span>
+        <span className="text-[9px] lg:text-[10px] text-[#00ff88] font-bold -mt-2 lg:-mt-3">™</span>
       </div>
 
-      <div className="flex-1 flex items-center justify-center">
-        <div className="flex items-center gap-2.5">
-          {STEPS.map((label, i) => {
-            const done = i < activeStep;
-            const active = i === activeStep;
-            return (
-              <div key={label} className="flex items-center gap-2.5">
-                <div className="flex items-center gap-2">
-                  <span
-                    className={cn(
-                      "w-1.5 h-1.5 rounded-full transition-colors",
-                      (done || active) ? "bg-[#00ff88]" : "bg-white/20"
-                    )}
-                    style={active ? { boxShadow: "0 0 8px rgba(0,255,136,0.6)" } : undefined}
-                  />
-                  <span className={cn(
-                    "text-[11px] tracking-wide",
-                    active && "text-white font-medium",
-                    done && "text-white/70",
-                    !done && !active && "text-white/40"
-                  )}>{label}</span>
-                </div>
-                {i < STEPS.length - 1 && (
-                  <div className="w-8 h-px bg-white/10 relative overflow-hidden">
-                    <motion.div
-                      className="h-full bg-[#00ff88]"
-                      initial={{ width: "0%" }}
-                      animate={{ width: done ? "100%" : "0%" }}
-                      transition={{ duration: 0.5 }}
-                    />
-                  </div>
-                )}
-              </div>
-            );
-          })}
+      {/* Center — single status string (desktop only) */}
+      <div className="hidden lg:flex flex-1 items-center justify-center">
+        <div className="flex items-center gap-2">
+          <span
+            className="w-[6px] h-[6px] rounded-full bg-[#00ff88]"
+            style={{ boxShadow: "0 0 8px rgba(0,255,136,0.6)" }}
+          />
+          <span className="text-[13px] text-white/90 font-normal">{statusLabel}</span>
         </div>
       </div>
 
-      <div className="w-[180px] flex justify-end">
+      <div className="flex-1 lg:flex-none lg:w-auto flex justify-end ml-auto">
         <button
           onClick={onSaveExit}
-          className="flex items-center gap-1.5 text-[11px] text-white/50 hover:text-white/90 transition-colors"
+          className="flex items-center gap-1.5 text-[11px] lg:text-[13px] text-white/50 hover:text-white transition-colors"
         >
-          <LogOut className="w-3 h-3" />
+          <LogOut className="w-3 h-3 lg:w-3.5 lg:h-3.5" />
           Save & exit
         </button>
       </div>
     </header>
+  );
+}
+
+/* ============================================================
+   Page heading row (desktop only)
+============================================================ */
+function PageHeading() {
+  return (
+    <div className="hidden lg:flex items-end justify-between mb-6">
+      <div>
+        <h1 className="text-[28px] font-medium text-white tracking-[-0.4px] leading-tight">
+          Inventory <span className="text-[#00ff88]">Scanner</span>
+        </h1>
+        <p className="text-[14px] text-[#a8b3c0] mt-1.5">
+          Drop photos. Our AI builds your moving inventory in seconds.
+        </p>
+      </div>
+      <div className="flex items-center gap-3">
+        <button className="flex items-center gap-1.5 text-[12px] text-[#a8b3c0] hover:text-white transition-colors px-2.5 py-1.5 rounded-md hover:bg-white/[0.04]">
+          <HelpCircle className="w-3.5 h-3.5" /> How it works
+        </button>
+        <div
+          className="flex items-center gap-2 px-2.5 py-1.5 rounded-full"
+          style={{
+            background: "rgba(255,255,255,0.03)",
+            border: "0.5px solid rgba(255,255,255,0.08)",
+          }}
+        >
+          <span
+            className="w-[6px] h-[6px] rounded-full bg-[#00ff88]"
+            style={{ boxShadow: "0 0 6px rgba(0,255,136,0.6)" }}
+          />
+          <span className="text-[10px] uppercase tracking-[0.12em] text-[#7d8694] font-medium">
+            AI Engine
+          </span>
+          <span className="text-[10px] text-white/80 font-mono">Gemini Vision</span>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -404,29 +425,124 @@ function Bracket({ pos }: { pos: "tl" | "tr" | "bl" | "br" }) {
 }
 
 /* ============================================================
-   Status bar (scanning state)
+   Status bar (scanning + complete states)
 ============================================================ */
 function StatusBar({
-  current, total, itemsFound, etaSec,
+  current, total, itemsFound, etaSec, complete, roomCount, slim, onRescan, onDismiss,
 }: {
   current: number; total: number; itemsFound: number; etaSec: number;
+  complete: boolean; roomCount: number;
+  slim?: boolean;
+  onRescan?: () => void;
+  onDismiss?: () => void;
 }) {
+  if (complete && slim) {
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="rounded-lg px-3 lg:px-5 py-2 flex items-center justify-between"
+        style={{ background: "rgba(255,255,255,0.02)", border: "0.5px solid rgba(255,255,255,0.06)" }}
+      >
+        <div className="flex items-center gap-2.5">
+          <CheckCircle2 className="w-4 h-4 text-[#00ff88]" />
+          <span className="text-[13px] text-white/90 font-medium">Ready to review</span>
+          <span className="text-[12px] text-[#a8b3c0]">
+            {itemsFound} items · {roomCount} {roomCount === 1 ? "room" : "rooms"}
+          </span>
+        </div>
+        {onRescan && (
+          <button
+            onClick={onRescan}
+            className="flex items-center gap-1.5 text-[12px] text-[#a8b3c0] hover:text-white transition-colors"
+          >
+            <RotateCcw className="w-3 h-3" /> Re-scan
+          </button>
+        )}
+      </motion.div>
+    );
+  }
+
+  if (complete) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, scale: 0.98 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
+        className="rounded-lg flex items-center justify-between"
+        style={{
+          background: "rgba(0,255,136,0.08)",
+          border: "0.5px solid rgba(0,255,136,0.4)",
+          padding: "14px 20px",
+          minHeight: 56,
+        }}
+      >
+        <div className="flex items-center gap-3">
+          <motion.div
+            initial={{ scale: 0.6, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 400, damping: 18 }}
+          >
+            <CheckCircle2 className="w-[18px] h-[18px] text-[#00ff88]" fill="rgba(0,255,136,0.18)" />
+          </motion.div>
+          <div className="flex flex-col">
+            <span className="text-[14px] text-white font-medium leading-tight">Scan complete</span>
+            <span className="text-[12px] text-[#a8b3c0] leading-tight mt-0.5">
+              {itemsFound} items detected across {roomCount} {roomCount === 1 ? "room" : "rooms"}
+            </span>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          {onRescan && (
+            <button
+              onClick={onRescan}
+              className="h-7 px-2.5 rounded text-[12px] text-white/80 hover:text-white border border-white/15 hover:border-white/30 transition-colors flex items-center gap-1.5"
+            >
+              <RotateCcw className="w-3 h-3" /> Re-scan
+            </button>
+          )}
+          {onDismiss && (
+            <button
+              onClick={onDismiss}
+              className="text-white/50 hover:text-white p-1"
+              aria-label="Dismiss"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          )}
+        </div>
+      </motion.div>
+    );
+  }
+
   return (
     <div
-      className="rounded-lg px-3 py-2.5 flex items-center justify-between"
-      style={{ background: "rgba(0,255,136,0.04)", border: "0.5px solid rgba(0,255,136,0.15)" }}
+      className="rounded-lg flex items-center justify-between"
+      style={{
+        background: "rgba(0,255,136,0.04)",
+        border: "0.5px solid rgba(0,255,136,0.15)",
+        padding: "14px 20px",
+        minHeight: 56,
+      }}
     >
       <div className="flex items-center gap-3">
-        <Loader2 className="w-4 h-4 text-[#00ff88] animate-spin" />
-        <span className="text-[12px] text-white font-medium">
-          Analyzing {current} of {total} photos
-        </span>
-        <span className="text-[11px] text-white/50">
-          Found {itemsFound} items so far
-        </span>
+        <div className="relative w-[18px] h-[18px] flex items-center justify-center">
+          <Loader2
+            className="w-[18px] h-[18px] text-[#00ff88] animate-spin"
+            style={{ filter: "drop-shadow(0 0 6px rgba(0,255,136,0.5))" }}
+          />
+        </div>
+        <div className="flex flex-col">
+          <span className="text-[14px] text-white font-medium leading-tight">
+            Analyzing {current} of {total} {total === 1 ? "photo" : "photos"}
+          </span>
+          <span className="text-[12px] text-[#a8b3c0] leading-tight mt-0.5">
+            Found {itemsFound} items so far
+          </span>
+        </div>
       </div>
-      <div className="text-[11px] text-white/50">
-        {etaSec > 0 ? `~${etaSec}s remaining` : "Wrapping up..."}
+      <div className="text-[12px] font-mono text-[#00ff88]">
+        {etaSec > 0 ? `~${etaSec}s` : "wrapping up…"}
       </div>
     </div>
   );
@@ -502,30 +618,34 @@ function DetectionBox({
   color: string;
   index: number;
 }) {
+  // Dark text for legibility on color fills
+  const textColor =
+    color === "#00ff88" ? "#002818" :
+    color === "#fbbf24" ? "#422006" :
+    color === "#ef4444" ? "#450a0a" :
+    "#000";
   const cornerBase: React.CSSProperties = {
     position: "absolute",
-    width: 12,
-    height: 12,
     borderColor: color,
     borderStyle: "solid",
-    filter: `drop-shadow(0 0 4px ${color}66)`,
+    filter: `drop-shadow(0 0 8px ${color}66)`,
   };
   const corners: Array<{ key: string; style: React.CSSProperties }> = [
-    { key: "tl", style: { top: -1, left: -1, borderTopWidth: 2, borderLeftWidth: 2, borderRightWidth: 0, borderBottomWidth: 0 } },
-    { key: "tr", style: { top: -1, right: -1, borderTopWidth: 2, borderRightWidth: 2, borderLeftWidth: 0, borderBottomWidth: 0 } },
-    { key: "br", style: { bottom: -1, right: -1, borderBottomWidth: 2, borderRightWidth: 2, borderLeftWidth: 0, borderTopWidth: 0 } },
-    { key: "bl", style: { bottom: -1, left: -1, borderBottomWidth: 2, borderLeftWidth: 2, borderRightWidth: 0, borderTopWidth: 0 } },
+    { key: "tl", style: { top: -1, left: -1, borderTopWidth: 2.5, borderLeftWidth: 2.5, borderRightWidth: 0, borderBottomWidth: 0 } },
+    { key: "tr", style: { top: -1, right: -1, borderTopWidth: 2.5, borderRightWidth: 2.5, borderLeftWidth: 0, borderBottomWidth: 0 } },
+    { key: "br", style: { bottom: -1, right: -1, borderBottomWidth: 2.5, borderRightWidth: 2.5, borderLeftWidth: 0, borderTopWidth: 0 } },
+    { key: "bl", style: { bottom: -1, left: -1, borderBottomWidth: 2.5, borderLeftWidth: 2.5, borderRightWidth: 0, borderTopWidth: 0 } },
   ];
   const baseDelay = index * 0.08;
   return (
     <div
-      className="absolute"
+      className="absolute group"
       style={{
         left: `${bbox.x * 100}%`,
         top: `${bbox.y * 100}%`,
         width: `${bbox.width * 100}%`,
         height: `${bbox.height * 100}%`,
-        pointerEvents: "none",
+        pointerEvents: "auto",
         border: "none",
         background: "transparent",
       }}
@@ -534,8 +654,9 @@ function DetectionBox({
         <motion.div
           key={c.key}
           initial={{ opacity: 0, scale: 0.6 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: baseDelay + i * 0.03, duration: 0.18, ease: "easeOut" }}
+          animate={{ opacity: [0, 1, 0.85, 1], scale: 1 }}
+          transition={{ delay: baseDelay + i * 0.03, duration: 0.4, ease: "easeOut" }}
+          className="w-3 h-3 lg:w-[18px] lg:h-[18px]"
           style={{ ...cornerBase, ...c.style }}
         />
       ))}
@@ -543,8 +664,20 @@ function DetectionBox({
         initial={{ opacity: 0, y: 2 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: baseDelay + 0.22, duration: 0.15 }}
-        className="absolute -top-[22px] left-0 px-1.5 py-0.5 text-[10px] font-semibold whitespace-nowrap rounded-[3px] pointer-events-none"
-        style={{ background: color, color: "#000", maxWidth: "120px", overflow: "hidden", textOverflow: "ellipsis" }}
+        className="absolute -top-[24px] left-0 whitespace-nowrap pointer-events-none"
+        style={{
+          background: color,
+          color: textColor,
+          maxWidth: "180px",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          padding: "3px 8px",
+          borderRadius: 4,
+          fontSize: 11,
+          fontWeight: 600,
+          outline: "1px solid rgba(0,0,0,0.2)",
+          letterSpacing: "0.01em",
+        }}
       >
         {label} · {Math.round(confidence)}%
       </motion.div>
@@ -564,22 +697,33 @@ function RoomChips({
   onAdd: () => void;
 }) {
   return (
-    <div className="flex flex-wrap items-center gap-1.5">
+    <div className="flex flex-wrap items-center gap-2">
       <button
         onClick={() => onPick(null)}
         className={cn(
-          "px-2.5 py-1 rounded-full text-[11px] font-medium transition-colors flex items-center gap-1.5",
+          "h-8 lg:h-8 px-3 lg:px-3.5 rounded-full text-[12px] lg:text-[13px] font-medium transition-all flex items-center gap-2",
           activeRoomId === null
-            ? "bg-white/10 text-white border border-white/20"
-            : "text-white/50 border border-white/10 hover:text-white/80"
+            ? "bg-[#00ff88]/10 text-white border-[0.5px] border-[#00ff88]/40"
+            : "text-[#a8b3c0] hover:text-white"
         )}
+        style={
+          activeRoomId === null
+            ? undefined
+            : {
+                background: "rgba(255,255,255,0.04)",
+                border: "0.5px solid rgba(255,255,255,0.08)",
+              }
+        }
       >
         All
-        <span className="text-[10px] opacity-70">{items.reduce((s, i) => s + i.quantity, 0)}</span>
+        <span className={cn("text-[11px]", activeRoomId === null ? "text-[#00ff88]" : "opacity-70")}>
+          {items.reduce((s, i) => s + i.quantity, 0)}
+        </span>
       </button>
       <AnimatePresence>
         {rooms.map((r) => {
           const count = items.filter((i) => i.roomId === r.id).reduce((s, i) => s + i.quantity, 0);
+          const photoFor = "items"; // (visual-only tooltip key)
           const active = activeRoomId === r.id;
           return (
             <motion.button
@@ -588,29 +732,30 @@ function RoomChips({
               animate={{ opacity: 1, scale: 1 }}
               transition={{ type: "spring", stiffness: 400, damping: 25 }}
               onClick={() => onPick(r.id)}
+              title={`${count} ${photoFor}`}
               className={cn(
-                "px-2.5 py-1 rounded-full text-[11px] font-medium transition-colors flex items-center gap-1.5",
+                "h-8 lg:h-8 px-3 lg:px-3.5 rounded-full text-[12px] lg:text-[13px] font-medium transition-all flex items-center gap-2 hover:scale-[1.02]",
                 active
                   ? "text-white"
-                  : "text-white/60 hover:text-white/90"
+                  : "text-[#a8b3c0] hover:text-white"
               )}
               style={{
-                background: active ? "rgba(0,255,136,0.1)" : "rgba(255,255,255,0.02)",
+                background: active ? "rgba(0,255,136,0.1)" : "rgba(255,255,255,0.04)",
                 border: active
                   ? "0.5px solid rgba(0,255,136,0.4)"
                   : "0.5px solid rgba(255,255,255,0.08)",
               }}
             >
-              <span className="w-1.5 h-1.5 rounded-full" style={{ background: r.color }} />
+              <span className="w-[6px] h-[6px] rounded-full" style={{ background: r.color }} />
               {r.name}
-              <span className={cn("text-[10px]", active ? "text-[#00ff88]" : "opacity-70")}>{count}</span>
+              <span className={cn("text-[11px]", active ? "text-[#00ff88]" : "opacity-70")}>{count}</span>
             </motion.button>
           );
         })}
       </AnimatePresence>
       <button
         onClick={onAdd}
-        className="px-2 py-1 rounded-full text-[11px] text-white/40 hover:text-white/70 transition-colors flex items-center gap-1"
+        className="h-8 px-3 rounded-full text-[12px] text-white/40 hover:text-white/70 transition-colors flex items-center gap-1"
         style={{ border: "0.5px dashed rgba(255,255,255,0.15)" }}
       >
         <Plus className="w-3 h-3" /> add
@@ -683,21 +828,30 @@ function ScannerCanvas({
             </div>
           )}
 
-          {/* Top-center pill */}
+          {/* Top-center photo info pill */}
           <div className="absolute top-3 left-1/2 -translate-x-1/2">
             <Popover>
               <PopoverTrigger asChild>
                 <button
-                  className="flex items-center gap-1.5 px-2 py-1 rounded-xl text-[10px] text-white hover:bg-black/85 transition-colors"
-                  style={{ background: "rgba(0,0,0,0.7)", border: "0.5px solid rgba(255,255,255,0.1)" }}
+                  className="flex items-center gap-2 rounded-full text-white hover:bg-black/85 transition-colors"
+                  style={{
+                    background: "rgba(0,0,0,0.7)",
+                    border: "0.5px solid rgba(255,255,255,0.12)",
+                    padding: "6px 14px",
+                    fontSize: 13,
+                    backdropFilter: "blur(8px)",
+                  }}
                 >
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#00ff88]" />
-                  Photo {photoIndex + 1} of {totalPhotos}
-                  <span className="text-white/50">·</span>
-                  <span className="text-white/70">
-                    {photo.autoTagged ? "auto-tagged" : "manually tagged"} {room?.name?.toLowerCase() || "—"}
+                  <span className="w-[6px] h-[6px] rounded-full bg-[#00ff88]" />
+                  <span className="text-white font-medium">
+                    Photo {photoIndex + 1} of {totalPhotos}
                   </span>
-                  <ChevronDown className="w-3 h-3 text-white/50" />
+                  <span className="text-white/40">·</span>
+                  <span className="text-[#00ff88]/90">
+                    {photo.autoTagged ? "auto-tagged" : "tagged"}
+                  </span>
+                  <span className="text-white">{room?.name?.toLowerCase() || "—"}</span>
+                  <ChevronDown className="w-3.5 h-3.5 text-white/60" />
                 </button>
               </PopoverTrigger>
               <PopoverContent className="w-44 p-1 bg-black border-white/10" align="center">
@@ -737,14 +891,24 @@ function ScannerCanvas({
 }
 
 function CanvasBracket({ pos }: { pos: "tl" | "tr" | "bl" | "br" }) {
-  const base = "absolute w-3 h-3 pointer-events-none z-10";
+  const base = "absolute w-3 h-3 lg:w-[18px] lg:h-[18px] pointer-events-none z-10";
   const map = {
-    tl: "top-2 left-2 border-t-[1.5px] border-l-[1.5px]",
-    tr: "top-2 right-2 border-t-[1.5px] border-r-[1.5px]",
-    bl: "bottom-2 left-2 border-b-[1.5px] border-l-[1.5px]",
-    br: "bottom-2 right-2 border-b-[1.5px] border-r-[1.5px]",
+    tl: "top-2 left-2 border-t-[1.5px] border-l-[1.5px] lg:border-t-[2.5px] lg:border-l-[2.5px]",
+    tr: "top-2 right-2 border-t-[1.5px] border-r-[1.5px] lg:border-t-[2.5px] lg:border-r-[2.5px]",
+    bl: "bottom-2 left-2 border-b-[1.5px] border-l-[1.5px] lg:border-b-[2.5px] lg:border-l-[2.5px]",
+    br: "bottom-2 right-2 border-b-[1.5px] border-r-[1.5px] lg:border-b-[2.5px] lg:border-r-[2.5px]",
   };
-  return <div className={cn(base, map[pos])} style={{ borderColor: "#00ff88" }} />;
+  return (
+    <motion.div
+      animate={{ opacity: [0.7, 1, 0.7] }}
+      transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+      className={cn(base, map[pos])}
+      style={{
+        borderColor: "#00ff88",
+        filter: "drop-shadow(0 0 8px rgba(0,255,136,0.4))",
+      }}
+    />
+  );
 }
 
 /* ============================================================
@@ -896,11 +1060,12 @@ function PhotoStrip({
    Live inventory feed
 ============================================================ */
 function LiveInventoryFeed({
-  rooms, items, activeRoomId, onPickRoom,
+  rooms, items, activeRoomId, onPickRoom, photos,
 }: {
   rooms: Room[]; items: InventoryItem[];
   activeRoomId: string | null;
   onPickRoom: (id: string) => void;
+  photos: Photo[];
 }) {
   const now = Date.now();
   const activeRoom = rooms.find((r) => r.id === activeRoomId);
@@ -909,28 +1074,49 @@ function LiveInventoryFeed({
     : items;
   const others = rooms.filter((r) => r.id !== activeRoomId);
 
+  const thumbFor = useCallback((item: InventoryItem) => {
+    for (const p of photos) {
+      const d = p.detections.find(
+        (x) =>
+          x.roomId === item.roomId &&
+          x.itemName.toLowerCase() === item.name.toLowerCase(),
+      );
+      if (d) return { url: p.url, bbox: d.bbox };
+    }
+    return null;
+  }, [photos]);
+
   return (
     <div
-      className="rounded-lg p-3 flex flex-col"
-      style={{ background: "rgba(255,255,255,0.02)", border: "0.5px solid rgba(255,255,255,0.06)", maxHeight: "380px" }}
+      className="rounded-lg flex flex-col"
+      style={{
+        background: "rgba(255,255,255,0.02)",
+        border: "0.5px solid rgba(255,255,255,0.08)",
+        padding: 16,
+        maxHeight: 600,
+      }}
     >
-      <div className="flex items-center justify-between mb-2">
-        <span className="text-[12px] text-white font-medium truncate">
+      <div className="flex items-center justify-between mb-3">
+        <span className="text-[14px] text-white font-medium truncate">
           {activeRoom?.name || "All rooms"}
         </span>
-        <span className="text-[11px] text-[#00ff88] font-medium">
+        <span
+          className="text-[11px] text-[#00ff88] font-medium px-2 py-0.5 rounded-full"
+          style={{ background: "rgba(0,255,136,0.1)" }}
+        >
           {active.reduce((s, i) => s + i.quantity, 0)}
         </span>
       </div>
 
-      <div className="flex-1 overflow-y-auto space-y-0.5 -mx-1 px-1">
+      <div className="flex-1 overflow-y-auto space-y-1 -mx-1 px-1">
         <AnimatePresence initial={false}>
           {active.length === 0 && (
-            <div className="text-[11px] text-white/30 italic py-2">Detecting items…</div>
+            <div className="text-[12px] text-white/30 italic py-2">Detecting items…</div>
           )}
           {active.map((it) => {
             const isNew = now - it.detectedAt < 2500;
             const lowConf = it.confidence < 70;
+            const thumb = thumbFor(it);
             return (
               <motion.div
                 key={it.id}
@@ -939,23 +1125,64 @@ function LiveInventoryFeed({
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
                 className={cn(
-                  "flex items-center justify-between rounded px-1.5 py-1 transition-colors",
+                  "flex items-center gap-3 rounded-md transition-colors group/item hover:bg-white/[0.03]",
                   isNew && "bg-[#00ff88]/[0.06] border-[0.5px] border-[#00ff88]/20"
                 )}
+                style={{ minHeight: 52, padding: "6px 8px" }}
               >
-                <div className="flex items-center gap-1.5 min-w-0">
-                  {isNew && <span className="w-1 h-1 rounded-full bg-[#00ff88] flex-shrink-0" />}
-                  {lowConf && !isNew && <span className="w-1 h-1 rounded-full bg-amber-400 flex-shrink-0" />}
-                  <span className="text-[11px] text-white truncate">{it.name}</span>
+                <div
+                  className="w-10 h-10 rounded-md flex-shrink-0 overflow-hidden"
+                  style={{
+                    background: "rgba(255,255,255,0.04)",
+                    border: "0.5px solid rgba(255,255,255,0.08)",
+                  }}
+                >
+                  {thumb ? (
+                    <div
+                      className="w-full h-full"
+                      style={{
+                        backgroundImage: `url(${thumb.url})`,
+                        backgroundSize: `${100 / Math.max(thumb.bbox.width, 0.05)}% ${100 / Math.max(thumb.bbox.height, 0.05)}%`,
+                        backgroundPosition: `${(thumb.bbox.x / Math.max(1 - thumb.bbox.width, 0.0001)) * 100}% ${(thumb.bbox.y / Math.max(1 - thumb.bbox.height, 0.0001)) * 100}%`,
+                      }}
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <ImageIcon className="w-4 h-4 text-white/20" />
+                    </div>
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-1.5 min-w-0">
+                    {isNew && (
+                      <span
+                        className="w-1.5 h-1.5 rounded-full bg-[#00ff88] flex-shrink-0"
+                        style={{ boxShadow: "0 0 4px rgba(0,255,136,0.7)" }}
+                      />
+                    )}
+                    {lowConf && !isNew && (
+                      <span className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0" />
+                    )}
+                    <span className="text-[13px] text-white font-medium truncate leading-tight">
+                      {it.name}
+                    </span>
+                  </div>
+                  <div className="text-[11px] text-[#7d8694] mt-0.5 truncate">
+                    {Math.round(it.weight * it.quantity)} lb · {Math.round(it.cubicFeet * it.quantity)} cu ft
+                  </div>
                 </div>
                 <div className="flex items-center gap-1.5 flex-shrink-0">
-                  <span className="text-[10px] text-white/40">{Math.round(it.weight * it.quantity)} lb</span>
-                  <span className={cn(
-                    "text-[10px]",
-                    isNew ? "text-[#00ff88]" : lowConf ? "text-amber-400" : "text-white/50"
-                  )}>
-                    {lowConf ? "verify" : `×${it.quantity}`}
-                  </span>
+                  {lowConf ? (
+                    <span className="text-[11px] text-amber-400 font-medium">verify</span>
+                  ) : (
+                    <span className="text-[14px] text-[#00ff88] font-medium">×{it.quantity}</span>
+                  )}
+                  <button
+                    className="opacity-0 group-hover/item:opacity-100 text-white/40 hover:text-white transition-opacity"
+                    aria-label="Edit"
+                  >
+                    <Pencil className="w-3 h-3" />
+                  </button>
                 </div>
               </motion.div>
             );
@@ -964,20 +1191,25 @@ function LiveInventoryFeed({
       </div>
 
       {others.length > 0 && activeRoomId && (
-        <div className="mt-2 pt-2 border-t border-white/[0.06] space-y-0.5">
+        <div className="mt-3 pt-3 border-t border-white/[0.06] space-y-1">
           {others.map((r) => {
             const count = items.filter((i) => i.roomId === r.id).reduce((s, i) => s + i.quantity, 0);
             return (
               <button
                 key={r.id}
                 onClick={() => onPickRoom(r.id)}
-                className="w-full flex items-center justify-between px-1.5 py-0.5 rounded hover:bg-white/[0.03] opacity-60 hover:opacity-100 transition-opacity"
+                className="w-full flex items-center justify-between px-2 py-1.5 rounded hover:bg-white/[0.03] opacity-70 hover:opacity-100 transition-opacity"
               >
-                <div className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full" style={{ background: r.color }} />
-                  <span className="text-[11px] text-white/80">{r.name}</span>
+                <div className="flex items-center gap-2">
+                  <span className="w-[6px] h-[6px] rounded-full" style={{ background: r.color }} />
+                  <span className="text-[12px] text-white/80">{r.name}</span>
                 </div>
-                <span className="text-[10px] text-white/50">{count}</span>
+                <span
+                  className="text-[11px] text-[#00ff88] font-medium px-1.5 py-0.5 rounded-full"
+                  style={{ background: "rgba(0,255,136,0.08)" }}
+                >
+                  {count}
+                </span>
               </button>
             );
           })}
@@ -991,9 +1223,10 @@ function LiveInventoryFeed({
    Stats bar
 ============================================================ */
 function StatsBar({
-  items, onReview, disabled,
+  items, roomCount, onReview, disabled,
 }: {
   items: InventoryItem[];
+  roomCount: number;
   onReview: () => void;
   disabled: boolean;
 }) {
@@ -1009,25 +1242,34 @@ function StatsBar({
 
   return (
     <div
-      className="mt-3.5 rounded-md px-3 py-2.5 flex items-center justify-between"
-      style={{ background: "rgba(255,255,255,0.02)", border: "0.5px solid rgba(255,255,255,0.06)" }}
+      className="rounded-lg flex items-center justify-between"
+      style={{
+        background:
+          "linear-gradient(90deg, rgba(0,255,136,0.04), transparent 50%, rgba(0,255,136,0.04))",
+        border: "0.5px solid rgba(0,255,136,0.12)",
+        padding: "16px 24px",
+        minHeight: 64,
+      }}
     >
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-5 lg:gap-7">
         <Stat label="Items" value={totals.qty.toString()} />
-        <span className="w-px h-5 bg-white/10" />
+        <span className="w-px h-7 bg-white/10" />
         <Stat label="Weight" value={`${totals.wt.toLocaleString()} lb`} />
-        <span className="w-px h-5 bg-white/10" />
+        <span className="w-px h-7 bg-white/10" />
         <Stat label="Volume" value={`${Math.round(totals.cf)} cu ft`} />
+        <span className="w-px h-7 bg-white/10" />
+        <Stat label="Rooms" value={roomCount.toString()} />
       </div>
       <button
         onClick={onReview}
         disabled={disabled}
         className={cn(
-          "px-[18px] py-2 rounded-md text-[12px] font-medium transition-all flex items-center gap-1.5",
+          "rounded-lg font-semibold transition-all flex items-center gap-2",
           disabled
             ? "bg-white/5 text-white/30 cursor-not-allowed"
-            : "bg-[#00ff88] text-black hover:bg-[#00ff88]/90"
+            : "bg-[#00ff88] text-black hover:bg-[#00ff88] hover:shadow-[0_0_24px_rgba(0,255,136,0.3)]"
         )}
+        style={{ height: 44, padding: "0 28px", fontSize: 16 }}
       >
         Review inventory →
       </button>
@@ -1037,9 +1279,13 @@ function StatsBar({
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center gap-1.5">
-      <span className="text-[10px] text-white/50">{label}</span>
-      <span className="text-[13px] text-white font-medium">{value}</span>
+    <div className="flex flex-col">
+      <span className="text-[10px] uppercase tracking-[0.06em] text-[#7d8694] font-medium leading-tight">
+        {label}
+      </span>
+      <span className="text-[18px] lg:text-[20px] text-white font-medium leading-tight mt-0.5">
+        {value}
+      </span>
     </div>
   );
 }
@@ -1425,12 +1671,39 @@ export default function InventoryScan() {
   };
 
   const itemsFound = items.reduce((s, i) => s + i.quantity, 0);
-  const activeStep = state === "empty" || state === "scanning" ? 0 : 1;
+
+  // Status string for header
+  const headerStatus = useMemo(() => {
+    if (state === "empty") return "Step 1 — Building your inventory";
+    if (scanComplete) return "Step 1 — Inventory ready to review";
+    return `Step 1 — Scanning your photos (${scanCursor}/${totalPhotos})`;
+  }, [state, scanComplete, scanCursor, totalPhotos]);
+
+  // Auto-fade scan-complete card to a slim "Ready to review" strip after 3s
+  const [completeSlim, setCompleteSlim] = useState(false);
+  const [completeDismissed, setCompleteDismissed] = useState(false);
+  useEffect(() => {
+    if (!scanComplete) {
+      setCompleteSlim(false);
+      setCompleteDismissed(false);
+      return;
+    }
+    const t = window.setTimeout(() => setCompleteSlim(true), 3000);
+    return () => window.clearTimeout(t);
+  }, [scanComplete]);
+
+  const handleRescan = () => {
+    setPhotos((prev) => prev.map((p) => ({ ...p, status: "pending", detections: [] })));
+    setItems([]);
+    setScanCursor(0);
+    setCompleteSlim(false);
+    setCompleteDismissed(false);
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-black text-white">
       <TopBar
-        activeStep={activeStep}
+        statusLabel={headerStatus}
         onSaveExit={() => navigate("/")}
       />
 
@@ -1453,70 +1726,90 @@ export default function InventoryScan() {
       )}
 
       {state === "scanning" && (
-        <div className="flex-1 overflow-auto px-6 py-4">
-          <div className="max-w-[1100px] mx-auto space-y-3">
-            <StatusBar
-              current={Math.min(scanCursor + (scanComplete ? 0 : 1), totalPhotos)}
-              total={totalPhotos}
-              itemsFound={itemsFound}
-              etaSec={etaSec}
-            />
+        <div className="flex-1 overflow-auto px-6 lg:px-8 py-4 lg:py-6">
+          <div className="max-w-[1100px] lg:max-w-[1200px] mx-auto">
+            <PageHeading />
 
-            <MiniDropzone
-              uploaded={totalPhotos}
-              scanned={photos.filter((p) => p.status === "scanned").length}
-              onFiles={handleFiles}
-            />
-
-            <div className="grid gap-3" style={{ gridTemplateColumns: "1fr 240px" }}>
-              {/* LEFT */}
-              <div className="space-y-2 min-w-0">
-                <div className="flex items-center justify-between gap-2">
-                  <RoomChips
-                    rooms={rooms}
-                    items={items}
-                    activeRoomId={activeRoomId}
-                    onPick={setActiveRoomId}
-                    onAdd={handleAddRoom}
+            <div className="space-y-3 lg:space-y-0">
+              {/* Status bar */}
+              <div className="lg:mb-3">
+                {!completeDismissed && (
+                  <StatusBar
+                    current={Math.min(scanCursor + (scanComplete ? 0 : 1), totalPhotos)}
+                    total={totalPhotos}
+                    itemsFound={itemsFound}
+                    etaSec={etaSec}
+                    complete={scanComplete}
+                    roomCount={rooms.length}
+                    slim={completeSlim}
+                    onRescan={scanComplete ? handleRescan : undefined}
+                    onDismiss={scanComplete && !completeSlim ? () => setCompleteSlim(true) : undefined}
                   />
-                  <button className="text-[10px] text-white/40 hover:text-white/70 flex items-center gap-1 flex-shrink-0">
-                    <HelpCircle className="w-3 h-3" /> How it works
-                  </button>
-                </div>
+                )}
+              </div>
 
-                <ScannerCanvas
-                  photo={activePhoto}
-                  photoIndex={activePhoto ? photos.findIndex((p) => p.id === activePhoto.id) : 0}
-                  totalPhotos={totalPhotos}
-                  room={rooms.find((r) => r.id === activePhoto?.roomId)}
-                  onChangeRoom={(rid) => activePhoto && reassignPhoto(activePhoto.id, rid)}
-                  allRooms={rooms}
-                  onEnhance={enhancePhoto}
-                  onDismissQuality={dismissQuality}
-                />
-
-                <PhotoStrip
-                  photos={photos}
-                  activeId={activePhotoId}
-                  onPick={setActivePhotoId}
-                  onAddMore={triggerAddMore}
+              {/* Mini dropzone */}
+              <div className="lg:mb-5">
+                <MiniDropzone
+                  uploaded={totalPhotos}
+                  scanned={photos.filter((p) => p.status === "scanned").length}
+                  onFiles={handleFiles}
                 />
               </div>
 
-              {/* RIGHT */}
-              <LiveInventoryFeed
-                rooms={rooms}
-                items={items}
-                activeRoomId={activeRoomId ?? activePhoto?.roomId ?? null}
-                onPickRoom={setActiveRoomId}
-              />
-            </div>
+              {/* Room chips */}
+              <div className="lg:mb-4 flex items-center justify-between gap-3">
+                <RoomChips
+                  rooms={rooms}
+                  items={items}
+                  activeRoomId={activeRoomId}
+                  onPick={setActiveRoomId}
+                  onAdd={handleAddRoom}
+                />
+              </div>
 
-            <StatsBar
-              items={items}
-              onReview={handleReview}
-              disabled={!scanComplete}
-            />
+              {/* Canvas + right panel */}
+              <div
+                className="grid gap-3 lg:gap-6"
+                style={{ gridTemplateColumns: "1fr 380px" }}
+              >
+                <div className="space-y-3 min-w-0">
+                  <ScannerCanvas
+                    photo={activePhoto}
+                    photoIndex={activePhoto ? photos.findIndex((p) => p.id === activePhoto.id) : 0}
+                    totalPhotos={totalPhotos}
+                    room={rooms.find((r) => r.id === activePhoto?.roomId)}
+                    onChangeRoom={(rid) => activePhoto && reassignPhoto(activePhoto.id, rid)}
+                    allRooms={rooms}
+                    onEnhance={enhancePhoto}
+                    onDismissQuality={dismissQuality}
+                  />
+                  <PhotoStrip
+                    photos={photos}
+                    activeId={activePhotoId}
+                    onPick={setActivePhotoId}
+                    onAddMore={triggerAddMore}
+                  />
+                </div>
+
+                <LiveInventoryFeed
+                  rooms={rooms}
+                  items={items}
+                  activeRoomId={activeRoomId ?? activePhoto?.roomId ?? null}
+                  onPickRoom={setActiveRoomId}
+                  photos={photos}
+                />
+              </div>
+
+              <div className="lg:mt-4 mt-3">
+                <StatsBar
+                  items={items}
+                  roomCount={rooms.length}
+                  onReview={handleReview}
+                  disabled={!scanComplete}
+                />
+              </div>
+            </div>
           </div>
         </div>
       )}
