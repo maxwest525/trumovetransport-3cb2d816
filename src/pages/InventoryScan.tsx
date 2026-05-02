@@ -1012,7 +1012,7 @@ function ScannerTrustStrip() {
 function InventoryPanel({
   rooms, items, scanning, hasAnyScan, highlightedItemId,
   onItemHover, onItemClick, onEditItem, onAddItem, onContinue,
-  collapsedRooms, toggleRoom,
+  collapsedRooms, toggleRoom, suggestion, onAcceptSuggestion, onDismissSuggestion,
 }: {
   rooms: Room[];
   items: InventoryItem[];
@@ -1026,6 +1026,9 @@ function InventoryPanel({
   onContinue: () => void;
   collapsedRooms: Set<string>;
   toggleRoom: (id: string) => void;
+  suggestion: { fromRoomId: string; toRoomId: string; toRoomName: string } | null;
+  onAcceptSuggestion: () => void;
+  onDismissSuggestion: () => void;
 }) {
   const grouped = useMemo(() => {
     const map = new Map<string, InventoryItem[]>();
@@ -1053,11 +1056,53 @@ function InventoryPanel({
             )}
             <div className="text-[14px] font-semibold text-white">Detected Items</div>
           </div>
-          <div className="text-[11px] font-semibold tabular-nums px-2 py-0.5 rounded-full bg-[#00ff88]/15 text-[#00ff88]">
+          <motion.div
+            key={totalCount}
+            initial={{ scale: 1.2 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 0.3 }}
+            className="text-[11px] font-semibold tabular-nums px-2 py-0.5 rounded-full bg-[#00ff88]/15 text-[#00ff88]"
+          >
             {totalCount}
-          </div>
+          </motion.div>
         </div>
       )}
+
+      {/* Smart room suggestion banner */}
+      <AnimatePresence>
+        {suggestion && (
+          <motion.div
+            initial={{ opacity: 0, y: -8, height: 0 }}
+            animate={{ opacity: 1, y: 0, height: "auto" }}
+            exit={{ opacity: 0, y: -8, height: 0 }}
+            transition={{ duration: 0.25 }}
+            className="overflow-hidden border-b border-amber-500/30 bg-amber-500/[0.06]"
+          >
+            <div className="px-4 py-3">
+              <div className="flex items-start gap-2 mb-2">
+                <ArrowRightLeft className="w-3.5 h-3.5 text-amber-400 mt-0.5 flex-shrink-0" />
+                <div className="text-[12px] text-amber-100 leading-snug">
+                  These items look like a <span className="font-semibold">{suggestion.toRoomName}</span>.
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={onAcceptSuggestion}
+                  className="flex-1 h-7 rounded text-[11px] font-semibold bg-amber-400 text-black hover:bg-amber-300"
+                >
+                  Yes, move
+                </button>
+                <button
+                  onClick={onDismissSuggestion}
+                  className="flex-1 h-7 rounded text-[11px] font-medium border border-white/15 text-white/70 hover:text-white"
+                >
+                  Keep here
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div className="flex-1 overflow-y-auto overflow-x-hidden min-w-0">
         {isEmpty ? (
@@ -1117,7 +1162,7 @@ function InventoryPanel({
                             layout
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.25 }}
+                            transition={{ duration: 0.25, delay: 0.05 }}
                             onMouseEnter={() => onItemHover(item.id)}
                             onMouseLeave={() => onItemHover(null)}
                             className={cn(
@@ -1133,7 +1178,16 @@ function InventoryPanel({
                                 <Square className="w-3.5 h-3.5 text-white/30" />
                               )}
                             </div>
-                            <div className="text-[13px] text-white flex-1 min-w-0 truncate">{item.name}</div>
+                            <div className="flex-1 min-w-0">
+                              <div className="text-[13px] text-white truncate leading-tight">{item.name}</div>
+                              <div className="flex items-center gap-1 mt-0.5">
+                                <span
+                                  className="w-1.5 h-1.5 rounded-full"
+                                  style={{ background: confidenceColor(item.confidence) }}
+                                />
+                                <span className="text-[9px] text-white/40 tabular-nums">{Math.round(item.confidence)}%</span>
+                              </div>
+                            </div>
                             <div className="text-[13px] tabular-nums text-[#00ff88] font-semibold w-6 text-right">{item.quantity}</div>
                             <button
                               onClick={(e) => { e.stopPropagation(); onEditItem(item); }}
