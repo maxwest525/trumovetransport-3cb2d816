@@ -342,7 +342,7 @@ function TopBar(_: { statusLabel: string; onSaveExit: () => void }) {
 }
 
 /* ============================================================
-   Empty state
+   Empty state — scanner-shaped layout with overlay
 ============================================================ */
 function EmptyState({
   onFiles, onSample,
@@ -359,128 +359,93 @@ function EmptyState({
   });
 
   return (
-    <div className="flex-1 overflow-auto px-6 py-8">
-      <div className="max-w-[1100px] mx-auto">
-        {/* Heading */}
-        <div className="text-center mb-6">
-          <h1 className="text-[22px] font-medium text-white tracking-[-0.3px]">
-            Show us what you're moving
-          </h1>
-          <p className="text-[13px] text-white/50 mt-1.5">
-            Upload photos of every room. Our AI handles the rest.
-          </p>
-        </div>
+    <div
+      {...getRootProps()}
+      className="grid gap-3 items-stretch"
+      style={{ gridTemplateColumns: "1fr 220px" }}
+    >
+      <input {...getInputProps()} />
 
-        {/* Hero dropzone */}
+      {/* Scanner canvas (empty) */}
+      <div
+        onClick={open}
+        className="relative cursor-pointer overflow-hidden"
+        style={{
+          background:
+            "linear-gradient(135deg, #2d2620 0%, #1a1812 50%, #0c0a08 100%)",
+          borderRadius: "12px",
+          aspectRatio: "16 / 10",
+        }}
+      >
+        {/* Outer corner brackets */}
+        <Bracket pos="tl" />
+        <Bracket pos="tr" />
+        <Bracket pos="bl" />
+        <Bracket pos="br" />
+
+        {/* Inner dashed brand-green frame */}
         <div
-          {...getRootProps()}
           className={cn(
-            "relative rounded-lg transition-all duration-200 cursor-pointer",
-            "py-8 px-5",
-            isDragActive ? "scale-[1.01]" : ""
+            "absolute inset-4 rounded-lg flex items-center justify-center transition-colors",
           )}
           style={{
-            background: isDragActive ? "rgba(0,255,136,0.06)" : "rgba(0,255,136,0.02)",
             border: isDragActive
-              ? "1px solid rgba(0,255,136,0.7)"
-              : "1px dashed rgba(0,255,136,0.35)",
+              ? "2px dashed rgba(0,255,136,0.85)"
+              : "1.5px dashed rgba(0,255,136,0.45)",
+            background: isDragActive ? "rgba(0,255,136,0.06)" : "transparent",
           }}
         >
-          <input {...getInputProps()} />
-          {/* corner brackets */}
-          <Bracket pos="tl" />
-          <Bracket pos="tr" />
-          <Bracket pos="bl" />
-          <Bracket pos="br" />
-
-          <div className="flex items-center justify-center gap-4">
+          <div className="text-center px-6">
             <motion.div
               animate={{ scale: [1, 1.05, 1] }}
               transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-              className="relative w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0"
-              style={{ background: "rgba(0,255,136,0.08)", border: "0.5px solid rgba(0,255,136,0.2)" }}
+              className="mx-auto mb-3 w-14 h-14 rounded-xl flex items-center justify-center"
+              style={{
+                background: "rgba(0,255,136,0.08)",
+                border: "1px solid rgba(0,255,136,0.25)",
+              }}
             >
-              <ImageIcon className="w-5 h-5 text-[#00ff88]" strokeWidth={1.5} />
-              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#00ff88] flex items-center justify-center">
-                <Sparkles className="w-2.5 h-2.5 text-black" strokeWidth={2.5} />
-              </span>
+              <Upload className="w-6 h-6" style={{ color: "#00ff88" }} strokeWidth={1.75} />
             </motion.div>
-
-            <div className="text-left">
-              <div className="text-[16px] text-white font-medium">
-                {isDragActive ? "Drop to start scanning" : "Drop photos and videos anywhere"}
-              </div>
-              <div className="text-[12px] text-white/50 mt-0.5">
-                JPG, PNG, HEIC, MP4 — up to 50 files at once
-              </div>
+            <div className="text-[16px] font-semibold text-white">
+              {isDragActive ? "Drop to start scanning" : "Drop photos here"}
             </div>
-          </div>
-
-          <div className="flex items-center justify-center gap-2 mt-5">
-            <button
-              type="button"
-              onClick={(e) => { e.stopPropagation(); open(); }}
-              className="px-3 py-1.5 rounded-md bg-[#00ff88] text-black text-[12px] font-medium hover:bg-[#00ff88]/90 transition-colors"
-            >
-              Browse files
-            </button>
-            <button
-              type="button"
-              onClick={(e) => { e.stopPropagation(); open(); }}
-              className="px-3 py-1.5 rounded-md border border-white/15 text-white/80 text-[12px] hover:border-white/30 hover:text-white transition-colors flex items-center gap-1.5"
-            >
-              <Camera className="w-3 h-3" /> Use camera
-            </button>
+            <div className="text-[12px] mt-1" style={{ color: "rgba(255,255,255,0.55)" }}>
+              or click <span style={{ color: "#00ff88" }}>Add photos</span> above
+            </div>
             <button
               type="button"
               onClick={(e) => { e.stopPropagation(); onSample(); }}
-              className="px-3 py-1.5 rounded-md border border-white/10 text-white/60 text-[12px] hover:border-white/20 hover:text-white/90 transition-colors"
+              className="mt-4 text-[11px] font-semibold underline-offset-2 hover:underline"
+              style={{ color: "rgba(255,255,255,0.55)" }}
             >
               Try with sample
             </button>
           </div>
         </div>
+      </div>
 
-        {/* Process strip */}
-        <div className="grid grid-cols-3 gap-3 mt-4">
-          {[
-            { n: 1, t: "Upload anything", d: "All rooms, all at once. No sorting needed." },
-            { n: 2, t: "AI sorts by room", d: "Detects furniture and groups automatically." },
-            { n: 3, t: "Review & continue", d: "Edit anything wrong, then get your quote." },
-          ].map((s) => (
-            <div
-              key={s.n}
-              className="rounded-lg p-3"
-              style={{ background: "rgba(255,255,255,0.02)", border: "0.5px solid rgba(255,255,255,0.06)" }}
-            >
-              <div className="flex items-center gap-2 mb-1">
-                <span
-                  className="w-[18px] h-[18px] rounded text-[10px] font-semibold flex items-center justify-center"
-                  style={{ background: "rgba(0,255,136,0.12)", color: "#00ff88" }}
-                >
-                  {s.n}
-                </span>
-                <span className="text-[11px] text-white font-medium">{s.t}</span>
-              </div>
-              <p className="text-[10px] text-white/50 leading-relaxed pl-[26px]">{s.d}</p>
-            </div>
-          ))}
-        </div>
-
-        {/* Trust strip */}
+      {/* Just Detected (empty) */}
+      <div
+        className="flex flex-col items-center justify-center text-center p-4"
+        style={{
+          background: "#ffffff",
+          border: "1px solid #e5e7eb",
+          borderRadius: "12px",
+        }}
+      >
         <div
-          className="mt-5 rounded-md p-2.5 flex items-center justify-between"
-          style={{ background: "rgba(255,255,255,0.02)" }}
+          className="w-9 h-9 rounded-full flex items-center justify-center mb-2"
+          style={{ background: "#f0fdf5", border: "1px solid #86efac" }}
         >
-          <div className="flex items-center gap-1.5 text-[11px] text-white/50">
-            <ShieldCheck className="w-3 h-3 text-[#00ff88]" />
-            Photos never leave our servers · Encrypted in transit
-          </div>
-          <div className="flex items-center gap-1.5 text-[11px] text-white/50">
-            <Clock className="w-3 h-3" />
-            Avg time: 3 min for a 2-bed apartment
-          </div>
+          <Wand2 className="w-4 h-4" style={{ color: "#00b369" }} />
         </div>
+        <div className="text-[11px] font-bold uppercase mb-1" style={{ color: "#0f1115", letterSpacing: "0.5px" }}>
+          Just detected
+        </div>
+        <p className="text-[11px] leading-snug" style={{ color: "#6b7280" }}>
+          No items yet — upload photos to begin
+        </p>
       </div>
     </div>
   );
