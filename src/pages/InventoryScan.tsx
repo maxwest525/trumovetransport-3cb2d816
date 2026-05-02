@@ -130,9 +130,9 @@ const confidenceColor = (c: number) =>
 function TopBar({ activeStep, onSaveExit }: { activeStep: number; onSaveExit: () => void }) {
   return (
     <header className="h-16 border-b border-white/[0.06] bg-black flex items-center px-6 flex-shrink-0">
-      <div className="flex items-center gap-2 w-[200px]">
-        <img src={logoImg} alt="TruMove" className="h-5 brightness-0 invert" />
-        <span className="text-[11px] text-[#00ff88]/70 font-mono mt-0.5">™</span>
+      <div className="flex items-center gap-1.5 w-[200px]">
+        <img src={logoImg} alt="TruMove" className="h-[18px] brightness-0 invert" />
+        <span className="text-[10px] text-[#00ff88] font-mono mt-0.5 font-bold">™</span>
       </div>
 
       <div className="flex-1 flex items-center justify-center">
@@ -144,10 +144,10 @@ function TopBar({ activeStep, onSaveExit }: { activeStep: number; onSaveExit: ()
               <div key={label} className="flex items-center gap-3">
                 <div className="flex flex-col items-center gap-1.5">
                   <motion.div
-                    animate={active ? { boxShadow: ["0 0 8px rgba(0,255,136,0.4)", "0 0 20px rgba(0,255,136,0.7)", "0 0 8px rgba(0,255,136,0.4)"] } : {}}
+                    animate={active ? { boxShadow: ["0 0 12px rgba(0,255,136,0.4)", "0 0 22px rgba(0,255,136,0.75)", "0 0 12px rgba(0,255,136,0.4)"] } : {}}
                     transition={{ duration: 2, repeat: Infinity }}
                     className={cn(
-                      "w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-semibold transition-all duration-300",
+                      "w-7 h-7 rounded-full flex items-center justify-center text-[14px] font-semibold transition-all duration-300",
                       done && "bg-[#00ff88] text-black",
                       active && "bg-[#00ff88] text-black",
                       !done && !active && "border border-white/15 text-white/40"
@@ -161,7 +161,7 @@ function TopBar({ activeStep, onSaveExit }: { activeStep: number; onSaveExit: ()
                   )}>{label}</span>
                 </div>
                 {i < STEPS.length - 1 && (
-                  <div className="w-12 h-px bg-white/10 relative -mt-4 overflow-hidden">
+                  <div className="w-12 h-0.5 bg-white/10 relative -mt-4 overflow-hidden rounded-full">
                     <motion.div
                       className="h-full bg-[#00ff88]"
                       initial={{ width: "0%" }}
