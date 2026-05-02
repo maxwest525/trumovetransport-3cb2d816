@@ -3258,7 +3258,7 @@ export default function ScanRoom() {
                       </thead>
                       <tbody>
                         {detectedItems.map((item, idx) => (
-                          <tr key={item.id} style={{ animationDelay: `${idx * 0.05}s` }}>
+                          <tr key={item.id} data-item-id={item.id} style={{ animationDelay: `${idx * 0.05}s` }}>
                             <td className="tru-scan-table-order">{idx + 1}</td>
                             <td className="tru-scan-table-item">
                               {(() => {
