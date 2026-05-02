@@ -6,7 +6,7 @@ import {
   Upload, Sparkles, Pencil, Plus, Check, ChevronDown, ChevronRight,
   LogOut, HelpCircle, Loader2, X, Trash2, Image as ImageIcon,
   Cpu, ShieldCheck, Headphones, AlertTriangle, Camera, Square, ArrowRight,
-  Layers, Play, Zap, Pause, FolderPlus, Eye, EyeOff, Brain,
+  Layers, Play, Zap, Pause, FolderPlus, Eye, EyeOff, Brain, RefreshCw, ArrowRightLeft,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
@@ -123,6 +123,67 @@ const getImageDims = (url: string): Promise<{ width: number; height: number }> =
 
 const confidenceColor = (c: number) =>
   c >= 85 ? "#00ff88" : c >= 70 ? "#fbbf24" : "#ef4444";
+
+/* ----- Smart room suggestion (keyword match) ----- */
+const ROOM_KEYWORDS: Record<string, string[]> = {
+  bedroom: ["bed", "nightstand", "dresser", "headboard", "mattress", "armoire", "wardrobe"],
+  "living-room": ["sofa", "couch", "loveseat", "coffee table", "tv stand", "recliner", "ottoman", "media console"],
+  kitchen: ["fridge", "refrigerator", "stove", "oven", "microwave", "dishwasher", "kitchen"],
+  "dining-room": ["dining table", "dining chair", "buffet", "china cabinet", "hutch"],
+  office: ["desk", "office chair", "filing cabinet", "bookshelf", "monitor"],
+  bathroom: ["vanity", "toilet", "shower", "bath"],
+  garage: ["lawn mower", "tool chest", "workbench", "bike", "bicycle"],
+};
+
+function suggestRoomForItems(itemNames: string[]): string | null {
+  const counts: Record<string, number> = {};
+  for (const name of itemNames) {
+    const n = name.toLowerCase();
+    for (const [roomId, keywords] of Object.entries(ROOM_KEYWORDS)) {
+      if (keywords.some((k) => n.includes(k))) {
+        counts[roomId] = (counts[roomId] || 0) + 1;
+      }
+    }
+  }
+  let best: string | null = null;
+  let bestCount = 0;
+  for (const [roomId, c] of Object.entries(counts)) {
+    if (c > bestCount) { best = roomId; bestCount = c; }
+  }
+  // require a strong signal: at least 2 matches OR >50% of items
+  if (bestCount >= 2 || (bestCount >= 1 && bestCount / Math.max(1, itemNames.length) > 0.5)) {
+    return best;
+  }
+  return null;
+}
+
+/* ----- Detection box collision / dedup helpers ----- */
+function bboxOverlapRatio(a: Detection["bbox"], b: Detection["bbox"]): number {
+  const x1 = Math.max(a.x, b.x);
+  const y1 = Math.max(a.y, b.y);
+  const x2 = Math.min(a.x + a.width, b.x + b.width);
+  const y2 = Math.min(a.y + a.height, b.y + b.height);
+  const inter = Math.max(0, x2 - x1) * Math.max(0, y2 - y1);
+  const areaA = a.width * a.height;
+  const areaB = b.width * b.height;
+  const smaller = Math.min(areaA, areaB);
+  return smaller > 0 ? inter / smaller : 0;
+}
+
+function dedupeDetections(detections: Detection[]): Detection[] {
+  const sorted = [...detections].sort((a, b) => b.confidence - a.confidence);
+  const kept: Detection[] = [];
+  for (const d of sorted) {
+    const dup = kept.find(
+      (k) =>
+        bboxOverlapRatio(k.bbox, d.bbox) > 0.7 &&
+        (k.itemName.toLowerCase() === d.itemName.toLowerCase() ||
+          bboxOverlapRatio(k.bbox, d.bbox) > 0.85)
+    );
+    if (!dup) kept.push(d);
+  }
+  return kept;
+}
 
 /* ============================================================
    Top Bar
