@@ -2190,65 +2190,6 @@ export default function ScanRoom() {
                 )}
               </div>
 
-              {/* Drag handle + maximize toggles: only shown on lg+ where the
-                  split layout exists. Pointer events on the bar drive a
-                  px-perfect resize; double-click resets to default; the two
-                  chevron buttons collapse one side fully without dragging. */}
-              <div className="hidden lg:flex relative items-center justify-center">
-                {/* Resize bar (drag target). Also focusable so keyboard users
-                    can nudge the split: Left/Right arrows shift by 24px,
-                    Home resets to default, PageUp maximizes the library,
-                    PageDown maximizes the scanner. */}
-                <div
-                  role="separator"
-                  tabIndex={0}
-                  aria-orientation="vertical"
-                  aria-label="Resize photo library. Use left and right arrows to adjust, Home to reset, Page Up to maximize library, Page Down to maximize scanner."
-                  aria-valuenow={libraryWidth}
-                  aria-valuemin={LIBRARY_MIN}
-                  aria-valuemax={LIBRARY_MAX}
-                  onPointerDown={handleSplitPointerDown}
-                  onDoubleClick={resetLibraryWidth}
-                  onKeyDown={(e) => {
-                    const STEP = 24;
-                    switch (e.key) {
-                      case "ArrowLeft":
-                        // Left shrinks the library (scanner grows)
-                        e.preventDefault();
-                        triggerSplitAnimation();
-                        setLibraryWidth((w) => Math.max(LIBRARY_MIN, w - STEP));
-                        break;
-                      case "ArrowRight":
-                        // Right grows the library
-                        e.preventDefault();
-                        triggerSplitAnimation();
-                        setLibraryWidth((w) => Math.min(LIBRARY_MAX, w + STEP));
-                        break;
-                      case "Home":
-                        e.preventDefault();
-                        triggerSplitAnimation();
-                        resetLibraryWidth();
-                        break;
-                      case "PageUp":
-                        e.preventDefault();
-                        if (maximizedSide === "library") restoreSplit();
-                        else maximizeLibrary();
-                        break;
-                      case "PageDown":
-                        e.preventDefault();
-                        if (maximizedSide === "scanner") restoreSplit();
-                        else maximizeScanner();
-                        break;
-                    }
-                  }}
-                  title="Drag to resize - double-click to reset - arrows/Home/PageUp/PageDown for keyboard control"
-                  className="group flex h-full w-full items-center justify-center cursor-col-resize select-none touch-none outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 focus-visible:ring-offset-background rounded-sm"
-                >
-                  <div className="h-16 w-1 rounded-full bg-border group-hover:bg-primary/60 group-active:bg-primary group-focus-visible:bg-primary transition-colors" />
-                </div>
-
-              </div>
-
               {/* Right: Photo Library - Compact */}
               <div
                 className={`tru-scan-library-panel tru-scan-library-compact relative transition-colors ${isDraggingFiles ? "ring-2 ring-primary ring-offset-2 ring-offset-background" : ""}`}
