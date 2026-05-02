@@ -425,29 +425,124 @@ function Bracket({ pos }: { pos: "tl" | "tr" | "bl" | "br" }) {
 }
 
 /* ============================================================
-   Status bar (scanning state)
+   Status bar (scanning + complete states)
 ============================================================ */
 function StatusBar({
-  current, total, itemsFound, etaSec,
+  current, total, itemsFound, etaSec, complete, roomCount, slim, onRescan, onDismiss,
 }: {
   current: number; total: number; itemsFound: number; etaSec: number;
+  complete: boolean; roomCount: number;
+  slim?: boolean;
+  onRescan?: () => void;
+  onDismiss?: () => void;
 }) {
+  if (complete && slim) {
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="rounded-lg px-3 lg:px-5 py-2 flex items-center justify-between"
+        style={{ background: "rgba(255,255,255,0.02)", border: "0.5px solid rgba(255,255,255,0.06)" }}
+      >
+        <div className="flex items-center gap-2.5">
+          <CheckCircle2 className="w-4 h-4 text-[#00ff88]" />
+          <span className="text-[13px] text-white/90 font-medium">Ready to review</span>
+          <span className="text-[12px] text-[#a8b3c0]">
+            {itemsFound} items · {roomCount} {roomCount === 1 ? "room" : "rooms"}
+          </span>
+        </div>
+        {onRescan && (
+          <button
+            onClick={onRescan}
+            className="flex items-center gap-1.5 text-[12px] text-[#a8b3c0] hover:text-white transition-colors"
+          >
+            <RotateCcw className="w-3 h-3" /> Re-scan
+          </button>
+        )}
+      </motion.div>
+    );
+  }
+
+  if (complete) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, scale: 0.98 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
+        className="rounded-lg flex items-center justify-between"
+        style={{
+          background: "rgba(0,255,136,0.08)",
+          border: "0.5px solid rgba(0,255,136,0.4)",
+          padding: "14px 20px",
+          minHeight: 56,
+        }}
+      >
+        <div className="flex items-center gap-3">
+          <motion.div
+            initial={{ scale: 0.6, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 400, damping: 18 }}
+          >
+            <CheckCircle2 className="w-[18px] h-[18px] text-[#00ff88]" fill="rgba(0,255,136,0.18)" />
+          </motion.div>
+          <div className="flex flex-col">
+            <span className="text-[14px] text-white font-medium leading-tight">Scan complete</span>
+            <span className="text-[12px] text-[#a8b3c0] leading-tight mt-0.5">
+              {itemsFound} items detected across {roomCount} {roomCount === 1 ? "room" : "rooms"}
+            </span>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          {onRescan && (
+            <button
+              onClick={onRescan}
+              className="h-7 px-2.5 rounded text-[12px] text-white/80 hover:text-white border border-white/15 hover:border-white/30 transition-colors flex items-center gap-1.5"
+            >
+              <RotateCcw className="w-3 h-3" /> Re-scan
+            </button>
+          )}
+          {onDismiss && (
+            <button
+              onClick={onDismiss}
+              className="text-white/50 hover:text-white p-1"
+              aria-label="Dismiss"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          )}
+        </div>
+      </motion.div>
+    );
+  }
+
   return (
     <div
-      className="rounded-lg px-3 py-2.5 flex items-center justify-between"
-      style={{ background: "rgba(0,255,136,0.04)", border: "0.5px solid rgba(0,255,136,0.15)" }}
+      className="rounded-lg flex items-center justify-between"
+      style={{
+        background: "rgba(0,255,136,0.04)",
+        border: "0.5px solid rgba(0,255,136,0.15)",
+        padding: "14px 20px",
+        minHeight: 56,
+      }}
     >
       <div className="flex items-center gap-3">
-        <Loader2 className="w-4 h-4 text-[#00ff88] animate-spin" />
-        <span className="text-[12px] text-white font-medium">
-          Analyzing {current} of {total} photos
-        </span>
-        <span className="text-[11px] text-white/50">
-          Found {itemsFound} items so far
-        </span>
+        <div className="relative w-[18px] h-[18px] flex items-center justify-center">
+          <Loader2
+            className="w-[18px] h-[18px] text-[#00ff88] animate-spin"
+            style={{ filter: "drop-shadow(0 0 6px rgba(0,255,136,0.5))" }}
+          />
+        </div>
+        <div className="flex flex-col">
+          <span className="text-[14px] text-white font-medium leading-tight">
+            Analyzing {current} of {total} {total === 1 ? "photo" : "photos"}
+          </span>
+          <span className="text-[12px] text-[#a8b3c0] leading-tight mt-0.5">
+            Found {itemsFound} items so far
+          </span>
+        </div>
       </div>
-      <div className="text-[11px] text-white/50">
-        {etaSec > 0 ? `~${etaSec}s remaining` : "Wrapping up..."}
+      <div className="text-[12px] font-mono text-[#00ff88]">
+        {etaSec > 0 ? `~${etaSec}s` : "wrapping up…"}
       </div>
     </div>
   );
