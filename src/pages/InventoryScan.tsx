@@ -551,7 +551,7 @@ function ScannerCanvas({
 ============================================================ */
 function PhotoStrip({
   photos, activeId, editMode, showRoomLabels, rooms,
-  onSelect, onDelete, onAdd, onPhotoDragStart,
+  onSelect, onDelete, onAdd, onPhotoDragStart, detectionCounts,
 }: {
   photos: Photo[];
   activeId: string | null;
@@ -562,6 +562,7 @@ function PhotoStrip({
   onDelete: (id: string) => void;
   onAdd: () => void;
   onPhotoDragStart: (photoId: string) => void;
+  detectionCounts: Record<string, number>;
 }) {
   const grouped = useMemo(() => {
     if (!showRoomLabels) return [{ room: null as Room | null, photos }];
@@ -584,25 +585,37 @@ function PhotoStrip({
       : p.status === "failed" ? "bg-red-500"
       : "bg-white/30";
     const active = p.id === activeId;
+    const itemCount = detectionCounts[p.id] || 0;
+    const truncatedName = p.file.name.length > 14 ? p.file.name.slice(0, 11) + "..." : p.file.name;
     return (
       <motion.div
         key={p.id}
         animate={editMode ? { rotate: [-1, 1, -1] } : { rotate: 0 }}
         transition={editMode ? { duration: 0.3, repeat: Infinity } : {}}
-        className="relative flex-shrink-0"
+        className="relative flex-shrink-0 group"
         draggable={editMode}
         onDragStart={() => onPhotoDragStart(p.id)}
       >
         <button
           onClick={() => onSelect(p.id)}
           className={cn(
-            "w-[64px] h-[64px] rounded-md overflow-hidden border-2 transition-all relative",
-            active ? "border-[#00ff88] shadow-[0_0_12px_rgba(0,255,136,0.4)]" : "border-white/10 hover:border-white/30"
+            "w-[64px] h-[64px] rounded-md overflow-hidden transition-all relative",
+            active ? "border-[3px] border-[#00ff88] shadow-[0_0_12px_rgba(0,255,136,0.4)]" : "border-2 border-white/10 hover:border-white/30"
           )}
         >
           <img src={p.url} alt="" className="w-full h-full object-cover" />
           <span className={cn("absolute bottom-1 right-1 w-2 h-2 rounded-full ring-2 ring-black", dotColor)} />
+          {itemCount > 0 && (
+            <span className="absolute top-1 left-1 px-1 py-px rounded-sm bg-black/80 text-[#00ff88] text-[8px] font-bold tabular-nums leading-none">
+              {itemCount}
+            </span>
+          )}
         </button>
+        {/* Filename below */}
+        <div className="text-[9px] text-white/40 mt-1 text-center truncate w-[64px] font-mono leading-tight">
+          {truncatedName}
+        </div>
+        {/* Hover X (or permanent in edit mode) */}
         {editMode && (
           <button
             onClick={() => onDelete(p.id)}
@@ -610,6 +623,15 @@ function PhotoStrip({
             aria-label="Delete photo"
           >
             <X className="w-3 h-3" strokeWidth={3} />
+          </button>
+        )}
+        {!editMode && (
+          <button
+            onClick={(e) => { e.stopPropagation(); onDelete(p.id); }}
+            className="absolute -top-1.5 -left-1.5 w-5 h-5 rounded-full bg-black/80 border border-white/20 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-red-500 hover:border-red-500 transition-all"
+            aria-label="Delete photo"
+          >
+            <X className="w-2.5 h-2.5" strokeWidth={3} />
           </button>
         )}
       </motion.div>
