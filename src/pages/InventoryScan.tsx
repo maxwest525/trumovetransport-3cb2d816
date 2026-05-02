@@ -194,15 +194,15 @@ function TopBar({ activeStep, onSaveExit }: { activeStep: number; onSaveExit: ()
 ============================================================ */
 function Brackets({ pulse }: { pulse?: boolean }) {
   const cls = cn(
-    "absolute w-6 h-6 border-[#00ff88] pointer-events-none",
+    "absolute w-7 h-7 border-[#00ff88] pointer-events-none [filter:drop-shadow(0_0_6px_rgba(0,255,136,0.4))]",
     pulse && "animate-[pulse_2s_ease-in-out_infinite]"
   );
   return (
     <>
-      <div className={cn(cls, "top-3 left-3 border-t-2 border-l-2")} />
-      <div className={cn(cls, "top-3 right-3 border-t-2 border-r-2")} />
-      <div className={cn(cls, "bottom-3 left-3 border-b-2 border-l-2")} />
-      <div className={cn(cls, "bottom-3 right-3 border-b-2 border-r-2")} />
+      <div className={cn(cls, "top-3 left-3 border-t-[3px] border-l-[3px] rounded-tl-sm")} />
+      <div className={cn(cls, "top-3 right-3 border-t-[3px] border-r-[3px] rounded-tr-sm")} />
+      <div className={cn(cls, "bottom-3 left-3 border-b-[3px] border-l-[3px] rounded-bl-sm")} />
+      <div className={cn(cls, "bottom-3 right-3 border-b-[3px] border-r-[3px] rounded-br-sm")} />
     </>
   );
 }
