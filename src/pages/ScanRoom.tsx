@@ -451,6 +451,8 @@ export default function ScanRoom() {
   const [newFolderDraft, setNewFolderDraft] = useState("");
   const [renamingFolder, setRenamingFolder] = useState<string | null>(null);
   const [renameDraft, setRenameDraft] = useState("");
+  // "View all folders" modal for the empty-state library quick-pick grid.
+  const [showAllFoldersModal, setShowAllFoldersModal] = useState(false);
   // Per-photo notes keyed by photo id. Free-text the customer types about a
   // specific photo (e.g. "fragile, do not stack"). Seeded from persisted state
   // so notes survive a refresh, and sent to the CRM via save-scan-room.
