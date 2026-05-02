@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Camera, Sparkles, ImageIcon, Check, LogOut, Loader2,
   ShieldCheck, Clock, ChevronDown, Plus, X, HelpCircle,
+  CheckCircle2, RotateCcw, Pencil,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
@@ -99,8 +100,6 @@ const ROOM_KEYWORDS: Record<string, string[]> = {
   bathroom: ["vanity", "toilet", "shower", "bath"],
   garage: ["lawn mower", "tool chest", "workbench", "bike", "bicycle"],
 };
-
-const STEPS = ["Upload", "Review", "Quote"] as const;
 
 const uid = () => Math.random().toString(36).slice(2, 10);
 
