@@ -117,6 +117,14 @@ function detectRoomFromItems(itemNames: string[]): { roomId: string; auto: boole
   return { roomId: "other", auto: true };
 }
 
+/* Map a Gemini room display name -> internal room id, creating one if needed. */
+function roomNameToId(name: string): string {
+  const trimmed = name.trim();
+  const match = ROOM_PALETTE.find((p) => p.name.toLowerCase() === trimmed.toLowerCase());
+  if (match) return match.id;
+  return trimmed.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") || "other";
+}
+
 /* ============================================================
    Top Bar — dot-style progress
 ============================================================ */
