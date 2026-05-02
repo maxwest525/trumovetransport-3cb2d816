@@ -4020,9 +4020,20 @@ export default function ScanRoom() {
                   <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
                     Folders ({folders.length})
                   </span>
-                  <span className="text-[10px] text-muted-foreground/70">
-                    {uploadedPhotos.length} photo{uploadedPhotos.length === 1 ? "" : "s"}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    {scannerFolderFilter && (
+                      <button
+                        type="button"
+                        onClick={() => setScannerFolderFilter(null)}
+                        className="text-[10px] font-semibold uppercase tracking-wider text-primary hover:underline underline-offset-2"
+                      >
+                        Clear filter
+                      </button>
+                    )}
+                    <span className="text-[10px] text-muted-foreground/70">
+                      {uploadedPhotos.length} photo{uploadedPhotos.length === 1 ? "" : "s"}
+                    </span>
+                  </div>
                 </div>
                 {folders.length === 0 ? (
                   <p className="text-[11px] text-muted-foreground/70 italic">
@@ -4030,17 +4041,42 @@ export default function ScanRoom() {
                   </p>
                 ) : (
                   <div className="flex flex-wrap gap-1.5">
+                    {/* "All" pseudo-folder clears the filter. */}
+                    <button
+                      type="button"
+                      onClick={() => setScannerFolderFilter(null)}
+                      className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium transition-colors ${
+                        scannerFolderFilter === null
+                          ? "border-primary bg-primary/15 text-primary"
+                          : "border-border bg-background text-foreground hover:border-primary/50 hover:bg-primary/[0.06]"
+                      }`}
+                      title="Show all detected items"
+                    >
+                      <span>All</span>
+                      <span className="font-bold">{detectedItems.length}</span>
+                    </button>
                     {folders.slice(0, 12).map((name) => {
                       const count = uploadedPhotos.filter((p) => parseRoom(p.name) === name).length;
+                      const isActive = scannerFolderFilter === name;
                       return (
-                        <span
+                        <button
+                          type="button"
                           key={name}
-                          className="inline-flex items-center gap-1 rounded-full border border-border bg-background px-2 py-0.5 text-[11px] font-medium text-foreground"
-                          title={`${name} - ${count} photo${count === 1 ? "" : "s"}`}
+                          onClick={() =>
+                            setScannerFolderFilter((prev) => (prev === name ? null : name))
+                          }
+                          className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium transition-colors ${
+                            isActive
+                              ? "border-primary bg-primary/15 text-primary"
+                              : "border-border bg-background text-foreground hover:border-primary/50 hover:bg-primary/[0.06]"
+                          }`}
+                          title={`Filter inventory by ${name} (${count} photo${count === 1 ? "" : "s"})`}
                         >
                           <span className="truncate max-w-[120px]">{name}</span>
-                          <span className="text-primary font-bold">{count}</span>
-                        </span>
+                          <span className={isActive ? "font-bold" : "text-primary font-bold"}>
+                            {count}
+                          </span>
+                        </button>
                       );
                     })}
                     {folders.length > 12 && (
@@ -4054,13 +4090,26 @@ export default function ScanRoom() {
             );
           })()}
 
-          {/* Inventory preview - top 3 most recent detected items. */}
+          {/* Inventory preview - top 3 most recent detected items. When a
+              folder filter is active, only items whose source photo lives in
+              that folder are considered. */}
+          {(() => {
+            const filteredItems = scannerFolderFilter
+              ? detectedItems.filter((it) => {
+                  if (!it.photoId) return false;
+                  const photo = uploadedPhotos.find((p) => p.id === it.photoId);
+                  if (!photo) return false;
+                  return parseRoom(photo.name) === scannerFolderFilter;
+                })
+              : detectedItems;
+            return (
           <div className="rounded-xl border border-border bg-muted/20 p-3">
             <div className="flex items-center justify-between mb-2">
               <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
-                Inventory ({detectedItems.length})
+                Inventory ({filteredItems.length}
+                {scannerFolderFilter ? ` in ${scannerFolderFilter}` : ""})
               </span>
-              {detectedItems.length > 3 && (
+              {filteredItems.length > 3 && (
                 <button
                   type="button"
                   onClick={() => {
@@ -4078,7 +4127,7 @@ export default function ScanRoom() {
                   }}
                   className="text-[10px] font-semibold uppercase tracking-wider text-primary hover:underline underline-offset-2"
                 >
-                  View all ({detectedItems.length})
+                  View all ({filteredItems.length})
                 </button>
               )}
             </div>
@@ -4086,7 +4135,7 @@ export default function ScanRoom() {
                 the list height stays consistent regardless of detection count. */}
             <ul className="space-y-1.5">
               {Array.from({ length: 3 }).map((_, i) => {
-                const recent = detectedItems.slice(-3).reverse();
+                const recent = filteredItems.slice(-3).reverse();
                 const item = recent[i];
                 if (!item) {
                   return (
@@ -4095,7 +4144,9 @@ export default function ScanRoom() {
                       className="flex items-center gap-2 rounded-md border border-dashed border-border/60 bg-background/40 px-2 py-1.5"
                     >
                       <p className="text-[11px] text-muted-foreground/60 italic">
-                        Awaiting detection...
+                        {scannerFolderFilter
+                          ? `No items in ${scannerFolderFilter} yet`
+                          : "Awaiting detection..."}
                       </p>
                     </li>
                   );
@@ -4181,6 +4232,8 @@ export default function ScanRoom() {
               })}
             </ul>
           </div>
+            );
+          })()}
         </FloatingScannerWindow>
       </div>
     </SiteShell>
