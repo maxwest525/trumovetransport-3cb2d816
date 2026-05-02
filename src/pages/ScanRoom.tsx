@@ -2134,7 +2134,7 @@ export default function ScanRoom() {
                 {/* Buttons */}
                 <div className="flex flex-col items-stretch gap-2 w-full max-w-[380px] mx-auto px-4 pb-6">
                   {!isDemoActive ? (
-                    <>
+                    uploadedPhotos.length > 0 && (
                       <button
                         onClick={handleStartScanClick}
                         disabled={isAiScanning}
@@ -2145,11 +2145,9 @@ export default function ScanRoom() {
                           ? "Scanning..."
                           : uploadedPhotos.some(p => p.id !== 'demo-photo' && !scannedPhotoIds.has(p.id))
                             ? "Scan Your Home"
-                            : uploadedPhotos.length > 0
-                              ? "Start Scanning"
-                              : "Watch Demo"}
+                            : "Start Scanning"}
                       </button>
-                    </>
+                    )
                   ) : (
                     <div className="flex items-center gap-2 w-full">
                       {demoStep < DEMO_TOTAL_STEPS && (
