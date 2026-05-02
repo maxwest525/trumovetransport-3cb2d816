@@ -1,61 +1,60 @@
 ## Goal
 
-Turn the AI scanner panel into an expandable, resizable, movable window. Inside that window, surface the photo upload library card with drag-and-drop, plus a live preview pill (total lbs, total cu.ft, and the 3 most recent detected items cycling). Keep the full inventory accessible via a "Back to inventory" button.
+Make the scan-room library panel render in a clean, predictable top-to-bottom order with no `order-*` overrides:
 
-## What this is NOT
+1. Header strip (Library label + counter + multi-select controls)
+2. Folders / photo grid (or empty-state uploader)
+3. Analyze (Start Scanning) button
 
-This is not adding a new modal. The Custom Item modal stays as-is. Drag-and-drop file upload already exists in the scanner - we're not rebuilding it, we're re-housing it inside the new floating window and adding the preview header.
+## Root cause
 
-## What changes
+The library panel (`.tru-scan-library-panel`) is a flex column. The grid wrapper currently has `order-first`, which is the leftover hack that pushed the photo grid above the header. The header itself was previously stuck to the bottom via `order-last` + `border-t`. Both should be removed, and the header should rely on natural document order with a clean bottom border.
 
-### 1. New floating scanner window (`src/components/scan/FloatingScannerWindow.tsx`)
+## Changes
 
-A new wrapper component, modeled on the existing `DraggableModal`:
+### 1. `src/pages/ScanRoom.tsx`
 
-- Movable: drag by the title bar.
-- Resizable: edge + corner handles, viewport-clamped (cannot be dragged or resized off-screen).
-- Window controls in the title bar: Expand / Restore / Close.
-- "Expand" maximizes to ~95vw x 90vh; "Restore" returns to the last user size.
-- Sensible min size (e.g. 480 x 520) and a default size that fits a laptop screen.
-- Position + size persisted in `localStorage` so it remembers across sessions.
-- Mobile: full-screen sheet behavior (no drag/resize on small viewports).
+**Library panel children (around lines 2207, 2396):**
 
-### 2. Live preview header (inside the window, above the upload card)
+- Header wrapper (line 2207): keep current natural-order classes, drop the `mb-3` margin since the panel already provides a `0.5rem` flex `gap`. Result:
+  ```tsx
+  <div className="tru-scan-library-header">
+  ```
+  (Remove `mb-3 pb-2 border-b` - the base `.tru-scan-library-header` CSS rule already supplies `padding-bottom` + `border-bottom`.)
 
-A single horizontal pill row that always shows:
+- Grid wrapper (line 2396): remove `order-first`. Result:
+  ```tsx
+  <div className="tru-scan-library-grid tru-scan-library-grid-compact">
+  ```
 
-- Total weight (lbs) of detected inventory.
-- Total volume (cu.ft) of detected inventory.
-- A rotating slot showing 3 most recently detected items (cycles every ~2.5s if more than 3 exist).
-- A "Back to inventory" button on the right that closes the floating window and returns the user to the full inventory view.
+No other elements use `order-*` inside the panel.
 
-Counts come from the existing `detectedItems` state already in `ScanRoom.tsx`.
+### 2. `src/index.css`
 
-### 3. Upload card moved into the window
+No structural changes needed - the existing `.tru-scan-library-panel` flex column + per-section padding/border rules already produce the correct visual stack once the `order-first` hack is removed.
 
-The existing Library panel (the right-hand column at `ScanRoom.tsx` ~line 2167) is lifted out and rendered inside the new floating window. All existing behavior is preserved:
+(Optional cleanup: the inline `[border-bottom:0] border-t pt-2` styles were added during the bottom-pinned phase and have already been replaced by my prior edit, so nothing further is required in CSS.)
 
-- Click to upload.
-- Drag-and-drop files onto the card (already wired via `handleLibraryDrop`).
-- Folders, multi-select, batch move, scan triggers - unchanged.
+## Resulting DOM order (desktop and mobile)
 
-### 4. Trigger to open the window
+```text
+.tru-scan-library-panel  (flex column, gap 0.5rem)
+  .tru-scan-library-header     <- title, counter, multi-select tools
+  .tru-scan-library-grid       <- folders + photo grid OR empty-state uploader
+  .tru-scan-library-analyze-btn <- "Start Scanning"
+```
 
-Add an "Open scanner" / "Expand scanner" button on the scan page. When clicked, the floating window mounts. The existing inline split-pane layout still works for users who prefer it; the floating window is an additional view, not a replacement, so we don't break the current flow.
+Mobile breakpoint already collapses the outer scan-room split to a single column (`grid-cols-1`); the panel itself is unchanged across breakpoints, so the same order applies.
 
-## Files touched
+## Verification
 
-- New: `src/components/scan/FloatingScannerWindow.tsx`
-- New: `src/components/scan/ScannerPreviewPill.tsx` (the lbs/cu.ft + cycling items header)
-- Edit: `src/pages/ScanRoom.tsx` - add the open button, mount the floating window, pass `detectedItems` and the existing library handlers in as props. No logic rewrites.
+After the edit, on `/scan-room`:
+
+- Desktop (>=1024px): right-side panel shows Header -> Folders/Empty uploader -> Start Scanning button.
+- Mobile (<1024px): panel stacks below the scanner with the same internal order.
+- No `order-*` classes remain inside `.tru-scan-library-panel` (grep confirms).
 
 ## Technical notes
 
-- Reuse drag/resize math from `src/components/ui/DraggableModal.tsx` (already viewport-clamped and battle-tested) instead of writing new geometry code.
-- Cycling preview uses a `setInterval` with a 3-item window over `detectedItems`, cleared on unmount.
-- All colors via semantic tokens (`var(--primary)`, `var(--background)`), per project rules. No em dashes in copy.
-- No backend changes, no new tables, no new edge functions.
-
-## Open question (non-blocking, can decide during build)
-
-Should opening the floating window auto-collapse the inline split-pane scanner so there's only one scanner UI visible at a time? Default plan: yes, hide the inline scanner while the floating window is open, restore it on close.
+- The base `.tru-scan-library-header` rule already provides `padding-bottom: 0.5rem` and `border-bottom: 1px solid hsl(var(--border))`, so we don't need Tailwind utilities to recreate them.
+- The panel's `gap: 0.75rem` (or `0.5rem` in compact mode) handles vertical spacing - extra `mb-*` utilities would double the gap.

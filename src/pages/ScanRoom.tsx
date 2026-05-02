@@ -2204,7 +2204,7 @@ export default function ScanRoom() {
                   </div>
                 )}
 
-                <div className="tru-scan-library-header mb-3 pb-2 border-b">
+                <div className="tru-scan-library-header">
                   <FolderOpen className="w-3.5 h-3.5" />
                   <span>Library</span>
                   <span className="tru-scan-library-count">{uploadedPhotos.length}</span>
@@ -2393,7 +2393,7 @@ export default function ScanRoom() {
                   onChange={handleAllUpload}
                 />
 
-                <div className="tru-scan-library-grid tru-scan-library-grid-compact order-first">
+                <div className="tru-scan-library-grid tru-scan-library-grid-compact">
                   {uploadedPhotos.length === 0 ? (
                     <div className="tru-scan-library-empty tru-scan-library-empty-compact flex flex-col items-center gap-3 py-3">
                       {/* Primary drop zone - the "easy path" */}
