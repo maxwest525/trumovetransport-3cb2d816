@@ -395,8 +395,8 @@ export default function OnlineEstimate() {
 
           {/* Conditional Layout: 2-column when locked or unlocked - move details pre-captured from homepage form */}
           {!wizardComplete ?
-          // LOCKED STATE: Two-Column Layout - Inventory (left) | Summary (right)
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-6 items-start">
+          // LOCKED STATE: Single-Column Layout - Inventory only
+          <div className="grid grid-cols-1 gap-6 items-start">
             {/* Left Column - Inventory Builder + Inventory Table */}
             <div className="relative w-full min-w-0 space-y-6">
               <div className="rounded-2xl border border-border/60 bg-card shadow-lg w-full overflow-hidden tru-estimate-card-frame">
@@ -440,11 +440,6 @@ export default function OnlineEstimate() {
                     onReorder={handleReorder} />
                 </div>
               )}
-            </div>
-
-            {/* Right Column - Summary (far right) */}
-            <div className="hidden lg:block lg:sticky lg:top-6">
-              <QuoteSnapshotVertical items={items} moveDetails={moveDetails} extendedDetails={extendedDetails} onEdit={() => {}} />
             </div>
           </div> : (
 
