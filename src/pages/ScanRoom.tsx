@@ -723,10 +723,47 @@ export default function ScanRoom() {
   const [showScannerPopout, setShowScannerPopout] = useState(false);
   // Resizable/movable scanner window. Independent of the legacy "Pop Out" modal -
   // this one houses the Add Photo uploader plus a live preview pill.
-  const [showFloatingScanner, setShowFloatingScanner] = useState(false);
-  // Folder filter applied to the inventory preview inside the floating
-  // scanner window. `null` = show all detected items.
-  const [scannerFolderFilter, setScannerFolderFilter] = useState<string | null>(null);
+  // Floating scanner UI state - persisted across reloads so customers return
+  // to the same view (window open/closed and active folder filter) they left.
+  const [showFloatingScanner, setShowFloatingScanner] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    try {
+      return localStorage.getItem("tm_scanner_open_v1") === "true";
+    } catch {
+      return false;
+    }
+  });
+  const [scannerFolderFilter, setScannerFolderFilter] = useState<string | null>(() => {
+    if (typeof window === "undefined") return null;
+    try {
+      const raw = localStorage.getItem("tm_scanner_folder_filter_v1");
+      return raw && raw.length > 0 ? raw : null;
+    } catch {
+      return null;
+    }
+  });
+
+  // Persist on change. Use try/catch so private-mode storage failures never
+  // break the UI.
+  useEffect(() => {
+    try {
+      localStorage.setItem("tm_scanner_open_v1", showFloatingScanner ? "true" : "false");
+    } catch {
+      /* ignore */
+    }
+  }, [showFloatingScanner]);
+
+  useEffect(() => {
+    try {
+      if (scannerFolderFilter) {
+        localStorage.setItem("tm_scanner_folder_filter_v1", scannerFolderFilter);
+      } else {
+        localStorage.removeItem("tm_scanner_folder_filter_v1");
+      }
+    } catch {
+      /* ignore */
+    }
+  }, [scannerFolderFilter]);
   // Short-lived counter of photos currently being ingested. URL.createObjectURL
   // is synchronous, but flashing a "Saving N photos..." chip gives the user
   // visible feedback that their drop/select was received.
