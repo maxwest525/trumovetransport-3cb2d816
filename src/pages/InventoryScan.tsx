@@ -284,6 +284,11 @@ function DetectionBoxes({
       {detections.map((d, i) => {
         const color = confidenceColor(d.confidence);
         const highlighted = highlightedId === d.id;
+        const isLow = d.confidence < 70;
+        const isMid = d.confidence >= 70 && d.confidence < 85;
+        const dashed = isLow || isMid;
+        // Label vertical placement: shift below if too close to top edge
+        const labelBelow = d.bbox.y < 0.06;
         return (
           <motion.button
             key={d.id}
@@ -300,16 +305,47 @@ function DetectionBoxes({
               top: `${d.bbox.y * 100}%`,
               width: `${d.bbox.width * 100}%`,
               height: `${d.bbox.height * 100}%`,
-              border: `${highlighted ? 3 : 2}px solid ${color}`,
+              border: `${highlighted ? 3 : 2}px ${dashed ? "dashed" : "solid"} ${color}`,
               boxShadow: highlighted ? `0 0 16px ${color}80` : undefined,
               borderRadius: 4,
+              zIndex: highlighted ? 30 : 10 + Math.round(d.confidence / 10),
             }}
           >
+            {/* Label pill — positioned above box (or below near top edge) with tail */}
             <div
-              className="absolute -top-[22px] left-0 px-1.5 py-0.5 rounded-sm text-[10px] font-semibold whitespace-nowrap"
+              className={cn(
+                "absolute left-0 flex items-center gap-1 px-1.5 py-[3px] rounded-[3px] text-[10px] font-semibold leading-none max-w-[160px] truncate shadow-sm",
+                labelBelow ? "top-full mt-[6px]" : "bottom-full mb-[6px]"
+              )}
               style={{ background: color, color: "#000" }}
             >
-              {d.itemName}
+              <span className="truncate">{d.itemName}</span>
+              {isLow && <span className="font-bold">?</span>}
+              {/* Tail */}
+              <span
+                className="absolute left-2 w-0 h-0"
+                style={{
+                  [labelBelow ? "top" : "bottom"]: -3,
+                  borderLeft: "3px solid transparent",
+                  borderRight: "3px solid transparent",
+                  [labelBelow ? "borderBottom" : "borderTop"]: `3px solid ${color}`,
+                } as React.CSSProperties}
+              />
+            </div>
+
+            {/* Hover tooltip with details */}
+            <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50">
+              <div className="bg-black/95 backdrop-blur-sm border border-white/10 rounded-md px-3 py-2 min-w-[160px] shadow-xl">
+                <div className="text-[12px] font-semibold text-white">{d.itemName}</div>
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <span className="w-1.5 h-1.5 rounded-full" style={{ background: color }} />
+                  <span className="text-[10px] text-white/60">{Math.round(d.confidence)}% confidence</span>
+                </div>
+                <div className="text-[10px] text-white/50 mt-1 tabular-nums">
+                  ~{d.weight}lbs · {d.cubicFeet}cu ft
+                </div>
+                <div className="text-[10px] text-[#00ff88] mt-1 font-medium">✎ Click to edit</div>
+              </div>
             </div>
           </motion.button>
         );
