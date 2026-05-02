@@ -716,22 +716,19 @@ function RoomSidebar({
         )}
       >
         {isAll ? (
-          <Layers className="w-4 h-4 flex-shrink-0" />
+          <Layers className="w-3.5 h-3.5 flex-shrink-0" />
         ) : (
           <span
-            className="w-4 h-4 rounded-sm flex-shrink-0"
+            className="w-3 h-3 rounded-sm flex-shrink-0"
             style={{ background: color ? `${COLOR_TINT[color]}40` : undefined, border: color ? `1px solid ${COLOR_TINT[color]}` : undefined }}
           />
         )}
         <span className="text-[13px] flex-1 truncate font-medium">{name}</span>
-        <span
-          className={cn(
-            "text-[11px] font-semibold tabular-nums px-1.5 py-0.5 rounded min-w-[22px] text-center",
-            count > 0 ? "bg-white/5 text-[#00ff88]" : "bg-white/5 text-white/30"
-          )}
-        >
-          {count}
-        </span>
+        {count > 0 && (
+          <span className="text-[10px] font-bold tabular-nums px-1.5 py-0.5 rounded-full bg-[#00ff88]/15 text-[#00ff88] min-w-[20px] text-center">
+            {count}
+          </span>
+        )}
       </button>
     );
   };
@@ -783,22 +780,25 @@ function RoomSidebar({
         )}
       </div>
 
-      <div className="p-4 border-t border-white/[0.06]">
-        <div className="text-[10px] font-semibold text-white/40 uppercase tracking-[0.1em] mb-2 px-1">Summary</div>
-        <div className="space-y-1.5">
-          <div className="flex items-center justify-between text-[12px]">
-            <span className="text-white/50">Total items</span>
-            <span className="text-white font-semibold tabular-nums">{items.reduce((s, i) => s + i.quantity, 0)}</span>
+      <div className="p-4 border-t border-white/[0.06] bg-black/40">
+        <div className="text-[10px] font-semibold text-[#00ff88]/70 uppercase tracking-[0.15em] mb-3 px-1">Live Summary</div>
+        <div className="divide-y divide-white/[0.06]">
+          <div className="py-2.5">
+            <div className="text-[9px] uppercase tracking-[0.12em] text-white/40 mb-0.5">Total items</div>
+            <div className="text-[18px] font-semibold text-white tabular-nums leading-none">
+              {items.reduce((s, i) => s + i.quantity, 0)}
+            </div>
           </div>
-          <div className="flex items-center justify-between text-[12px]">
-            <span className="text-white/50">Active rooms</span>
-            <span className="text-white/70 tabular-nums">{roomsWithContent}</span>
+          <div className="py-2.5">
+            <div className="text-[9px] uppercase tracking-[0.12em] text-white/40 mb-0.5">Active rooms</div>
+            <div className="text-[18px] font-semibold text-white tabular-nums leading-none">{roomsWithContent}</div>
           </div>
-          <div className="flex items-center justify-between text-[12px]">
-            <span className="text-white/50">Total weight</span>
-            <span className="text-white font-semibold tabular-nums">
-              {Math.round(totalWeight).toLocaleString()} <span className="text-white/40 font-normal">lbs</span>
-            </span>
+          <div className="py-2.5">
+            <div className="text-[9px] uppercase tracking-[0.12em] text-white/40 mb-0.5">Total weight</div>
+            <div className="text-[18px] font-semibold text-white tabular-nums leading-none">
+              {Math.round(totalWeight).toLocaleString()}
+              <span className="text-[11px] text-white/40 font-normal ml-1">lbs</span>
+            </div>
           </div>
         </div>
       </div>
