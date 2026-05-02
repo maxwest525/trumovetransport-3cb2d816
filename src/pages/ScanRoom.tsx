@@ -4309,6 +4309,69 @@ export default function ScanRoom() {
           })()}
         </FloatingScannerWindow>
       </div>
+      {/* All-folders modal: triggered from the empty-state library "View all" link. */}
+      <Dialog open={showAllFoldersModal} onOpenChange={setShowAllFoldersModal}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>All folders</DialogTitle>
+            <DialogDescription>
+              Pick a folder to add photos, or create a new one.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex items-center gap-2">
+            <Input
+              value={newFolderDraft}
+              onChange={(e) => setNewFolderDraft(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && newFolderDraft.trim()) {
+                  e.preventDefault();
+                  addCustomFolder(newFolderDraft);
+                  setNewFolderDraft("");
+                }
+              }}
+              placeholder="New folder name"
+              className="h-9 text-sm"
+            />
+            <Button
+              type="button"
+              size="sm"
+              onClick={() => {
+                if (newFolderDraft.trim()) {
+                  addCustomFolder(newFolderDraft);
+                  setNewFolderDraft("");
+                }
+              }}
+            >
+              <FolderPlus className="w-4 h-4" />
+              Add
+            </Button>
+          </div>
+          <div className="grid grid-cols-3 gap-2 max-h-[50vh] overflow-y-auto">
+            {[
+              { icon: Sofa, label: "Living", room: "Living Room" },
+              { icon: BedDouble, label: "Bed", room: "Bedroom" },
+              { icon: UtensilsCrossed, label: "Kitchen", room: "Kitchen" },
+              { icon: Bath, label: "Bath", room: "Bathroom" },
+              { icon: Warehouse, label: "Garage", room: "Garage" },
+              { icon: Box, label: "Storage", room: "Storage" },
+              ...customFolders.map((name) => ({ icon: FolderOpen, label: name, room: name })),
+            ].map(({ icon: Icon, label, room }) => (
+              <button
+                key={room}
+                type="button"
+                onClick={() => {
+                  setShowAllFoldersModal(false);
+                  handleRoomClick(room);
+                }}
+                className="flex flex-col items-center gap-1 rounded-lg border border-border bg-muted/30 px-2 py-3 text-xs font-medium text-foreground hover:bg-muted/60 hover:border-primary/40 transition-colors cursor-pointer"
+              >
+                <Icon className="w-4 h-4 flex-shrink-0" />
+                <span className="truncate max-w-full">{label}</span>
+              </button>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
     </SiteShell>
   );
 }
