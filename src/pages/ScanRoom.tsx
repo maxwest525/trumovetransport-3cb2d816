@@ -2459,10 +2459,14 @@ export default function ScanRoom() {
                             icon: FolderOpen,
                             label: name.length > 8 ? `${name.slice(0, 8)}…` : name,
                             room: name,
+                            isCustom: true,
                           }));
                           // Custom folders the customer just added show first so
                           // they're easy to find; defaults follow.
-                          const allRooms = [...customAsRooms, ...defaultRooms];
+                          const allRooms = [
+                            ...customAsRooms,
+                            ...defaultRooms.map((r) => ({ ...r, isCustom: false })),
+                          ];
                           const VISIBLE = 5; // 5 + Add folder tile = 6 total
                           const visibleRooms = allRooms.slice(0, VISIBLE);
                           const hasMore = allRooms.length > VISIBLE;
@@ -2527,16 +2531,33 @@ export default function ScanRoom() {
                                     <span>Add folder</span>
                                   </button>
                                 )}
-                                {visibleRooms.map(({ icon: Icon, label, room }) => (
-                                  <button
-                                    key={room}
-                                    type="button"
-                                    onClick={() => handleRoomClick(room)}
-                                    className="flex flex-col items-center gap-1 rounded-lg border border-border bg-muted/30 px-2 py-2.5 text-[11px] font-medium text-muted-foreground/70 hover:bg-muted/60 hover:text-foreground hover:border-foreground/20 transition-colors cursor-pointer"
-                                  >
-                                    <Icon className="w-3.5 h-3.5 flex-shrink-0" />
-                                    <span className="truncate max-w-full">{label}</span>
-                                  </button>
+                                {visibleRooms.map(({ icon: Icon, label, room, isCustom }) => (
+                                  <div key={room} className="relative group">
+                                    <button
+                                      type="button"
+                                      onClick={() => handleRoomClick(room)}
+                                      className="w-full flex flex-col items-center gap-1 rounded-lg border border-border bg-muted/30 px-2 py-2.5 text-[11px] font-medium text-muted-foreground/70 hover:bg-muted/60 hover:text-foreground hover:border-foreground/20 transition-colors cursor-pointer"
+                                    >
+                                      <Icon className="w-3.5 h-3.5 flex-shrink-0" />
+                                      <span className="truncate max-w-full">{label}</span>
+                                    </button>
+                                    {isCustom && (
+                                      <button
+                                        type="button"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          if (confirm(`Delete folder "${room}"? Photos inside will move to All.`)) {
+                                            removeCustomFolder(room);
+                                          }
+                                        }}
+                                        className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-background border border-border text-muted-foreground hover:bg-destructive hover:text-destructive-foreground hover:border-destructive flex items-center justify-center opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity"
+                                        aria-label={`Delete folder ${room}`}
+                                        title="Delete folder"
+                                      >
+                                        <X className="w-2.5 h-2.5" />
+                                      </button>
+                                    )}
+                                  </div>
                                 ))}
                               </div>
                               {hasMore && (
