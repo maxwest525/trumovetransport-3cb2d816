@@ -1491,6 +1491,8 @@ export default function InventoryScan() {
                   room={rooms.find((r) => r.id === activePhoto?.roomId)}
                   onChangeRoom={(rid) => activePhoto && reassignPhoto(activePhoto.id, rid)}
                   allRooms={rooms}
+                  onEnhance={enhancePhoto}
+                  onDismissQuality={dismissQuality}
                 />
 
                 <PhotoStrip
