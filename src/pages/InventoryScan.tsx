@@ -6,7 +6,7 @@ import {
   Upload, Sparkles, Pencil, Plus, Check, ChevronDown, ChevronRight,
   LogOut, HelpCircle, Loader2, X, Trash2, Image as ImageIcon,
   Cpu, ShieldCheck, Headphones, AlertTriangle, Camera, Square, ArrowRight,
-  Layers, Play, Zap, Pause, FolderPlus,
+  Layers, Play, Zap, Pause, FolderPlus, Eye, EyeOff, Brain,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
@@ -130,9 +130,9 @@ const confidenceColor = (c: number) =>
 function TopBar({ activeStep, onSaveExit }: { activeStep: number; onSaveExit: () => void }) {
   return (
     <header className="h-16 border-b border-white/[0.06] bg-black flex items-center px-6 flex-shrink-0">
-      <div className="flex items-center gap-2 w-[200px]">
-        <img src={logoImg} alt="TruMove" className="h-5 brightness-0 invert" />
-        <span className="text-[11px] text-[#00ff88]/70 font-mono mt-0.5">™</span>
+      <div className="flex items-center gap-1.5 w-[200px]">
+        <img src={logoImg} alt="TruMove" className="h-[18px] brightness-0 invert" />
+        <span className="text-[10px] text-[#00ff88] font-mono mt-0.5 font-bold">™</span>
       </div>
 
       <div className="flex-1 flex items-center justify-center">
@@ -144,10 +144,10 @@ function TopBar({ activeStep, onSaveExit }: { activeStep: number; onSaveExit: ()
               <div key={label} className="flex items-center gap-3">
                 <div className="flex flex-col items-center gap-1.5">
                   <motion.div
-                    animate={active ? { boxShadow: ["0 0 8px rgba(0,255,136,0.4)", "0 0 20px rgba(0,255,136,0.7)", "0 0 8px rgba(0,255,136,0.4)"] } : {}}
+                    animate={active ? { boxShadow: ["0 0 12px rgba(0,255,136,0.4)", "0 0 22px rgba(0,255,136,0.75)", "0 0 12px rgba(0,255,136,0.4)"] } : {}}
                     transition={{ duration: 2, repeat: Infinity }}
                     className={cn(
-                      "w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-semibold transition-all duration-300",
+                      "w-7 h-7 rounded-full flex items-center justify-center text-[14px] font-semibold transition-all duration-300",
                       done && "bg-[#00ff88] text-black",
                       active && "bg-[#00ff88] text-black",
                       !done && !active && "border border-white/15 text-white/40"
@@ -161,7 +161,7 @@ function TopBar({ activeStep, onSaveExit }: { activeStep: number; onSaveExit: ()
                   )}>{label}</span>
                 </div>
                 {i < STEPS.length - 1 && (
-                  <div className="w-12 h-px bg-white/10 relative -mt-4 overflow-hidden">
+                  <div className="w-12 h-0.5 bg-white/10 relative -mt-4 overflow-hidden rounded-full">
                     <motion.div
                       className="h-full bg-[#00ff88]"
                       initial={{ width: "0%" }}
@@ -194,15 +194,15 @@ function TopBar({ activeStep, onSaveExit }: { activeStep: number; onSaveExit: ()
 ============================================================ */
 function Brackets({ pulse }: { pulse?: boolean }) {
   const cls = cn(
-    "absolute w-6 h-6 border-[#00ff88] pointer-events-none",
+    "absolute w-7 h-7 border-[#00ff88] pointer-events-none [filter:drop-shadow(0_0_6px_rgba(0,255,136,0.4))]",
     pulse && "animate-[pulse_2s_ease-in-out_infinite]"
   );
   return (
     <>
-      <div className={cn(cls, "top-3 left-3 border-t-2 border-l-2")} />
-      <div className={cn(cls, "top-3 right-3 border-t-2 border-r-2")} />
-      <div className={cn(cls, "bottom-3 left-3 border-b-2 border-l-2")} />
-      <div className={cn(cls, "bottom-3 right-3 border-b-2 border-r-2")} />
+      <div className={cn(cls, "top-3 left-3 border-t-[3px] border-l-[3px] rounded-tl-sm")} />
+      <div className={cn(cls, "top-3 right-3 border-t-[3px] border-r-[3px] rounded-tr-sm")} />
+      <div className={cn(cls, "bottom-3 left-3 border-b-[3px] border-l-[3px] rounded-bl-sm")} />
+      <div className={cn(cls, "bottom-3 right-3 border-b-[3px] border-r-[3px] rounded-br-sm")} />
     </>
   );
 }
@@ -262,7 +262,7 @@ function DetectionBoxes({
 ============================================================ */
 function ScannerCanvas({
   activePhoto, highlightedDetectionId, onHoverDetection, onClickDetection,
-  onDrop, isScanning, onHelp,
+  onDrop, isScanning, activeRoomName, showBrackets,
 }: {
   activePhoto: Photo | null;
   highlightedDetectionId: string | null;
@@ -270,7 +270,8 @@ function ScannerCanvas({
   onClickDetection: (d: Detection) => void;
   onDrop: (files: File[]) => void;
   isScanning: boolean;
-  onHelp: () => void;
+  activeRoomName: string;
+  showBrackets: boolean;
 }) {
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     onDrop,
@@ -288,45 +289,34 @@ function ScannerCanvas({
         isDragActive ? "border-[#00ff88] shadow-[0_0_32px_rgba(0,255,136,0.25)]" : "border-white/[0.06]",
         !activePhoto && "cursor-pointer"
       )}
-      style={{ aspectRatio: "16 / 9" }}
+      style={{ aspectRatio: "16 / 10" }}
     >
       <input {...getInputProps()} />
-
-      {/* How it works floating button */}
-      <button
-        type="button"
-        onClick={(e) => { e.stopPropagation(); onHelp(); }}
-        className="absolute top-3 right-3 z-10 flex items-center gap-1.5 text-[11px] text-white/70 hover:text-[#00ff88] bg-black/60 backdrop-blur-sm border border-white/10 hover:border-[#00ff88]/40 px-2.5 py-1.5 rounded-md transition-all"
-      >
-        <HelpCircle className="w-3.5 h-3.5" />
-        How it works
-      </button>
 
       {!activePhoto && (
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
           <Brackets />
           <motion.div
-            initial={{ y: -4, opacity: 0.6 }}
-            animate={{ y: 4, opacity: 1 }}
-            transition={{ duration: 2, repeat: Infinity, repeatType: "reverse", ease: "easeInOut" }}
+            animate={{ scale: [1, 1.05, 1] }}
+            transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
             className="mb-5 relative"
           >
-            <div className="relative w-20 h-20 flex items-center justify-center">
-              <div className="absolute inset-0 rounded-2xl bg-[#00ff88]/10 blur-xl" />
+            <div className="relative w-[72px] h-[72px] flex items-center justify-center">
+              <div className="absolute inset-0 rounded-2xl bg-[#00ff88]/15 blur-xl" />
               <Camera className="w-14 h-14 text-[#00ff88]" strokeWidth={1.25} />
-              <Sparkles className="absolute -top-1 -right-1 w-5 h-5 text-[#00ff88]" />
+              <Sparkles className="absolute -top-1 -right-1 w-5 h-5 text-[#00ff88]" fill="#00ff88" />
             </div>
           </motion.div>
-          <h2 className="text-2xl font-semibold text-white mb-2">
+          <h2 className="text-[22px] font-semibold text-white mb-1.5">
             {isDragActive ? "Drop to upload" : "Drop photos here"}
           </h2>
-          <p className="text-sm text-white/50 mb-6">
+          <p className="text-[13px] text-white/50 mb-5">
             or click to browse — JPG, PNG, HEIC up to 20MB each
           </p>
           <button
             type="button"
             onClick={(e) => { e.stopPropagation(); open(); }}
-            className="px-5 py-2.5 rounded-md bg-[#00ff88] text-black font-semibold text-sm hover:bg-[#00ff88]/90 hover:shadow-[0_0_20px_rgba(0,255,136,0.4)] transition-all"
+            className="h-11 w-[140px] rounded-md bg-[#00ff88] text-black font-semibold text-sm hover:bg-[#00ff88]/90 hover:shadow-[0_0_20px_rgba(0,255,136,0.4)] transition-all"
           >
             Browse files
           </button>
@@ -340,7 +330,7 @@ function ScannerCanvas({
             alt="Room"
             className="absolute inset-0 w-full h-full object-cover"
           />
-          <Brackets pulse={isScanning} />
+          {showBrackets && <Brackets pulse={isScanning} />}
 
           <div className="absolute top-4 left-4 bg-black/70 backdrop-blur-sm border border-white/10 rounded-md px-3 py-2 flex items-center gap-2">
             <Camera className="w-3.5 h-3.5 text-[#00ff88]" />
@@ -367,12 +357,14 @@ function ScannerCanvas({
             </motion.div>
           )}
 
-          <DetectionBoxes
-            detections={activePhoto.detections}
-            highlightedId={highlightedDetectionId}
-            onHover={onHoverDetection}
-            onClick={onClickDetection}
-          />
+          {showBrackets && (
+            <DetectionBoxes
+              detections={activePhoto.detections}
+              highlightedId={highlightedDetectionId}
+              onHover={onHoverDetection}
+              onClick={onClickDetection}
+            />
+          )}
 
           {!isScanning && activePhoto.detections.length === 0 && activePhoto.status !== "failed" && activePhoto.status !== "scanned" && (
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/80 backdrop-blur-sm border border-white/10 rounded-md px-4 py-2.5 flex items-center gap-2.5 max-w-md">
@@ -395,9 +387,16 @@ function ScannerCanvas({
       )}
 
       {activePhoto && isDragActive && (
-        <div className="absolute inset-0 bg-[#00ff88]/10 border-2 border-dashed border-[#00ff88] rounded-xl flex items-center justify-center backdrop-blur-sm">
+        <div className="absolute inset-0 bg-[#00ff88]/15 border-2 border-dashed border-[#00ff88] rounded-xl flex items-center justify-center backdrop-blur-sm">
           <div className="text-white font-semibold flex items-center gap-2">
-            <Upload className="w-5 h-5" /> Drop to add more photos
+            <Upload className="w-5 h-5" /> Drop to add to {activeRoomName}
+          </div>
+        </div>
+      )}
+      {!activePhoto && isDragActive && (
+        <div className="absolute inset-0 bg-[#00ff88]/15 flex items-center justify-center pointer-events-none">
+          <div className="text-white font-semibold flex items-center gap-2">
+            <Upload className="w-5 h-5" /> Drop to add to {activeRoomName}
           </div>
         </div>
       )}
@@ -506,12 +505,15 @@ function PhotoStrip({
 ============================================================ */
 function ActionToolbar({
   onUpload, onEnhance, editMode, onToggleEdit, hasActivePhoto,
+  showBrackets, onToggleBrackets,
 }: {
   onUpload: () => void;
   onEnhance: () => void;
   editMode: boolean;
   onToggleEdit: () => void;
   hasActivePhoto: boolean;
+  showBrackets: boolean;
+  onToggleBrackets: () => void;
 }) {
   const RoundBtn = ({ icon: Icon, onClick, active, disabled, label }:
     { icon: any; onClick: () => void; active?: boolean; disabled?: boolean; label: string }) => (
@@ -523,11 +525,11 @@ function ActionToolbar({
             disabled={disabled}
             aria-label={label}
             className={cn(
-              "w-11 h-11 rounded-full border flex items-center justify-center transition-all",
+              "w-11 h-11 rounded-full border flex items-center justify-center transition-all duration-150",
               active
-                ? "border-[#00ff88] bg-[#00ff88]/10 text-[#00ff88]"
-                : "border-white/10 bg-[#111827] text-white/70 hover:border-[#00ff88]/40 hover:text-white",
-              disabled && "opacity-40 cursor-not-allowed"
+                ? "border-[#00ff88] bg-[#00ff88] text-black shadow-[0_0_12px_rgba(0,255,136,0.35)]"
+                : "border-white/10 bg-[#111827] text-white/70 hover:border-[#00ff88] hover:text-white hover:scale-[1.05]",
+              disabled && "opacity-30 cursor-not-allowed hover:scale-100 hover:border-white/10"
             )}
           >
             <Icon className="w-4 h-4" />
@@ -540,9 +542,10 @@ function ActionToolbar({
 
   return (
     <div className="flex items-center gap-2">
-      <RoundBtn icon={Upload} onClick={onUpload} label="Upload more photos" />
+      <RoundBtn icon={Upload} onClick={onUpload} label="Upload photos" />
       <RoundBtn icon={Sparkles} onClick={onEnhance} disabled={!hasActivePhoto} label="Enhance current photo" />
-      <RoundBtn icon={Trash2} onClick={onToggleEdit} active={editMode} disabled={!hasActivePhoto} label="Edit photos" />
+      <RoundBtn icon={Trash2} onClick={onToggleEdit} active={editMode} disabled={!hasActivePhoto} label="Edit / delete photos" />
+      <RoundBtn icon={showBrackets ? Eye : EyeOff} onClick={onToggleBrackets} active={!showBrackets} disabled={!hasActivePhoto} label={showBrackets ? "Hide detection brackets" : "Show detection brackets"} />
     </div>
   );
 }
@@ -554,7 +557,7 @@ type ScanProgress = { current: number; total: number };
 
 function ScanControls({
   scanState, scanProgress, canScanRoom, canScanAll, activeRoomName,
-  onScanRoom, onScanAll, onCancel,
+  onScanRoom, onScanAll, onCancel, photosInRoom, totalUnscanned,
 }: {
   scanState: "idle" | "scanning";
   scanProgress: ScanProgress;
@@ -564,13 +567,15 @@ function ScanControls({
   onScanRoom: () => void;
   onScanAll: () => void;
   onCancel: () => void;
+  photosInRoom: number;
+  totalUnscanned: number;
 }) {
   if (scanState === "scanning") {
     const pct = scanProgress.total > 0 ? Math.round((scanProgress.current / scanProgress.total) * 100) : 0;
     return (
       <div className="rounded-md border border-[#00ff88]/30 bg-[#00ff88]/[0.04] p-3">
         <div className="flex items-center justify-between mb-2">
-          <div className="text-[12px] font-semibold text-white">
+          <div className="text-[13px] font-semibold text-white">
             Scanning {scanProgress.current} of {scanProgress.total} photos…
           </div>
           <button
@@ -580,47 +585,75 @@ function ScanControls({
             <Pause className="w-3 h-3" /> Cancel
           </button>
         </div>
-        <div className="h-1.5 rounded-full bg-white/10 overflow-hidden">
+        <div className="h-2 rounded-full bg-white/10 overflow-hidden relative">
           <motion.div
-            className="h-full bg-[#00ff88]"
+            className="h-full bg-gradient-to-r from-[#00cc6e] via-[#00ff88] to-[#00cc6e] bg-[length:200%_100%]"
+            animate={{ backgroundPosition: ["0% 0%", "200% 0%"] }}
+            transition={{ duration: 1.6, repeat: Infinity, ease: "linear" }}
+            style={{ width: `${pct}%` }}
+          />
+          <motion.div
+            className="absolute inset-y-0 left-0 h-full bg-[#00ff88]"
             initial={{ width: 0 }}
             animate={{ width: `${pct}%` }}
             transition={{ duration: 0.3 }}
+            style={{ mixBlendMode: "screen", opacity: 0 }}
           />
         </div>
       </div>
     );
   }
 
+  const roomEst = Math.max(5, Math.round(photosInRoom * 8));
+  const allEstMin = Math.max(1, Math.round((totalUnscanned * 8) / 60));
+
   return (
-    <div className="grid grid-cols-2 gap-2">
-      <button
-        onClick={onScanRoom}
-        disabled={!canScanRoom}
-        className={cn(
-          "h-11 rounded-md font-semibold text-[13px] flex items-center justify-center gap-2 transition-all",
-          canScanRoom
-            ? "bg-[#00ff88] text-black hover:shadow-[0_0_20px_rgba(0,255,136,0.4)]"
-            : "bg-white/5 text-white/30 cursor-not-allowed"
-        )}
-      >
-        <Play className="w-3.5 h-3.5" fill="currentColor" />
-        Scan {activeRoomName}
-      </button>
-      <button
-        onClick={onScanAll}
-        disabled={!canScanAll}
-        className={cn(
-          "h-11 rounded-md font-semibold text-[13px] flex items-center justify-center gap-2 border transition-all",
-          canScanAll
-            ? "border-[#00ff88] text-[#00ff88] hover:bg-[#00ff88]/10"
-            : "border-white/10 text-white/30 cursor-not-allowed"
-        )}
-      >
-        <Zap className="w-3.5 h-3.5" />
-        Scan all rooms
-      </button>
-    </div>
+    <TooltipProvider>
+      <div className="grid grid-cols-2 gap-3">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              onClick={onScanRoom}
+              disabled={!canScanRoom}
+              className={cn(
+                "h-12 rounded-md font-semibold text-[13px] flex items-center justify-center gap-2 transition-all",
+                canScanRoom
+                  ? "bg-[#00ff88] text-black hover:shadow-[0_0_24px_rgba(0,255,136,0.5)] hover:bg-[#00ff88]/95"
+                  : "bg-white/[0.04] text-white/30 cursor-not-allowed"
+              )}
+            >
+              <Play className="w-3.5 h-3.5" fill="currentColor" />
+              Scan {activeRoomName}
+              {canScanRoom && <span className="text-black/60 font-normal">(~{roomEst}s)</span>}
+            </button>
+          </TooltipTrigger>
+          {!canScanRoom && (
+            <TooltipContent>Upload photos to this room first</TooltipContent>
+          )}
+        </Tooltip>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              onClick={onScanAll}
+              disabled={!canScanAll}
+              className={cn(
+                "h-12 rounded-md font-semibold text-[13px] flex items-center justify-center gap-2 border-[1.5px] transition-all",
+                canScanAll
+                  ? "border-[#00ff88] text-[#00ff88] hover:bg-[#00ff88]/10 hover:shadow-[0_0_16px_rgba(0,255,136,0.25)]"
+                  : "border-white/10 text-white/30 cursor-not-allowed"
+              )}
+            >
+              <Zap className="w-3.5 h-3.5" />
+              Scan all rooms
+              {canScanAll && <span className="text-[#00ff88]/60 font-normal">({totalUnscanned} photos, ~{allEstMin}m)</span>}
+            </button>
+          </TooltipTrigger>
+          {!canScanAll && (
+            <TooltipContent>Upload photos first</TooltipContent>
+          )}
+        </Tooltip>
+      </div>
+    </TooltipProvider>
   );
 }
 
@@ -683,22 +716,19 @@ function RoomSidebar({
         )}
       >
         {isAll ? (
-          <Layers className="w-4 h-4 flex-shrink-0" />
+          <Layers className="w-3.5 h-3.5 flex-shrink-0" />
         ) : (
           <span
-            className="w-4 h-4 rounded-sm flex-shrink-0"
+            className="w-3 h-3 rounded-sm flex-shrink-0"
             style={{ background: color ? `${COLOR_TINT[color]}40` : undefined, border: color ? `1px solid ${COLOR_TINT[color]}` : undefined }}
           />
         )}
         <span className="text-[13px] flex-1 truncate font-medium">{name}</span>
-        <span
-          className={cn(
-            "text-[11px] font-semibold tabular-nums px-1.5 py-0.5 rounded min-w-[22px] text-center",
-            count > 0 ? "bg-white/5 text-[#00ff88]" : "bg-white/5 text-white/30"
-          )}
-        >
-          {count}
-        </span>
+        {count > 0 && (
+          <span className="text-[10px] font-bold tabular-nums px-1.5 py-0.5 rounded-full bg-[#00ff88]/15 text-[#00ff88] min-w-[20px] text-center">
+            {count}
+          </span>
+        )}
       </button>
     );
   };
@@ -750,22 +780,25 @@ function RoomSidebar({
         )}
       </div>
 
-      <div className="p-4 border-t border-white/[0.06]">
-        <div className="text-[10px] font-semibold text-white/40 uppercase tracking-[0.1em] mb-2 px-1">Summary</div>
-        <div className="space-y-1.5">
-          <div className="flex items-center justify-between text-[12px]">
-            <span className="text-white/50">Total items</span>
-            <span className="text-white font-semibold tabular-nums">{items.reduce((s, i) => s + i.quantity, 0)}</span>
+      <div className="p-4 border-t border-white/[0.06] bg-black/40">
+        <div className="text-[10px] font-semibold text-[#00ff88]/70 uppercase tracking-[0.15em] mb-3 px-1">Live Summary</div>
+        <div className="divide-y divide-white/[0.06]">
+          <div className="py-2.5">
+            <div className="text-[9px] uppercase tracking-[0.12em] text-white/40 mb-0.5">Total items</div>
+            <div className="text-[18px] font-semibold text-white tabular-nums leading-none">
+              {items.reduce((s, i) => s + i.quantity, 0)}
+            </div>
           </div>
-          <div className="flex items-center justify-between text-[12px]">
-            <span className="text-white/50">Active rooms</span>
-            <span className="text-white/70 tabular-nums">{roomsWithContent}</span>
+          <div className="py-2.5">
+            <div className="text-[9px] uppercase tracking-[0.12em] text-white/40 mb-0.5">Active rooms</div>
+            <div className="text-[18px] font-semibold text-white tabular-nums leading-none">{roomsWithContent}</div>
           </div>
-          <div className="flex items-center justify-between text-[12px]">
-            <span className="text-white/50">Total weight</span>
-            <span className="text-white font-semibold tabular-nums">
-              {Math.round(totalWeight).toLocaleString()} <span className="text-white/40 font-normal">lbs</span>
-            </span>
+          <div className="py-2.5">
+            <div className="text-[9px] uppercase tracking-[0.12em] text-white/40 mb-0.5">Total weight</div>
+            <div className="text-[18px] font-semibold text-white tabular-nums leading-none">
+              {Math.round(totalWeight).toLocaleString()}
+              <span className="text-[11px] text-white/40 font-normal ml-1">lbs</span>
+            </div>
           </div>
         </div>
       </div>
@@ -778,14 +811,14 @@ function RoomSidebar({
 ============================================================ */
 function ScannerTrustStrip() {
   const items = [
-    { icon: Cpu, title: "AI-Powered Detection", body: "Our AI identifies and counts your items automatically." },
+    { icon: Brain, title: "AI-Powered Detection", body: "Our AI identifies and counts your items automatically." },
     { icon: ShieldCheck, title: "100% Private & Secure", body: "Your photos and data are never shared or stored." },
     { icon: Headphones, title: "Need Help?", body: "Our moving experts are here to help you 24/7." },
   ];
   return (
-    <div className="grid grid-cols-3 gap-0 rounded-lg border border-white/[0.06] bg-[#0a0e1a] overflow-hidden divide-x divide-white/[0.06]">
+    <div className="grid grid-cols-3 gap-0 rounded-lg border border-white/[0.06] bg-[#0a0e1a] overflow-hidden divide-x divide-white/[0.08]">
       {items.map((it) => (
-        <div key={it.title} className="px-4 py-3 flex items-start gap-3">
+        <div key={it.title} className="px-4 py-2.5 flex items-start gap-3">
           <div className="w-8 h-8 rounded-md bg-[#00ff88]/10 border border-[#00ff88]/20 flex items-center justify-center flex-shrink-0">
             <it.icon className="w-4 h-4 text-[#00ff88]" />
           </div>
@@ -835,7 +868,7 @@ function InventoryPanel({
   const canContinue = totalCount > 0;
 
   return (
-    <aside className="w-[380px] flex-shrink-0 bg-[#0a0e1a] border-l border-white/[0.06] flex flex-col h-full">
+    <aside className="w-[360px] flex-shrink-0 min-w-0 bg-[#0a0e1a] border-l border-white/[0.06] flex flex-col h-full overflow-hidden">
       {!isEmpty && (
         <div className="px-4 py-3 flex items-center justify-between border-b border-white/[0.06]">
           <div className="flex items-center gap-2">
@@ -852,30 +885,29 @@ function InventoryPanel({
         </div>
       )}
 
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden min-w-0">
         {isEmpty ? (
-          <div className="h-full flex flex-col items-center justify-center px-8 text-center">
-            <div className="w-12 h-12 rounded-full bg-[#00ff88]/10 border border-[#00ff88]/20 flex items-center justify-center mb-4">
-              <ImageIcon className="w-5 h-5 text-[#00ff88]" />
-            </div>
-            <div className="text-[14px] text-white font-semibold mb-1">No items yet</div>
-            <div className="text-[12px] text-white/50 mb-6 max-w-[240px]">
-              Organize photos by room, then scan to detect items automatically.
-            </div>
-            <ol className="text-left space-y-2.5 w-full max-w-[240px]">
+          <div className="h-full flex flex-col items-center justify-center px-5 text-center">
+            <div className="w-full max-w-[280px] rounded-lg border border-dashed border-[#00ff88]/20 p-5">
+              <div className="text-[16px] text-white font-medium mb-1.5">No items yet</div>
+              <div className="text-[13px] text-white/50 mb-4 leading-snug">
+                Drop photos into a room, then scan to detect items.
+              </div>
+              <ol className="text-left space-y-1.5 w-full">
               {[
                 "Pick a room from the left",
                 "Drop photos into the canvas",
                 "Hit Scan this room",
               ].map((line, i) => (
-                <li key={i} className="flex gap-2.5 items-start">
-                  <span className="w-5 h-5 rounded-full bg-white/5 border border-white/10 text-white/60 text-[10px] font-semibold flex items-center justify-center flex-shrink-0 mt-0.5">
+                <li key={i} className="flex gap-2 items-center">
+                  <span className="w-4 h-4 rounded-full bg-[#00ff88]/10 border border-[#00ff88]/30 text-[#00ff88] text-[9px] font-bold flex items-center justify-center flex-shrink-0">
                     {i + 1}
                   </span>
-                  <span className="text-[12px] text-white/70">{line}</span>
+                  <span className="text-[12px] text-white/70 leading-tight">{line}</span>
                 </li>
               ))}
             </ol>
+            </div>
           </div>
         ) : (
           <div className="py-2">
@@ -948,54 +980,64 @@ function InventoryPanel({
         )}
       </div>
 
-      <div className="p-4 border-t border-white/[0.06] space-y-2 flex-shrink-0">
-        <div className="grid grid-cols-2 gap-2">
-          <button
-            onClick={onAddItem}
-            disabled={isEmpty}
-            className={cn(
-              "h-9 rounded-md border bg-transparent text-[12px] font-medium flex items-center justify-center gap-1.5 transition-colors",
-              isEmpty
-                ? "border-white/5 text-white/20 cursor-not-allowed"
-                : "border-white/10 text-white/70 hover:border-white/30 hover:text-white"
-            )}
-          >
-            <Plus className="w-3.5 h-3.5" /> Add Item
-          </button>
-          <button
-            disabled={isEmpty}
-            className={cn(
-              "h-9 rounded-md border bg-transparent text-[12px] font-medium flex items-center justify-center gap-1.5 transition-colors",
-              isEmpty
-                ? "border-white/5 text-white/20 cursor-not-allowed"
-                : "border-white/10 text-white/70 hover:border-white/30 hover:text-white"
-            )}
-          >
-            <Pencil className="w-3.5 h-3.5" /> Edit Room
-          </button>
-        </div>
-        <TooltipProvider>
+      <TooltipProvider>
+        <div className="p-5 border-t border-white/[0.06] space-y-2 flex-shrink-0 overflow-hidden">
+          <div className="grid grid-cols-2 gap-2 min-w-0">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={onAddItem}
+                  disabled={isEmpty}
+                  className={cn(
+                    "h-9 min-w-0 rounded-md border bg-transparent text-[12px] font-medium flex items-center justify-center gap-1.5 transition-colors truncate",
+                    isEmpty
+                      ? "border-white/5 text-white/30 opacity-50 cursor-not-allowed"
+                      : "border-white/10 text-white/70 hover:border-white/30 hover:text-white"
+                  )}
+                >
+                  <Plus className="w-3.5 h-3.5 flex-shrink-0" /> <span className="truncate">Add Item</span>
+                </button>
+              </TooltipTrigger>
+              {isEmpty && <TooltipContent>Complete a scan first</TooltipContent>}
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  disabled={isEmpty}
+                  className={cn(
+                    "h-9 min-w-0 rounded-md border bg-transparent text-[12px] font-medium flex items-center justify-center gap-1.5 transition-colors truncate",
+                    isEmpty
+                      ? "border-white/5 text-white/30 opacity-50 cursor-not-allowed"
+                      : "border-white/10 text-white/70 hover:border-white/30 hover:text-white"
+                  )}
+                >
+                  <Pencil className="w-3.5 h-3.5 flex-shrink-0" /> <span className="truncate">Edit Room</span>
+                </button>
+              </TooltipTrigger>
+              {isEmpty && <TooltipContent>Complete a scan first</TooltipContent>}
+            </Tooltip>
+          </div>
           <Tooltip>
             <TooltipTrigger asChild>
               <button
                 onClick={canContinue ? onContinue : undefined}
                 disabled={!canContinue}
                 className={cn(
-                  "w-full h-[52px] rounded-md font-semibold text-[14px] flex items-center justify-center gap-2 transition-all",
+                  "w-full h-12 rounded-md font-semibold text-[14px] flex items-center justify-center gap-2 transition-all min-w-0 truncate",
                   canContinue
                     ? "bg-[#00ff88] text-black hover:shadow-[0_0_24px_rgba(0,255,136,0.5)]"
-                    : "bg-white/[0.04] text-white/25 cursor-not-allowed"
+                    : "bg-white/[0.04] text-white/25 opacity-60 cursor-not-allowed"
                 )}
               >
-                Looks Good, Continue <ArrowRight className="w-4 h-4" />
+                <span className="truncate">Looks Good, Continue</span> <ArrowRight className="w-4 h-4 flex-shrink-0" />
               </button>
             </TooltipTrigger>
             {!canContinue && (
               <TooltipContent>Complete a scan first</TooltipContent>
             )}
           </Tooltip>
-        </TooltipProvider>
-      </div>
+        </div>
+      </TooltipProvider>
     </aside>
   );
 }
@@ -1165,6 +1207,7 @@ export default function InventoryScan() {
   const [scanProgress, setScanProgress] = useState<ScanProgress>({ current: 0, total: 0 });
   const cancelScanRef = useRef(false);
   const [confirmAllOpen, setConfirmAllOpen] = useState(false);
+  const [showBrackets, setShowBrackets] = useState(true);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -1477,16 +1520,31 @@ export default function InventoryScan() {
         />
 
         {/* CENTER: Scanner stage */}
-        <section className="flex-1 min-w-0 flex flex-col p-6 gap-4 overflow-y-auto">
-          <div>
-            <h1 className="text-[26px] font-semibold leading-tight">
-              Inventory <span className="text-[#00ff88]">Scanner</span>
-            </h1>
-            <p className="text-sm text-white/50 mt-1">
-              {activeRoomId === ""
-                ? "Showing all rooms — pick a folder to focus."
-                : `Active room: ${activeRoomName}. Upload, organize, scan.`}
-            </p>
+        <section className="flex-1 min-w-0 flex flex-col p-6 gap-6 overflow-y-auto">
+          <div className="flex items-end justify-between gap-4 flex-wrap">
+            <div className="min-w-0">
+              <h1 className="text-[26px] font-semibold leading-tight">
+                Inventory <span className="text-[#00ff88]">Scanner</span>
+              </h1>
+              {activeRoomId === "" ? (
+                <p className="text-[13px] text-white/50 mt-1">Showing all rooms — pick a folder to focus.</p>
+              ) : (
+                <div className="mt-1.5 flex items-center gap-2">
+                  <span className="text-[10px] uppercase tracking-[0.15em] text-white/40 font-semibold">Active room</span>
+                  <span
+                    className="w-1.5 h-1.5 rounded-full"
+                    style={{ background: COLOR_TINT[(rooms.find((r) => r.id === activeRoomId)?.color) || "blue"] }}
+                  />
+                  <span className="text-[18px] text-white font-medium leading-none">{activeRoomName}</span>
+                </div>
+              )}
+            </div>
+            <button
+              onClick={() => setHowOpen(true)}
+              className="flex items-center gap-1.5 text-[12px] text-white/60 hover:text-[#00ff88] px-2.5 py-1.5 rounded-md hover:bg-white/5 transition-colors"
+            >
+              <HelpCircle className="w-3.5 h-3.5" /> How it works
+            </button>
           </div>
 
           {activePhoto?.qualityFlag === "low" && !activePhoto.enhancedUrl && (
@@ -1537,7 +1595,8 @@ export default function InventoryScan() {
             onClickDetection={handleDetectionClick}
             onDrop={(files) => handleFiles(files)}
             isScanning={isScanning}
-            onHelp={() => setHowOpen(true)}
+            activeRoomName={activeRoomName}
+            showBrackets={showBrackets}
           />
 
           <input
@@ -1561,6 +1620,8 @@ export default function InventoryScan() {
               editMode={editMode}
               onToggleEdit={() => setEditMode((v) => !v)}
               hasActivePhoto={!!activePhoto}
+              showBrackets={showBrackets}
+              onToggleBrackets={() => setShowBrackets((v) => !v)}
             />
             <ScanControls
               scanState={scanState}
@@ -1571,6 +1632,8 @@ export default function InventoryScan() {
               onScanRoom={scanThisRoom}
               onScanAll={() => setConfirmAllOpen(true)}
               onCancel={cancelScan}
+              photosInRoom={photosInActiveRoom.length}
+              totalUnscanned={unscannedAll.length}
             />
           </div>
 
