@@ -1060,11 +1060,12 @@ function PhotoStrip({
    Live inventory feed
 ============================================================ */
 function LiveInventoryFeed({
-  rooms, items, activeRoomId, onPickRoom,
+  rooms, items, activeRoomId, onPickRoom, photos,
 }: {
   rooms: Room[]; items: InventoryItem[];
   activeRoomId: string | null;
   onPickRoom: (id: string) => void;
+  photos: Photo[];
 }) {
   const now = Date.now();
   const activeRoom = rooms.find((r) => r.id === activeRoomId);
@@ -1073,28 +1074,49 @@ function LiveInventoryFeed({
     : items;
   const others = rooms.filter((r) => r.id !== activeRoomId);
 
+  const thumbFor = useCallback((item: InventoryItem) => {
+    for (const p of photos) {
+      const d = p.detections.find(
+        (x) =>
+          x.roomId === item.roomId &&
+          x.itemName.toLowerCase() === item.name.toLowerCase(),
+      );
+      if (d) return { url: p.url, bbox: d.bbox };
+    }
+    return null;
+  }, [photos]);
+
   return (
     <div
-      className="rounded-lg p-3 flex flex-col"
-      style={{ background: "rgba(255,255,255,0.02)", border: "0.5px solid rgba(255,255,255,0.06)", maxHeight: "380px" }}
+      className="rounded-lg flex flex-col"
+      style={{
+        background: "rgba(255,255,255,0.02)",
+        border: "0.5px solid rgba(255,255,255,0.08)",
+        padding: 16,
+        maxHeight: 600,
+      }}
     >
-      <div className="flex items-center justify-between mb-2">
-        <span className="text-[12px] text-white font-medium truncate">
+      <div className="flex items-center justify-between mb-3">
+        <span className="text-[14px] text-white font-medium truncate">
           {activeRoom?.name || "All rooms"}
         </span>
-        <span className="text-[11px] text-[#00ff88] font-medium">
+        <span
+          className="text-[11px] text-[#00ff88] font-medium px-2 py-0.5 rounded-full"
+          style={{ background: "rgba(0,255,136,0.1)" }}
+        >
           {active.reduce((s, i) => s + i.quantity, 0)}
         </span>
       </div>
 
-      <div className="flex-1 overflow-y-auto space-y-0.5 -mx-1 px-1">
+      <div className="flex-1 overflow-y-auto space-y-1 -mx-1 px-1">
         <AnimatePresence initial={false}>
           {active.length === 0 && (
-            <div className="text-[11px] text-white/30 italic py-2">Detecting items…</div>
+            <div className="text-[12px] text-white/30 italic py-2">Detecting items…</div>
           )}
           {active.map((it) => {
             const isNew = now - it.detectedAt < 2500;
             const lowConf = it.confidence < 70;
+            const thumb = thumbFor(it);
             return (
               <motion.div
                 key={it.id}
@@ -1103,23 +1125,64 @@ function LiveInventoryFeed({
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
                 className={cn(
-                  "flex items-center justify-between rounded px-1.5 py-1 transition-colors",
+                  "flex items-center gap-3 rounded-md transition-colors group/item hover:bg-white/[0.03]",
                   isNew && "bg-[#00ff88]/[0.06] border-[0.5px] border-[#00ff88]/20"
                 )}
+                style={{ minHeight: 52, padding: "6px 8px" }}
               >
-                <div className="flex items-center gap-1.5 min-w-0">
-                  {isNew && <span className="w-1 h-1 rounded-full bg-[#00ff88] flex-shrink-0" />}
-                  {lowConf && !isNew && <span className="w-1 h-1 rounded-full bg-amber-400 flex-shrink-0" />}
-                  <span className="text-[11px] text-white truncate">{it.name}</span>
+                <div
+                  className="w-10 h-10 rounded-md flex-shrink-0 overflow-hidden"
+                  style={{
+                    background: "rgba(255,255,255,0.04)",
+                    border: "0.5px solid rgba(255,255,255,0.08)",
+                  }}
+                >
+                  {thumb ? (
+                    <div
+                      className="w-full h-full"
+                      style={{
+                        backgroundImage: `url(${thumb.url})`,
+                        backgroundSize: `${100 / Math.max(thumb.bbox.width, 0.05)}% ${100 / Math.max(thumb.bbox.height, 0.05)}%`,
+                        backgroundPosition: `${(thumb.bbox.x / Math.max(1 - thumb.bbox.width, 0.0001)) * 100}% ${(thumb.bbox.y / Math.max(1 - thumb.bbox.height, 0.0001)) * 100}%`,
+                      }}
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <ImageIcon className="w-4 h-4 text-white/20" />
+                    </div>
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-1.5 min-w-0">
+                    {isNew && (
+                      <span
+                        className="w-1.5 h-1.5 rounded-full bg-[#00ff88] flex-shrink-0"
+                        style={{ boxShadow: "0 0 4px rgba(0,255,136,0.7)" }}
+                      />
+                    )}
+                    {lowConf && !isNew && (
+                      <span className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0" />
+                    )}
+                    <span className="text-[13px] text-white font-medium truncate leading-tight">
+                      {it.name}
+                    </span>
+                  </div>
+                  <div className="text-[11px] text-[#7d8694] mt-0.5 truncate">
+                    {Math.round(it.weight * it.quantity)} lb · {Math.round(it.cubicFeet * it.quantity)} cu ft
+                  </div>
                 </div>
                 <div className="flex items-center gap-1.5 flex-shrink-0">
-                  <span className="text-[10px] text-white/40">{Math.round(it.weight * it.quantity)} lb</span>
-                  <span className={cn(
-                    "text-[10px]",
-                    isNew ? "text-[#00ff88]" : lowConf ? "text-amber-400" : "text-white/50"
-                  )}>
-                    {lowConf ? "verify" : `×${it.quantity}`}
-                  </span>
+                  {lowConf ? (
+                    <span className="text-[11px] text-amber-400 font-medium">verify</span>
+                  ) : (
+                    <span className="text-[14px] text-[#00ff88] font-medium">×{it.quantity}</span>
+                  )}
+                  <button
+                    className="opacity-0 group-hover/item:opacity-100 text-white/40 hover:text-white transition-opacity"
+                    aria-label="Edit"
+                  >
+                    <Pencil className="w-3 h-3" />
+                  </button>
                 </div>
               </motion.div>
             );
@@ -1128,20 +1191,25 @@ function LiveInventoryFeed({
       </div>
 
       {others.length > 0 && activeRoomId && (
-        <div className="mt-2 pt-2 border-t border-white/[0.06] space-y-0.5">
+        <div className="mt-3 pt-3 border-t border-white/[0.06] space-y-1">
           {others.map((r) => {
             const count = items.filter((i) => i.roomId === r.id).reduce((s, i) => s + i.quantity, 0);
             return (
               <button
                 key={r.id}
                 onClick={() => onPickRoom(r.id)}
-                className="w-full flex items-center justify-between px-1.5 py-0.5 rounded hover:bg-white/[0.03] opacity-60 hover:opacity-100 transition-opacity"
+                className="w-full flex items-center justify-between px-2 py-1.5 rounded hover:bg-white/[0.03] opacity-70 hover:opacity-100 transition-opacity"
               >
-                <div className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full" style={{ background: r.color }} />
-                  <span className="text-[11px] text-white/80">{r.name}</span>
+                <div className="flex items-center gap-2">
+                  <span className="w-[6px] h-[6px] rounded-full" style={{ background: r.color }} />
+                  <span className="text-[12px] text-white/80">{r.name}</span>
                 </div>
-                <span className="text-[10px] text-white/50">{count}</span>
+                <span
+                  className="text-[11px] text-[#00ff88] font-medium px-1.5 py-0.5 rounded-full"
+                  style={{ background: "rgba(0,255,136,0.08)" }}
+                >
+                  {count}
+                </span>
               </button>
             );
           })}
