@@ -262,7 +262,7 @@ function DetectionBoxes({
 ============================================================ */
 function ScannerCanvas({
   activePhoto, highlightedDetectionId, onHoverDetection, onClickDetection,
-  onDrop, isScanning, onHelp,
+  onDrop, isScanning, activeRoomName, showBrackets,
 }: {
   activePhoto: Photo | null;
   highlightedDetectionId: string | null;
@@ -270,7 +270,8 @@ function ScannerCanvas({
   onClickDetection: (d: Detection) => void;
   onDrop: (files: File[]) => void;
   isScanning: boolean;
-  onHelp: () => void;
+  activeRoomName: string;
+  showBrackets: boolean;
 }) {
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     onDrop,
@@ -288,45 +289,34 @@ function ScannerCanvas({
         isDragActive ? "border-[#00ff88] shadow-[0_0_32px_rgba(0,255,136,0.25)]" : "border-white/[0.06]",
         !activePhoto && "cursor-pointer"
       )}
-      style={{ aspectRatio: "16 / 9" }}
+      style={{ aspectRatio: "16 / 10" }}
     >
       <input {...getInputProps()} />
-
-      {/* How it works floating button */}
-      <button
-        type="button"
-        onClick={(e) => { e.stopPropagation(); onHelp(); }}
-        className="absolute top-3 right-3 z-10 flex items-center gap-1.5 text-[11px] text-white/70 hover:text-[#00ff88] bg-black/60 backdrop-blur-sm border border-white/10 hover:border-[#00ff88]/40 px-2.5 py-1.5 rounded-md transition-all"
-      >
-        <HelpCircle className="w-3.5 h-3.5" />
-        How it works
-      </button>
 
       {!activePhoto && (
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
           <Brackets />
           <motion.div
-            initial={{ y: -4, opacity: 0.6 }}
-            animate={{ y: 4, opacity: 1 }}
-            transition={{ duration: 2, repeat: Infinity, repeatType: "reverse", ease: "easeInOut" }}
+            animate={{ scale: [1, 1.05, 1] }}
+            transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
             className="mb-5 relative"
           >
-            <div className="relative w-20 h-20 flex items-center justify-center">
-              <div className="absolute inset-0 rounded-2xl bg-[#00ff88]/10 blur-xl" />
+            <div className="relative w-[72px] h-[72px] flex items-center justify-center">
+              <div className="absolute inset-0 rounded-2xl bg-[#00ff88]/15 blur-xl" />
               <Camera className="w-14 h-14 text-[#00ff88]" strokeWidth={1.25} />
-              <Sparkles className="absolute -top-1 -right-1 w-5 h-5 text-[#00ff88]" />
+              <Sparkles className="absolute -top-1 -right-1 w-5 h-5 text-[#00ff88]" fill="#00ff88" />
             </div>
           </motion.div>
-          <h2 className="text-2xl font-semibold text-white mb-2">
+          <h2 className="text-[22px] font-semibold text-white mb-1.5">
             {isDragActive ? "Drop to upload" : "Drop photos here"}
           </h2>
-          <p className="text-sm text-white/50 mb-6">
+          <p className="text-[13px] text-white/50 mb-5">
             or click to browse — JPG, PNG, HEIC up to 20MB each
           </p>
           <button
             type="button"
             onClick={(e) => { e.stopPropagation(); open(); }}
-            className="px-5 py-2.5 rounded-md bg-[#00ff88] text-black font-semibold text-sm hover:bg-[#00ff88]/90 hover:shadow-[0_0_20px_rgba(0,255,136,0.4)] transition-all"
+            className="h-11 w-[140px] rounded-md bg-[#00ff88] text-black font-semibold text-sm hover:bg-[#00ff88]/90 hover:shadow-[0_0_20px_rgba(0,255,136,0.4)] transition-all"
           >
             Browse files
           </button>
@@ -340,7 +330,7 @@ function ScannerCanvas({
             alt="Room"
             className="absolute inset-0 w-full h-full object-cover"
           />
-          <Brackets pulse={isScanning} />
+          {showBrackets && <Brackets pulse={isScanning} />}
 
           <div className="absolute top-4 left-4 bg-black/70 backdrop-blur-sm border border-white/10 rounded-md px-3 py-2 flex items-center gap-2">
             <Camera className="w-3.5 h-3.5 text-[#00ff88]" />
@@ -367,12 +357,14 @@ function ScannerCanvas({
             </motion.div>
           )}
 
-          <DetectionBoxes
-            detections={activePhoto.detections}
-            highlightedId={highlightedDetectionId}
-            onHover={onHoverDetection}
-            onClick={onClickDetection}
-          />
+          {showBrackets && (
+            <DetectionBoxes
+              detections={activePhoto.detections}
+              highlightedId={highlightedDetectionId}
+              onHover={onHoverDetection}
+              onClick={onClickDetection}
+            />
+          )}
 
           {!isScanning && activePhoto.detections.length === 0 && activePhoto.status !== "failed" && activePhoto.status !== "scanned" && (
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/80 backdrop-blur-sm border border-white/10 rounded-md px-4 py-2.5 flex items-center gap-2.5 max-w-md">
@@ -395,9 +387,16 @@ function ScannerCanvas({
       )}
 
       {activePhoto && isDragActive && (
-        <div className="absolute inset-0 bg-[#00ff88]/10 border-2 border-dashed border-[#00ff88] rounded-xl flex items-center justify-center backdrop-blur-sm">
+        <div className="absolute inset-0 bg-[#00ff88]/15 border-2 border-dashed border-[#00ff88] rounded-xl flex items-center justify-center backdrop-blur-sm">
           <div className="text-white font-semibold flex items-center gap-2">
-            <Upload className="w-5 h-5" /> Drop to add more photos
+            <Upload className="w-5 h-5" /> Drop to add to {activeRoomName}
+          </div>
+        </div>
+      )}
+      {!activePhoto && isDragActive && (
+        <div className="absolute inset-0 bg-[#00ff88]/15 flex items-center justify-center pointer-events-none">
+          <div className="text-white font-semibold flex items-center gap-2">
+            <Upload className="w-5 h-5" /> Drop to add to {activeRoomName}
           </div>
         </div>
       )}
