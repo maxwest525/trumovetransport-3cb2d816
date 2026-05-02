@@ -618,30 +618,34 @@ function DetectionBox({
   color: string;
   index: number;
 }) {
+  // Dark text for legibility on color fills
+  const textColor =
+    color === "#00ff88" ? "#002818" :
+    color === "#fbbf24" ? "#422006" :
+    color === "#ef4444" ? "#450a0a" :
+    "#000";
   const cornerBase: React.CSSProperties = {
     position: "absolute",
-    width: 12,
-    height: 12,
     borderColor: color,
     borderStyle: "solid",
-    filter: `drop-shadow(0 0 4px ${color}66)`,
+    filter: `drop-shadow(0 0 8px ${color}66)`,
   };
   const corners: Array<{ key: string; style: React.CSSProperties }> = [
-    { key: "tl", style: { top: -1, left: -1, borderTopWidth: 2, borderLeftWidth: 2, borderRightWidth: 0, borderBottomWidth: 0 } },
-    { key: "tr", style: { top: -1, right: -1, borderTopWidth: 2, borderRightWidth: 2, borderLeftWidth: 0, borderBottomWidth: 0 } },
-    { key: "br", style: { bottom: -1, right: -1, borderBottomWidth: 2, borderRightWidth: 2, borderLeftWidth: 0, borderTopWidth: 0 } },
-    { key: "bl", style: { bottom: -1, left: -1, borderBottomWidth: 2, borderLeftWidth: 2, borderRightWidth: 0, borderTopWidth: 0 } },
+    { key: "tl", style: { top: -1, left: -1, borderTopWidth: 2.5, borderLeftWidth: 2.5, borderRightWidth: 0, borderBottomWidth: 0 } },
+    { key: "tr", style: { top: -1, right: -1, borderTopWidth: 2.5, borderRightWidth: 2.5, borderLeftWidth: 0, borderBottomWidth: 0 } },
+    { key: "br", style: { bottom: -1, right: -1, borderBottomWidth: 2.5, borderRightWidth: 2.5, borderLeftWidth: 0, borderTopWidth: 0 } },
+    { key: "bl", style: { bottom: -1, left: -1, borderBottomWidth: 2.5, borderLeftWidth: 2.5, borderRightWidth: 0, borderTopWidth: 0 } },
   ];
   const baseDelay = index * 0.08;
   return (
     <div
-      className="absolute"
+      className="absolute group"
       style={{
         left: `${bbox.x * 100}%`,
         top: `${bbox.y * 100}%`,
         width: `${bbox.width * 100}%`,
         height: `${bbox.height * 100}%`,
-        pointerEvents: "none",
+        pointerEvents: "auto",
         border: "none",
         background: "transparent",
       }}
@@ -650,8 +654,9 @@ function DetectionBox({
         <motion.div
           key={c.key}
           initial={{ opacity: 0, scale: 0.6 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: baseDelay + i * 0.03, duration: 0.18, ease: "easeOut" }}
+          animate={{ opacity: [0, 1, 0.85, 1], scale: 1 }}
+          transition={{ delay: baseDelay + i * 0.03, duration: 0.4, ease: "easeOut" }}
+          className="w-3 h-3 lg:w-[18px] lg:h-[18px]"
           style={{ ...cornerBase, ...c.style }}
         />
       ))}
@@ -659,8 +664,20 @@ function DetectionBox({
         initial={{ opacity: 0, y: 2 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: baseDelay + 0.22, duration: 0.15 }}
-        className="absolute -top-[22px] left-0 px-1.5 py-0.5 text-[10px] font-semibold whitespace-nowrap rounded-[3px] pointer-events-none"
-        style={{ background: color, color: "#000", maxWidth: "120px", overflow: "hidden", textOverflow: "ellipsis" }}
+        className="absolute -top-[24px] left-0 whitespace-nowrap pointer-events-none"
+        style={{
+          background: color,
+          color: textColor,
+          maxWidth: "180px",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          padding: "3px 8px",
+          borderRadius: 4,
+          fontSize: 11,
+          fontWeight: 600,
+          outline: "1px solid rgba(0,0,0,0.2)",
+          letterSpacing: "0.01em",
+        }}
       >
         {label} · {Math.round(confidence)}%
       </motion.div>
