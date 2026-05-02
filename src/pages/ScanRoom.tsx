@@ -4386,21 +4386,38 @@ export default function ScanRoom() {
               { icon: UtensilsCrossed, label: "Kitchen", room: "Kitchen" },
               { icon: Bath, label: "Bath", room: "Bathroom" },
               { icon: Warehouse, label: "Garage", room: "Garage" },
-              { icon: Box, label: "Storage", room: "Storage" },
-              ...customFolders.map((name) => ({ icon: FolderOpen, label: name, room: name })),
-            ].map(({ icon: Icon, label, room }) => (
-              <button
-                key={room}
-                type="button"
-                onClick={() => {
-                  setShowAllFoldersModal(false);
-                  handleRoomClick(room);
-                }}
-                className="flex flex-col items-center gap-1 rounded-lg border border-border bg-muted/30 px-2 py-3 text-xs font-medium text-foreground hover:bg-muted/60 hover:border-primary/40 transition-colors cursor-pointer"
-              >
-                <Icon className="w-4 h-4 flex-shrink-0" />
-                <span className="truncate max-w-full">{label}</span>
-              </button>
+              { icon: Box, label: "Storage", room: "Storage", isCustom: false },
+              ...customFolders.map((name) => ({ icon: FolderOpen, label: name, room: name, isCustom: true })),
+            ].map(({ icon: Icon, label, room, isCustom }) => (
+              <div key={room} className="relative group">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowAllFoldersModal(false);
+                    handleRoomClick(room);
+                  }}
+                  className="w-full flex flex-col items-center gap-1 rounded-lg border border-border bg-muted/30 px-2 py-3 text-xs font-medium text-foreground hover:bg-muted/60 hover:border-primary/40 transition-colors cursor-pointer"
+                >
+                  <Icon className="w-4 h-4 flex-shrink-0" />
+                  <span className="truncate max-w-full">{label}</span>
+                </button>
+                {isCustom && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (confirm(`Delete folder "${room}"? Photos inside will move to All.`)) {
+                        removeCustomFolder(room);
+                      }
+                    }}
+                    className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-background border border-border text-muted-foreground hover:bg-destructive hover:text-destructive-foreground hover:border-destructive flex items-center justify-center opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity"
+                    aria-label={`Delete folder ${room}`}
+                    title="Delete folder"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                )}
+              </div>
             ))}
           </div>
         </DialogContent>
