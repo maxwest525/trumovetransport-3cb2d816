@@ -32,6 +32,19 @@ interface Photo {
   autoTagged: boolean;
   status: PhotoStatus;
   detections: Detection[];
+  width?: number;
+  height?: number;
+  quality?: QualityResult;
+  enhanceStatus?: "idle" | "enhancing" | "enhanced" | "failed";
+  qualityDismissed?: boolean;
+}
+
+interface QualityResult {
+  tier: "good" | "medium" | "low";
+  reason: "resolution" | "compression" | null;
+  recommendation: "enhance" | "optional" | null;
+  width: number;
+  height: number;
 }
 
 interface Detection {
