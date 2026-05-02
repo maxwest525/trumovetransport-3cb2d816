@@ -2146,15 +2146,22 @@ export default function ScanRoom() {
                     uploadedPhotos.length > 0 && (
                       <button
                         onClick={handleStartScanClick}
-                        disabled={isAiScanning}
-                        className="flex items-center justify-center gap-2 rounded-full px-6 py-3.5 text-base font-semibold bg-foreground text-background hover:opacity-90 transition-opacity disabled:opacity-50"
+                        disabled={isAiScanning || isScanning}
+                        aria-busy={isAiScanning || isScanning}
+                        className="flex items-center justify-center gap-2 rounded-full px-6 py-3.5 text-base font-semibold bg-foreground text-background hover:opacity-90 transition-opacity disabled:opacity-60 disabled:cursor-not-allowed"
                       >
-                        <Sparkles className="w-5 h-5" />
+                        {isAiScanning || isScanning ? (
+                          <Loader2 className="w-5 h-5 animate-spin" />
+                        ) : (
+                          <Sparkles className="w-5 h-5" />
+                        )}
                         {isAiScanning
                           ? "Scanning..."
-                          : uploadedPhotos.some(p => p.id !== 'demo-photo' && !scannedPhotoIds.has(p.id))
-                            ? "Scan Your Home"
-                            : "Start Scanning"}
+                          : isScanning
+                            ? "Preparing..."
+                            : uploadedPhotos.some(p => p.id !== 'demo-photo' && !scannedPhotoIds.has(p.id))
+                              ? "Scan Your Home"
+                              : "Start Scanning"}
                       </button>
                     )
                   ) : (
@@ -3180,9 +3187,14 @@ export default function ScanRoom() {
                     }
                   }}
                   disabled={isScanning || isAiScanning || uploadedPhotos.length === 0 || uploadedPhotos.every(p => p.id === 'demo-photo' || scannedPhotoIds.has(p.id))}
+                  aria-busy={isAiScanning || isScanning}
                   className="tru-scan-library-analyze-btn tru-scan-library-analyze-btn-compact"
                 >
-                  <Sparkles className="w-5 h-5" />
+                  {isAiScanning || isScanning ? (
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                  ) : (
+                    <Sparkles className="w-5 h-5" />
+                  )}
                   {isAiScanning ? "Analyzing..." : isScanning ? "Scanning..." : "Start Scanning"}
                 </button>
               </div>
