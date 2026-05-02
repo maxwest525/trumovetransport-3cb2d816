@@ -1736,6 +1736,56 @@ export default function InventoryScan() {
   const unscannedAll = photos.filter((p) => p.status !== "scanned" && p.status !== "scanning");
   const canScanRoom = activeRoomId !== "" && unscannedInActiveRoom.length > 0 && scanState === "idle";
   const canScanAll = unscannedAll.length > 0 && scanState === "idle";
+  const allScanned = photos.length > 0 && unscannedAll.length === 0 && scanState === "idle";
+  const roomAlreadyScanned = photosInActiveRoom.length > 0 && unscannedInActiveRoom.length === 0;
+
+  // Detection count per photo (for strip badges)
+  const detectionCounts = useMemo(() => {
+    const map: Record<string, number> = {};
+    for (const p of photos) map[p.id] = p.detections.length;
+    return map;
+  }, [photos]);
+
+  // Active photo index / total within visible set
+  const activePhotoIdx = activePhoto ? visiblePhotos.findIndex((p) => p.id === activePhoto.id) : -1;
+  const activeDetectedCount = activePhoto?.detections.length || 0;
+
+  // Re-scan helper: forces re-scan of the active room
+  const rescanActiveRoom = () => {
+    const target = photos.filter((p) => p.roomId === activeRoomId);
+    // Reset their detections + items first
+    setPhotos((prev) => prev.map((p) =>
+      p.roomId === activeRoomId ? { ...p, status: "pending", detections: [] } : p
+    ));
+    setItems((prev) => prev.filter((i) => i.roomId !== activeRoomId));
+    runBatch(target);
+  };
+
+  const handleScanRoomClick = () => {
+    if (canScanRoom) scanThisRoom();
+    else if (allScanned && photosInActiveRoom.length > 0) rescanActiveRoom();
+  };
+
+  // Clear suggestion when active room changes
+  useEffect(() => { setSuggestion(null); }, [activeRoomId]);
+
+  const acceptSuggestion = () => {
+    if (!suggestion) return;
+    // Move items + photos from fromRoomId (matching keyword) to toRoomId
+    const { fromRoomId, toRoomId } = suggestion;
+    setItems((prev) => prev.map((i) => i.roomId === fromRoomId ? { ...i, roomId: toRoomId } : i));
+    setPhotos((prev) => prev.map((p) => p.roomId === fromRoomId ? { ...p, roomId: toRoomId } : p));
+    setActiveRoomId(toRoomId);
+    setSuggestion(null);
+    toast({ title: "Moved", description: `Items reassigned to ${suggestion.toRoomName}.` });
+  };
+
+  const dismissSuggestion = () => {
+    if (suggestion) {
+      setDismissedSuggestions((prev) => new Set(prev).add(`${suggestion.fromRoomId}->${suggestion.toRoomId}`));
+    }
+    setSuggestion(null);
+  };
 
   // Photo drag (for reassignment)
   const draggedPhotoIdRef = useRef<string | null>(null);
