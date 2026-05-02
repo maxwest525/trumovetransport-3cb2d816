@@ -1024,19 +1024,71 @@ export default function InventoryScan() {
   /* ----- File handler ----- */
   const handleFiles = useCallback(async (files: File[]) => {
     if (files.length === 0) return;
-    const newPhotos: Photo[] = files.slice(0, 50).map((file) => ({
-      id: uid(),
-      file,
-      url: URL.createObjectURL(file),
-      roomId: "",
-      autoTagged: true,
-      status: "pending",
-      detections: [],
-    }));
+    const slice = files.slice(0, 50);
+    const dims = await Promise.all(slice.map((f) => getImageDimensions(f)));
+    const newPhotos: Photo[] = slice.map((file, i) => {
+      const { width, height } = dims[i];
+      const quality = checkPhotoQuality(file.size, width, height);
+      return {
+        id: uid(),
+        file,
+        url: URL.createObjectURL(file),
+        roomId: "",
+        autoTagged: true,
+        status: "pending",
+        detections: [],
+        width,
+        height,
+        quality,
+        enhanceStatus: "idle",
+        qualityDismissed: false,
+      };
+    });
     setPhotos((prev) => [...prev, ...newPhotos]);
     if (state === "empty") setState("scanning");
     if (!activePhotoId && newPhotos[0]) setActivePhotoId(newPhotos[0].id);
   }, [state, activePhotoId]);
+
+  /* ----- Dismiss / enhance handlers ----- */
+  const dismissQuality = useCallback((photoId: string) => {
+    setPhotos((prev) => prev.map((p) =>
+      p.id === photoId ? { ...p, qualityDismissed: true } : p
+    ));
+  }, []);
+
+  const enhancePhoto = useCallback(async (photoId: string) => {
+    const photo = photos.find((p) => p.id === photoId);
+    if (!photo || !photo.file) {
+      setPhotos((prev) => prev.map((p) =>
+        p.id === photoId ? { ...p, qualityDismissed: true } : p
+      ));
+      return;
+    }
+    setPhotos((prev) => prev.map((p) =>
+      p.id === photoId ? { ...p, enhanceStatus: "enhancing" } : p
+    ));
+    try {
+      const dataUrl = await fileToDataUrl(photo.file);
+      const { data, error } = await supabase.functions.invoke("enhance-image", {
+        body: { imageUrl: dataUrl },
+      });
+      if (error) throw error;
+      const enhancedUrl: string | undefined = data?.enhancedUrl;
+      if (!enhancedUrl) throw new Error("No enhanced image returned");
+      setPhotos((prev) => prev.map((p) =>
+        p.id === photoId
+          ? { ...p, url: enhancedUrl, dataUrl: enhancedUrl, enhanceStatus: "enhanced", qualityDismissed: true }
+          : p
+      ));
+      toast({ title: "Photo sharpened", description: "We'll use the higher-resolution version for detection." });
+    } catch (err: any) {
+      console.error("enhance error", err);
+      setPhotos((prev) => prev.map((p) =>
+        p.id === photoId ? { ...p, enhanceStatus: "failed" } : p
+      ));
+      toast({ title: "Couldn't enhance photo", description: "We'll continue with the original." });
+    }
+  }, [photos]);
 
   /* ----- Sample loader ----- */
   const loadSample = useCallback(() => {
