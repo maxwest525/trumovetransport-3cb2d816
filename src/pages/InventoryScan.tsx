@@ -1223,9 +1223,10 @@ function LiveInventoryFeed({
    Stats bar
 ============================================================ */
 function StatsBar({
-  items, onReview, disabled,
+  items, roomCount, onReview, disabled,
 }: {
   items: InventoryItem[];
+  roomCount: number;
   onReview: () => void;
   disabled: boolean;
 }) {
@@ -1241,25 +1242,34 @@ function StatsBar({
 
   return (
     <div
-      className="mt-3.5 rounded-md px-3 py-2.5 flex items-center justify-between"
-      style={{ background: "rgba(255,255,255,0.02)", border: "0.5px solid rgba(255,255,255,0.06)" }}
+      className="rounded-lg flex items-center justify-between"
+      style={{
+        background:
+          "linear-gradient(90deg, rgba(0,255,136,0.04), transparent 50%, rgba(0,255,136,0.04))",
+        border: "0.5px solid rgba(0,255,136,0.12)",
+        padding: "16px 24px",
+        minHeight: 64,
+      }}
     >
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-5 lg:gap-7">
         <Stat label="Items" value={totals.qty.toString()} />
-        <span className="w-px h-5 bg-white/10" />
+        <span className="w-px h-7 bg-white/10" />
         <Stat label="Weight" value={`${totals.wt.toLocaleString()} lb`} />
-        <span className="w-px h-5 bg-white/10" />
+        <span className="w-px h-7 bg-white/10" />
         <Stat label="Volume" value={`${Math.round(totals.cf)} cu ft`} />
+        <span className="w-px h-7 bg-white/10" />
+        <Stat label="Rooms" value={roomCount.toString()} />
       </div>
       <button
         onClick={onReview}
         disabled={disabled}
         className={cn(
-          "px-[18px] py-2 rounded-md text-[12px] font-medium transition-all flex items-center gap-1.5",
+          "rounded-lg font-semibold transition-all flex items-center gap-2",
           disabled
             ? "bg-white/5 text-white/30 cursor-not-allowed"
-            : "bg-[#00ff88] text-black hover:bg-[#00ff88]/90"
+            : "bg-[#00ff88] text-black hover:bg-[#00ff88] hover:shadow-[0_0_24px_rgba(0,255,136,0.3)]"
         )}
+        style={{ height: 44, padding: "0 28px", fontSize: 16 }}
       >
         Review inventory →
       </button>
@@ -1269,9 +1279,13 @@ function StatsBar({
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center gap-1.5">
-      <span className="text-[10px] text-white/50">{label}</span>
-      <span className="text-[13px] text-white font-medium">{value}</span>
+    <div className="flex flex-col">
+      <span className="text-[10px] uppercase tracking-[0.06em] text-[#7d8694] font-medium leading-tight">
+        {label}
+      </span>
+      <span className="text-[18px] lg:text-[20px] text-white font-medium leading-tight mt-0.5">
+        {value}
+      </span>
     </div>
   );
 }
