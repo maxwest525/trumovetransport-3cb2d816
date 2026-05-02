@@ -2204,7 +2204,7 @@ export default function ScanRoom() {
                   </div>
                 )}
 
-                <div className="tru-scan-library-header order-last mt-3 [border-bottom:0] border-t pt-2">
+                <div className="tru-scan-library-header mb-3 pb-2 border-b">
                   <FolderOpen className="w-3.5 h-3.5" />
                   <span>Library</span>
                   <span className="tru-scan-library-count">{uploadedPhotos.length}</span>
