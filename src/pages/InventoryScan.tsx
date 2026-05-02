@@ -185,64 +185,86 @@ function roomNameToId(name: string): string {
 }
 
 /* ============================================================
-   Top Bar — dot-style progress
+   Top Bar — TruMove header (desktop polish)
 ============================================================ */
-function TopBar({ activeStep, onSaveExit }: { activeStep: number; onSaveExit: () => void }) {
+function TopBar({ statusLabel, onSaveExit }: { statusLabel: string; onSaveExit: () => void }) {
   return (
-    <header className="h-12 border-b border-white/[0.06] bg-black flex items-center px-5 flex-shrink-0">
-      <div className="flex items-center gap-1 w-[180px]">
-        <span className="text-[13px] tracking-[0.18em] font-semibold text-white">TRUMOVE</span>
-        <span className="text-[9px] text-[#00ff88] font-bold -mt-2">™</span>
+    <header
+      className="h-12 lg:h-16 flex items-center px-5 lg:px-8 flex-shrink-0 relative"
+      style={{
+        background:
+          "linear-gradient(180deg, rgba(0,255,136,0.03) 0%, transparent 100%), #000",
+        borderBottom: "0.5px solid rgba(0,255,136,0.15)",
+      }}
+    >
+      {/* Left — wordmark */}
+      <div className="flex items-center gap-1 flex-shrink-0">
+        <span className="text-[13px] lg:text-[20px] tracking-[0.18em] lg:tracking-[0.14em] font-semibold text-white">
+          TRUMOVE
+        </span>
+        <span className="text-[9px] lg:text-[10px] text-[#00ff88] font-bold -mt-2 lg:-mt-3">™</span>
       </div>
 
-      <div className="flex-1 flex items-center justify-center">
-        <div className="flex items-center gap-2.5">
-          {STEPS.map((label, i) => {
-            const done = i < activeStep;
-            const active = i === activeStep;
-            return (
-              <div key={label} className="flex items-center gap-2.5">
-                <div className="flex items-center gap-2">
-                  <span
-                    className={cn(
-                      "w-1.5 h-1.5 rounded-full transition-colors",
-                      (done || active) ? "bg-[#00ff88]" : "bg-white/20"
-                    )}
-                    style={active ? { boxShadow: "0 0 8px rgba(0,255,136,0.6)" } : undefined}
-                  />
-                  <span className={cn(
-                    "text-[11px] tracking-wide",
-                    active && "text-white font-medium",
-                    done && "text-white/70",
-                    !done && !active && "text-white/40"
-                  )}>{label}</span>
-                </div>
-                {i < STEPS.length - 1 && (
-                  <div className="w-8 h-px bg-white/10 relative overflow-hidden">
-                    <motion.div
-                      className="h-full bg-[#00ff88]"
-                      initial={{ width: "0%" }}
-                      animate={{ width: done ? "100%" : "0%" }}
-                      transition={{ duration: 0.5 }}
-                    />
-                  </div>
-                )}
-              </div>
-            );
-          })}
+      {/* Center — single status string (desktop only) */}
+      <div className="hidden lg:flex flex-1 items-center justify-center">
+        <div className="flex items-center gap-2">
+          <span
+            className="w-[6px] h-[6px] rounded-full bg-[#00ff88]"
+            style={{ boxShadow: "0 0 8px rgba(0,255,136,0.6)" }}
+          />
+          <span className="text-[13px] text-white/90 font-normal">{statusLabel}</span>
         </div>
       </div>
 
-      <div className="w-[180px] flex justify-end">
+      <div className="flex-1 lg:flex-none lg:w-auto flex justify-end ml-auto">
         <button
           onClick={onSaveExit}
-          className="flex items-center gap-1.5 text-[11px] text-white/50 hover:text-white/90 transition-colors"
+          className="flex items-center gap-1.5 text-[11px] lg:text-[13px] text-white/50 hover:text-white transition-colors"
         >
-          <LogOut className="w-3 h-3" />
+          <LogOut className="w-3 h-3 lg:w-3.5 lg:h-3.5" />
           Save & exit
         </button>
       </div>
     </header>
+  );
+}
+
+/* ============================================================
+   Page heading row (desktop only)
+============================================================ */
+function PageHeading() {
+  return (
+    <div className="hidden lg:flex items-end justify-between mb-6">
+      <div>
+        <h1 className="text-[28px] font-medium text-white tracking-[-0.4px] leading-tight">
+          Inventory <span className="text-[#00ff88]">Scanner</span>
+        </h1>
+        <p className="text-[14px] text-[#a8b3c0] mt-1.5">
+          Drop photos. Our AI builds your moving inventory in seconds.
+        </p>
+      </div>
+      <div className="flex items-center gap-3">
+        <button className="flex items-center gap-1.5 text-[12px] text-[#a8b3c0] hover:text-white transition-colors px-2.5 py-1.5 rounded-md hover:bg-white/[0.04]">
+          <HelpCircle className="w-3.5 h-3.5" /> How it works
+        </button>
+        <div
+          className="flex items-center gap-2 px-2.5 py-1.5 rounded-full"
+          style={{
+            background: "rgba(255,255,255,0.03)",
+            border: "0.5px solid rgba(255,255,255,0.08)",
+          }}
+        >
+          <span
+            className="w-[6px] h-[6px] rounded-full bg-[#00ff88]"
+            style={{ boxShadow: "0 0 6px rgba(0,255,136,0.6)" }}
+          />
+          <span className="text-[10px] uppercase tracking-[0.12em] text-[#7d8694] font-medium">
+            AI Engine
+          </span>
+          <span className="text-[10px] text-white/80 font-mono">Gemini Vision</span>
+        </div>
+      </div>
+    </div>
   );
 }
 
