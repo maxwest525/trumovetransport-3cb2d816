@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Camera, Sparkles, ImageIcon, Check, LogOut, Loader2,
   ShieldCheck, Clock, ChevronDown, Plus, X, HelpCircle,
-  CheckCircle2, RotateCcw, Pencil,
+  CheckCircle2, RotateCcw, Pencil, Upload, Wand2, Package,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
