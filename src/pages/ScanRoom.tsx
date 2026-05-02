@@ -4332,19 +4332,19 @@ export default function ScanRoom() {
               placeholder="New folder name"
               className="h-9 text-sm"
             />
-            <Button
+            <button
               type="button"
-              size="sm"
               onClick={() => {
                 if (newFolderDraft.trim()) {
                   addCustomFolder(newFolderDraft);
                   setNewFolderDraft("");
                 }
               }}
+              className="inline-flex items-center gap-1.5 h-9 px-3 rounded-md bg-foreground text-background text-sm font-semibold hover:bg-foreground/85 transition-colors"
             >
               <FolderPlus className="w-4 h-4" />
               Add
-            </Button>
+            </button>
           </div>
           <div className="grid grid-cols-3 gap-2 max-h-[50vh] overflow-y-auto">
             {[
