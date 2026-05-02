@@ -6,7 +6,7 @@ import {
   Upload, Sparkles, Pencil, Plus, Check, ChevronDown, ChevronRight,
   LogOut, HelpCircle, Loader2, X, Trash2, Image as ImageIcon,
   Cpu, ShieldCheck, Headphones, AlertTriangle, Camera, Square, ArrowRight,
-  Layers, Play, Zap, Pause, FolderPlus, Eye, EyeOff, Brain,
+  Layers, Play, Zap, Pause, FolderPlus, Eye, EyeOff, Brain, RefreshCw, ArrowRightLeft,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
@@ -124,6 +124,67 @@ const getImageDims = (url: string): Promise<{ width: number; height: number }> =
 const confidenceColor = (c: number) =>
   c >= 85 ? "#00ff88" : c >= 70 ? "#fbbf24" : "#ef4444";
 
+/* ----- Smart room suggestion (keyword match) ----- */
+const ROOM_KEYWORDS: Record<string, string[]> = {
+  bedroom: ["bed", "nightstand", "dresser", "headboard", "mattress", "armoire", "wardrobe"],
+  "living-room": ["sofa", "couch", "loveseat", "coffee table", "tv stand", "recliner", "ottoman", "media console"],
+  kitchen: ["fridge", "refrigerator", "stove", "oven", "microwave", "dishwasher", "kitchen"],
+  "dining-room": ["dining table", "dining chair", "buffet", "china cabinet", "hutch"],
+  office: ["desk", "office chair", "filing cabinet", "bookshelf", "monitor"],
+  bathroom: ["vanity", "toilet", "shower", "bath"],
+  garage: ["lawn mower", "tool chest", "workbench", "bike", "bicycle"],
+};
+
+function suggestRoomForItems(itemNames: string[]): string | null {
+  const counts: Record<string, number> = {};
+  for (const name of itemNames) {
+    const n = name.toLowerCase();
+    for (const [roomId, keywords] of Object.entries(ROOM_KEYWORDS)) {
+      if (keywords.some((k) => n.includes(k))) {
+        counts[roomId] = (counts[roomId] || 0) + 1;
+      }
+    }
+  }
+  let best: string | null = null;
+  let bestCount = 0;
+  for (const [roomId, c] of Object.entries(counts)) {
+    if (c > bestCount) { best = roomId; bestCount = c; }
+  }
+  // require a strong signal: at least 2 matches OR >50% of items
+  if (bestCount >= 2 || (bestCount >= 1 && bestCount / Math.max(1, itemNames.length) > 0.5)) {
+    return best;
+  }
+  return null;
+}
+
+/* ----- Detection box collision / dedup helpers ----- */
+function bboxOverlapRatio(a: Detection["bbox"], b: Detection["bbox"]): number {
+  const x1 = Math.max(a.x, b.x);
+  const y1 = Math.max(a.y, b.y);
+  const x2 = Math.min(a.x + a.width, b.x + b.width);
+  const y2 = Math.min(a.y + a.height, b.y + b.height);
+  const inter = Math.max(0, x2 - x1) * Math.max(0, y2 - y1);
+  const areaA = a.width * a.height;
+  const areaB = b.width * b.height;
+  const smaller = Math.min(areaA, areaB);
+  return smaller > 0 ? inter / smaller : 0;
+}
+
+function dedupeDetections(detections: Detection[]): Detection[] {
+  const sorted = [...detections].sort((a, b) => b.confidence - a.confidence);
+  const kept: Detection[] = [];
+  for (const d of sorted) {
+    const dup = kept.find(
+      (k) =>
+        bboxOverlapRatio(k.bbox, d.bbox) > 0.7 &&
+        (k.itemName.toLowerCase() === d.itemName.toLowerCase() ||
+          bboxOverlapRatio(k.bbox, d.bbox) > 0.85)
+    );
+    if (!dup) kept.push(d);
+  }
+  return kept;
+}
+
 /* ============================================================
    Top Bar
 ============================================================ */
@@ -223,6 +284,11 @@ function DetectionBoxes({
       {detections.map((d, i) => {
         const color = confidenceColor(d.confidence);
         const highlighted = highlightedId === d.id;
+        const isLow = d.confidence < 70;
+        const isMid = d.confidence >= 70 && d.confidence < 85;
+        const dashed = isLow || isMid;
+        // Label vertical placement: shift below if too close to top edge
+        const labelBelow = d.bbox.y < 0.06;
         return (
           <motion.button
             key={d.id}
@@ -239,16 +305,47 @@ function DetectionBoxes({
               top: `${d.bbox.y * 100}%`,
               width: `${d.bbox.width * 100}%`,
               height: `${d.bbox.height * 100}%`,
-              border: `${highlighted ? 3 : 2}px solid ${color}`,
+              border: `${highlighted ? 3 : 2}px ${dashed ? "dashed" : "solid"} ${color}`,
               boxShadow: highlighted ? `0 0 16px ${color}80` : undefined,
               borderRadius: 4,
+              zIndex: highlighted ? 30 : 10 + Math.round(d.confidence / 10),
             }}
           >
+            {/* Label pill — positioned above box (or below near top edge) with tail */}
             <div
-              className="absolute -top-[22px] left-0 px-1.5 py-0.5 rounded-sm text-[10px] font-semibold whitespace-nowrap"
+              className={cn(
+                "absolute left-0 flex items-center gap-1 px-1.5 py-[3px] rounded-[3px] text-[10px] font-semibold leading-none max-w-[160px] truncate shadow-sm",
+                labelBelow ? "top-full mt-[6px]" : "bottom-full mb-[6px]"
+              )}
               style={{ background: color, color: "#000" }}
             >
-              {d.itemName}
+              <span className="truncate">{d.itemName}</span>
+              {isLow && <span className="font-bold">?</span>}
+              {/* Tail */}
+              <span
+                className="absolute left-2 w-0 h-0"
+                style={{
+                  [labelBelow ? "top" : "bottom"]: -3,
+                  borderLeft: "3px solid transparent",
+                  borderRight: "3px solid transparent",
+                  [labelBelow ? "borderBottom" : "borderTop"]: `3px solid ${color}`,
+                } as React.CSSProperties}
+              />
+            </div>
+
+            {/* Hover tooltip with details */}
+            <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50">
+              <div className="bg-black/95 backdrop-blur-sm border border-white/10 rounded-md px-3 py-2 min-w-[160px] shadow-xl">
+                <div className="text-[12px] font-semibold text-white">{d.itemName}</div>
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <span className="w-1.5 h-1.5 rounded-full" style={{ background: color }} />
+                  <span className="text-[10px] text-white/60">{Math.round(d.confidence)}% confidence</span>
+                </div>
+                <div className="text-[10px] text-white/50 mt-1 tabular-nums">
+                  ~{d.weight}lbs · {d.cubicFeet}cu ft
+                </div>
+                <div className="text-[10px] text-[#00ff88] mt-1 font-medium">✎ Click to edit</div>
+              </div>
             </div>
           </motion.button>
         );
@@ -263,6 +360,7 @@ function DetectionBoxes({
 function ScannerCanvas({
   activePhoto, highlightedDetectionId, onHoverDetection, onClickDetection,
   onDrop, isScanning, activeRoomName, showBrackets,
+  photoIndex, photoTotal, detectedCount, scanJustCompleted,
 }: {
   activePhoto: Photo | null;
   highlightedDetectionId: string | null;
@@ -272,6 +370,10 @@ function ScannerCanvas({
   isScanning: boolean;
   activeRoomName: string;
   showBrackets: boolean;
+  photoIndex: number;
+  photoTotal: number;
+  detectedCount: number;
+  scanJustCompleted: boolean;
 }) {
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     onDrop,
@@ -332,15 +434,55 @@ function ScannerCanvas({
           />
           {showBrackets && <Brackets pulse={isScanning} />}
 
-          <div className="absolute top-4 left-4 bg-black/70 backdrop-blur-sm border border-white/10 rounded-md px-3 py-2 flex items-center gap-2">
-            <Camera className="w-3.5 h-3.5 text-[#00ff88]" />
-            <div className="text-[10px]">
-              <div className="text-white/40 uppercase tracking-wider">Photo</div>
-              <div className="text-white font-mono truncate max-w-[180px]">
-                {activePhoto.file.name}
-              </div>
-            </div>
+          {/* Sleek photo header pill */}
+          <div className="absolute top-3 left-3 h-7 bg-black/60 backdrop-blur-sm border border-white/10 rounded-full px-2.5 flex items-center gap-2 text-[11px]">
+            <Camera className="w-3 h-3 text-[#00ff88]" />
+            <span className="text-white font-medium tabular-nums">Photo {photoIndex} of {photoTotal}</span>
+            <span className="w-px h-3 bg-white/15" />
+            <span className="text-white/70 capitalize">{activeRoomName}</span>
+            {detectedCount > 0 && (
+              <>
+                <span className="w-px h-3 bg-white/15" />
+                <span className="text-[#00ff88] font-semibold tabular-nums">{detectedCount} {detectedCount === 1 ? "item" : "items"}</span>
+              </>
+            )}
           </div>
+
+          {/* Scan complete shimmer */}
+          <AnimatePresence>
+            {scanJustCompleted && (
+              <motion.div
+                key="shimmer"
+                initial={{ opacity: 0, x: "-100%" }}
+                animate={{ opacity: 1, x: "100%" }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 1, ease: "easeOut" }}
+                className="absolute inset-y-0 w-1/2 pointer-events-none"
+                style={{
+                  background: "linear-gradient(90deg, transparent, rgba(0,255,136,0.18), transparent)",
+                }}
+              />
+            )}
+          </AnimatePresence>
+
+          {/* Scan complete toast — top of canvas */}
+          <AnimatePresence>
+            {scanJustCompleted && (
+              <motion.div
+                key="complete"
+                initial={{ opacity: 0, y: -12, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                className="absolute top-12 left-1/2 -translate-x-1/2 bg-black/90 backdrop-blur-sm border border-[#00ff88]/50 rounded-full px-4 py-1.5 flex items-center gap-2 shadow-[0_0_24px_rgba(0,255,136,0.3)]"
+              >
+                <Check className="w-3.5 h-3.5 text-[#00ff88]" strokeWidth={3} />
+                <span className="text-[12px] text-white font-semibold">
+                  Scan complete — {detectedCount} {detectedCount === 1 ? "item" : "items"} detected
+                </span>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {isScanning && (
             <motion.div
@@ -409,7 +551,7 @@ function ScannerCanvas({
 ============================================================ */
 function PhotoStrip({
   photos, activeId, editMode, showRoomLabels, rooms,
-  onSelect, onDelete, onAdd, onPhotoDragStart,
+  onSelect, onDelete, onAdd, onPhotoDragStart, detectionCounts,
 }: {
   photos: Photo[];
   activeId: string | null;
@@ -420,6 +562,7 @@ function PhotoStrip({
   onDelete: (id: string) => void;
   onAdd: () => void;
   onPhotoDragStart: (photoId: string) => void;
+  detectionCounts: Record<string, number>;
 }) {
   const grouped = useMemo(() => {
     if (!showRoomLabels) return [{ room: null as Room | null, photos }];
@@ -442,25 +585,37 @@ function PhotoStrip({
       : p.status === "failed" ? "bg-red-500"
       : "bg-white/30";
     const active = p.id === activeId;
+    const itemCount = detectionCounts[p.id] || 0;
+    const truncatedName = p.file.name.length > 14 ? p.file.name.slice(0, 11) + "..." : p.file.name;
     return (
       <motion.div
         key={p.id}
         animate={editMode ? { rotate: [-1, 1, -1] } : { rotate: 0 }}
         transition={editMode ? { duration: 0.3, repeat: Infinity } : {}}
-        className="relative flex-shrink-0"
+        className="relative flex-shrink-0 group"
         draggable={editMode}
         onDragStart={() => onPhotoDragStart(p.id)}
       >
         <button
           onClick={() => onSelect(p.id)}
           className={cn(
-            "w-[64px] h-[64px] rounded-md overflow-hidden border-2 transition-all relative",
-            active ? "border-[#00ff88] shadow-[0_0_12px_rgba(0,255,136,0.4)]" : "border-white/10 hover:border-white/30"
+            "w-[64px] h-[64px] rounded-md overflow-hidden transition-all relative",
+            active ? "border-[3px] border-[#00ff88] shadow-[0_0_12px_rgba(0,255,136,0.4)]" : "border-2 border-white/10 hover:border-white/30"
           )}
         >
           <img src={p.url} alt="" className="w-full h-full object-cover" />
           <span className={cn("absolute bottom-1 right-1 w-2 h-2 rounded-full ring-2 ring-black", dotColor)} />
+          {itemCount > 0 && (
+            <span className="absolute top-1 left-1 px-1 py-px rounded-sm bg-black/80 text-[#00ff88] text-[8px] font-bold tabular-nums leading-none">
+              {itemCount}
+            </span>
+          )}
         </button>
+        {/* Filename below */}
+        <div className="text-[9px] text-white/40 mt-1 text-center truncate w-[64px] font-mono leading-tight">
+          {truncatedName}
+        </div>
+        {/* Hover X (or permanent in edit mode) */}
         {editMode && (
           <button
             onClick={() => onDelete(p.id)}
@@ -468,6 +623,15 @@ function PhotoStrip({
             aria-label="Delete photo"
           >
             <X className="w-3 h-3" strokeWidth={3} />
+          </button>
+        )}
+        {!editMode && (
+          <button
+            onClick={(e) => { e.stopPropagation(); onDelete(p.id); }}
+            className="absolute -top-1.5 -left-1.5 w-5 h-5 rounded-full bg-black/80 border border-white/20 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-red-500 hover:border-red-500 transition-all"
+            aria-label="Delete photo"
+          >
+            <X className="w-2.5 h-2.5" strokeWidth={3} />
           </button>
         )}
       </motion.div>
@@ -558,6 +722,7 @@ type ScanProgress = { current: number; total: number };
 function ScanControls({
   scanState, scanProgress, canScanRoom, canScanAll, activeRoomName,
   onScanRoom, onScanAll, onCancel, photosInRoom, totalUnscanned,
+  roomAlreadyScanned, allScanned,
 }: {
   scanState: "idle" | "scanning";
   scanProgress: ScanProgress;
@@ -569,6 +734,8 @@ function ScanControls({
   onCancel: () => void;
   photosInRoom: number;
   totalUnscanned: number;
+  roomAlreadyScanned: boolean;
+  allScanned: boolean;
 }) {
   if (scanState === "scanning") {
     const pct = scanProgress.total > 0 ? Math.round((scanProgress.current / scanProgress.total) * 100) : 0;
@@ -607,6 +774,9 @@ function ScanControls({
   const roomEst = Math.max(5, Math.round(photosInRoom * 8));
   const allEstMin = Math.max(1, Math.round((totalUnscanned * 8) / 60));
 
+  // If everything is scanned, allow re-scanning current room as the primary action
+  const showRescan = allScanned && photosInRoom > 0;
+
   return (
     <TooltipProvider>
       <div className="grid grid-cols-2 gap-3">
@@ -614,20 +784,22 @@ function ScanControls({
           <TooltipTrigger asChild>
             <button
               onClick={onScanRoom}
-              disabled={!canScanRoom}
+              disabled={!canScanRoom && !showRescan}
               className={cn(
                 "h-12 rounded-md font-semibold text-[13px] flex items-center justify-center gap-2 transition-all",
                 canScanRoom
                   ? "bg-[#00ff88] text-black hover:shadow-[0_0_24px_rgba(0,255,136,0.5)] hover:bg-[#00ff88]/95"
-                  : "bg-white/[0.04] text-white/30 cursor-not-allowed"
+                  : showRescan
+                    ? "border border-white/15 bg-transparent text-white/80 hover:border-[#00ff88] hover:text-[#00ff88]"
+                    : "bg-white/[0.04] text-white/30 cursor-not-allowed"
               )}
             >
-              <Play className="w-3.5 h-3.5" fill="currentColor" />
-              Scan {activeRoomName}
+              {showRescan ? <RefreshCw className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" fill="currentColor" />}
+              {showRescan ? `Re-scan ${activeRoomName}` : `Scan ${activeRoomName}`}
               {canScanRoom && <span className="text-black/60 font-normal">(~{roomEst}s)</span>}
             </button>
           </TooltipTrigger>
-          {!canScanRoom && (
+          {!canScanRoom && !showRescan && (
             <TooltipContent>Upload photos to this room first</TooltipContent>
           )}
         </Tooltip>
@@ -635,20 +807,22 @@ function ScanControls({
           <TooltipTrigger asChild>
             <button
               onClick={onScanAll}
-              disabled={!canScanAll}
+              disabled={!canScanAll && !allScanned}
               className={cn(
                 "h-12 rounded-md font-semibold text-[13px] flex items-center justify-center gap-2 border-[1.5px] transition-all",
                 canScanAll
                   ? "border-[#00ff88] text-[#00ff88] hover:bg-[#00ff88]/10 hover:shadow-[0_0_16px_rgba(0,255,136,0.25)]"
-                  : "border-white/10 text-white/30 cursor-not-allowed"
+                  : allScanned
+                    ? "border-white/10 text-white/40 cursor-default"
+                    : "border-white/10 text-white/30 cursor-not-allowed"
               )}
             >
-              <Zap className="w-3.5 h-3.5" />
-              Scan all rooms
+              {allScanned ? <Check className="w-3.5 h-3.5" strokeWidth={3} /> : <Zap className="w-3.5 h-3.5" />}
+              {allScanned ? "All photos scanned" : (totalUnscanned > 0 && totalUnscanned < photosInRoom + 1 ? `Scan remaining (${totalUnscanned})` : "Scan all rooms")}
               {canScanAll && <span className="text-[#00ff88]/60 font-normal">({totalUnscanned} photos, ~{allEstMin}m)</span>}
             </button>
           </TooltipTrigger>
-          {!canScanAll && (
+          {!canScanAll && !allScanned && (
             <TooltipContent>Upload photos first</TooltipContent>
           )}
         </Tooltip>
@@ -838,7 +1012,7 @@ function ScannerTrustStrip() {
 function InventoryPanel({
   rooms, items, scanning, hasAnyScan, highlightedItemId,
   onItemHover, onItemClick, onEditItem, onAddItem, onContinue,
-  collapsedRooms, toggleRoom,
+  collapsedRooms, toggleRoom, suggestion, onAcceptSuggestion, onDismissSuggestion,
 }: {
   rooms: Room[];
   items: InventoryItem[];
@@ -852,6 +1026,9 @@ function InventoryPanel({
   onContinue: () => void;
   collapsedRooms: Set<string>;
   toggleRoom: (id: string) => void;
+  suggestion: { fromRoomId: string; toRoomId: string; toRoomName: string } | null;
+  onAcceptSuggestion: () => void;
+  onDismissSuggestion: () => void;
 }) {
   const grouped = useMemo(() => {
     const map = new Map<string, InventoryItem[]>();
@@ -879,11 +1056,53 @@ function InventoryPanel({
             )}
             <div className="text-[14px] font-semibold text-white">Detected Items</div>
           </div>
-          <div className="text-[11px] font-semibold tabular-nums px-2 py-0.5 rounded-full bg-[#00ff88]/15 text-[#00ff88]">
+          <motion.div
+            key={totalCount}
+            initial={{ scale: 1.2 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 0.3 }}
+            className="text-[11px] font-semibold tabular-nums px-2 py-0.5 rounded-full bg-[#00ff88]/15 text-[#00ff88]"
+          >
             {totalCount}
-          </div>
+          </motion.div>
         </div>
       )}
+
+      {/* Smart room suggestion banner */}
+      <AnimatePresence>
+        {suggestion && (
+          <motion.div
+            initial={{ opacity: 0, y: -8, height: 0 }}
+            animate={{ opacity: 1, y: 0, height: "auto" }}
+            exit={{ opacity: 0, y: -8, height: 0 }}
+            transition={{ duration: 0.25 }}
+            className="overflow-hidden border-b border-amber-500/30 bg-amber-500/[0.06]"
+          >
+            <div className="px-4 py-3">
+              <div className="flex items-start gap-2 mb-2">
+                <ArrowRightLeft className="w-3.5 h-3.5 text-amber-400 mt-0.5 flex-shrink-0" />
+                <div className="text-[12px] text-amber-100 leading-snug">
+                  These items look like a <span className="font-semibold">{suggestion.toRoomName}</span>.
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={onAcceptSuggestion}
+                  className="flex-1 h-7 rounded text-[11px] font-semibold bg-amber-400 text-black hover:bg-amber-300"
+                >
+                  Yes, move
+                </button>
+                <button
+                  onClick={onDismissSuggestion}
+                  className="flex-1 h-7 rounded text-[11px] font-medium border border-white/15 text-white/70 hover:text-white"
+                >
+                  Keep here
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div className="flex-1 overflow-y-auto overflow-x-hidden min-w-0">
         {isEmpty ? (
@@ -943,7 +1162,7 @@ function InventoryPanel({
                             layout
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.25 }}
+                            transition={{ duration: 0.25, delay: 0.05 }}
                             onMouseEnter={() => onItemHover(item.id)}
                             onMouseLeave={() => onItemHover(null)}
                             className={cn(
@@ -959,7 +1178,16 @@ function InventoryPanel({
                                 <Square className="w-3.5 h-3.5 text-white/30" />
                               )}
                             </div>
-                            <div className="text-[13px] text-white flex-1 min-w-0 truncate">{item.name}</div>
+                            <div className="flex-1 min-w-0">
+                              <div className="text-[13px] text-white truncate leading-tight">{item.name}</div>
+                              <div className="flex items-center gap-1 mt-0.5">
+                                <span
+                                  className="w-1.5 h-1.5 rounded-full"
+                                  style={{ background: confidenceColor(item.confidence) }}
+                                />
+                                <span className="text-[9px] text-white/40 tabular-nums">{Math.round(item.confidence)}%</span>
+                              </div>
+                            </div>
                             <div className="text-[13px] tabular-nums text-[#00ff88] font-semibold w-6 text-right">{item.quantity}</div>
                             <button
                               onClick={(e) => { e.stopPropagation(); onEditItem(item); }}
@@ -1208,6 +1436,9 @@ export default function InventoryScan() {
   const cancelScanRef = useRef(false);
   const [confirmAllOpen, setConfirmAllOpen] = useState(false);
   const [showBrackets, setShowBrackets] = useState(true);
+  const [scanJustCompleted, setScanJustCompleted] = useState(false);
+  const [suggestion, setSuggestion] = useState<{ fromRoomId: string; toRoomId: string; toRoomName: string } | null>(null);
+  const [dismissedSuggestions, setDismissedSuggestions] = useState<Set<string>>(new Set());
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -1287,7 +1518,7 @@ export default function InventoryScan() {
       if (error) throw error;
       const rawItems: any[] = data?.items || [];
 
-      const detections: Detection[] = rawItems.map((it) => ({
+      const rawDetections: Detection[] = rawItems.map((it) => ({
         id: uid(),
         itemName: it.name,
         confidence: it.confidence ?? 80,
@@ -1297,22 +1528,60 @@ export default function InventoryScan() {
         photoId: photo.id,
         roomId: photo.roomId,
       }));
+      // De-duplicate overlapping boxes
+      const detections = dedupeDetections(rawDetections);
 
       setPhotos((prev) => prev.map((p) =>
         p.id === photo.id ? { ...p, status: "scanned", detections, dataUrl } : p
       ));
 
-      const newItems: InventoryItem[] = rawItems.map((it) => ({
-        id: uid(),
-        name: it.name,
-        quantity: Math.max(1, Math.round(it.quantity || 1)),
-        cubicFeet: it.cubicFeet || 5,
-        weight: it.weight || 35,
-        roomId: photo.roomId,
-        sourcePhotoId: photo.id,
-        confidence: it.confidence ?? 80,
-      }));
-      setItems((prev) => [...prev, ...newItems]);
+      // Build items from de-duped detections, then merge with existing same-name items in same room
+      setItems((prev) => {
+        const next = [...prev];
+        for (const d of detections) {
+          const existingIdx = next.findIndex(
+            (i) => i.roomId === photo.roomId && i.name.toLowerCase() === d.itemName.toLowerCase()
+          );
+          if (existingIdx >= 0) {
+            next[existingIdx] = {
+              ...next[existingIdx],
+              quantity: next[existingIdx].quantity + 1,
+              confidence: Math.max(next[existingIdx].confidence, d.confidence),
+            };
+          } else {
+            next.push({
+              id: uid(),
+              name: d.itemName,
+              quantity: 1,
+              cubicFeet: d.cubicFeet,
+              weight: d.weight,
+              roomId: photo.roomId,
+              sourcePhotoId: photo.id,
+              confidence: d.confidence,
+            });
+          }
+        }
+        return next;
+      });
+
+      // Smart room suggestion
+      const itemNames = detections.map((d) => d.itemName);
+      const suggested = suggestRoomForItems(itemNames);
+      const suggestionKey = `${photo.roomId}->${suggested}`;
+      if (
+        suggested &&
+        suggested !== photo.roomId &&
+        !dismissedSuggestions.has(suggestionKey)
+      ) {
+        const targetRoom = rooms.find((r) => r.id === suggested);
+        if (targetRoom) {
+          setSuggestion({
+            fromRoomId: photo.roomId,
+            toRoomId: suggested,
+            toRoomName: targetRoom.name,
+          });
+        }
+      }
     } catch (err: any) {
       console.error("scan failed", err);
       const msg = err?.message?.includes("429") ? "Rate limited. Wait a moment and try again."
@@ -1339,6 +1608,9 @@ export default function InventoryScan() {
     }
     setScanState("idle");
     setScanProgress({ current: 0, total: 0 });
+    // Trigger celebration moment
+    setScanJustCompleted(true);
+    setTimeout(() => setScanJustCompleted(false), 2200);
   };
 
   const scanThisRoom = () => {
@@ -1464,6 +1736,56 @@ export default function InventoryScan() {
   const unscannedAll = photos.filter((p) => p.status !== "scanned" && p.status !== "scanning");
   const canScanRoom = activeRoomId !== "" && unscannedInActiveRoom.length > 0 && scanState === "idle";
   const canScanAll = unscannedAll.length > 0 && scanState === "idle";
+  const allScanned = photos.length > 0 && unscannedAll.length === 0 && scanState === "idle";
+  const roomAlreadyScanned = photosInActiveRoom.length > 0 && unscannedInActiveRoom.length === 0;
+
+  // Detection count per photo (for strip badges)
+  const detectionCounts = useMemo(() => {
+    const map: Record<string, number> = {};
+    for (const p of photos) map[p.id] = p.detections.length;
+    return map;
+  }, [photos]);
+
+  // Active photo index / total within visible set
+  const activePhotoIdx = activePhoto ? visiblePhotos.findIndex((p) => p.id === activePhoto.id) : -1;
+  const activeDetectedCount = activePhoto?.detections.length || 0;
+
+  // Re-scan helper: forces re-scan of the active room
+  const rescanActiveRoom = () => {
+    const target = photos.filter((p) => p.roomId === activeRoomId);
+    // Reset their detections + items first
+    setPhotos((prev) => prev.map((p) =>
+      p.roomId === activeRoomId ? { ...p, status: "pending", detections: [] } : p
+    ));
+    setItems((prev) => prev.filter((i) => i.roomId !== activeRoomId));
+    runBatch(target);
+  };
+
+  const handleScanRoomClick = () => {
+    if (canScanRoom) scanThisRoom();
+    else if (allScanned && photosInActiveRoom.length > 0) rescanActiveRoom();
+  };
+
+  // Clear suggestion when active room changes
+  useEffect(() => { setSuggestion(null); }, [activeRoomId]);
+
+  const acceptSuggestion = () => {
+    if (!suggestion) return;
+    // Move items + photos from fromRoomId (matching keyword) to toRoomId
+    const { fromRoomId, toRoomId } = suggestion;
+    setItems((prev) => prev.map((i) => i.roomId === fromRoomId ? { ...i, roomId: toRoomId } : i));
+    setPhotos((prev) => prev.map((p) => p.roomId === fromRoomId ? { ...p, roomId: toRoomId } : p));
+    setActiveRoomId(toRoomId);
+    setSuggestion(null);
+    toast({ title: "Moved", description: `Items reassigned to ${suggestion.toRoomName}.` });
+  };
+
+  const dismissSuggestion = () => {
+    if (suggestion) {
+      setDismissedSuggestions((prev) => new Set(prev).add(`${suggestion.fromRoomId}->${suggestion.toRoomId}`));
+    }
+    setSuggestion(null);
+  };
 
   // Photo drag (for reassignment)
   const draggedPhotoIdRef = useRef<string | null>(null);
@@ -1584,6 +1906,7 @@ export default function InventoryScan() {
               onDelete={deletePhoto}
               onAdd={() => fileInputRef.current?.click()}
               onPhotoDragStart={(id) => { draggedPhotoIdRef.current = id; }}
+              detectionCounts={detectionCounts}
             />
           )}
 
@@ -1597,6 +1920,10 @@ export default function InventoryScan() {
             isScanning={isScanning}
             activeRoomName={activeRoomName}
             showBrackets={showBrackets}
+            photoIndex={activePhotoIdx >= 0 ? activePhotoIdx + 1 : 0}
+            photoTotal={visiblePhotos.length}
+            detectedCount={activeDetectedCount}
+            scanJustCompleted={scanJustCompleted}
           />
 
           <input
@@ -1629,11 +1956,13 @@ export default function InventoryScan() {
               canScanRoom={canScanRoom}
               canScanAll={canScanAll}
               activeRoomName={activeRoomId === "" ? "this room" : `this ${activeRoomName}`}
-              onScanRoom={scanThisRoom}
+              onScanRoom={handleScanRoomClick}
               onScanAll={() => setConfirmAllOpen(true)}
               onCancel={cancelScan}
               photosInRoom={photosInActiveRoom.length}
               totalUnscanned={unscannedAll.length}
+              roomAlreadyScanned={roomAlreadyScanned}
+              allScanned={allScanned}
             />
           </div>
 
@@ -1664,6 +1993,9 @@ export default function InventoryScan() {
           onContinue={continueToReview}
           collapsedRooms={collapsedRooms}
           toggleRoom={toggleRoom}
+          suggestion={suggestion}
+          onAcceptSuggestion={acceptSuggestion}
+          onDismissSuggestion={dismissSuggestion}
         />
       </main>
 
