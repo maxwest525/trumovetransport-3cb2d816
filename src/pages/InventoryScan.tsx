@@ -624,12 +624,15 @@ function RoomChips({
 ============================================================ */
 function ScannerCanvas({
   photo, photoIndex, totalPhotos, room, onChangeRoom, allRooms,
+  onEnhance, onDismissQuality,
 }: {
   photo: Photo | null;
   photoIndex: number; totalPhotos: number;
   room: Room | undefined;
   onChangeRoom: (newRoomId: string) => void;
   allRooms: Room[];
+  onEnhance: (photoId: string) => void;
+  onDismissQuality: (photoId: string) => void;
 }) {
   return (
     <div
@@ -650,6 +653,15 @@ function ScannerCanvas({
             className="w-full h-full object-contain"
             draggable={false}
           />
+          {/* Quality banner */}
+          {photo.quality && photo.quality.tier !== "good" && !photo.qualityDismissed && (
+            <QualityBanner
+              quality={photo.quality}
+              enhanceStatus={photo.enhanceStatus ?? "idle"}
+              onEnhance={() => onEnhance(photo.id)}
+              onDismiss={() => onDismissQuality(photo.id)}
+            />
+          )}
           {/* Detection boxes */}
           {photo.status === "scanned" && photo.detections.map((d, i) => (
             <DetectionBox
