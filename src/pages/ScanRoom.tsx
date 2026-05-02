@@ -595,8 +595,18 @@ export default function ScanRoom() {
     // reality, not the raw file count which may include unsupported types.
     let acceptedCount = 0;
     const targetFolder = roomLabel || "All";
-    Array.from(files).forEach((file) => {
-      if (!file.type.startsWith("image/") && !file.type.startsWith("video/")) return;
+    const accepted = Array.from(files).filter(
+      (f) => f.type.startsWith("image/") || f.type.startsWith("video/")
+    );
+    if (accepted.length > 0) {
+      setUploadingCount((n) => n + accepted.length);
+      // Clear the indicator on the next frame after state flush so the chip
+      // is visible long enough to register, then disappears on its own.
+      window.setTimeout(() => {
+        setUploadingCount((n) => Math.max(0, n - accepted.length));
+      }, 700);
+    }
+    accepted.forEach((file) => {
       acceptedCount += 1;
       const url = URL.createObjectURL(file);
       setUploadedPhotos((prev) => [
