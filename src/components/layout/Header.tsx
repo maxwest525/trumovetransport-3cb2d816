@@ -10,7 +10,7 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { href: "/online-estimate", label: "Virtual Inventory", icon: Calculator },
+  { href: "/scan-room", label: "Virtual Inventory", icon: Calculator },
   // { href: "/auto-transport", label: "Auto Transport", icon: Car },
   { href: "/track", label: "Shipment Tracking", icon: MapPin },
   { href: "/vetting", label: "FMCSA Carrier Vetting", icon: Shield },
