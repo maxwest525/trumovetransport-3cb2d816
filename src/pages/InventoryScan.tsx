@@ -722,6 +722,7 @@ type ScanProgress = { current: number; total: number };
 function ScanControls({
   scanState, scanProgress, canScanRoom, canScanAll, activeRoomName,
   onScanRoom, onScanAll, onCancel, photosInRoom, totalUnscanned,
+  roomAlreadyScanned, allScanned,
 }: {
   scanState: "idle" | "scanning";
   scanProgress: ScanProgress;
@@ -733,6 +734,8 @@ function ScanControls({
   onCancel: () => void;
   photosInRoom: number;
   totalUnscanned: number;
+  roomAlreadyScanned: boolean;
+  allScanned: boolean;
 }) {
   if (scanState === "scanning") {
     const pct = scanProgress.total > 0 ? Math.round((scanProgress.current / scanProgress.total) * 100) : 0;
@@ -771,6 +774,9 @@ function ScanControls({
   const roomEst = Math.max(5, Math.round(photosInRoom * 8));
   const allEstMin = Math.max(1, Math.round((totalUnscanned * 8) / 60));
 
+  // If everything is scanned, allow re-scanning current room as the primary action
+  const showRescan = allScanned && photosInRoom > 0;
+
   return (
     <TooltipProvider>
       <div className="grid grid-cols-2 gap-3">
@@ -778,20 +784,22 @@ function ScanControls({
           <TooltipTrigger asChild>
             <button
               onClick={onScanRoom}
-              disabled={!canScanRoom}
+              disabled={!canScanRoom && !showRescan}
               className={cn(
                 "h-12 rounded-md font-semibold text-[13px] flex items-center justify-center gap-2 transition-all",
                 canScanRoom
                   ? "bg-[#00ff88] text-black hover:shadow-[0_0_24px_rgba(0,255,136,0.5)] hover:bg-[#00ff88]/95"
-                  : "bg-white/[0.04] text-white/30 cursor-not-allowed"
+                  : showRescan
+                    ? "border border-white/15 bg-transparent text-white/80 hover:border-[#00ff88] hover:text-[#00ff88]"
+                    : "bg-white/[0.04] text-white/30 cursor-not-allowed"
               )}
             >
-              <Play className="w-3.5 h-3.5" fill="currentColor" />
-              Scan {activeRoomName}
+              {showRescan ? <RefreshCw className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" fill="currentColor" />}
+              {showRescan ? `Re-scan ${activeRoomName}` : `Scan ${activeRoomName}`}
               {canScanRoom && <span className="text-black/60 font-normal">(~{roomEst}s)</span>}
             </button>
           </TooltipTrigger>
-          {!canScanRoom && (
+          {!canScanRoom && !showRescan && (
             <TooltipContent>Upload photos to this room first</TooltipContent>
           )}
         </Tooltip>
@@ -799,20 +807,22 @@ function ScanControls({
           <TooltipTrigger asChild>
             <button
               onClick={onScanAll}
-              disabled={!canScanAll}
+              disabled={!canScanAll && !allScanned}
               className={cn(
                 "h-12 rounded-md font-semibold text-[13px] flex items-center justify-center gap-2 border-[1.5px] transition-all",
                 canScanAll
                   ? "border-[#00ff88] text-[#00ff88] hover:bg-[#00ff88]/10 hover:shadow-[0_0_16px_rgba(0,255,136,0.25)]"
-                  : "border-white/10 text-white/30 cursor-not-allowed"
+                  : allScanned
+                    ? "border-white/10 text-white/40 cursor-default"
+                    : "border-white/10 text-white/30 cursor-not-allowed"
               )}
             >
-              <Zap className="w-3.5 h-3.5" />
-              Scan all rooms
+              {allScanned ? <Check className="w-3.5 h-3.5" strokeWidth={3} /> : <Zap className="w-3.5 h-3.5" />}
+              {allScanned ? "All photos scanned" : (totalUnscanned > 0 && totalUnscanned < photosInRoom + 1 ? `Scan remaining (${totalUnscanned})` : "Scan all rooms")}
               {canScanAll && <span className="text-[#00ff88]/60 font-normal">({totalUnscanned} photos, ~{allEstMin}m)</span>}
             </button>
           </TooltipTrigger>
-          {!canScanAll && (
+          {!canScanAll && !allScanned && (
             <TooltipContent>Upload photos first</TooltipContent>
           )}
         </Tooltip>
