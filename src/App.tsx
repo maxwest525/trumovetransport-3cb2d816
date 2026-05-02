@@ -34,7 +34,11 @@ const queryClient = new QueryClient();
 function GlobalFloatingTruckChat() {
   const location = useLocation();
 
-  if (location.pathname === "/customer-service") {
+  if (
+    location.pathname === "/customer-service" ||
+    location.pathname === "/inventory/scan" ||
+    location.pathname === "/scanner"
+  ) {
     return null;
   }
 
