@@ -2539,7 +2539,7 @@ export default function ScanRoom() {
                                   <div key={room} className="relative group">
                                     <button
                                       type="button"
-                                      onClick={() => handleRoomClick(room)}
+                                      onClick={() => setFolderBrowser(room)}
                                       className="w-full flex flex-col items-center gap-1 rounded-lg border border-border bg-muted/30 px-2 py-2.5 text-[11px] font-medium text-muted-foreground/70 hover:bg-muted/60 hover:text-foreground hover:border-foreground/20 transition-colors cursor-pointer"
                                     >
                                       <Icon className="w-3.5 h-3.5 flex-shrink-0" />
