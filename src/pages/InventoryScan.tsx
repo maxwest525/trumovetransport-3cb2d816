@@ -115,6 +115,51 @@ const fileToDataUrl = (file: File): Promise<string> =>
 const confidenceColor = (c: number) =>
   c >= 85 ? "#00ff88" : c >= 70 ? "#fbbf24" : "#ef4444";
 
+/* ----- Photo quality helpers ----- */
+function getImageDimensions(file: File): Promise<{ width: number; height: number }> {
+  return new Promise((resolve) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      resolve({ width: img.naturalWidth, height: img.naturalHeight });
+      URL.revokeObjectURL(url);
+    };
+    img.onerror = () => {
+      resolve({ width: 0, height: 0 });
+      URL.revokeObjectURL(url);
+    };
+    img.src = url;
+  });
+}
+
+function checkPhotoQuality(
+  fileSize: number,
+  width: number,
+  height: number,
+): QualityResult {
+  const minDim = Math.min(width, height);
+  if (minDim > 0 && minDim < 600) {
+    return { tier: "low", reason: "resolution", recommendation: "enhance", width, height };
+  }
+  const pixels = width * height;
+  const bpp = pixels > 0 ? fileSize / pixels : 1;
+  if (bpp < 0.3 && pixels > 0) {
+    return { tier: "low", reason: "compression", recommendation: "enhance", width, height };
+  }
+  if (minDim > 0 && minDim < 1000) {
+    return { tier: "medium", reason: "resolution", recommendation: "optional", width, height };
+  }
+  return { tier: "good", reason: null, recommendation: null, width, height };
+}
+
+function formatDimensions(width: number, height: number): string {
+  const max = Math.max(width, height);
+  if (max >= 3840) return "4K";
+  if (max >= 4000) return "high resolution";
+  if (max >= 1920 && Math.min(width, height) >= 1080) return "1080p";
+  return `${width}x${height}`;
+}
+
 function detectRoomFromItems(itemNames: string[]): { roomId: string; auto: boolean } {
   const counts: Record<string, number> = {};
   for (const name of itemNames) {
