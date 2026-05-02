@@ -985,12 +985,12 @@ export default function InventoryScan() {
         } else {
           next.push({
             id: uid(),
-            name: d.name,
+            name: d.itemName,
             quantity: 1,
-            cubicFeet: d.cuft,
-            weight: d.wt,
+            cubicFeet: d.cubicFeet,
+            weight: d.weight,
             roomId,
-            confidence: d.conf,
+            confidence: d.confidence,
             detectedAt: now,
           });
         }
