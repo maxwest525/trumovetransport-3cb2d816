@@ -868,7 +868,7 @@ function InventoryPanel({
   const canContinue = totalCount > 0;
 
   return (
-    <aside className="w-[380px] flex-shrink-0 bg-[#0a0e1a] border-l border-white/[0.06] flex flex-col h-full">
+    <aside className="w-[360px] flex-shrink-0 min-w-0 bg-[#0a0e1a] border-l border-white/[0.06] flex flex-col h-full overflow-hidden">
       {!isEmpty && (
         <div className="px-4 py-3 flex items-center justify-between border-b border-white/[0.06]">
           <div className="flex items-center gap-2">
@@ -885,30 +885,29 @@ function InventoryPanel({
         </div>
       )}
 
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden min-w-0">
         {isEmpty ? (
-          <div className="h-full flex flex-col items-center justify-center px-8 text-center">
-            <div className="w-12 h-12 rounded-full bg-[#00ff88]/10 border border-[#00ff88]/20 flex items-center justify-center mb-4">
-              <ImageIcon className="w-5 h-5 text-[#00ff88]" />
-            </div>
-            <div className="text-[14px] text-white font-semibold mb-1">No items yet</div>
-            <div className="text-[12px] text-white/50 mb-6 max-w-[240px]">
-              Organize photos by room, then scan to detect items automatically.
-            </div>
-            <ol className="text-left space-y-2.5 w-full max-w-[240px]">
+          <div className="h-full flex flex-col items-center justify-center px-5 text-center">
+            <div className="w-full max-w-[280px] rounded-lg border border-dashed border-[#00ff88]/20 p-5">
+              <div className="text-[16px] text-white font-medium mb-1.5">No items yet</div>
+              <div className="text-[13px] text-white/50 mb-4 leading-snug">
+                Drop photos into a room, then scan to detect items.
+              </div>
+              <ol className="text-left space-y-1.5 w-full">
               {[
                 "Pick a room from the left",
                 "Drop photos into the canvas",
                 "Hit Scan this room",
               ].map((line, i) => (
-                <li key={i} className="flex gap-2.5 items-start">
-                  <span className="w-5 h-5 rounded-full bg-white/5 border border-white/10 text-white/60 text-[10px] font-semibold flex items-center justify-center flex-shrink-0 mt-0.5">
+                <li key={i} className="flex gap-2 items-center">
+                  <span className="w-4 h-4 rounded-full bg-[#00ff88]/10 border border-[#00ff88]/30 text-[#00ff88] text-[9px] font-bold flex items-center justify-center flex-shrink-0">
                     {i + 1}
                   </span>
-                  <span className="text-[12px] text-white/70">{line}</span>
+                  <span className="text-[12px] text-white/70 leading-tight">{line}</span>
                 </li>
               ))}
             </ol>
+            </div>
           </div>
         ) : (
           <div className="py-2">
@@ -981,54 +980,64 @@ function InventoryPanel({
         )}
       </div>
 
-      <div className="p-4 border-t border-white/[0.06] space-y-2 flex-shrink-0">
-        <div className="grid grid-cols-2 gap-2">
-          <button
-            onClick={onAddItem}
-            disabled={isEmpty}
-            className={cn(
-              "h-9 rounded-md border bg-transparent text-[12px] font-medium flex items-center justify-center gap-1.5 transition-colors",
-              isEmpty
-                ? "border-white/5 text-white/20 cursor-not-allowed"
-                : "border-white/10 text-white/70 hover:border-white/30 hover:text-white"
-            )}
-          >
-            <Plus className="w-3.5 h-3.5" /> Add Item
-          </button>
-          <button
-            disabled={isEmpty}
-            className={cn(
-              "h-9 rounded-md border bg-transparent text-[12px] font-medium flex items-center justify-center gap-1.5 transition-colors",
-              isEmpty
-                ? "border-white/5 text-white/20 cursor-not-allowed"
-                : "border-white/10 text-white/70 hover:border-white/30 hover:text-white"
-            )}
-          >
-            <Pencil className="w-3.5 h-3.5" /> Edit Room
-          </button>
-        </div>
-        <TooltipProvider>
+      <TooltipProvider>
+        <div className="p-5 border-t border-white/[0.06] space-y-2 flex-shrink-0 overflow-hidden">
+          <div className="grid grid-cols-2 gap-2 min-w-0">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={onAddItem}
+                  disabled={isEmpty}
+                  className={cn(
+                    "h-9 min-w-0 rounded-md border bg-transparent text-[12px] font-medium flex items-center justify-center gap-1.5 transition-colors truncate",
+                    isEmpty
+                      ? "border-white/5 text-white/30 opacity-50 cursor-not-allowed"
+                      : "border-white/10 text-white/70 hover:border-white/30 hover:text-white"
+                  )}
+                >
+                  <Plus className="w-3.5 h-3.5 flex-shrink-0" /> <span className="truncate">Add Item</span>
+                </button>
+              </TooltipTrigger>
+              {isEmpty && <TooltipContent>Complete a scan first</TooltipContent>}
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  disabled={isEmpty}
+                  className={cn(
+                    "h-9 min-w-0 rounded-md border bg-transparent text-[12px] font-medium flex items-center justify-center gap-1.5 transition-colors truncate",
+                    isEmpty
+                      ? "border-white/5 text-white/30 opacity-50 cursor-not-allowed"
+                      : "border-white/10 text-white/70 hover:border-white/30 hover:text-white"
+                  )}
+                >
+                  <Pencil className="w-3.5 h-3.5 flex-shrink-0" /> <span className="truncate">Edit Room</span>
+                </button>
+              </TooltipTrigger>
+              {isEmpty && <TooltipContent>Complete a scan first</TooltipContent>}
+            </Tooltip>
+          </div>
           <Tooltip>
             <TooltipTrigger asChild>
               <button
                 onClick={canContinue ? onContinue : undefined}
                 disabled={!canContinue}
                 className={cn(
-                  "w-full h-[52px] rounded-md font-semibold text-[14px] flex items-center justify-center gap-2 transition-all",
+                  "w-full h-12 rounded-md font-semibold text-[14px] flex items-center justify-center gap-2 transition-all min-w-0 truncate",
                   canContinue
                     ? "bg-[#00ff88] text-black hover:shadow-[0_0_24px_rgba(0,255,136,0.5)]"
-                    : "bg-white/[0.04] text-white/25 cursor-not-allowed"
+                    : "bg-white/[0.04] text-white/25 opacity-60 cursor-not-allowed"
                 )}
               >
-                Looks Good, Continue <ArrowRight className="w-4 h-4" />
+                <span className="truncate">Looks Good, Continue</span> <ArrowRight className="w-4 h-4 flex-shrink-0" />
               </button>
             </TooltipTrigger>
             {!canContinue && (
               <TooltipContent>Complete a scan first</TooltipContent>
             )}
           </Tooltip>
-        </TooltipProvider>
-      </div>
+        </div>
+      </TooltipProvider>
     </aside>
   );
 }
