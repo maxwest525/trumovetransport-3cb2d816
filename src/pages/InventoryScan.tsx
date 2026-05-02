@@ -185,87 +185,160 @@ function roomNameToId(name: string): string {
 }
 
 /* ============================================================
-   Top Bar — TruMove header (desktop polish)
+   Page chrome — Hero + Mode toggle + Section header
+   (Renders above page body. The global TruMove navbar lives
+   outside this page; this is the in-page hero section.)
 ============================================================ */
-function TopBar({ statusLabel, onSaveExit }: { statusLabel: string; onSaveExit: () => void }) {
+function HeroBlock() {
   return (
-    <header
-      className="h-12 lg:h-16 flex items-center px-5 lg:px-8 flex-shrink-0 relative"
-      style={{
-        background:
-          "linear-gradient(180deg, rgba(0,255,136,0.03) 0%, transparent 100%), #000",
-        borderBottom: "0.5px solid rgba(0,255,136,0.15)",
-      }}
-    >
-      {/* Left — wordmark */}
-      <div className="flex items-center gap-1 flex-shrink-0">
-        <span className="text-[13px] lg:text-[20px] tracking-[0.18em] lg:tracking-[0.14em] font-semibold text-white">
-          TRUMOVE
-        </span>
-        <span className="text-[9px] lg:text-[10px] text-[#00ff88] font-bold -mt-2 lg:-mt-3">™</span>
+    <div className="text-center mb-7 lg:mb-8">
+      <div
+        className="text-[11px] font-bold uppercase mb-2"
+        style={{ color: "#00b369", letterSpacing: "1.5px" }}
+      >
+        Virtual Inventory
       </div>
-
-      {/* Center — single status string (desktop only) */}
-      <div className="hidden lg:flex flex-1 items-center justify-center">
-        <div className="flex items-center gap-2">
-          <span
-            className="w-[6px] h-[6px] rounded-full bg-[#00ff88]"
-            style={{ boxShadow: "0 0 8px rgba(0,255,136,0.6)" }}
-          />
-          <span className="text-[13px] text-white/90 font-normal">{statusLabel}</span>
-        </div>
-      </div>
-
-      <div className="flex-1 lg:flex-none lg:w-auto flex justify-end ml-auto">
-        <button
-          onClick={onSaveExit}
-          className="flex items-center gap-1.5 text-[11px] lg:text-[13px] text-white/50 hover:text-white transition-colors"
-        >
-          <LogOut className="w-3 h-3 lg:w-3.5 lg:h-3.5" />
-          Save & exit
-        </button>
-      </div>
-    </header>
+      <h1
+        className="text-[24px] lg:text-[28px] font-bold leading-tight"
+        style={{ color: "#0f1115", letterSpacing: "-0.5px" }}
+      >
+        Build Your <span style={{ color: "#00b369" }}>Inventory</span>
+      </h1>
+      <p className="text-[13px] mt-1.5" style={{ color: "#6b7280" }}>
+        Scan with AI, build manually, or both. Switch anytime.
+      </p>
+    </div>
   );
 }
 
-/* ============================================================
-   Page heading row (desktop only)
-============================================================ */
-function PageHeading() {
+function ModeTogglePill({
+  mode,
+  onChange,
+}: {
+  mode: "ai" | "manual";
+  onChange: (m: "ai" | "manual") => void;
+}) {
+  const segBase =
+    "flex items-center gap-2 px-4 lg:px-5 py-2 rounded-full text-[13px] font-semibold transition-colors select-none";
   return (
-    <div className="hidden lg:flex items-end justify-between mb-6">
-      <div>
-        <h1 className="text-[28px] font-medium text-white tracking-[-0.4px] leading-tight">
-          Inventory <span className="text-[#00ff88]">Scanner</span>
-        </h1>
-        <p className="text-[14px] text-[#a8b3c0] mt-1.5">
-          Drop photos. Our AI builds your moving inventory in seconds.
-        </p>
-      </div>
-      <div className="flex items-center gap-3">
-        <button className="flex items-center gap-1.5 text-[12px] text-[#a8b3c0] hover:text-white transition-colors px-2.5 py-1.5 rounded-md hover:bg-white/[0.04]">
-          <HelpCircle className="w-3.5 h-3.5" /> How it works
-        </button>
-        <div
-          className="flex items-center gap-2 px-2.5 py-1.5 rounded-full"
-          style={{
-            background: "rgba(255,255,255,0.03)",
-            border: "0.5px solid rgba(255,255,255,0.08)",
-          }}
+    <div className="flex justify-center mb-7 lg:mb-8">
+      <div
+        className="inline-flex items-center p-1 rounded-full"
+        style={{
+          background: "#ffffff",
+          border: "1px solid #e5e7eb",
+          boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+        }}
+      >
+        <button
+          type="button"
+          onClick={() => onChange("ai")}
+          className={cn(segBase)}
+          style={
+            mode === "ai"
+              ? { background: "#0f1115", color: "#ffffff" }
+              : { background: "transparent", color: "#6b7280" }
+          }
         >
-          <span
-            className="w-[6px] h-[6px] rounded-full bg-[#00ff88]"
-            style={{ boxShadow: "0 0 6px rgba(0,255,136,0.6)" }}
+          <Sparkles
+            className="w-3.5 h-3.5"
+            style={{ color: mode === "ai" ? "#00d97e" : "#9ca3af" }}
           />
-          <span className="text-[10px] uppercase tracking-[0.12em] text-[#7d8694] font-medium">
-            AI Engine
+          AI Room Scan
+          <span
+            className="ml-1 text-[9px] font-bold px-1.5 py-[1px] rounded"
+            style={{
+              background: mode === "ai" ? "rgba(0,217,126,0.2)" : "#f0fdf5",
+              color: mode === "ai" ? "#00d97e" : "#00b369",
+              letterSpacing: "0.5px",
+            }}
+          >
+            BETA
           </span>
-          <span className="text-[10px] text-white/80 font-mono">Gemini Vision</span>
-        </div>
+        </button>
+        <button
+          type="button"
+          onClick={() => onChange("manual")}
+          className={cn(segBase)}
+          style={
+            mode === "manual"
+              ? { background: "#0f1115", color: "#ffffff" }
+              : { background: "transparent", color: "#6b7280" }
+          }
+        >
+          <Package
+            className="w-3.5 h-3.5"
+            style={{ color: mode === "manual" ? "#00d97e" : "#9ca3af" }}
+          />
+          Build Manually
+        </button>
       </div>
     </div>
   );
+}
+
+function ScannerSectionHeader({
+  onAddPhotos,
+  onSample,
+}: {
+  onAddPhotos: () => void;
+  onSample?: () => void;
+}) {
+  return (
+    <div className="flex items-end justify-between gap-3 px-1 pb-3">
+      <div>
+        <h2
+          className="text-[18px] font-bold leading-tight"
+          style={{ color: "#0f1115", letterSpacing: "-0.3px" }}
+        >
+          AI Room <span style={{ color: "#00b369" }}>Scanner</span>
+        </h2>
+        <p className="text-[12px] mt-0.5" style={{ color: "#6b7280" }}>
+          Drop photos. We detect every item automatically.
+        </p>
+      </div>
+      <div className="flex items-center gap-3">
+        {onSample && (
+          <button
+            type="button"
+            onClick={onSample}
+            className="text-[12px] font-semibold transition-colors hover:underline"
+            style={{ color: "#6b7280" }}
+          >
+            Try with sample
+          </button>
+        )}
+        <button
+          type="button"
+          onClick={onAddPhotos}
+          className="inline-flex items-center gap-2 font-bold transition-transform hover:scale-[1.02] active:scale-[0.98]"
+          style={{
+            background: "#00d97e",
+            color: "#0f1115",
+            border: "none",
+            padding: "10px 18px",
+            borderRadius: "100px",
+            fontSize: "13px",
+          }}
+        >
+          <Upload className="w-3.5 h-3.5" strokeWidth={2.5} />
+          Add photos
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* Kept for backwards-compat with the scanning state below.
+   Phase 2 will fold this into the new section-header pattern. */
+function PageHeading() {
+  return null;
+}
+
+/* No-op shim so existing render code that imports TopBar still compiles
+   while we rebuild upward. */
+function TopBar(_: { statusLabel: string; onSaveExit: () => void }) {
+  return null;
 }
 
 /* ============================================================
