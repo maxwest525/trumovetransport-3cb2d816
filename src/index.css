@@ -11158,30 +11158,31 @@
 /* Active state: clearly mark the current route */
 .header-nav-link.is-active {
   font-weight: 700;
-  color: hsl(var(--primary));
-  background: hsl(var(--primary) / 0.12);
-  border-color: hsl(var(--primary) / 0.45);
-  box-shadow: 0 0 0 1px hsl(var(--primary) / 0.15), 0 2px 10px hsl(var(--primary) / 0.18);
+  color: hsl(0 0% 100%);
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  padding-left: 16px;
 }
 
 .header-nav-link.is-active:hover {
-  color: hsl(var(--primary));
-  background: hsl(var(--primary) / 0.18);
-  border-color: hsl(var(--primary) / 0.6);
+  color: hsl(0 0% 100%);
+  background: hsl(0 0% 100% / 0.06);
+  border-color: transparent;
 }
 
-/* Underline indicator under the active link */
-.header-nav-link.is-active::after {
-  display: block;
+/* Active state: vertical green accent bar on the left */
+.header-nav-link.is-active::before {
   content: "";
   position: absolute;
-  left: 16px;
-  right: 16px;
-  bottom: 4px;
-  height: 2px;
-  border-radius: 2px;
+  left: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 60%;
+  border-radius: 3px;
   background: hsl(var(--primary));
-  box-shadow: 0 0 8px hsl(var(--primary) / 0.6);
+  box-shadow: 0 0 10px hsl(var(--primary) / 0.7);
 }
 
 
