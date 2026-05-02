@@ -360,6 +360,7 @@ function DetectionBoxes({
 function ScannerCanvas({
   activePhoto, highlightedDetectionId, onHoverDetection, onClickDetection,
   onDrop, isScanning, activeRoomName, showBrackets,
+  photoIndex, photoTotal, detectedCount, scanJustCompleted,
 }: {
   activePhoto: Photo | null;
   highlightedDetectionId: string | null;
@@ -369,6 +370,10 @@ function ScannerCanvas({
   isScanning: boolean;
   activeRoomName: string;
   showBrackets: boolean;
+  photoIndex: number;
+  photoTotal: number;
+  detectedCount: number;
+  scanJustCompleted: boolean;
 }) {
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     onDrop,
@@ -429,15 +434,55 @@ function ScannerCanvas({
           />
           {showBrackets && <Brackets pulse={isScanning} />}
 
-          <div className="absolute top-4 left-4 bg-black/70 backdrop-blur-sm border border-white/10 rounded-md px-3 py-2 flex items-center gap-2">
-            <Camera className="w-3.5 h-3.5 text-[#00ff88]" />
-            <div className="text-[10px]">
-              <div className="text-white/40 uppercase tracking-wider">Photo</div>
-              <div className="text-white font-mono truncate max-w-[180px]">
-                {activePhoto.file.name}
-              </div>
-            </div>
+          {/* Sleek photo header pill */}
+          <div className="absolute top-3 left-3 h-7 bg-black/60 backdrop-blur-sm border border-white/10 rounded-full px-2.5 flex items-center gap-2 text-[11px]">
+            <Camera className="w-3 h-3 text-[#00ff88]" />
+            <span className="text-white font-medium tabular-nums">Photo {photoIndex} of {photoTotal}</span>
+            <span className="w-px h-3 bg-white/15" />
+            <span className="text-white/70 capitalize">{activeRoomName}</span>
+            {detectedCount > 0 && (
+              <>
+                <span className="w-px h-3 bg-white/15" />
+                <span className="text-[#00ff88] font-semibold tabular-nums">{detectedCount} {detectedCount === 1 ? "item" : "items"}</span>
+              </>
+            )}
           </div>
+
+          {/* Scan complete shimmer */}
+          <AnimatePresence>
+            {scanJustCompleted && (
+              <motion.div
+                key="shimmer"
+                initial={{ opacity: 0, x: "-100%" }}
+                animate={{ opacity: 1, x: "100%" }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 1, ease: "easeOut" }}
+                className="absolute inset-y-0 w-1/2 pointer-events-none"
+                style={{
+                  background: "linear-gradient(90deg, transparent, rgba(0,255,136,0.18), transparent)",
+                }}
+              />
+            )}
+          </AnimatePresence>
+
+          {/* Scan complete toast — top of canvas */}
+          <AnimatePresence>
+            {scanJustCompleted && (
+              <motion.div
+                key="complete"
+                initial={{ opacity: 0, y: -12, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                className="absolute top-12 left-1/2 -translate-x-1/2 bg-black/90 backdrop-blur-sm border border-[#00ff88]/50 rounded-full px-4 py-1.5 flex items-center gap-2 shadow-[0_0_24px_rgba(0,255,136,0.3)]"
+              >
+                <Check className="w-3.5 h-3.5 text-[#00ff88]" strokeWidth={3} />
+                <span className="text-[12px] text-white font-semibold">
+                  Scan complete — {detectedCount} {detectedCount === 1 ? "item" : "items"} detected
+                </span>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {isScanning && (
             <motion.div
