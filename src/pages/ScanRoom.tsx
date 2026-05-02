@@ -2425,6 +2425,11 @@ export default function ScanRoom() {
 
                       {/* Optional room organization */}
                       <div className="w-full">
+                        <div className="tru-scan-library-header mb-2">
+                          <FolderOpen className="w-3.5 h-3.5" />
+                          <span>Library</span>
+                          <span className="tru-scan-library-count">{uploadedPhotos.length}</span>
+                        </div>
                         <div className="grid grid-cols-3 gap-1.5 w-full px-1">
                           {[
                             { icon: Sofa, label: "Living", room: "Living Room" },
