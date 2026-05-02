@@ -6,7 +6,7 @@ import {
   Upload, Sparkles, Pencil, Plus, Check, ChevronDown, ChevronRight,
   LogOut, HelpCircle, Loader2, X, Trash2, Image as ImageIcon,
   Cpu, ShieldCheck, Headphones, AlertTriangle, Camera, Square, ArrowRight,
-  Layers, Play, Zap, Pause, FolderPlus,
+  Layers, Play, Zap, Pause, FolderPlus, Eye, EyeOff, Brain,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
