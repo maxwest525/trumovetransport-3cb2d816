@@ -32,6 +32,19 @@ interface Photo {
   autoTagged: boolean;
   status: PhotoStatus;
   detections: Detection[];
+  width?: number;
+  height?: number;
+  quality?: QualityResult;
+  enhanceStatus?: "idle" | "enhancing" | "enhanced" | "failed";
+  qualityDismissed?: boolean;
+}
+
+interface QualityResult {
+  tier: "good" | "medium" | "low";
+  reason: "resolution" | "compression" | null;
+  recommendation: "enhance" | "optional" | null;
+  width: number;
+  height: number;
 }
 
 interface Detection {
@@ -101,6 +114,51 @@ const fileToDataUrl = (file: File): Promise<string> =>
 
 const confidenceColor = (c: number) =>
   c >= 85 ? "#00ff88" : c >= 70 ? "#fbbf24" : "#ef4444";
+
+/* ----- Photo quality helpers ----- */
+function getImageDimensions(file: File): Promise<{ width: number; height: number }> {
+  return new Promise((resolve) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      resolve({ width: img.naturalWidth, height: img.naturalHeight });
+      URL.revokeObjectURL(url);
+    };
+    img.onerror = () => {
+      resolve({ width: 0, height: 0 });
+      URL.revokeObjectURL(url);
+    };
+    img.src = url;
+  });
+}
+
+function checkPhotoQuality(
+  fileSize: number,
+  width: number,
+  height: number,
+): QualityResult {
+  const minDim = Math.min(width, height);
+  if (minDim > 0 && minDim < 600) {
+    return { tier: "low", reason: "resolution", recommendation: "enhance", width, height };
+  }
+  const pixels = width * height;
+  const bpp = pixels > 0 ? fileSize / pixels : 1;
+  if (bpp < 0.3 && pixels > 0) {
+    return { tier: "low", reason: "compression", recommendation: "enhance", width, height };
+  }
+  if (minDim > 0 && minDim < 1000) {
+    return { tier: "medium", reason: "resolution", recommendation: "optional", width, height };
+  }
+  return { tier: "good", reason: null, recommendation: null, width, height };
+}
+
+function formatDimensions(width: number, height: number): string {
+  const max = Math.max(width, height);
+  if (max >= 3840) return "4K";
+  if (max >= 4000) return "high resolution";
+  if (max >= 1920 && Math.min(width, height) >= 1080) return "1080p";
+  return `${width}x${height}`;
+}
 
 function detectRoomFromItems(itemNames: string[]): { roomId: string; auto: boolean } {
   const counts: Record<string, number> = {};
@@ -461,20 +519,17 @@ function DetectionBox({
   const baseDelay = index * 0.08;
   return (
     <div
-      className="absolute group"
+      className="absolute"
       style={{
         left: `${bbox.x * 100}%`,
         top: `${bbox.y * 100}%`,
         width: `${bbox.width * 100}%`,
         height: `${bbox.height * 100}%`,
-        pointerEvents: "auto",
+        pointerEvents: "none",
+        border: "none",
+        background: "transparent",
       }}
     >
-      {/* hover full outline */}
-      <div
-        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
-        style={{ border: `0.5px solid ${color}`, opacity: 0.3 }}
-      />
       {corners.map((c, i) => (
         <motion.div
           key={c.key}
@@ -569,12 +624,15 @@ function RoomChips({
 ============================================================ */
 function ScannerCanvas({
   photo, photoIndex, totalPhotos, room, onChangeRoom, allRooms,
+  onEnhance, onDismissQuality,
 }: {
   photo: Photo | null;
   photoIndex: number; totalPhotos: number;
   room: Room | undefined;
   onChangeRoom: (newRoomId: string) => void;
   allRooms: Room[];
+  onEnhance: (photoId: string) => void;
+  onDismissQuality: (photoId: string) => void;
 }) {
   return (
     <div
@@ -595,6 +653,15 @@ function ScannerCanvas({
             className="w-full h-full object-contain"
             draggable={false}
           />
+          {/* Quality banner */}
+          {photo.quality && photo.quality.tier !== "good" && !photo.qualityDismissed && (
+            <QualityBanner
+              quality={photo.quality}
+              enhanceStatus={photo.enhanceStatus ?? "idle"}
+              onEnhance={() => onEnhance(photo.id)}
+              onDismiss={() => onDismissQuality(photo.id)}
+            />
+          )}
           {/* Detection boxes */}
           {photo.status === "scanned" && photo.detections.map((d, i) => (
             <DetectionBox
@@ -678,6 +745,106 @@ function CanvasBracket({ pos }: { pos: "tl" | "tr" | "bl" | "br" }) {
     br: "bottom-2 right-2 border-b-[1.5px] border-r-[1.5px]",
   };
   return <div className={cn(base, map[pos])} style={{ borderColor: "#00ff88" }} />;
+}
+
+/* ============================================================
+   Quality Banner — slides into top of canvas
+============================================================ */
+function QualityBanner({
+  quality, enhanceStatus, onEnhance, onDismiss,
+}: {
+  quality: QualityResult;
+  enhanceStatus: "idle" | "enhancing" | "enhanced" | "failed";
+  onEnhance: () => void;
+  onDismiss: () => void;
+}) {
+  const [expanded, setExpanded] = useState(quality.tier === "low");
+  const [autoFaded, setAutoFaded] = useState(false);
+
+  useEffect(() => {
+    if (quality.tier === "medium" && !expanded) {
+      const t = setTimeout(() => setAutoFaded(true), 4000);
+      return () => clearTimeout(t);
+    }
+  }, [quality.tier, expanded]);
+
+  if (autoFaded) return null;
+
+  const headline =
+    quality.reason === "compression"
+      ? "We can sharpen this photo"
+      : "We can make this photo sharper";
+  const subtitle =
+    quality.reason === "compression"
+      ? "Image quality looks compressed - enhancement will help our AI detect items more accurately."
+      : `This image is ${formatDimensions(quality.width, quality.height)} - we'll get better detection at higher resolution.`;
+
+  // Compact pill for medium tier
+  if (quality.tier === "medium" && !expanded) {
+    return (
+      <motion.button
+        initial={{ opacity: 0, y: -6 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.25, ease: "easeOut" }}
+        onClick={() => setExpanded(true)}
+        className="absolute top-3 right-3 z-20 flex items-center gap-1.5 px-2 py-1 rounded-full text-[10px] font-medium text-white"
+        style={{ background: "rgba(0,0,0,0.7)", border: "0.5px solid rgba(0,255,136,0.3)" }}
+      >
+        <Sparkles className="w-3 h-3 text-[#00ff88]" />
+        Tip: enhance for better results
+      </motion.button>
+    );
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -40 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -40 }}
+      transition={{ duration: 0.25, ease: "easeOut" }}
+      className="absolute top-0 left-0 right-0 z-20 mx-3 mt-3 rounded-md flex items-center gap-3 px-3 py-2"
+      style={{
+        background: "rgba(0,255,136,0.08)",
+        border: "0.5px solid rgba(0,255,136,0.4)",
+        backdropFilter: "blur(8px)",
+      }}
+    >
+      <Sparkles className="w-3.5 h-3.5 text-[#00ff88] flex-shrink-0" />
+      <div className="flex-1 min-w-0">
+        <div className="text-[12px] font-medium text-white leading-tight">{headline}</div>
+        <div className="text-[11px] text-white/60 leading-tight mt-0.5 truncate">{subtitle}</div>
+      </div>
+      <div className="flex items-center gap-1.5 flex-shrink-0">
+        <button
+          onClick={onEnhance}
+          disabled={enhanceStatus === "enhancing" || enhanceStatus === "enhanced"}
+          className="h-7 px-2.5 rounded text-[11px] font-semibold text-black bg-[#00ff88] hover:bg-[#00ff88]/90 transition-colors flex items-center gap-1 disabled:opacity-60"
+        >
+          {enhanceStatus === "enhancing" ? (
+            <><Loader2 className="w-3 h-3 animate-spin" /> Enhancing</>
+          ) : enhanceStatus === "enhanced" ? (
+            <><Check className="w-3 h-3" /> Enhanced</>
+          ) : (
+            "Enhance"
+          )}
+        </button>
+        <button
+          onClick={onDismiss}
+          className="h-7 px-2 rounded text-[11px] text-white/60 hover:text-white border border-white/15 hover:border-white/30 transition-colors"
+        >
+          Use anyway
+        </button>
+        <button
+          onClick={onDismiss}
+          className="text-white/40 hover:text-white p-0.5"
+          aria-label="Dismiss"
+        >
+          <X className="w-3 h-3" />
+        </button>
+      </div>
+    </motion.div>
+  );
 }
 
 /* ============================================================
@@ -969,19 +1136,71 @@ export default function InventoryScan() {
   /* ----- File handler ----- */
   const handleFiles = useCallback(async (files: File[]) => {
     if (files.length === 0) return;
-    const newPhotos: Photo[] = files.slice(0, 50).map((file) => ({
-      id: uid(),
-      file,
-      url: URL.createObjectURL(file),
-      roomId: "",
-      autoTagged: true,
-      status: "pending",
-      detections: [],
-    }));
+    const slice = files.slice(0, 50);
+    const dims = await Promise.all(slice.map((f) => getImageDimensions(f)));
+    const newPhotos: Photo[] = slice.map((file, i) => {
+      const { width, height } = dims[i];
+      const quality = checkPhotoQuality(file.size, width, height);
+      return {
+        id: uid(),
+        file,
+        url: URL.createObjectURL(file),
+        roomId: "",
+        autoTagged: true,
+        status: "pending",
+        detections: [],
+        width,
+        height,
+        quality,
+        enhanceStatus: "idle",
+        qualityDismissed: false,
+      };
+    });
     setPhotos((prev) => [...prev, ...newPhotos]);
     if (state === "empty") setState("scanning");
     if (!activePhotoId && newPhotos[0]) setActivePhotoId(newPhotos[0].id);
   }, [state, activePhotoId]);
+
+  /* ----- Dismiss / enhance handlers ----- */
+  const dismissQuality = useCallback((photoId: string) => {
+    setPhotos((prev) => prev.map((p) =>
+      p.id === photoId ? { ...p, qualityDismissed: true } : p
+    ));
+  }, []);
+
+  const enhancePhoto = useCallback(async (photoId: string) => {
+    const photo = photos.find((p) => p.id === photoId);
+    if (!photo || !photo.file) {
+      setPhotos((prev) => prev.map((p) =>
+        p.id === photoId ? { ...p, qualityDismissed: true } : p
+      ));
+      return;
+    }
+    setPhotos((prev) => prev.map((p) =>
+      p.id === photoId ? { ...p, enhanceStatus: "enhancing" } : p
+    ));
+    try {
+      const dataUrl = await fileToDataUrl(photo.file);
+      const { data, error } = await supabase.functions.invoke("enhance-image", {
+        body: { imageUrl: dataUrl },
+      });
+      if (error) throw error;
+      const enhancedUrl: string | undefined = data?.enhancedUrl;
+      if (!enhancedUrl) throw new Error("No enhanced image returned");
+      setPhotos((prev) => prev.map((p) =>
+        p.id === photoId
+          ? { ...p, url: enhancedUrl, dataUrl: enhancedUrl, enhanceStatus: "enhanced", qualityDismissed: true }
+          : p
+      ));
+      toast({ title: "Photo sharpened", description: "We'll use the higher-resolution version for detection." });
+    } catch (err: any) {
+      console.error("enhance error", err);
+      setPhotos((prev) => prev.map((p) =>
+        p.id === photoId ? { ...p, enhanceStatus: "failed" } : p
+      ));
+      toast({ title: "Couldn't enhance photo", description: "We'll continue with the original." });
+    }
+  }, [photos]);
 
   /* ----- Sample loader ----- */
   const loadSample = useCallback(() => {
@@ -1272,6 +1491,8 @@ export default function InventoryScan() {
                   room={rooms.find((r) => r.id === activePhoto?.roomId)}
                   onChangeRoom={(rid) => activePhoto && reassignPhoto(activePhoto.id, rid)}
                   allRooms={rooms}
+                  onEnhance={enhancePhoto}
+                  onDismissQuality={dismissQuality}
                 />
 
                 <PhotoStrip
