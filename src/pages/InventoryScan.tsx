@@ -680,22 +680,33 @@ function RoomChips({
   onAdd: () => void;
 }) {
   return (
-    <div className="flex flex-wrap items-center gap-1.5">
+    <div className="flex flex-wrap items-center gap-2">
       <button
         onClick={() => onPick(null)}
         className={cn(
-          "px-2.5 py-1 rounded-full text-[11px] font-medium transition-colors flex items-center gap-1.5",
+          "h-8 lg:h-8 px-3 lg:px-3.5 rounded-full text-[12px] lg:text-[13px] font-medium transition-all flex items-center gap-2",
           activeRoomId === null
-            ? "bg-white/10 text-white border border-white/20"
-            : "text-white/50 border border-white/10 hover:text-white/80"
+            ? "bg-[#00ff88]/10 text-white border-[0.5px] border-[#00ff88]/40"
+            : "text-[#a8b3c0] hover:text-white"
         )}
+        style={
+          activeRoomId === null
+            ? undefined
+            : {
+                background: "rgba(255,255,255,0.04)",
+                border: "0.5px solid rgba(255,255,255,0.08)",
+              }
+        }
       >
         All
-        <span className="text-[10px] opacity-70">{items.reduce((s, i) => s + i.quantity, 0)}</span>
+        <span className={cn("text-[11px]", activeRoomId === null ? "text-[#00ff88]" : "opacity-70")}>
+          {items.reduce((s, i) => s + i.quantity, 0)}
+        </span>
       </button>
       <AnimatePresence>
         {rooms.map((r) => {
           const count = items.filter((i) => i.roomId === r.id).reduce((s, i) => s + i.quantity, 0);
+          const photoFor = "items"; // (visual-only tooltip key)
           const active = activeRoomId === r.id;
           return (
             <motion.button
@@ -704,29 +715,30 @@ function RoomChips({
               animate={{ opacity: 1, scale: 1 }}
               transition={{ type: "spring", stiffness: 400, damping: 25 }}
               onClick={() => onPick(r.id)}
+              title={`${count} ${photoFor}`}
               className={cn(
-                "px-2.5 py-1 rounded-full text-[11px] font-medium transition-colors flex items-center gap-1.5",
+                "h-8 lg:h-8 px-3 lg:px-3.5 rounded-full text-[12px] lg:text-[13px] font-medium transition-all flex items-center gap-2 hover:scale-[1.02]",
                 active
                   ? "text-white"
-                  : "text-white/60 hover:text-white/90"
+                  : "text-[#a8b3c0] hover:text-white"
               )}
               style={{
-                background: active ? "rgba(0,255,136,0.1)" : "rgba(255,255,255,0.02)",
+                background: active ? "rgba(0,255,136,0.1)" : "rgba(255,255,255,0.04)",
                 border: active
                   ? "0.5px solid rgba(0,255,136,0.4)"
                   : "0.5px solid rgba(255,255,255,0.08)",
               }}
             >
-              <span className="w-1.5 h-1.5 rounded-full" style={{ background: r.color }} />
+              <span className="w-[6px] h-[6px] rounded-full" style={{ background: r.color }} />
               {r.name}
-              <span className={cn("text-[10px]", active ? "text-[#00ff88]" : "opacity-70")}>{count}</span>
+              <span className={cn("text-[11px]", active ? "text-[#00ff88]" : "opacity-70")}>{count}</span>
             </motion.button>
           );
         })}
       </AnimatePresence>
       <button
         onClick={onAdd}
-        className="px-2 py-1 rounded-full text-[11px] text-white/40 hover:text-white/70 transition-colors flex items-center gap-1"
+        className="h-8 px-3 rounded-full text-[12px] text-white/40 hover:text-white/70 transition-colors flex items-center gap-1"
         style={{ border: "0.5px dashed rgba(255,255,255,0.15)" }}
       >
         <Plus className="w-3 h-3" /> add
