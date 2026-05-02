@@ -1243,6 +1243,12 @@ export default function InventoryScan() {
               etaSec={etaSec}
             />
 
+            <MiniDropzone
+              uploaded={totalPhotos}
+              scanned={photos.filter((p) => p.status === "scanned").length}
+              onFiles={handleFiles}
+            />
+
             <div className="grid gap-3" style={{ gridTemplateColumns: "1fr 240px" }}>
               {/* LEFT */}
               <div className="space-y-2 min-w-0">
