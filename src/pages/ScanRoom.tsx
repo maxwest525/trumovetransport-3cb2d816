@@ -2439,26 +2439,111 @@ export default function ScanRoom() {
                           <span>Library</span>
                           <span className="tru-scan-library-count">{uploadedPhotos.length}</span>
                         </div>
-                        <div className="grid grid-cols-3 gap-1.5 w-full px-1">
-                          {[
+                        {(() => {
+                          const defaultRooms = [
                             { icon: Sofa, label: "Living", room: "Living Room" },
                             { icon: BedDouble, label: "Bed", room: "Bedroom" },
                             { icon: UtensilsCrossed, label: "Kitchen", room: "Kitchen" },
                             { icon: Bath, label: "Bath", room: "Bathroom" },
                             { icon: Warehouse, label: "Garage", room: "Garage" },
                             { icon: Box, label: "Storage", room: "Storage" },
-                          ].map(({ icon: Icon, label, room }) => (
-                            <button
-                              key={label}
-                              type="button"
-                              onClick={() => handleRoomClick(room)}
-                              className="flex flex-col items-center gap-1 rounded-lg border border-border bg-muted/30 px-2 py-2.5 text-[11px] font-medium text-muted-foreground/70 hover:bg-muted/60 hover:text-foreground hover:border-foreground/20 transition-colors cursor-pointer"
-                            >
-                              <Icon className="w-3.5 h-3.5 flex-shrink-0" />
-                              <span>{label}</span>
-                            </button>
-                          ))}
-                        </div>
+                          ];
+                          const customAsRooms = customFolders.map((name) => ({
+                            icon: FolderOpen,
+                            label: name.length > 8 ? `${name.slice(0, 8)}…` : name,
+                            room: name,
+                          }));
+                          // Custom folders the customer just added show first so
+                          // they're easy to find; defaults follow.
+                          const allRooms = [...customAsRooms, ...defaultRooms];
+                          const VISIBLE = 5; // 5 + Add folder tile = 6 total
+                          const visibleRooms = allRooms.slice(0, VISIBLE);
+                          const hasMore = allRooms.length > VISIBLE;
+                          return (
+                            <>
+                              <div className="grid grid-cols-3 gap-1.5 w-full px-1">
+                                {/* Add folder tile - always first */}
+                                {isAddingFolder ? (
+                                  <div className="col-span-3 flex items-center gap-1.5 rounded-lg border border-primary/40 bg-primary/[0.04] px-2 py-2">
+                                    <Input
+                                      autoFocus
+                                      value={newFolderDraft}
+                                      onChange={(e) => setNewFolderDraft(e.target.value)}
+                                      onKeyDown={(e) => {
+                                        if (e.key === "Enter") {
+                                          e.preventDefault();
+                                          if (newFolderDraft.trim()) {
+                                            addCustomFolder(newFolderDraft);
+                                            setNewFolderDraft("");
+                                            setIsAddingFolder(false);
+                                          }
+                                        } else if (e.key === "Escape") {
+                                          setNewFolderDraft("");
+                                          setIsAddingFolder(false);
+                                        }
+                                      }}
+                                      placeholder="Folder name"
+                                      className="h-7 text-xs"
+                                    />
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        if (newFolderDraft.trim()) {
+                                          addCustomFolder(newFolderDraft);
+                                          setNewFolderDraft("");
+                                          setIsAddingFolder(false);
+                                        }
+                                      }}
+                                      className="text-[11px] font-semibold text-primary hover:underline px-1"
+                                    >
+                                      Add
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        setNewFolderDraft("");
+                                        setIsAddingFolder(false);
+                                      }}
+                                      className="text-muted-foreground hover:text-foreground"
+                                      aria-label="Cancel"
+                                    >
+                                      <X className="w-3.5 h-3.5" />
+                                    </button>
+                                  </div>
+                                ) : (
+                                  <button
+                                    type="button"
+                                    onClick={() => setIsAddingFolder(true)}
+                                    className="flex flex-col items-center gap-1 rounded-lg border border-dashed border-primary/40 bg-primary/[0.04] px-2 py-2.5 text-[11px] font-semibold text-primary hover:bg-primary/[0.08] hover:border-primary/60 transition-colors cursor-pointer"
+                                  >
+                                    <FolderPlus className="w-3.5 h-3.5 flex-shrink-0" />
+                                    <span>Add folder</span>
+                                  </button>
+                                )}
+                                {visibleRooms.map(({ icon: Icon, label, room }) => (
+                                  <button
+                                    key={room}
+                                    type="button"
+                                    onClick={() => handleRoomClick(room)}
+                                    className="flex flex-col items-center gap-1 rounded-lg border border-border bg-muted/30 px-2 py-2.5 text-[11px] font-medium text-muted-foreground/70 hover:bg-muted/60 hover:text-foreground hover:border-foreground/20 transition-colors cursor-pointer"
+                                  >
+                                    <Icon className="w-3.5 h-3.5 flex-shrink-0" />
+                                    <span className="truncate max-w-full">{label}</span>
+                                  </button>
+                                ))}
+                              </div>
+                              {hasMore && (
+                                <button
+                                  type="button"
+                                  onClick={() => setShowAllFoldersModal(true)}
+                                  className="mt-2 w-full text-[11px] font-semibold text-primary hover:underline py-1.5"
+                                >
+                                  View all ({allRooms.length})
+                                </button>
+                              )}
+                            </>
+                          );
+                        })()}
                       </div>
                     </div>
                   ) : (
