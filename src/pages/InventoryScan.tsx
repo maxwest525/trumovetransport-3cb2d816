@@ -557,7 +557,7 @@ type ScanProgress = { current: number; total: number };
 
 function ScanControls({
   scanState, scanProgress, canScanRoom, canScanAll, activeRoomName,
-  onScanRoom, onScanAll, onCancel,
+  onScanRoom, onScanAll, onCancel, photosInRoom, totalUnscanned,
 }: {
   scanState: "idle" | "scanning";
   scanProgress: ScanProgress;
@@ -567,13 +567,15 @@ function ScanControls({
   onScanRoom: () => void;
   onScanAll: () => void;
   onCancel: () => void;
+  photosInRoom: number;
+  totalUnscanned: number;
 }) {
   if (scanState === "scanning") {
     const pct = scanProgress.total > 0 ? Math.round((scanProgress.current / scanProgress.total) * 100) : 0;
     return (
       <div className="rounded-md border border-[#00ff88]/30 bg-[#00ff88]/[0.04] p-3">
         <div className="flex items-center justify-between mb-2">
-          <div className="text-[12px] font-semibold text-white">
+          <div className="text-[13px] font-semibold text-white">
             Scanning {scanProgress.current} of {scanProgress.total} photos…
           </div>
           <button
@@ -583,47 +585,75 @@ function ScanControls({
             <Pause className="w-3 h-3" /> Cancel
           </button>
         </div>
-        <div className="h-1.5 rounded-full bg-white/10 overflow-hidden">
+        <div className="h-2 rounded-full bg-white/10 overflow-hidden relative">
           <motion.div
-            className="h-full bg-[#00ff88]"
+            className="h-full bg-gradient-to-r from-[#00cc6e] via-[#00ff88] to-[#00cc6e] bg-[length:200%_100%]"
+            animate={{ backgroundPosition: ["0% 0%", "200% 0%"] }}
+            transition={{ duration: 1.6, repeat: Infinity, ease: "linear" }}
+            style={{ width: `${pct}%` }}
+          />
+          <motion.div
+            className="absolute inset-y-0 left-0 h-full bg-[#00ff88]"
             initial={{ width: 0 }}
             animate={{ width: `${pct}%` }}
             transition={{ duration: 0.3 }}
+            style={{ mixBlendMode: "screen", opacity: 0 }}
           />
         </div>
       </div>
     );
   }
 
+  const roomEst = Math.max(5, Math.round(photosInRoom * 8));
+  const allEstMin = Math.max(1, Math.round((totalUnscanned * 8) / 60));
+
   return (
-    <div className="grid grid-cols-2 gap-2">
-      <button
-        onClick={onScanRoom}
-        disabled={!canScanRoom}
-        className={cn(
-          "h-11 rounded-md font-semibold text-[13px] flex items-center justify-center gap-2 transition-all",
-          canScanRoom
-            ? "bg-[#00ff88] text-black hover:shadow-[0_0_20px_rgba(0,255,136,0.4)]"
-            : "bg-white/5 text-white/30 cursor-not-allowed"
-        )}
-      >
-        <Play className="w-3.5 h-3.5" fill="currentColor" />
-        Scan {activeRoomName}
-      </button>
-      <button
-        onClick={onScanAll}
-        disabled={!canScanAll}
-        className={cn(
-          "h-11 rounded-md font-semibold text-[13px] flex items-center justify-center gap-2 border transition-all",
-          canScanAll
-            ? "border-[#00ff88] text-[#00ff88] hover:bg-[#00ff88]/10"
-            : "border-white/10 text-white/30 cursor-not-allowed"
-        )}
-      >
-        <Zap className="w-3.5 h-3.5" />
-        Scan all rooms
-      </button>
-    </div>
+    <TooltipProvider>
+      <div className="grid grid-cols-2 gap-3">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              onClick={onScanRoom}
+              disabled={!canScanRoom}
+              className={cn(
+                "h-12 rounded-md font-semibold text-[13px] flex items-center justify-center gap-2 transition-all",
+                canScanRoom
+                  ? "bg-[#00ff88] text-black hover:shadow-[0_0_24px_rgba(0,255,136,0.5)] hover:bg-[#00ff88]/95"
+                  : "bg-white/[0.04] text-white/30 cursor-not-allowed"
+              )}
+            >
+              <Play className="w-3.5 h-3.5" fill="currentColor" />
+              Scan {activeRoomName}
+              {canScanRoom && <span className="text-black/60 font-normal">(~{roomEst}s)</span>}
+            </button>
+          </TooltipTrigger>
+          {!canScanRoom && (
+            <TooltipContent>Upload photos to this room first</TooltipContent>
+          )}
+        </Tooltip>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              onClick={onScanAll}
+              disabled={!canScanAll}
+              className={cn(
+                "h-12 rounded-md font-semibold text-[13px] flex items-center justify-center gap-2 border-[1.5px] transition-all",
+                canScanAll
+                  ? "border-[#00ff88] text-[#00ff88] hover:bg-[#00ff88]/10 hover:shadow-[0_0_16px_rgba(0,255,136,0.25)]"
+                  : "border-white/10 text-white/30 cursor-not-allowed"
+              )}
+            >
+              <Zap className="w-3.5 h-3.5" />
+              Scan all rooms
+              {canScanAll && <span className="text-[#00ff88]/60 font-normal">({totalUnscanned} photos, ~{allEstMin}m)</span>}
+            </button>
+          </TooltipTrigger>
+          {!canScanAll && (
+            <TooltipContent>Upload photos first</TooltipContent>
+          )}
+        </Tooltip>
+      </div>
+    </TooltipProvider>
   );
 }
 
